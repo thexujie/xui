@@ -2,8 +2,34 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="core\error.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\logger.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\system.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="core\error.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\logger.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\path.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\system.h">
+      <Filter>core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{e66dda2f-c3a6-461a-8a88-89379ad27427}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
