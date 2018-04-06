@@ -18,17 +18,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\libs\libjpeg\libjpeg.vcxproj">
-      <Project>{0eff8869-28a7-4736-ad19-046b893652fa}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\libs\libpng\libpng.vcxproj">
-      <Project>{21cb22f3-74ea-4a22-a953-c6ca294d7d8d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\libs\zlib\zlib.vcxproj">
-      <Project>{d2202452-772a-4e11-b3d8-5e7849065cc1}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{327EADFF-ED36-413C-89FE-D9DC08BE57BE}</ProjectGuid>
   </PropertyGroup>

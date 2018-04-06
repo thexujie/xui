@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/error.h"
+#include "core/error.h"
 
 namespace core
 {
@@ -40,7 +40,7 @@ namespace core
         public:
             virtual ~istream() = default;
 
-            virtual std::tuple<common::error_e, int64_t> read(std::shared_ptr<byte_t> buffer, int64_t nbytes) = 0;
+            virtual std::tuple<core::error_e, int64_t> read(std::shared_ptr<byte_t> buffer, int64_t nbytes) = 0;
         };
     }
 }

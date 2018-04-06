@@ -6,7 +6,7 @@ namespace core
 {
     namespace io
     {
-        using namespace common;
+        using namespace core;
 
         class filestream : public core::io::istream
         {
@@ -15,7 +15,7 @@ namespace core
             filestream(std::string path);
             ~filestream();
 
-            std::tuple<common::error_e, int64_t> read(std::shared_ptr<byte_t> buffer, int64_t nbytes);
+            std::tuple<core::error_e, int64_t> read(std::shared_ptr<byte_t> buffer, int64_t nbytes);
 
         protected:
             std::fstream _fs;

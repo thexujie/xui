@@ -20,7 +20,7 @@ namespace core
 
         }
 
-        std::tuple<common::error_e, int64_t> filestream::read(std::shared_ptr<byte_t> buffer, int64_t nbytes)
+        std::tuple<core::error_e, int64_t> filestream::read(std::shared_ptr<byte_t> buffer, int64_t nbytes)
         {
             if (!_fs.is_open())
                 return { error_io, 0 };

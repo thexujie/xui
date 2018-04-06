@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tools/string.h"
+#include "core/string.h"
 
 inline std::basic_ostream<char, std::char_traits<char>> & __fixed_op(std::basic_ostream<char, std::char_traits<char>>& _Ostr, const char * _Val)
 {
@@ -30,11 +30,11 @@ inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_
 
 inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>>&& _Ostr, const wchar_t * _Val)
 {
-    return _Ostr << tools::string::ucs2_u8(_Val);
+    return _Ostr << core::string::ucs2_u8(_Val);
 }
 inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>>& _Ostr, const wchar_t * _Val)
 {
-    return _Ostr << tools::string::ucs2_u8(_Val);
+    return _Ostr << core::string::ucs2_u8(_Val);
 }
 
 namespace core

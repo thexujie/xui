@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "windows.h"
-#include "tools/string.h"
+#include "core/string.h"
 
 namespace win32
 {
@@ -9,7 +9,7 @@ namespace win32
         wchar_t buffer[512] = {};
         int nchars = ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, 512, NULL);
         std::wstring str(buffer, nchars - 2);
-        return tools::string::usc2_u8(str);
+        return core::string::usc2_u8(str);
     }
 
     int runLoop()

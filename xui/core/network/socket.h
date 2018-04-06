@@ -1,7 +1,6 @@
 #pragma once
 
 #include "addr.h"
-#include "../event.h"
 
 namespace core
 {
@@ -32,18 +31,18 @@ namespace core
             ~socket();
 
             socket_state state() const;
-            common::error_e set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write);
-            common::error_e connect(std::string host, port_t port, std::chrono::microseconds timeout);
-            common::error_e connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
+            core::error_e set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write);
+            core::error_e connect(std::string host, port_t port, std::chrono::microseconds timeout);
+            core::error_e connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
             void close();
 
-            common::error_e select(std::chrono::microseconds timeout);
+            core::error_e select(std::chrono::microseconds timeout);
 
-            std::tuple<common::error_e, int64_t> send(std::shared_ptr<byte_t> buffer, int64_t nbytes);
-            std::tuple<common::error_e, int64_t> send(std::vector<byte_t> & buffer, int64_t nbyte);
+            std::tuple<core::error_e, int64_t> send(std::shared_ptr<byte_t> buffer, int64_t nbytes);
+            std::tuple<core::error_e, int64_t> send(std::vector<byte_t> & buffer, int64_t nbyte);
 
-            std::tuple<common::error_e, int64_t> recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes);
-            std::tuple<common::error_e, int64_t> recieve(std::vector<byte_t> & buffer, int64_t nbyte);
+            std::tuple<core::error_e, int64_t> recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes);
+            std::tuple<core::error_e, int64_t> recieve(std::vector<byte_t> & buffer, int64_t nbyte);
 
         protected:
             void * _fd = invalid_fd;

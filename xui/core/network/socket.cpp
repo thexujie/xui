@@ -9,7 +9,7 @@ namespace core
 {
     namespace network
     {
-        using namespace common;
+        using namespace core;
 
         socket::socket()
         {
