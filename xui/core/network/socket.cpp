@@ -42,11 +42,10 @@ namespace core
             _timeout_send = timeout_write;
             if (_fd != invalid_fd)
             {
-                uint32_t to_read = _timeout_read.count() / 1000;
-                uint32_t to_send = _timeout_send.count() / 1000;
+                uint32_t to_read = (uint32_t)(_timeout_read.count() / 1000);
+                uint32_t to_send = (uint32_t)(_timeout_send.count() / 1000);
                 setsockopt(reinterpret_cast<SOCKET>(_fd), SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&to_read), sizeof(timeval));
-                timeval tv_send = { static_cast<long>(_timeout_send.count() / 1000000), static_cast<long>(_timeout_send.count() % 1000000) };
-                setsockopt(reinterpret_cast<SOCKET>(_fd), SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char *>(&tv_send), sizeof(timeval));
+                setsockopt(reinterpret_cast<SOCKET>(_fd), SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char *>(&to_send), sizeof(timeval));
             }
             return error_ok;
         }
@@ -70,11 +69,10 @@ namespace core
                 if (_fd == invalid_fd)
                     return error_generic;
 
-                uint32_t to_read = _timeout_read.count() / 1000;
-                uint32_t to_send = _timeout_send.count() / 1000;
+                uint32_t to_read = (uint32_t)(_timeout_read.count() / 1000);
+                uint32_t to_send = (uint32_t)(_timeout_send.count() / 1000);
                 setsockopt(reinterpret_cast<SOCKET>(_fd), SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&to_read), sizeof(timeval));
-                timeval tv_send = { static_cast<long>(_timeout_send.count() / 1000000), static_cast<long>(_timeout_send.count() % 1000000) };
-                setsockopt(reinterpret_cast<SOCKET>(_fd), SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char *>(&tv_send), sizeof(timeval));
+                setsockopt(reinterpret_cast<SOCKET>(_fd), SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char *>(&to_send), sizeof(timeval));
             }
             
             sockaddr_in saddr = {};

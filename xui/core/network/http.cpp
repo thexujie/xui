@@ -126,7 +126,7 @@ namespace core
             if (_buffer_size > _buffer_pos)
             {
                 nb_write = std::min(_buffer_size - _buffer_pos, nbytes);
-                std::memcpy(buffer.get(), _buffer.get() + _buffer_pos, nb_write);
+                std::memcpy(buffer.get(), _buffer.get() + _buffer_pos, (size_t)nb_write);
                 _buffer_pos += nb_write;
 
                 if (nb_write >= nbytes)
@@ -210,11 +210,11 @@ namespace core
                 auto [err_read, nb_read_from_socket] = read(temp, http_patch_size);
                 if (err_read < 0)
                     return { err_read, response, 0};
-                std::string_view sv(temp.get(), nb_read_from_socket);
+                std::string_view sv(temp.get(), (size_t)nb_read_from_socket);
                 int64_t pos = 0;
                 while (pos < nb_read_from_socket)
                 {
-                    int64_t pos_rn = sv.find_first_of("\r\n", pos, 2);
+                    int64_t pos_rn = sv.find_first_of("\r\n", (size_t)pos, 2);
                     if (pos_rn == std::string_view::npos)
                     {
                         core::logger::err() << __FUNCTION__" sv.find_first_of npos";
@@ -229,7 +229,7 @@ namespace core
                         parse_response(*response);
                         int64_t nb_frac = nb_read_from_socket - pos;
                         int64_t nb_need = std::min(nb_frac, nbytes);
-                        std::memcpy(buffer.get(), temp.get() + pos, nb_need);
+                        std::memcpy(buffer.get(), temp.get() + pos, (size_t)nb_need);
                         nb_read = nb_need;
                         reading = false;
 
@@ -319,7 +319,7 @@ namespace core
 
         core::error_e http::parse_line(const std::string line, http_response & response)
         {
-            int64_t pos_colon = line.find_first_of(": ");
+            size_t pos_colon = line.find_first_of(": ");
             if (pos_colon == std::string_view::npos)
                 return error_generic;
 
