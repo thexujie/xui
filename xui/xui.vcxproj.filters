@@ -29,6 +29,69 @@
     <ClCompile Include="core\io\filestream.cpp">
       <Filter>core\io</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\image\image.cpp">
+      <Filter>graphics\image</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\bmp.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\dds.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\ico.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\jpg.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\png.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\tga.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="core\core.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\text\font.cpp">
+      <Filter>graphics\text</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Graphics.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Pixmap.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\float2.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\float3.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\float4.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\float4x4.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\quat4.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\math.cpp">
+      <Filter>core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\GraphicsService.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="core\app.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="main\main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\Bitmap.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -71,6 +134,102 @@
     <ClInclude Include="core\io\stream.h">
       <Filter>core\io</Filter>
     </ClInclude>
+    <ClInclude Include="graphics\image\image.h">
+      <Filter>graphics\image</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\bmp.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\dds.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\ico.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\jpg.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\png.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\tga.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\text\font.h">
+      <Filter>graphics\text</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Graphics.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Pixmap.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\align.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\edge.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\rect.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\vec2.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\vec3.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\vec4.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\float2.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\float3.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\float4.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\float4x4.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\quat4.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xmm.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xm\xm.h">
+      <Filter>core\math\xmm\xm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xm\xmf.h">
+      <Filter>core\math\xmm\xm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xm\xmi.h">
+      <Filter>core\math\xmm\xm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xm\xmi_argb.h">
+      <Filter>core\math\xmm\xm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\math.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\GraphicsService.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="core\app.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Bitmap.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="core\color32.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -85,5 +244,43 @@
     <Filter Include="core\io">
       <UniqueIdentifier>{f04b9ca1-3ee7-48f3-b7da-66c8c1a693e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{749c32a9-4ad8-41c4-ac68-4c8f72da806d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\image">
+      <UniqueIdentifier>{7c7dde39-a045-4635-a52c-0af3676d3882}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\image\formats">
+      <UniqueIdentifier>{c5b7d167-7308-4813-9cdb-bab67b2294da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\text">
+      <UniqueIdentifier>{fe89e65f-fb7a-4a83-ba2c-246539f57e3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\math">
+      <UniqueIdentifier>{cb6c943e-d954-4c9b-9492-3fdf01283f00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\math\xmm">
+      <UniqueIdentifier>{83016ac8-564d-4584-8649-a90857206961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\math\xmm\xm">
+      <UniqueIdentifier>{3078cc9c-008f-43a2-8ab9-173d04cd0f4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{88779072-c8c3-48d8-b1d9-fd7315e9672e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="core\math\xmm\xm\xmf_base.inl">
+      <Filter>core\math\xmm\xm</Filter>
+    </None>
+    <None Include="core\math\xmm\xm\xmf_matr.inl">
+      <Filter>core\math\xmm\xm</Filter>
+    </None>
+    <None Include="core\math\xmm\xm\xmf_quat.inl">
+      <Filter>core\math\xmm\xm</Filter>
+    </None>
+    <None Include="core\math\xmm\xm\xmf_vec.inl">
+      <Filter>core\math\xmm\xm</Filter>
+    </None>
   </ItemGroup>
 </Project>

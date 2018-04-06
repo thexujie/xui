@@ -52,39 +52,106 @@
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\app.cpp" />
+    <ClCompile Include="core\core.cpp" />
     <ClCompile Include="core\error.cpp" />
     <ClCompile Include="core\io\filestream.cpp" />
     <ClCompile Include="core\logger.cpp" />
+    <ClCompile Include="core\math\math.cpp" />
+    <ClCompile Include="core\math\xmm\float2.cpp" />
+    <ClCompile Include="core\math\xmm\float3.cpp" />
+    <ClCompile Include="core\math\xmm\float4.cpp" />
+    <ClCompile Include="core\math\xmm\float4x4.cpp" />
+    <ClCompile Include="core\math\xmm\quat4.cpp" />
     <ClCompile Include="core\network\addr.cpp" />
     <ClCompile Include="core\network\http.cpp" />
     <ClCompile Include="core\network\socket.cpp" />
     <ClCompile Include="core\string.cpp" />
     <ClCompile Include="core\system.cpp" />
+    <ClCompile Include="graphics\Graphics.cpp" />
+    <ClCompile Include="graphics\GraphicsService.cpp" />
+    <ClCompile Include="graphics\image\formats\bmp.cpp" />
+    <ClCompile Include="graphics\image\formats\dds.cpp" />
+    <ClCompile Include="graphics\image\formats\ico.cpp" />
+    <ClCompile Include="graphics\image\formats\jpg.cpp" />
+    <ClCompile Include="graphics\image\formats\png.cpp" />
+    <ClCompile Include="graphics\image\formats\tga.cpp" />
+    <ClCompile Include="graphics\image\image.cpp" />
+    <ClCompile Include="graphics\Pixmap.cpp" />
+    <ClCompile Include="graphics\text\font.cpp" />
+    <ClCompile Include="main\main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="win32\Bitmap.cpp" />
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\app.h" />
     <ClInclude Include="core\base64.h" />
+    <ClInclude Include="core\color32.h" />
+    <ClInclude Include="core\core.h" />
     <ClInclude Include="core\error.h" />
     <ClInclude Include="core\io\buffer.h" />
     <ClInclude Include="core\io\filestream.h" />
     <ClInclude Include="core\io\stream.h" />
     <ClInclude Include="core\logger.h" />
+    <ClInclude Include="core\math\align.h" />
+    <ClInclude Include="core\math\edge.h" />
+    <ClInclude Include="core\math\math.h" />
+    <ClInclude Include="core\math\rect.h" />
+    <ClInclude Include="core\math\vec2.h" />
+    <ClInclude Include="core\math\vec3.h" />
+    <ClInclude Include="core\math\vec4.h" />
+    <ClInclude Include="core\math\xmm\float2.h" />
+    <ClInclude Include="core\math\xmm\float3.h" />
+    <ClInclude Include="core\math\xmm\float4.h" />
+    <ClInclude Include="core\math\xmm\float4x4.h" />
+    <ClInclude Include="core\math\xmm\quat4.h" />
+    <ClInclude Include="core\math\xmm\xmm.h" />
+    <ClInclude Include="core\math\xmm\xm\xm.h" />
+    <ClInclude Include="core\math\xmm\xm\xmf.h" />
+    <ClInclude Include="core\math\xmm\xm\xmi.h" />
+    <ClInclude Include="core\math\xmm\xm\xmi_argb.h" />
     <ClInclude Include="core\network\addr.h" />
     <ClInclude Include="core\network\http.h" />
     <ClInclude Include="core\network\socket.h" />
     <ClInclude Include="core\path.h" />
     <ClInclude Include="core\string.h" />
     <ClInclude Include="core\system.h" />
+    <ClInclude Include="graphics\GraphicsService.h" />
+    <ClInclude Include="graphics\image\formats\bmp.h" />
+    <ClInclude Include="graphics\image\formats\dds.h" />
+    <ClInclude Include="graphics\image\formats\ico.h" />
+    <ClInclude Include="graphics\image\formats\jpg.h" />
+    <ClInclude Include="graphics\image\formats\png.h" />
+    <ClInclude Include="graphics\image\formats\tga.h" />
+    <ClInclude Include="graphics\image\image.h" />
+    <ClInclude Include="graphics\Graphics.h" />
+    <ClInclude Include="graphics\Pixmap.h" />
+    <ClInclude Include="graphics\text\font.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="win32\Bitmap.h" />
     <ClInclude Include="win32\windows.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="core\math\xmm\xm\xmf_base.inl" />
+    <None Include="core\math\xmm\xm\xmf_matr.inl" />
+    <None Include="core\math\xmm\xm\xmf_quat.inl" />
+    <None Include="core\math\xmm\xm\xmf_vec.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

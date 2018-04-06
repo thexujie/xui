@@ -4,8 +4,8 @@ namespace core
 {
     namespace string
     {
-        std::vector<std::string> split(const std::string & src, const char & delimiter);
-        std::vector<std::string_view> split(const std::string_view & src, const char & delimiter);
+        std::vector<std::string> split(const std::string & src, const char8_t & delimiter);
+        std::vector<std::string_view> split(const std::string_view & src, const char8_t & delimiter);
         std::string & ltrim(std::string & str, const std::string & chars = "\t\n\v\f\r ");
         std::string & rtrim(std::string & str, const std::string & chars = "\t\n\v\f\r ");
         std::string & trim(std::string & str, const std::string & chars = "\t\n\v\f\r ");
@@ -13,19 +13,19 @@ namespace core
         std::string_view & rtrim(std::string_view & str, const std::string & chars = "\t\n\v\f\r ");
         std::string_view & trim(std::string_view & str, const std::string & chars = "\t\n\v\f\r ");
 
-        u8string ansi_u8(const char * text, int32_t length);
-        u8string u8_ansi(const char * text, int32_t length);
-        u8string ucs2_u8(const wchar_t * text, int32_t length);
-        u8string ucs2_ansi(const wchar_t * text, int32_t length);
-        std::wstring u8_ucs2(const char * text, int32_t length);
-        std::wstring ansi_ucs2(const char * text, int32_t length);
+        std::string ansi_u8(const char8_t * text, int32_t length);
+        std::string u8_ansi(const char8_t * text, int32_t length);
+        std::string ucs2_u8(const char16_t * text, int32_t length);
+        std::string ucs2_ansi(const char16_t * text, int32_t length);
+        std::wstring u8_ucs2(const char8_t * text, int32_t length);
+        std::wstring ansi_ucs2(const char8_t * text, int32_t length);
 
-        u8string ansi_u8(std::string str);
-        u8string u8_ansi(std::string str);
-        u8string usc2_u8(std::wstring str);
-        u8string usc2_ansi(std::wstring str);
+        std::string ansi_u8(std::string str);
+        std::string u8_ansi(std::string str);
+        std::string usc2_u8(std::wstring str);
+        std::string usc2_ansi(std::wstring str);
         std::wstring u8_ucs2(std::string str);
-        u8string ucs2_u8(std::wstring str);
+        std::string ucs2_u8(std::wstring str);
 
         struct less_ic
         {

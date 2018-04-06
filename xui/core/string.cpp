@@ -66,7 +66,7 @@ namespace core { namespace string
         return ltrim(rtrim(str, chars), chars);
     }
 
-    u8string ansi_u8(const char * text, int32_t length)
+    std::string ansi_u8(const char * text, int32_t length)
     {
         if (length < 0)
             length = (int32_t)std::strlen(text);
@@ -81,15 +81,15 @@ namespace core { namespace string
         int32_t nchars2 = WideCharToMultiByte(CP_UTF8, 0, u16, nwchars2, u8, nchars, NULL, FALSE);
         delete[] u16;
         assert(nchars2 == nchars);
-        u8string str(u8, nchars);
+        std::string str(u8, nchars);
         delete[] u8;
         return str;
 #else
-        return u8string(text, length);
+        return std::string(text, length);
 #endif
     }
 
-    u8string u8_ansi(const char * text, int32_t length)
+    std::string u8_ansi(const char * text, int32_t length)
     {
         if (length < 0)
             length = (int32_t)std::strlen(text);
@@ -104,15 +104,15 @@ namespace core { namespace string
         int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, u16, nwchars2, out, nchars, NULL, FALSE);
         delete[] u16;
         assert(nchars2 == nchars);
-        u8string str(out, nchars);
+        std::string str(out, nchars);
         delete[] out;
         return str;
 #else
-        return u8string(text, length);
+        return std::string(text, length);
 #endif
     }
 
-    u8string ucs2_u8(const wchar_t * text, int32_t length)
+    std::string ucs2_u8(const wchar_t * text, int32_t length)
     {
         if (length < 0)
             length = (int32_t)std::wcslen(text);
@@ -128,12 +128,12 @@ namespace core { namespace string
         int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, text, length, u8, nchars, NULL, FALSE);
 #endif
         assert(nchars2 == nchars);
-        u8string str(u8, nchars);
+        std::string str(u8, nchars);
         delete[] u8;
         return str;
     }
 
-    u8string ucs2_ansi(const wchar_t * text, int32_t length)
+    std::string ucs2_ansi(const wchar_t * text, int32_t length)
     {
         if (length < 0)
             length = (int32_t)std::wcslen(text);
@@ -142,7 +142,7 @@ namespace core { namespace string
         char * u8 = new char[nchars];
         int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, text, length, u8, nchars, NULL, FALSE);
         assert(nchars2 == nchars);
-        u8string str(u8, nchars);
+        std::string str(u8, nchars);
         delete[] u8;
         return str;
     }
@@ -177,22 +177,22 @@ namespace core { namespace string
         return ucs2;
     }
 
-    u8string ansi_u8(std::string str)
+    std::string ansi_u8(std::string str)
     {
         return ansi_u8(str.c_str(), (int32_t)str.length());
     }
 
-    u8string u8_ansi(std::string str)
+    std::string u8_ansi(std::string str)
     {
         return u8_ansi(str.c_str(), (int32_t)str.length());
     }
 
-    u8string usc2_u8(std::wstring str)
+    std::string usc2_u8(std::wstring str)
     {
         return ucs2_u8(str.c_str(), (int32_t)str.length());
     }
 
-    u8string usc2_ansi(std::wstring str)
+    std::string usc2_ansi(std::wstring str)
     {
         return ucs2_ansi(str.c_str(), (int32_t)str.length());
     }
@@ -202,7 +202,7 @@ namespace core { namespace string
         return u8_ucs2(str.c_str(), (int32_t)str.length());
     }
 
-    u8string ucs2_u8(std::wstring str)
+    std::string ucs2_u8(std::wstring str)
     {
         return ucs2_u8(str.c_str(), (int32_t)str.length());
     }
