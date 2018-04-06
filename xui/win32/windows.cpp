@@ -91,7 +91,7 @@ namespace win32
             typedef void (WINAPI * NtVersionNumbersFuncT)(DWORD *, DWORD *, DWORD *);
 
             RTL_OSVERSIONINFOEXW rtlOSVersion = { sizeof(RTL_OSVERSIONINFOEXW) };
-            RtlGetVersionFuncT pfnRtlGetVersion = (RtlGetVersionFuncT)(::GetProcAddress(::GetModuleHandle(L"ntdll.dll"), "RtlGetVersion"));
+            RtlGetVersionFuncT pfnRtlGetVersion = (RtlGetVersionFuncT)(::GetProcAddress(::GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion"));
             if(pfnRtlGetVersion)
             {
                 pfnRtlGetVersion(&rtlOSVersion);
@@ -106,7 +106,7 @@ namespace win32
             }
             else
             {
-                NtVersionNumbersFuncT pfnRtlGetNtVersionNumbers = (NtVersionNumbersFuncT)(::GetProcAddress(::GetModuleHandle(L"ntdll.dll"), "RtlGetNtVersionNumbers"));
+                NtVersionNumbersFuncT pfnRtlGetNtVersionNumbers = (NtVersionNumbersFuncT)(::GetProcAddress(::GetModuleHandleW(L"ntdll.dll"), "RtlGetNtVersionNumbers"));
                 if (pfnRtlGetNtVersionNumbers)
                 {
                     DWORD dwMajor = 0;
