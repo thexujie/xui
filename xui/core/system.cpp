@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "system.h"
 #include "path.h"
+#include "string.h"
 #include "win32/windows.h"
 #include <shlobj.h>
 
@@ -10,7 +11,7 @@ namespace core
     {
         wchar_t szPath[MAX_PATH] = {};
         DWORD dwLength = ::GetTempPathW(MAX_PATH, szPath);
-        return core::filesystem::path(tools::string::ucs2_u8(std::wstring(szPath, dwLength)));
+        return core::filesystem::path(core::string::ucs2_u8(std::wstring(szPath, dwLength)));
     }
 
     core::filesystem::path appdata_path()
@@ -19,7 +20,7 @@ namespace core
         BOOL bSucc = ::SHGetSpecialFolderPathW(NULL, szPath, CSIDL_APPDATA, FALSE);
         if (!bSucc)
             return temp_path();
-        return core::filesystem::path(tools::string::ucs2_u8(std::wstring(szPath, std::wcslen(szPath))));
+        return core::filesystem::path(core::string::ucs2_u8(std::wstring(szPath, std::wcslen(szPath))));
     }
 
     core::filesystem::path process_path()
@@ -78,7 +79,7 @@ namespace core
         if (!thread_id)
             thread_id = GetCurrentThreadId();
 
-        std::string namea = tools::string::u8_ansi(name);
+        std::string namea = core::string::u8_ansi(name);
         __thread_set_name(thread_id, namea.c_str());
     }
 

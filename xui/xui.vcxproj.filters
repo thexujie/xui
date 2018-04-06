@@ -11,6 +11,24 @@
     <ClCompile Include="core\system.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="win32\windows.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="core\string.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\network\addr.cpp">
+      <Filter>core\network</Filter>
+    </ClCompile>
+    <ClCompile Include="core\network\http.cpp">
+      <Filter>core\network</Filter>
+    </ClCompile>
+    <ClCompile Include="core\network\socket.cpp">
+      <Filter>core\network</Filter>
+    </ClCompile>
+    <ClCompile Include="core\io\filestream.cpp">
+      <Filter>core\io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -26,10 +44,46 @@
     <ClInclude Include="core\system.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="win32\windows.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="core\string.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\base64.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\network\addr.h">
+      <Filter>core\network</Filter>
+    </ClInclude>
+    <ClInclude Include="core\network\http.h">
+      <Filter>core\network</Filter>
+    </ClInclude>
+    <ClInclude Include="core\network\socket.h">
+      <Filter>core\network</Filter>
+    </ClInclude>
+    <ClInclude Include="core\io\buffer.h">
+      <Filter>core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="core\io\filestream.h">
+      <Filter>core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="core\io\stream.h">
+      <Filter>core\io</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
       <UniqueIdentifier>{e66dda2f-c3a6-461a-8a88-89379ad27427}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32">
+      <UniqueIdentifier>{a88dfbcf-0f88-4960-a408-6112a362b37d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\network">
+      <UniqueIdentifier>{78b849b8-1f55-4870-a9f1-1786828a6c0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\io">
+      <UniqueIdentifier>{f04b9ca1-3ee7-48f3-b7da-66c8c1a693e2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

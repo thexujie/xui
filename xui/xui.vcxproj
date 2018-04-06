@@ -56,7 +56,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\error.cpp" />
+    <ClCompile Include="core\io\filestream.cpp" />
     <ClCompile Include="core\logger.cpp" />
+    <ClCompile Include="core\network\addr.cpp" />
+    <ClCompile Include="core\network\http.cpp" />
+    <ClCompile Include="core\network\socket.cpp" />
+    <ClCompile Include="core\string.cpp" />
     <ClCompile Include="core\system.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -64,13 +69,23 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\base64.h" />
     <ClInclude Include="core\error.h" />
+    <ClInclude Include="core\io\buffer.h" />
+    <ClInclude Include="core\io\filestream.h" />
+    <ClInclude Include="core\io\stream.h" />
     <ClInclude Include="core\logger.h" />
+    <ClInclude Include="core\network\addr.h" />
+    <ClInclude Include="core\network\http.h" />
+    <ClInclude Include="core\network\socket.h" />
     <ClInclude Include="core\path.h" />
+    <ClInclude Include="core\string.h" />
     <ClInclude Include="core\system.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="win32\windows.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
