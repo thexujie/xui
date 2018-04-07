@@ -42,6 +42,7 @@ namespace graphics
         virtual core::error_e DrawString(std::string str, core::color32 color, font font, rc32_t rect, int32_t flags) = 0;
 
         virtual core::error_e DrawImage(graphics::IImage & image, pt32_t point, int32_t flags) = 0;
+        virtual core::error_e DrawImage(graphics::IImage & image, rc32_t rect, int32_t flags) = 0;
     };
 
     class IGraphicsService : public core::Object

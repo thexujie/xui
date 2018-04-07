@@ -29,8 +29,6 @@ int main()
     graphics->DrawLine({ 0, cy / 2 }, { cx, cy / 2 }, colors::Red, 1);
     graphics->DrawLine({ cx / 2, 0 }, { cx / 2, cy }, colors::Red, 1);
 
-    auto image = std::make_shared<graphics::Image>("pd.jpg");
-    graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, core::math::align::leftTop);
     graphics->FillRect({ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Green);
     graphics->DrawRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
 
@@ -56,6 +54,9 @@ int main()
     graphics->DrawString(u8"RBRB", colors::Green, { "", 20 }, { cx / 4, cy / 4, cx / 2, cy / 2 }, core::math::align::rightCenterY);
     graphics->DrawString(u8"LBLB", colors::Blue, { "", 20 }, { cx / 4, cy / 4, cx / 2, cy / 2 }, core::math::align::bottomCenterX);
 
+    auto image = std::make_shared<graphics::Image>("pd.jpg");
+    graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, core::math::align::leftTop);
+    graphics->DrawImage(*(image.get()), { 0, 0, cx / 4, cy / 4 }, core::math::align::rightTop);
 
     pixmap->Save("test.bmp");
     image->Save("pd2.jpg");

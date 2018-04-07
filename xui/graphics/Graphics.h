@@ -27,6 +27,7 @@ namespace graphics
         void DrawString(std::string str, core::color32 color, font font, pt32_t point, int32_t flags);
         void DrawString(std::string str, core::color32 color, font font, rc32_t rect, int32_t flags);
         void DrawImage(graphics::Image & image, pt32_t point, int32_t flags);
+        void DrawImage(graphics::Image & image, rc32_t rect, int32_t flags);
 
     private:
         core::error_e _state = core::error_ok;

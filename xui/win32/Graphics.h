@@ -2,6 +2,7 @@
 #include "graphics/GraphicsService.h"
 #include "Bitmap.h"
 #include "GDIObjectCache.h"
+#include "win32/windows.h"
 
 namespace win32
 {
@@ -19,12 +20,25 @@ namespace win32
         core::error_e DrawString(std::string str, core::color32 color, graphics::font font, core::math::rc32_t rect, int32_t flags);
 
         core::error_e DrawImage(graphics::IImage & image, core::math::pt32_t point, int32_t flags);
+        core::error_e DrawImage(graphics::IImage & image, core::math::rc32_t rect, int32_t flags);
 
         core::color32 AffineColor(core::color32 color);
 
+    public:
+        void PushOrign(core::math::pt32_t point);
+        core::math::pt32_t GetOrign() const;
+        void PopOrign();
+        void PushClip(core::math::rc32_t rect);
+        core::math::rc32_t GetClip() const;
+        void PopClip();
+
     private:
-        handle_t _hdc = NULL;
+        HDC _hdc = NULL;
         std::shared_ptr<core::Object> _bitmap;
         std::shared_ptr<GDIObjectCache> _objCache;
+
+        HRGN _clipRegion = NULL;
+        std::stack<core::math::pt32_t> _origns;
+        std::stack<core::math::rc32_t> _clips;
     };
 }

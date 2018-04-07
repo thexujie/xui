@@ -75,4 +75,12 @@ namespace graphics
         _state = _graphics->DrawImage(*(image.image()), point, flags);
     }
 
+    void Graphics::DrawImage(graphics::Image & image, rc32_t rect, int32_t flags)
+    {
+        if (!_graphics)
+            return;
+
+        _state = _graphics->DrawImage(*(image.image()), rect, flags);
+    }
+
 }

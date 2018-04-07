@@ -20,6 +20,7 @@
 #include <memory>
 #include <map>
 #include <queue>
+#include <stack>
 
 #include <sstream>
 #include <fstream>

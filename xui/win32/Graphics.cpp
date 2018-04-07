@@ -158,7 +158,7 @@ namespace win32
 
     core::error_e Graphics::DrawImage(graphics::IImage & image, core::math::pt32_t point, int32_t flags)
     {
-        auto win32image = dynamic_cast<win32::Image &>(image);
+        auto & win32image = dynamic_cast<win32::Image &>(image);
 
         HGDIOBJ hBitmapOld = ::SelectObject((HDC)win32image.hdc(), win32image.bitmap());
         if (win32image.cmode() == graphics::image::cmode_a8r8g8b8)
@@ -178,6 +178,69 @@ namespace win32
         return error_ok;
     }
 
+    core::error_e Graphics::DrawImage(graphics::IImage & image, core::math::rc32_t rect, int32_t flags)
+    {
+        auto & win32image = dynamic_cast<win32::Image &>(image);
+
+        core::math::rc32_t point;
+        if (flags & core::math::align::right)
+        {
+            point.x = rect.right() - image.size().cx;
+        }
+        else if (flags & core::math::align::centerX)
+        {
+            point.x = rect.centerX() - image.size().cx / 2;
+        }
+        else
+        {
+            point.x = rect.x;
+        }
+
+        if (flags & core::math::align::bottom)
+        {
+            point.y = rect.bottom() - image.size().cy;
+        }
+        else if (flags & core::math::align::centerY)
+        {
+            point.y = rect.centerY() - image.size().cy / 2;
+        }
+        else
+        {
+            point.y = rect.y;
+        }
+
+        PushClip(rect);
+
+        HGDIOBJ hBitmapOld = ::SelectObject((HDC)win32image.hdc(), win32image.bitmap());
+        if (win32image.cmode() == graphics::image::cmode_a8r8g8b8)
+        {
+            BLENDFUNCTION bfun = {};
+            bfun.BlendOp = AC_SRC_OVER;
+            bfun.SourceConstantAlpha = 0xff;
+            bfun.AlphaFormat = AC_SRC_ALPHA;
+            ::GdiAlphaBlend((HDC)_hdc, point.x, point.y, win32image.size().cx, win32image.size().cy, (HDC)win32image.hdc(), 0, 0, win32image.size().cx, win32image.size().cy, bfun);
+        }
+        //else if(rect.size != win32image.size())
+        //{
+        //    //BLENDFUNCTION bfun = {};
+        //    //bfun.BlendOp = AC_SRC_OVER;
+        //    //bfun.SourceConstantAlpha = 0xff;
+        //    //bfun.AlphaFormat = AC_SRC_ALPHA;
+        //    //::GdiAlphaBlend((HDC)_hdc, rect.x, rect.y, rect.cx, rect.cy, (HDC)win32image.hdc(), 0, 0, win32image.size().cx, win32image.size().cy, bfun);
+
+        //    //::SetStretchBltMode((HDC)_hdc, COLORONCOLOR);
+        //    //::SetStretchBltMode((HDC)_hdc, STRETCH_HALFTONE);
+        //    //::StretchBlt((HDC)_hdc, rect.x, rect.y, rect.cx, rect.cy, (HDC)win32image.hdc(), 0, 0, win32image.size().cx, win32image.size().cy, SRCCOPY);
+        //}
+        else
+        {
+            ::BitBlt((HDC)_hdc, point.x, point.y, win32image.size().cx, win32image.size().cy, (HDC)win32image.hdc(), 0, 0, SRCCOPY);
+        }
+        ::SelectObject((HDC)win32image.hdc(), hBitmapOld);
+        PopClip();
+        return error_ok;
+    }
+
     color32 Graphics::AffineColor(color32 color)
     {
         color32 color2 = (color & 0xFF000000) |
@@ -186,4 +249,61 @@ namespace win32
             ((color & 0xFF0000) >> 16);
         return color2;
     }
+
+    void Graphics::PushOrign(core::math::pt32_t point)
+    {
+        core::math::pt32_t temp = point;
+        if (!_origns.empty())
+            temp += _origns.top();
+        _origns.push(temp);
+    }
+
+    core::math::pt32_t Graphics::GetOrign() const
+    {
+        if (_origns.empty())
+            return {};
+        else
+            return _origns.top();
+    }
+
+    void Graphics::PopOrign()
+    {
+        _origns.pop();
+    }
+
+    void Graphics::PushClip(core::math::rc32_t rect)
+    {
+        if (!_origns.empty())
+        {
+            core::math::pt32_t orign = _origns.top();
+            rect.x += orign.x;
+            rect.y += orign.y;
+        }
+        _clips.push(rect);
+
+        if (_clipRegion)
+        {
+            ::SelectClipRgn(_hdc, NULL);
+            ::DeleteObject(_clipRegion);
+            _clipRegion = NULL;
+        }
+
+        winrect_t winrect = rect;
+        _clipRegion = ::CreateRectRgnIndirect(&winrect);
+        ::SelectClipRgn(_hdc, _clipRegion);
+    }
+
+    core::math::rc32_t Graphics::GetClip() const
+    {
+        if (_clips.empty())
+            return {};
+        else
+            return _clips.top();
+    }
+
+    void Graphics::PopClip()
+    {
+        _clips.pop();
+    }
+
 }

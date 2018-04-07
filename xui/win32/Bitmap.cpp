@@ -9,7 +9,7 @@ namespace win32
     Bitmap::Bitmap(core::math::si32_t size)
     {
         HDC hdcScreen = ::GetDC(NULL);
-        handle_t hdc = ::CreateCompatibleDC(hdcScreen);
+        HDC hdc = ::CreateCompatibleDC(hdcScreen);
         ::ReleaseDC(NULL, hdcScreen);
 
 
@@ -28,7 +28,7 @@ namespace win32
         bmpInfo.bmiHeader.biSizeImage = (uint32_t)(pitch * size.cy);
 
         byte_t * data = nullptr;
-        handle_t bitmap = ::CreateDIBSection((HDC)hdc, &bmpInfo, DIB_RGB_COLORS, (void **)&data, NULL, 0);
+        HBITMAP bitmap = ::CreateDIBSection((HDC)hdc, &bmpInfo, DIB_RGB_COLORS, (void **)&data, NULL, 0);
         if (bitmap)
         {
             _hdc = hdc;
