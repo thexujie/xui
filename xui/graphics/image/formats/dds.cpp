@@ -343,7 +343,7 @@ namespace graphics { namespace image { namespace formats
 
     cmode_e dds_get_cmode(const dds_pixel_format_t & pixel_format)
     {
-        cmode_e color_mode = cmode_invalid;
+        cmode_e color_mode = cmode_none;
 
         if (pixel_format.flags & DDSPF_ALPHA_ONLY)
         {
@@ -435,7 +435,7 @@ namespace graphics { namespace image { namespace formats
             return cmode_a8b8g8r8;
 
         default:
-            return cmode_invalid;
+            return cmode_none;
         }
     }
 

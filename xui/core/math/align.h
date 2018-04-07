@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace math
+namespace core { namespace math
 {
     enum AxisE
     {
@@ -43,103 +43,52 @@ namespace math
     *  @brief 用作击中测试、方向指示等。
     /********************************************************************************************************************/
     // 只占用低 16 位
-    enum AlignE
+    class align
     {
-        AlignNone = 0x0000,
+    public:
+        enum
+        {
+            none = 0x0000,
 
-        // 外部
-        AlignLeft = 0x0001,
-        // 左
-        AlignCenterX = 0x0002,
-        // 居中(X)
-        AlignRight = 0x0004,
-        // 右
+            // 外部
+            left = 0x0001,
+            // 左
+            centerX = 0x0002,
+            // 居中(X)
+            right = 0x0004,
+            // 右
 
-        AlignTop = 0x0008,
-        // 上
-        AlignCenterY = 0x0010,
-        // 居中(ValT)
-        AlignBottom = 0x0020,
-        // 下
+            top = 0x0008,
+            // 上
+            centerY = 0x0010,
+            // 居中(ValT)
+            bottom = 0x0020,
+            // 下
 
-        AlignFront = 0x0040,
-        // 前
-        AlignCenterZ = 0x0080,
-        // 居中(Z)
-        AlignBack = 0x0100,
-        // 后
+            front = 0x0040,
+            // 前
+            centerZ = 0x0080,
+            // 居中(Z)
+            back = 0x0100,
+            // 后
 
-        AlignLeftTop = AlignLeft | AlignTop,
-        AlignTopRight = AlignRight | AlignTop,
-        AlignRightBottom = AlignRight | AlignBottom,
-        AlignBottomLeft = AlignLeft | AlignBottom,
+            leftTop = left | top,
+            rightTop = right | top,
+            rightBottom = right | bottom,
+            leftBottom = left | bottom,
 
-        AlignLeftRight = AlignLeft | AlignRight,
-        AlignTopBottom = AlignTop | AlignBottom,
+            leftRight = left | right,
+            topBottom = top | bottom,
 
-        AlignTopCenterX = AlignTop | AlignCenterX,
-        AlignBottomCenterX = AlignBottom | AlignCenterX,
+            topCenterX = top | centerX,
+            bottomCenterX = bottom | centerX,
 
-        AlignLeftCenterY = AlignLeft | AlignCenterY,
-        AlignRightCenterY = AlignRight | AlignCenterY,
+            leftCenterY = left | centerY,
+            rightCenterY = right | centerY,
 
-        AlignCenter = AlignCenterX | AlignCenterY,
+            centerXY = centerX | centerY,
 
-        AlignLT = AlignLeft | AlignTop,
-        // 1100
-        AlignTR = AlignTop | AlignRight,
-        // 0110
-        AlignRB = AlignRight | AlignBottom,
-        // 0011
-        AlignBL = AlignBottom | AlignLeft,
-        // 1001
-
-        AlignLR = AlignLeft | AlignRight,
-        // 0101
-        AlignTB = AlignTop | AlignBottom,
-        // 0101
-
-        AlignTCx = AlignTop | AlignCenterX,
-        AlignBCx = AlignBottom | AlignCenterX,
-
-        AlignLCy = AlignLeft | AlignCenterY,
-        AlignRCy = AlignRight | AlignCenterY,
-
-        AlignLTR = AlignLeft | AlignTop | AlignRight,
-        // 1110
-        AlignLTRB = AlignLeft | AlignTop | AlignRight | AlignBottom,
-        //1111
-        AlignLTB = AlignLeft | AlignTop | AlignBottom,
-        // 1101
-        AlignLRB = AlignLeft | AlignRight | AlignBottom,
-        // 1011
-
-        AlignTRB = AlignTop | AlignRight | AlignBottom,
-        // 0111
+            mask = 0xfff
+        };
     };
-
-    inline AlignE operator |(AlignE left, AlignE right)
-    {
-        return (AlignE)((int32_t)left | (int32_t)right);
-    }
-
-    inline AlignE operator &(AlignE left, AlignE right)
-    {
-        return (AlignE)((int32_t)left & (int32_t)right);
-    }
-
-    inline AlignE operator ^(AlignE left, AlignE right)
-    {
-        return (AlignE)((int32_t)left ^ (int32_t)right);
-    }
-
-    inline AlignE operator !(AlignE align)
-    {
-        return (AlignE)!((int32_t)align);
-    }
-
-    inline AlignE operator ~(AlignE align)
-    {
-        return (AlignE)~((int32_t)align);
-    }
-}
+}}

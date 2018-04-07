@@ -6,7 +6,7 @@ namespace core
     {
     public:
         virtual ~IApp() = default;
-        virtual void * GetService(std::string name) = 0;
+        virtual std::shared_ptr<Object> GetService(std::string name) = 0;
     };
 
     void app(IApp * ptr);

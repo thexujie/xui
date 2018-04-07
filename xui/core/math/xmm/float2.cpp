@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "float2.h"
+#include "xmm.h"
 
 namespace core { namespace math { namespace xmm
 {

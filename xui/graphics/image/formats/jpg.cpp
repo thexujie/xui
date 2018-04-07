@@ -64,7 +64,7 @@ namespace graphics { namespace image { namespace formats
 
         for (int32_t cnt = 0; cnt < sizeof(JPEG_HEADER); ++cnt)
         {
-            if (buffer[cnt] != JPEG_HEADER[cnt])
+            if ((uint8_t)buffer[cnt] != JPEG_HEADER[cnt])
                 return false;
         }
 

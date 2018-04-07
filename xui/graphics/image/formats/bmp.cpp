@@ -13,7 +13,7 @@ namespace graphics { namespace image { namespace formats
 
         for (int cnt = 0; cnt < sizeof(BMP_HEADER); ++cnt)
         {
-            if (buffer[cnt] != BMP_HEADER[cnt])
+            if ((uint8_t)buffer[cnt] != BMP_HEADER[cnt])
                 return false;
         }
         return true;
@@ -33,7 +33,7 @@ namespace graphics { namespace image { namespace formats
 
         int32_t width = 0;
         int32_t height = 0;
-        cmode_e src_mode = cmode_invalid;
+        cmode_e src_mode = cmode_none;
         const byte_t * conv_palette = nullptr;
         const byte_t * conv_buffer = nullptr;
         int32_t flags = 0;
@@ -140,7 +140,7 @@ namespace graphics { namespace image { namespace formats
                 // 有调色板
             else if (extern_size)
             {
-                src_mode = cmode_invalid;
+                src_mode = cmode_none;
                 switch (info->bit_count)
                 {
                 case 1:
@@ -163,7 +163,7 @@ namespace graphics { namespace image { namespace formats
             }
             else // 没有调色板
             {
-                src_mode = cmode_invalid;
+                src_mode = cmode_none;
                 switch (info->bit_count)
                 {
                 case 2:

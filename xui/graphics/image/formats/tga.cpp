@@ -58,7 +58,7 @@ namespace graphics { namespace image { namespace formats
 
         const byte_t * conv_buffer = buffer;
         const byte_t * conv_palette = nullptr;
-        cmode_e src_mode = cmode_invalid;
+        cmode_e src_mode = cmode_none;
         switch (tga_format)
         {
         case tga_format_rgb:

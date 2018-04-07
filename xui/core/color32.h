@@ -233,10 +233,6 @@ namespace core
             Yellow = 0xFFFFFF00,
             YellowGreen = 0xFF9ACD32
         };
-    private:
-        Colors();
-        ~Colors();
     };
-
 }
 

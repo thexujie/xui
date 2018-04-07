@@ -53,9 +53,6 @@
     <ClCompile Include="core\core.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\text\font.cpp">
-      <Filter>graphics\text</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\Graphics.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -90,6 +87,24 @@
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="win32\Bitmap.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\Graphics.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\GDIObjectCache.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Image.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\Image.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\GraphicsService.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\Win32App.cpp">
       <Filter>win32</Filter>
     </ClCompile>
   </ItemGroup>
@@ -158,9 +173,6 @@
     <ClInclude Include="core\core.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\text\font.h">
-      <Filter>graphics\text</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\Graphics.h">
       <Filter>graphics</Filter>
     </ClInclude>
@@ -200,9 +212,6 @@
     <ClInclude Include="core\math\xmm\quat4.h">
       <Filter>core\math\xmm</Filter>
     </ClInclude>
-    <ClInclude Include="core\math\xmm\xmm.h">
-      <Filter>core\math\xmm</Filter>
-    </ClInclude>
     <ClInclude Include="core\math\xmm\xm\xm.h">
       <Filter>core\math\xmm\xm</Filter>
     </ClInclude>
@@ -230,6 +239,36 @@
     <ClInclude Include="core\color32.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="core\object.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xmm.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\font.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Graphics.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\GDIObjectCache.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Image.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Image.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\GraphicsService.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Win32App.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\win32.h">
+      <Filter>win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -252,9 +291,6 @@
     </Filter>
     <Filter Include="graphics\image\formats">
       <UniqueIdentifier>{c5b7d167-7308-4813-9cdb-bab67b2294da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="graphics\text">
-      <UniqueIdentifier>{fe89e65f-fb7a-4a83-ba2c-246539f57e3e}</UniqueIdentifier>
     </Filter>
     <Filter Include="core\math">
       <UniqueIdentifier>{cb6c943e-d954-4c9b-9492-3fdf01283f00}</UniqueIdentifier>
@@ -282,5 +318,8 @@
     <None Include="core\math\xmm\xm\xmf_vec.inl">
       <Filter>core\math\xmm\xm</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="xui.natvis" />
   </ItemGroup>
 </Project>

@@ -21,13 +21,13 @@ typedef uint32_t uint_h;
 typedef char char8_t;
 typedef float float32_t;
 typedef double float64_t;
-typedef void * handle_t;
 
 #include "core/error.h"
 #include "core/system.h"
 #include "core/logger.h"
 #include "core/path.h"
 #include "core/color32.h"
+#include "core/object.h"
 
 namespace core
 {

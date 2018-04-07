@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "quat4.h"
+#include "xmm.h"
 
 namespace core { namespace math { namespace xmm
 {

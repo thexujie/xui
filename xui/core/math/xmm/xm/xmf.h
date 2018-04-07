@@ -1,5 +1,6 @@
 #pragma once
 
+#include "xm.h"
 
 namespace core { namespace math { namespace xmm
 {
@@ -13,25 +14,6 @@ namespace core { namespace math { namespace xmm
     inline int32_t xmi_y(const xmf & v) { return v.iy; }
     inline int32_t xmi_z(const xmf & v) { return v.iz; }
     inline int32_t xmi_w(const xmf & v) { return v.iw; }
-
-    struct xmm
-    {
-        xmm()
-        {
-        }
-
-        xmm(xmf _row0, xmf _row1, xmf _row2, xmf _row3) : row0(_row0), row1(_row1), row2(_row2), row3(_row3)
-        {
-        }
-
-        xmf row0;
-        xmf row1;
-        xmf row2;
-        xmf row3;
-
-        xmf & operator[](int32_t iIndex) { return ((xmf *)this)[iIndex]; }
-        const xmf & operator[](int32_t iIndex) const { return ((xmf *)this)[iIndex]; }
-    };
 
     const float32_t float_epsilon = 1.192092896e-07f;
 

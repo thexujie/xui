@@ -34,7 +34,7 @@ namespace graphics { namespace image { namespace formats
         if (length < 21)
             return false;
         for (int cnt = 0; cnt < sizeof(PNG_HEADER); ++cnt)
-            if (pBuffer[cnt] != PNG_HEADER[cnt])
+            if ((uint8_t)pBuffer[cnt] != PNG_HEADER[cnt])
                 return false;
 
         // 有时只是想读取前若干个字节测试，所以校验文件尾作用不大。
@@ -75,7 +75,7 @@ namespace graphics { namespace image { namespace formats
         int32_t color_type = -1;
         png_uint_32 width = 0;
         png_uint_32 height = 0;
-        cmode_e src_mode = cmode_invalid;
+        cmode_e src_mode = cmode_none;
 
         png_get_IHDR(png, pinfo, &width, &height, &bit_depth, &color_type, 0, 0, 0);
 

@@ -346,44 +346,44 @@ namespace graphics { namespace image { namespace formats
 
     void dds_convert_bc1(int32_t width, int32_t height,
                          pixel_convert_fun_t conv_fun,
-                         const uint8_t * /*pal*/, int32_t /*pal_stride*/,
-                         const uint8_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-                         uint8_t * dst, int32_t dst_stride, int32_t dst_pitch,
+                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
+                         const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
+        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
                          int32_t flags);
 
     void dds_convert_bc2(int32_t width, int32_t height,
                          pixel_convert_fun_t conv_fun,
-                         const uint8_t * /*pal*/, int32_t /*pal_stride*/,
-                         const uint8_t * src, int32_t /*src_strike*/, int32_t /*src_pitch*/,
-                         uint8_t * dst, int32_t dst_strike, int32_t dst_pitch,
+                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
+                         const byte_t * src, int32_t /*src_strike*/, int32_t /*src_pitch*/,
+        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
                          int32_t flags);
 
     void dds_convert_bc3(int32_t width, int32_t height,
                          pixel_convert_fun_t conv_fun,
-                         const uint8_t * /*pal*/, int32_t /*pal_stride*/,
-                         const uint8_t * src, int32_t src_strike, int32_t src_pitch,
-                         uint8_t * dst, int32_t dst_strike, int32_t dst_pitch,
+                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
+                         const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
                          int32_t flags);
 
     void dds_convert_copy_dxt1(int32_t width, int32_t height,
                                pixel_convert_fun_t conv_fun,
-                               const uint8_t * /*pal*/, int32_t /*pal_stride*/,
-                               const uint8_t * src, int32_t src_stride, int32_t src_pitch,
-                               uint8_t * dst, int32_t dst_stride, int32_t dst_pitch,
+                               const byte_t * /*pal*/, int32_t /*pal_stride*/,
+                               const byte_t * src, int32_t src_stride, int32_t src_pitch,
+        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
                                int32_t flags);
 
     void dds_convert_copy_dxt23(int32_t width, int32_t height,
                                 pixel_convert_fun_t conv_fun,
-                                const uint8_t * /*pal*/, int32_t /*pal_stride*/,
-                                const uint8_t * src, int32_t src_strike, int32_t src_pitch,
-                                uint8_t * dst, int32_t dst_strike, int32_t dst_pitch,
+                                const byte_t * /*pal*/, int32_t /*pal_stride*/,
+                                const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
                                 int32_t flags);
 
     void dds_convert_copy_dxt45(int32_t width, int32_t height,
                                 pixel_convert_fun_t conv_fun,
-                                const uint8_t * /*pal*/, int32_t /*pal_stride*/,
-                                const uint8_t * src, int32_t src_strike, int32_t src_pitch,
-                                uint8_t * dst, int32_t dst_strike, int32_t dst_pitch,
+                                const byte_t * /*pal*/, int32_t /*pal_stride*/,
+                                const byte_t * src, int32_t src_strike, int32_t src_pitch,
+                                byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
                                 int32_t flags);
 
 

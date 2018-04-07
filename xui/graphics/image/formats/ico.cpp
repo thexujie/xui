@@ -38,7 +38,7 @@ namespace graphics { namespace image { namespace formats
         if (info->height > 0)
             flags |= IMAGE_CONVERT_FLIP_Y;
 
-        cmode_e src_mode = cmode_invalid;
+        cmode_e src_mode = cmode_none;
         byte_t * pallete = nullptr;
         byte_t * src = buffer;
         switch (info->bit_count)

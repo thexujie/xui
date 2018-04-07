@@ -1,5 +1,6 @@
 #pragma once
 
+#include "xm.h"
 
 namespace core { namespace math { namespace xmm
 {

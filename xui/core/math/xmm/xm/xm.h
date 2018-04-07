@@ -116,8 +116,31 @@ namespace core { namespace math { namespace xmm
     typedef xmt xmf;
     typedef xmt xmi;
     typedef xmt xmui;
+
+    struct xmm
+    {
+        xmm()
+        {
+        }
+
+        xmm(xmf _row0, xmf _row1, xmf _row2, xmf _row3) : row0(_row0), row1(_row1), row2(_row2), row3(_row3)
+        {
+        }
+
+        xmf row0;
+        xmf row1;
+        xmf row2;
+        xmf row3;
+
+        xmf & operator[](int32_t iIndex) { return ((xmf *)this)[iIndex]; }
+        const xmf & operator[](int32_t iIndex) const { return ((xmf *)this)[iIndex]; }
+    };
 }}}
 
 #include "xmi.h"
 #include "xmf.h"
 #include "xmi_argb.h"
+#include "xm/xmf_base.inl"
+#include "xm/xmf_vec.inl"
+#include "xm/xmf_quat.inl"
+#include "xm/xmf_matr.inl"

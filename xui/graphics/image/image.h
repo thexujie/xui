@@ -18,9 +18,9 @@ namespace graphics { namespace image
 
     //////////////////////////////////////////////////////////////////////////
     /// ÑÕÉ«Ä£Ê½
-    typedef enum tag_cmode
+    enum cmode_e
     {
-        cmode_invalid = 0,
+        cmode_none = 0,
         cmode_gray1,
         cmode_gray2,
         cmode_gray4,
@@ -114,7 +114,7 @@ namespace graphics { namespace image
 
         cmode_d24s8,
         //cmode_dx100 = cmode_dx1 + 99, // keep..
-    } cmode_e;
+    } ;
 
     const char * cmode_text(cmode_e cmode);
 
@@ -478,6 +478,10 @@ namespace graphics { namespace image
                        image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
 
     image_format_e image_get_format(const byte_t * buffer, int32_t length);
+
+
+    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img,
+        image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
 
     core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img,
                          image_format_e image_format,

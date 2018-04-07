@@ -55,6 +55,12 @@ namespace graphics { namespace image
         return image_format_invalid;
     }
 
+    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img,
+        image_convert_rule_fun_t pfn_rule, void * user_data)
+    {
+        return image_create(buffer, length, img, image_get_format(buffer, length), pfn_rule, user_data);
+    }
+
     core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img, image_format_e image_format,
                          image_convert_rule_fun_t pfn_rule, void * user_data)
     {
@@ -465,7 +471,7 @@ namespace graphics { namespace image
     {
         switch (cmode)
         {
-            COLOR_MODE_TEXT(cmode_invalid);
+            COLOR_MODE_TEXT(cmode_none);
             COLOR_MODE_TEXT(cmode_gray2);
             COLOR_MODE_TEXT(cmode_gray4);
             COLOR_MODE_TEXT(cmode_gray8);
@@ -647,7 +653,7 @@ namespace graphics { namespace image
                 return cmode_g16r16;
             break;
         }
-        return cmode_invalid;
+        return cmode_none;
     }
 
     bool image_data_malloc(image_data_t * data)

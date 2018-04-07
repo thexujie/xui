@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "float4x4.h"
-
+#include "xmm.h"
 
 namespace core { namespace math { namespace xmm
 {
