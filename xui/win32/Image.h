@@ -4,7 +4,7 @@
 
 namespace win32
 {
-    class Image : public graphics::IImage
+    class Image : public graphics::IGraphicsImage
     {
     public:
         Image(std::shared_ptr<HDC> hdc) : _hdc(hdc) {}

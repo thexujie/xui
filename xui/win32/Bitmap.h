@@ -6,7 +6,7 @@
 
 namespace win32
 {
-    class Bitmap : public graphics::IPixmap
+    class Bitmap : public graphics::IGraphicsPixmap
     {
     public:
         ~Bitmap() = default;

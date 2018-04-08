@@ -155,7 +155,7 @@ namespace win32
         ::TextOutW(*_hdc, point.x, point.y + tm.tmExternalLeading, strw.c_str(), (int32_t)strw.length());
     }
 
-    void Graphics::DrawImage(graphics::IImage & image, core::math::pt32_t point)
+    void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point)
     {
         auto & win32image = dynamic_cast<win32::Image &>(image);
 
@@ -172,7 +172,7 @@ namespace win32
         ::SelectObject(*_hdcStaging, hBitmapOld);
     }
 
-    void Graphics::DrawImage(graphics::IImage & image, core::math::pt32_t point, core::math::rc32_t region)
+    void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region)
     {
         if(region.right() > image.size().cx)
             region.setRight(image.size().cx);
@@ -194,7 +194,7 @@ namespace win32
         ::SelectObject(*_hdcStaging, hBitmapOld);
     }
 
-    void Graphics::DrawImage(graphics::IImage & image, core::math::rc32_t rect)
+    void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect)
     {
         auto & win32image = dynamic_cast<win32::Image &>(image);
         HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
@@ -214,7 +214,7 @@ namespace win32
         ::SelectObject(*_hdcStaging, hBitmapOld);
     }
 
-    void Graphics::DrawImage(graphics::IImage & image, core::math::rc32_t rect, core::math::rc32_t region)
+    void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
     {
         auto & win32image = dynamic_cast<win32::Image &>(image);
         HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
@@ -223,7 +223,7 @@ namespace win32
             BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
             ::GdiAlphaBlend(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging, region.x, region.y, region.cx, region.cy, bfun);
         }
-        else if (rect.size != image.size())
+        else if (rect.size != region.size)
         {
             ::StretchBlt(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging.get(), region.x, region.y, region.cx, region.cy, SRCCOPY);
         }
@@ -232,6 +232,11 @@ namespace win32
             ::BitBlt(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging.get(), region.x, region.y, SRCCOPY);
         }
         ::SelectObject(*_hdcStaging, hBitmapOld);
+    }
+
+    void Graphics::DrawString(graphics::IGraphicsString & str, core::math::pt32_t point)
+    {
+        
     }
 
     graphics::fontmetrics Graphics::GetFontMetrics(graphics::font font)

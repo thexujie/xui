@@ -9,7 +9,7 @@ namespace win32
         dll(std::string path);
         ~dll();
 
-        common::error_e load(std::string path);
+        core::error_e load(std::string path);
         void free();
         operator bool() const { return !!_handle; }
 

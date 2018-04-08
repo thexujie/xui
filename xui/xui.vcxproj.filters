@@ -107,6 +107,21 @@
     <ClCompile Include="win32\Win32App.cpp">
       <Filter>win32</Filter>
     </ClCompile>
+    <ClCompile Include="win32\uniscribe\UspInc.cpp">
+      <Filter>win32\uniscribe</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\com_ptr.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\dll.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\uniscribe\CTextLayoutUsp.cpp">
+      <Filter>win32\uniscribe</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\uniscribe\CUspFactory.cpp">
+      <Filter>win32\uniscribe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -269,6 +284,21 @@
     <ClInclude Include="win32\win32.h">
       <Filter>win32</Filter>
     </ClInclude>
+    <ClInclude Include="win32\uniscribe\UspInc.h">
+      <Filter>win32\uniscribe</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\com_ptr.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\dll.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\uniscribe\CTextLayoutUsp.h">
+      <Filter>win32\uniscribe</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\uniscribe\CUspFactory.h">
+      <Filter>win32\uniscribe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -303,6 +333,9 @@
     </Filter>
     <Filter Include="main">
       <UniqueIdentifier>{88779072-c8c3-48d8-b1d9-fd7315e9672e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32\uniscribe">
+      <UniqueIdentifier>{1563d03b-b08a-447f-ac87-6a14c3db607e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

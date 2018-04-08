@@ -11,7 +11,7 @@ namespace graphics
         _pixmap = GraphicsService().CreatePixmap(size);
     }
 
-    Pixmap::Pixmap(std::shared_ptr<IPixmap> pixmap) : _pixmap(pixmap)
+    Pixmap::Pixmap(std::shared_ptr<IGraphicsPixmap> pixmap) : _pixmap(pixmap)
     {
         
     }

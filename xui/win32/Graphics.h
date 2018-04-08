@@ -26,10 +26,11 @@ namespace win32
 
         void DrawString(std::string str, core::math::pt32_t point, graphics::font font, core::color32 color);
 
-        void DrawImage(graphics::IImage & image, core::math::pt32_t point);
-        void DrawImage(graphics::IImage & image, core::math::pt32_t point, core::math::rc32_t region);
-        void DrawImage(graphics::IImage & image, core::math::rc32_t rect);
-        void DrawImage(graphics::IImage & image, core::math::rc32_t rect, core::math::rc32_t region);
+        void DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point);
+        void DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region);
+        void DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect);
+        void DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region);
+        void DrawString(graphics::IGraphicsString & str, core::math::pt32_t point);
 
     public:
         graphics::fontmetrics GetFontMetrics(graphics::font font);

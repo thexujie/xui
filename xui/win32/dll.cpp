@@ -4,7 +4,7 @@
 
 namespace win32
 {
-    using namespace common;
+    using namespace core;
 
     dll::dll() :
         _handle(NULL)
@@ -23,12 +23,12 @@ namespace win32
         free();
     }
 
-    common::error_e dll::load(std::string path)
+    core::error_e dll::load(std::string path)
     {
         free();
         if (!path.empty())
         {
-            std::wstring pathw = tools::string::u8_ucs2(path);
+            std::wstring pathw = core::string::u8_ucs2(path);
             _handle = ::LoadLibraryW(pathw.c_str());
             if (!_handle)
                 logger::war() << __FUNCTION__" LoadLibraryW failed " << winerr_str(GetLastError());
@@ -49,7 +49,7 @@ namespace win32
     {
         if (_handle)
         {
-            std::string namea = tools::string::u8_ansi(name);
+            std::string namea = core::string::u8_ansi(name);
             return (void *)::GetProcAddress((HMODULE)_handle, namea.c_str());
         }
         else
