@@ -16,9 +16,12 @@ namespace win32
 
         int iDpiY = GetDeviceCaps(hdc, LOGPIXELSY);
         logFont.lfWidth = 0;
-        logFont.lfHeight = (int32_t)(-font.size * 72 / iDpiY);
-        logFont.lfWeight = (int32_t)font.weight;
+        if(font.size < 0)
+            logFont.lfHeight = (int32_t)(font.size * 72 / iDpiY);
+        else
+            logFont.lfWeight = font.size;
 
+        logFont.lfWeight = font.weight;
         logFont.lfItalic = !!(font.flags & font::italic);
         logFont.lfUnderline = !!(font.flags & font::underline);
         logFont.lfStrikeOut = FALSE;
@@ -36,12 +39,12 @@ namespace win32
     }
 
 
-    GDIObjectCache::GDIObjectCache(handle_t hdc):_hdc(hdc)
+    GDIObjectCache::GDIObjectCache(std::shared_ptr<HDC> hdc):_hdc(hdc)
     {
         
     }
 
-    handle_t GDIObjectCache::GetPen(const core::color32 color, float32_t width)
+    std::shared_ptr<HPEN> GDIObjectCache::GetPen(const core::color32 color, float32_t width)
     {
         auto iter = _pens.find({ color, width });
         if (iter != _pens.end())
@@ -53,11 +56,12 @@ namespace win32
         else
             hPen = ::CreatePen(PS_SOLID, (int32_t)width, color & 0x00FFFFFF);
 
-        _pens[{color, width}] = hPen;
-        return hPen;
+        std::shared_ptr<HPEN> penptr = std::make_shared<HPEN>(hPen);
+        _pens[{color, width}] = penptr;
+        return penptr;
     }
 
-    handle_t GDIObjectCache::GetBrush(const core::color32 color)
+    std::shared_ptr<HBRUSH> GDIObjectCache::GetBrush(const core::color32 color)
     {
         auto iter = _brushs.find(color);
         if (iter != _brushs.end())
@@ -69,23 +73,25 @@ namespace win32
         else
             hBrush = ::CreateSolidBrush(color & 0x00FFFFFF);
 
-        _brushs[color] = hBrush;
-        return hBrush;
+        std::shared_ptr<HBRUSH> brushptr = std::make_shared<HBRUSH>(hBrush);
+        _brushs[color] = brushptr;
+        return brushptr;
     }
 
-    handle_t GDIObjectCache::GetFont(const graphics::font & font)
+    std::shared_ptr<HFONT> GDIObjectCache::GetFont(const graphics::font & font)
     {
         auto iter = _fonts.find(font);
         if (iter != _fonts.end())
             return iter->second;
 
         LOGFONTW logFont = {};
-        FontToLOGFONT((HDC)_hdc, font, logFont);
+        FontToLOGFONT(*_hdc.get(), font, logFont);
 
         HFONT hFont = CreateFontIndirectW(&logFont);
         std::hash<graphics::font>{}(font);
 
-        _fonts[font] = hFont;
-        return hFont;
+        std::shared_ptr<HFONT> fontptr = std::make_shared<HFONT>(hFont);
+        _fonts[font] = fontptr;
+        return fontptr;
     }
 }

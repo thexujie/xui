@@ -12,10 +12,11 @@ typedef uint32_t uintx_t;
 typedef int16_t intx_h;
 typedef uint16_t uintx_h;
 #else
-typedef int64_t int_x;
-typedef uint64_t uint_x;
-typedef int32_t int_h;
-typedef uint32_t uint_h;
+#define BIT64
+typedef int64_t intx_t;
+typedef uint64_t uintx_t;
+typedef int32_t intx_h;
+typedef uint32_t uintx_h;
 #endif
 
 typedef char char8_t;

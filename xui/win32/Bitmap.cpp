@@ -6,13 +6,13 @@ namespace win32
 {
     using namespace core;
 
-    Bitmap::Bitmap(core::math::si32_t size)
+    Bitmap::Bitmap(std::shared_ptr<HDC> hdc):_hdc(hdc)
     {
-        HDC hdcScreen = ::GetDC(NULL);
-        HDC hdc = ::CreateCompatibleDC(hdcScreen);
-        ::ReleaseDC(NULL, hdcScreen);
+        
+    }
 
-
+    Bitmap::Bitmap(std::shared_ptr<HDC> hdc, core::math::si32_t size) : _hdc(hdc)
+    {
         int32_t strike = 4;
         int32_t pitch = size.cx * strike;
         if (pitch & 0x4)
@@ -28,16 +28,15 @@ namespace win32
         bmpInfo.bmiHeader.biSizeImage = (uint32_t)(pitch * size.cy);
 
         byte_t * data = nullptr;
-        HBITMAP bitmap = ::CreateDIBSection((HDC)hdc, &bmpInfo, DIB_RGB_COLORS, (void **)&data, NULL, 0);
+        HBITMAP bitmap = ::CreateDIBSection(*hdc, &bmpInfo, DIB_RGB_COLORS, (void **)&data, NULL, 0);
         if (bitmap)
         {
-            _hdc = hdc;
             _handle = bitmap;
             _data = data;
             _strike = strike;
             _pitch = pitch;
             _size = size;
-            ::SelectObject((HDC)_hdc, (HGDIOBJ)_handle);
+            ::SelectObject(*_hdc.get(), (HGDIOBJ)_handle);
         }
     }
 
@@ -53,10 +52,10 @@ namespace win32
         }
     }
 
-    void Bitmap::BitBltTo(handle_t hdc, int32_t x, int32_t y, int32_t width, int32_t height)
+    void Bitmap::BitBltTo(HDC hdc, int32_t x, int32_t y, int32_t width, int32_t height)
     {
-        if (_hdc)
-            ::BitBlt((HDC)hdc, x, y, width, height, (HDC)_hdc, 0, 0, SRCCOPY);
+        if (_hdc && hdc != *_hdc)
+            ::BitBlt(hdc, x, y, width, height, *_hdc.get(), 0, 0, SRCCOPY);
     }
 
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "graphics/GraphicsService.h"
-#include "win32.h"
+#include "win32/windows.h"
 
 namespace win32
 {
@@ -12,6 +12,6 @@ namespace win32
         std::shared_ptr<graphics::IImage> CreateImage(std::string path);
 
     private:
-        handle_t _hdc = nullptr;
+        std::shared_ptr<HDC> _hdc;
     };
 }

@@ -9,20 +9,20 @@ namespace win32
     class Bitmap : public graphics::IPixmap
     {
     public:
-        Bitmap() = default;
         ~Bitmap() = default;
 
-        Bitmap(core::math::si32_t size);
+        Bitmap(std::shared_ptr<HDC> hdc);
+        Bitmap(std::shared_ptr<HDC> hdc, core::math::si32_t size);
 
     public: // IBuffer
         byte_t * data() const { return _data; }
         core::math::si32_t size() const { return _size; }
         int32_t pitch() const { return _pitch; }
-        HDC hdc() const { return _hdc; }
+        std::shared_ptr<HDC> hdc() const { return _hdc; }
         HBITMAP handle() const { return _handle; }
 
         void Clear(core::color32 color);
-        void BitBltTo(handle_t hdc, int32_t x, int32_t y, int32_t width, int32_t height);
+        void BitBltTo(HDC hdc, int32_t x, int32_t y, int32_t width, int32_t height);
 
     public:
         core::error_e Save(std::string path) const;
@@ -33,7 +33,7 @@ namespace win32
         int32_t _pitch = 0;
         core::math::si32_t _size;
 
-        HDC _hdc = nullptr;
+        std::shared_ptr<HDC> _hdc;
         HBITMAP _handle = nullptr;
     };
 }

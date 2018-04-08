@@ -12,19 +12,6 @@ namespace win32
         Graphics(std::shared_ptr<win32::Bitmap> bitmap);
         ~Graphics() = default;
 
-        core::error_e Clear(core::color32 color);
-        core::error_e DrawLine(core::math::pt32_t start, core::math::pt32_t end, core::color32 color, float32_t width);
-        core::error_e DrawRect(core::math::rc32_t rect, core::color32 color, float32_t width);
-        core::error_e FillRect(core::math::rc32_t rect, core::color32 color);
-        core::error_e DrawString(std::string str, core::color32 color, graphics::font font, core::math::pt32_t point, int32_t flags);
-        core::error_e DrawString(std::string str, core::color32 color, graphics::font font, core::math::rc32_t rect, int32_t flags);
-
-        core::error_e DrawImage(graphics::IImage & image, core::math::pt32_t point, int32_t flags);
-        core::error_e DrawImage(graphics::IImage & image, core::math::rc32_t rect, int32_t flags);
-
-        core::color32 AffineColor(core::color32 color);
-
-    public:
         void PushOrign(core::math::pt32_t point);
         core::math::pt32_t GetOrign() const;
         void PopOrign();
@@ -32,8 +19,30 @@ namespace win32
         core::math::rc32_t GetClip() const;
         void PopClip();
 
+        void Clear(core::color32 color);
+        void DrawLine(core::math::pt32_t start, core::math::pt32_t end, core::color32 color, float32_t width);
+        void DrawRect(core::math::rc32_t rect, core::color32 color, float32_t width);
+        void FillRect(core::math::rc32_t rect, core::color32 color);
+
+        void DrawString(std::string str, core::math::pt32_t point, graphics::font font, core::color32 color);
+
+        void DrawImage(graphics::IImage & image, core::math::pt32_t point);
+        void DrawImage(graphics::IImage & image, core::math::pt32_t point, core::math::rc32_t region);
+        void DrawImage(graphics::IImage & image, core::math::rc32_t rect);
+        void DrawImage(graphics::IImage & image, core::math::rc32_t rect, core::math::rc32_t region);
+
+    public:
+        graphics::fontmetrics GetFontMetrics(graphics::font font);
+        core::math::si32_t MeasureString(std::string str, graphics::font font);
+
     private:
-        HDC _hdc = NULL;
+        core::color32 AffineColor(core::color32 color);
+        void SetPen(std::shared_ptr<HPEN> pen);
+        void SetBrush(std::shared_ptr<HBRUSH> brush);
+        void SetFont(std::shared_ptr<HFONT> font);
+    private:
+        std::shared_ptr<HDC> _hdc;
+        std::shared_ptr<HDC> _hdcStaging;
         std::shared_ptr<core::Object> _bitmap;
         std::shared_ptr<GDIObjectCache> _objCache;
 

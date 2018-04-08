@@ -8,7 +8,15 @@ namespace win32
 {
     std::shared_ptr<graphics::IPixmap> GraphicsService::CreatePixmap(core::math::si32_t size)
     {
-        return std::dynamic_pointer_cast<graphics::IPixmap>(std::make_shared<win32::Bitmap>(size));
+        if (!_hdc)
+        {
+            _hdc = std::make_shared<HDC>();
+            HDC hdcScreen = GetDC(NULL);
+            *_hdc = CreateCompatibleDC(hdcScreen);
+            ::ReleaseDC(NULL, hdcScreen);
+        }
+
+        return std::dynamic_pointer_cast<graphics::IPixmap>(std::make_shared<win32::Bitmap>(_hdc, size));
     }
 
     std::shared_ptr<graphics::IGraphics> GraphicsService::CreateGraphics(std::shared_ptr<core::Object> pixmap)
@@ -20,8 +28,9 @@ namespace win32
     {
         if(!_hdc)
         {
+            _hdc = std::make_shared<HDC>();
             HDC hdcScreen = GetDC(NULL);
-            _hdc = CreateCompatibleDC(hdcScreen);
+            *_hdc = CreateCompatibleDC(hdcScreen);
             ::ReleaseDC(NULL, hdcScreen);
         }
         return std::make_shared<win32::Image>(_hdc, path);

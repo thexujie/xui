@@ -34,15 +34,27 @@ namespace graphics
     {
     public:
         virtual ~IGraphics() = default;
-        virtual core::error_e Clear(core::color32 color) = 0;
-        virtual core::error_e DrawLine(pt32_t start, pt32_t end, color32 color, float32_t width) = 0;
-        virtual core::error_e DrawRect(rc32_t rect, color32 color, float32_t width) = 0;
-        virtual core::error_e FillRect(rc32_t rect, color32 color) = 0;
-        virtual core::error_e DrawString(std::string str, core::color32 color, font font, pt32_t point, int32_t flags) = 0;
-        virtual core::error_e DrawString(std::string str, core::color32 color, font font, rc32_t rect, int32_t flags) = 0;
 
-        virtual core::error_e DrawImage(graphics::IImage & image, pt32_t point, int32_t flags) = 0;
-        virtual core::error_e DrawImage(graphics::IImage & image, rc32_t rect, int32_t flags) = 0;
+        virtual void PushOrign(core::math::pt32_t point) = 0;
+        virtual core::math::pt32_t GetOrign() const = 0;
+        virtual void PopOrign() = 0;
+        virtual void PushClip(core::math::rc32_t rect) = 0;
+        virtual core::math::rc32_t GetClip() const = 0;
+        virtual void PopClip() = 0;
+
+        virtual void Clear(core::color32 color) = 0;
+        virtual void DrawLine(pt32_t start, pt32_t end, color32 color, float32_t width) = 0;
+        virtual void DrawRect(rc32_t rect, color32 color, float32_t width) = 0;
+        virtual void FillRect(rc32_t rect, color32 color) = 0;
+
+        virtual void DrawString(std::string str, core::math::pt32_t point, graphics::font font, core::color32 color) = 0;
+        virtual void DrawImage(graphics::IImage & image, pt32_t point) = 0;
+        virtual void DrawImage(graphics::IImage & image, core::math::pt32_t point, core::math::rc32_t region) = 0;
+        virtual void DrawImage(graphics::IImage & image, rc32_t rect) = 0;
+        virtual void DrawImage(graphics::IImage & image, core::math::rc32_t rect, core::math::rc32_t region) = 0;
+
+        virtual graphics::fontmetrics GetFontMetrics(graphics::font font) = 0;
+        virtual core::math::si32_t MeasureString(std::string str, graphics::font font) = 0;
     };
 
     class IGraphicsService : public core::Object

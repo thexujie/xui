@@ -40,6 +40,14 @@ namespace core { namespace math
         const RT bottom() const { return y + cy; }
         const RT centerX() const { return x + cx / 2; }
         const RT centerY() const { return y + cy / 2; }
+        void setLeft(RT val) { x = val; }
+        void setTop(RT val) { y = val; }
+        void setRight(RT val) { cx = val - x; }
+        void setBottom(RT val) { cy = val - y; }
+        void moveLeft(RT val) { x += val; }
+        void moveTop(RT val) { y += val; }
+        void moveRight(RT val) { cx += val; }
+        void moveBottom(RT val) { cy += val; }
 
         vec2<RT> leftTop() const { return vec2<RT>(x, y); }
         vec2<RT> rightTop() const { return vec2<RT>(x + cx, y); }

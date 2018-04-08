@@ -681,7 +681,7 @@ namespace win32
     }
 
 
-    Image::Image(handle_t hdc, std::string path):_hdc(hdc)
+    Image::Image(std::shared_ptr<HDC> hdc, std::string path):_hdc(hdc)
     {
         LoadFromFile(path);
     }
@@ -693,7 +693,7 @@ namespace win32
             return error_io;
 
         image_data_t img;
-        error_e err = image_create(data.get(), size, &img, d2d_rule_full, nullptr);
+        error_e err = image_create(data.get(), (int32_t)size, &img, d2d_rule_full, nullptr);
         if (err < 0)
             return err;
 
@@ -708,11 +708,26 @@ namespace win32
             bmpInfo.bmiHeader.biCompression = BI_RGB;
             bmpInfo.bmiHeader.biSizeImage = img.height * img.pitch;
 
-            void * data = nullptr;
-            HBITMAP hBitmap = ::CreateDIBSection((HDC)_hdc, &bmpInfo, DIB_RGB_COLORS, &data, NULL, 0);
-            buffcpy8(data, bmpInfo.bmiHeader.biSizeImage, img.buffer, img.length);
-
-            _data = data;
+            byte_t * bits = nullptr;
+            HBITMAP hBitmap = ::CreateDIBSection(*_hdc.get(), &bmpInfo, DIB_RGB_COLORS, (void **)&bits, NULL, 0);
+            buffcpy8(bits, bmpInfo.bmiHeader.biSizeImage, img.buffer, img.length);
+            if(img.dst_mode == cmode_a8r8g8b8)
+            {
+                // µÃÔ¤³Ë
+                for(int row = 0; row < img.height; ++row)
+                {
+                    byte_t * line = bits + row * img.pitch;
+                    for(int col = 0; col < img.width; ++col)
+                    {
+                        color_a8r8g8b8_t * pixel = (color_a8r8g8b8_t *)(line + sizeof(color_a8r8g8b8_t) * col);
+                        pixel->r = pixel->r * pixel->a / 0xff;
+                        pixel->g = pixel->g * pixel->a / 0xff;
+                        pixel->b = pixel->b * pixel->a / 0xff;
+                        //pixel->a = pixel->a * pixel->a / 0xff;
+                    }
+                }
+            }
+            _data = bits;
             _strike = 4;
             _pitch = img.pitch;
             _handle = hBitmap;

@@ -1,15 +1,15 @@
 #pragma once
 #include "graphics/GraphicsService.h"
-#include "win32.h"
+#include "win32/windows.h"
 
 namespace win32
 {
     class Image : public graphics::IImage
     {
     public:
-        Image(handle_t hdc) : _hdc(hdc) {}
+        Image(std::shared_ptr<HDC> hdc) : _hdc(hdc) {}
         ~Image() = default;
-        Image(handle_t hdc, std::string path);
+        Image(std::shared_ptr<HDC> hdc, std::string path);
 
         core::math::si32_t size() const { return _size; }
         graphics::image::cmode_e cmode() const { return _cmode; }
@@ -18,17 +18,17 @@ namespace win32
         core::error_e Save(std::string path) const;
 
     public:
-        handle_t hdc() const { return _hdc; }
-        handle_t bitmap() const { return _handle; }
+        std::shared_ptr<HDC> hdc() const { return _hdc; }
+        HBITMAP bitmap() const { return _handle; }
 
     private:
-        handle_t _hdc = nullptr;
+        std::shared_ptr<HDC> _hdc;
 
-        handle_t _data = nullptr;
+        byte_t * _data = nullptr;
         int32_t _strike = 0;
         int32_t _pitch = 0;
 
-        handle_t _handle = nullptr;
+        HBITMAP _handle = nullptr;
 
         graphics::image::cmode_e _cmode = graphics::image::cmode_none;
         core::math::si32_t _size;
