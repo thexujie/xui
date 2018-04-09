@@ -122,6 +122,81 @@
     <ClCompile Include="win32\uniscribe\CUspFactory.cpp">
       <Filter>win32\uniscribe</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_arc.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_arrowhead.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_bezier_arc.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_bspline.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_curves.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_embedded_raster_fonts.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_gsv_text.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_image_filters.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_line_aa_basics.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_line_profile_aa.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_rounded_rect.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_sqrt_tables.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_trans_affine.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_trans_double_path.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_trans_single_path.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_trans_warp_magnifier.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vcgen_bspline.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vcgen_contour.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vcgen_dash.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vcgen_markers_term.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vcgen_smooth_poly1.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vcgen_stroke.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vpgen_clip_polygon.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vpgen_clip_polyline.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\raster\agg\agg_vpgen_segmentator.cpp">
+      <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -260,9 +335,6 @@
     <ClInclude Include="core\math\xmm\xmm.h">
       <Filter>core\math\xmm</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\font.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
     <ClInclude Include="win32\Graphics.h">
       <Filter>win32</Filter>
     </ClInclude>
@@ -298,6 +370,390 @@
     </ClInclude>
     <ClInclude Include="win32\uniscribe\CUspFactory.h">
       <Filter>win32\uniscribe</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\text\text.h">
+      <Filter>graphics\text</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\text\font.h">
+      <Filter>graphics\text</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\util\agg_color_conv.h">
+      <Filter>graphics\raster\agg\util</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\util\agg_color_conv_rgb8.h">
+      <Filter>graphics\raster\agg\util</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\util\agg_color_conv_rgb16.h">
+      <Filter>graphics\raster\agg\util</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_alpha_mask_u8.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_arc.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_array.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_arrowhead.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_basics.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_bezier_arc.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_bitset_iterator.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_blur.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_bounding_rect.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_bspline.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_clip_liang_barsky.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_color_gray.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_color_rgba.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_config.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_adaptor_vcgen.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_adaptor_vpgen.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_bspline.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_clip_polygon.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_clip_polyline.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_close_polygon.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_concat.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_contour.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_curve.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_dash.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_gpc.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_marker.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_marker_adaptor.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_segmentator.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_shorten_path.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_smooth_poly1.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_stroke.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_transform.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_conv_unclose_polygon.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_curves.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_dda_line.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_ellipse.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_ellipse_bresenham.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_embedded_raster_fonts.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_font_cache_manager.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_gamma_functions.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_gamma_lut.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_glyph_raster_bin.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_gradient_lut.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_gsv_text.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_image_accessors.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_image_filters.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_line_aa_basics.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_math.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_math_stroke.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_path_length.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_path_storage.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_path_storage_integer.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_pattern_filters_rgba.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_pixfmt_amask_adaptor.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_pixfmt_gray.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_pixfmt_rgb.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_pixfmt_rgb_packed.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_pixfmt_rgba.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_pixfmt_transposer.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rasterizer_cells_aa.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rasterizer_compound_aa.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rasterizer_outline.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rasterizer_outline_aa.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rasterizer_scanline_aa.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rasterizer_sl_clip.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_renderer_base.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_renderer_markers.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_renderer_mclip.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_renderer_outline_aa.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_renderer_outline_image.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_renderer_primitives.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_renderer_raster_text.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_renderer_scanline.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rendering_buffer.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rendering_buffer_dynarow.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_rounded_rect.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_scanline_bin.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_scanline_boolean_algebra.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_scanline_p.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_scanline_storage_aa.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_scanline_storage_bin.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_scanline_u.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_shorten_path.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_simul_eq.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_allocator.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_converter.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_gouraud.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_gouraud_gray.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_gouraud_rgba.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_gradient.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_gradient_alpha.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_image_filter.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_image_filter_gray.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_image_filter_rgb.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_image_filter_rgba.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_interpolator_adaptor.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_interpolator_linear.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_interpolator_persp.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_interpolator_trans.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_pattern_gray.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_pattern_rgb.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_pattern_rgba.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_solid.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_span_subdiv_adaptor.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_trans_affine.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_trans_bilinear.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_trans_double_path.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_trans_perspective.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_trans_single_path.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_trans_viewport.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_trans_warp_magnifier.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vcgen_bspline.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vcgen_contour.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vcgen_dash.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vcgen_markers_term.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vcgen_smooth_poly1.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vcgen_stroke.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vcgen_vertex_sequence.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vertex_sequence.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vpgen_clip_polygon.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vpgen_clip_polyline.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg\agg_vpgen_segmentator.h">
+      <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\agg.h">
+      <Filter>graphics\raster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -336,6 +792,18 @@
     </Filter>
     <Filter Include="win32\uniscribe">
       <UniqueIdentifier>{1563d03b-b08a-447f-ac87-6a14c3db607e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\text">
+      <UniqueIdentifier>{b55f09cb-d7eb-48f0-a007-a1505b064964}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\raster">
+      <UniqueIdentifier>{814b3427-2369-425b-8714-b1aa390c27ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\raster\agg">
+      <UniqueIdentifier>{e3894a84-aa6d-495d-b728-45def96ec7b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\raster\agg\util">
+      <UniqueIdentifier>{6a12fd04-1e4c-4cd0-88ff-bf8f0f2807e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

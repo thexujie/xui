@@ -31,7 +31,7 @@ namespace win32
         return std::make_shared<win32::Image>(_hdc, path);
     }
 
-    std::shared_ptr<graphics::IGraphicsImage> GraphicsService::CreateString(std::string str, graphics::font font, core::color32 color)
+    std::shared_ptr<graphics::IGraphicsImage> GraphicsService::CreateString(std::string str, graphics::text::font font, core::color32 color)
     {
         return nullptr;
     }

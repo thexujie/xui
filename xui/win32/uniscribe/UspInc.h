@@ -1,7 +1,8 @@
 #pragma once
 
-#include <usp10.h>
+#include "graphics/text/text.h"
 #include "win32/dll.h"
+#include <usp10.h>
 
 // usp10 ∂ØÃ¨º”‘ÿ.
 //

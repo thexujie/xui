@@ -9,13 +9,13 @@ namespace graphics
 
     Graphics::Graphics(std::shared_ptr<Pixmap> pixmap): _graphics(GraphicsService().CreateGraphics(pixmap->handle())) { }
 
-    void Graphics::PushOrign(core::math::pt32_t point)
+    void Graphics::PushOrign(pt32_t point)
     {
         if (_graphics)
             _graphics->PushOrign(point);
     }
 
-    core::math::pt32_t Graphics::GetOrign() const
+    pt32_t Graphics::GetOrign() const
     {
         if (_graphics)
             return _graphics->GetOrign();
@@ -28,13 +28,13 @@ namespace graphics
             _graphics->PopOrign();
     }
 
-    void Graphics::PushClip(core::math::rc32_t rect)
+    void Graphics::PushClip(rc32_t rect)
     {
         if (_graphics)
             _graphics->PushClip(rect);
     }
 
-    core::math::rc32_t Graphics::GetClip() const
+    rc32_t Graphics::GetClip() const
     {
         if (_graphics)
             return _graphics->GetClip();
@@ -47,7 +47,7 @@ namespace graphics
             _graphics->PopClip();
     }
 
-    void Graphics::Clear(core::color32 color)
+    void Graphics::Clear(color32 color)
     {
         if (!_graphics)
             return;
@@ -79,12 +79,12 @@ namespace graphics
         _graphics->FillRect(rect, color);
     }
 
-    void Graphics::DrawString(std::string str, pt32_t point, font font, core::color32 color, int32_t flags)
+    void Graphics::DrawString(std::string str, pt32_t point, text::font font, color32 color, int32_t flags)
     {
         if (!_graphics)
             return;
 
-        core::math::si32_t size = _graphics->MeasureString(str, font);
+        si32_t size = _graphics->MeasureString(str, font);
         if (flags & core::math::align::right)
             point.x -= size.cx;
         else if (flags & core::math::align::centerX)
@@ -100,7 +100,7 @@ namespace graphics
         _graphics->DrawString(str, point, font, color);
     }
 
-    void Graphics::DrawString(std::string str, rc32_t rect, font font, core::color32 color, int32_t flags)
+    void Graphics::DrawString(std::string str, rc32_t rect, text::font font, color32 color, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -108,7 +108,7 @@ namespace graphics
             return;
 
         pt32_t point;
-        core::math::si32_t size = _graphics->MeasureString(str, font);
+        si32_t size = _graphics->MeasureString(str, font);
         if (flags & core::math::align::right)
             point.x = rect.right() - size.cx;
         else if (flags & core::math::align::centerX)
@@ -128,7 +128,7 @@ namespace graphics
         PopClip();
     }
 
-    void Graphics::DrawImage(graphics::Image & image, pt32_t point, int32_t flags)
+    void Graphics::DrawImage(Image & image, pt32_t point, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -149,7 +149,7 @@ namespace graphics
         _graphics->DrawImage(*(image.image()), point);
     }
 
-    void Graphics::DrawImage(graphics::Image & image, rc32_t rect, int32_t flags)
+    void Graphics::DrawImage(Image & image, rc32_t rect, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -175,7 +175,7 @@ namespace graphics
         _graphics->PopClip();
     }
 
-    void Graphics::DrawImage(graphics::Image & image, pt32_t point, core::math::rc32_t region, int32_t flags)
+    void Graphics::DrawImage(Image & image, pt32_t point, rc32_t region, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -200,7 +200,7 @@ namespace graphics
         _graphics->DrawImage(*(image.image()), point, region);
     }
 
-    void Graphics::DrawImage(graphics::Image & image, rc32_t rect, core::math::rc32_t region, int32_t flags)
+    void Graphics::DrawImage(Image & image, rc32_t rect, rc32_t region, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -231,7 +231,7 @@ namespace graphics
     }
 
 
-    void Graphics::DrawImage(graphics::Image & image, rc32_t rect)
+    void Graphics::DrawImage(Image & image, rc32_t rect)
     {
         if (!_graphics)
             return;
@@ -239,7 +239,7 @@ namespace graphics
         _graphics->DrawImage(*(image.image()), rect);
     }
 
-    void Graphics::DrawImage(graphics::Image & image, core::math::rc32_t rect, core::math::rc32_t region)
+    void Graphics::DrawImage(Image & image, rc32_t rect, rc32_t region)
     {
         if (!_graphics)
             return;
@@ -247,14 +247,14 @@ namespace graphics
         _graphics->DrawImage(*(image.image()), rect, region);
     }
 
-    graphics::fontmetrics Graphics::GetFontMetrics(graphics::font font)
+    text::fontmetrics Graphics::GetFontMetrics(text::font font)
     {
         if (!_graphics)
             return {};
 
         return _graphics->GetFontMetrics(font);
     }
-    core::math::si32_t Graphics::MeasureString(std::string str, graphics::font font)
+    si32_t Graphics::MeasureString(std::string str, text::font font)
     {
         if (!_graphics)
             return {};

@@ -9,7 +9,7 @@ namespace win32
     public:
         std::shared_ptr<graphics::IGraphicsPixmap> CreatePixmap(core::math::si32_t size);
         std::shared_ptr<graphics::IGraphicsImage> CreateImage(std::string path);
-        std::shared_ptr<graphics::IGraphicsImage> CreateString(std::string str, graphics::font font, core::color32 color);
+        std::shared_ptr<graphics::IGraphicsImage> CreateString(std::string str, graphics::text::font font, core::color32 color);
         std::shared_ptr<graphics::IGraphics> CreateGraphics(std::shared_ptr<core::Object> pixmap);
 
     private:

@@ -207,6 +207,7 @@ namespace core { namespace math
 
     typedef vec2<int32_t> si32_t;
     typedef vec2<float32_t> si32f_t;
+    typedef vec2<float64_t> si64f_t;
 
     typedef vec2<int32_t> pt32_t;
     typedef vec2<float32_t> pt32f_t;

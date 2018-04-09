@@ -20,7 +20,7 @@
 	<Type Name="core::math::rect&lt;*&gt;">
 		<DisplayString>{{({x},{y}),[{cx},{cy}]}}</DisplayString>
 	</Type>
-	<Type Name="graphics::font">
+	<Type Name="graphics::text::font">
 		<DisplayString>{{{family}, {size}}}</DisplayString>
 	</Type>
   

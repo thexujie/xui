@@ -7,7 +7,7 @@ namespace win32
     using namespace core;
     using namespace graphics;
 
-    void FontToLOGFONT(HDC hdc, const font & font, LOGFONTW & logFont)
+    void FontToLOGFONT(HDC hdc, const text::font & font, LOGFONTW & logFont)
     {
         if (font.family.empty())
             textcpy(logFont.lfFaceName, LF_FACESIZE, core::string::u8_ucs2(win32::defaultFont().family).c_str(), -1);
@@ -22,16 +22,16 @@ namespace win32
             logFont.lfWeight = font.size;
 
         logFont.lfWeight = font.weight;
-        logFont.lfItalic = !!(font.flags & font::italic);
-        logFont.lfUnderline = !!(font.flags & font::underline);
+        logFont.lfItalic = !!(font.flags & text::font::italic);
+        logFont.lfUnderline = !!(font.flags & text::font::underline);
         logFont.lfStrikeOut = FALSE;
         //logFont.lfCharSet = (uint_8)(font.charset);
         logFont.lfCharSet = DEFAULT_CHARSET;
         logFont.lfOutPrecision = OUT_DEFAULT_PRECIS;
         logFont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-        if (font.flags & font::gray)
+        if (font.flags & text::font::gray)
             logFont.lfQuality = DRAFT_QUALITY;
-        else if (font.flags & font::anti)
+        else if (font.flags & text::font::anti)
             logFont.lfQuality = ANTIALIASED_QUALITY;
         else
             logFont.lfQuality = CLEARTYPE_QUALITY;
@@ -78,7 +78,7 @@ namespace win32
         return brushptr;
     }
 
-    std::shared_ptr<HFONT> GDIObjectCache::GetFont(const graphics::font & font)
+    std::shared_ptr<HFONT> GDIObjectCache::GetFont(const graphics::text::font & font)
     {
         auto iter = _fonts.find(font);
         if (iter != _fonts.end())
@@ -88,7 +88,7 @@ namespace win32
         FontToLOGFONT(*_hdc.get(), font, logFont);
 
         HFONT hFont = CreateFontIndirectW(&logFont);
-        std::hash<graphics::font>{}(font);
+        std::hash<graphics::text::font>{}(font);
 
         std::shared_ptr<HFONT> fontptr = std::make_shared<HFONT>(hFont);
         _fonts[font] = fontptr;

@@ -2,50 +2,53 @@
 
 #include "UspInc.h"
 
-VENUS_BEG
-
-class WIN32_API UspFontCacheT
+namespace win32
 {
-public:
-	int_x iHash;
-	HFONT hFont;
-	SCRIPT_CACHE * cache;
+    namespace script
+    {
+        class UspFontCacheT
+        {
+        public:
+            int32_t iHash;
+            HFONT hFont;
+            SCRIPT_CACHE * cache;
 
 #ifdef _DEBUG
-	font_t font;
+            font_t font;
 #endif
-};
+        };
 
-struct UspFallBackFontT
-{
-	font_base_t font;
-	HFONT hFont;
-};
+        struct UspFallBackFontT
+        {
+            graphics::text::font font;
+            HFONT hFont;
+        };
 
-typedef int_x usp_cache_t;
-class WIN32_API CUspFactory : public UspBase
-{
-public:
-	CUspFactory(HDC hdc);
-	~CUspFactory();
+        typedef int32_t usp_cache_t;
+        class CUspFactory : public UspBase
+        {
+        public:
+            CUspFactory(HDC hdc);
+            ~CUspFactory();
 
-	ITextLayout * CreateLayout();
+            ITextLayout * CreateLayout();
 
-	usp_font_t GetFont(const font_t & font);
-	void SetFont(const usp_font_t & font);
-	usp_font_t GetFontFallBack(const font_t & font, int_x iLanguage, const char_16 * text = nullptr, int_x length = 0);
-	bool RestFontFallBack();
-	int_x GetTabSize(const usp_font_t & font, int_x iIndex);
+            usp_font_t GetFont(const font_t & font);
+            void SetFont(const usp_font_t & font);
+            usp_font_t GetFontFallBack(const font_t & font, int32_t iLanguage, const char_16 * text = nullptr, int32_t length = 0);
+            bool RestFontFallBack();
+            int32_t GetTabSize(const usp_font_t & font, int32_t iIndex);
 
-public:
-	void AddFallBack(int_x iCharset, const char_16 * szName);
-private:
-	UspFontCacheT * GetFontCache(const font_t & font);
-private:
-	vector<UspFontCacheT> m_fonts;
-	HFONT m_hFontOld;
+        public:
+            void AddFallBack(int32_t iCharset, const char_16 * szName);
+        private:
+            UspFontCacheT * GetFontCache(const font_t & font);
+        private:
+            vector<UspFontCacheT> m_fonts;
+            HFONT m_hFontOld;
 
-	vector<UspFallBackFontT> m_fallbacks;
-};
+            vector<UspFallBackFontT> m_fallbacks;
+        };
 
-VENUS_END
+    }
+}

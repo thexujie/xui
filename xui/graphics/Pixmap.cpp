@@ -16,6 +16,20 @@ namespace graphics
         
     }
 
+    pixmap_buffer Pixmap::buffer() const
+    {
+        if (!_pixmap)
+            return {};
+        return _pixmap->buffer();
+    }
+
+    si32_t Pixmap::size() const
+    {
+        if (!_pixmap)
+            return {};
+        return _pixmap->size();
+    }
+
     void Pixmap::Save(std::string path)
     {
         if(!_pixmap)

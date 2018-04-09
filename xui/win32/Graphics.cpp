@@ -138,7 +138,7 @@ namespace win32
         ::Rectangle(*_hdc, rect.x, rect.y, rect.right() + 1, rect.bottom() + 1);
     }
 
-    void Graphics::DrawString(std::string str, core::math::pt32_t point, graphics::font font, core::color32 color)
+    void Graphics::DrawString(std::string str, core::math::pt32_t point, graphics::text::font font, core::color32 color)
     {
         if(!*_hdc || !_objCache)
             return;
@@ -239,13 +239,13 @@ namespace win32
         
     }
 
-    graphics::fontmetrics Graphics::GetFontMetrics(graphics::font font)
+    graphics::text::fontmetrics Graphics::GetFontMetrics(graphics::text::font font)
     {
         SetFont(_objCache->GetFont(font));
         TEXTMETRICW tm;
         ::GetTextMetricsW(*_hdc, &tm);
 
-        graphics::fontmetrics metrics;
+        graphics::text::fontmetrics metrics;
         metrics.size = font.size;
         metrics.height = tm.tmHeight;
         metrics.ascent = tm.tmAscent;
@@ -255,7 +255,7 @@ namespace win32
         return metrics;
     }
 
-    core::math::si32_t Graphics::MeasureString(std::string str, graphics::font font)
+    core::math::si32_t Graphics::MeasureString(std::string str, graphics::text::font font)
     {
         if(!*_hdc || !_objCache)
             return {};

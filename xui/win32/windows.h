@@ -3,7 +3,7 @@
 #include "win32.h"
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "graphics/font.h"
+#include "graphics/text/font.h"
 #include "core/math/rect.h"
 
 namespace win32

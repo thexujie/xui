@@ -58,6 +58,10 @@ namespace win32
             ::BitBlt(hdc, x, y, width, height, *_hdc.get(), 0, 0, SRCCOPY);
     }
 
+    graphics::pixmap_buffer Bitmap::buffer() const
+    {
+        return { _data, _size, _strike, _pitch, true };
+    }
 
     core::error_e Bitmap::Save(std::string path) const
     {

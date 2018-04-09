@@ -159,12 +159,12 @@ namespace win32
         return "Unknown";
     }
 
-    graphics::font defaultFont()
+    graphics::text::font defaultFont()
     {
         NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
-        graphics::font font;
+        graphics::text::font font;
         font.family = core::string::ucs2_u8(metrics.lfMessageFont.lfFaceName);
         font.size = metrics.lfMessageFont.lfHeight;
         return font;

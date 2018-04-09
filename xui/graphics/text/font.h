@@ -1,7 +1,7 @@
 #pragma once
 #include "core/string.h"
 
-namespace graphics
+namespace graphics { namespace text
 {
     const int32_t FONT_WEIGHT_BOLD = 800;
     const int32_t FONT_WEIGHT_NORMAL = 400;
@@ -73,15 +73,15 @@ namespace graphics
         int32_t linespace = 0;
         int32_t weight = 0;
     };
-}
+}}
 
 namespace std
 {
     template<>
-    struct hash<graphics::font> 
+    struct hash<graphics::text::font>
     {
     public:
-        size_t operator()(const graphics::font & font) const
+        size_t operator()(const graphics::text::font & font) const
         {
             size_t h1 = std::hash<std::string>()(font.family);
             size_t h2 = std::hash<int32_t>()(font.size);
@@ -90,10 +90,11 @@ namespace std
             return h1 ^ (h2 << 1) ^ (h3 << 1) ^ (h4 << 1);
         }
     };
+
     template<>
-    struct less<graphics::font>
+    struct less<graphics::text::font>
     {
-        constexpr bool operator()(const graphics::font & lhs, const graphics::font& rhs) const
+        constexpr bool operator()(const graphics::text::font & lhs, const graphics::text::font & rhs) const
         {
             return lhs.family < rhs.family ||
                 lhs.size < rhs.size ||

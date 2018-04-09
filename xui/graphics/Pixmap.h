@@ -15,7 +15,8 @@ namespace graphics
 
         operator bool() const { return !!_pixmap; }
         std::shared_ptr<IGraphicsPixmap> handle() const { return _pixmap; }
-
+        pixmap_buffer buffer() const;
+        si32_t size() const;
         void Save(std::string path);
     private:
         core::error_e _state = core::error_ok;

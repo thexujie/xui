@@ -24,7 +24,7 @@ namespace win32
         void DrawRect(core::math::rc32_t rect, core::color32 color, float32_t width);
         void FillRect(core::math::rc32_t rect, core::color32 color);
 
-        void DrawString(std::string str, core::math::pt32_t point, graphics::font font, core::color32 color);
+        void DrawString(std::string str, core::math::pt32_t point, graphics::text::font font, core::color32 color);
 
         void DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point);
         void DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region);
@@ -33,8 +33,8 @@ namespace win32
         void DrawString(graphics::IGraphicsString & str, core::math::pt32_t point);
 
     public:
-        graphics::fontmetrics GetFontMetrics(graphics::font font);
-        core::math::si32_t MeasureString(std::string str, graphics::font font);
+        graphics::text::fontmetrics GetFontMetrics(graphics::text::font font);
+        core::math::si32_t MeasureString(std::string str, graphics::text::font font);
 
     private:
         core::color32 AffineColor(core::color32 color);

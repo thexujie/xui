@@ -25,6 +25,7 @@ namespace win32
         void BitBltTo(HDC hdc, int32_t x, int32_t y, int32_t width, int32_t height);
 
     public:
+        graphics::pixmap_buffer buffer() const;
         core::error_e Save(std::string path) const;
 
     private:
