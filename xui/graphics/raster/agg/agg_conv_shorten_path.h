@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_SHORTEN_PATH_INCLUDED
-#define AGG_CONV_SHORTEN_PATH_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_conv_adaptor_vcgen.h"
@@ -31,29 +31,23 @@
 
 namespace agg
 {
-
     //=======================================================conv_shorten_path
-    template<class VertexSource>  class conv_shorten_path : 
-    public conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence>
+    template<class VertexSource>
+    class conv_shorten_path :
+        public conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence>
     {
     public:
         typedef conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence> base_type;
 
-        conv_shorten_path(VertexSource& vs) : 
-            conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence>(vs)
-        {
-        }
+        conv_shorten_path(VertexSource & vs) :
+            conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence>(vs) { }
 
         void shorten(double s) { base_type::generator().shorten(s); }
         double shorten() const { return base_type::generator().shorten(); }
 
     private:
-        conv_shorten_path(const conv_shorten_path<VertexSource>&);
-        const conv_shorten_path<VertexSource>& 
-            operator = (const conv_shorten_path<VertexSource>&);
+        conv_shorten_path(const conv_shorten_path<VertexSource> &);
+        const conv_shorten_path<VertexSource> &
+        operator =(const conv_shorten_path<VertexSource> &);
     };
-
-
 }
-
-#endif

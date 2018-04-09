@@ -22,15 +22,14 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_VCGEN_MARKERS_TERM_INCLUDED
-#define AGG_VCGEN_MARKERS_TERM_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_vertex_sequence.h"
 
 namespace agg
 {
-
     //======================================================vcgen_markers_term
     //
     // See Implemantation agg_vcgen_markers_term.cpp
@@ -48,11 +47,11 @@ namespace agg
 
         // Vertex Source Interface
         void rewind(unsigned path_id);
-        unsigned vertex(double* x, double* y);
+        unsigned vertex(double * x, double * y);
 
     private:
-        vcgen_markers_term(const vcgen_markers_term&);
-        const vcgen_markers_term& operator = (const vcgen_markers_term&);
+        vcgen_markers_term(const vcgen_markers_term &);
+        const vcgen_markers_term & operator =(const vcgen_markers_term &);
 
         struct coord_type
         {
@@ -62,14 +61,10 @@ namespace agg
             coord_type(double x_, double y_) : x(x_), y(y_) {}
         };
 
-        typedef pod_bvector<coord_type, 6> coord_storage; 
+        typedef pod_bvector<coord_type, 6> coord_storage;
 
         coord_storage m_markers;
-        unsigned      m_curr_id;
-        unsigned      m_curr_idx;
+        unsigned m_curr_id;
+        unsigned m_curr_idx;
     };
-
-
 }
-
-#endif

@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_MARKER_ADAPTOR_INCLUDED
-#define AGG_CONV_MARKER_ADAPTOR_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_conv_adaptor_vcgen.h"
@@ -31,30 +31,23 @@
 
 namespace agg
 {
-
     //=====================================================conv_marker_adaptor
     template<class VertexSource, class Markers=null_markers>
-    struct conv_marker_adaptor : 
-    public conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence, Markers>
+    struct conv_marker_adaptor :
+        public conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence, Markers>
     {
         typedef Markers marker_type;
         typedef conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence, Markers> base_type;
 
-        conv_marker_adaptor(VertexSource& vs) : 
-            conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence, Markers>(vs)
-        {
-        }
+        conv_marker_adaptor(VertexSource & vs) :
+            conv_adaptor_vcgen<VertexSource, vcgen_vertex_sequence, Markers>(vs) { }
 
         void shorten(double s) { base_type::generator().shorten(s); }
         double shorten() const { return base_type::generator().shorten(); }
 
     private:
-        conv_marker_adaptor(const conv_marker_adaptor<VertexSource, Markers>&);
-        const conv_marker_adaptor<VertexSource, Markers>& 
-            operator = (const conv_marker_adaptor<VertexSource, Markers>&);
+        conv_marker_adaptor(const conv_marker_adaptor<VertexSource, Markers> &);
+        const conv_marker_adaptor<VertexSource, Markers> &
+        operator =(const conv_marker_adaptor<VertexSource, Markers> &);
     };
-
-
 }
-
-#endif

@@ -32,8 +32,8 @@
 // without any considerable overhead.
 //
 //----------------------------------------------------------------------------
-#ifndef AGG_CONV_CLIP_POLYGON_INCLUDED
-#define AGG_CONV_CLIP_POLYGON_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_conv_adaptor_vpgen.h"
@@ -41,14 +41,13 @@
 
 namespace agg
 {
-
     //=======================================================conv_clip_polygon
-    template<class VertexSource> 
+    template<class VertexSource>
     struct conv_clip_polygon : public conv_adaptor_vpgen<VertexSource, vpgen_clip_polygon>
     {
         typedef conv_adaptor_vpgen<VertexSource, vpgen_clip_polygon> base_type;
 
-        conv_clip_polygon(VertexSource& vs) : 
+        conv_clip_polygon(VertexSource & vs) :
             conv_adaptor_vpgen<VertexSource, vpgen_clip_polygon>(vs) {}
 
         void clip_box(double x1, double y1, double x2, double y2)
@@ -62,11 +61,8 @@ namespace agg
         double y2() const { return base_type::vpgen().y2(); }
 
     private:
-        conv_clip_polygon(const conv_clip_polygon<VertexSource>&);
-        const conv_clip_polygon<VertexSource>& 
-            operator = (const conv_clip_polygon<VertexSource>&);
+        conv_clip_polygon(const conv_clip_polygon<VertexSource> &);
+        const conv_clip_polygon<VertexSource> &
+        operator =(const conv_clip_polygon<VertexSource> &);
     };
-
 }
-
-#endif

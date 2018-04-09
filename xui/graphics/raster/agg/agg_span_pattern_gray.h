@@ -31,16 +31,15 @@
 //----------------------------------------------------------------------------
 
 
-#ifndef AGG_SPAN_PATTERN_GRAY_INCLUDED
-#define AGG_SPAN_PATTERN_GRAY_INCLUDED
+#pragma once
 
 #include "agg_basics.h"
 
 namespace agg
 {
-
     //=======================================================span_pattern_gray
-    template<class Source> class span_pattern_gray
+    template<class Source>
+    class span_pattern_gray
     {
     public:
         typedef Source source_type;
@@ -50,34 +49,35 @@ namespace agg
 
         //--------------------------------------------------------------------
         span_pattern_gray() {}
-        span_pattern_gray(source_type& src, 
-                          unsigned offset_x, unsigned offset_y) :
+
+        span_pattern_gray(source_type & src,
+            unsigned offset_x, unsigned offset_y) :
             m_src(&src),
             m_offset_x(offset_x),
             m_offset_y(offset_y),
-            m_alpha(color_type::base_mask)
-        {}
+            m_alpha(color_type::base_mask) {}
 
         //--------------------------------------------------------------------
-        void   attach(source_type& v)      { m_src = &v; }
-               source_type& source()       { return *m_src; }
-        const  source_type& source() const { return *m_src; }
+        void attach(source_type & v) { m_src = &v; }
+        source_type & source() { return *m_src; }
+        const source_type & source() const { return *m_src; }
 
         //--------------------------------------------------------------------
-        void       offset_x(unsigned v) { m_offset_x = v; }
-        void       offset_y(unsigned v) { m_offset_y = v; }
-        unsigned   offset_x() const { return m_offset_x; }
-        unsigned   offset_y() const { return m_offset_y; }
-        void       alpha(value_type v) { m_alpha = v; }
+        void offset_x(unsigned v) { m_offset_x = v; }
+        void offset_y(unsigned v) { m_offset_y = v; }
+        unsigned offset_x() const { return m_offset_x; }
+        unsigned offset_y() const { return m_offset_y; }
+        void alpha(value_type v) { m_alpha = v; }
         value_type alpha() const { return m_alpha; }
 
         //--------------------------------------------------------------------
         void prepare() {}
-        void generate(color_type* span, int x, int y, unsigned len)
-        {   
+
+        void generate(color_type * span, int x, int y, unsigned len)
+        {
             x += m_offset_x;
             y += m_offset_y;
-            const value_type* p = (const value_type*)m_src->span(x, y, len);
+            const value_type * p = (const value_type*)m_src->span(x, y, len);
             do
             {
                 span->v = *p;
@@ -85,18 +85,13 @@ namespace agg
                 p = m_src->next_x();
                 ++span;
             }
-            while(--len);
+            while (--len);
         }
 
     private:
-        source_type* m_src;
-        unsigned     m_offset_x;
-        unsigned     m_offset_y;
-        value_type   m_alpha;
-
+        source_type * m_src;
+        unsigned m_offset_x;
+        unsigned m_offset_y;
+        value_type m_alpha;
     };
-
 }
-
-#endif
-

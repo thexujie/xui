@@ -1,5 +1,4 @@
-#ifndef AGG_CONFIG_INCLUDED
-#define AGG_CONFIG_INCLUDED
+#pragma once
 
 // This file can be used to redefine certain data types.
 
@@ -40,5 +39,3 @@
 // You can still use both of them simultaneouslyin your applications 
 // This #define is used only for default rendering_buffer type,
 // in short hand typedefs like pixfmt_rgba32.
-
-#endif

@@ -22,41 +22,39 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_CLOSE_POLYGON_INCLUDED
-#define AGG_CONV_CLOSE_POLYGON_INCLUDED
+#pragma once
 
 #include "agg_basics.h"
 
 namespace agg
 {
-
     //======================================================conv_close_polygon
-    template<class VertexSource> class conv_close_polygon
+    template<class VertexSource>
+    class conv_close_polygon
     {
     public:
-        explicit conv_close_polygon(VertexSource& vs) : m_source(&vs) {}
-        void attach(VertexSource& source) { m_source = &source; }
+        explicit conv_close_polygon(VertexSource & vs) : m_source(&vs) {}
+        void attach(VertexSource & source) { m_source = &source; }
 
         void rewind(unsigned path_id);
-        unsigned vertex(double* x, double* y);
+        unsigned vertex(double * x, double * y);
 
     private:
-        conv_close_polygon(const conv_close_polygon<VertexSource>&);
-        const conv_close_polygon<VertexSource>& 
-            operator = (const conv_close_polygon<VertexSource>&);
+        conv_close_polygon(const conv_close_polygon<VertexSource> &);
+        const conv_close_polygon<VertexSource> &
+        operator =(const conv_close_polygon<VertexSource> &);
 
-        VertexSource* m_source;
-        unsigned      m_cmd[2];
-        double        m_x[2];
-        double        m_y[2];
-        unsigned      m_vertex;
-        bool          m_line_to;
+        VertexSource * m_source;
+        unsigned m_cmd[2];
+        double m_x[2];
+        double m_y[2];
+        unsigned m_vertex;
+        bool m_line_to;
     };
 
 
-
     //------------------------------------------------------------------------
-    template<class VertexSource> 
+    template<class VertexSource>
     void conv_close_polygon<VertexSource>::rewind(unsigned path_id)
     {
         m_source->rewind(path_id);
@@ -65,15 +63,14 @@ namespace agg
     }
 
 
-    
     //------------------------------------------------------------------------
-    template<class VertexSource> 
-    unsigned conv_close_polygon<VertexSource>::vertex(double* x, double* y)
+    template<class VertexSource>
+    unsigned conv_close_polygon<VertexSource>::vertex(double * x, double * y)
     {
         unsigned cmd = path_cmd_stop;
-        for(;;)
+        for (;;)
         {
-            if(m_vertex < 2)
+            if (m_vertex < 2)
             {
                 *x = m_x[m_vertex];
                 *y = m_y[m_vertex];
@@ -84,43 +81,43 @@ namespace agg
 
             cmd = m_source->vertex(x, y);
 
-            if(is_end_poly(cmd))
+            if (is_end_poly(cmd))
             {
                 cmd |= path_flags_close;
                 break;
             }
 
-            if(is_stop(cmd))
+            if (is_stop(cmd))
             {
-                if(m_line_to)
+                if (m_line_to)
                 {
-                    m_cmd[0]  = path_cmd_end_poly | path_flags_close;
-                    m_cmd[1]  = path_cmd_stop;
-                    m_vertex  = 0;
+                    m_cmd[0] = path_cmd_end_poly | path_flags_close;
+                    m_cmd[1] = path_cmd_stop;
+                    m_vertex = 0;
                     m_line_to = false;
                     continue;
                 }
                 break;
             }
 
-            if(is_move_to(cmd))
+            if (is_move_to(cmd))
             {
-                if(m_line_to)
+                if (m_line_to)
                 {
-                    m_x[0]    = 0.0;
-                    m_y[0]    = 0.0;
-                    m_cmd[0]  = path_cmd_end_poly | path_flags_close;
-                    m_x[1]    = *x;
-                    m_y[1]    = *y;
-                    m_cmd[1]  = cmd;
-                    m_vertex  = 0;
+                    m_x[0] = 0.0;
+                    m_y[0] = 0.0;
+                    m_cmd[0] = path_cmd_end_poly | path_flags_close;
+                    m_x[1] = *x;
+                    m_y[1] = *y;
+                    m_cmd[1] = cmd;
+                    m_vertex = 0;
                     m_line_to = false;
                     continue;
                 }
                 break;
             }
 
-            if(is_vertex(cmd))
+            if (is_vertex(cmd))
             {
                 m_line_to = true;
                 break;
@@ -128,7 +125,4 @@ namespace agg
         }
         return cmd;
     }
-
 }
-
-#endif

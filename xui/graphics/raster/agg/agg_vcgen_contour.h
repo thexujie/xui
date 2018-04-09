@@ -22,14 +22,13 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_VCGEN_CONTOUR_INCLUDED
-#define AGG_VCGEN_CONTOUR_INCLUDED
+
+#pragma once
 
 #include "agg_math_stroke.h"
 
 namespace agg
 {
-
     //----------------------------------------------------------vcgen_contour
     //
     // See Implementation agg_vcgen_contour.cpp
@@ -48,16 +47,16 @@ namespace agg
 
     public:
         typedef vertex_sequence<vertex_dist, 6> vertex_storage;
-        typedef pod_bvector<point_d, 6>         coord_storage;
+        typedef pod_bvector<point_d, 6> coord_storage;
 
         vcgen_contour();
 
-        void line_cap(line_cap_e lc)     { m_stroker.line_cap(lc); }
-        void line_join(line_join_e lj)   { m_stroker.line_join(lj); }
+        void line_cap(line_cap_e lc) { m_stroker.line_cap(lc); }
+        void line_join(line_join_e lj) { m_stroker.line_join(lj); }
         void inner_join(inner_join_e ij) { m_stroker.inner_join(ij); }
 
-        line_cap_e   line_cap()   const { return m_stroker.line_cap(); }
-        line_join_e  line_join()  const { return m_stroker.line_join(); }
+        line_cap_e line_cap() const { return m_stroker.line_cap(); }
+        line_join_e line_join() const { return m_stroker.line_join(); }
         inner_join_e inner_join() const { return m_stroker.inner_join(); }
 
         void width(double w) { m_stroker.width(m_width = w); }
@@ -79,25 +78,22 @@ namespace agg
         void add_vertex(double x, double y, unsigned cmd);
 
         // Vertex Source Interface
-        void     rewind(unsigned path_id);
-        unsigned vertex(double* x, double* y);
+        void rewind(unsigned path_id);
+        unsigned vertex(double * x, double * y);
 
     private:
-        vcgen_contour(const vcgen_contour&);
-        const vcgen_contour& operator = (const vcgen_contour&);
+        vcgen_contour(const vcgen_contour &);
+        const vcgen_contour & operator =(const vcgen_contour &);
 
         math_stroke<coord_storage> m_stroker;
-        double                     m_width;
-        vertex_storage             m_src_vertices;
-        coord_storage              m_out_vertices;
-        status_e                   m_status;
-        unsigned                   m_src_vertex;
-        unsigned                   m_out_vertex;
-        unsigned                   m_closed;
-        unsigned                   m_orientation;
-        bool                       m_auto_detect;
+        double m_width;
+        vertex_storage m_src_vertices;
+        coord_storage m_out_vertices;
+        status_e m_status;
+        unsigned m_src_vertex;
+        unsigned m_out_vertex;
+        unsigned m_closed;
+        unsigned m_orientation;
+        bool m_auto_detect;
     };
-
 }
-
-#endif

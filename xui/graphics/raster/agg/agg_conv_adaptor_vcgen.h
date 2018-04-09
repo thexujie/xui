@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_ADAPTOR_VCGEN_INCLUDED
-#define AGG_CONV_ADAPTOR_VCGEN_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 
@@ -37,14 +37,15 @@ namespace agg
         void prepare_src() {}
 
         void rewind(unsigned) {}
-        unsigned vertex(double*, double*) { return path_cmd_stop; }
+        unsigned vertex(double *, double *) { return path_cmd_stop; }
     };
 
 
     //------------------------------------------------------conv_adaptor_vcgen
-    template<class VertexSource, 
-             class Generator, 
-             class Markers=null_markers> class conv_adaptor_vcgen
+    template<class VertexSource,
+             class Generator,
+             class Markers=null_markers>
+    class conv_adaptor_vcgen
     {
         enum status
         {
@@ -54,54 +55,51 @@ namespace agg
         };
 
     public:
-        explicit conv_adaptor_vcgen(VertexSource& source) :
-            m_source(&source), 
-            m_status(initial)
-        {}
-        void attach(VertexSource& source) { m_source = &source; }
+        explicit conv_adaptor_vcgen(VertexSource & source) :
+            m_source(&source),
+            m_status(initial) {}
 
-        Generator& generator() { return m_generator; }
-        const Generator& generator() const { return m_generator; }
+        void attach(VertexSource & source) { m_source = &source; }
 
-        Markers& markers() { return m_markers; }
-        const Markers& markers() const { return m_markers; }
-        
-        void rewind(unsigned path_id) 
-        { 
-            m_source->rewind(path_id); 
+        Generator & generator() { return m_generator; }
+        const Generator & generator() const { return m_generator; }
+
+        Markers & markers() { return m_markers; }
+        const Markers & markers() const { return m_markers; }
+
+        void rewind(unsigned path_id)
+        {
+            m_source->rewind(path_id);
             m_status = initial;
         }
 
-        unsigned vertex(double* x, double* y);
+        unsigned vertex(double * x, double * y);
 
     private:
         // Prohibit copying
-        conv_adaptor_vcgen(const conv_adaptor_vcgen<VertexSource, Generator, Markers>&);
-        const conv_adaptor_vcgen<VertexSource, Generator, Markers>& 
-            operator = (const conv_adaptor_vcgen<VertexSource, Generator, Markers>&);
+        conv_adaptor_vcgen(const conv_adaptor_vcgen<VertexSource, Generator, Markers> &);
+        const conv_adaptor_vcgen<VertexSource, Generator, Markers> &
+        operator =(const conv_adaptor_vcgen<VertexSource, Generator, Markers> &);
 
-        VertexSource* m_source;
-        Generator     m_generator;
-        Markers       m_markers;
-        status        m_status;
-        unsigned      m_last_cmd;
-        double        m_start_x;
-        double        m_start_y;
+        VertexSource * m_source;
+        Generator m_generator;
+        Markers m_markers;
+        status m_status;
+        unsigned m_last_cmd;
+        double m_start_x;
+        double m_start_y;
     };
 
 
-
-
-
     //------------------------------------------------------------------------
-    template<class VertexSource, class Generator, class Markers> 
-    unsigned conv_adaptor_vcgen<VertexSource, Generator, Markers>::vertex(double* x, double* y)
+    template<class VertexSource, class Generator, class Markers>
+    unsigned conv_adaptor_vcgen<VertexSource, Generator, Markers>::vertex(double * x, double * y)
     {
         unsigned cmd = path_cmd_stop;
         bool done = false;
-        while(!done)
+        while (!done)
         {
-            switch(m_status)
+            switch (m_status)
             {
             case initial:
                 m_markers.remove_all();
@@ -109,19 +107,19 @@ namespace agg
                 m_status = accumulate;
 
             case accumulate:
-                if(is_stop(m_last_cmd)) return path_cmd_stop;
+                if (is_stop(m_last_cmd)) return path_cmd_stop;
 
                 m_generator.remove_all();
                 m_generator.add_vertex(m_start_x, m_start_y, path_cmd_move_to);
                 m_markers.add_vertex(m_start_x, m_start_y, path_cmd_move_to);
 
-                for(;;)
+                for (;;)
                 {
                     cmd = m_source->vertex(x, y);
-                    if(is_vertex(cmd))
+                    if (is_vertex(cmd))
                     {
                         m_last_cmd = cmd;
-                        if(is_move_to(cmd))
+                        if (is_move_to(cmd))
                         {
                             m_start_x = *x;
                             m_start_y = *y;
@@ -132,12 +130,12 @@ namespace agg
                     }
                     else
                     {
-                        if(is_stop(cmd))
+                        if (is_stop(cmd))
                         {
                             m_last_cmd = path_cmd_stop;
                             break;
                         }
-                        if(is_end_poly(cmd))
+                        if (is_end_poly(cmd))
                         {
                             m_generator.add_vertex(*x, *y, cmd);
                             break;
@@ -149,7 +147,7 @@ namespace agg
 
             case generate:
                 cmd = m_generator.vertex(x, y);
-                if(is_stop(cmd))
+                if (is_stop(cmd))
                 {
                     m_status = accumulate;
                     break;
@@ -160,7 +158,4 @@ namespace agg
         }
         return cmd;
     }
-
 }
-
-#endif

@@ -22,53 +22,50 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_TRANSFORM_INCLUDED
-#define AGG_CONV_TRANSFORM_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_trans_affine.h"
 
 namespace agg
 {
-
     //----------------------------------------------------------conv_transform
-    template<class VertexSource, class Transformer=trans_affine> class conv_transform
+    template<class VertexSource, class Transformer=trans_affine>
+    class conv_transform
     {
     public:
-        conv_transform(VertexSource& source, const Transformer& tr) :
+        conv_transform(VertexSource & source, const Transformer & tr) :
             m_source(&source), m_trans(&tr) {}
-        void attach(VertexSource& source) { m_source = &source; }
 
-        void rewind(unsigned path_id) 
-        { 
-            m_source->rewind(path_id); 
+        void attach(VertexSource & source) { m_source = &source; }
+
+        void rewind(unsigned path_id)
+        {
+            m_source->rewind(path_id);
         }
 
-        unsigned vertex(double* x, double* y)
+        unsigned vertex(double * x, double * y)
         {
             unsigned cmd = m_source->vertex(x, y);
-            if(is_vertex(cmd))
+            if (is_vertex(cmd))
             {
                 m_trans->transform(x, y);
             }
             return cmd;
         }
 
-        void transformer(const Transformer& tr)
+        void transformer(const Transformer & tr)
         {
             m_trans = &tr;
         }
 
     private:
-        conv_transform(const conv_transform<VertexSource>&);
-        const conv_transform<VertexSource>& 
-            operator = (const conv_transform<VertexSource>&);
+        conv_transform(const conv_transform<VertexSource> &);
+        const conv_transform<VertexSource> &
+        operator =(const conv_transform<VertexSource> &);
 
-        VertexSource*      m_source;
-        const Transformer* m_trans;
+        VertexSource * m_source;
+        const Transformer * m_trans;
     };
-
-
 }
-
-#endif

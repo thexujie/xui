@@ -54,9 +54,9 @@ namespace agg
 
         m_vertex = 0;
         m_num_vertices = 0;
-        if((flags & 4) == 0)
+        if ((flags & 4) == 0)
         {
-            if((flags & 1) != 0 || m_move_to)
+            if ((flags & 1) != 0 || m_move_to)
             {
                 m_x[0] = m_x1;
                 m_y[0] = m_y1;
@@ -73,9 +73,9 @@ namespace agg
     }
 
     //----------------------------------------------------------------------------
-    unsigned vpgen_clip_polyline::vertex(double* x, double* y)
+    unsigned vpgen_clip_polyline::vertex(double * x, double * y)
     {
-        if(m_vertex < m_num_vertices)
+        if (m_vertex < m_num_vertices)
         {
             *x = m_x[m_vertex];
             *y = m_y[m_vertex];

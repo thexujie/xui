@@ -22,8 +22,7 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_CONTOUR_INCLUDED
-#define AGG_CONV_CONTOUR_INCLUDED
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_vcgen_contour.h"
@@ -31,17 +30,14 @@
 
 namespace agg
 {
-
     //-----------------------------------------------------------conv_contour
-    template<class VertexSource> 
+    template<class VertexSource>
     struct conv_contour : public conv_adaptor_vcgen<VertexSource, vcgen_contour>
     {
         typedef conv_adaptor_vcgen<VertexSource, vcgen_contour> base_type;
 
-        conv_contour(VertexSource& vs) : 
-            conv_adaptor_vcgen<VertexSource, vcgen_contour>(vs)
-        {
-        }
+        conv_contour(VertexSource & vs) :
+            conv_adaptor_vcgen<VertexSource, vcgen_contour>(vs) { }
 
         void line_join(line_join_e lj) { base_type::generator().line_join(lj); }
         void inner_join(inner_join_e ij) { base_type::generator().inner_join(ij); }
@@ -61,11 +57,8 @@ namespace agg
         bool auto_detect_orientation() const { return base_type::generator().auto_detect_orientation(); }
 
     private:
-        conv_contour(const conv_contour<VertexSource>&);
-        const conv_contour<VertexSource>& 
-            operator = (const conv_contour<VertexSource>&);
+        conv_contour(const conv_contour<VertexSource> &);
+        const conv_contour<VertexSource> &
+        operator =(const conv_contour<VertexSource> &);
     };
-
 }
-
-#endif

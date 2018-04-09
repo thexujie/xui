@@ -27,19 +27,20 @@
 //
 //----------------------------------------------------------------------------
 
-#ifndef AGG_SPAN_INTERPOLATOR_TRANS_INCLUDED
-#define AGG_SPAN_INTERPOLATOR_TRANS_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 
 namespace agg
 {
     //=================================================span_interpolator_trans
-    template<class Transformer, unsigned SubpixelShift = 8> 
+    template<class Transformer, unsigned SubpixelShift = 8>
     class span_interpolator_trans
     {
     public:
         typedef Transformer trans_type;
+
         enum subpixel_scale_e
         {
             subpixel_shift = SubpixelShift,
@@ -48,17 +49,18 @@ namespace agg
 
         //--------------------------------------------------------------------
         span_interpolator_trans() {}
-        span_interpolator_trans(const trans_type& trans) : m_trans(&trans) {}
-        span_interpolator_trans(const trans_type& trans,
-                                double x, double y, unsigned) :
+        span_interpolator_trans(const trans_type & trans) : m_trans(&trans) {}
+
+        span_interpolator_trans(const trans_type & trans,
+            double x, double y, unsigned) :
             m_trans(&trans)
         {
             begin(x, y, 0);
         }
 
         //----------------------------------------------------------------
-        const trans_type& transformer() const { return *m_trans; }
-        void transformer(const trans_type& trans) { m_trans = &trans; }
+        const trans_type & transformer() const { return *m_trans; }
+        void transformer(const trans_type & trans) { m_trans = &trans; }
 
         //----------------------------------------------------------------
         void begin(double x, double y, unsigned)
@@ -82,20 +84,17 @@ namespace agg
         }
 
         //----------------------------------------------------------------
-        void coordinates(int* x, int* y) const
+        void coordinates(int * x, int * y) const
         {
             *x = m_ix;
             *y = m_iy;
         }
 
     private:
-        const trans_type* m_trans;
-        double            m_x;
-        double            m_y;
-        int               m_ix;
-        int               m_iy;
+        const trans_type * m_trans;
+        double m_x;
+        double m_y;
+        int m_ix;
+        int m_iy;
     };
-
 }
-
-#endif

@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_EMBEDDED_RASTER_FONTS_INCLUDED
-#define AGG_EMBEDDED_RASTER_FONTS_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 
@@ -64,5 +64,3 @@ namespace agg
     extern const int8u verdana18[];
     extern const int8u verdana18_bold[];
 }
-
-#endif

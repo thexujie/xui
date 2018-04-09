@@ -22,16 +22,15 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_SPAN_SUBDIV_ADAPTOR_INCLUDED
-#define AGG_SPAN_SUBDIV_ADAPTOR_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 
 namespace agg
 {
-
     //=================================================span_subdiv_adaptor
-    template<class Interpolator, unsigned SubpixelShift = 8> 
+    template<class Interpolator, unsigned SubpixelShift = 8>
     class span_subdiv_adaptor
     {
     public:
@@ -51,16 +50,16 @@ namespace agg
             m_subdiv_size(1 << m_subdiv_shift),
             m_subdiv_mask(m_subdiv_size - 1) {}
 
-        span_subdiv_adaptor(interpolator_type& interpolator, 
-                             unsigned subdiv_shift = 4) : 
+        span_subdiv_adaptor(interpolator_type & interpolator,
+            unsigned subdiv_shift = 4) :
             m_subdiv_shift(subdiv_shift),
             m_subdiv_size(1 << m_subdiv_shift),
             m_subdiv_mask(m_subdiv_size - 1),
             m_interpolator(&interpolator) {}
 
-        span_subdiv_adaptor(interpolator_type& interpolator, 
-                             double x, double y, unsigned len,
-                             unsigned subdiv_shift = 4) :
+        span_subdiv_adaptor(interpolator_type & interpolator,
+            double x, double y, unsigned len,
+            unsigned subdiv_shift = 4) :
             m_subdiv_shift(subdiv_shift),
             m_subdiv_size(1 << m_subdiv_shift),
             m_subdiv_mask(m_subdiv_size - 1),
@@ -71,22 +70,24 @@ namespace agg
 
 
         //----------------------------------------------------------------
-        const interpolator_type& interpolator() const { return *m_interpolator; }
-        void interpolator(interpolator_type& intr) { m_interpolator = &intr; }
+        const interpolator_type & interpolator() const { return *m_interpolator; }
+        void interpolator(interpolator_type & intr) { m_interpolator = &intr; }
 
         //----------------------------------------------------------------
-        const trans_type& transformer() const 
-        { 
-            return *m_interpolator->transformer(); 
+        const trans_type & transformer() const
+        {
+            return *m_interpolator->transformer();
         }
-        void transformer(const trans_type& trans) 
-        { 
-            m_interpolator->transformer(trans); 
+
+        void transformer(const trans_type & trans)
+        {
+            m_interpolator->transformer(trans);
         }
 
         //----------------------------------------------------------------
         unsigned subdiv_shift() const { return m_subdiv_shift; }
-        void subdiv_shift(unsigned shift) 
+
+        void subdiv_shift(unsigned shift)
         {
             m_subdiv_shift = shift;
             m_subdiv_size = 1 << m_subdiv_shift;
@@ -96,11 +97,11 @@ namespace agg
         //----------------------------------------------------------------
         void begin(double x, double y, unsigned len)
         {
-            m_pos   = 1;
+            m_pos = 1;
             m_src_x = iround(x * subpixel_scale) + subpixel_scale;
             m_src_y = y;
-            m_len   = len;
-            if(len > m_subdiv_size) len = m_subdiv_size;
+            m_len = len;
+            if (len > m_subdiv_size) len = m_subdiv_size;
             m_interpolator->begin(x, y, len);
         }
 
@@ -108,13 +109,13 @@ namespace agg
         void operator++()
         {
             ++(*m_interpolator);
-            if(m_pos >= m_subdiv_size)
+            if (m_pos >= m_subdiv_size)
             {
                 unsigned len = m_len;
-                if(len > m_subdiv_size) len = m_subdiv_size;
-                m_interpolator->resynchronize(double(m_src_x) / double(subpixel_scale) + len, 
-                                              m_src_y, 
-                                              len);
+                if (len > m_subdiv_size) len = m_subdiv_size;
+                m_interpolator->resynchronize(double(m_src_x) / double(subpixel_scale) + len,
+                    m_src_y,
+                    len);
                 m_pos = 0;
             }
             m_src_x += subpixel_scale;
@@ -123,13 +124,13 @@ namespace agg
         }
 
         //----------------------------------------------------------------
-        void coordinates(int* x, int* y) const
+        void coordinates(int * x, int * y) const
         {
             m_interpolator->coordinates(x, y);
         }
 
         //----------------------------------------------------------------
-        void local_scale(int* x, int* y) const
+        void local_scale(int * x, int * y) const
         {
             m_interpolator->local_scale(x, y);
         }
@@ -139,13 +140,10 @@ namespace agg
         unsigned m_subdiv_shift;
         unsigned m_subdiv_size;
         unsigned m_subdiv_mask;
-        interpolator_type* m_interpolator;
-        int      m_src_x;
-        double   m_src_y;
+        interpolator_type * m_interpolator;
+        int m_src_x;
+        double m_src_y;
         unsigned m_pos;
         unsigned m_len;
     };
-
 }
-
-#endif

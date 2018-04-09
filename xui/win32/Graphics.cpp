@@ -7,13 +7,17 @@ namespace win32
 {
     using namespace core;
 
-    Graphics::Graphics(std::shared_ptr<win32::Bitmap> bitmap) : _bitmap(bitmap), _hdc(bitmap->hdc()), _objCache(std::make_shared<GDIObjectCache>(bitmap->hdc()))
+    Graphics::Graphics(std::shared_ptr<win32::Bitmap> bitmap) : _bitmap(bitmap), _hdc(bitmap->hdc()), _objCache(std::make_shared<GDIObjectCache>(bitmap->hdc())),
+        _pixf(_rbuf), _renderer(_pixf)
     {
         //::SetStretchBltMode(*_hdc, COLORONCOLOR);
         ::SetStretchBltMode(*_hdc, STRETCH_HALFTONE);
         ::SetBkMode(*_hdc, TRANSPARENT);
         _hdcStaging = std::make_shared<HDC>();
         *_hdcStaging = ::CreateCompatibleDC(*bitmap->hdc());
+
+        graphics::pixmap_buffer buffer = bitmap->buffer();
+        _rbuf.attach(reinterpret_cast<agg::int8u *>(buffer.data), buffer.size.cx, buffer.size.cy, buffer.flip_y ? -buffer.pitch : buffer.pitch);
     }
 
     void Graphics::PushOrign(core::math::pt32_t point)
@@ -116,13 +120,13 @@ namespace win32
 
     void Graphics::DrawRect(core::math::rc32_t rect, core::color32 color, float32_t width)
     {
-        if(!*_hdc || !_objCache)
-            return;
-
-        SetPen(_objCache->GetPen(AffineColor(color), width));
-        SetBrush(_objCache->GetBrush(AffineColor(colors::Transparent)));
-
-        ::Rectangle(*_hdc, rect.x, rect.y, rect.right(), rect.bottom());
+        _raster.reset();
+        _raster.move_to(rect.x, rect.y);
+        _raster.line_to(rect.right(), rect.y);
+        _raster.line_to(rect.right(), rect.bottom());
+        _raster.line_to(rect.x, rect.bottom());
+        _raster.close_polygon();
+        agg::render_scanlines_aa_solid(_raster, _sl, _renderer, agg::tools::rgba(color));
     }
 
     void Graphics::FillRect(core::math::rc32_t rect, color32 color)

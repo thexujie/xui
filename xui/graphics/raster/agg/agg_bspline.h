@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_BSPLINE_INCLUDED
-#define AGG_BSPLINE_INCLUDED
+
+#pragma once
 
 #include "agg_array.h"
 
@@ -42,40 +42,36 @@ namespace agg
     //
     //  See Implementation agg_bspline.cpp
     //------------------------------------------------------------------------
-    class bspline 
+    class bspline
     {
     public:
         bspline();
         bspline(int num);
-        bspline(int num, const double* x, const double* y);
+        bspline(int num, const double * x, const double * y);
 
-        void   init(int num);
-        void   add_point(double x, double y);
-        void   prepare();
+        void init(int num);
+        void add_point(double x, double y);
+        void prepare();
 
-        void   init(int num, const double* x, const double* y);
+        void init(int num, const double * x, const double * y);
 
         double get(double x) const;
         double get_stateful(double x) const;
-    
-    private:
-        bspline(const bspline&);
-        const bspline& operator = (const bspline&);
 
-        static void bsearch(int n, const double *x, double x0, int *i);
+    private:
+        bspline(const bspline &);
+        const bspline & operator =(const bspline &);
+
+        static void bsearch(int n, const double * x, double x0, int * i);
         double extrapolation_left(double x) const;
         double extrapolation_right(double x) const;
         double interpolation(double x, int i) const;
 
-        int               m_max;
-        int               m_num;
-        double*           m_x;
-        double*           m_y;
+        int m_max;
+        int m_num;
+        double * m_x;
+        double * m_y;
         pod_array<double> m_am;
-        mutable int       m_last_idx;
+        mutable int m_last_idx;
     };
-
-
 }
-
-#endif

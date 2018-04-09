@@ -34,27 +34,28 @@
 //
 //----------------------------------------------------------------------------
 
-#ifndef AGG_COLOR_GRAY_INCLUDED
-#define AGG_COLOR_GRAY_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_color_rgba.h"
 
 namespace agg
 {
-
     //===================================================================gray8
     struct gray8
     {
-        typedef int8u  value_type;
+        typedef int8u value_type;
         typedef int32u calc_type;
-        typedef int32  long_type;
+        typedef int32 long_type;
+
         enum base_scale_e
         {
             base_shift = 8,
             base_scale = 1 << base_shift,
-            base_mask  = base_scale - 1
+            base_mask = base_scale - 1
         };
+
         typedef gray8 self_type;
 
         value_type v;
@@ -64,31 +65,31 @@ namespace agg
         gray8() {}
 
         //--------------------------------------------------------------------
-        gray8(unsigned v_, unsigned a_=base_mask) :
+        gray8(unsigned v_, unsigned a_ = base_mask) :
             v(int8u(v_)), a(int8u(a_)) {}
 
         //--------------------------------------------------------------------
-        gray8(const self_type& c, unsigned a_) :
+        gray8(const self_type & c, unsigned a_) :
             v(c.v), a(value_type(a_)) {}
 
         //--------------------------------------------------------------------
-        gray8(const rgba& c) :
-            v((value_type)uround((0.299*c.r + 0.587*c.g + 0.114*c.b) * double(base_mask))),
+        gray8(const rgba & c) :
+            v((value_type)uround((0.299 * c.r + 0.587 * c.g + 0.114 * c.b) * double(base_mask))),
             a((value_type)uround(c.a * double(base_mask))) {}
 
         //--------------------------------------------------------------------
-        gray8(const rgba& c, double a_) :
-            v((value_type)uround((0.299*c.r + 0.587*c.g + 0.114*c.b) * double(base_mask))),
+        gray8(const rgba & c, double a_) :
+            v((value_type)uround((0.299 * c.r + 0.587 * c.g + 0.114 * c.b) * double(base_mask))),
             a((value_type)uround(a_ * double(base_mask))) {}
 
         //--------------------------------------------------------------------
-        gray8(const rgba8& c) :
-            v((c.r*77 + c.g*150 + c.b*29) >> 8),
+        gray8(const rgba8 & c) :
+            v((c.r * 77 + c.g * 150 + c.b * 29) >> 8),
             a(c.a) {}
 
         //--------------------------------------------------------------------
-        gray8(const rgba8& c, unsigned a_) :
-            v((c.r*77 + c.g*150 + c.b*29) >> 8),
+        gray8(const rgba8 & c, unsigned a_) :
+            v((c.r * 77 + c.g * 150 + c.b * 29) >> 8),
             a(a_) {}
 
         //--------------------------------------------------------------------
@@ -98,7 +99,7 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        const self_type& transparent()
+        const self_type & transparent()
         {
             a = 0;
             return *this;
@@ -107,8 +108,8 @@ namespace agg
         //--------------------------------------------------------------------
         void opacity(double a_)
         {
-            if(a_ < 0.0) a_ = 0.0;
-            if(a_ > 1.0) a_ = 1.0;
+            if (a_ < 0.0) a_ = 0.0;
+            if (a_ > 1.0) a_ = 1.0;
             a = (value_type)uround(a_ * double(base_mask));
         }
 
@@ -120,10 +121,10 @@ namespace agg
 
 
         //--------------------------------------------------------------------
-        const self_type& premultiply()
+        const self_type & premultiply()
         {
-            if(a == base_mask) return *this;
-            if(a == 0)
+            if (a == base_mask) return *this;
+            if (a == 0)
             {
                 v = 0;
                 return *this;
@@ -133,10 +134,10 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        const self_type& premultiply(unsigned a_)
+        const self_type & premultiply(unsigned a_)
         {
-            if(a == base_mask && a_ >= base_mask) return *this;
-            if(a == 0 || a_ == 0)
+            if (a == base_mask && a_ >= base_mask) return *this;
+            if (a == 0 || a_ == 0)
             {
                 v = a = 0;
                 return *this;
@@ -148,10 +149,10 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        const self_type& demultiply()
+        const self_type & demultiply()
         {
-            if(a == base_mask) return *this;
-            if(a == 0)
+            if (a == base_mask) return *this;
+            if (a == 0)
             {
                 v = 0;
                 return *this;
@@ -172,62 +173,67 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        AGG_INLINE void add(const self_type& c, unsigned cover)
+        AGG_INLINE void add(const self_type & c, unsigned cover)
         {
             calc_type cv, ca;
-            if(cover == cover_mask)
+            if (cover == cover_mask)
             {
-                if(c.a == base_mask) 
+                if (c.a == base_mask)
                 {
                     *this = c;
                 }
                 else
                 {
-                    cv = v + c.v; v = (cv > calc_type(base_mask)) ? calc_type(base_mask) : cv;
-                    ca = a + c.a; a = (ca > calc_type(base_mask)) ? calc_type(base_mask) : ca;
+                    cv = v + c.v;
+                    v = (cv > calc_type(base_mask)) ? calc_type(base_mask) : cv;
+                    ca = a + c.a;
+                    a = (ca > calc_type(base_mask)) ? calc_type(base_mask) : ca;
                 }
             }
             else
             {
-                cv = v + ((c.v * cover + cover_mask/2) >> cover_shift);
-                ca = a + ((c.a * cover + cover_mask/2) >> cover_shift);
+                cv = v + ((c.v * cover + cover_mask / 2) >> cover_shift);
+                ca = a + ((c.a * cover + cover_mask / 2) >> cover_shift);
                 v = (cv > calc_type(base_mask)) ? calc_type(base_mask) : cv;
                 a = (ca > calc_type(base_mask)) ? calc_type(base_mask) : ca;
             }
         }
 
         //--------------------------------------------------------------------
-        static self_type no_color() { return self_type(0,0); }
+        static self_type no_color() { return self_type(0, 0); }
     };
 
 
     //-------------------------------------------------------------gray8_pre
     inline gray8 gray8_pre(unsigned v, unsigned a = gray8::base_mask)
     {
-        return gray8(v,a).premultiply();
+        return gray8(v, a).premultiply();
     }
-    inline gray8 gray8_pre(const gray8& c, unsigned a)
+
+    inline gray8 gray8_pre(const gray8 & c, unsigned a)
     {
-        return gray8(c,a).premultiply();
+        return gray8(c, a).premultiply();
     }
-    inline gray8 gray8_pre(const rgba& c)
+
+    inline gray8 gray8_pre(const rgba & c)
     {
         return gray8(c).premultiply();
     }
-    inline gray8 gray8_pre(const rgba& c, double a)
+
+    inline gray8 gray8_pre(const rgba & c, double a)
     {
-        return gray8(c,a).premultiply();
+        return gray8(c, a).premultiply();
     }
-    inline gray8 gray8_pre(const rgba8& c)
+
+    inline gray8 gray8_pre(const rgba8 & c)
     {
         return gray8(c).premultiply();
     }
-    inline gray8 gray8_pre(const rgba8& c, unsigned a)
+
+    inline gray8 gray8_pre(const rgba8 & c, unsigned a)
     {
-        return gray8(c,a).premultiply();
+        return gray8(c, a).premultiply();
     }
-
-
 
 
     //==================================================================gray16
@@ -235,13 +241,15 @@ namespace agg
     {
         typedef int16u value_type;
         typedef int32u calc_type;
-        typedef int64  long_type;
+        typedef int64 long_type;
+
         enum base_scale_e
         {
             base_shift = 16,
             base_scale = 1 << base_shift,
-            base_mask  = base_scale - 1
+            base_mask = base_scale - 1
         };
+
         typedef gray16 self_type;
 
         value_type v;
@@ -251,31 +259,31 @@ namespace agg
         gray16() {}
 
         //--------------------------------------------------------------------
-        gray16(unsigned v_, unsigned a_=base_mask) :
+        gray16(unsigned v_, unsigned a_ = base_mask) :
             v(int16u(v_)), a(int16u(a_)) {}
 
         //--------------------------------------------------------------------
-        gray16(const self_type& c, unsigned a_) :
+        gray16(const self_type & c, unsigned a_) :
             v(c.v), a(value_type(a_)) {}
 
         //--------------------------------------------------------------------
-        gray16(const rgba& c) :
-            v((value_type)uround((0.299*c.r + 0.587*c.g + 0.114*c.b) * double(base_mask))),
+        gray16(const rgba & c) :
+            v((value_type)uround((0.299 * c.r + 0.587 * c.g + 0.114 * c.b) * double(base_mask))),
             a((value_type)uround(c.a * double(base_mask))) {}
 
         //--------------------------------------------------------------------
-        gray16(const rgba& c, double a_) :
-            v((value_type)uround((0.299*c.r + 0.587*c.g + 0.114*c.b) * double(base_mask))),
+        gray16(const rgba & c, double a_) :
+            v((value_type)uround((0.299 * c.r + 0.587 * c.g + 0.114 * c.b) * double(base_mask))),
             a((value_type)uround(a_ * double(base_mask))) {}
 
         //--------------------------------------------------------------------
-        gray16(const rgba8& c) :
-            v(c.r*77 + c.g*150 + c.b*29),
+        gray16(const rgba8 & c) :
+            v(c.r * 77 + c.g * 150 + c.b * 29),
             a((value_type(c.a) << 8) | c.a) {}
 
         //--------------------------------------------------------------------
-        gray16(const rgba8& c, unsigned a_) :
-            v(c.r*77 + c.g*150 + c.b*29),
+        gray16(const rgba8 & c, unsigned a_) :
+            v(c.r * 77 + c.g * 150 + c.b * 29),
             a((value_type(a_) << 8) | c.a) {}
 
         //--------------------------------------------------------------------
@@ -285,7 +293,7 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        const self_type& transparent()
+        const self_type & transparent()
         {
             a = 0;
             return *this;
@@ -294,8 +302,8 @@ namespace agg
         //--------------------------------------------------------------------
         void opacity(double a_)
         {
-            if(a_ < 0.0) a_ = 0.0;
-            if(a_ > 1.0) a_ = 1.0;
+            if (a_ < 0.0) a_ = 0.0;
+            if (a_ > 1.0) a_ = 1.0;
             a = (value_type)uround(a_ * double(base_mask));
         }
 
@@ -307,10 +315,10 @@ namespace agg
 
 
         //--------------------------------------------------------------------
-        const self_type& premultiply()
+        const self_type & premultiply()
         {
-            if(a == base_mask) return *this;
-            if(a == 0)
+            if (a == base_mask) return *this;
+            if (a == 0)
             {
                 v = 0;
                 return *this;
@@ -320,10 +328,10 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        const self_type& premultiply(unsigned a_)
+        const self_type & premultiply(unsigned a_)
         {
-            if(a == base_mask && a_ >= base_mask) return *this;
-            if(a == 0 || a_ == 0)
+            if (a == base_mask && a_ >= base_mask) return *this;
+            if (a == 0 || a_ == 0)
             {
                 v = a = 0;
                 return *this;
@@ -335,10 +343,10 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        const self_type& demultiply()
+        const self_type & demultiply()
         {
-            if(a == base_mask) return *this;
-            if(a == 0)
+            if (a == base_mask) return *this;
+            if (a == 0)
             {
                 v = 0;
                 return *this;
@@ -359,65 +367,65 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        AGG_INLINE void add(const self_type& c, unsigned cover)
+        AGG_INLINE void add(const self_type & c, unsigned cover)
         {
             calc_type cv, ca;
-            if(cover == cover_mask)
+            if (cover == cover_mask)
             {
-                if(c.a == base_mask) 
+                if (c.a == base_mask)
                 {
                     *this = c;
                 }
                 else
                 {
-                    cv = v + c.v; v = (cv > calc_type(base_mask)) ? calc_type(base_mask) : cv;
-                    ca = a + c.a; a = (ca > calc_type(base_mask)) ? calc_type(base_mask) : ca;
+                    cv = v + c.v;
+                    v = (cv > calc_type(base_mask)) ? calc_type(base_mask) : cv;
+                    ca = a + c.a;
+                    a = (ca > calc_type(base_mask)) ? calc_type(base_mask) : ca;
                 }
             }
             else
             {
-                cv = v + ((c.v * cover + cover_mask/2) >> cover_shift);
-                ca = a + ((c.a * cover + cover_mask/2) >> cover_shift);
+                cv = v + ((c.v * cover + cover_mask / 2) >> cover_shift);
+                ca = a + ((c.a * cover + cover_mask / 2) >> cover_shift);
                 v = (cv > calc_type(base_mask)) ? calc_type(base_mask) : cv;
                 a = (ca > calc_type(base_mask)) ? calc_type(base_mask) : ca;
             }
         }
 
         //--------------------------------------------------------------------
-        static self_type no_color() { return self_type(0,0); }
+        static self_type no_color() { return self_type(0, 0); }
     };
 
 
     //------------------------------------------------------------gray16_pre
     inline gray16 gray16_pre(unsigned v, unsigned a = gray16::base_mask)
     {
-        return gray16(v,a).premultiply();
+        return gray16(v, a).premultiply();
     }
-    inline gray16 gray16_pre(const gray16& c, unsigned a)
+
+    inline gray16 gray16_pre(const gray16 & c, unsigned a)
     {
-        return gray16(c,a).premultiply();
+        return gray16(c, a).premultiply();
     }
-    inline gray16 gray16_pre(const rgba& c)
+
+    inline gray16 gray16_pre(const rgba & c)
     {
         return gray16(c).premultiply();
     }
-    inline gray16 gray16_pre(const rgba& c, double a)
+
+    inline gray16 gray16_pre(const rgba & c, double a)
     {
-        return gray16(c,a).premultiply();
+        return gray16(c, a).premultiply();
     }
-    inline gray16 gray16_pre(const rgba8& c)
+
+    inline gray16 gray16_pre(const rgba8 & c)
     {
         return gray16(c).premultiply();
     }
-    inline gray16 gray16_pre(const rgba8& c, unsigned a)
+
+    inline gray16 gray16_pre(const rgba8 & c, unsigned a)
     {
-        return gray16(c,a).premultiply();
+        return gray16(c, a).premultiply();
     }
-
-
 }
-
-
-
-
-#endif

@@ -22,8 +22,7 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_GAMMA_FUNCTIONS_INCLUDED
-#define AGG_GAMMA_FUNCTIONS_INCLUDED
+#pragma once
 
 #include <math.h>
 #include "agg_basics.h"
@@ -47,7 +46,7 @@ namespace agg
         void gamma(double g) { m_gamma = g; }
         double gamma() const { return m_gamma; }
 
-        double operator() (double x) const
+        double operator()(double x) const
         {
             return pow(x, m_gamma);
         }
@@ -67,7 +66,7 @@ namespace agg
         void threshold(double t) { m_threshold = t; }
         double threshold() const { return m_threshold; }
 
-        double operator() (double x) const
+        double operator()(double x) const
         {
             return (x < m_threshold) ? 0.0 : 1.0;
         }
@@ -84,16 +83,21 @@ namespace agg
         gamma_linear() : m_start(0.0), m_end(1.0) {}
         gamma_linear(double s, double e) : m_start(s), m_end(e) {}
 
-        void set(double s, double e) { m_start = s; m_end = e; }
+        void set(double s, double e)
+        {
+            m_start = s;
+            m_end = e;
+        }
+
         void start(double s) { m_start = s; }
         void end(double e) { m_end = e; }
         double start() const { return m_start; }
         double end() const { return m_end; }
 
-        double operator() (double x) const
+        double operator()(double x) const
         {
-            if(x < m_start) return 0.0;
-            if(x > m_end) return 1.0;
+            if (x < m_start) return 0.0;
+            if (x > m_end) return 1.0;
             return (x - m_start) / (m_end - m_start);
         }
 
@@ -113,20 +117,14 @@ namespace agg
         void value(double v) { m_mul = v; }
         double value() const { return m_mul; }
 
-        double operator() (double x) const
+        double operator()(double x) const
         {
             double y = x * m_mul;
-            if(y > 1.0) y = 1.0;
+            if (y > 1.0) y = 1.0;
             return y;
         }
 
     private:
         double m_mul;
     };
-
 }
-
-#endif
-
-
-

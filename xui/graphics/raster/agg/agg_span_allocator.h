@@ -22,23 +22,24 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_SPAN_ALLOCATOR_INCLUDED
-#define AGG_SPAN_ALLOCATOR_INCLUDED
+
+#pragma once
 
 #include "agg_array.h"
 
 namespace agg
 {
     //----------------------------------------------------------span_allocator
-    template<class ColorT> class span_allocator
+    template<class ColorT>
+    class span_allocator
     {
     public:
         typedef ColorT color_type;
 
         //--------------------------------------------------------------------
-        AGG_INLINE color_type* allocate(unsigned span_len)
+        AGG_INLINE color_type * allocate(unsigned span_len)
         {
-            if(span_len > m_span.size())
+            if (span_len > m_span.size())
             {
                 // To reduce the number of reallocs we align the 
                 // span_len to 256 color elements. 
@@ -49,15 +50,10 @@ namespace agg
             return &m_span[0];
         }
 
-        AGG_INLINE color_type* span()               { return &m_span[0]; }
-        AGG_INLINE unsigned    max_span_len() const { return m_span.size(); }
+        AGG_INLINE color_type * span() { return &m_span[0]; }
+        AGG_INLINE unsigned max_span_len() const { return m_span.size(); }
 
     private:
         pod_array<color_type> m_span;
     };
 }
-
-
-#endif
-
-

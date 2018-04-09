@@ -3,6 +3,7 @@
 #include "agg/agg_basics.h"
 #include "agg/agg_rendering_buffer.h"
 #include "agg/agg_rasterizer_scanline_aa.h"
+#include "agg/agg_conv_transform.h"
 #include "agg/agg_conv_curve.h"
 #include "agg/agg_conv_contour.h"
 #include "agg/agg_conv_stroke.h"
@@ -16,3 +17,11 @@
 #include "agg/agg_trans_perspective.h"
 #include "agg/agg_blur.h"
 #include "agg/agg_path_storage.h"
+
+namespace agg { namespace tools
+{
+    inline agg::rgba rgba(core::color32 color)
+    {
+        return agg::rgba{ color.r / 255.0, color.g / 255.0, color.b / 255.0, color.a / 255.0 };
+    }
+}}

@@ -22,17 +22,17 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_DDA_LINE_INCLUDED
-#define AGG_DDA_LINE_INCLUDED
+
+#pragma once
 
 #include <stdlib.h>
 #include "agg_basics.h"
 
 namespace agg
 {
-
     //===================================================dda_line_interpolator
-    template<int FractionShift, int YShift=0> class dda_line_interpolator
+    template<int FractionShift, int YShift = 0>
+    class dda_line_interpolator
     {
     public:
         //--------------------------------------------------------------------
@@ -42,37 +42,35 @@ namespace agg
         dda_line_interpolator(int y1, int y2, unsigned count) :
             m_y(y1),
             m_inc(((y2 - y1) << FractionShift) / int(count)),
-            m_dy(0)
-        {
-        }
+            m_dy(0) { }
 
         //--------------------------------------------------------------------
-        void operator ++ ()
+        void operator ++()
         {
             m_dy += m_inc;
         }
 
         //--------------------------------------------------------------------
-        void operator -- ()
+        void operator --()
         {
             m_dy -= m_inc;
         }
 
         //--------------------------------------------------------------------
-        void operator += (unsigned n)
+        void operator +=(unsigned n)
         {
             m_dy += m_inc * n;
         }
 
         //--------------------------------------------------------------------
-        void operator -= (unsigned n)
+        void operator -=(unsigned n)
         {
             m_dy -= m_inc * n;
         }
 
 
         //--------------------------------------------------------------------
-        int y()  const { return m_y + (m_dy >> (FractionShift-YShift)); }
+        int y() const { return m_y + (m_dy >> (FractionShift - YShift)); }
         int dy() const { return m_dy; }
 
 
@@ -83,14 +81,12 @@ namespace agg
     };
 
 
-
-
-
     //=================================================dda2_line_interpolator
     class dda2_line_interpolator
     {
     public:
         typedef int save_data_type;
+
         enum save_size_e { save_size = 2 };
 
         //--------------------------------------------------------------------
@@ -104,7 +100,7 @@ namespace agg
             m_mod(m_rem),
             m_y(y1)
         {
-            if(m_mod <= 0)
+            if (m_mod <= 0)
             {
                 m_mod += count;
                 m_rem += count;
@@ -121,7 +117,7 @@ namespace agg
             m_mod(m_rem),
             m_y(y1)
         {
-            if(m_mod <= 0)
+            if (m_mod <= 0)
             {
                 m_mod += count;
                 m_rem += count;
@@ -137,7 +133,7 @@ namespace agg
             m_mod(m_rem),
             m_y(0)
         {
-            if(m_mod <= 0)
+            if (m_mod <= 0)
             {
                 m_mod += count;
                 m_rem += count;
@@ -147,17 +143,17 @@ namespace agg
 
 
         //--------------------------------------------------------------------
-        void save(save_data_type* data) const
+        void save(save_data_type * data) const
         {
             data[0] = m_mod;
             data[1] = m_y;
         }
 
         //--------------------------------------------------------------------
-        void load(const save_data_type* data)
+        void load(const save_data_type * data)
         {
             m_mod = data[0];
-            m_y   = data[1];
+            m_y = data[1];
         }
 
         //--------------------------------------------------------------------
@@ -165,7 +161,7 @@ namespace agg
         {
             m_mod += m_rem;
             m_y += m_lft;
-            if(m_mod > 0)
+            if (m_mod > 0)
             {
                 m_mod -= m_cnt;
                 m_y++;
@@ -175,7 +171,7 @@ namespace agg
         //--------------------------------------------------------------------
         void operator--()
         {
-            if(m_mod <= m_rem)
+            if (m_mod <= m_rem)
             {
                 m_mod += m_cnt;
                 m_y--;
@@ -213,11 +209,6 @@ namespace agg
     };
 
 
-
-
-
-
-
     //---------------------------------------------line_bresenham_interpolator
     class line_bresenham_interpolator
     {
@@ -226,7 +217,7 @@ namespace agg
         {
             subpixel_shift = 8,
             subpixel_scale = 1 << subpixel_shift,
-            subpixel_mask  = subpixel_scale - 1
+            subpixel_mask = subpixel_scale - 1
         };
 
         //--------------------------------------------------------------------
@@ -239,19 +230,16 @@ namespace agg
             m_x2_lr(line_lr(x2)),
             m_y2_lr(line_lr(y2)),
             m_ver(abs(m_x2_lr - m_x1_lr) < abs(m_y2_lr - m_y1_lr)),
-            m_len(m_ver ? abs(m_y2_lr - m_y1_lr) : 
-                          abs(m_x2_lr - m_x1_lr)),
+            m_len(m_ver ? abs(m_y2_lr - m_y1_lr) : abs(m_x2_lr - m_x1_lr)),
             m_inc(m_ver ? ((y2 > y1) ? 1 : -1) : ((x2 > x1) ? 1 : -1)),
-            m_interpolator(m_ver ? x1 : y1, 
-                           m_ver ? x2 : y2, 
-                           m_len)
-        {
-        }
-    
+            m_interpolator(m_ver ? x1 : y1,
+                m_ver ? x2 : y2,
+                m_len) { }
+
         //--------------------------------------------------------------------
-        bool     is_ver() const { return m_ver; }
-        unsigned len()    const { return m_len; }
-        int      inc()    const { return m_inc; }
+        bool is_ver() const { return m_ver; }
+        unsigned len() const { return m_len; }
+        int inc() const { return m_inc; }
 
         //--------------------------------------------------------------------
         void hstep()
@@ -276,20 +264,13 @@ namespace agg
         int y2_hr() const { return m_interpolator.y(); }
 
     private:
-        int                    m_x1_lr;
-        int                    m_y1_lr;
-        int                    m_x2_lr;
-        int                    m_y2_lr;
-        bool                   m_ver;
-        unsigned               m_len;
-        int                    m_inc;
+        int m_x1_lr;
+        int m_y1_lr;
+        int m_x2_lr;
+        int m_y2_lr;
+        bool m_ver;
+        unsigned m_len;
+        int m_inc;
         dda2_line_interpolator m_interpolator;
-
     };
-
-
 }
-
-
-
-#endif

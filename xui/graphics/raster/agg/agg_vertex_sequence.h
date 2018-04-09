@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_VERTEX_SEQUENCE_INCLUDED
-#define AGG_VERTEX_SEQUENCE_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_array.h"
@@ -31,7 +31,6 @@
 
 namespace agg
 {
-
     //----------------------------------------------------------vertex_sequence
     // Modified agg::pod_bvector. The data is interpreted as a sequence 
     // of vertices. It means that the type T must expose:
@@ -69,26 +68,25 @@ namespace agg
     // Function close() calls this operator and removes the last vertex if 
     // necessary.
     //------------------------------------------------------------------------
-    template<class T, unsigned S=6> 
+    template<class T, unsigned S = 6>
     class vertex_sequence : public pod_bvector<T, S>
     {
     public:
         typedef pod_bvector<T, S> base_type;
 
-        void add(const T& val);
-        void modify_last(const T& val);
+        void add(const T & val);
+        void modify_last(const T & val);
         void close(bool remove_flag);
     };
 
 
-
     //------------------------------------------------------------------------
-    template<class T, unsigned S> 
-    void vertex_sequence<T, S>::add(const T& val)
+    template<class T, unsigned S>
+    void vertex_sequence<T, S>::add(const T & val)
     {
-        if(base_type::size() > 1)
+        if (base_type::size() > 1)
         {
-            if(!(*this)[base_type::size() - 2]((*this)[base_type::size() - 1])) 
+            if (!(*this)[base_type::size() - 2]((*this)[base_type::size() - 1]))
             {
                 base_type::remove_last();
             }
@@ -98,32 +96,31 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    template<class T, unsigned S> 
-    void vertex_sequence<T, S>::modify_last(const T& val)
+    template<class T, unsigned S>
+    void vertex_sequence<T, S>::modify_last(const T & val)
     {
         base_type::remove_last();
         add(val);
     }
 
 
-
     //------------------------------------------------------------------------
-    template<class T, unsigned S> 
+    template<class T, unsigned S>
     void vertex_sequence<T, S>::close(bool closed)
     {
-        while(base_type::size() > 1)
+        while (base_type::size() > 1)
         {
-            if((*this)[base_type::size() - 2]((*this)[base_type::size() - 1])) break;
+            if ((*this)[base_type::size() - 2]((*this)[base_type::size() - 1])) break;
             T t = (*this)[base_type::size() - 1];
             base_type::remove_last();
             modify_last(t);
         }
 
-        if(closed)
+        if (closed)
         {
-            while(base_type::size() > 1)
+            while (base_type::size() > 1)
             {
-                if((*this)[base_type::size() - 1]((*this)[0])) break;
+                if ((*this)[base_type::size() - 1]((*this)[0])) break;
                 base_type::remove_last();
             }
         }
@@ -136,26 +133,24 @@ namespace agg
     // and 0.0 if it's a polyline.
     struct vertex_dist
     {
-        double   x;
-        double   y;
-        double   dist;
+        double x;
+        double y;
+        double dist;
 
         vertex_dist() {}
+
         vertex_dist(double x_, double y_) :
             x(x_),
             y(y_),
-            dist(0.0)
-        {
-        }
+            dist(0.0) { }
 
-        bool operator () (const vertex_dist& val)
+        bool operator ()(const vertex_dist & val)
         {
             bool ret = (dist = calc_distance(x, y, val.x, val.y)) > vertex_dist_epsilon;
-            if(!ret) dist = 1.0 / vertex_dist_epsilon;
+            if (!ret) dist = 1.0 / vertex_dist_epsilon;
             return ret;
         }
     };
-
 
 
     //--------------------------------------------------------vertex_dist_cmd
@@ -165,14 +160,9 @@ namespace agg
         unsigned cmd;
 
         vertex_dist_cmd() {}
+
         vertex_dist_cmd(double x_, double y_, unsigned cmd_) :
             vertex_dist(x_, y_),
-            cmd(cmd_)
-        {
-        }
+            cmd(cmd_) { }
     };
-
-
 }
-
-#endif

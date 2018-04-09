@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_BSPLINE_INCLUDED
-#define AGG_CONV_BSPLINE_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_vcgen_bspline.h"
@@ -32,27 +32,21 @@
 
 namespace agg
 {
-
     //---------------------------------------------------------conv_bspline
-    template<class VertexSource> 
+    template<class VertexSource>
     struct conv_bspline : public conv_adaptor_vcgen<VertexSource, vcgen_bspline>
     {
         typedef conv_adaptor_vcgen<VertexSource, vcgen_bspline> base_type;
 
-        conv_bspline(VertexSource& vs) : 
+        conv_bspline(VertexSource & vs) :
             conv_adaptor_vcgen<VertexSource, vcgen_bspline>(vs) {}
 
-        void   interpolation_step(double v) { base_type::generator().interpolation_step(v); }
+        void interpolation_step(double v) { base_type::generator().interpolation_step(v); }
         double interpolation_step() const { return base_type::generator().interpolation_step(); }
 
     private:
-        conv_bspline(const conv_bspline<VertexSource>&);
-        const conv_bspline<VertexSource>& 
-            operator = (const conv_bspline<VertexSource>&);
+        conv_bspline(const conv_bspline<VertexSource> &);
+        const conv_bspline<VertexSource> &
+        operator =(const conv_bspline<VertexSource> &);
     };
-
 }
-
-
-#endif
-

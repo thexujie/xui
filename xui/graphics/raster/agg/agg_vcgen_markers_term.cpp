@@ -26,7 +26,6 @@
 
 namespace agg
 {
-
     //------------------------------------------------------------------------
     void vcgen_markers_term::remove_all()
     {
@@ -37,9 +36,9 @@ namespace agg
     //------------------------------------------------------------------------
     void vcgen_markers_term::add_vertex(double x, double y, unsigned cmd)
     {
-        if(is_move_to(cmd))
+        if (is_move_to(cmd))
         {
-            if(m_markers.size() & 1)
+            if (m_markers.size() & 1)
             {
                 // Initial state, the first coordinate was added.
                 // If two of more calls of start_vertex() occures
@@ -53,9 +52,9 @@ namespace agg
         }
         else
         {
-            if(is_vertex(cmd))
+            if (is_vertex(cmd))
             {
-                if(m_markers.size() & 1)
+                if (m_markers.size() & 1)
                 {
                     // Initial state, the first coordinate was added.
                     // Add three more points, 0,1,1,0
@@ -65,7 +64,7 @@ namespace agg
                 }
                 else
                 {
-                    if(m_markers.size())
+                    if (m_markers.size())
                     {
                         // Replace two last points: 0,1,1,0 -> 0,1,2,1
                         m_markers[m_markers.size() - 1] = m_markers[m_markers.size() - 2];
@@ -86,16 +85,16 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned vcgen_markers_term::vertex(double* x, double* y)
+    unsigned vcgen_markers_term::vertex(double * x, double * y)
     {
-        if(m_curr_id > 2 || m_curr_idx >= m_markers.size()) 
+        if (m_curr_id > 2 || m_curr_idx >= m_markers.size())
         {
             return path_cmd_stop;
         }
-        const coord_type& c = m_markers[m_curr_idx];
+        const coord_type & c = m_markers[m_curr_idx];
         *x = c.x;
         *y = c.y;
-        if(m_curr_idx & 1)
+        if (m_curr_idx & 1)
         {
             m_curr_idx += 3;
             return path_cmd_line_to;
@@ -103,6 +102,4 @@ namespace agg
         ++m_curr_idx;
         return path_cmd_move_to;
     }
-
-
 }

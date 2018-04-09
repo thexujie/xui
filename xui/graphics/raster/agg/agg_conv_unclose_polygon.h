@@ -22,40 +22,38 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_UNCLOSE_POLYGON_INCLUDED
-#define AGG_CONV_UNCLOSE_POLYGON_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 
 namespace agg
 {
     //====================================================conv_unclose_polygon
-    template<class VertexSource> class conv_unclose_polygon
+    template<class VertexSource>
+    class conv_unclose_polygon
     {
     public:
-        explicit conv_unclose_polygon(VertexSource& vs) : m_source(&vs) {}
-        void attach(VertexSource& source) { m_source = &source; }
+        explicit conv_unclose_polygon(VertexSource & vs) : m_source(&vs) {}
+        void attach(VertexSource & source) { m_source = &source; }
 
         void rewind(unsigned path_id)
         {
             m_source->rewind(path_id);
         }
 
-        unsigned vertex(double* x, double* y)
+        unsigned vertex(double * x, double * y)
         {
             unsigned cmd = m_source->vertex(x, y);
-            if(is_end_poly(cmd)) cmd &= ~path_flags_close;
+            if (is_end_poly(cmd)) cmd &= ~path_flags_close;
             return cmd;
         }
 
     private:
-        conv_unclose_polygon(const conv_unclose_polygon<VertexSource>&);
-        const conv_unclose_polygon<VertexSource>& 
-            operator = (const conv_unclose_polygon<VertexSource>&);
+        conv_unclose_polygon(const conv_unclose_polygon<VertexSource> &);
+        const conv_unclose_polygon<VertexSource> &
+        operator =(const conv_unclose_polygon<VertexSource> &);
 
-        VertexSource* m_source;
+        VertexSource * m_source;
     };
-
 }
-
-#endif

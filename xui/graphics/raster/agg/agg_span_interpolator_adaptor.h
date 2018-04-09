@@ -22,14 +22,13 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_SPAN_INTERPOLATOR_ADAPTOR_INCLUDED
-#define AGG_SPAN_INTERPOLATOR_ADAPTOR_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 
 namespace agg
 {
-
     //===============================================span_interpolator_adaptor
     template<class Interpolator, class Distortion>
     class span_interpolator_adaptor : public Interpolator
@@ -41,36 +40,33 @@ namespace agg
 
         //--------------------------------------------------------------------
         span_interpolator_adaptor() {}
-        span_interpolator_adaptor(const trans_type& trans, 
-                                  const distortion_type& dist) :
+
+        span_interpolator_adaptor(const trans_type & trans,
+            const distortion_type & dist) :
             base_type(trans),
-            m_distortion(&dist)
-        {   
-        }
+            m_distortion(&dist) { }
 
         //--------------------------------------------------------------------
-        span_interpolator_adaptor(const trans_type& trans,
-                                  const distortion_type& dist,
-                                  double x, double y, unsigned len) :
+        span_interpolator_adaptor(const trans_type & trans,
+            const distortion_type & dist,
+            double x, double y, unsigned len) :
             base_type(trans, x, y, len),
-            m_distortion(&dist)
-        {
-        }
+            m_distortion(&dist) { }
 
         //--------------------------------------------------------------------
-        const distortion_type& distortion() const
+        const distortion_type & distortion() const
         {
             return *m_distortion;
         }
 
         //--------------------------------------------------------------------
-        void distortion(const distortion_type& dist)
+        void distortion(const distortion_type & dist)
         {
             m_distortion = dist;
         }
 
         //--------------------------------------------------------------------
-        void coordinates(int* x, int* y) const
+        void coordinates(int * x, int * y) const
         {
             base_type::coordinates(x, y);
             m_distortion->calculate(x, y);
@@ -78,9 +74,6 @@ namespace agg
 
     private:
         //--------------------------------------------------------------------
-        const distortion_type* m_distortion;
+        const distortion_type * m_distortion;
     };
 }
-
-
-#endif

@@ -22,16 +22,14 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_CURVE_INCLUDED
-#define AGG_CONV_CURVE_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_curves.h"
 
 namespace agg
 {
-
-
     //---------------------------------------------------------------conv_curve
     // Curve converter class. Any path storage can have Bezier curves defined 
     // by their control points. There're two types of curves supported: curve3 
@@ -56,77 +54,78 @@ namespace agg
     // Class conv_curve recognizes commands path_cmd_curve3 and path_cmd_curve4 
     // and converts these vertices into a move_to/line_to sequence. 
     //-----------------------------------------------------------------------
-    template<class VertexSource, 
-             class Curve3=curve3, 
-             class Curve4=curve4> class conv_curve
+    template<class VertexSource,
+             class Curve3=curve3,
+             class Curve4=curve4>
+    class conv_curve
     {
     public:
         typedef Curve3 curve3_type;
         typedef Curve4 curve4_type;
         typedef conv_curve<VertexSource, Curve3, Curve4> self_type;
 
-        explicit conv_curve(VertexSource& source) :
-          m_source(&source), m_last_x(0.0), m_last_y(0.0) {}
-        void attach(VertexSource& source) { m_source = &source; }
+        explicit conv_curve(VertexSource & source) :
+            m_source(&source), m_last_x(0.0), m_last_y(0.0) {}
 
-        void approximation_method(curve_approximation_method_e v) 
-        { 
+        void attach(VertexSource & source) { m_source = &source; }
+
+        void approximation_method(curve_approximation_method_e v)
+        {
             m_curve3.approximation_method(v);
             m_curve4.approximation_method(v);
         }
 
-        curve_approximation_method_e approximation_method() const 
-        { 
+        curve_approximation_method_e approximation_method() const
+        {
             return m_curve4.approximation_method();
         }
 
-        void approximation_scale(double s) 
-        { 
-            m_curve3.approximation_scale(s); 
-            m_curve4.approximation_scale(s); 
+        void approximation_scale(double s)
+        {
+            m_curve3.approximation_scale(s);
+            m_curve4.approximation_scale(s);
         }
 
-        double approximation_scale() const 
-        { 
-            return m_curve4.approximation_scale();  
+        double approximation_scale() const
+        {
+            return m_curve4.approximation_scale();
         }
 
-        void angle_tolerance(double v) 
-        { 
-            m_curve3.angle_tolerance(v); 
-            m_curve4.angle_tolerance(v); 
+        void angle_tolerance(double v)
+        {
+            m_curve3.angle_tolerance(v);
+            m_curve4.angle_tolerance(v);
         }
 
-        double angle_tolerance() const 
-        { 
-            return m_curve4.angle_tolerance();  
+        double angle_tolerance() const
+        {
+            return m_curve4.angle_tolerance();
         }
 
-        void cusp_limit(double v) 
-        { 
-            m_curve3.cusp_limit(v); 
-            m_curve4.cusp_limit(v); 
+        void cusp_limit(double v)
+        {
+            m_curve3.cusp_limit(v);
+            m_curve4.cusp_limit(v);
         }
 
-        double cusp_limit() const 
-        { 
-            return m_curve4.cusp_limit();  
+        double cusp_limit() const
+        {
+            return m_curve4.cusp_limit();
         }
 
-        void     rewind(unsigned path_id); 
-        unsigned vertex(double* x, double* y);
+        void rewind(unsigned path_id);
+        unsigned vertex(double * x, double * y);
 
     private:
-        conv_curve(const self_type&);
-        const self_type& operator = (const self_type&);
+        conv_curve(const self_type &);
+        const self_type & operator =(const self_type &);
 
-        VertexSource* m_source;
-        double        m_last_x;
-        double        m_last_y;
-        curve3_type   m_curve3;
-        curve4_type   m_curve4;
+        VertexSource * m_source;
+        double m_last_x;
+        double m_last_y;
+        curve3_type m_curve3;
+        curve4_type m_curve4;
     };
-
 
 
     //------------------------------------------------------------------------
@@ -143,16 +142,16 @@ namespace agg
 
     //------------------------------------------------------------------------
     template<class VertexSource, class Curve3, class Curve4>
-    unsigned conv_curve<VertexSource, Curve3, Curve4>::vertex(double* x, double* y)
+    unsigned conv_curve<VertexSource, Curve3, Curve4>::vertex(double * x, double * y)
     {
-        if(!is_stop(m_curve3.vertex(x, y)))
+        if (!is_stop(m_curve3.vertex(x, y)))
         {
             m_last_x = *x;
             m_last_y = *y;
             return path_cmd_line_to;
         }
 
-        if(!is_stop(m_curve4.vertex(x, y)))
+        if (!is_stop(m_curve4.vertex(x, y)))
         {
             m_last_x = *x;
             m_last_y = *y;
@@ -165,17 +164,17 @@ namespace agg
         double end_y;
 
         unsigned cmd = m_source->vertex(x, y);
-        switch(cmd)
+        switch (cmd)
         {
         case path_cmd_curve3:
             m_source->vertex(&end_x, &end_y);
 
-            m_curve3.init(m_last_x, m_last_y, 
-                          *x,       *y, 
-                          end_x,     end_y);
+            m_curve3.init(m_last_x, m_last_y,
+                *x, *y,
+                end_x, end_y);
 
-            m_curve3.vertex(x, y);    // First call returns path_cmd_move_to
-            m_curve3.vertex(x, y);    // This is the first vertex of the curve
+            m_curve3.vertex(x, y); // First call returns path_cmd_move_to
+            m_curve3.vertex(x, y); // This is the first vertex of the curve
             cmd = path_cmd_line_to;
             break;
 
@@ -183,13 +182,13 @@ namespace agg
             m_source->vertex(&ct2_x, &ct2_y);
             m_source->vertex(&end_x, &end_y);
 
-            m_curve4.init(m_last_x, m_last_y, 
-                          *x,       *y, 
-                          ct2_x,    ct2_y, 
-                          end_x,    end_y);
+            m_curve4.init(m_last_x, m_last_y,
+                *x, *y,
+                ct2_x, ct2_y,
+                end_x, end_y);
 
-            m_curve4.vertex(x, y);    // First call returns path_cmd_move_to
-            m_curve4.vertex(x, y);    // This is the first vertex of the curve
+            m_curve4.vertex(x, y); // First call returns path_cmd_move_to
+            m_curve4.vertex(x, y); // This is the first vertex of the curve
             cmd = path_cmd_line_to;
             break;
         }
@@ -197,10 +196,4 @@ namespace agg
         m_last_y = *y;
         return cmd;
     }
-
-
 }
-
-
-
-#endif

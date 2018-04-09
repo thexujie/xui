@@ -28,7 +28,6 @@
 
 namespace agg
 {
-
     //------------------------------------------------------------------------
     vcgen_stroke::vcgen_stroke() :
         m_stroker(),
@@ -38,9 +37,7 @@ namespace agg
         m_closed(0),
         m_status(initial),
         m_src_vertex(0),
-        m_out_vertex(0)
-    {
-    }
+        m_out_vertex(0) { }
 
     //------------------------------------------------------------------------
     void vcgen_stroke::remove_all()
@@ -55,13 +52,13 @@ namespace agg
     void vcgen_stroke::add_vertex(double x, double y, unsigned cmd)
     {
         m_status = initial;
-        if(is_move_to(cmd))
+        if (is_move_to(cmd))
         {
             m_src_vertices.modify_last(vertex_dist(x, y));
         }
         else
         {
-            if(is_vertex(cmd))
+            if (is_vertex(cmd))
             {
                 m_src_vertices.add(vertex_dist(x, y));
             }
@@ -75,11 +72,11 @@ namespace agg
     //------------------------------------------------------------------------
     void vcgen_stroke::rewind(unsigned)
     {
-        if(m_status == initial)
+        if (m_status == initial)
         {
             m_src_vertices.close(m_closed != 0);
             shorten_path(m_src_vertices, m_shorten, m_closed);
-            if(m_src_vertices.size() < 3) m_closed = 0;
+            if (m_src_vertices.size() < 3) m_closed = 0;
         }
         m_status = ready;
         m_src_vertex = 0;
@@ -88,18 +85,18 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned vcgen_stroke::vertex(double* x, double* y)
+    unsigned vcgen_stroke::vertex(double * x, double * y)
     {
         unsigned cmd = path_cmd_line_to;
-        while(!is_stop(cmd))
+        while (!is_stop(cmd))
         {
-            switch(m_status)
+            switch (m_status)
             {
             case initial:
                 rewind(0);
 
             case ready:
-                if(m_src_vertices.size() < 2 + unsigned(m_closed != 0))
+                if (m_src_vertices.size() < 2 + unsigned(m_closed != 0))
                 {
                     cmd = path_cmd_stop;
                     break;
@@ -112,9 +109,9 @@ namespace agg
 
             case cap1:
                 m_stroker.calc_cap(m_out_vertices,
-                                   m_src_vertices[0], 
-                                   m_src_vertices[1], 
-                                   m_src_vertices[0].dist);
+                    m_src_vertices[0],
+                    m_src_vertices[1],
+                    m_src_vertices[0].dist);
                 m_src_vertex = 1;
                 m_prev_status = outline1;
                 m_status = out_vertices;
@@ -123,18 +120,18 @@ namespace agg
 
             case cap2:
                 m_stroker.calc_cap(m_out_vertices,
-                                   m_src_vertices[m_src_vertices.size() - 1], 
-                                   m_src_vertices[m_src_vertices.size() - 2], 
-                                   m_src_vertices[m_src_vertices.size() - 2].dist);
+                    m_src_vertices[m_src_vertices.size() - 1],
+                    m_src_vertices[m_src_vertices.size() - 2],
+                    m_src_vertices[m_src_vertices.size() - 2].dist);
                 m_prev_status = outline2;
                 m_status = out_vertices;
                 m_out_vertex = 0;
                 break;
 
             case outline1:
-                if(m_closed)
+                if (m_closed)
                 {
-                    if(m_src_vertex >= m_src_vertices.size())
+                    if (m_src_vertex >= m_src_vertices.size())
                     {
                         m_prev_status = close_first;
                         m_status = end_poly1;
@@ -143,18 +140,18 @@ namespace agg
                 }
                 else
                 {
-                    if(m_src_vertex >= m_src_vertices.size() - 1)
+                    if (m_src_vertex >= m_src_vertices.size() - 1)
                     {
                         m_status = cap2;
                         break;
                     }
                 }
-                m_stroker.calc_join(m_out_vertices, 
-                                    m_src_vertices.prev(m_src_vertex), 
-                                    m_src_vertices.curr(m_src_vertex), 
-                                    m_src_vertices.next(m_src_vertex), 
-                                    m_src_vertices.prev(m_src_vertex).dist,
-                                    m_src_vertices.curr(m_src_vertex).dist);
+                m_stroker.calc_join(m_out_vertices,
+                    m_src_vertices.prev(m_src_vertex),
+                    m_src_vertices.curr(m_src_vertex),
+                    m_src_vertices.next(m_src_vertex),
+                    m_src_vertices.prev(m_src_vertex).dist,
+                    m_src_vertices.curr(m_src_vertex).dist);
                 ++m_src_vertex;
                 m_prev_status = m_status;
                 m_status = out_vertices;
@@ -166,7 +163,7 @@ namespace agg
                 cmd = path_cmd_move_to;
 
             case outline2:
-                if(m_src_vertex <= unsigned(m_closed == 0))
+                if (m_src_vertex <= unsigned(m_closed == 0))
                 {
                     m_status = end_poly2;
                     m_prev_status = stop;
@@ -175,11 +172,11 @@ namespace agg
 
                 --m_src_vertex;
                 m_stroker.calc_join(m_out_vertices,
-                                    m_src_vertices.next(m_src_vertex), 
-                                    m_src_vertices.curr(m_src_vertex), 
-                                    m_src_vertices.prev(m_src_vertex), 
-                                    m_src_vertices.curr(m_src_vertex).dist, 
-                                    m_src_vertices.prev(m_src_vertex).dist);
+                    m_src_vertices.next(m_src_vertex),
+                    m_src_vertices.curr(m_src_vertex),
+                    m_src_vertices.prev(m_src_vertex),
+                    m_src_vertices.curr(m_src_vertex).dist,
+                    m_src_vertices.prev(m_src_vertex).dist);
 
                 m_prev_status = m_status;
                 m_status = out_vertices;
@@ -187,13 +184,13 @@ namespace agg
                 break;
 
             case out_vertices:
-                if(m_out_vertex >= m_out_vertices.size())
+                if (m_out_vertex >= m_out_vertices.size())
                 {
                     m_status = m_prev_status;
                 }
                 else
                 {
-                    const point_d& c = m_out_vertices[m_out_vertex++];
+                    const point_d & c = m_out_vertices[m_out_vertex++];
                     *x = c.x;
                     *y = c.y;
                     return cmd;
@@ -215,5 +212,4 @@ namespace agg
         }
         return cmd;
     }
-
 }

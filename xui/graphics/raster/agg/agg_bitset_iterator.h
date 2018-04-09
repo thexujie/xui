@@ -22,26 +22,24 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_BITSET_ITERATOR_INCLUDED
-#define AGG_BITSET_ITERATOR_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 
 namespace agg
 {
-    
     class bitset_iterator
     {
     public:
-        bitset_iterator(const int8u* bits, unsigned offset = 0) :
+        bitset_iterator(const int8u * bits, unsigned offset = 0) :
             m_bits(bits + (offset >> 3)),
-            m_mask(0x80 >> (offset & 7))
-        {}
+            m_mask(0x80 >> (offset & 7)) {}
 
-        void operator ++ ()
+        void operator ++()
         {
             m_mask >>= 1;
-            if(m_mask == 0)
+            if (m_mask == 0)
             {
                 ++m_bits;
                 m_mask = 0x80;
@@ -54,10 +52,7 @@ namespace agg
         }
 
     private:
-        const int8u* m_bits;
-        int8u        m_mask;
+        const int8u * m_bits;
+        int8u m_mask;
     };
-
 }
-
-#endif

@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_VCGEN_BSPLINE_INCLUDED
-#define AGG_VCGEN_BSPLINE_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_array.h"
@@ -32,7 +32,6 @@
 
 namespace agg
 {
-
     //==========================================================vcgen_bspline
     class vcgen_bspline
     {
@@ -58,26 +57,21 @@ namespace agg
         void add_vertex(double x, double y, unsigned cmd);
 
         // Vertex Source Interface
-        void     rewind(unsigned path_id);
-        unsigned vertex(double* x, double* y);
+        void rewind(unsigned path_id);
+        unsigned vertex(double * x, double * y);
 
     private:
-        vcgen_bspline(const vcgen_bspline&);
-        const vcgen_bspline& operator = (const vcgen_bspline&);
+        vcgen_bspline(const vcgen_bspline &);
+        const vcgen_bspline & operator =(const vcgen_bspline &);
 
         vertex_storage m_src_vertices;
-        bspline        m_spline_x;
-        bspline        m_spline_y;
-        double         m_interpolation_step;
-        unsigned       m_closed;
-        status_e       m_status;
-        unsigned       m_src_vertex;
-        double         m_cur_abscissa;
-        double         m_max_abscissa;
+        bspline m_spline_x;
+        bspline m_spline_y;
+        double m_interpolation_step;
+        unsigned m_closed;
+        status_e m_status;
+        unsigned m_src_vertex;
+        double m_cur_abscissa;
+        double m_max_abscissa;
     };
-
 }
-
-
-#endif
-

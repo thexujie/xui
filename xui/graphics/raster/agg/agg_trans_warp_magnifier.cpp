@@ -27,14 +27,13 @@
 
 namespace agg
 {
-
     //------------------------------------------------------------------------
-    void trans_warp_magnifier::transform(double* x, double* y) const
+    void trans_warp_magnifier::transform(double * x, double * y) const
     {
         double dx = *x - m_xc;
         double dy = *y - m_yc;
         double r = sqrt(dx * dx + dy * dy);
-        if(r < m_radius)
+        if (r < m_radius)
         {
             *x = m_xc + dx * m_magn;
             *y = m_yc + dy * m_magn;
@@ -47,7 +46,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void trans_warp_magnifier::inverse_transform(double* x, double* y) const
+    void trans_warp_magnifier::inverse_transform(double * x, double * y) const
     {
         // New version by Andrew Skalkin
         //-----------------
@@ -55,7 +54,7 @@ namespace agg
         double dy = *y - m_yc;
         double r = sqrt(dx * dx + dy * dy);
 
-        if(r < m_radius * m_magn) 
+        if (r < m_radius * m_magn)
         {
             *x = m_xc + dx / m_magn;
             *y = m_yc + dy / m_magn;
@@ -63,7 +62,7 @@ namespace agg
         else
         {
             double rnew = r - m_radius * (m_magn - 1.0);
-            *x = m_xc + rnew * dx / r; 
+            *x = m_xc + rnew * dx / r;
             *y = m_yc + rnew * dy / r;
         }
 
@@ -74,6 +73,4 @@ namespace agg
         //t.radius(m_radius * m_magn);
         //t.transform(x, y);
     }
-
-
 }

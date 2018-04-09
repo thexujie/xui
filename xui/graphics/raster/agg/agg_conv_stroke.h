@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_STROKE_INCLUDED
-#define AGG_CONV_STROKE_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_vcgen_stroke.h"
@@ -31,26 +31,23 @@
 
 namespace agg
 {
-
     //-------------------------------------------------------------conv_stroke
-    template<class VertexSource, class Markers=null_markers> 
-    struct conv_stroke : 
-    public conv_adaptor_vcgen<VertexSource, vcgen_stroke, Markers>
+    template<class VertexSource, class Markers=null_markers>
+    struct conv_stroke :
+        public conv_adaptor_vcgen<VertexSource, vcgen_stroke, Markers>
     {
         typedef Markers marker_type;
         typedef conv_adaptor_vcgen<VertexSource, vcgen_stroke, Markers> base_type;
 
-        conv_stroke(VertexSource& vs) : 
-            conv_adaptor_vcgen<VertexSource, vcgen_stroke, Markers>(vs)
-        {
-        }
+        conv_stroke(VertexSource & vs) :
+            conv_adaptor_vcgen<VertexSource, vcgen_stroke, Markers>(vs) { }
 
-        void line_cap(line_cap_e lc)     { base_type::generator().line_cap(lc);  }
-        void line_join(line_join_e lj)   { base_type::generator().line_join(lj); }
+        void line_cap(line_cap_e lc) { base_type::generator().line_cap(lc); }
+        void line_join(line_join_e lj) { base_type::generator().line_join(lj); }
         void inner_join(inner_join_e ij) { base_type::generator().inner_join(ij); }
 
-        line_cap_e   line_cap()   const { return base_type::generator().line_cap();  }
-        line_join_e  line_join()  const { return base_type::generator().line_join(); }
+        line_cap_e line_cap() const { return base_type::generator().line_cap(); }
+        line_join_e line_join() const { return base_type::generator().line_join(); }
         inner_join_e inner_join() const { return base_type::generator().inner_join(); }
 
         void width(double w) { base_type::generator().width(w); }
@@ -68,12 +65,8 @@ namespace agg
         double shorten() const { return base_type::generator().shorten(); }
 
     private:
-       conv_stroke(const conv_stroke<VertexSource, Markers>&);
-       const conv_stroke<VertexSource, Markers>& 
-           operator = (const conv_stroke<VertexSource, Markers>&);
-
+        conv_stroke(const conv_stroke<VertexSource, Markers> &);
+        const conv_stroke<VertexSource, Markers> &
+        operator =(const conv_stroke<VertexSource, Markers> &);
     };
-
 }
-
-#endif

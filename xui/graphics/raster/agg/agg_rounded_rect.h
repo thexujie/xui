@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_ROUNDED_RECT_INCLUDED
-#define AGG_ROUNDED_RECT_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_arc.h"
@@ -44,15 +44,15 @@ namespace agg
         void radius(double r);
         void radius(double rx, double ry);
         void radius(double rx_bottom, double ry_bottom, double rx_top, double ry_top);
-        void radius(double rx1, double ry1, double rx2, double ry2, 
-                    double rx3, double ry3, double rx4, double ry4);
+        void radius(double rx1, double ry1, double rx2, double ry2,
+            double rx3, double ry3, double rx4, double ry4);
         void normalize_radius();
 
         void approximation_scale(double s) { m_arc.approximation_scale(s); }
         double approximation_scale() const { return m_arc.approximation_scale(); }
 
         void rewind(unsigned);
-        unsigned vertex(double* x, double* y);
+        unsigned vertex(double * x, double * y);
 
     private:
         double m_x1;
@@ -68,10 +68,6 @@ namespace agg
         double m_rx4;
         double m_ry4;
         unsigned m_status;
-        arc      m_arc;
+        arc m_arc;
     };
-
 }
-
-#endif
-

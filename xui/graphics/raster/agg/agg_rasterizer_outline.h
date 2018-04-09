@@ -22,24 +22,25 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_RASTERIZER_OUTLINE_INCLUDED
-#define AGG_RASTERIZER_OUTLINE_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 
 namespace agg
 {
     //======================================================rasterizer_outline
-    template<class Renderer> class rasterizer_outline
+    template<class Renderer>
+    class rasterizer_outline
     {
     public:
-        explicit rasterizer_outline(Renderer& ren) : 
-            m_ren(&ren), 
-            m_start_x(0), 
-            m_start_y(0), 
-            m_vertices(0)
-        {}
-        void attach(Renderer& ren) { m_ren = &ren; }
+        explicit rasterizer_outline(Renderer & ren) :
+            m_ren(&ren),
+            m_start_x(0),
+            m_start_y(0),
+            m_vertices(0) {}
+
+        void attach(Renderer & ren) { m_ren = &ren; }
 
 
         //--------------------------------------------------------------------
@@ -71,7 +72,7 @@ namespace agg
         //--------------------------------------------------------------------
         void close()
         {
-            if(m_vertices > 2)
+            if (m_vertices > 2)
             {
                 line_to(m_start_x, m_start_y);
             }
@@ -81,15 +82,15 @@ namespace agg
         //--------------------------------------------------------------------
         void add_vertex(double x, double y, unsigned cmd)
         {
-            if(is_move_to(cmd)) 
+            if (is_move_to(cmd))
             {
                 move_to_d(x, y);
             }
-            else 
+            else
             {
-                if(is_end_poly(cmd))
+                if (is_end_poly(cmd))
                 {
-                    if(is_closed(cmd)) close();
+                    if (is_closed(cmd)) close();
                 }
                 else
                 {
@@ -101,14 +102,14 @@ namespace agg
 
         //--------------------------------------------------------------------
         template<class VertexSource>
-        void add_path(VertexSource& vs, unsigned path_id=0)
+        void add_path(VertexSource & vs, unsigned path_id = 0)
         {
             double x;
             double y;
 
             unsigned cmd;
             vs.rewind(path_id);
-            while(!is_stop(cmd = vs.vertex(&x, &y)))
+            while (!is_stop(cmd = vs.vertex(&x, &y)))
             {
                 add_vertex(x, y, cmd);
             }
@@ -117,12 +118,12 @@ namespace agg
 
         //--------------------------------------------------------------------
         template<class VertexSource, class ColorStorage, class PathId>
-        void render_all_paths(VertexSource& vs, 
-                              const ColorStorage& colors, 
-                              const PathId& path_id,
-                              unsigned num_paths)
+        void render_all_paths(VertexSource & vs,
+            const ColorStorage & colors,
+            const PathId & path_id,
+            unsigned num_paths)
         {
-            for(unsigned i = 0; i < num_paths; i++)
+            for (unsigned i = 0; i < num_paths; i++)
             {
                 m_ren->line_color(colors[i]);
                 add_path(vs, path_id[i]);
@@ -131,10 +132,11 @@ namespace agg
 
 
         //--------------------------------------------------------------------
-        template<class Ctrl> void render_ctrl(Ctrl& c)
+        template<class Ctrl>
+        void render_ctrl(Ctrl & c)
         {
             unsigned i;
-            for(i = 0; i < c.num_paths(); i++)
+            for (i = 0; i < c.num_paths(); i++)
             {
                 m_ren->line_color(c.color(i));
                 add_path(c, i);
@@ -143,15 +145,9 @@ namespace agg
 
 
     private:
-        Renderer* m_ren;
-        int       m_start_x;
-        int       m_start_y;
-        unsigned  m_vertices;
+        Renderer * m_ren;
+        int m_start_x;
+        int m_start_y;
+        unsigned m_vertices;
     };
-
-
 }
-
-
-#endif
-

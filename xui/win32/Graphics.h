@@ -1,5 +1,6 @@
 #pragma once
 #include "graphics/GraphicsService.h"
+#include "graphics/raster/agg.h"
 #include "Bitmap.h"
 #include "GDIObjectCache.h"
 #include "win32/windows.h"
@@ -50,5 +51,12 @@ namespace win32
         HRGN _clipRegion = NULL;
         std::stack<core::math::pt32_t> _origns;
         std::stack<core::math::rc32_t> _clips;
+
+        agg::rasterizer_scanline_aa<> _raster;
+        agg::scanline_u8 _sl;
+
+        agg::rendering_buffer _rbuf;
+        agg::pixfmt_rgba32 _pixf;
+        agg::renderer_base<agg::pixfmt_rgba32> _renderer;
     };
 }

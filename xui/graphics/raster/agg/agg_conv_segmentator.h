@@ -22,8 +22,8 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CONV_SEGMENTATOR_INCLUDED
-#define AGG_CONV_SEGMENTATOR_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_conv_adaptor_vpgen.h"
@@ -31,27 +31,21 @@
 
 namespace agg
 {
-
     //========================================================conv_segmentator
-    template<class VertexSource> 
+    template<class VertexSource>
     struct conv_segmentator : public conv_adaptor_vpgen<VertexSource, vpgen_segmentator>
     {
         typedef conv_adaptor_vpgen<VertexSource, vpgen_segmentator> base_type;
 
-        conv_segmentator(VertexSource& vs) : 
+        conv_segmentator(VertexSource & vs) :
             conv_adaptor_vpgen<VertexSource, vpgen_segmentator>(vs) {}
 
-        void approximation_scale(double s) { base_type::vpgen().approximation_scale(s);        }
-        double approximation_scale() const { return base_type::vpgen().approximation_scale();  }
+        void approximation_scale(double s) { base_type::vpgen().approximation_scale(s); }
+        double approximation_scale() const { return base_type::vpgen().approximation_scale(); }
 
     private:
-        conv_segmentator(const conv_segmentator<VertexSource>&);
-        const conv_segmentator<VertexSource>& 
-            operator = (const conv_segmentator<VertexSource>&);
+        conv_segmentator(const conv_segmentator<VertexSource> &);
+        const conv_segmentator<VertexSource> &
+        operator =(const conv_segmentator<VertexSource> &);
     };
-
-
 }
-
-#endif
-

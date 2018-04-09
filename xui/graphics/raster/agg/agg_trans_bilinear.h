@@ -22,15 +22,14 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_TRANS_BILINEAR_INCLUDED
-#define AGG_TRANS_BILINEAR_INCLUDED
+
+#pragma once
 
 #include "agg_basics.h"
 #include "agg_simul_eq.h"
 
 namespace agg
 {
-
     //==========================================================trans_bilinear
     class trans_bilinear
     {
@@ -40,7 +39,7 @@ namespace agg
 
         //--------------------------------------------------------------------
         // Arbitrary quadrangle transformations
-        trans_bilinear(const double* src, const double* dst) 
+        trans_bilinear(const double * src, const double * dst)
         {
             quad_to_quad(src, dst);
         }
@@ -48,8 +47,8 @@ namespace agg
 
         //--------------------------------------------------------------------
         // Direct transformations 
-        trans_bilinear(double x1, double y1, double x2, double y2, 
-                       const double* quad)
+        trans_bilinear(double x1, double y1, double x2, double y2,
+            const double * quad)
         {
             rect_to_quad(x1, y1, x2, y2, quad);
         }
@@ -57,8 +56,8 @@ namespace agg
 
         //--------------------------------------------------------------------
         // Reverse transformations 
-        trans_bilinear(const double* quad, 
-                       double x1, double y1, double x2, double y2)
+        trans_bilinear(const double * quad,
+            double x1, double y1, double x2, double y2)
         {
             quad_to_rect(quad, x1, y1, x2, y2);
         }
@@ -66,13 +65,13 @@ namespace agg
 
         //--------------------------------------------------------------------
         // Set the transformations using two arbitrary quadrangles.
-        void quad_to_quad(const double* src, const double* dst)
+        void quad_to_quad(const double * src, const double * dst)
         {
             double left[4][4];
             double right[4][2];
 
             unsigned i;
-            for(i = 0; i < 4; i++)
+            for (i = 0; i < 4; i++)
             {
                 unsigned ix = i * 2;
                 unsigned iy = ix + 1;
@@ -90,8 +89,8 @@ namespace agg
 
         //--------------------------------------------------------------------
         // Set the direct transformations, i.e., rectangle -> quadrangle
-        void rect_to_quad(double x1, double y1, double x2, double y2, 
-                          const double* quad)
+        void rect_to_quad(double x1, double y1, double x2, double y2,
+            const double * quad)
         {
             double src[8];
             src[0] = src[6] = x1;
@@ -104,8 +103,8 @@ namespace agg
 
         //--------------------------------------------------------------------
         // Set the reverse transformations, i.e., quadrangle -> rectangle
-        void quad_to_rect(const double* quad, 
-                          double x1, double y1, double x2, double y2)
+        void quad_to_rect(const double * quad,
+            double x1, double y1, double x2, double y2)
         {
             double dst[8];
             dst[0] = dst[6] = x1;
@@ -121,7 +120,7 @@ namespace agg
 
         //--------------------------------------------------------------------
         // Transform a point (x, y)
-        void transform(double* x, double* y) const
+        void transform(double * x, double * y) const
         {
             double tx = *x;
             double ty = *y;
@@ -142,15 +141,14 @@ namespace agg
             double y;
 
             iterator_x() {}
+
             iterator_x(double tx, double ty, double step, const double m[4][2]) :
                 inc_x(m[1][0] * step * ty + m[2][0] * step),
                 inc_y(m[1][1] * step * ty + m[2][1] * step),
                 x(m[0][0] + m[1][0] * tx * ty + m[2][0] * tx + m[3][0] * ty),
-                y(m[0][1] + m[1][1] * tx * ty + m[2][1] * tx + m[3][1] * ty)
-            {
-            }
+                y(m[0][1] + m[1][1] * tx * ty + m[2][1] * tx + m[3][1] * ty) { }
 
-            void operator ++ ()
+            void operator ++()
             {
                 x += inc_x;
                 y += inc_y;
@@ -164,9 +162,6 @@ namespace agg
 
     private:
         double m_mtx[4][2];
-        bool   m_valid;
+        bool m_valid;
     };
-
 }
-
-#endif

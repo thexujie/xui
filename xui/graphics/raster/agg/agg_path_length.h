@@ -22,15 +22,15 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_PATH_LENGTH_INCLUDED
-#define AGG_PATH_LENGTH_INCLUDED
+
+#pragma once
 
 #include "agg_math.h"
 
 namespace agg
 {
-    template<class VertexSource> 
-    double path_length(VertexSource& vs, unsigned path_id = 0)
+    template<class VertexSource>
+    double path_length(VertexSource & vs, unsigned path_id = 0)
     {
         double len = 0.0;
         double start_x = 0.0;
@@ -43,11 +43,11 @@ namespace agg
 
         unsigned cmd;
         vs.rewind(path_id);
-        while(!is_stop(cmd = vs.vertex(&x2, &y2)))
+        while (!is_stop(cmd = vs.vertex(&x2, &y2)))
         {
-            if(is_vertex(cmd))
+            if (is_vertex(cmd))
             {
-                if(first || is_move_to(cmd))
+                if (first || is_move_to(cmd))
                 {
                     start_x = x2;
                     start_y = y2;
@@ -62,7 +62,7 @@ namespace agg
             }
             else
             {
-                if(is_close(cmd) && !first)
+                if (is_close(cmd) && !first)
                 {
                     len += calc_distance(x1, y1, start_x, start_y);
                 }
@@ -71,5 +71,3 @@ namespace agg
         return len;
     }
 }
-
-#endif

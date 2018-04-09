@@ -22,15 +22,14 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_VCGEN_STROKE_INCLUDED
-#define AGG_VCGEN_STROKE_INCLUDED
+
+#pragma once
 
 #include "agg_math_stroke.h"
 
 
 namespace agg
 {
-
     //============================================================vcgen_stroke
     //
     // See Implementation agg_vcgen_stroke.cpp
@@ -56,16 +55,16 @@ namespace agg
 
     public:
         typedef vertex_sequence<vertex_dist, 6> vertex_storage;
-        typedef pod_bvector<point_d, 6>         coord_storage;
+        typedef pod_bvector<point_d, 6> coord_storage;
 
         vcgen_stroke();
 
-        void line_cap(line_cap_e lc)     { m_stroker.line_cap(lc); }
-        void line_join(line_join_e lj)   { m_stroker.line_join(lj); }
+        void line_cap(line_cap_e lc) { m_stroker.line_cap(lc); }
+        void line_join(line_join_e lj) { m_stroker.line_join(lj); }
         void inner_join(inner_join_e ij) { m_stroker.inner_join(ij); }
 
-        line_cap_e   line_cap()   const { return m_stroker.line_cap(); }
-        line_join_e  line_join()  const { return m_stroker.line_join(); }
+        line_cap_e line_cap() const { return m_stroker.line_cap(); }
+        line_join_e line_join() const { return m_stroker.line_join(); }
         inner_join_e inner_join() const { return m_stroker.inner_join(); }
 
         void width(double w) { m_stroker.width(w); }
@@ -87,25 +86,21 @@ namespace agg
         void add_vertex(double x, double y, unsigned cmd);
 
         // Vertex Source Interface
-        void     rewind(unsigned path_id);
-        unsigned vertex(double* x, double* y);
+        void rewind(unsigned path_id);
+        unsigned vertex(double * x, double * y);
 
     private:
-        vcgen_stroke(const vcgen_stroke&);
-        const vcgen_stroke& operator = (const vcgen_stroke&);
+        vcgen_stroke(const vcgen_stroke &);
+        const vcgen_stroke & operator =(const vcgen_stroke &);
 
         math_stroke<coord_storage> m_stroker;
-        vertex_storage             m_src_vertices;
-        coord_storage              m_out_vertices;
-        double                     m_shorten;
-        unsigned                   m_closed;
-        status_e                   m_status;
-        status_e                   m_prev_status;
-        unsigned                   m_src_vertex;
-        unsigned                   m_out_vertex;
+        vertex_storage m_src_vertices;
+        coord_storage m_out_vertices;
+        double m_shorten;
+        unsigned m_closed;
+        status_e m_status;
+        status_e m_prev_status;
+        unsigned m_src_vertex;
+        unsigned m_out_vertex;
     };
-
-
 }
-
-#endif

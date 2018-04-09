@@ -22,16 +22,13 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_ELLIPSE_BRESENHAM_INCLUDED
-#define AGG_ELLIPSE_BRESENHAM_INCLUDED
-
+#pragma once
 
 #include "agg_basics.h"
 
 
 namespace agg
 {
-
     //------------------------------------------ellipse_bresenham_interpolator
     class ellipse_bresenham_interpolator
     {
@@ -45,48 +42,47 @@ namespace agg
             m_dy(0),
             m_inc_x(0),
             m_inc_y(-ry * m_two_rx2),
-            m_cur_f(0)
-        {}
-        
+            m_cur_f(0) {}
+
         int dx() const { return m_dx; }
         int dy() const { return m_dy; }
 
-        void operator++ ()
+        void operator++()
         {
-            int  mx, my, mxy, min_m;
-            int  fx, fy, fxy;
+            int mx, my, mxy, min_m;
+            int fx, fy, fxy;
 
             mx = fx = m_cur_f + m_inc_x + m_ry2;
-            if(mx < 0) mx = -mx;
+            if (mx < 0) mx = -mx;
 
             my = fy = m_cur_f + m_inc_y + m_rx2;
-            if(my < 0) my = -my;
+            if (my < 0) my = -my;
 
             mxy = fxy = m_cur_f + m_inc_x + m_ry2 + m_inc_y + m_rx2;
-            if(mxy < 0) mxy = -mxy;
+            if (mxy < 0) mxy = -mxy;
 
-            min_m = mx; 
+            min_m = mx;
             bool flag = true;
 
-            if(min_m > my)  
-            { 
-                min_m = my; 
-                flag = false; 
+            if (min_m > my)
+            {
+                min_m = my;
+                flag = false;
             }
 
             m_dx = m_dy = 0;
 
-            if(min_m > mxy) 
-            { 
+            if (min_m > mxy)
+            {
                 m_inc_x += m_two_ry2;
                 m_inc_y += m_two_rx2;
                 m_cur_f = fxy;
-                m_dx = 1; 
+                m_dx = 1;
                 m_dy = 1;
                 return;
             }
 
-            if(flag) 
+            if (flag)
             {
                 m_inc_x += m_two_ry2;
                 m_cur_f = fx;
@@ -109,10 +105,5 @@ namespace agg
         int m_inc_x;
         int m_inc_y;
         int m_cur_f;
-
     };
-
 }
-
-#endif
-

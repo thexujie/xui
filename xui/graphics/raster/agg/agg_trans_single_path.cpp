@@ -28,15 +28,12 @@
 
 namespace agg
 {
-
     //------------------------------------------------------------------------
     trans_single_path::trans_single_path() :
         m_base_length(0.0),
         m_kindex(0.0),
         m_status(initial),
-        m_preserve_x_scale(true)
-    {
-    }
+        m_preserve_x_scale(true) { }
 
     //------------------------------------------------------------------------
     void trans_single_path::reset()
@@ -49,7 +46,7 @@ namespace agg
     //------------------------------------------------------------------------
     void trans_single_path::move_to(double x, double y)
     {
-        if(m_status == initial)
+        if (m_status == initial)
         {
             m_src_vertices.modify_last(vertex_dist(x, y));
             m_status = making_path;
@@ -63,7 +60,7 @@ namespace agg
     //------------------------------------------------------------------------
     void trans_single_path::line_to(double x, double y)
     {
-        if(m_status == making_path)
+        if (m_status == making_path)
         {
             m_src_vertices.add(vertex_dist(x, y));
         }
@@ -73,22 +70,22 @@ namespace agg
     //------------------------------------------------------------------------
     void trans_single_path::finalize_path()
     {
-        if(m_status == making_path && m_src_vertices.size() > 1)
+        if (m_status == making_path && m_src_vertices.size() > 1)
         {
             unsigned i;
             double dist;
             double d;
 
             m_src_vertices.close(false);
-            if(m_src_vertices.size() > 2)
+            if (m_src_vertices.size() > 2)
             {
-                if(m_src_vertices[m_src_vertices.size() - 2].dist * 10.0 < 
-                   m_src_vertices[m_src_vertices.size() - 3].dist)
+                if (m_src_vertices[m_src_vertices.size() - 2].dist * 10.0 <
+                    m_src_vertices[m_src_vertices.size() - 3].dist)
                 {
-                    d = m_src_vertices[m_src_vertices.size() - 3].dist + 
+                    d = m_src_vertices[m_src_vertices.size() - 3].dist +
                         m_src_vertices[m_src_vertices.size() - 2].dist;
 
-                    m_src_vertices[m_src_vertices.size() - 2] = 
+                    m_src_vertices[m_src_vertices.size() - 2] =
                         m_src_vertices[m_src_vertices.size() - 1];
 
                     m_src_vertices.remove_last();
@@ -97,9 +94,9 @@ namespace agg
             }
 
             dist = 0.0;
-            for(i = 0; i < m_src_vertices.size(); i++)
+            for (i = 0; i < m_src_vertices.size(); i++)
             {
-                vertex_dist& v = m_src_vertices[i];
+                vertex_dist & v = m_src_vertices[i];
                 double d = v.dist;
                 v.dist = dist;
                 dist += d;
@@ -110,35 +107,32 @@ namespace agg
     }
 
 
-
     //------------------------------------------------------------------------
     double trans_single_path::total_length() const
     {
-        if(m_base_length >= 1e-10) return m_base_length;
-        return (m_status == ready) ? 
-            m_src_vertices[m_src_vertices.size() - 1].dist :
-            0.0;
+        if (m_base_length >= 1e-10) return m_base_length;
+        return (m_status == ready) ? m_src_vertices[m_src_vertices.size() - 1].dist : 0.0;
     }
 
 
     //------------------------------------------------------------------------
-    void trans_single_path::transform(double *x, double *y) const
+    void trans_single_path::transform(double * x, double * y) const
     {
-        if(m_status == ready)
+        if (m_status == ready)
         {
-            if(m_base_length > 1e-10)
+            if (m_base_length > 1e-10)
             {
-                *x *= m_src_vertices[m_src_vertices.size() - 1].dist / 
-                      m_base_length;
+                *x *= m_src_vertices[m_src_vertices.size() - 1].dist /
+                    m_base_length;
             }
 
             double x1 = 0.0;
             double y1 = 0.0;
             double dx = 1.0;
             double dy = 1.0;
-            double d  = 0.0;
+            double d = 0.0;
             double dd = 1.0;
-            if(*x < 0.0)
+            if (*x < 0.0)
             {
                 // Extrapolation on the left
                 //--------------------------
@@ -147,10 +141,9 @@ namespace agg
                 dx = m_src_vertices[1].x - x1;
                 dy = m_src_vertices[1].y - y1;
                 dd = m_src_vertices[1].dist - m_src_vertices[0].dist;
-                d  = *x;
+                d = *x;
             }
-            else
-            if(*x > m_src_vertices[m_src_vertices.size() - 1].dist)
+            else if (*x > m_src_vertices[m_src_vertices.size() - 1].dist)
             {
                 // Extrapolation on the right
                 //--------------------------
@@ -161,7 +154,7 @@ namespace agg
                 dx = x1 - m_src_vertices[i].x;
                 dy = y1 - m_src_vertices[i].y;
                 dd = m_src_vertices[j].dist - m_src_vertices[i].dist;
-                d  = *x - m_src_vertices[j].dist;
+                d = *x - m_src_vertices[j].dist;
             }
             else
             {
@@ -169,23 +162,23 @@ namespace agg
                 //--------------------------
                 unsigned i = 0;
                 unsigned j = m_src_vertices.size() - 1;
-                if(m_preserve_x_scale)
+                if (m_preserve_x_scale)
                 {
                     unsigned k;
-                    for(i = 0; (j - i) > 1; ) 
+                    for (i = 0; (j - i) > 1;)
                     {
-                        if(*x < m_src_vertices[k = (i + j) >> 1].dist) 
+                        if (*x < m_src_vertices[k = (i + j) >> 1].dist)
                         {
-                            j = k; 
+                            j = k;
                         }
-                        else 
+                        else
                         {
                             i = k;
                         }
                     }
-                    d  = m_src_vertices[i].dist;
+                    d = m_src_vertices[i].dist;
                     dd = m_src_vertices[j].dist - d;
-                    d  = *x - d;
+                    d = *x - d;
                 }
                 else
                 {
@@ -205,7 +198,4 @@ namespace agg
             *y = y2 + *y * dx / dd;
         }
     }
-
-
 }
-
