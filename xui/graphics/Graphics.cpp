@@ -63,6 +63,22 @@ namespace graphics
         _graphics->DrawLine(start, end, color, width);
     }
 
+    void Graphics::DrawEllipse(rc32_t ellipse, color32 color, float32_t width)
+    {
+        if (!_graphics)
+            return;
+
+        _graphics->DrawEllipse(ellipse, color, width);
+    }
+
+    void Graphics::FillEllipse(rc32_t ellipse, color32 color)
+    {
+        if (!_graphics)
+            return;
+
+        _graphics->FillEllipse(ellipse, color);
+    }
+
     void Graphics::DrawRect(rc32_t rect, color32 color, float32_t width)
     {
         if (!_graphics)
@@ -77,6 +93,22 @@ namespace graphics
             return;
 
         _graphics->FillRect(rect, color);
+    }
+
+    void Graphics::DrawRoundRect(core::math::rc32_t rect, core::color32 color, float32_t width, float32_t radius)
+    {
+        if (!_graphics)
+            return;
+
+        _graphics->DrawRoundRect(rect, color, width, radius);
+    }
+
+    void Graphics::FillRoundRect(core::math::rc32_t rect, core::color32 color, float32_t radius)
+    {
+        if (!_graphics)
+            return;
+
+        _graphics->FillRoundRect(rect, color, radius);
     }
 
     void Graphics::DrawString(std::string str, pt32_t point, text::font font, color32 color, int32_t flags)

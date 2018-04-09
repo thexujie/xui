@@ -18,6 +18,7 @@ agg::rendering_buffer rbuf;
 agg::rasterizer_scanline_aa<> raster;
 agg::scanline_u8 sl;
 
+#if 0
 void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 {
     auto buffer = pixmap->buffer();
@@ -181,6 +182,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     raster.add_path(pg);
     agg::render_scanlines_aa_solid(raster, sl, renb, agg::tools::rgba(colors::Black));
 }
+#endif
 int main()
 {
     win32::Win32App app;
@@ -206,9 +208,14 @@ int main()
 
     graphics->DrawLine({ 0, cy / 2 }, { cx, cy / 2 }, colors::Red, 1);
     graphics->DrawLine({ cx / 2, 0 }, { cx / 2, cy }, colors::Red, 1);
+    graphics->DrawLine({ 0, 0 }, { cx, cy}, colors::Red, 1);
+    graphics->DrawLine({ cx, 0 }, { 0, cy }, colors::Red, 1);
+    graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
+    graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
 
     //graphics->FillRect({ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Green);
     graphics->DrawRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
+    graphics->DrawRoundRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
 
     graphics->DrawString(u8"MMMM", { cx / 2, cy / 2 }, { "", 10 }, colors::Red, core::math::align::centerXY);
 

@@ -109,13 +109,43 @@ namespace win32
 
     void Graphics::DrawLine(core::math::pt32_t start, core::math::pt32_t end, core::color32 color, float32_t width)
     {
-        if(!*_hdc || !_objCache)
-            return;
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
 
-        SetPen(_objCache->GetPen(AffineColor(color), width));
+        agg::path_storage ps;
+        agg::conv_stroke<agg::path_storage> pg(ps);
+        pg.width(width);
 
-        MoveToEx(*_hdc, start.x, start.y, NULL);
-        LineTo(*_hdc, end.x, end.y);
+        ps.move_to(start.x, start.y);
+        ps.line_to(end.x, end.y);
+        _raster.reset();
+        _raster.add_path(pg);
+        agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
+    }
+
+    void Graphics::DrawEllipse(core::math::rc32_t ellipse, core::color32 color, float32_t width)
+    {
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
+
+        agg::ellipse path(ellipse.centerX(), ellipse.centerY(), ellipse.cx / 2, ellipse.cy / 2);
+        agg::conv_stroke<agg::ellipse> pg(path);
+        pg.width(width);
+
+        _raster.reset();
+        _raster.add_path(pg);
+        agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
+    }
+
+    void Graphics::FillEllipse(core::math::rc32_t ellipse, core::color32 color)
+    {
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
+
+        agg::ellipse path(ellipse.centerX(), ellipse.centerY(), ellipse.cx / 2, ellipse.cy / 2);
+        _raster.reset();
+        _raster.add_path(path);
+        agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
     }
 
     void Graphics::DrawRect(core::math::rc32_t rect, core::color32 color, float32_t width)
@@ -142,14 +172,37 @@ namespace win32
         agg::pixfmt_bgra32 pixf(_rbuf);
         agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
 
-        agg::path_storage ps;
-        ps.move_to(rect.x, rect.y);
-        ps.line_to(rect.right(), rect.y);
-        ps.line_to(rect.right(), rect.bottom());
-        ps.line_to(rect.x, rect.bottom());
-        ps.close_polygon();
+        _raster.move_to_d(rect.x, rect.y);
+        _raster.line_to_d(rect.right(), rect.y);
+        _raster.line_to_d(rect.right(), rect.bottom());
+        _raster.line_to_d(rect.x, rect.bottom());
+        _raster.close_polygon();
+        agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
+    }
+
+    void Graphics::DrawRoundRect(core::math::rc32_t rect, core::color32 color, float32_t width, float32_t radius)
+    {
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
+
+        agg::rounded_rect path(rect.x, rect.y, rect.right(), rect.bottom(), radius);
+        agg::conv_stroke<agg::rounded_rect> pg(path);
+        pg.width(width);
+
         _raster.reset();
-        _raster.add_path(ps);
+        _raster.add_path(pg);
+        agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
+    }
+
+    void Graphics::FillRoundRect(core::math::rc32_t rect, core::color32 color, float32_t radius)
+    {
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
+
+        agg::rounded_rect path(rect.x, rect.y, rect.right(), rect.bottom(), radius);
+
+        _raster.reset();
+        _raster.add_path(path);
         agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
     }
 

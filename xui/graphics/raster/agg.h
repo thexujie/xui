@@ -18,6 +18,9 @@
 #include "agg/agg_blur.h"
 #include "agg/agg_path_storage.h"
 
+#include "agg/agg_ellipse.h"
+#include "agg/agg_rounded_rect.h"
+
 namespace agg { namespace tools
 {
     inline agg::rgba rgba(core::color32 color)

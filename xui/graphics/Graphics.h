@@ -28,8 +28,14 @@ namespace graphics
         void Clear(color32 color);
         void DrawLine(pt32_t start, pt32_t end, color32 color, float32_t width);
 
+        void DrawEllipse(rc32_t ellipse, color32 color, float32_t width);
+        void FillEllipse(rc32_t ellipse, color32 color);
+
         void DrawRect(rc32_t rect, color32 color, float32_t width);
         void FillRect(rc32_t rect, color32 color);
+
+        void DrawRoundRect(core::math::rc32_t rect, core::color32 color, float32_t width, float32_t radius);
+        void FillRoundRect(core::math::rc32_t rect, core::color32 color, float32_t radius);
 
         void DrawString(std::string str, pt32_t point, text::font font, color32 color, int32_t flags);
         void DrawString(std::string str, rc32_t rect, text::font font, color32 color, int32_t flags);
