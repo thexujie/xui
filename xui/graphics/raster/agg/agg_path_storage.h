@@ -539,7 +539,7 @@ namespace agg
 
 
     //--------------------------------------------------------line_adaptor
-    class line_adaptor
+    class line_adaptor : public graphics::raster::path
     {
     public:
         typedef double value_type;
@@ -593,7 +593,7 @@ namespace agg
     // See also: vertex_source concept
     //------------------------------------------------------------------------
     template<class VertexContainer>
-    class path_base
+    class path_base : public graphics::raster::path
     {
     public:
         typedef VertexContainer container_type;

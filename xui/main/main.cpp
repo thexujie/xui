@@ -248,8 +248,8 @@ int main()
 
     //testAgg(pixmap);
     graphics->DrawRect({ 100, 100, 200, 50 }, colors::Red, 2.0f);
-
     graphics->FillRect({ 100, 160, 200, 50 }, 0x80ff0000);
+    graphics->DrawRect({ 100, 220, 200, 50 }, colors::Red, 2.0f);
 
     pixmap->Save("out.bmp");
     //image->Save("pd2.jpg");

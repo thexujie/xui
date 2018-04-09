@@ -160,6 +160,17 @@ namespace core { namespace math
             return x >= vec.x && y >= vec.y;
         }
 
+        template<typename = std::enable_if_t<ValT, int32_t>::value>
+        vec2<float32_t> to_rc32f() const
+        {
+            return { (float32_t)x, (float32_t)y };
+        }
+
+        template<typename ValT2>
+        vec2<ValT2> to() const
+        {
+            return { (ValT2)x, (ValT2)y };
+        }
     public:
         union
         {
@@ -211,4 +222,5 @@ namespace core { namespace math
 
     typedef vec2<int32_t> pt32_t;
     typedef vec2<float32_t> pt32f_t;
+    typedef vec2<float64_t> pt64f_t;
 }}

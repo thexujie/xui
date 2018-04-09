@@ -34,7 +34,7 @@ namespace agg
     //
     // See Implemantation agg_rounded_rect.cpp
     //
-    class rounded_rect
+    class rounded_rect : public graphics::raster::path
     {
     public:
         rounded_rect() {}

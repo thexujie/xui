@@ -31,7 +31,7 @@
 namespace agg
 {
     //----------------------------------------------------------------ellipse
-    class ellipse
+    class ellipse : public graphics::raster::path
     {
     public:
         ellipse() :

@@ -27,11 +27,14 @@
 
 #include <math.h>
 #include "agg_config.h"
+#include "graphics/raster/path.h"
 
 //---------------------------------------------------------AGG_CUSTOM_ALLOCATOR
 #ifdef AGG_CUSTOM_ALLOCATOR
 #include "agg_allocator.h"
 #else
+
+
 namespace agg
 {
     // The policy of all AGG containers and memory allocation strategy 

@@ -4,19 +4,13 @@ namespace graphics
 {
     namespace raster
     {
-        enum command
-        {
-            none = 0,
-            move,
-            line,
-            close,
-        };
-
         class path
         {
         public:
-            virtual ~path() {};
-            virtual bool vertex(int32_t & status, float64_t & x, float64_t & y, command & cmd) = 0;
+            virtual ~path() {}
+
+            virtual void rewind(uint32_t path_id) = 0;
+            virtual uint32_t vertex(float64_t * x, float64_t * y) = 0;
         };
     }
 }

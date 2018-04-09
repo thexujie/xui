@@ -20,6 +20,7 @@
 
 #include "agg/agg_ellipse.h"
 #include "agg/agg_rounded_rect.h"
+#include "path_adapter.h"
 
 namespace agg { namespace tools
 {

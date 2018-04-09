@@ -21,15 +21,6 @@ namespace win32
         void PopClip();
 
         void Clear(core::color32 color);
-        void DrawLine(core::math::pt32_t start, core::math::pt32_t end, core::color32 color, float32_t width);
-        void DrawEllipse(core::math::rc32_t ellipse, core::color32 color, float32_t width);
-        void FillEllipse(core::math::rc32_t ellipse, core::color32 color);
-
-        void DrawRect(core::math::rc32_t rect, core::color32 color, float32_t width);
-        void FillRect(core::math::rc32_t rect, core::color32 color);
-
-        void DrawRoundRect(core::math::rc32_t rect, core::color32 color, float32_t width, float32_t radius);
-        void FillRoundRect(core::math::rc32_t rect, core::color32 color, float32_t radius);
 
         void DrawString(std::string str, core::math::pt32_t point, graphics::text::font font, core::color32 color);
 

@@ -21,7 +21,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
-
+#include "stdafx.h"
 #include "agg_vpgen_clip_polyline.h"
 #include "agg_clip_liang_barsky.h"
 

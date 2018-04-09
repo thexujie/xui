@@ -45,7 +45,7 @@ namespace agg
     template<class VertexSource,
              class Generator,
              class Markers=null_markers>
-    class conv_adaptor_vcgen
+    class conv_adaptor_vcgen : public graphics::raster::path
     {
         enum status
         {
@@ -73,7 +73,71 @@ namespace agg
             m_status = initial;
         }
 
-        unsigned vertex(double * x, double * y);
+        unsigned vertex(double * x, double * y)
+        {
+            unsigned cmd = path_cmd_stop;
+            bool done = false;
+            while (!done)
+            {
+                switch (m_status)
+                {
+                case initial:
+                    m_markers.remove_all();
+                    m_last_cmd = m_source->vertex(&m_start_x, &m_start_y);
+                    m_status = accumulate;
+
+                case accumulate:
+                    if (is_stop(m_last_cmd)) return path_cmd_stop;
+
+                    m_generator.remove_all();
+                    m_generator.add_vertex(m_start_x, m_start_y, path_cmd_move_to);
+                    m_markers.add_vertex(m_start_x, m_start_y, path_cmd_move_to);
+
+                    for (;;)
+                    {
+                        cmd = m_source->vertex(x, y);
+                        if (is_vertex(cmd))
+                        {
+                            m_last_cmd = cmd;
+                            if (is_move_to(cmd))
+                            {
+                                m_start_x = *x;
+                                m_start_y = *y;
+                                break;
+                            }
+                            m_generator.add_vertex(*x, *y, cmd);
+                            m_markers.add_vertex(*x, *y, path_cmd_line_to);
+                        }
+                        else
+                        {
+                            if (is_stop(cmd))
+                            {
+                                m_last_cmd = path_cmd_stop;
+                                break;
+                            }
+                            if (is_end_poly(cmd))
+                            {
+                                m_generator.add_vertex(*x, *y, cmd);
+                                break;
+                            }
+                        }
+                    }
+                    m_generator.rewind(0);
+                    m_status = generate;
+
+                case generate:
+                    cmd = m_generator.vertex(x, y);
+                    if (is_stop(cmd))
+                    {
+                        m_status = accumulate;
+                        break;
+                    }
+                    done = true;
+                    break;
+                }
+            }
+            return cmd;
+        }
 
     private:
         // Prohibit copying
@@ -89,73 +153,4 @@ namespace agg
         double m_start_x;
         double m_start_y;
     };
-
-
-    //------------------------------------------------------------------------
-    template<class VertexSource, class Generator, class Markers>
-    unsigned conv_adaptor_vcgen<VertexSource, Generator, Markers>::vertex(double * x, double * y)
-    {
-        unsigned cmd = path_cmd_stop;
-        bool done = false;
-        while (!done)
-        {
-            switch (m_status)
-            {
-            case initial:
-                m_markers.remove_all();
-                m_last_cmd = m_source->vertex(&m_start_x, &m_start_y);
-                m_status = accumulate;
-
-            case accumulate:
-                if (is_stop(m_last_cmd)) return path_cmd_stop;
-
-                m_generator.remove_all();
-                m_generator.add_vertex(m_start_x, m_start_y, path_cmd_move_to);
-                m_markers.add_vertex(m_start_x, m_start_y, path_cmd_move_to);
-
-                for (;;)
-                {
-                    cmd = m_source->vertex(x, y);
-                    if (is_vertex(cmd))
-                    {
-                        m_last_cmd = cmd;
-                        if (is_move_to(cmd))
-                        {
-                            m_start_x = *x;
-                            m_start_y = *y;
-                            break;
-                        }
-                        m_generator.add_vertex(*x, *y, cmd);
-                        m_markers.add_vertex(*x, *y, path_cmd_line_to);
-                    }
-                    else
-                    {
-                        if (is_stop(cmd))
-                        {
-                            m_last_cmd = path_cmd_stop;
-                            break;
-                        }
-                        if (is_end_poly(cmd))
-                        {
-                            m_generator.add_vertex(*x, *y, cmd);
-                            break;
-                        }
-                    }
-                }
-                m_generator.rewind(0);
-                m_status = generate;
-
-            case generate:
-                cmd = m_generator.vertex(x, y);
-                if (is_stop(cmd))
-                {
-                    m_status = accumulate;
-                    break;
-                }
-                done = true;
-                break;
-            }
-        }
-        return cmd;
-    }
 }

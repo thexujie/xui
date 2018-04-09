@@ -755,6 +755,12 @@
     <ClInclude Include="graphics\raster\agg.h">
       <Filter>graphics\raster</Filter>
     </ClInclude>
+    <ClInclude Include="graphics\raster\path.h">
+      <Filter>graphics\raster</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\raster\path_adapter.h">
+      <Filter>graphics\raster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">

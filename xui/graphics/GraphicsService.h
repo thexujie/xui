@@ -66,13 +66,6 @@ namespace graphics
         virtual void PopClip() = 0;
 
         virtual void Clear(core::color32 color) = 0;
-        virtual void DrawLine(pt32_t start, pt32_t end, color32 color, float32_t width) = 0;
-        virtual void DrawEllipse(rc32_t ellipse, color32 color, float32_t width) = 0;
-        virtual void FillEllipse(rc32_t ellipse, color32 color) = 0;
-        virtual void DrawRect(rc32_t rect, color32 color, float32_t width) = 0;
-        virtual void FillRect(rc32_t rect, color32 color) = 0;
-        virtual void DrawRoundRect(core::math::rc32_t rect, core::color32 color, float32_t width, float32_t radius) = 0;
-        virtual void FillRoundRect(core::math::rc32_t rect, core::color32 color, float32_t radius) = 0;
 
         virtual void DrawString(std::string str, core::math::pt32_t point, graphics::text::font font, core::color32 color) = 0;
 

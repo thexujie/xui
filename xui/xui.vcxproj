@@ -54,6 +54,7 @@
       <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/</AdditionalLibraryDirectories>
@@ -71,6 +72,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -326,6 +328,8 @@
     <ClInclude Include="graphics\raster\agg\util\agg_color_conv.h" />
     <ClInclude Include="graphics\raster\agg\util\agg_color_conv_rgb16.h" />
     <ClInclude Include="graphics\raster\agg\util\agg_color_conv_rgb8.h" />
+    <ClInclude Include="graphics\raster\path.h" />
+    <ClInclude Include="graphics\raster\path_adapter.h" />
     <ClInclude Include="graphics\text\font.h" />
     <ClInclude Include="graphics\text\text.h" />
     <ClInclude Include="stdafx.h" />
