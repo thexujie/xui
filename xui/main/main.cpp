@@ -11,12 +11,22 @@
 #include "win32/Win32App.h"
 #include "graphics/Image.h"
 #include "graphics/raster/agg.h"
+#include "core/io/filestream.h"
 
 using namespace core;
 
 agg::rendering_buffer rbuf;
 agg::rasterizer_scanline_aa<> raster;
 agg::scanline_u8 sl;
+
+#include "FreeImage.h"
+#pragma comment(lib, "FreeImage.lib")
+
+namespace win32
+{
+bool d2d_rule_full(graphics::image::image_convert_rule_t * rule);
+    
+}
 
 #if 0
 void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
@@ -187,6 +197,31 @@ int main()
 {
     win32::Win32App app;
 
+    auto[data, size] = core::io::readFullFile("dds_dxt4.dds");
+    graphics::image::image_data_t  img;
+    graphics::image::image_create(data.get(), size, &img, win32::d2d_rule_full);
+
+    FREE_IMAGE_FORMAT fifmt = FreeImage_GetFileType("dds_dxt4.dds");
+    if ((fifmt != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fifmt))
+    {
+        graphics::image::color_mask_abgr_t mask;
+        FIBITMAP * fbmp = FreeImage_Load(fifmt, "dds_dxt4.dds", 0);
+        auto info = FreeImage_GetInfo(fbmp);
+        mask.r = FreeImage_GetRedMask(fbmp);
+        mask.g = FreeImage_GetGreenMask(fbmp);
+        mask.b = FreeImage_GetBlueMask(fbmp);
+        graphics::image::cmode_e cmode = graphics::image::cmode_from_mask_abgr(mask, info->bmiHeader.biBitCount);
+
+        auto tcnt = FreeImage_GetTransparencyCount(fbmp);
+        auto istrans = FreeImage_IsTransparent(fbmp);
+        auto transindex = FreeImage_GetTransparentIndex(fbmp);
+
+        auto fbmp2 = FreeImage_ConvertTo32Bits(fbmp);
+        FreeImage_Unload(fbmp);
+
+        auto info2 = FreeImage_GetInfo(fbmp);
+        info2->bmiHeader;
+    }
     int32_t cx = 1280;
     int32_t cy = 720;
     std::shared_ptr<graphics::Pixmap> pixmap = std::make_shared<graphics::Pixmap>(graphics::si32_t{ cx, cy });

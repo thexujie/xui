@@ -32,24 +32,6 @@
     <ClCompile Include="graphics\image\image.cpp">
       <Filter>graphics\image</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\image\formats\bmp.cpp">
-      <Filter>graphics\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\image\formats\dds.cpp">
-      <Filter>graphics\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\image\formats\ico.cpp">
-      <Filter>graphics\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\image\formats\jpg.cpp">
-      <Filter>graphics\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\image\formats\png.cpp">
-      <Filter>graphics\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\image\formats\tga.cpp">
-      <Filter>graphics\image\formats</Filter>
-    </ClCompile>
     <ClCompile Include="core\core.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -197,6 +179,24 @@
     <ClCompile Include="graphics\raster\agg\agg_vpgen_segmentator.cpp">
       <Filter>graphics\raster\agg</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\image\formats\bmp.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\dds.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\ico.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\jpg.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\png.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\tga.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -241,24 +241,6 @@
     </ClInclude>
     <ClInclude Include="graphics\image\image.h">
       <Filter>graphics\image</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\image\formats\bmp.h">
-      <Filter>graphics\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\image\formats\dds.h">
-      <Filter>graphics\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\image\formats\ico.h">
-      <Filter>graphics\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\image\formats\jpg.h">
-      <Filter>graphics\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\image\formats\png.h">
-      <Filter>graphics\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\image\formats\tga.h">
-      <Filter>graphics\image\formats</Filter>
     </ClInclude>
     <ClInclude Include="core\core.h">
       <Filter>core</Filter>
@@ -761,6 +743,24 @@
     <ClInclude Include="graphics\raster\path_adapter.h">
       <Filter>graphics\raster</Filter>
     </ClInclude>
+    <ClInclude Include="graphics\image\formats\bmp.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\dds.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\ico.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\jpg.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\png.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\tga.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -780,9 +780,6 @@
     </Filter>
     <Filter Include="graphics\image">
       <UniqueIdentifier>{7c7dde39-a045-4635-a52c-0af3676d3882}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="graphics\image\formats">
-      <UniqueIdentifier>{c5b7d167-7308-4813-9cdb-bab67b2294da}</UniqueIdentifier>
     </Filter>
     <Filter Include="core\math">
       <UniqueIdentifier>{cb6c943e-d954-4c9b-9492-3fdf01283f00}</UniqueIdentifier>
@@ -810,6 +807,9 @@
     </Filter>
     <Filter Include="graphics\raster\agg\util">
       <UniqueIdentifier>{6a12fd04-1e4c-4cd0-88ff-bf8f0f2807e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\image\formats">
+      <UniqueIdentifier>{1212c281-62d5-4205-a647-d12b274a2777}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

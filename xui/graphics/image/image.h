@@ -367,10 +367,10 @@ namespace graphics { namespace image
 
     struct color_mask_abgr_t
     {
-        uint32_t r;
-        uint32_t g;
-        uint32_t b;
-        uint32_t a;
+        uint32_t r = 0;
+        uint32_t g = 0;
+        uint32_t b = 0;
+        uint32_t a = 0;
     };
 
 
