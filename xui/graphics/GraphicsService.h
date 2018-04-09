@@ -4,6 +4,7 @@
 #include "core/math/rect.h"
 #include "image/image.h"
 #include "text/text.h"
+#include "raster/path.h"
 
 namespace graphics
 {
@@ -80,6 +81,8 @@ namespace graphics
         virtual void DrawImage(graphics::IGraphicsImage & image, rc32_t rect) = 0;
         virtual void DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region) = 0;
         virtual void DrawString(graphics::IGraphicsString & str, core::math::pt32_t point) = 0;
+
+        virtual void FillPath(graphics::raster::path & path, core::color32 color) = 0;
 
         virtual graphics::text::fontmetrics GetFontMetrics(graphics::text::font font) = 0;
         virtual core::math::si32_t MeasureString(std::string str, graphics::text::font font) = 0;

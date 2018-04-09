@@ -49,6 +49,7 @@ namespace graphics
         void DrawImage(Image & image, rc32_t rect, rc32_t region);
 
     public:
+        void FillPath(graphics::raster::path & path, core::color32 color);
         text::fontmetrics GetFontMetrics(text::font font);
         si32_t MeasureString(std::string str, text::font font);
 

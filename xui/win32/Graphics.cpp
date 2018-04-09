@@ -307,6 +307,37 @@ namespace win32
         
     }
 
+    void Graphics::FillPath(graphics::raster::path & path, core::color32 color)
+    {
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
+
+        graphics::raster::command cmd = graphics::raster::none;
+        int32_t status = 0;
+        float64_t x = 0;
+        float64_t y = 0;
+
+        _raster.reset();
+        while (path.vertex(status, x, y, cmd))
+        {
+            switch(cmd)
+            {
+            case graphics::raster::none:
+                break;
+            case graphics::raster::move:
+                _raster.move_to_d(x, y);
+                break;
+            case graphics::raster::line:
+                _raster.line_to_d(x, y);
+                break;
+            case graphics::raster::close:
+                _raster.close_polygon();
+                break;
+            }
+        }
+        agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
+    }
+
     graphics::text::fontmetrics Graphics::GetFontMetrics(graphics::text::font font)
     {
         SetFont(_objCache->GetFont(font));

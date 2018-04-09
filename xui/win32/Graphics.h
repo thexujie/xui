@@ -40,6 +40,7 @@ namespace win32
         void DrawString(graphics::IGraphicsString & str, core::math::pt32_t point);
 
     public:
+        void FillPath(graphics::raster::path & path, core::color32 color);
         graphics::text::fontmetrics GetFontMetrics(graphics::text::font font);
         core::math::si32_t MeasureString(std::string str, graphics::text::font font);
 

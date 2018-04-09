@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Graphics.h"
+#include "raster/agg.h"
 
 namespace graphics
 {
@@ -68,7 +69,9 @@ namespace graphics
         if (!_graphics)
             return;
 
-        _graphics->DrawEllipse(ellipse, color, width);
+        agg::ellipse path(ellipse.centerX(), ellipse.centerY(), ellipse.cx / 2, ellipse.cy / 2);
+        agg::conv_stroke<agg::ellipse> pg(path);
+        _graphics->FillPath(pg, color, width);
     }
 
     void Graphics::FillEllipse(rc32_t ellipse, color32 color)
@@ -277,6 +280,14 @@ namespace graphics
             return;
 
         _graphics->DrawImage(*(image.image()), rect, region);
+    }
+
+    void Graphics::FillPath(graphics::raster::path & path, core::color32 color)
+    {
+        if (!_graphics)
+            return;
+
+        _graphics->FillPath(path, color);
     }
 
     text::fontmetrics Graphics::GetFontMetrics(text::font font)
