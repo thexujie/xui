@@ -18,9 +18,21 @@
 #include "agg/agg_blur.h"
 #include "agg/agg_path_storage.h"
 
+#include "agg/agg_span_allocator.h"
+#include "agg/agg_span_image_filter.h"
+#include "agg/agg_span_image_filter_gray.h"
+#include "agg/agg_span_image_filter_rgb.h"
+#include "agg/agg_span_image_filter_rgba.h"
+#include "agg/agg_span_interpolator_linear.h"
+#include "agg/agg_span_interpolator_persp.h"
+#include "agg/agg_span_interpolator_trans.h"
+
 #include "agg/agg_ellipse.h"
 #include "agg/agg_rounded_rect.h"
 #include "path_adapter.h"
+
+#include "agg/agg_image_accessors.h"
+#include "agg/agg_image_filters.h"
 
 namespace agg { namespace tools
 {

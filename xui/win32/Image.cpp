@@ -173,17 +173,17 @@ namespace win32
             rule->dst_length = rule->dst_pitch * rule->height;
             break;
         case cmode_r8g8b8:
-            rule->dst_mode = cmode_x8r8g8b8;
-            rule->pixel_convert_fun = color_r8g8b8_to_x8r8g8b8;
-            rule->image_convert_fun = image_convert_ex;
+            rule->dst_mode = cmode_r8g8b8;
+            rule->pixel_convert_fun = color_24_to_24;
+            rule->image_convert_fun = image_convert_copy_ex;
 
             rule->src_bits = 24;
             rule->src_stride = 3;
             rule->src_pitch = align_to_4(rule->width * 3);
 
-            rule->dst_bits = 32;
-            rule->dst_stride = 4;
-            rule->dst_pitch = rule->width * 4;
+            rule->dst_bits = 24;
+            rule->dst_stride = 3;
+            rule->dst_pitch = align_to_4(rule->width * 3);
 
             rule->dst_length = rule->dst_pitch * rule->height;
             break;
