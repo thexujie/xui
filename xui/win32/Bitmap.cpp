@@ -60,7 +60,7 @@ namespace win32
 
     graphics::pixmap_buffer Bitmap::buffer() const
     {
-        return { _data, _size, _strike, _pitch, true };
+        return { _data, _size, _strike, _pitch, false };
     }
 
     core::error_e Bitmap::Save(std::string path) const

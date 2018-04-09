@@ -503,7 +503,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    const trans_perspective &
+    inline const trans_perspective &
     trans_perspective::multiply_inv(const trans_perspective & m)
     {
         trans_perspective t = m;
@@ -512,7 +512,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    const trans_perspective &
+    inline const trans_perspective &
     trans_perspective::multiply_inv(const trans_affine & m)
     {
         trans_affine t = m;
@@ -521,7 +521,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    const trans_perspective &
+    inline const trans_perspective &
     trans_perspective::premultiply_inv(const trans_perspective & m)
     {
         trans_perspective t = m;
@@ -530,7 +530,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    const trans_perspective &
+    inline const trans_perspective &
     trans_perspective::premultiply_inv(const trans_affine & m)
     {
         trans_perspective t(m);
@@ -716,14 +716,14 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void trans_perspective::translation(double * dx, double * dy) const
+    inline void trans_perspective::translation(double * dx, double * dy) const
     {
         *dx = tx;
         *dy = ty;
     }
 
     //------------------------------------------------------------------------
-    void trans_perspective::scaling(double * x, double * y) const
+    inline void trans_perspective::scaling(double * x, double * y) const
     {
         double x1 = 0.0;
         double y1 = 0.0;
@@ -738,7 +738,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void trans_perspective::scaling_abs(double * x, double * y) const
+    inline void trans_perspective::scaling_abs(double * x, double * y) const
     {
         *x = sqrt(sx * sx + shx * shx);
         *y = sqrt(shy * shy + sy * sy);

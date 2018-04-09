@@ -7,8 +7,7 @@ namespace win32
 {
     using namespace core;
 
-    Graphics::Graphics(std::shared_ptr<win32::Bitmap> bitmap) : _bitmap(bitmap), _hdc(bitmap->hdc()), _objCache(std::make_shared<GDIObjectCache>(bitmap->hdc())),
-        _pixf(_rbuf), _renderer(_pixf)
+    Graphics::Graphics(std::shared_ptr<win32::Bitmap> bitmap) : _bitmap(bitmap), _hdc(bitmap->hdc()), _objCache(std::make_shared<GDIObjectCache>(bitmap->hdc()))
     {
         //::SetStretchBltMode(*_hdc, COLORONCOLOR);
         ::SetStretchBltMode(*_hdc, STRETCH_HALFTONE);
@@ -18,6 +17,7 @@ namespace win32
 
         graphics::pixmap_buffer buffer = bitmap->buffer();
         _rbuf.attach(reinterpret_cast<agg::int8u *>(buffer.data), buffer.size.cx, buffer.size.cy, buffer.flip_y ? -buffer.pitch : buffer.pitch);
+        _raster.clip_box(0, 0, buffer.size.cx, buffer.size.cy);
     }
 
     void Graphics::PushOrign(core::math::pt32_t point)
@@ -120,26 +120,37 @@ namespace win32
 
     void Graphics::DrawRect(core::math::rc32_t rect, core::color32 color, float32_t width)
     {
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
+
+        agg::path_storage ps;
+        agg::conv_stroke<agg::path_storage> pg(ps);
+        pg.width(width);
+
+        ps.move_to(rect.x, rect.y);
+        ps.line_to(rect.right(), rect.y);
+        ps.line_to(rect.right(), rect.bottom());
+        ps.line_to(rect.x, rect.bottom());
+        ps.close_polygon();
         _raster.reset();
-        _raster.move_to(rect.x, rect.y);
-        _raster.line_to(rect.right(), rect.y);
-        _raster.line_to(rect.right(), rect.bottom());
-        _raster.line_to(rect.x, rect.bottom());
-        _raster.close_polygon();
-        agg::render_scanlines_aa_solid(_raster, _sl, _renderer, agg::tools::rgba(color));
+        _raster.add_path(pg);
+        agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
     }
 
     void Graphics::FillRect(core::math::rc32_t rect, color32 color)
     {
-        if(!*_hdc || !_objCache)
-            return;
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
 
-        RECT rc = { rect.x, rect.y, rect.cx, rect.cy };
-
-        SetPen(_objCache->GetPen(AffineColor(colors::Transparent), 1));
-        SetBrush(_objCache->GetBrush(AffineColor(color)));
-
-        ::Rectangle(*_hdc, rect.x, rect.y, rect.right() + 1, rect.bottom() + 1);
+        agg::path_storage ps;
+        ps.move_to(rect.x, rect.y);
+        ps.line_to(rect.right(), rect.y);
+        ps.line_to(rect.right(), rect.bottom());
+        ps.line_to(rect.x, rect.bottom());
+        ps.close_polygon();
+        _raster.reset();
+        _raster.add_path(ps);
+        agg::render_scanlines_aa_solid(_raster, _sl, renderer, agg::tools::rgba(color));
     }
 
     void Graphics::DrawString(std::string str, core::math::pt32_t point, graphics::text::font font, core::color32 color)

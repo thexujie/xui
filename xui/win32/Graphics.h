@@ -56,7 +56,5 @@ namespace win32
         agg::scanline_u8 _sl;
 
         agg::rendering_buffer _rbuf;
-        agg::pixfmt_rgba32 _pixf;
-        agg::renderer_base<agg::pixfmt_rgba32> _renderer;
     };
 }

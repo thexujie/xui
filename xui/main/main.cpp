@@ -14,15 +14,18 @@
 
 using namespace core;
 
+agg::rendering_buffer rbuf;
+agg::rasterizer_scanline_aa<> raster;
+agg::scanline_u8 sl;
+
 void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 {
-    agg::rendering_buffer rbuf;
-    {
-        auto buffer = pixmap->buffer();
-        rbuf.attach((agg::int8u *)buffer.data, buffer.size.cx, buffer.size.cy, buffer.flip_y ? -buffer.pitch : buffer.pitch);
-    }
+    auto buffer = pixmap->buffer();
+    rbuf.attach((agg::int8u *)buffer.data, buffer.size.cx, buffer.size.cy, buffer.flip_y ? -buffer.pitch : buffer.pitch);
     agg::pixfmt_rgba32 pixf(rbuf);
     agg::renderer_base<agg::pixfmt_rgba32> renb(pixf);
+
+    //renb.clear(agg::rgba(1, 1, 1));
 
     agg::path_storage path;
     path.remove_all();
@@ -90,9 +93,6 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 
     core::math::si64f_t size = { shadow_bounds.x2, shadow_bounds.y2 };
 
-    //renb.clear(agg::rgba(1, 1, 1));
-    agg::rasterizer_scanline_aa<> raster;
-    agg::scanline_u8 sl;
 
     //agg::render_scanlines_aa_solid(raster, sl, renb, agg::rgba(0.2, 0.3, 0));
 
@@ -165,6 +165,21 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     raster.reset();
     raster.add_path(stroke);
     agg::render_scanlines_aa_solid(raster, sl, renb, agg::rgba(0.2, 0.6, 0.6, 0.8));
+
+
+    agg::path_storage ps;
+    agg::conv_stroke<agg::path_storage> pg(ps);
+    pg.width(2.0);
+
+    core::math::rc32_t rect{100, 100, 200, 50};
+    ps.move_to(rect.x, rect.y);
+    ps.line_to(rect.right(), rect.y);
+    ps.line_to(rect.right(), rect.bottom());
+    ps.line_to(rect.x, rect.bottom());
+    ps.close_polygon();
+    raster.reset();
+    raster.add_path(pg);
+    agg::render_scanlines_aa_solid(raster, sl, renb, agg::tools::rgba(colors::Black));
 }
 int main()
 {
@@ -225,6 +240,9 @@ int main()
     auto si = graphics->MeasureString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空\r\n位过了旺季安哥拉晋文公来围观", {"", 10 });
 
     //testAgg(pixmap);
+    graphics->DrawRect({ 100, 100, 200, 50 }, colors::Red, 2.0f);
+
+    graphics->FillRect({ 100, 160, 200, 50 }, 0x80ff0000);
 
     pixmap->Save("out.bmp");
     //image->Save("pd2.jpg");
