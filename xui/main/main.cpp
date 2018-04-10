@@ -210,7 +210,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     agg::span_allocator<agg::rgba8> sa;
     agg::render_scanlines_aa(raster, sl, renb, sa, sg);
 
-    //agg::render_scanlines_aa_solid(raster, sl, renb, agg::rgba(0.6, 0, 0, 0.8));
+    agg::render_scanlines_aa_solid(raster, sl, renb, agg::rgba(0.6, 0, 0, 0.8));
 }
 #endif
 int main()

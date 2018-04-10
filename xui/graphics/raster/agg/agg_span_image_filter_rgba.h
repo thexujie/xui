@@ -228,8 +228,7 @@ namespace agg
         //--------------------------------------------------------------------
         void generate(color_type * span, int x, int y, unsigned len)
         {
-            base_type::interpolator().begin(x + base_type::filter_dx_dbl(),
-                y + base_type::filter_dy_dbl(), len);
+            base_type::interpolator().begin(x + base_type::filter_dx_dbl(), y + base_type::filter_dy_dbl(), len);
 
             calc_type fg[4];
             value_type back_r = m_back_color.r;
