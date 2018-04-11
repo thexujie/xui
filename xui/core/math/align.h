@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace core { namespace math
+namespace core::math
 {
     enum AxisE
     {
@@ -91,4 +91,4 @@ namespace core { namespace math
             mask = 0xfff
         };
     };
-}}
+}

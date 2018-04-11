@@ -12,6 +12,7 @@ namespace core
     int32_t process_id();
 
     void thread_set_name(int thread_id, std::string name);
+
     enum thread_priority
     {
         thread_priority_idle,
@@ -22,5 +23,6 @@ namespace core
         thread_priority_highest,
         thread_priority_realtime,
     };
+
     void thread_set_priority(thread_priority priority);
 }

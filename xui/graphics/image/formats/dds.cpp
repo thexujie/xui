@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "dds.h"
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     using namespace core;
 
@@ -89,11 +89,11 @@ namespace graphics { namespace image { namespace formats
     }
 
     void dds_convert_bc1(int32_t width, int32_t height,
-                         pixel_convert_fun_t conv_fun,
-                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                         const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-                         byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                         int32_t flags)
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
+        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
+        int32_t flags)
     {
         int32_t texel_w = width >> 2;
         int32_t texel_h = height >> 2;
@@ -126,11 +126,11 @@ namespace graphics { namespace image { namespace formats
     }
 
     void dds_convert_bc2(int32_t width, int32_t height,
-                         pixel_convert_fun_t conv_fun,
-                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                         const byte_t * src, int32_t src_strike, int32_t src_pitch,
-                         byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-                         int32_t flags)
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
+        int32_t flags)
     {
         int32_t texel_w = width >> 2;
         int32_t texel_h = height >> 2;
@@ -171,11 +171,11 @@ namespace graphics { namespace image { namespace formats
 
 
     void dds_convert_bc3(int32_t width, int32_t height,
-                         pixel_convert_fun_t conv_fun,
-                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                         const byte_t * src, int32_t src_strike, int32_t src_pitch,
-                         byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-                         int32_t flags)
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
+        int32_t flags)
     {
         int32_t texel_w = width >> 2;
         int32_t texel_h = height >> 2;
@@ -216,11 +216,11 @@ namespace graphics { namespace image { namespace formats
     }
 
     void dds_convert_copy_dxt1(int32_t width, int32_t height,
-                               pixel_convert_fun_t conv_fun,
-                               const byte_t *, int32_t,
-                               const byte_t * src, int32_t src_stride, int32_t src_pitch,
-                               byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                               int32_t flags)
+        pixel_convert_fun_t conv_fun,
+        const byte_t *, int32_t,
+        const byte_t * src, int32_t src_stride, int32_t src_pitch,
+        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
+        int32_t flags)
     {
         int32_t texel_h = (height + 3) >> 2;
         for (int32_t row = 0; row < texel_h; ++row)
@@ -232,11 +232,11 @@ namespace graphics { namespace image { namespace formats
     }
 
     void dds_convert_copy_dxt23(int32_t width, int32_t height,
-                                pixel_convert_fun_t conv_fun,
-                                const byte_t *, int32_t,
-                                const byte_t * src, int32_t src_strike, int32_t src_pitch,
-                                byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-                                int32_t flags)
+        pixel_convert_fun_t conv_fun,
+        const byte_t *, int32_t,
+        const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
+        int32_t flags)
     {
         int32_t texel_h = (height + 3) >> 2;
         for (int32_t row = 0; row < texel_h; ++row)
@@ -248,11 +248,11 @@ namespace graphics { namespace image { namespace formats
     }
 
     void dds_convert_copy_dxt45(int32_t width, int32_t height,
-                                pixel_convert_fun_t conv_fun,
-                                const byte_t *, int32_t,
-                                const byte_t * src, int32_t src_strike, int32_t src_pitch,
-                                byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-                                int32_t flags)
+        pixel_convert_fun_t conv_fun,
+        const byte_t *, int32_t,
+        const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
+        int32_t flags)
     {
         int32_t texel_h = (height + 3) >> 2;
         for (int32_t row = 0; row < texel_h; ++row)
@@ -301,7 +301,7 @@ namespace graphics { namespace image { namespace formats
     }
 
     core::error_e dds_create(const byte_t * buffer, int32_t length, image_data_t * img,
-                       image_convert_rule_fun_t pfn_match, void * user_data)
+        image_convert_rule_fun_t pfn_match, void * user_data)
     {
         if (!pfn_match)
             pfn_match = dds_rule_default;
@@ -317,7 +317,7 @@ namespace graphics { namespace image { namespace formats
 
         cmode_e color_mode = dds_get_cmode(header->pixel_format);
 
-        image_convert_rule_t rule = {image_format_dds, (int32_t)header->width, (int32_t)header->height, color_mode, user_data};
+        image_convert_rule_t rule = { image_format_dds, (int32_t)header->width, (int32_t)header->height, color_mode, user_data };
         if (!pfn_match(&rule))
             return error_bad_format;
 
@@ -334,10 +334,10 @@ namespace graphics { namespace image { namespace formats
         img->buffer = image_malloc(img->length);
         //! dds 不使用调色板
         rule.image_convert_fun(rule.width, rule.height,
-                               rule.pixel_convert_fun,
-                               nullptr, 0,
-                               buffer, rule.src_stride, rule.src_pitch,
-                               img->buffer, rule.dst_stride, rule.dst_pitch, 0);
+            rule.pixel_convert_fun,
+            nullptr, 0,
+            buffer, rule.src_stride, rule.src_pitch,
+            img->buffer, rule.dst_stride, rule.dst_pitch, 0);
         return error_ok;
     }
 
@@ -409,9 +409,7 @@ namespace graphics { namespace image { namespace formats
         {
             color_mode = cmode_from_mask_abgr(pixel_format.color_mask, pixel_format.bit_count);
         }
-        else
-        {
-        }
+        else { }
         return color_mode;
     }
 
@@ -486,4 +484,4 @@ namespace graphics { namespace image { namespace formats
     {
         return false;
     }
-}}}
+}

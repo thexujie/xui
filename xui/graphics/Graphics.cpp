@@ -320,6 +320,7 @@ namespace graphics
 
         return _graphics->GetFontMetrics(font);
     }
+
     si32_t Graphics::MeasureString(std::string str, text::font font)
     {
         if (!_graphics)

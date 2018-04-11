@@ -1,22 +1,16 @@
 #pragma once
 
-namespace core { namespace math
+namespace core::math
 {
-    template <typename ValT>
+    template<typename ValT>
     class vec3
     {
     public:
-        vec3() : x(0), y(0), z(0)
-        {
-        }
+        vec3() : x(0), y(0), z(0) { }
 
-        vec3(ValT _x, ValT _y, ValT _z) : x(_x), y(_y), z(_z)
-        {
-        }
+        vec3(ValT _x, ValT _y, ValT _z) : x(_x), y(_y), z(_z) { }
 
-        vec3(const vec3 & vec) : x(vec.x), y(vec.y), z(vec.z)
-        {
-        }
+        vec3(const vec3 & vec) : x(vec.x), y(vec.y), z(vec.z) { }
 
         void set(ValT _x, ValT _y, ValT _z)
         {
@@ -179,4 +173,4 @@ namespace core { namespace math
 
     typedef vec3<int32_t> intx4;
     //typedef vec3x1<float32_t> float2x1;
-}}
+}

@@ -3,38 +3,30 @@
 #include "align.h"
 #include "vec2.h"
 
-namespace core { namespace math
+namespace core::math
 {
     /************************************************************************/
     /* @brief rectangle 通常表示的有效矩形区域是不包含其右边和下边最后一排像素的。
     /************************************************************************/
 
-    template <typename RT>
+    template<typename RT>
     class rect
     {
     public:
-        rect() : x(0), y(0), cx(0), cy(0)
-        {
-        }
+        rect() : x(0), y(0), cx(0), cy(0) { }
 
         rect(RT _x, RT _y, RT _w, RT _h)
-            : x(_x), y(_y), cx(_w), cy(_h)
-        {
-        }
+            : x(_x), y(_y), cx(_w), cy(_h) { }
 
         //explicit rect_tmpl(const vec2<RT> & _size)
         //	: position(0, 0), size(_size)
         //{
         //}
         rect(const vec2<RT> & _position, const vec2<RT> & _size)
-            : position(_position), size(_size)
-        {
-        }
+            : position(_position), size(_size) { }
 
         rect(const rect & another)
-            : x(another.x), y(another.y), cx(another.cx), cy(another.cy)
-        {
-        }
+            : x(another.x), y(another.y), cx(another.cx), cy(another.cy) { }
 
         const RT right() const { return x + cx; }
         const RT bottom() const { return y + cy; }
@@ -202,9 +194,7 @@ namespace core { namespace math
                     set(x_min, y_min, x_max - x_min, y_max - y_min);
                 }
             }
-            else
-            {
-            }
+            else { }
             return *this;
         }
 
@@ -255,7 +245,7 @@ namespace core { namespace math
 
         bool operator !=(const rect & another) const { return !operator==(another); }
 
-        template <typename RT2>
+        template<typename RT2>
         explicit operator rect<RT2>() const
         {
             return rect<RT2>((RT2)x, (RT2)y, (RT2)cx, (RT2)cy);
@@ -319,4 +309,4 @@ namespace core { namespace math
 
     typedef rect<int32_t> rc32_t;
     typedef rect<float32_t> rc32f_t;
-}}
+}

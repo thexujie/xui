@@ -4,7 +4,6 @@
 
 namespace core
 {
-
     void breakpoint()
     {
         //_asm int 3

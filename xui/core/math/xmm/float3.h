@@ -3,29 +3,19 @@
 #include "xm/xm.h"
 #include "float2.h"
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
     struct float3
     {
-        inline float3() : x(0), y(0), z(0)
-        {
-        }
+        inline float3() : x(0), y(0), z(0) { }
 
-        inline float3(const float3 & another) : x(another.x), y(another.y), z(another.z)
-        {
-        }
+        inline float3(const float3 & another) : x(another.x), y(another.y), z(another.z) { }
 
-        inline float3(const xmf & m128) : x(xmv_x(m128)), y(xmv_y(m128)), z(xmv_z(m128))
-        {
-        }
+        inline float3(const xmf & m128) : x(xmv_x(m128)), y(xmv_y(m128)), z(xmv_z(m128)) { }
 
-        inline float3(float32_t _x, float32_t _y, float32_t _z) : x(_x), y(_y), z(_z)
-        {
-        }
+        inline float3(float32_t _x, float32_t _y, float32_t _z) : x(_x), y(_y), z(_z) { }
 
-        inline float3(const float32_t (&arr)[3]) : x(arr[0]), y(arr[1]), z(arr[2])
-        {
-        }
+        inline float3(const float32_t (&arr)[3]) : x(arr[0]), y(arr[1]), z(arr[2]) { }
 
         inline float3 & operator=(const float32_t (&arr)[3])
         {
@@ -153,4 +143,4 @@ namespace core { namespace math { namespace xmm
     {
         return vec / rate;
     }
-}}}
+}

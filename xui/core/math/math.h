@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace math
+namespace core::math
 {
     /**
     * @brief 四舍五入，小于 0.5f 的舍去，大于或等于 0.5f 的补齐 1.0f。

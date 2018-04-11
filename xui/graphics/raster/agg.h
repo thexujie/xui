@@ -34,10 +34,10 @@
 #include "agg/agg_image_accessors.h"
 #include "agg/agg_image_filters.h"
 
-namespace agg { namespace tools
+namespace agg::tools
 {
     inline agg::rgba rgba(core::color32 color)
     {
         return agg::rgba{ color.r / 255.0, color.g / 255.0, color.b / 255.0, color.a / 255.0 };
     }
-}}
+}

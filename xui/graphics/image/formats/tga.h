@@ -2,7 +2,7 @@
 
 #include "graphics/image/image.h"
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     //////////////////////////////////////////////////////////////////////////
     // Tga 文件(压缩)格式
@@ -96,18 +96,18 @@ namespace graphics { namespace image { namespace formats
 
     bool is_tga_data(const byte_t * buffer, int32_t length);
     core::error_e tga_create(const byte_t * buffer, int32_t length, image_data_t * img,
-                       image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
+        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
 
     bool tga_rule_default(image_convert_rule_t * rule);
 
     void image_convert_tga_rle8(int32_t width, int32_t height,
-                                pixel_convert_fun_t conv_fun,
-                                const byte_t * pal, int32_t pal_stride,
-                                const byte_t * src, int32_t src_stride, int32_t src_pitch,
+        pixel_convert_fun_t conv_fun,
+        const byte_t * pal, int32_t pal_stride,
+        const byte_t * src, int32_t src_stride, int32_t src_pitch,
         byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                                int32_t flags);
+        int32_t flags);
 
     core::error_e tga_save(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata);
     core::error_e tga_save_ex(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata,
-                      tga_format_e format);
-}}}
+        tga_format_e format);
+}

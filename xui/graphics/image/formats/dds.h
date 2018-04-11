@@ -2,13 +2,13 @@
 
 #include "graphics/image/image.h"
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
 #define DDS_MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
 	((uint32_t)(uint8_t)(ch0) | ((uint32_t)(uint8_t)(ch1) << 8) | \
 	((uint32_t)(uint8_t)(ch2) << 16) | ((uint32_t)(uint8_t)(ch3) << 24))
 
-    const uint8_t DDS_HEADER[4] = {0x44, 0x44, 0x53, 0x20};
+    const uint8_t DDS_HEADER[4] = { 0x44, 0x44, 0x53, 0x20 };
     const uint32_t DDS_MAGIC = DDS_MAKEFOURCC('D', 'D', 'S', ' ');
 
     enum dxt_format_e
@@ -336,55 +336,53 @@ namespace graphics { namespace image { namespace formats
     };
 #pragma pack(pop)
 
-    struct dds_image_data_t : public image_data_t
-    {
-    };
+    struct dds_image_data_t : public image_data_t { };
 
     //////////////////////////////////////////////////////////////////////////
     /// dxt Ñ¹Ëõ
     /// 
 
     void dds_convert_bc1(int32_t width, int32_t height,
-                         pixel_convert_fun_t conv_fun,
-                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                         const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
         byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                         int32_t flags);
+        int32_t flags);
 
     void dds_convert_bc2(int32_t width, int32_t height,
-                         pixel_convert_fun_t conv_fun,
-                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                         const byte_t * src, int32_t /*src_strike*/, int32_t /*src_pitch*/,
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t /*src_strike*/, int32_t /*src_pitch*/,
         byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-                         int32_t flags);
+        int32_t flags);
 
     void dds_convert_bc3(int32_t width, int32_t height,
-                         pixel_convert_fun_t conv_fun,
-                         const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                         const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t src_strike, int32_t src_pitch,
         byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-                         int32_t flags);
+        int32_t flags);
 
     void dds_convert_copy_dxt1(int32_t width, int32_t height,
-                               pixel_convert_fun_t conv_fun,
-                               const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                               const byte_t * src, int32_t src_stride, int32_t src_pitch,
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t src_stride, int32_t src_pitch,
         byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                               int32_t flags);
+        int32_t flags);
 
     void dds_convert_copy_dxt23(int32_t width, int32_t height,
-                                pixel_convert_fun_t conv_fun,
-                                const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                                const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t src_strike, int32_t src_pitch,
         byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-                                int32_t flags);
+        int32_t flags);
 
     void dds_convert_copy_dxt45(int32_t width, int32_t height,
-                                pixel_convert_fun_t conv_fun,
-                                const byte_t * /*pal*/, int32_t /*pal_stride*/,
-                                const byte_t * src, int32_t src_strike, int32_t src_pitch,
-                                byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-                                int32_t flags);
+        pixel_convert_fun_t conv_fun,
+        const byte_t * /*pal*/, int32_t /*pal_stride*/,
+        const byte_t * src, int32_t src_strike, int32_t src_pitch,
+        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
+        int32_t flags);
 
 
     void color_dds_a4r5g6b5_to_r5g5b5(const void * src_pixel, void * dst_pixel);
@@ -547,9 +545,9 @@ namespace graphics { namespace image { namespace formats
 
     bool is_dds_data(const byte_t * buffer, int32_t length);
     core::error_e dds_create(const byte_t * buffer, int32_t length, image_data_t * img,
-                       image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
+        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
     cmode_e dds_get_cmode(const dds_pixel_format_t & pixel_format);
     cmode_e dds_get_cmode(dxgi_format_e format);
     void dds_get_pitch(cmode_e cmode, int32_t width, int32_t height, int32_t * row, int32_t * col, int32_t * pitch);
     bool dds_rule_default(image_convert_rule_t * rule);
-}}}
+}

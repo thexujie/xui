@@ -2,7 +2,7 @@
 #include <math.h>
 #include "math.h"
 
-namespace math
+namespace core::math
 {
     int32_t round(float32_t val)
     {

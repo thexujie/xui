@@ -2,7 +2,7 @@
 #include "float4x4.h"
 #include "xmm.h"
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
     float4x4 & float4x4::identity()
     {
@@ -119,4 +119,4 @@ namespace core { namespace math { namespace xmm
     {
         result = xm_matr_transpose(*this);
     }
-}}}
+}

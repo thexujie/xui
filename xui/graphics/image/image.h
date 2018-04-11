@@ -1,6 +1,6 @@
 #pragma once
 
-namespace graphics { namespace image
+namespace graphics::image
 {
     /**
     * 图像格式
@@ -114,7 +114,7 @@ namespace graphics { namespace image
 
         cmode_d24s8,
         //cmode_dx100 = cmode_dx1 + 99, // keep..
-    } ;
+    };
 
     const char * cmode_text(cmode_e cmode);
 
@@ -377,10 +377,10 @@ namespace graphics { namespace image
     // 转换时是否需要翻转行序
     const int32_t IMAGE_CONVERT_FLIP_Y = 0x1;
 
-    typedef void(*pixel_convert_fun_t)(const void * src_pixel, void * dst_pixel);
+    typedef void (*pixel_convert_fun_t)(const void * src_pixel, void * dst_pixel);
 
     /// 以下用于支持颜色之间的相互转换
-    typedef void(*image_convert_fun_t)(int32_t width, int32_t height,
+    typedef void (*image_convert_fun_t)(int32_t width, int32_t height,
         pixel_convert_fun_t conv_fun, const byte_t * palette, int32_t pal_stride,
         const byte_t * src, int32_t src_strike, int32_t src_pitch,
         byte_t * dst, int32_t dst_strike, int32_t dst_pitch, int32_t flags);
@@ -418,10 +418,10 @@ namespace graphics { namespace image
         byte_t * dst_buffer;
     };
 
-    typedef bool(*image_convert_rule_fun_t)(image_convert_rule_t * rule);
+    typedef bool (*image_convert_rule_fun_t)(image_convert_rule_t * rule);
 
-    typedef core::error_e(*image_save_write_fun_t)(const void * buffer, int32_t size, void * userdata);
-    typedef core::error_e(*image_save_fun_t)(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata);
+    typedef core::error_e (*image_save_write_fun_t)(const void * buffer, int32_t size, void * userdata);
+    typedef core::error_e (*image_save_fun_t)(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata);
 
     const color_mask_abgr_t MASK_R3G3B2 = { 0x00E0, 0x001C, 0x0003, 0x0000 };
 
@@ -474,8 +474,8 @@ namespace graphics { namespace image
     }
 
     core::error_e image_load(std::string path, image_data_t * img,
-                       image_format_e image_format = image_format_invalid,
-                       image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
+        image_format_e image_format = image_format_invalid,
+        image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
 
     image_format_e image_get_format(const byte_t * buffer, int32_t length);
 
@@ -484,8 +484,8 @@ namespace graphics { namespace image
         image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
 
     core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img,
-                         image_format_e image_format,
-                         image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
+        image_format_e image_format,
+        image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
 
     /**
     * 用 src 所指定的颜色填充 dst。
@@ -607,8 +607,6 @@ namespace graphics { namespace image
         int32_t flags);
 
 
-
-
     // 根据颜色掩码计算颜色类型
     cmode_e cmode_from_mask_abgr(const color_mask_abgr_t & mask, int32_t bits);
 
@@ -714,4 +712,4 @@ namespace graphics { namespace image
     void color_a2b10g10r10_to_a8r8g8b8(const void * src_pixel, void * dst_pixel);
     void color_a2b10g10r10_to_a2b10g10r10(const void * src_pixel, void * dst_pixel);
     void color_a2b10g10r10_to_a2r10g10b10(const void * src_pixel, void * dst_pixel);
-}}
+}

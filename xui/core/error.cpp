@@ -9,7 +9,7 @@ namespace core
     {
         int num;
         const char * tag;
-        const char *str;
+        const char * str;
     };
 
     static const struct error_entry error_entries[] =

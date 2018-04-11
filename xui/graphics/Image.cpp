@@ -23,4 +23,3 @@ namespace graphics
             _image->Save(path);
     }
 }
-

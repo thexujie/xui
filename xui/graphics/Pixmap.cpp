@@ -11,10 +11,7 @@ namespace graphics
         _pixmap = GraphicsService().CreatePixmap(size);
     }
 
-    Pixmap::Pixmap(std::shared_ptr<IGraphicsPixmap> pixmap) : _pixmap(pixmap)
-    {
-        
-    }
+    Pixmap::Pixmap(std::shared_ptr<IGraphicsPixmap> pixmap) : _pixmap(pixmap) { }
 
     pixmap_buffer Pixmap::buffer() const
     {
@@ -32,7 +29,7 @@ namespace graphics
 
     void Pixmap::Save(std::string path)
     {
-        if(!_pixmap)
+        if (!_pixmap)
         {
             _state = error_state;
             return;
@@ -41,4 +38,3 @@ namespace graphics
         _state = _pixmap->Save(path);
     }
 }
-

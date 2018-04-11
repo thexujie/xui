@@ -2,7 +2,7 @@
 
 #include "graphics/image/image.h"
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
 #pragma pack(push, 1)
     struct icon_plane_header_t
@@ -34,4 +34,4 @@ namespace graphics { namespace image { namespace formats
     //} iconimage, *lpiconimage;
 
     int32_t ico_create(byte_t * buffer, int32_t length, image_data_t * img, int32_t iIndex);
-}}}
+}

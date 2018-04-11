@@ -2,29 +2,19 @@
 
 #include "xm/xm.h"
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
     struct quat4
     {
-        quat4() : x(0), y(0), z(0), w(0)
-        {
-        }
+        quat4() : x(0), y(0), z(0), w(0) { }
 
-        quat4(float32_t _x, float32_t _y, float32_t _z, float32_t _w) : x(_x), y(_y), z(_z), w(_w)
-        {
-        }
+        quat4(float32_t _x, float32_t _y, float32_t _z, float32_t _w) : x(_x), y(_y), z(_z), w(_w) { }
 
-        quat4(const quat4 & another) : x(another.x), y(another.y), z(another.z), w(another.w)
-        {
-        }
+        quat4(const quat4 & another) : x(another.x), y(another.y), z(another.z), w(another.w) { }
 
-        quat4(const xmf & v) : x(xmv_x(v)), y(xmv_y(v)), z(xmv_z(v)), w(xmv_w(v))
-        {
-        }
+        quat4(const xmf & v) : x(xmv_x(v)), y(xmv_y(v)), z(xmv_z(v)), w(xmv_w(v)) { }
 
-        quat4(float32_t arr[4]) : x(arr[0]), y(arr[1]), z(arr[2]), w(arr[3])
-        {
-        }
+        quat4(float32_t arr[4]) : x(arr[0]), y(arr[1]), z(arr[2]), w(arr[3]) { }
 
         float32_t & operator[](int32_t iIndex) { return af[iIndex]; }
         const float32_t & operator[](int32_t iIndex) const { return ((const float32_t *)this)[iIndex]; }
@@ -131,4 +121,4 @@ namespace core { namespace math { namespace xmm
             };
         };
     };
-}}}
+}

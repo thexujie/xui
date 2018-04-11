@@ -4,7 +4,7 @@
 #include "bmp.h"
 #include "png.h"
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     int32_t ico_create(byte_t * buffer, int32_t length, image_data_t * img, int32_t index)
     {
@@ -68,7 +68,7 @@ namespace graphics { namespace image { namespace formats
 
         int32_t width = (int32_t)plane->width;
         int32_t height = (int32_t)plane->height;
-        image_convert_rule_t rule = {image_format_bmp, width, height, src_mode, nullptr};
+        image_convert_rule_t rule = { image_format_bmp, width, height, src_mode, nullptr };
         if (bmp_rule_default(&rule))
         {
             image_data_t bmp;
@@ -83,13 +83,13 @@ namespace graphics { namespace image { namespace formats
             bmp.flags = flags;
 
             rule.image_convert_fun(rule.width, rule.height,
-                                   rule.pixel_convert_fun,
-                                   pallete, rule.pal_stride,
-                                   src, rule.src_stride, rule.src_pitch,
-                                   bmp.buffer, rule.dst_stride, rule.dst_pitch, flags);
+                rule.pixel_convert_fun,
+                pallete, rule.pal_stride,
+                src, rule.src_stride, rule.src_pitch,
+                bmp.buffer, rule.dst_stride, rule.dst_pitch, flags);
             *img = bmp;
             return true;
         }
         return false;
     }
-}}}
+}

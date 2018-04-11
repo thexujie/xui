@@ -1,22 +1,16 @@
 #pragma once
 
-namespace core { namespace math
+namespace core::math
 {
-    template <typename ValT>
+    template<typename ValT>
     class vec4
     {
     public:
-        vec4() : x(0), y(0), z(0), w(0)
-        {
-        }
+        vec4() : x(0), y(0), z(0), w(0) { }
 
-        vec4(ValT _x, ValT _y, ValT _z, ValT _w) : x(_x), y(_y), z(_z), w(_w)
-        {
-        }
+        vec4(ValT _x, ValT _y, ValT _z, ValT _w) : x(_x), y(_y), z(_z), w(_w) { }
 
-        vec4(const vec4 & vec) : x(vec.x), y(vec.y), z(vec.z), w(vec.w)
-        {
-        }
+        vec4(const vec4 & vec) : x(vec.x), y(vec.y), z(vec.z), w(vec.w) { }
 
         void set(ValT _x, ValT _y, ValT _z, ValT _w)
         {
@@ -179,4 +173,4 @@ namespace core { namespace math
             };
         };
     };
-}}
+}

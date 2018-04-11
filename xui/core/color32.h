@@ -13,6 +13,7 @@ namespace core
                 float32_t g;
                 float32_t b;
             };
+
             float32_t arr[4];
         };
     };
@@ -31,7 +32,7 @@ namespace core
             return colorf;
         }
 
-        operator uint32_t () const
+        operator uint32_t() const
         {
             return argb;
         }
@@ -39,6 +40,7 @@ namespace core
         union
         {
             uint32_t argb;
+
             struct
             {
                 uint8_t b;
@@ -235,4 +237,3 @@ namespace core
         };
     };
 }
-

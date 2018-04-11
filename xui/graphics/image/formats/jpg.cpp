@@ -6,7 +6,7 @@
 #include "../deps/libjpeg/jpeglib.h"
 #pragma comment(lib, "libjpeg.lib")
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     using namespace core;
 
@@ -17,9 +17,7 @@ namespace graphics { namespace image { namespace formats
     };
 
 
-    void init_source(j_decompress_ptr cinfo)
-    {
-    }
+    void init_source(j_decompress_ptr cinfo) { }
 
     boolean fill_input_buffer(j_decompress_ptr cinfo)
     {
@@ -36,9 +34,7 @@ namespace graphics { namespace image { namespace formats
         }
     }
 
-    void term_source(j_decompress_ptr cinfo)
-    {
-    }
+    void term_source(j_decompress_ptr cinfo) { }
 
     void error_exit(j_common_ptr cinfo)
     {
@@ -78,7 +74,7 @@ namespace graphics { namespace image { namespace formats
 
     // 创建一幅JPEG图片的字节数组
     core::error_e jpg_create(const byte_t * buffer, int32_t length, image_data_t * img, image_convert_rule_fun_t pfn_match,
-                       void * user_data)
+        void * user_data)
     {
         if (!pfn_match)
             pfn_match = jpg_rule_default;
@@ -124,7 +120,7 @@ namespace graphics { namespace image { namespace formats
         int32_t width = (int32_t)cinfo.image_width;
         int32_t height = (int32_t)cinfo.image_height;
 
-        image_convert_rule_t rule = {image_format_jpg, width, height, cmode_b8g8r8, user_data};
+        image_convert_rule_t rule = { image_format_jpg, width, height, cmode_b8g8r8, user_data };
         if (!pfn_match(&rule))
         {
             //jpeg_finish_decompress(&cinfo);
@@ -176,10 +172,10 @@ namespace graphics { namespace image { namespace formats
             img->buffer = image_malloc(rule.dst_length);
 
             rule.image_convert_fun(rule.width, rule.height,
-                                   rule.pixel_convert_fun,
-                                   nullptr, rule.pal_stride,
-                                   src_buffer, rule.src_stride, rule.src_pitch,
-                                   img->buffer, rule.dst_stride, rule.dst_pitch, 0);
+                rule.pixel_convert_fun,
+                nullptr, rule.pal_stride,
+                src_buffer, rule.src_stride, rule.src_pitch,
+                img->buffer, rule.dst_stride, rule.dst_pitch, 0);
             image_free(src_buffer);
         }
         return error_ok;
@@ -189,4 +185,4 @@ namespace graphics { namespace image { namespace formats
     {
         return false;
     }
-}}}
+}

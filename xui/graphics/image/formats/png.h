@@ -2,7 +2,7 @@
 
 #include "graphics/image/image.h"
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     //	数据块符号	数据块名称			多数据块	可选否	位置限制
     //	IHDR		文件头数据块			否		否		第一块
@@ -26,8 +26,8 @@ namespace graphics { namespace image { namespace formats
     //	gIFx		(专用公共数据块)		是		是		无限制
     //	IEND		图像结束数据			否		否		最后一个数据块
 
-    const uint8_t PNG_HEADER[] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
-    const uint8_t PNG_TAIL[12] = {0x0, 0x0, 0x0, 0x0, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82};
+    const uint8_t PNG_HEADER[] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+    const uint8_t PNG_TAIL[12] = { 0x0, 0x0, 0x0, 0x0, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82 };
 #pragma pack(push, 1)
     typedef enum tag_png_color_type
     {
@@ -133,8 +133,8 @@ namespace graphics { namespace image { namespace formats
 
     bool is_png_data(const byte_t * pBuffer, int32_t length);
     core::error_e png_create(const byte_t * buffer, int32_t length, image_data_t * img,
-                       image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
+        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
     bool png_rule_default(image_convert_rule_t * rule);
 
-    const image_convert_fun_t image_convert_png_use_src = (image_convert_fun_t) - 1;
-}}}
+    const image_convert_fun_t image_convert_png_use_src = (image_convert_fun_t)- 1;
+}

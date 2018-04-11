@@ -9,7 +9,7 @@ namespace core { namespace string
         std::vector<std::string> tokens;
         std::string token;
         std::istringstream sstream(src);
-        while(std::getline(sstream, token, delimiter)) { tokens.push_back(token); }
+        while (std::getline(sstream, token, delimiter)) { tokens.push_back(token); }
         return tokens;
     }
 
@@ -20,16 +20,16 @@ namespace core { namespace string
 
         int last = 0;
         int curr = 0;
-        while(curr < src.length())
+        while (curr < src.length())
         {
-            if(src[curr] == delimiter)
+            if (src[curr] == delimiter)
             {
                 tokens.push_back(src.substr(last, curr));
                 last = curr + 1;
             }
             ++curr;
         }
-        if(last <= curr)
+        if (last <= curr)
             tokens.push_back(src.substr(last, curr));
         return tokens;
     }
@@ -210,8 +210,8 @@ namespace core { namespace string
     std::string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes)
     {
         std::string str;
-        const char chars[] = { '0' , '1' , '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-        for(int32_t cnt = 0; cnt < nbytes; ++cnt)
+        const char chars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        for (int32_t cnt = 0; cnt < nbytes; ++cnt)
         {
             byte_t b = bytes.get()[cnt];
             str.append(1, chars[(b >> 4) & 0xf]);

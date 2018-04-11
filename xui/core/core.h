@@ -55,6 +55,7 @@ namespace core
             breakpoint();
 #endif
     }
+
     /*!@brief 断言，如果失败，会触发一个调试断点。非Debug版该函数也会起作用。*/
     template<typename ValT>
     void ensure(const ValT & val)
@@ -183,10 +184,7 @@ namespace core
     * @param ptr 目标指针
     */
     template<typename ValT>
-    void FakeAddRef(ValT *& ptr)
-    {
-
-    }
+    void FakeAddRef(ValT *& ptr) { }
 
     /**
     * @brief 不调用 Release，仅赋空，部分情况下，防止造成循环引用，
@@ -260,6 +258,7 @@ namespace core
     {
         return value < min ? value : (value > max ? max : value);
     }
+
     /**
     * @brief 交换两个数字的值。
     * @param a,b 要交换的两个数的 const 引用。
@@ -267,8 +266,11 @@ namespace core
     template<typename ValT>
     void swap(ValT & a, ValT & b)
     {
-        ValT tmp = a; a = b; b = tmp;
+        ValT tmp = a;
+        a = b;
+        b = tmp;
     }
+
     /**
     * @brief 交换两个指针所指向的数据的值。
     * @param a,b 要交换的两个数的 const 引用。
@@ -276,7 +278,9 @@ namespace core
     template<typename ValT>
     void swap_ptr(ValT * pA, ValT * pB)
     {
-        ValT temp = *pA; *pA = *pB; *pB = temp;
+        ValT temp = *pA;
+        *pA = *pB;
+        *pB = temp;
     }
 
     /**
@@ -589,7 +593,7 @@ namespace core
     }
 
     template<typename ...Args>
-    inline int32_t intx_bits(int32_t bit, Args... args)
+    inline int32_t intx_bits(int32_t bit, Args ... args)
     {
         return ((int32_t)1 << bit) | intx_bits(args...);
     }
@@ -747,7 +751,7 @@ namespace core
     * !@brief 计算固定数组的长度
     */
     template<typename EleT, int32_t LENGTH>
-    constexpr int32_t arraysize(const EleT(&arr)[LENGTH])
+    constexpr int32_t arraysize(const EleT (&arr)[LENGTH])
     {
         return LENGTH;
     }
@@ -774,7 +778,7 @@ namespace core
 
     /*!@brief 将pArray中的iLength个EleT赋值为val。*/
     template<typename EleT, int32_t LENGTH>
-    void arrayfill(EleT(&dst)[LENGTH], const EleT & val)
+    void arrayfill(EleT (&dst)[LENGTH], const EleT & val)
     {
         arrayfill(dst, LENGTH, val);
     }
@@ -796,7 +800,7 @@ namespace core
 
     /*!@brief 复制 src 中的 count 歌 EleT 到容量为 size 个 EleT 的 dst 中。*/
     template<typename EleT, int32_t LENGTH>
-    void arraycpy(EleT(&dst)[LENGTH], const EleT(&src)[LENGTH])
+    void arraycpy(EleT (&dst)[LENGTH], const EleT (&src)[LENGTH])
     {
         arraycpy<EleT>(dst, src, LENGTH);
     }
@@ -918,7 +922,6 @@ namespace core
                         *(insert + 1) = ele;
                     }
                 }
-
             }
         }
         else {}
@@ -1067,6 +1070,7 @@ namespace core
         else
             return ch;
     }
+
     template<typename CharT>
     CharT chupper(CharT ch)
     {
@@ -1668,18 +1672,6 @@ namespace core
         }
         return 0;
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     // ---------------------------------------------- 文件路径相关。
@@ -2361,7 +2353,8 @@ namespace core
         {
             ++length;
             temp /= scale;
-        } while (temp);
+        }
+        while (temp);
 
         if (!text)
             return length;
@@ -2393,7 +2386,8 @@ namespace core
                 else
                     text[--index] = (CharT)('0' + number);
             }
-        } while (value);
+        }
+        while (value);
         text[length] = '\0';
         return length;
     }
@@ -2662,4 +2656,3 @@ namespace core
 
 #pragma endregion
 }
-

@@ -2,7 +2,7 @@
 #include "float3.h"
 #include "xmm.h"
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
     float32_t float3::length() const
     {
@@ -146,4 +146,4 @@ namespace core { namespace math { namespace xmm
         *this = xm_vec_div(*this, vec);
         return *this;
     }
-}}}
+}

@@ -2,11 +2,11 @@
 
 #include "xm.h"
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
-    const xmi xmi_0 = {0, 0, 0, 0};
-    const xmi xmi_255 = {255, 255, 255, 255};
-    const xmi xmi_select_1000 = {0xFFFFFFFFu, 0x00000000u, 0x00000000u, 0x00000000u};
+    const xmi xmi_0 = { 0, 0, 0, 0 };
+    const xmi xmi_255 = { 255, 255, 255, 255 };
+    const xmi xmi_select_1000 = { 0xFFFFFFFFu, 0x00000000u, 0x00000000u, 0x00000000u };
 
     inline xmi xmi_select(xmi v1, xmi v2, xmi ctrl)
     {
@@ -34,4 +34,4 @@ namespace core { namespace math { namespace xmm
         i = _mm_max_epi32(i, max);
         return i;
     }
-}}}
+}

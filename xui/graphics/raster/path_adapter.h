@@ -41,6 +41,7 @@ namespace agg
             uint32_t cmd = agg::path_cmd_stop;
             core::math::pt64f_t coord;
         };
+
         uint32_t status = 0;
         std::array<vertex_t, count> _data;
         size_t _index = 0;

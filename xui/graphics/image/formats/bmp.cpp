@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "bmp.h"
 
-namespace graphics { namespace image { namespace formats
+//namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     using namespace core;
 
@@ -20,7 +21,7 @@ namespace graphics { namespace image { namespace formats
     }
 
     core::error_e bmp_create(const byte_t * buffer, int32_t length, image_data_t * bmp, image_convert_rule_fun_t pfn_match,
-                       void * user_data)
+        void * user_data)
     {
         if (!pfn_match)
             pfn_match = bmp_rule_default;
@@ -192,7 +193,7 @@ namespace graphics { namespace image { namespace formats
             }
         }
 
-        image_convert_rule_t rule = {image_format_bmp, width, height, src_mode, user_data};
+        image_convert_rule_t rule = { image_format_bmp, width, height, src_mode, user_data };
         if (!pfn_match(&rule))
             return error_bad_format;
         bmp->width = rule.width;
@@ -207,10 +208,10 @@ namespace graphics { namespace image { namespace formats
         bmp->buffer = image_malloc(bmp->length);
 
         rule.image_convert_fun(rule.width, rule.height,
-                               rule.pixel_convert_fun,
-                               conv_palette, rule.pal_stride,
-                               conv_buffer, rule.src_stride, rule.src_pitch,
-                               bmp->buffer, rule.dst_stride, rule.dst_pitch, flags);
+            rule.pixel_convert_fun,
+            conv_palette, rule.pal_stride,
+            conv_buffer, rule.src_stride, rule.src_pitch,
+            bmp->buffer, rule.dst_stride, rule.dst_pitch, flags);
         return error_ok;
     }
 
@@ -492,11 +493,11 @@ namespace graphics { namespace image { namespace formats
     }
 
     void image_convert_bmp_index4_rle(int32_t width, int32_t height,
-                                      pixel_convert_fun_t conv_fun,
-                                      const byte_t * pal, int32_t pal_stride,
-                                      const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
+        pixel_convert_fun_t conv_fun,
+        const byte_t * pal, int32_t pal_stride,
+        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
         byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                                      int32_t flags)
+        int32_t flags)
     {
         byte_t * dst_line = dst;
         int32_t pitch = dst_pitch;
@@ -607,11 +608,11 @@ namespace graphics { namespace image { namespace formats
     }
 
     void image_convert_bmp_index8_rle(int32_t width, int32_t height,
-                                      pixel_convert_fun_t conv_fun,
-                                      const byte_t * pal, int32_t pal_stride,
-                                      const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-                                      byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                                      int32_t flags)
+        pixel_convert_fun_t conv_fun,
+        const byte_t * pal, int32_t pal_stride,
+        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
+        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
+        int32_t flags)
     {
         byte_t * dst_line = dst;
         int32_t pitch = dst_pitch;
@@ -706,4 +707,4 @@ namespace graphics { namespace image { namespace formats
             }
         }
     }
-}}}
+}

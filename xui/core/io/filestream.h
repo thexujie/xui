@@ -3,7 +3,7 @@
 #include <fstream>
 #include "buffer.h"
 
-namespace core { namespace io
+namespace core::io
 {
     using namespace core;
 
@@ -21,4 +21,4 @@ namespace core { namespace io
     };
 
     std::tuple<std::shared_ptr<byte_t>, int64_t> readFullFile(std::string path);
-}}
+}

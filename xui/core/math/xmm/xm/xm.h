@@ -19,25 +19,17 @@ using namespace DirectX;
 
 #define xm_shuffle(fp0, fp1, fp2, fp3) (((fp0) << 0) | ((fp1) << 2) | ((fp2) << 4) | ((fp3 << 6)))
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
     union xmt
     {
-        xmt()
-        {
-        }
+        xmt() { }
 
-        xmt(float32_t _x, float32_t _y, float32_t _z, float32_t _w) : fx(_x), fy(_y), fz(_z), fw(_w)
-        {
-        }
+        xmt(float32_t _x, float32_t _y, float32_t _z, float32_t _w) : fx(_x), fy(_y), fz(_z), fw(_w) { }
 
-        xmt(int32_t _x, int32_t _y, int32_t _z, int32_t _w) : ix(_x), iy(_y), iz(_z), iw(_w)
-        {
-        }
+        xmt(int32_t _x, int32_t _y, int32_t _z, int32_t _w) : ix(_x), iy(_y), iz(_z), iw(_w) { }
 
-        xmt(uint32_t _x, uint32_t _y, uint32_t _z, uint32_t _w) : uix(_x), uiy(_y), uiz(_z), uiw(_w)
-        {
-        }
+        xmt(uint32_t _x, uint32_t _y, uint32_t _z, uint32_t _w) : uix(_x), uiy(_y), uiz(_z), uiw(_w) { }
 
         float32_t af[4];
 
@@ -74,17 +66,27 @@ namespace core { namespace math { namespace xmm
 
 #ifdef VXM_SSE
 #ifdef BIT64
-                __m128 m128;
-                xmt(__m128 _m128) : m128(_m128) {}
-                operator const __m128 &() const { return m128; }
-                operator __m128 &() { return m128; }
-                xmt & operator = (__m128 _m128) { m128 = _m128; return *this; }
+        __m128 m128;
+        xmt(__m128 _m128) : m128(_m128) {}
+        operator const __m128 &() const { return m128; }
+        operator __m128 &() { return m128; }
 
-                __m128i m128i;
-                xmt(__m128i _m128i) : m128i(_m128i) {}
-                operator const __m128i &() const { return m128i; }
-                operator __m128i &() { return m128i; }
-                xmt & operator = (__m128i _m128i) { m128i = _m128i; return *this; }
+        xmt & operator =(__m128 _m128)
+        {
+            m128 = _m128;
+            return *this;
+        }
+
+        __m128i m128i;
+        xmt(__m128i _m128i) : m128i(_m128i) {}
+        operator const __m128i &() const { return m128i; }
+        operator __m128i &() { return m128i; }
+
+        xmt & operator =(__m128i _m128i)
+        {
+            m128i = _m128i;
+            return *this;
+        }
 #else // BIT64
         xmt(__m128 _m128) : xmt(_m128.m128_f32[0], _m128.m128_f32[1], _m128.m128_f32[2], _m128.m128_f32[3])
         {
@@ -119,13 +121,9 @@ namespace core { namespace math { namespace xmm
 
     struct xmm
     {
-        xmm()
-        {
-        }
+        xmm() { }
 
-        xmm(xmf _row0, xmf _row1, xmf _row2, xmf _row3) : row0(_row0), row1(_row1), row2(_row2), row3(_row3)
-        {
-        }
+        xmm(xmf _row0, xmf _row1, xmf _row2, xmf _row3) : row0(_row0), row1(_row1), row2(_row2), row3(_row3) { }
 
         xmf row0;
         xmf row1;
@@ -135,7 +133,7 @@ namespace core { namespace math { namespace xmm
         xmf & operator[](int32_t iIndex) { return ((xmf *)this)[iIndex]; }
         const xmf & operator[](int32_t iIndex) const { return ((xmf *)this)[iIndex]; }
     };
-}}}
+}
 
 #include "xmi.h"
 #include "xmf.h"

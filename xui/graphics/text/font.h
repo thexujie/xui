@@ -1,7 +1,7 @@
 #pragma once
 #include "core/string.h"
 
-namespace graphics { namespace text
+namespace graphics::text
 {
     const int32_t FONT_WEIGHT_BOLD = 800;
     const int32_t FONT_WEIGHT_NORMAL = 400;
@@ -73,7 +73,7 @@ namespace graphics { namespace text
         int32_t linespace = 0;
         int32_t weight = 0;
     };
-}}
+}
 
 namespace std
 {

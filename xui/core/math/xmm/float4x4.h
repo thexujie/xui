@@ -4,47 +4,33 @@
 #include "float4.h"
 #include "quat4.h"
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
     struct float4x4
     {
-        float4x4()
-        {
-        }
+        float4x4() { }
 
         float4x4(const float4x4 & another) : row0(another.row0), row1(another.row1), row2(another.row2),
-                                             row3(another.row3)
-        {
-        }
+                                             row3(another.row3) { }
 
         float4x4(float4 _row0, float4 _row1, float4 _row2, float4 _row3) : row0(_row0), row1(_row1), row2(_row2),
-                                                                           row3(_row3)
-        {
-        }
+                                                                           row3(_row3) { }
 
-        float4x4(float4 rows[4]) : row0(rows[0]), row1(rows[1]), row2(rows[2]), row3(rows[3])
-        {
-        }
+        float4x4(float4 rows[4]) : row0(rows[0]), row1(rows[1]), row2(rows[2]), row3(rows[3]) { }
 
-        float4x4(float32_t arr[4][4]) : row0(arr[0]), row1(arr[1]), row2(arr[2]), row3(arr[3])
-        {
-        }
+        float4x4(float32_t arr[4][4]) : row0(arr[0]), row1(arr[1]), row2(arr[2]), row3(arr[3]) { }
 
         float4x4(float32_t _00, float32_t _01, float32_t _02, float32_t _03,
-                 float32_t _10, float32_t _11, float32_t _12, float32_t _13,
-                 float32_t _20, float32_t _21, float32_t _22, float32_t _23,
-                 float32_t _30, float32_t _31, float32_t _32, float32_t _33) :
+            float32_t _10, float32_t _11, float32_t _12, float32_t _13,
+            float32_t _20, float32_t _21, float32_t _22, float32_t _23,
+            float32_t _30, float32_t _31, float32_t _32, float32_t _33) :
             row0(_00, _01, _02, _03),
             row1(_10, _11, _12, _13),
             row2(_20, _21, _22, _23),
-            row3(_30, _31, _32, _33)
-        {
-        }
+            row3(_30, _31, _32, _33) { }
 
         float4x4(const xmm & matrix) :
-            row0(matrix.row0), row1(matrix.row1), row2(matrix.row2), row3(matrix.row3)
-        {
-        }
+            row0(matrix.row0), row1(matrix.row1), row2(matrix.row2), row3(matrix.row3) { }
 
         float4 & operator[](int32_t iIndex) { return ((float4 *)this)[iIndex]; }
         const float4 & operator[](int32_t iIndex) const { return ((const float4 *)this)[iIndex]; }
@@ -133,7 +119,7 @@ namespace core { namespace math { namespace xmm
         };
     };
 
-    const float4x4 f4x4_identity = {xmf_row0, xmf_row1, xmf_row2, xmf_row3};
+    const float4x4 f4x4_identity = { xmf_row0, xmf_row1, xmf_row2, xmf_row3 };
 
     //! 初始化为单位矩阵
     inline void float4x4_identity(float4x4 & matrix)
@@ -246,4 +232,4 @@ namespace core { namespace math { namespace xmm
     {
         return xm_matr_transform(pos, rot, scl);
     }
-}}}
+}

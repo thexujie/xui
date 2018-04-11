@@ -5,7 +5,7 @@
 #pragma comment(lib, "libpng.lib")
 #pragma comment(lib, "zlib.lib")
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     using namespace core;
 
@@ -46,7 +46,7 @@ namespace graphics { namespace image { namespace formats
     }
 
     core::error_e png_create(const byte_t * buffer, int32_t length, image_data_t * img,
-                       image_convert_rule_fun_t pfn_match, void * user_data)
+        image_convert_rule_fun_t pfn_match, void * user_data)
     {
         if (!pfn_match)
             pfn_match = png_rule_default;
@@ -131,7 +131,7 @@ namespace graphics { namespace image { namespace formats
             break;
         }
 
-        image_convert_rule_t rule = {image_format_png, (int32_t)width, (int32_t)height, src_mode, user_data};
+        image_convert_rule_t rule = { image_format_png, (int32_t)width, (int32_t)height, src_mode, user_data };
         if (!pfn_match(&rule))
         {
             png_free(png, row_ptr);
@@ -184,10 +184,10 @@ namespace graphics { namespace image { namespace formats
             img->buffer = image_malloc(rule.dst_length);
 
             rule.image_convert_fun(rule.width, rule.height,
-                                   rule.pixel_convert_fun,
-                                   nullptr, rule.pal_stride,
-                                   src_buffer, rule.src_stride, rule.src_pitch,
-                                   img->buffer, rule.dst_stride, rule.dst_pitch, 0);
+                rule.pixel_convert_fun,
+                nullptr, rule.pal_stride,
+                src_buffer, rule.src_stride, rule.src_pitch,
+                img->buffer, rule.dst_stride, rule.dst_pitch, 0);
             image_free(src_buffer);
         }
         return error_ok;
@@ -356,4 +356,4 @@ namespace graphics { namespace image { namespace formats
         }
         return rule->image_convert_fun != nullptr;
     }
-}}}
+}

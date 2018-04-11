@@ -39,6 +39,7 @@ namespace core
     {
         return ::GetCurrentThreadId();
     }
+
     int32_t process_id()
     {
         return ::GetCurrentProcessId();
@@ -69,9 +70,7 @@ namespace core
         {
             RaiseException(MS_VC_EXCEPTION_SET_THREAD_NAME, 0, sizeof(THREADNAME_INFO) / sizeof(ULONG_PTR), (ULONG_PTR *)&info);
         }
-        __except (EXCEPTION_CONTINUE_EXECUTION)
-        {
-        }
+        __except (EXCEPTION_CONTINUE_EXECUTION) { }
     }
 
     void thread_set_name(int thread_id, std::string name)
@@ -87,15 +86,21 @@ namespace core
     {
         switch (priority)
         {
-        case thread_priority_idle: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_IDLE); break;
-        case thread_priority_lowest: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST); break;
-        case thread_priority_low: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL); break;
-        case thread_priority_normal: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL); break;
-        case thread_priority_high: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL); break;
-        case thread_priority_highest: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST); break;
-        case thread_priority_realtime: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL); break;
+        case thread_priority_idle: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_IDLE);
+            break;
+        case thread_priority_lowest: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_LOWEST);
+            break;
+        case thread_priority_low: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+            break;
+        case thread_priority_normal: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
+            break;
+        case thread_priority_high: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+            break;
+        case thread_priority_highest: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+            break;
+        case thread_priority_realtime: ::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+            break;
         default: break;
         }
-
     }
 }

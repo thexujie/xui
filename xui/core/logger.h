@@ -2,17 +2,17 @@
 
 #include "core/string.h"
 
-inline std::basic_ostream<char, std::char_traits<char>> & __fixed_op(std::basic_ostream<char, std::char_traits<char>>& _Ostr, const char * _Val)
+inline std::basic_ostream<char, std::char_traits<char>> & __fixed_op(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const char * _Val)
 {
     return _Ostr << _Val;
 }
 
-inline std::basic_ostream<char, std::char_traits<char>> & __fixed_op(std::basic_ostream<char, std::char_traits<char>>&& _Ostr, const char * _Val)
+inline std::basic_ostream<char, std::char_traits<char>> & __fixed_op(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const char * _Val)
 {
     return _Ostr << _Val;
 }
 
-inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>>&& _Ostr, const char * _Val)
+inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const char * _Val)
 {
     if (!_Val)
         return __fixed_op(_Ostr, "null");
@@ -20,7 +20,7 @@ inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_
         return __fixed_op(_Ostr, _Val);
 }
 
-inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>>& _Ostr, const char * _Val)
+inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const char * _Val)
 {
     if (!_Val)
         return __fixed_op(_Ostr, "null");
@@ -28,11 +28,12 @@ inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_
         return __fixed_op(_Ostr, _Val);
 }
 
-inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>>&& _Ostr, const wchar_t * _Val)
+inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const wchar_t * _Val)
 {
     return _Ostr << core::string::ucs2_u8(_Val);
 }
-inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>>& _Ostr, const wchar_t * _Val)
+
+inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const wchar_t * _Val)
 {
     return _Ostr << core::string::ucs2_u8(_Val);
 }
@@ -53,8 +54,9 @@ namespace core
     public:
         null_logger_stream() = default;
         ~null_logger_stream() = default;
+
         template<typename T>
-        null_logger_stream & operator << (T && v) { return *this;}
+        null_logger_stream & operator <<(T && v) { return *this; }
     };
 
     class logger_stream : public std::ostream, private std::streambuf
@@ -64,7 +66,7 @@ namespace core
         logger_stream(const logger_stream & another);
         ~logger_stream();
 
-        void set_lg(log_e lg) { _lg_curr = lg;}
+        void set_lg(log_e lg) { _lg_curr = lg; }
 
         int overflow(int ch);
         std::streamsize xsputn(const char * s, std::streamsize n);
@@ -101,7 +103,7 @@ namespace core
         error_e line(log_e lg, std::string_view text);
         error_e line(log_e lg, const char * text, int32_t length = -1);
 
-        operator std::fstream & () { return _fs; }
+        operator std::fstream &() { return _fs; }
 
         logger_stream operator[](log_e lg)
         {
@@ -148,8 +150,8 @@ namespace core
 
     inline void glog_helper(logger_stream & stream) {}
 
-    template <typename Head, typename... Tail>
-    void glog_helper(logger_stream & stream, Head const & head, Tail&&... tail)
+    template<typename Head, typename... Tail>
+    void glog_helper(logger_stream & stream, Head const & head, Tail &&... tail)
     {
         stream << head;
         glog_helper(stream, std::forward<Tail>(tail)...);

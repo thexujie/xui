@@ -4,17 +4,19 @@
 
 namespace core
 {
-    logger_stream::logger_stream(class logger & logger, log_e lg) :std::ostream(this), _lg_curr(lg), _logger(logger)
+    logger_stream::logger_stream(class logger & logger, log_e lg) : std::ostream(this), _lg_curr(lg), _logger(logger)
     {
         if (&_logger != nullptr)
             _lg = _logger.lg();
     }
-    logger_stream::logger_stream(const logger_stream & another) : std::ostream(this), _lg(another._lg), _lg_curr(another._lg_curr), _logger(another._logger){}
+
+    logger_stream::logger_stream(const logger_stream & another) : std::ostream(this), _lg(another._lg), _lg_curr(another._lg_curr), _logger(another._logger) {}
+
     logger_stream::~logger_stream()
     {
         if (_buffer.in_avail())
         {
-            if(&_logger != nullptr)
+            if (&_logger != nullptr)
             {
                 _logger.line(_lg_curr, _buffer.str());
                 _logger.flush();
@@ -49,12 +51,9 @@ namespace core
         return 0;
     }
 
-    logger::logger()
-    {
+    logger::logger() { }
 
-    }
-
-    logger::logger(std::string path, log_e lg):_lg(lg)
+    logger::logger(std::string path, log_e lg): _lg(lg)
     {
         open(path);
     }
@@ -77,7 +76,7 @@ namespace core
     void logger::close()
     {
         std::lock_guard<std::mutex> lock(_mtx);
-        if(_fs.good())
+        if (_fs.good())
         {
             _fs.flush();
             _fs.close();
@@ -191,7 +190,7 @@ namespace core
         tm tm;
         localtime_s(&tm, &tb.time);
 
-        const char * level[] = {"dbg", "inf", "act", "war", "err"};
+        const char * level[] = { "dbg", "inf", "act", "war", "err" };
         int32_t nchars = _snprintf_s(text, 64, "[%04d-%02d-%02d %02d:%02d:%02d %03d][pid:%-6d][tid:%-6d]%s ",
             tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
             tm.tm_hour, tm.tm_min, tm.tm_sec,
@@ -219,6 +218,7 @@ namespace core
     logger_stream logger::err() { return global_logger::instance()[log_err]; }
 
     std::shared_ptr<logger> __global_logger;
+
     global_logger::global_logger(std::string path, log_e lg)
     {
         std::cout << "log file " << path << std::endl;
@@ -234,5 +234,4 @@ namespace core
     {
         return *__global_logger.get();
     }
-
 }

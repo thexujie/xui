@@ -2,7 +2,7 @@
 
 #include "xm.h"
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
     typedef float32_t float1;
 
@@ -58,54 +58,54 @@ namespace core { namespace math { namespace xmm
     const uint32_t xm_select_0 = 0x00000000;
     const uint32_t xm_select_1 = 0xFFFFFFFF;
 
-    const xmf xmf_zero = {0.0f, 0.0f, 0.0f, 0.0f};
-    const xmf xmf_one = {1.0f, 1.0f, 1.0f, 1.0f};
+    const xmf xmf_zero = { 0.0f, 0.0f, 0.0f, 0.0f };
+    const xmf xmf_one = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    const xmf xmf_1of2 = {0.5f, 0.5f, 0.5f, 0.5f};
+    const xmf xmf_1of2 = { 0.5f, 0.5f, 0.5f, 0.5f };
 
-    const xmui xmf_negative_zero = {0x80000000, 0x80000000, 0x80000000, 0x80000000};
-    const xmf xmf_negative_one = {-1.0f, -1.0f, -1.0f, -1.0f};
+    const xmui xmf_negative_zero = { 0x80000000, 0x80000000, 0x80000000, 0x80000000 };
+    const xmf xmf_negative_one = { -1.0f, -1.0f, -1.0f, -1.0f };
 
-    const xmui xmf_abs_mask = {0x7FFFFFFFu, 0x7FFFFFFFu, 0x7FFFFFFFu, 0x7FFFFFFFu};
-    const xmui xmf_infinity = {0x7F800000u, 0x7F800000u, 0x7F800000u, 0x7F800000u};
-    const xmui xmf_mask_3 = {0xFFFFFFFFu, 0xFFFFFFFFu, 0xFFFFFFFFu, 0x00000000u};
-    const xmui xmf_mask_x = {0xFFFFFFFFu, 0x00000000u, 0x00000000u, 0x00000000u};
-    const xmui xmf_mask_y = {0x00000000u, 0xFFFFFFFFu, 0x00000000u, 0x00000000u};
-    const xmui xmf_mask_z = {0x00000000u, 0x00000000u, 0xFFFFFFFFu, 0x00000000u};
-    const xmui xmf_mask_w = {0x00000000u, 0x00000000u, 0x00000000u, 0xFFFFFFFFu};
-    const xmui xmf_qnan = {0x7FC00000u, 0x7FC00000u, 0x7FC00000u, 0x7FC00000u};
+    const xmui xmf_abs_mask = { 0x7FFFFFFFu, 0x7FFFFFFFu, 0x7FFFFFFFu, 0x7FFFFFFFu };
+    const xmui xmf_infinity = { 0x7F800000u, 0x7F800000u, 0x7F800000u, 0x7F800000u };
+    const xmui xmf_mask_3 = { 0xFFFFFFFFu, 0xFFFFFFFFu, 0xFFFFFFFFu, 0x00000000u };
+    const xmui xmf_mask_x = { 0xFFFFFFFFu, 0x00000000u, 0x00000000u, 0x00000000u };
+    const xmui xmf_mask_y = { 0x00000000u, 0xFFFFFFFFu, 0x00000000u, 0x00000000u };
+    const xmui xmf_mask_z = { 0x00000000u, 0x00000000u, 0xFFFFFFFFu, 0x00000000u };
+    const xmui xmf_mask_w = { 0x00000000u, 0x00000000u, 0x00000000u, 0xFFFFFFFFu };
+    const xmui xmf_qnan = { 0x7FC00000u, 0x7FC00000u, 0x7FC00000u, 0x7FC00000u };
 
-    const xmf xmf_pi = {xm_pi, xm_pi, xm_pi, xm_pi};
-    const xmf xmf_2pi = {xm_2pi, xm_2pi, xm_2pi, xm_2pi};
-    const xmf xmf_1pi_of_2 = {xm_1pi_of_2, xm_1pi_of_2, xm_1pi_of_2, xm_1pi_of_2};
-    const xmf xmf_1_of_2pi = {xm_1_of_2pi, xm_1_of_2pi, xm_1_of_2pi, xm_1_of_2pi};
+    const xmf xmf_pi = { xm_pi, xm_pi, xm_pi, xm_pi };
+    const xmf xmf_2pi = { xm_2pi, xm_2pi, xm_2pi, xm_2pi };
+    const xmf xmf_1pi_of_2 = { xm_1pi_of_2, xm_1pi_of_2, xm_1pi_of_2, xm_1pi_of_2 };
+    const xmf xmf_1_of_2pi = { xm_1_of_2pi, xm_1_of_2pi, xm_1_of_2pi, xm_1_of_2pi };
 
-    const xmf xmf_row0 = {1.0f, 0.0f, 0.0f, 0.0f};
-    const xmf xmf_row1 = {0.0f, 1.0f, 0.0f, 0.0f};
-    const xmf xmf_row2 = {0.0f, 0.0f, 1.0f, 0.0f};
-    const xmf xmf_row3 = {0.0f, 0.0f, 0.0f, 1.0f};
-    const xmf xmf_row3_neg = {0.0f, 0.0f, 0.0f, -1.0f};
+    const xmf xmf_row0 = { 1.0f, 0.0f, 0.0f, 0.0f };
+    const xmf xmf_row1 = { 0.0f, 1.0f, 0.0f, 0.0f };
+    const xmf xmf_row2 = { 0.0f, 0.0f, 1.0f, 0.0f };
+    const xmf xmf_row3 = { 0.0f, 0.0f, 0.0f, 1.0f };
+    const xmf xmf_row3_neg = { 0.0f, 0.0f, 0.0f, -1.0f };
 
-    const xmf xmf_0000 = {0.0f, 0.0f, 0.0f, 0.0f};
-    const xmf xmf_1000 = {1.0f, 0.0f, 0.0f, 0.0f};
-    const xmf xmf_1110 = {1.0f, 1.0f, 1.0f, 0.0f};
-    const xmf xmf_1111 = {1.0f, 1.0f, 1.0f, 1.0f};
+    const xmf xmf_0000 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    const xmf xmf_1000 = { 1.0f, 0.0f, 0.0f, 0.0f };
+    const xmf xmf_1110 = { 1.0f, 1.0f, 1.0f, 0.0f };
+    const xmf xmf_1111 = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    const xmui xmf_select_1110 = {xm_select_1, xm_select_1, xm_select_1, xm_select_0};
-    const xmui xmf_select_0101 = {xm_select_0, xm_select_1, xm_select_0, xm_select_1};
+    const xmui xmf_select_1110 = { xm_select_1, xm_select_1, xm_select_1, xm_select_0 };
+    const xmui xmf_select_0101 = { xm_select_0, xm_select_1, xm_select_0, xm_select_1 };
 
-    const xmf xmf_epsilon = {1.192092896e-07f, 1.192092896e-07f, 1.192092896e-07f, 1.192092896e-07f};
+    const xmf xmf_epsilon = { 1.192092896e-07f, 1.192092896e-07f, 1.192092896e-07f, 1.192092896e-07f };
     // atan ÏµÊý
-    const xmf xmf_atan_coefficients1 = {-0.0752896400f, +0.0429096138f, -0.0161657367f, +0.0028662257f};
+    const xmf xmf_atan_coefficients1 = { -0.0752896400f, +0.0429096138f, -0.0161657367f, +0.0028662257f };
 
-    const xmf xmf_sin_coefficients0 = {-0.16666667f, +0.0083333310f, -0.00019840874f, +2.7525562e-06f};
-    const xmf xmf_sin_coefficients1 = {-2.3889859e-08f, -0.16665852f, +0.0083139502f, -0.00018524670f};
+    const xmf xmf_sin_coefficients0 = { -0.16666667f, +0.0083333310f, -0.00019840874f, +2.7525562e-06f };
+    const xmf xmf_sin_coefficients1 = { -2.3889859e-08f, -0.16665852f, +0.0083139502f, -0.00018524670f };
 
-    const xmf xmf_cos_coefficients0 = {-0.5f, +0.041666638f, -0.0013888378f, +2.4760495e-05f};
-    const xmf xmf_cos_coefficients1 = {-2.6051615e-07f, -0.49992746f, +0.041493919f, -0.0012712436f};
+    const xmf xmf_cos_coefficients0 = { -0.5f, +0.041666638f, -0.0013888378f, +2.4760495e-05f };
+    const xmf xmf_cos_coefficients1 = { -2.6051615e-07f, -0.49992746f, +0.041493919f, -0.0012712436f };
 
 #include "xmf_base.inl"
 #include "xmf_vec.inl"
 #include "xmf_quat.inl"
 #include "xmf_matr.inl"
-}}}
+}

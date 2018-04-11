@@ -13,18 +13,18 @@
 //#include "converter/image_converter_cmyk.h"
 //#include "converter/image_converter_rgb.h"
 
-namespace graphics { namespace image
+namespace graphics::image
 {
     using namespace core;
     using namespace graphics::image::formats;
 
     error_e image_load(std::string path, image_data_t * img, image_format_e image_format,
-                       image_convert_rule_fun_t pfn_rule, void * user_data)
+        image_convert_rule_fun_t pfn_rule, void * user_data)
     {
         std::wstring pathw = core::string::u8_ucs2(path);
         std::fstream fs;
         fs.open(pathw.c_str(), std::ios::in | std::ios::binary);
-        if(!fs.good())
+        if (!fs.good())
             return error_not_found;
 
         fs.seekg(0, std::ios::end);
@@ -33,7 +33,7 @@ namespace graphics { namespace image
 
         std::shared_ptr<byte_t[]> buffer(image_malloc((int32_t)length));
         fs.read(buffer.get(), length);
-        if(fs.tellg() != length)
+        if (fs.tellg() != length)
             return error_io;
         fs.close();
 
@@ -62,7 +62,7 @@ namespace graphics { namespace image
     }
 
     core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img, image_format_e image_format,
-                         image_convert_rule_fun_t pfn_rule, void * user_data)
+        image_convert_rule_fun_t pfn_rule, void * user_data)
     {
         if (image_format == image_format_invalid)
             image_format = image_get_format(buffer, length);
@@ -471,67 +471,67 @@ namespace graphics { namespace image
     {
         switch (cmode)
         {
-            COLOR_MODE_TEXT(cmode_none);
-            COLOR_MODE_TEXT(cmode_gray2);
-            COLOR_MODE_TEXT(cmode_gray4);
-            COLOR_MODE_TEXT(cmode_gray8);
+        COLOR_MODE_TEXT(cmode_none);
+        COLOR_MODE_TEXT(cmode_gray2);
+        COLOR_MODE_TEXT(cmode_gray4);
+        COLOR_MODE_TEXT(cmode_gray8);
 
-            COLOR_MODE_TEXT(cmode_r8g8b8);
-            COLOR_MODE_TEXT(cmode_a8r8g8b8);
-            COLOR_MODE_TEXT(cmode_x8r8g8b8);
+        COLOR_MODE_TEXT(cmode_r8g8b8);
+        COLOR_MODE_TEXT(cmode_a8r8g8b8);
+        COLOR_MODE_TEXT(cmode_x8r8g8b8);
 
-            COLOR_MODE_TEXT(cmode_b8g8r8);
-            COLOR_MODE_TEXT(cmode_a8b8g8r8);
-            COLOR_MODE_TEXT(cmode_x8b8g8r8);
+        COLOR_MODE_TEXT(cmode_b8g8r8);
+        COLOR_MODE_TEXT(cmode_a8b8g8r8);
+        COLOR_MODE_TEXT(cmode_x8b8g8r8);
 
-            COLOR_MODE_TEXT(cmode_yuv);
-            COLOR_MODE_TEXT(cmode_cmyk);
-            COLOR_MODE_TEXT(cmode_ycck);
+        COLOR_MODE_TEXT(cmode_yuv);
+        COLOR_MODE_TEXT(cmode_cmyk);
+        COLOR_MODE_TEXT(cmode_ycck);
 
-            COLOR_MODE_TEXT(cmode_r5g6b5);
-            COLOR_MODE_TEXT(cmode_a8r5g6b5);
-            COLOR_MODE_TEXT(cmode_a1r5g5b5);
-            COLOR_MODE_TEXT(cmode_a1b5g5r5);
-            COLOR_MODE_TEXT(cmode_x1r5g5b5);
-            COLOR_MODE_TEXT(cmode_a4r4g4b4);
-            COLOR_MODE_TEXT(cmode_x4r4g4b4);
-            COLOR_MODE_TEXT(cmode_g16r16);
-            COLOR_MODE_TEXT(cmode_a16b16g16r16);
-            COLOR_MODE_TEXT(cmode_r3g3b2);
+        COLOR_MODE_TEXT(cmode_r5g6b5);
+        COLOR_MODE_TEXT(cmode_a8r5g6b5);
+        COLOR_MODE_TEXT(cmode_a1r5g5b5);
+        COLOR_MODE_TEXT(cmode_a1b5g5r5);
+        COLOR_MODE_TEXT(cmode_x1r5g5b5);
+        COLOR_MODE_TEXT(cmode_a4r4g4b4);
+        COLOR_MODE_TEXT(cmode_x4r4g4b4);
+        COLOR_MODE_TEXT(cmode_g16r16);
+        COLOR_MODE_TEXT(cmode_a16b16g16r16);
+        COLOR_MODE_TEXT(cmode_r3g3b2);
 
-            COLOR_MODE_TEXT(cmode_r8g8b8a8);
-            COLOR_MODE_TEXT(cmode_r8g8b8x8);
+        COLOR_MODE_TEXT(cmode_r8g8b8a8);
+        COLOR_MODE_TEXT(cmode_r8g8b8x8);
 
-            COLOR_MODE_TEXT(cmode_r16f);
-            COLOR_MODE_TEXT(cmode_g16r16f);
-            COLOR_MODE_TEXT(cmode_a16b16g16r16f);
-            COLOR_MODE_TEXT(cmode_r32f);
-            COLOR_MODE_TEXT(cmode_g32r32f);
-            COLOR_MODE_TEXT(cmode_a32b32g32r32f);
+        COLOR_MODE_TEXT(cmode_r16f);
+        COLOR_MODE_TEXT(cmode_g16r16f);
+        COLOR_MODE_TEXT(cmode_a16b16g16r16f);
+        COLOR_MODE_TEXT(cmode_r32f);
+        COLOR_MODE_TEXT(cmode_g32r32f);
+        COLOR_MODE_TEXT(cmode_a32b32g32r32f);
 
-            COLOR_MODE_TEXT(cmode_x32y32z32f);
+        COLOR_MODE_TEXT(cmode_x32y32z32f);
 
-            COLOR_MODE_TEXT(cmode_index4_a8r8g8b8);
-            COLOR_MODE_TEXT(cmode_index8_a8r8g8b8);
-            COLOR_MODE_TEXT(cmode_index1_x8r8g8b8);
-            COLOR_MODE_TEXT(cmode_index2_x8r8g8b8);
-            COLOR_MODE_TEXT(cmode_index4_x8r8g8b8);
-            COLOR_MODE_TEXT(cmode_index8_x8r8g8b8);
-            COLOR_MODE_TEXT(cmode_index4_rle2_x8r8g8b8);
-            COLOR_MODE_TEXT(cmode_index8_rle2_x8r8g8b8);
+        COLOR_MODE_TEXT(cmode_index4_a8r8g8b8);
+        COLOR_MODE_TEXT(cmode_index8_a8r8g8b8);
+        COLOR_MODE_TEXT(cmode_index1_x8r8g8b8);
+        COLOR_MODE_TEXT(cmode_index2_x8r8g8b8);
+        COLOR_MODE_TEXT(cmode_index4_x8r8g8b8);
+        COLOR_MODE_TEXT(cmode_index8_x8r8g8b8);
+        COLOR_MODE_TEXT(cmode_index4_rle2_x8r8g8b8);
+        COLOR_MODE_TEXT(cmode_index8_rle2_x8r8g8b8);
 
-            COLOR_MODE_TEXT(cmode_rle_gray8);
-            COLOR_MODE_TEXT(cmode_rle_x1r5g5b5);
-            COLOR_MODE_TEXT(cmode_rle_r8g8b8);
-            COLOR_MODE_TEXT(cmode_rle_a8r8g8b8);
+        COLOR_MODE_TEXT(cmode_rle_gray8);
+        COLOR_MODE_TEXT(cmode_rle_x1r5g5b5);
+        COLOR_MODE_TEXT(cmode_rle_r8g8b8);
+        COLOR_MODE_TEXT(cmode_rle_a8r8g8b8);
 
-            COLOR_MODE_TEXT(cmode_index4_r8g8b8);
+        COLOR_MODE_TEXT(cmode_index4_r8g8b8);
 
-            COLOR_MODE_TEXT(cmode_index8_gray8);
-            COLOR_MODE_TEXT(cmode_index8_x1r5g5b5);
-            COLOR_MODE_TEXT(cmode_index8_r8g8b8);
+        COLOR_MODE_TEXT(cmode_index8_gray8);
+        COLOR_MODE_TEXT(cmode_index8_x1r5g5b5);
+        COLOR_MODE_TEXT(cmode_index8_r8g8b8);
 
-            COLOR_MODE_TEXT(cmode_d24s8);
+        COLOR_MODE_TEXT(cmode_d24s8);
         default:
             return _T("color_mode unkonwn");
         }
@@ -1434,4 +1434,4 @@ namespace graphics { namespace image
         uint32_t * dst = (uint32_t *)dst_pixel;
         *dst = (src & 0xC0000000) | ((src & 0x3FF00000) >> 20) | (src & 0xFFC00) | ((src & 0x3FF) << 20);
     }
-}}
+}

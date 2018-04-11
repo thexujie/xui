@@ -166,8 +166,7 @@ namespace agg
             if (len < 0) len = -len;
             typename BaseRenderer::color_type * colors = alloc.allocate(len);
             span_gen.generate(colors, x, y, len);
-            ren.blend_color_hspan(x, y, len, colors,
-                (span->len < 0) ? 0 : covers, *covers);
+            ren.blend_color_hspan(x, y, len, colors, (span->len < 0) ? 0 : covers, *covers);
 
             if (--num_spans == 0) break;
             ++span;

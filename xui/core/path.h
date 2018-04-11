@@ -2,10 +2,7 @@
 
 #include <filesystem>
 
-namespace core
+namespace core { namespace filesystem
 {
-    namespace filesystem
-    {
-        using namespace std::experimental::filesystem;
-    }
-}
+    using namespace std::experimental::filesystem;
+}}

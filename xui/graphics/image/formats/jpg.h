@@ -2,7 +2,7 @@
 
 #include "graphics/image/image.h"
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     struct jpeg_image_info
     {
@@ -20,14 +20,14 @@ namespace graphics { namespace image { namespace formats
         unsigned int dwByteNum;
     };
 
-    const uint8_t JPEG_HEADER[2] = {0xFF, 0xD8};
-    const uint8_t JPEG_TAIL[2] = {0xFF, 0xD9};
+    const uint8_t JPEG_HEADER[2] = { 0xFF, 0xD8 };
+    const uint8_t JPEG_TAIL[2] = { 0xFF, 0xD9 };
 
     bool is_jpg_data(const byte_t * buffer, int32_t length);
     core::error_e jpg_create(const byte_t * buffer, int32_t length, image_data_t * img,
-                       image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
+        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
 
     bool jpg_rule_default(image_convert_rule_t * rule);
 
-    const image_convert_fun_t image_convert_jpeg_use_src = (image_convert_fun_t) - 1;
-}}}
+    const image_convert_fun_t image_convert_jpeg_use_src = (image_convert_fun_t)- 1;
+}

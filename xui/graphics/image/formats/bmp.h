@@ -2,7 +2,7 @@
 
 #include "graphics/image/image.h"
 
-namespace graphics { namespace image { namespace formats
+namespace graphics::image::formats
 {
     //////////////////////////////////////////////////////////////////////////
     // Bitmap 文件(压缩)格式
@@ -26,7 +26,7 @@ namespace graphics { namespace image { namespace formats
         // OS/2 的 24 位编码
     } bmp_encode_e;
 
-    const byte_t BMP_HEADER[2] = {0x42, 0x4D};
+    const byte_t BMP_HEADER[2] = { 0x42, 0x4D };
     const uint16_t BMP_MAGIC = 0x4D42; // 'BM',header.type
 
 #pragma pack(push, 1)
@@ -103,7 +103,7 @@ namespace graphics { namespace image { namespace formats
 
     bool is_bmp_data(const byte_t * buffer, int32_t length);
     core::error_e bmp_create(const byte_t * buffer, int32_t length, image_data_t * img,
-                       image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
+        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
 
     /**
     * @brief 默认的 bmp 格式转换规则，默认将尽量在不损失精度的前提下转换为 GDI 兼容格式
@@ -116,19 +116,19 @@ namespace graphics { namespace image { namespace formats
     * rle 压缩 src_stride 和 src_pitch 没有意义。
     */
     void image_convert_bmp_index4_rle(int32_t width, int32_t height,
-                                      pixel_convert_fun_t conv_fun,
-                                      const byte_t * pal, int32_t pal_stride,
-                                      const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-                                      byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                                      int32_t flags);
+        pixel_convert_fun_t conv_fun,
+        const byte_t * pal, int32_t pal_stride,
+        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
+        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
+        int32_t flags);
     /**
     * Bmp 文件的 rle index8 压缩方式，使用索引色。
     * rle 压缩 src_stride 和 src_pitch 没有意义。
     */
     void image_convert_bmp_index8_rle(int32_t width, int32_t height,
-                                      pixel_convert_fun_t conv_fun,
-                                      const byte_t * pal, int32_t pal_stride,
-                                      const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-                                      byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-                                      int32_t flags);
-}}}
+        pixel_convert_fun_t conv_fun,
+        const byte_t * pal, int32_t pal_stride,
+        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
+        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
+        int32_t flags);
+}

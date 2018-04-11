@@ -2,29 +2,19 @@
 
 #include "xm/xm.h"
 
-namespace core { namespace math { namespace xmm
+namespace core::math::xmm
 {
     struct float2
     {
-        inline float2() : x(0), y(0)
-        {
-        }
+        inline float2() : x(0), y(0) { }
 
-        inline float2(const float2 & another) : x(another.x), y(another.y)
-        {
-        }
+        inline float2(const float2 & another) : x(another.x), y(another.y) { }
 
-        inline float2(const xmf & v) : x(xmv_x(v)), y(xmv_y(v))
-        {
-        }
+        inline float2(const xmf & v) : x(xmv_x(v)), y(xmv_y(v)) { }
 
-        inline float2(float32_t _x, float32_t _y) : x(_x), y(_y)
-        {
-        }
+        inline float2(float32_t _x, float32_t _y) : x(_x), y(_y) { }
 
-        inline float2(const float32_t (&arr)[2]) : x(arr[0]), y(arr[1])
-        {
-        }
+        inline float2(const float32_t (&arr)[2]) : x(arr[0]), y(arr[1]) { }
 
         inline float2 & operator=(const float32_t (&arr)[2])
         {
@@ -113,4 +103,4 @@ namespace core { namespace math { namespace xmm
     {
         return vec / rate;
     }
-}}}
+}

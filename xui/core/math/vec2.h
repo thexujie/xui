@@ -1,23 +1,17 @@
 #pragma once
 
 
-namespace core { namespace math
+namespace core::math
 {
-    template <typename ValT>
+    template<typename ValT>
     class vec2
     {
     public:
-        vec2() : x(0), y(0)
-        {
-        }
+        vec2() : x(0), y(0) { }
 
-        vec2(ValT _x, ValT _y) : x(_x), y(_y)
-        {
-        }
+        vec2(ValT _x, ValT _y) : x(_x), y(_y) { }
 
-        vec2(const vec2 & vec) : x(vec.x), y(vec.y)
-        {
-        }
+        vec2(const vec2 & vec) : x(vec.x), y(vec.y) { }
 
         void set(ValT _x, ValT _y)
         {
@@ -171,6 +165,7 @@ namespace core { namespace math
         {
             return { (ValT2)x, (ValT2)y };
         }
+
     public:
         union
         {
@@ -223,4 +218,4 @@ namespace core { namespace math
     typedef vec2<int32_t> pt32_t;
     typedef vec2<float32_t> pt32f_t;
     typedef vec2<float64_t> pt64f_t;
-}}
+}
