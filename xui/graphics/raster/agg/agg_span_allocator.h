@@ -47,7 +47,7 @@ namespace agg
                 //-----------------------
                 m_span.resize(((span_len + 255) >> 8) << 8);
             }
-            return &m_span[0];
+            return m_span.data();
         }
 
         AGG_INLINE color_type * span() { return &m_span[0]; }

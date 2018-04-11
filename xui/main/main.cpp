@@ -213,6 +213,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     agg::render_scanlines_aa_solid(raster, sl, renb, agg::rgba(0.6, 0, 0, 0.8));
 }
 #endif
+
 int main()
 {
     win32::Win32App app;
