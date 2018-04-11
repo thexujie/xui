@@ -393,7 +393,6 @@ namespace graphics::image
         int32_t height;
         cmode_e src_mode;
         void * user_data;
-        int32_t user_format;
 
         //-----------------------------------Êä³ö²¿·Ö
         cmode_e dst_mode;
