@@ -131,17 +131,17 @@ namespace win32
         ::TextOutW(*_hdc, point.x, point.y + tm.tmExternalLeading, strw.c_str(), (int32_t)strw.length());
     }
 
-    void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point)
+    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::pt32_t point)
     {
         DrawImage(image, { point, image.size() });
     }
 
-    void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region)
+    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region)
     {
         DrawImage(image, core::math::rc32_t(point, region.size), region);
     }
 
-    void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect)
+    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect)
     {
         auto & data = image.image();
         agg::pixfmt_bgra32 pixf(_rbuf);
@@ -170,7 +170,7 @@ namespace win32
         agg::render_scanlines_aa(_raster, _sl, renb, sa, sg);
     }
 
-    void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
+    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
     {
         auto & data = image.image();
         agg::pixfmt_bgra32 pixf(_rbuf);

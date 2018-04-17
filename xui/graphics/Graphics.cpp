@@ -186,7 +186,7 @@ namespace graphics
         PopClip();
     }
 
-    void Graphics::DrawImage(Image & image, pt32_t point, int32_t flags)
+    void Graphics::DrawImage(const Image & image, pt32_t point, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -207,7 +207,7 @@ namespace graphics
         _graphics->DrawImage(image, point);
     }
 
-    void Graphics::DrawImage(Image & image, rc32_t rect, int32_t flags)
+    void Graphics::DrawImage(const Image & image, rc32_t rect, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -233,7 +233,7 @@ namespace graphics
         _graphics->PopClip();
     }
 
-    void Graphics::DrawImage(Image & image, pt32_t point, rc32_t region, int32_t flags)
+    void Graphics::DrawImage(const Image & image, pt32_t point, rc32_t region, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -258,7 +258,7 @@ namespace graphics
         _graphics->DrawImage(image, point, region);
     }
 
-    void Graphics::DrawImage(Image & image, rc32_t rect, rc32_t region, int32_t flags)
+    void Graphics::DrawImage(const Image & image, rc32_t rect, rc32_t region, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -289,7 +289,7 @@ namespace graphics
     }
 
 
-    void Graphics::DrawImage(Image & image, rc32_t rect)
+    void Graphics::DrawImage(const Image & image, rc32_t rect)
     {
         if (!_graphics)
             return;
@@ -297,7 +297,7 @@ namespace graphics
         _graphics->DrawImage(image, rect);
     }
 
-    void Graphics::DrawImage(Image & image, rc32_t rect, rc32_t region)
+    void Graphics::DrawImage(const Image & image, rc32_t rect, rc32_t region)
     {
         if (!_graphics)
             return;

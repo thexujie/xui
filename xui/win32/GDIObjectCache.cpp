@@ -19,7 +19,7 @@ namespace win32
         if(font.size < 0)
             logFont.lfHeight = (int32_t)(font.size * 72 / iDpiY);
         else
-            logFont.lfWeight = font.size;
+            logFont.lfHeight = font.size;
 
         logFont.lfWeight = font.weight;
         logFont.lfItalic = !!(font.flags & text::font::italic);

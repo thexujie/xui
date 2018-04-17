@@ -306,12 +306,15 @@ int main()
     //cm->Save("cm.bmp");
     //graphics->DrawImage(*cm.get(), { 10, 10 }, 0);
     //graphics->DrawImage(*cm.get(), { 50, 50 }, 0);
-    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 10, 68, 300 }, { "", 10 }, colors::Black, core::math::align::leftTop);
+    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 10, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
+    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, core::math::align::leftTop);
     auto si = graphics->MeasureString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空\r\n位过了旺季安哥拉晋文公来围观", {"", 10 });
 
     graphics->DrawRect({ 100, 100, 200, 50 }, colors::Red, 2.0f);
     graphics->FillRect({ 100, 160, 200, 50 }, 0x80ff0000);
     graphics->DrawRect({ 100, 220, 200, 50 }, colors::Red, 2.0f);
+
+    graphics->DrawImage(graphics::Image("png/png2.png"), { 100, 100 }, math::align::leftTop);
 
     //testAgg(pixmap);
     pixmap->Save("out.bmp");

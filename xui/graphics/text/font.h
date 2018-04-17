@@ -27,11 +27,12 @@ namespace graphics::text
 
         font() = default;
 
-        font(const char * _family, int32_t _size = 0, int32_t _weight = FONT_WEIGHT_NORMAL)
+        font(const char * _family, int32_t _size = 0, int32_t _weight = FONT_WEIGHT_NORMAL, int32_t _flags = 0)
         {
             family = _family;
             size = _size;
-            weight = _weight;
+            weight = _weight > 0 ? _weight : FONT_WEIGHT_NORMAL;
+            flags = _flags;
         }
 
         font(const font & another) = default;
@@ -60,7 +61,7 @@ namespace graphics::text
 
         std::string family;
         int32_t size = 0;
-        int32_t weight = 0;
+        int32_t weight = FONT_WEIGHT_NORMAL;
         int32_t flags = 0;
     };
 

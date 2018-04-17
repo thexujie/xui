@@ -40,13 +40,13 @@ namespace graphics
         void DrawString(std::string str, pt32_t point, text::font font, color32 color, int32_t flags);
         void DrawString(std::string str, rc32_t rect, text::font font, color32 color, int32_t flags);
 
-        void DrawImage(Image & image, pt32_t point, int32_t flags);
-        void DrawImage(Image & image, rc32_t rect, int32_t flags);
-        void DrawImage(Image & image, pt32_t point, rc32_t region, int32_t flags);
-        void DrawImage(Image & image, rc32_t rect, rc32_t region, int32_t flags);
+        void DrawImage(const Image & image, pt32_t point, int32_t flags);
+        void DrawImage(const Image & image, rc32_t rect, int32_t flags);
+        void DrawImage(const Image & image, pt32_t point, rc32_t region, int32_t flags);
+        void DrawImage(const Image & image, rc32_t rect, rc32_t region, int32_t flags);
 
-        void DrawImage(Image & image, rc32_t rect);
-        void DrawImage(Image & image, rc32_t rect, rc32_t region);
+        void DrawImage(const Image & image, rc32_t rect);
+        void DrawImage(const Image & image, rc32_t rect, rc32_t region);
 
     public:
         void FillPath(graphics::raster::path & path, core::color32 color);

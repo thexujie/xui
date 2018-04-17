@@ -69,10 +69,10 @@ namespace graphics
 
         virtual void DrawString(std::string str, core::math::pt32_t point, graphics::text::font font, core::color32 color) = 0;
 
-        virtual void DrawImage(graphics::IGraphicsImage & image, pt32_t point) = 0;
-        virtual void DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region) = 0;
-        virtual void DrawImage(graphics::IGraphicsImage & image, rc32_t rect) = 0;
-        virtual void DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region) = 0;
+        virtual void DrawImage(const graphics::IGraphicsImage & image, pt32_t point) = 0;
+        virtual void DrawImage(const graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region) = 0;
+        virtual void DrawImage(const graphics::IGraphicsImage & image, rc32_t rect) = 0;
+        virtual void DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region) = 0;
         virtual void DrawString(graphics::IGraphicsString & str, core::math::pt32_t point) = 0;
 
         virtual void FillPath(graphics::raster::path & path, core::color32 color) = 0;
