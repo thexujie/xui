@@ -173,8 +173,8 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 
 
     agg::path_storage ps;
-    agg::conv_stroke<agg::path_storage> pg(ps);
-    pg.width(2.0);
+    //agg::conv_stroke<agg::path_storage> pg(ps);
+    //pg.width(2.0);
 
     core::math::rc32_t rect{0, 0, 800, 600};
     ps.move_to(rect.x, rect.y);
@@ -205,7 +205,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     agg::span_allocator<agg::rgba8> sa;
     agg::render_scanlines_aa(raster, sl, renb, sa, sg);
 
-    agg::render_scanlines_aa_solid(raster, sl, renb, agg::rgba(0.6, 0, 0, 0.8));
+    //agg::render_scanlines_aa_solid(raster, sl, renb, agg::rgba(0.6, 0, 0, 0.8));
 }
 #endif
 
@@ -243,8 +243,7 @@ void testImages()
 int main()
 {
     win32::Win32App app;
-    testImages();
-    return 0; 
+    //testImages();
 
     int32_t cx = 1280;
     int32_t cy = 720;
@@ -253,8 +252,13 @@ int main()
     
     graphics->Clear(colors::LightGray);
 
-
+    auto image = std::make_shared<graphics::Image>("lcw.tga");
     //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, core::math::align::leftTop);
+    //graphics->DrawImage(*image, { 160, 10 }, core::math::align::leftTop);
+    //graphics->DrawImage(*image, { 200, 20 }, core::math::align::leftTop);
+    //graphics->DrawImage(*image, { 200, 20, 400, 100 });
+    graphics->DrawImage(*image, math::rc32_t{100, 100, 500, 100}, core::math::rc32_t{ 100, 0, 194, 215});
+
     //graphics->DrawImage(*(image.get()), { 0, 0, cx / 4, cy / 4 }, core::math::align::bottomCenterX);
     //graphics->DrawImage(*(image.get()), { cx / 4, 0, cx / 4, cy / 4 });
 

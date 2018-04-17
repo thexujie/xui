@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Graphics.h"
 #include "win32/windows.h"
-#include "Image.h"
+#include "core/io/filestream.h"
 
 namespace win32
 {
@@ -58,9 +58,14 @@ namespace win32
             _clipRegion = NULL;
         }
 
-        winrect_t winrect = rect;
-        _clipRegion = ::CreateRectRgnIndirect(&winrect);
-        ::SelectClipRgn(*_hdc, _clipRegion);
+        if(rect.is_valid())
+        {
+            winrect_t winrect = rect;
+            _clipRegion = ::CreateRectRgnIndirect(&winrect);
+            ::SelectClipRgn(*_hdc, _clipRegion);
+        }
+        else
+            ::SelectClipRgn(*_hdc, NULL);
     }
 
     core::math::rc32_t Graphics::GetClip() const
@@ -128,81 +133,70 @@ namespace win32
 
     void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point)
     {
-        auto & win32image = dynamic_cast<win32::Image &>(image);
-
-        HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
-        if(win32image.cmode() == graphics::image::format_a8r8g8b8)
-        {
-            BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
-            ::GdiAlphaBlend(*_hdc, point.x, point.y, win32image.size().cx, win32image.size().cy, *_hdcStaging, 0, 0, win32image.size().cx, win32image.size().cy, bfun);
-        }
-        else
-        {
-            ::BitBlt(*_hdc, point.x, point.y, win32image.size().cx, win32image.size().cy, *_hdcStaging, 0, 0, SRCCOPY);
-        }
-        ::SelectObject(*_hdcStaging, hBitmapOld);
+        DrawImage(image, { point, image.size() });
     }
 
     void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region)
     {
-        if(region.right() > image.size().cx)
-            region.setRight(image.size().cx);
-        if(region.bottom() > image.size().cy)
-            region.setBottom(image.size().cy);
-
-        auto & win32image = dynamic_cast<win32::Image &>(image);
-
-        HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
-        if(win32image.cmode() == graphics::image::format_a8r8g8b8)
-        {
-            BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
-            ::GdiAlphaBlend(*_hdc, point.x, point.y, region.cx, region.cy, *_hdcStaging, region.x, region.y, region.cx, region.cy, bfun);
-        }
-        else
-        {
-            ::BitBlt(*_hdc, point.x, point.y, region.cx, region.cy, *_hdcStaging, region.x, region.y, SRCCOPY);
-        }
-        ::SelectObject(*_hdcStaging, hBitmapOld);
+        DrawImage(image, core::math::rc32_t(point, region.size), region);
     }
 
     void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect)
     {
-        auto & win32image = dynamic_cast<win32::Image &>(image);
-        HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
-        if(win32image.cmode() == graphics::image::format_a8r8g8b8)
-        {
-            BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
-            ::GdiAlphaBlend(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging, 0, 0, image.size().cx, image.size().cy, bfun);
-        }
-        else if (rect.size != image.size())
-        {
-            ::StretchBlt(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging.get(), 0, 0, image.size().cx, image.size().cy, SRCCOPY);
-        }
-        else
-        {
-            ::BitBlt(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging.get(), 0, 0, SRCCOPY);
-        }
-        ::SelectObject(*_hdcStaging, hBitmapOld);
+        auto & data = image.image();
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::pixfmt_bgra32_pre pixf_pre(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
+        agg::renderer_base<agg::pixfmt_bgra32_pre> ren_pre(pixf_pre);
+
+        agg::path_storage ps;
+        ps.move_to(rect.x, rect.y);
+        ps.line_to(rect.right(), rect.y);
+        ps.line_to(rect.right(), rect.bottom());
+        ps.line_to(rect.x, rect.bottom());
+        ps.close_polygon();
+        _raster.reset();
+        _raster.add_path(ps);
+
+        agg::rendering_buffer img_buf;
+        img_buf.attach((agg::int8u *)data.data.data, data.data.format.width, data.data.format.height, data.data.pitch);
+        agg::pixfmt_bgra32 img_pixf(img_buf);
+
+        agg::span_interpolator_linear<> interpolator(
+            agg::trans_affine_translation(-rect.x, -rect.y) *
+            agg::trans_affine_scaling(data.data.format.width / (double)rect.cx, data.data.format.height / (double)rect.cy));
+        agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+        agg::span_allocator<agg::rgba8> sa;
+        agg::render_scanlines_aa(_raster, _sl, renb, sa, sg);
     }
 
     void Graphics::DrawImage(graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
     {
-        auto & win32image = dynamic_cast<win32::Image &>(image);
-        HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
-        if (win32image.cmode() == graphics::image::format_a8r8g8b8)
-        {
-            BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
-            ::GdiAlphaBlend(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging, region.x, region.y, region.cx, region.cy, bfun);
-        }
-        else if (rect.size != region.size)
-        {
-            ::StretchBlt(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging.get(), region.x, region.y, region.cx, region.cy, SRCCOPY);
-        }
-        else
-        {
-            ::BitBlt(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging.get(), region.x, region.y, SRCCOPY);
-        }
-        ::SelectObject(*_hdcStaging, hBitmapOld);
+        auto & data = image.image();
+        agg::pixfmt_bgra32 pixf(_rbuf);
+        agg::pixfmt_bgra32_pre pixf_pre(_rbuf);
+        agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
+        agg::renderer_base<agg::pixfmt_bgra32_pre> ren_pre(pixf_pre);
+
+        agg::path_storage ps;
+        ps.move_to(rect.x, rect.y);
+        ps.line_to(rect.right(), rect.y);
+        ps.line_to(rect.right(), rect.bottom());
+        ps.line_to(rect.x, rect.bottom());
+        ps.close_polygon();
+        _raster.reset();
+        _raster.add_path(ps);
+
+        agg::rendering_buffer img_buf;
+        img_buf.attach((agg::int8u *)data.data.data, data.data.format.width, data.data.format.height, data.data.pitch);
+        agg::pixfmt_bgra32 img_pixf(img_buf);
+
+        agg::span_interpolator_linear<> interpolator(
+            agg::trans_affine_translation(-rect.x + region.x, -rect.y + region.y) *
+            agg::trans_affine_scaling(region.width / (double)rect.cx, region.height / (double)rect.cy));
+        agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+        agg::span_allocator<agg::rgba8> sa;
+        agg::render_scanlines_aa(_raster, _sl, renb, sa, sg);
     }
 
     void Graphics::DrawString(graphics::IGraphicsString & str, core::math::pt32_t point)

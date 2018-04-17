@@ -140,7 +140,6 @@
     <ClCompile Include="win32\GDIObjectCache.cpp" />
     <ClCompile Include="win32\Graphics.cpp" />
     <ClCompile Include="win32\GraphicsService.cpp" />
-    <ClCompile Include="win32\Image.cpp" />
     <ClCompile Include="win32\uniscribe\CTextLayoutUsp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -337,7 +336,6 @@
     <ClInclude Include="win32\GDIObjectCache.h" />
     <ClInclude Include="win32\Graphics.h" />
     <ClInclude Include="win32\GraphicsService.h" />
-    <ClInclude Include="win32\Image.h" />
     <ClInclude Include="win32\uniscribe\CTextLayoutUsp.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

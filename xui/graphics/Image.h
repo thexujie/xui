@@ -3,22 +3,20 @@
 
 namespace graphics
 {
-    class Image
+    class Image final : public IGraphicsImage
     {
     public:
         Image() = default;
         ~Image();
         Image(std::string path);
 
-        std::shared_ptr<IGraphicsImage> image() const { return _image; }
-        si32_t size() const;
-
-        operator bool() const { return !!_image; }
-
+        operator bool() const { return !!_image.data.data; }
+        si32_t size() const { return { _image.data.format.width, _image.data.format.height}; }
+        image::format cmode() const { return _image.data.format.format; }
+        const image::image_t & image() const { return _image; }
         core::error_e Save(std::string path) const;
 
     private:
-        image::image_t _img;
-        std::shared_ptr<IGraphicsImage> _image;
+        image::image_t _image;
     };
 }

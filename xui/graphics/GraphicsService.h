@@ -43,7 +43,7 @@ namespace graphics
         virtual ~IGraphicsImage() = default;
         virtual si32_t size() const = 0;
         virtual image::format cmode() const = 0;
-
+        virtual const image::image_t & image() const = 0;
         virtual core::error_e Save(std::string path) const = 0;
     };
 
@@ -86,7 +86,6 @@ namespace graphics
     public:
         virtual ~IGraphicsService() = default;
         virtual std::shared_ptr<graphics::IGraphicsPixmap> CreatePixmap(core::math::si32_t) = 0;
-        virtual std::shared_ptr<graphics::IGraphicsImage> CreateImage(std::string path) = 0;
         virtual std::shared_ptr<graphics::IGraphicsImage> CreateString(std::string str, graphics::text::font font, core::color32 color) = 0;
         virtual std::shared_ptr<graphics::IGraphics> CreateGraphics(std::shared_ptr<core::Object> pixmap) = 0;
     };

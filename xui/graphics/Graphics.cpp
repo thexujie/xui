@@ -204,7 +204,7 @@ namespace graphics
             point.y -= size.cy / 2;
         else {}
 
-        _graphics->DrawImage(*(image.image()), point);
+        _graphics->DrawImage(image, point);
     }
 
     void Graphics::DrawImage(Image & image, rc32_t rect, int32_t flags)
@@ -229,7 +229,7 @@ namespace graphics
             point.y = rect.y;
 
         _graphics->PushClip(rect);
-        _graphics->DrawImage(*(image.image()), point);
+        _graphics->DrawImage(image, point);
         _graphics->PopClip();
     }
 
@@ -255,7 +255,7 @@ namespace graphics
             point.y = point.y - region.cy / 2;
         else {}
 
-        _graphics->DrawImage(*(image.image()), point, region);
+        _graphics->DrawImage(image, point, region);
     }
 
     void Graphics::DrawImage(Image & image, rc32_t rect, rc32_t region, int32_t flags)
@@ -284,7 +284,7 @@ namespace graphics
             point.y = rect.y;
 
         _graphics->PushClip(rect);
-        _graphics->DrawImage(*(image.image()), point, region);
+        _graphics->DrawImage(image, point, region);
         _graphics->PopClip();
     }
 
@@ -294,7 +294,7 @@ namespace graphics
         if (!_graphics)
             return;
 
-        _graphics->DrawImage(*(image.image()), rect);
+        _graphics->DrawImage(image, rect);
     }
 
     void Graphics::DrawImage(Image & image, rc32_t rect, rc32_t region)
@@ -302,7 +302,7 @@ namespace graphics
         if (!_graphics)
             return;
 
-        _graphics->DrawImage(*(image.image()), rect, region);
+        _graphics->DrawImage(image, rect, region);
     }
 
     void Graphics::FillPath(graphics::raster::path & path, core::color32 color)

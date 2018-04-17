@@ -80,9 +80,6 @@
     <ClCompile Include="graphics\Image.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="win32\Image.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="win32\GraphicsService.cpp">
       <Filter>win32</Filter>
     </ClCompile>
@@ -322,9 +319,6 @@
     </ClInclude>
     <ClInclude Include="graphics\Image.h">
       <Filter>graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\Image.h">
-      <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="win32\GraphicsService.h">
       <Filter>win32</Filter>
