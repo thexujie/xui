@@ -12,7 +12,7 @@ namespace win32
         Image(std::shared_ptr<HDC> hdc, std::string path);
 
         core::math::si32_t size() const { return _size; }
-        graphics::image::cmode_e cmode() const { return _cmode; }
+        graphics::image::format cmode() const { return _cmode; }
 
         core::error_e LoadFromFile(std::string path);
         core::error_e Save(std::string path) const;
@@ -30,7 +30,7 @@ namespace win32
 
         HBITMAP _handle = nullptr;
 
-        graphics::image::cmode_e _cmode = graphics::image::cmode_none;
+        graphics::image::format _cmode = graphics::image::format_none;
         core::math::si32_t _size;
     };
 }

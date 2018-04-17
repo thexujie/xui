@@ -8,14 +8,14 @@ namespace graphics::image::formats
     // Bitmap 文件(压缩)格式
     typedef enum tag_bmp_encode
     {
-        bmp_encode_none = 0,
         // 未压缩
-        bmp_encode_rle8,
+        bmp_encode_none = 0,
         // rle8压缩
-        bmp_encode_rle4,
+        bmp_encode_rle8,
         // rle4压缩
-        bmp_encode_mask,
+        bmp_encode_rle4,
         // 由掩码(color_mask_abgr_t)决定
+        bmp_encode_mask,
 
         // os2 压缩方式
         bmp_encode_os2_index4,

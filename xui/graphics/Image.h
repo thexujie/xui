@@ -7,7 +7,7 @@ namespace graphics
     {
     public:
         Image() = default;
-        ~Image() = default;
+        ~Image();
         Image(std::string path);
 
         std::shared_ptr<IGraphicsImage> image() const { return _image; }
@@ -15,9 +15,10 @@ namespace graphics
 
         operator bool() const { return !!_image; }
 
-        void Save(std::string path) const;
+        core::error_e Save(std::string path) const;
 
     private:
+        image::image_t _img;
         std::shared_ptr<IGraphicsImage> _image;
     };
 }

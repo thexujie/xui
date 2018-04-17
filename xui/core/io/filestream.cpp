@@ -44,4 +44,12 @@ namespace core::io
             return {};
         return { data, (int64_t)size };
     }
+
+    std::vector<filesystem::path> allPaths(filesystem::path dirctory)
+    {
+        std::vector<filesystem::path> paths;
+        for (auto & path : filesystem::directory_iterator(dirctory))
+            paths.push_back(path);
+        return paths;
+    }
 }

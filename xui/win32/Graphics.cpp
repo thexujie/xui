@@ -131,7 +131,7 @@ namespace win32
         auto & win32image = dynamic_cast<win32::Image &>(image);
 
         HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
-        if(win32image.cmode() == graphics::image::cmode_a8r8g8b8)
+        if(win32image.cmode() == graphics::image::format_a8r8g8b8)
         {
             BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
             ::GdiAlphaBlend(*_hdc, point.x, point.y, win32image.size().cx, win32image.size().cy, *_hdcStaging, 0, 0, win32image.size().cx, win32image.size().cy, bfun);
@@ -153,7 +153,7 @@ namespace win32
         auto & win32image = dynamic_cast<win32::Image &>(image);
 
         HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
-        if(win32image.cmode() == graphics::image::cmode_a8r8g8b8)
+        if(win32image.cmode() == graphics::image::format_a8r8g8b8)
         {
             BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
             ::GdiAlphaBlend(*_hdc, point.x, point.y, region.cx, region.cy, *_hdcStaging, region.x, region.y, region.cx, region.cy, bfun);
@@ -169,7 +169,7 @@ namespace win32
     {
         auto & win32image = dynamic_cast<win32::Image &>(image);
         HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
-        if(win32image.cmode() == graphics::image::cmode_a8r8g8b8)
+        if(win32image.cmode() == graphics::image::format_a8r8g8b8)
         {
             BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
             ::GdiAlphaBlend(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging, 0, 0, image.size().cx, image.size().cy, bfun);
@@ -189,7 +189,7 @@ namespace win32
     {
         auto & win32image = dynamic_cast<win32::Image &>(image);
         HGDIOBJ hBitmapOld = ::SelectObject(*_hdcStaging, win32image.bitmap());
-        if (win32image.cmode() == graphics::image::cmode_a8r8g8b8)
+        if (win32image.cmode() == graphics::image::format_a8r8g8b8)
         {
             BLENDFUNCTION bfun = { AC_SRC_OVER, 0, 0xff, AC_SRC_ALPHA };
             ::GdiAlphaBlend(*_hdc, rect.x, rect.y, rect.cx, rect.cy, *_hdcStaging, region.x, region.y, region.cx, region.cy, bfun);

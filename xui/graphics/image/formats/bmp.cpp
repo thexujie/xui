@@ -86,7 +86,7 @@ namespace graphics::image::formats
             // Windows 格式
         else
         {
-            const bmp_header_windows_t * header = (const bmp_header_windows_t *)buffer;
+            const bmp_header_windows_t * bmp_header = (const bmp_header_windows_t *)buffer;
             buffer += sizeof(bmp_header_windows_t);
             if (header->type != BMP_MAGIC)
                 return error_bad_format;
@@ -235,8 +235,8 @@ namespace graphics::image::formats
 
         image::formats::bmp_header_windows_t bmfHdr = {};
         bmfHdr.type = 0x4D42;
-        bmfHdr.file_size = sizeof(image::formats::bmp_header_windows_t) + sizeof(image::formats::bmp_info_windows_t) + data.pitch * data.format.height;
-        bmfHdr.data_offset = sizeof(image::formats::bmp_header_windows_t) + sizeof(image::formats::bmp_info_windows_t);
+        bmfHdr.data_offset = sizeof(image::formats::bmp_header_windows_t) + sizeof(image::formats::bmp_info_windows_t) + sizeof(color_mask_abgr_t);
+        bmfHdr.file_size = bmfHdr.data_offset + data.pitch * data.format.height;
 
         image::formats::bmp_info_windows_t bi = {};
         bi.size = sizeof(image::formats::bmp_info_windows_t);
@@ -244,19 +244,20 @@ namespace graphics::image::formats
         bi.height = -data.format.height;
         bi.plane_count = 1;
         bi.bit_count = image::format_bits(data.format.format);
-        bi.encode = image::formats::bmp_encode_none;
+        bi.encode = image::formats::bmp_encode_mask;
         bi.image_size = 0;
         bi.ppm_x = 0;
         bi.ppm_y = 0;
         bi.color_used = 0;
         bi.color_important = 0;
 
+        color_mask_abgr_t mask = mask_from_format_abgr(data.format.format);
         fs.write((const char *)&bmfHdr, sizeof(image::formats::bmp_header_windows_t));
         fs.write((const char *)&bi, sizeof(image::formats::bmp_info_windows_t));
+        fs.write((const char *)&mask, sizeof(color_mask_abgr_t));
         fs.write((const char *)data.data, data.pitch * data.format.height);
 
         fs.close();
-        return error_ok;
         return error_ok;
     }
 
@@ -381,21 +382,25 @@ namespace graphics::image::formats
 
     core::error_e image_convert_bmp_index8_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
+        assert(dst.pitch > 0);
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
             return error_not_supported;
 
         byte_t * dst_line = dst.data;
-
+        int32_t dst_pitch = dst.pitch;
         if (src.pitch < 0)
+        {
             dst_line = dst.data + (dst.format.height - 1) * dst.pitch;
+            dst_pitch = -dst_pitch;
+        }
 
-        const byte_t * src_pixel = src.data;
-        byte_t * dst_pixel = dst_line;
         int32_t src_stride = format_bits(src.format.format) / 8;
         int32_t dst_stride = format_bits(dst.format.format) / 8;
-        int32_t dst_pitch = std::abs(dst.pitch);
 
+        const uint8_t * src_pixel = (const uint8_t *)src.data;
+
+        byte_t * dst_pixel = dst_line;
         const byte_t * src_color = nullptr;
         byte_t * dst_pixel_end = dst_line + dst_pitch;
         int32_t count = 0;
@@ -425,9 +430,9 @@ namespace graphics::image::formats
                         dst_pixel += dst_stride;
                     }
                     ++src_pixel;
-                    dst_line += dst.pitch;
+                    dst_line += dst_pitch;
                     dst_pixel = dst_line;
-                    dst_pixel_end = dst_line + dst_pitch;
+                    dst_pixel_end = dst_line + dst.pitch;
                     break;
                 case 1: // 解码结束
                     working = false;
@@ -441,8 +446,7 @@ namespace graphics::image::formats
                         dst_pixel += dst_stride;
                     }
 
-                    // 再次重复count个像素。
-                    if (count = *src_pixel++)
+                    if (count = *src_pixel++) // 跳过 count 行
                     {
                         byte_t * dst_pixel_repeat_to = dst_pixel + count * dst_pitch;
                         while (dst_pixel < dst_pixel_repeat_to)

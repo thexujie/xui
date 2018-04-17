@@ -20,11 +20,6 @@ agg::rasterizer_scanline_aa<> raster;
 agg::scanline_u8 sl;
 
 
-namespace win32
-{
-bool d2d_rule_full(graphics::image::image_convert_rule_t * rule);
-}
-
 #if 1
 void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 {
@@ -191,17 +186,17 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     raster.add_path(ps);
 
     auto[fileData, fileSize] = core::io::readFullFile("lcw.tga");
-    graphics::image::image_data_t img;
-    graphics::image::image_create(fileData.get(), fileSize, &img, win32::d2d_rule_full);
+    graphics::image::image_t img;
+    graphics::image::image_create(fileData.get(), fileSize, img);
 
     agg::rendering_buffer img_buf;
-    img_buf.attach((agg::int8u *)img.buffer, img.width, img.height, img.pitch);
+    img_buf.attach((agg::int8u *)img.data.data, img.data.format.width, img.data.format.height, img.data.pitch);
     agg::pixfmt_bgra32 img_pixf(img_buf);
     //agg::image_accessor_clip<agg::pixfmt_bgra32> img_src(img_pixf, agg::rgba_pre(0, 0.4, 0, 0.5));
     //agg::render_scanlines_aa_solid(raster, sl, renb, agg::tools::rgba(colors::Black));
 
     agg::span_interpolator_linear<> interpolator( 
-        agg::trans_affine_scaling(img.width / (double)rect.cx, img.height / (double)rect.cy) *
+        agg::trans_affine_scaling(img.data.format.width / (double)rect.cx, img.data.format.height / (double)rect.cy) *
         agg::trans_affine_translation(rect.x, rect.y));
 
     agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
@@ -214,9 +209,44 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 }
 #endif
 
+
+void testImages()
+{
+    //std::make_shared<graphics::Image>("tga/tga.tga")->Save("out/tga.tga");
+
+    //std::make_shared<graphics::Image>("tga/tga.tga")->Save("out/tga.tga");
+    //std::make_shared<graphics::Image>("tga/tga_16.tga")->Save("out/tga_16.tga");
+    //std::make_shared<graphics::Image>("tga/tga_24.tga")->Save("out/tga_24.tga");
+    //std::make_shared<graphics::Image>("tga/tga_32.tga")->Save("out/tga_32.tga");
+    //std::make_shared<graphics::Image>("tga/tga_gray8.tga")->Save("out/tga_gray8.tga");
+    //std::make_shared<graphics::Image>("tga/tga_index4.tga")->Save("out/tga_index4.tga");
+    //std::make_shared<graphics::Image>("tga/tga_index8.tga")->Save("out/tga_index8.tga");
+    //std::make_shared<graphics::Image>("tga/tga_index8_24.tga")->Save("out/tga_index8_24.tga");
+    //std::make_shared<graphics::Image>("tga/tga_index8_gray8.tga")->Save("out/tga_index8_gray8.tga");
+    //std::make_shared<graphics::Image>("tga/tga_rle8_16.tga")->Save("out/tga_rle8_16.tga");
+    //std::make_shared<graphics::Image>("tga/tga_rle8_24.tga")->Save("out/tga_rle8_24.tga");
+    //std::make_shared<graphics::Image>("tga/tga_rle8_32.tga")->Save("out/tga_rle8_32.tga");
+
+    //std::make_shared<graphics::Image>("png/png.png")->Save("out/png/png.tga");
+    //std::make_shared<graphics::Image>("png/png_gray.png")->Save("out/png/png_gray.tga");
+    //std::make_shared<graphics::Image>("png/png_gray1.png")->Save("out/png/png_gray1.tga");
+    //std::make_shared<graphics::Image>("png/png2.png")->Save("out/png/png2.tga");
+    //std::make_shared<graphics::Image>("png/png3.png")->Save("out/png/png3.tga");
+
+    //std::make_shared<graphics::Image>("out/bmp/bmp_window_a4r4g4b4.bmp");
+    //std::make_shared<graphics::Image>("bmp/bmp_window_a4r4g4b4f.bmp")->Save("out/bmp/bmp_window_a4r4g4b4f.bmp");
+    for(auto & path : core::io::allPaths("bmp"))
+    {
+        if(path.u8string().find(".bmp") != std::string::npos)
+            std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/bmp/", path.filename()));
+    }
+}
+
 int main()
 {
     win32::Win32App app;
+    testImages();
+    return 0; 
 
     int32_t cx = 1280;
     int32_t cy = 720;
@@ -225,7 +255,7 @@ int main()
     
     graphics->Clear(colors::LightGray);
 
-    auto image = std::make_shared<graphics::Image>("dota2.jpg");
+
     //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, core::math::align::leftTop);
     //graphics->DrawImage(*(image.get()), { 0, 0, cx / 4, cy / 4 }, core::math::align::bottomCenterX);
     //graphics->DrawImage(*(image.get()), { cx / 4, 0, cx / 4, cy / 4 });
@@ -234,7 +264,7 @@ int main()
 
     //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, { 20, 300, 600, 200 }, core::math::align::leftTop);
 
-    graphics->DrawImage(*(image.get()), { cx / 4, cy / 4, cx / 2, cy / 2 }, { 20, 300, 600, 200 });
+    //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4, cx / 2, cy / 2 }, { 20, 300, 600, 200 });
     //graphics->DrawLine({ cx / 2, cy }, { cx / 2, 0 },  colors::Yellow, 1);
 
     graphics->DrawLine({ 0, cy / 2 }, { cx, cy / 2 }, colors::Red, 1);
@@ -270,7 +300,7 @@ int main()
     graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Green, core::math::align::rightCenterY);
     graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Blue, core::math::align::bottomCenterX);
 
-    auto cm = std::make_shared<graphics::Image>("lcw.tga");
+    //auto cm = std::make_shared<graphics::Image>("lcw.tga");
     //cm->Save("cm.bmp");
     //graphics->DrawImage(*cm.get(), { 10, 10 }, 0);
     //graphics->DrawImage(*cm.get(), { 50, 50 }, 0);
@@ -281,7 +311,7 @@ int main()
     graphics->FillRect({ 100, 160, 200, 50 }, 0x80ff0000);
     graphics->DrawRect({ 100, 220, 200, 50 }, colors::Red, 2.0f);
 
-    testAgg(pixmap);
+    //testAgg(pixmap);
     pixmap->Save("out.bmp");
     //image->Save("pd2.jpg");
 

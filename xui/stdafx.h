@@ -38,6 +38,8 @@
 #include <thread>
 #include <chrono>
 
+#include <filesystem>
+
 using namespace std::chrono_literals;
 
 #include "core/core.h"

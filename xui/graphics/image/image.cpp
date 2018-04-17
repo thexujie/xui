@@ -158,7 +158,6 @@ namespace graphics::image
 
         const byte_t * src_pixel = src.data;
         byte_t * dst_line = dst.data;
-        byte_t * dst_pixel = nullptr;
 
         int32_t dst_pitch = dst.pitch;
         if (src.pitch < 0)
@@ -170,56 +169,58 @@ namespace graphics::image
         int32_t src_stride = format_bits(src.format.format) / 8;
         int32_t dst_stride = format_bits(dst.format.format) / 8;
 
-        for (int32_t row = 0, col = 0; row != src.format.height; ++row)
+        for (int32_t row = 0; row != src.format.height; ++row)
         {
-            dst_pixel = dst_line;
-            for (col = 0; col != src.format.width; ++col)
+            byte_t * dst_pixel = dst_line;
+            for (int32_t col = 0; col != src.format.width; ++col)
             {
 #pragma pack(push, 1)
                 union
                 {
                     struct
                     {
-                        uint8_t v7 : 1;
-                        uint8_t v6 : 1;
-                        uint8_t v5 : 1;
-                        uint8_t v4 : 1;
-                        uint8_t v3 : 1;
-                        uint8_t v2 : 1;
-                        uint8_t v1 : 1;
-                        uint8_t v0 : 1;
+                        uint8_t index7 : 1;
+                        uint8_t index6 : 1;
+                        uint8_t index5 : 1;
+                        uint8_t index4 : 1;
+                        uint8_t index3 : 1;
+                        uint8_t index2 : 1;
+                        uint8_t index1 : 1;
+                        uint8_t index0 : 1;
                     };
 
-                    byte_t v;
+                    uint8_t index;
                 };
 
 #pragma pack(pop)
+                const uint32_t colors[2] = {0, 0xffffffff};
+                const_cast<byte_t *&>(src.palette) = (byte_t *)colors;
                 switch (col & 0x7)
                 {
                 case 0:
-                    v = *src_pixel;
-                    pfn_resampler(src.palette + v0 * src_stride, dst_pixel);
+                    index = *src_pixel;
+                    pfn_resampler(src.palette + index0 * src_stride, dst_pixel);
                     break;
                 case 1:
-                    pfn_resampler(src.palette + v1 * src_stride, dst_pixel);
+                    pfn_resampler(src.palette + index1 * src_stride, dst_pixel);
                     break;
                 case 2:
-                    pfn_resampler(src.palette + v2 * src_stride, dst_pixel);
+                    pfn_resampler(src.palette + index2 * src_stride, dst_pixel);
                     break;
                 case 3:
-                    pfn_resampler(src.palette + v3 * src_stride, dst_pixel);
+                    pfn_resampler(src.palette + index3 * src_stride, dst_pixel);
                     break;
                 case 4:
-                    pfn_resampler(src.palette + v4 * src_stride, dst_pixel);
+                    pfn_resampler(src.palette + index4 * src_stride, dst_pixel);
                     break;
                 case 5:
-                    pfn_resampler(src.palette + v5 * src_stride, dst_pixel);
+                    pfn_resampler(src.palette + index5 * src_stride, dst_pixel);
                     break;
                 case 6:
-                    pfn_resampler(src.palette + v6 * src_stride, dst_pixel);
+                    pfn_resampler(src.palette + index6 * src_stride, dst_pixel);
                     break;
                 case 7:
-                    pfn_resampler(src.palette + v7 * src_stride, dst_pixel);
+                    pfn_resampler(src.palette + index7 * src_stride, dst_pixel);
                     src_pixel += 1;
                     break;
                 default:
@@ -620,6 +621,32 @@ namespace graphics::image
         return format_none;
     }
 
+    color_mask_abgr_t mask_from_format_abgr(format format)
+    {
+        switch(format)
+        {
+        case format_r3g3b2: return MASK_R3G3B2;
+        case format_a8r3g3b2: return MASK_A8R3G3B2;
+        case format_a4r4g4b4: return MASK_A4R4G4B4;
+        case format_x4r4g4b4: return MASK_X4R4G4B4;
+        case format_r5g6b5: return MASK_A0R5G6B5;
+        case format_x1r5g5b5: return MASK_X1R5G5B5;
+        case format_a1r5g5b5: return MASK_A1R5G5B5;
+        case format_r8g8b8: return MASK_R8G8B8;
+        case format_b8g8r8: return MASK_B8G8R8;
+        case format_x8r8g8b8: return MASK_X8R8G8B8;
+        case format_a8r8g8b8: return MASK_A8R8G8B8;
+        case format_x8b8g8r8: return MASK_X8B8G8R8;
+        case format_a8b8g8r8: return MASK_A8B8G8R8;
+        case format_r8g8b8x8: return MASK_R8G8B8X8;
+        case format_r8g8b8a8: return MASK_R8G8B8A8;
+        case format_g16r16: return MASK_G16R16;
+        case format_a2r10g10b10: return MASK_A2R10G10B10;
+        case format_a2b10g10r10: return MASK_A2B10G10R10;
+        default: return {};
+        }
+    }
+
     pixel_convert_fun image_get_samapler(format src, format dst)
     {
         static pixel_convert_fun pfns[format_count][format_count] = {};
@@ -639,12 +666,15 @@ namespace graphics::image
             pfns[format_x1r5g5b5][format_x1r5g5b5] = color_16_to_16;
             pfns[format_x1r5g5b5][format_r8g8b8] = color_x1r5g5b5_to_r8g8b8;
             pfns[format_a4r4g4b4][format_a4r4g4b4] = color_16_to_16;
+            pfns[format_x4r4g4b4][format_x4r4g4b4] = color_16_to_16;
 
             pfns[format_a8r8g8b8][format_a8r8g8b8] = color_32_to_32;
             pfns[format_a8b8g8r8][format_a8b8g8r8] = color_32_to_32;
             pfns[format_a8b8g8r8][format_a8r8g8b8] = color_a8b8g8r8_to_a8r8g8b8;
             pfns[format_x8r8g8b8][format_x8r8g8b8] = color_32_to_32;
             pfns[format_x8b8g8r8][format_x8b8g8r8] = color_32_to_32;
+            pfns[format_r8g8b8x8][format_r8g8b8x8] = color_32_to_32;
+            pfns[format_b8g8r8x8][format_b8g8r8x8] = color_32_to_32;
         }
         return pfns[src][dst];
     }

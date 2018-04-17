@@ -474,6 +474,7 @@ namespace graphics::image
 
     // 根据颜色掩码计算颜色类型
     format format_from_mask_abgr(const color_mask_abgr_t & mask, int32_t bits);
+    color_mask_abgr_t mask_from_format_abgr(format format);
 
 
     //////////////////////////////////////////////////////////////////////////
