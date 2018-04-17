@@ -185,9 +185,6 @@
     <ClCompile Include="graphics\image\formats\dds.cpp">
       <Filter>graphics\image\formats</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\image\formats\ico.cpp">
-      <Filter>graphics\image\formats</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\image\formats\jpg.cpp">
       <Filter>graphics\image\formats</Filter>
     </ClCompile>
@@ -747,9 +744,6 @@
       <Filter>graphics\image\formats</Filter>
     </ClInclude>
     <ClInclude Include="graphics\image\formats\dds.h">
-      <Filter>graphics\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\image\formats\ico.h">
       <Filter>graphics\image\formats</Filter>
     </ClInclude>
     <ClInclude Include="graphics\image\formats\jpg.h">

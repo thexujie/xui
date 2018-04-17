@@ -212,54 +212,32 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 
 void testImages()
 {
-    //std::make_shared<graphics::Image>("tga/tga.tga")->Save("out/tga.tga");
-
-    //std::make_shared<graphics::Image>("tga/tga.tga")->Save("out/tga.tga");
-    //std::make_shared<graphics::Image>("tga/tga_16.tga")->Save("out/tga_16.tga");
-    //std::make_shared<graphics::Image>("tga/tga_24.tga")->Save("out/tga_24.tga");
-    //std::make_shared<graphics::Image>("tga/tga_32.tga")->Save("out/tga_32.tga");
-    //std::make_shared<graphics::Image>("tga/tga_gray8.tga")->Save("out/tga_gray8.tga");
-    //std::make_shared<graphics::Image>("tga/tga_index4.tga")->Save("out/tga_index4.tga");
-    //std::make_shared<graphics::Image>("tga/tga_index8.tga")->Save("out/tga_index8.tga");
-    //std::make_shared<graphics::Image>("tga/tga_index8_24.tga")->Save("out/tga_index8_24.tga");
-    //std::make_shared<graphics::Image>("tga/tga_index8_gray8.tga")->Save("out/tga_index8_gray8.tga");
-    //std::make_shared<graphics::Image>("tga/tga_rle8_16.tga")->Save("out/tga_rle8_16.tga");
-    //std::make_shared<graphics::Image>("tga/tga_rle8_24.tga")->Save("out/tga_rle8_24.tga");
-    //std::make_shared<graphics::Image>("tga/tga_rle8_32.tga")->Save("out/tga_rle8_32.tga");
-
-    //std::make_shared<graphics::Image>("png/png.png")->Save("out/png/png.tga");
-    //std::make_shared<graphics::Image>("png/png_gray.png")->Save("out/png/png_gray.tga");
-    //std::make_shared<graphics::Image>("png/png_gray1.png")->Save("out/png/png_gray1.tga");
-    //std::make_shared<graphics::Image>("png/png2.png")->Save("out/png/png2.tga");
-    //std::make_shared<graphics::Image>("png/png3.png")->Save("out/png/png3.tga");
-
-    //std::make_shared<graphics::Image>("out/bmp/bmp_window_a4r4g4b4.bmp");
-    std::make_shared<graphics::Image>("dds/dds_r3g3b2.dds")->Save("out/dds_r3g3b2.bmp");
-    //for(auto & path : core::io::allPaths("bmp"))
-    //{
-    //    if(path.u8string().find(".bmp") != std::string::npos)
-    //        std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/bmp_", path.filename()));
-    //}
-    //for (auto & path : core::io::allPaths("tga"))
-    //{
-    //    if (path.u8string().find(".tga") != std::string::npos)
-    //        std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/tga_", path.stem(), ".tga"));
-    //}
-    //for (auto & path : core::io::allPaths("png"))
-    //{
-    //    if (path.u8string().find(".png") != std::string::npos)
-    //        std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/png_", path.stem(), ".tga"));
-    //}
-    //for (auto & path : core::io::allPaths("jpg"))
-    //{
-    //    if (path.u8string().find(".jpg") != std::string::npos)
-    //        std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/jpg_", path.stem(), ".tga"));
-    //}
-    //for (auto & path : core::io::allPaths("dds"))
-    //{
-    //    if (path.u8string().find(".dds") != std::string::npos)
-    //        std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/dds_", path.stem(), ".bmp"));
-    //}
+    std::make_shared<graphics::Image>(u8"jpg/对比.jpg")->Save(core::string::format("out/jpg_", u8"对比", ".tga"));
+    for(auto & path : core::io::allPaths("bmp"))
+    {
+        if(path.u8string().find(".bmp") != std::string::npos)
+            std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/bmp_", path.filename()));
+    }
+    for (auto & path : core::io::allPaths("tga"))
+    {
+        if (path.u8string().find(".tga") != std::string::npos)
+            std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/tga_", path.stem(), ".tga"));
+    }
+    for (auto & path : core::io::allPaths("png"))
+    {
+        if (path.u8string().find(".png") != std::string::npos)
+            std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/png_", path.stem(), ".tga"));
+    }
+    for (auto & path : core::io::allPaths("jpg"))
+    {
+        if (path.u8string().find(".jpg") != std::string::npos)
+            std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/jpg_", path.stem(), ".tga"));
+    }
+    for (auto & path : core::io::allPaths("dds"))
+    {
+        if (path.u8string().find(".dds") != std::string::npos)
+            std::make_shared<graphics::Image>(path.u8string())->Save(core::string::format("out/dds_", path.stem(), ".bmp"));
+    }
 }
 
 int main()

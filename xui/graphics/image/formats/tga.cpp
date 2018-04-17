@@ -152,7 +152,7 @@ namespace graphics::image::formats
         if (ictx.get_format)
             image.data.format = ictx.get_format(image_type_bmp, format);
 
-        ictx.pfn_alloc(image.data);
+        ictx.pfn_alloc(image.data, 4);
         image.pfn_free = ictx.pfn_free;
 
         image_data_t src_data = {};
@@ -161,7 +161,7 @@ namespace graphics::image::formats
         src_data.data = (byte_t *)conv_buffer;
         src_data.palette = (byte_t *)conv_palette;
 
-        if (header->flags & TGAF_FLIPY)
+        if (!(header->flags & TGAF_TOP_TO_BOTTOM))
             src_data.pitch = -src_data.pitch;
 
         error_e err = pfn_convert(ictx, src_data, image.data);
@@ -175,6 +175,7 @@ namespace graphics::image::formats
 
     core::error_e tga_save(const image_data_t & data, std::string path)
     {
+        assert(data.pitch > 0);
         switch (format_bits(data.format.format))
         {
         case 8:
@@ -187,7 +188,7 @@ namespace graphics::image::formats
         }
 
         std::fstream fs;
-        fs.open(path, std::ios::out | std::ios::binary | std::ios::trunc);
+        fs.open(core::string::u8_ucs2(path), std::ios::out | std::ios::binary | std::ios::trunc);
         if (!fs.good())
             return error_io;
 
@@ -197,10 +198,12 @@ namespace graphics::image::formats
         header.width = (uint16_t)data.format.width;
         header.height = (uint16_t)data.format.height;
         header.bit_count = (uint8_t)format_bits(data.format.format);
-        header.flags = data.pitch < 0 ? 0 : TGAF_FLIPY;
+        header.flags = TGAF_TOP_TO_BOTTOM;
 
         fs.write((const char *)&header, sizeof(tga_header_t));
-        fs.write((const char *)data.data, std::abs(data.pitch) * data.format.height);
+        int32_t row_pitch = format_bits(data.format.format) * data.format.width / 8;
+        for(int32_t row = 0; row < data.format.height; ++row)
+            fs.write((const char *)data.data + data.pitch * row, row_pitch);
         fs.write((const char *)TGA_TAIL, sizeof(TGA_TAIL)); // °üÀ¨ null
         return error_ok;
     }

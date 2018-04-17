@@ -367,7 +367,7 @@ namespace graphics::image
         byte_t * palette = nullptr;
         int32_t palette_size = 0;
     };
-    void image_buffer_alloc_default(image_data_t & data);
+    void image_buffer_alloc_default(image_data_t & data, int32_t align = 4);
     void image_buffer_free(image_data_t & data);
     pixel_convert_fun image_get_samapler(format src, format dst);
     image_format image_get_format(image_type type, image_format format);

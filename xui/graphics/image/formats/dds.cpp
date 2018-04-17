@@ -349,7 +349,7 @@ namespace graphics::image::formats
         if (ictx.get_format)
             image.data.format = ictx.get_format(image_type_bmp, format);
 
-        ictx.pfn_alloc(image.data);
+        ictx.pfn_alloc(image.data, 4);
         image.pfn_free = ictx.pfn_free;
 
         image_data_t src_data = {};

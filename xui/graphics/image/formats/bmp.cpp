@@ -205,7 +205,7 @@ namespace graphics::image::formats
         if (ictx.get_format)
             image.data.format = ictx.get_format(image_type_bmp, format);
 
-        ictx.pfn_alloc(image.data);
+        ictx.pfn_alloc(image.data, 4);
         image.pfn_free = ictx.pfn_free;
 
         image_data_t src_data = {};
@@ -233,7 +233,7 @@ namespace graphics::image::formats
             return error_not_supported;
 
         std::fstream fs;
-        fs.open(path, std::ios::out | std::ios::binary | std::ios::trunc);
+        fs.open(core::string::u8_ucs2(path), std::ios::out | std::ios::binary | std::ios::trunc);
         if (!fs.good())
             return error_io;
 

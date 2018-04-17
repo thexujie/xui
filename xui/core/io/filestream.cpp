@@ -30,7 +30,7 @@ namespace core::io
     std::tuple<std::shared_ptr<byte_t>, int64_t> readFullFile(std::string path)
     {
         std::fstream fs;
-        fs.open(path, std::ios::in | std::ios::binary);
+        fs.open(core::string::u8_ucs2(path), std::ios::in | std::ios::binary);
         if (!fs.good())
             return {};
 

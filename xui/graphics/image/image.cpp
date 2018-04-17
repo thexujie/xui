@@ -545,9 +545,9 @@ namespace graphics::image
     }
 
 
-    void image_buffer_alloc_default(image_data_t & data)
+    void image_buffer_alloc_default(image_data_t & data, int32_t align)
     {
-        data.pitch = align_to<int32_t>(data.format.width * (format_bits(data.format.format) / 8), 4);
+        data.pitch = align_to<int32_t>(data.format.width * (format_bits(data.format.format) / 8), align);
         data.data = (byte_t *)malloc(data.format.height * data.pitch);
     }
 

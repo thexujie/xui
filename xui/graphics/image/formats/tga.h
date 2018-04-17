@@ -74,8 +74,8 @@ namespace graphics::image::formats
         uint8_t flags;
     } tga_header_t;
 
-    // 标记文件是按照从下到上存储的。
-    const uint32_t TGAF_FLIPY = 0x20;
+    // 标记文件是按照从上到下存储的。
+    const uint32_t TGAF_TOP_TO_BOTTOM = 0x20;
     // 文件尾
     const uint8_t TGA_TAIL[] = "TRUEVISION-XFILE";
 
