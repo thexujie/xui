@@ -24,8 +24,7 @@ namespace graphics::image::formats
     const uint8_t JPEG_TAIL[2] = { 0xFF, 0xD9 };
 
     bool is_jpg_data(const byte_t * buffer, int32_t length);
-    core::error_e jpg_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
+    core::error_e jpg_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image);
 
     bool jpg_rule_default(image_codec_context * rule);
 

@@ -73,12 +73,8 @@ namespace graphics::image::formats
     }
 
     // 创建一幅JPEG图片的字节数组
-    core::error_e jpg_create(const byte_t * buffer, int32_t length, image_data_t * img, image_convert_rule_fun_t pfn_match,
-        void * user_data)
+    core::error_e jpg_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image)
     {
-        if (!pfn_match)
-            pfn_match = jpg_rule_default;
-
         byte_t ** rows = nullptr;
         // 解压信息
         struct jpeg_decompress_struct cinfo;
@@ -117,23 +113,16 @@ namespace graphics::image::formats
 
         jpeg_start_decompress(&cinfo);
 
-        int32_t width = (int32_t)cinfo.image_width;
-        int32_t height = (int32_t)cinfo.image_height;
+        image_format format = {};
+        format.format = format_b8g8r8;
+        format.width = (int32_t)cinfo.image_width;
+        format.height = (int32_t)cinfo.image_height;
 
-        image_codec_context rule = { image_type_jpeg, width, height, format_b8g8r8, user_data };
-        if (!pfn_match(&rule))
-        {
-            //jpeg_finish_decompress(&cinfo);
-            jpeg_destroy_decompress(&cinfo);
-            return error_bad_format;
-        }
+        int32_t src_pitch = format.width * 3;
+        byte_t * src_buffer = image_malloc(src_pitch * format.height);
 
-        int32_t src_pitch = align_to_4(width * 3);
-        int32_t src_length = src_pitch * height;
-        byte_t * src_buffer = image_malloc(src_length);
-
-        rows = (byte_t **)image_malloc(sizeof(byte_t *) * height);
-        for (int32_t cnt = 0; cnt < height; ++cnt)
+        rows = (byte_t **)image_malloc(sizeof(byte_t *) * format.height);
+        for (int32_t cnt = 0; cnt < format.height; ++cnt)
             rows[cnt] = src_buffer + cnt * src_pitch;
 
         uint32_t rowsRead = 0;
@@ -145,36 +134,23 @@ namespace graphics::image::formats
         jpeg_finish_decompress(&cinfo);
         jpeg_destroy_decompress(&cinfo);
 
-        if (rule.image_convert_fun == image_convert_jpeg_use_src)
-        {
-            img->width = rule.width;
-            img->height = rule.height;
-            img->bits = rule.dst_bits;
-            img->pitch = rule.dst_pitch;
-            img->length = rule.dst_pitch * rule.dst_height;
-            img->src_mode = rule.src_mode;
-            img->dst_mode = rule.dst_mode;
-            img->flags = 0;
-            img->buffer = src_buffer;
-        }
-        else
-        {
-            img->width = rule.width;
-            img->height = rule.height;
-            img->bits = rule.dst_bits;
-            img->pitch = rule.dst_pitch;
-            img->length = rule.dst_pitch * rule.dst_height;
-            img->src_mode = rule.src_mode;
-            img->dst_mode = rule.dst_mode;
-            img->flags = 0;
-            img->buffer = image_malloc(img->length);
+        image.data.format = format;
+        if (ictx.get_format)
+            image.data.format = ictx.get_format(image_type_jpeg, format);
 
-            rule.image_convert_fun(rule.width, rule.height,
-                rule.pixel_convert_fun,
-                nullptr, rule.pal_stride,
-                src_buffer, rule.src_stride, rule.src_pitch,
-                img->buffer, rule.dst_stride, rule.dst_pitch, 0);
-            image_free(src_buffer);
+        ictx.pfn_alloc(image.data);
+        image.pfn_free = ictx.pfn_free;
+
+        image_data_t src_data = {};
+        src_data.format = format;
+        src_data.data = src_buffer;
+        src_data.pitch = src_pitch;
+
+        error_e err = image_convert_ex(ictx, src_data, image.data);
+        if (err < 0)
+        {
+            image.pfn_free(image.data);
+            return err;
         }
         return error_ok;
     }

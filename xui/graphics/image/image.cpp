@@ -45,8 +45,8 @@ namespace graphics::image
             return image_type_bmp;
         if (is_png_data(buffer, length))
             return image_type_png;
-        //if (is_jpg_data(buffer, length))
-        //    return image_type_jpeg;
+        if (is_jpg_data(buffer, length))
+            return image_type_jpeg;
         if (is_tga_data(buffer, length))
             return image_type_tga;
         if (is_dds_data(buffer, length))
@@ -77,8 +77,8 @@ namespace graphics::image
             return tga_create(ictx, buffer, length, img);
         case image_type_png:
             return png_create(ictx, buffer, length, img);
-        ////case image_type_jpeg:
-        ////    return jpg_create(buffer, length, img, pfn_rule, user_data);
+        case image_type_jpeg:
+            return jpg_create(ictx, buffer, length, img);
         case image_type_dds:
             return dds_create(ictx, buffer, length, img);
         default:
@@ -554,6 +554,7 @@ namespace graphics::image
     void image_buffer_free(image_data_t & data)
     {
         free(data.data);
+        data = {};
     }
 
     static bool mask_equal(const color_mask_abgr_t & ma, const color_mask_abgr_t & mb)
@@ -657,6 +658,9 @@ namespace graphics::image
             pfns[format_gray8][format_r8g8b8] = color_gray8_to_r8g8b8;
             pfns[format_gray8][format_x8r8g8b8] = color_gray8_to_x8r8g8b8;
 
+            pfns[format_r3g3b2][format_r3g3b2] = color_8_to_8;
+            pfns[format_r3g3b2][format_r8g8b8] = color_r3g3b2_to_r8g8b8;
+
             pfns[format_r5g6b5][format_r5g6b5] = color_16_to_16;
             pfns[format_b5g6r5][format_b5g6r5] = color_16_to_16;
             pfns[format_r8g8b8][format_r8g8b8] = color_24_to_24;
@@ -675,6 +679,9 @@ namespace graphics::image
             pfns[format_x8b8g8r8][format_x8b8g8r8] = color_32_to_32;
             pfns[format_r8g8b8x8][format_r8g8b8x8] = color_32_to_32;
             pfns[format_b8g8r8x8][format_b8g8r8x8] = color_32_to_32;
+
+            pfns[format_a4r5g6b5][format_a8r8g8b8] = color_dds_a4r5g6b5_to_a8r8g8b8;
+            pfns[format_a8r5g6b5][format_a8r8g8b8] = color_dds_a8r5g6b5_to_a8r8g8b8;
         }
         return pfns[src][dst];
     }
@@ -995,6 +1002,15 @@ namespace graphics::image
             ((((src >> 0) & 0x3) * 0x1F / 0x3) << 10) |
             ((((src >> 2) & 0x7) * 0x1F / 0x7) << 5) |
             ((((src >> 5) & 0x7) * 0x1F / 0x7) << 0);
+    }
+
+    void color_r3g3b2_to_r8g8b8(const void * src_pixel, void * dst_pixel)
+    {
+        byte_t src = *(const byte_t *)src_pixel;
+        color_r8g8b8_t * dst = (color_r8g8b8_t *)dst_pixel;
+        dst->r = ((src & (0x7 << 5)) >> 5) * 0xFF / 0x7;
+        dst->g = ((src & (0x7 << 2)) >> 2) * 0xFF / 0x7;
+        dst->b = ((src & (0x3 << 0)) >> 0) * 0xFF / 0x3;
     }
 
     void color_r3g3b2_to_x8r8g8b8(const void * src_pixel, void * dst_pixel)

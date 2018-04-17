@@ -284,16 +284,16 @@ namespace graphics::image::formats
                 switch (header->pixel_format.dxt_format)
                 {
                 case dxt_format_dxt1:
-                    format.format = format_r8g8b8;
+                    format.format = format_r5g6b5;
                     pfn_convert = dds_convert_bc1;
                     break;
                 case dxt_format_dxt2:
                 case dxt_format_dxt3:
-                    format.format = format_r8g8b8;
+                    format.format = format_a4r5g6b5;
                     pfn_convert = dds_convert_bc2;
                     break;
                 case dxt_format_dxt4:
-                    format.format = format_r8g8b8;
+                    format.format = format_a8r5g6b5;
                     pfn_convert = dds_convert_bc3;
                     break;
                 case dxt_format_ati1:
@@ -353,6 +353,7 @@ namespace graphics::image::formats
         image.pfn_free = ictx.pfn_free;
 
         image_data_t src_data = {};
+        src_data.format = format;
         src_data.data = (byte_t *)buffer + sizeof(dds_header_t);
         src_data.pitch = align_to<int32_t>(format.width * (format_bits(format.format) / 8), 4);
 
@@ -360,6 +361,7 @@ namespace graphics::image::formats
         if (err < 0)
         {
             image.pfn_free(image.data);
+            image = {};
             return err;
         }
         return error_ok;

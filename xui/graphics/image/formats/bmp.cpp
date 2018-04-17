@@ -228,6 +228,10 @@ namespace graphics::image::formats
 
     core::error_e bmp_save(const image_data_t & data, std::string path)
     {
+        color_mask_abgr_t mask = mask_from_format_abgr(data.format.format);
+        if (!mask)
+            return error_not_supported;
+
         std::fstream fs;
         fs.open(path, std::ios::out | std::ios::binary | std::ios::trunc);
         if (!fs.good())
@@ -251,7 +255,6 @@ namespace graphics::image::formats
         bi.color_used = 0;
         bi.color_important = 0;
 
-        color_mask_abgr_t mask = mask_from_format_abgr(data.format.format);
         fs.write((const char *)&bmfHdr, sizeof(image::formats::bmp_header_windows_t));
         fs.write((const char *)&bi, sizeof(image::formats::bmp_info_windows_t));
         fs.write((const char *)&mask, sizeof(color_mask_abgr_t));

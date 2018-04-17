@@ -197,7 +197,7 @@ namespace graphics::image::formats
         header.width = (uint16_t)data.format.width;
         header.height = (uint16_t)data.format.height;
         header.bit_count = (uint8_t)format_bits(data.format.format);
-        header.flags = data.pitch < 0 ? TGAF_FLIPY : 0;
+        header.flags = data.pitch < 0 ? 0 : TGAF_FLIPY;
 
         fs.write((const char *)&header, sizeof(tga_header_t));
         fs.write((const char *)data.data, std::abs(data.pitch) * data.format.height);

@@ -80,6 +80,7 @@ namespace graphics::image
         format_cmyk,
         format_ycck,
 
+        format_a4r5g6b5,
         //format_dx100 = format_dx1 + 99, // keep..
         format_count,
     };
@@ -328,6 +329,8 @@ namespace graphics::image
         uint32_t g = 0;
         uint32_t b = 0;
         uint32_t a = 0;
+
+        operator bool() const { return (r || g || b || a); }
     };
 
     struct image_format
@@ -489,6 +492,7 @@ namespace graphics::image
 
     void color_r3g3b2_to_x1r5g5b5(const void * src_pixel, void * dst_pixel);
     void color_r3g3b2_to_a1r5g5b5(const void * src_pixel, void * dst_pixel);
+    void color_r3g3b2_to_r8g8b8(const void * src_pixel, void * dst_pixel);
     void color_r3g3b2_to_x8r8g8b8(const void * src_pixel, void * dst_pixel);
 
     void color_a8r3g3b2_to_a8r8g8b8(const void * src_pixel, void * dst_pixel);

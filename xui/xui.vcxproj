@@ -100,9 +100,7 @@
     <ClCompile Include="graphics\image\formats\ico.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="graphics\image\formats\jpg.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="graphics\image\formats\jpg.cpp" />
     <ClCompile Include="graphics\image\formats\png.cpp" />
     <ClCompile Include="graphics\image\formats\tga.cpp" />
     <ClCompile Include="graphics\image\image.cpp" />
@@ -202,9 +200,7 @@
     <ClInclude Include="graphics\image\formats\ico.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="graphics\image\formats\jpg.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="graphics\image\formats\jpg.h" />
     <ClInclude Include="graphics\image\formats\png.h" />
     <ClInclude Include="graphics\image\formats\tga.h" />
     <ClInclude Include="graphics\image\image.h" />

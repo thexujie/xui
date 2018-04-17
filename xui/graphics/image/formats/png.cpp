@@ -80,7 +80,6 @@ namespace graphics::image::formats
         if (png_get_valid(png, pinfo, PNG_INFO_tRNS))
             png_set_tRNS_to_alpha(png);
 
-
         image_convert_fun pfn_convert = nullptr;
         image_format format = {};
         format.width = (int32_t)width;
@@ -158,7 +157,7 @@ namespace graphics::image::formats
         byte_t * src_buffer = image_malloc(src_length);
 
         for (png_uint_32 cnt = 0; cnt < height; ++cnt)
-            row_ptr[cnt] = src_buffer + (height - cnt - 1) * src_pitch;
+            row_ptr[cnt] = src_buffer + cnt * src_pitch;
 
         png_read_image(png, (png_byte **)row_ptr);
         png_read_end(png, 0);
