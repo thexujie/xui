@@ -27,7 +27,7 @@ namespace graphics::image::formats
     core::error_e jpg_create(const byte_t * buffer, int32_t length, image_data_t * img,
         image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
 
-    bool jpg_rule_default(image_convert_rule_t * rule);
+    bool jpg_rule_default(image_codec_context * rule);
 
-    const image_convert_fun_t image_convert_jpeg_use_src = (image_convert_fun_t)- 1;
+    const image_convert_fun image_convert_jpeg_use_src = (image_convert_fun)- 1;
 }

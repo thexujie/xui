@@ -342,48 +342,9 @@ namespace graphics::image::formats
     /// dxt Ñ¹Ëõ
     /// 
 
-    void dds_convert_bc1(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
-
-    void dds_convert_bc2(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t /*src_strike*/, int32_t /*src_pitch*/,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-        int32_t flags);
-
-    void dds_convert_bc3(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t src_strike, int32_t src_pitch,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-        int32_t flags);
-
-    void dds_convert_copy_dxt1(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
-
-    void dds_convert_copy_dxt23(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t src_strike, int32_t src_pitch,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-        int32_t flags);
-
-    void dds_convert_copy_dxt45(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t src_strike, int32_t src_pitch,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-        int32_t flags);
-
+    core::error_e dds_convert_bc1(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error_e dds_convert_bc2(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error_e dds_convert_bc3(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
 
     void color_dds_a4r5g6b5_to_r5g5b5(const void * src_pixel, void * dst_pixel);
     void color_dds_a4r5g6b5_to_r8g8b8(const void * src_pixel, void * dst_pixel);
@@ -544,10 +505,5 @@ namespace graphics::image::formats
     void dds_dxt5(dds_header_t * header, byte_t * buffer, dds_image_data_t * dds);
 
     bool is_dds_data(const byte_t * buffer, int32_t length);
-    core::error_e dds_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
-    cmode_e dds_get_cmode(const dds_pixel_format_t & pixel_format);
-    cmode_e dds_get_cmode(dxgi_format_e format);
-    void dds_get_pitch(cmode_e cmode, int32_t width, int32_t height, int32_t * row, int32_t * col, int32_t * pitch);
-    bool dds_rule_default(image_convert_rule_t * rule);
+    core::error_e dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image);
 }

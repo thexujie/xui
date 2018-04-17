@@ -102,33 +102,16 @@ namespace graphics::image::formats
 #pragma pack(pop)
 
     bool is_bmp_data(const byte_t * buffer, int32_t length);
-    core::error_e bmp_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
-
-    /**
-    * @brief 默认的 bmp 格式转换规则，默认将尽量在不损失精度的前提下转换为 GDI 兼容格式
-    * 可能的输出格式有 r5g6b5 r8g8b8 a8r8g8b8 三种
-    */
-    bool bmp_rule_default(image_convert_rule_t * rule);
-
+    core::error_e bmp_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image);
+    core::error_e bmp_save(const image_data_t & data, std::string path);
     /**
     * Bmp 文件的 rle index4 压缩方式，使用索引色。
     * rle 压缩 src_stride 和 src_pitch 没有意义。
     */
-    void image_convert_bmp_index4_rle(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
+    core::error_e image_convert_bmp_index4_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
     /**
     * Bmp 文件的 rle index8 压缩方式，使用索引色。
     * rle 压缩 src_stride 和 src_pitch 没有意义。
     */
-    void image_convert_bmp_index8_rle(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
+    core::error_e image_convert_bmp_index8_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
 }

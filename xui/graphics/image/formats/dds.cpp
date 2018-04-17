@@ -88,21 +88,21 @@ namespace graphics::image::formats
         indices[3][3] = (index2 >> 13) & 0x7;
     }
 
-    void dds_convert_bc1(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e dds_convert_bc1(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        int32_t texel_w = width >> 2;
-        int32_t texel_h = height >> 2;
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        if (!pfn_resampler)
+            return error_not_supported;
+
+        int32_t texel_w = src.format.width >> 2;
+        int32_t texel_h = src.format.height >> 2;
 
         uint16_t colors[4];
 
-        byte_t * dst_line = dst;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+        byte_t * dst_line = dst.data;
         byte_t * dst_pixel = nullptr;
-        const dds_texel_bc1_t * texel = (const dds_texel_bc1_t *)src;
+        const dds_texel_bc1_t * texel = reinterpret_cast<const dds_texel_bc1_t *>(src.data);
         for (int32_t texel_row = 0, texel_col = 0; texel_row != texel_h; ++texel_row)
         {
             for (texel_col = 0; texel_col != texel_w; ++texel_col, ++texel)
@@ -111,158 +111,112 @@ namespace graphics::image::formats
                 uint32_t rgb_indices = texel->indices;
                 for (int32_t row = 0, col = 0; row != 4; ++row)
                 {
-                    dst_pixel = dst_line + texel_col * 4 * dst_stride + dst_pitch * row;
+                    dst_pixel = dst_line + texel_col * 4 * dst_stride + dst.pitch * row;
                     for (col = 0; col != 4; ++col)
                     {
                         uint32_t index = rgb_indices & 0x3;
-                        conv_fun(colors + index, dst_pixel);
+                        pfn_resampler(colors + index, dst_pixel);
                         rgb_indices >>= 2;
                         dst_pixel += dst_stride;
                     }
                 }
             }
-            dst_line += dst_pitch * 4; // 每次4行
+            dst_line += dst.pitch * 4; // 每次4行
         }
+        return error_ok;
     }
 
-    void dds_convert_bc2(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t src_strike, int32_t src_pitch,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e dds_convert_bc2(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        int32_t texel_w = width >> 2;
-        int32_t texel_h = height >> 2;
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        if (!pfn_resampler)
+            return error_not_supported;
 
-        uint16_t colors[4] = {};
-        uint16_t alphas = 0;
-        uint32_t rgb_indices = 0;
+        int32_t texel_w = src.format.width >> 2;
+        int32_t texel_h = src.format.height >> 2;
 
-        byte_t * dst_line = dst;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+
+        byte_t * dst_line = dst.data;
         byte_t * dst_pixel = nullptr;
-        const dds_texel_bc2_t * texel = (const dds_texel_bc2_t *)src;
+        const dds_texel_bc2_t * texel = reinterpret_cast<const dds_texel_bc2_t *>(src.data);
+
         for (int32_t texel_row = 0, texel_col = 0; texel_row != texel_h; ++texel_row)
         {
             for (texel_col = 0; texel_col != texel_w; ++texel_col, ++texel)
             {
+                uint16_t colors[4];
                 dxt_make_color(texel->color0, texel->color1, colors);
 
-                rgb_indices = texel->indices;
+                uint32_t rgb_indices = texel->indices;
                 for (int32_t row = 0, col = 0; row != 4; ++row)
                 {
-                    dst_pixel = dst_line + dst_pitch * row + texel_col * 4 * dst_strike;
-                    alphas = texel->alphas[row];
+                    dst_pixel = dst_line + dst.pitch * row + texel_col * 4 * dst_stride;
+                    uint16_t alphas = texel->alphas[row];
                     for (col = 0; col != 4; ++col)
                     {
                         uint32_t alpha = alphas & 0xF; // 4bits的Alpha通道
                         uint32_t color = colors[rgb_indices & 0x3];
                         uint32_t src_color = (alpha << 16) | color;
-                        conv_fun((const void *)&src_color, dst_pixel);
+                        pfn_resampler((const void *)&src_color, dst_pixel);
                         rgb_indices >>= 2;
                         alphas >>= 4;
-                        dst_pixel += dst_strike;
+                        dst_pixel += dst_stride;
                     }
                 }
             }
-            dst_line += dst_pitch * 4; // 每次4行
+            dst_line += dst.pitch * 4; // 每次4行
         }
+        return error_ok;
     }
 
 
-    void dds_convert_bc3(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t src_strike, int32_t src_pitch,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e dds_convert_bc3(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        int32_t texel_w = width >> 2;
-        int32_t texel_h = height >> 2;
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        if (!pfn_resampler)
+            return error_not_supported;
 
-        uint16_t colors[4];
-        byte_t alphas[8];
-        byte_t alpha_indices[4][4];
-        uint32_t rgb_indices;
+        int32_t texel_w = src.format.width >> 2;
+        int32_t texel_h = src.format.height >> 2;
 
-        byte_t * dst_line = dst;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+
+        byte_t * dst_line = dst.data;
         byte_t * dst_pixel = nullptr;
-        const dds_texel_bc3_t * texel = (const dds_texel_bc3_t *)src;
+        const dds_texel_bc3_t * texel = reinterpret_cast<const dds_texel_bc3_t *>(src.data);
+
         for (int32_t texel_row = 0, texel_col = 0; texel_row != texel_h; ++texel_row)
         {
             for (texel_col = 0; texel_col != texel_w; ++texel_col, ++texel)
             {
+                uint16_t colors[4];
+                byte_t alphas[8];
+                byte_t alpha_indices[4][4];
+
                 dxt_make_color(texel->color0, texel->color1, colors);
                 bc3_calc_alpha(texel->alpha0, texel->alpha1, alphas);
                 bc3_calc_alpha_indices(texel->index0, texel->index1, texel->index2, alpha_indices);
 
-                rgb_indices = texel->indices;
+                uint32_t rgb_indices = texel->indices;
                 for (int32_t row = 0, col = 0; row != 4; ++row)
                 {
-                    dst_pixel = dst_line + dst_pitch * row + texel_col * 4 * dst_strike;
+                    dst_pixel = dst_line + row * dst.pitch + texel_col * 4 * dst_stride;
                     for (col = 0; col != 4; ++col)
                     {
                         uint32_t alpha = alphas[alpha_indices[row][col]];
                         uint32_t color = colors[rgb_indices & 0x3];
                         uint32_t src_color = (alpha << 16) | color;
-                        conv_fun((const void *)&src_color, dst_pixel);
+                        pfn_resampler((const void *)&src_color, dst_pixel);
                         rgb_indices >>= 2;
-                        dst_pixel += dst_strike;
+                        dst_pixel += dst_stride;
                     }
                 }
             }
-            dst_line += dst_pitch * 4; // 每次4行
+            dst_line += dst.pitch * 4; // 每次4行
         }
+        return error_ok;
     }
-
-    void dds_convert_copy_dxt1(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t *, int32_t,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
-    {
-        int32_t texel_h = (height + 3) >> 2;
-        for (int32_t row = 0; row < texel_h; ++row)
-        {
-            image_memcpy(dst, src_pitch, src, src_pitch);
-            src += src_pitch;
-            dst += dst_pitch;
-        }
-    }
-
-    void dds_convert_copy_dxt23(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t *, int32_t,
-        const byte_t * src, int32_t src_strike, int32_t src_pitch,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-        int32_t flags)
-    {
-        int32_t texel_h = (height + 3) >> 2;
-        for (int32_t row = 0; row < texel_h; ++row)
-        {
-            image_memcpy(dst, src_pitch, src, src_pitch);
-            src += src_pitch;
-            dst += dst_pitch;
-        }
-    }
-
-    void dds_convert_copy_dxt45(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t *, int32_t,
-        const byte_t * src, int32_t src_strike, int32_t src_pitch,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch,
-        int32_t flags)
-    {
-        int32_t texel_h = (height + 3) >> 2;
-        for (int32_t row = 0; row < texel_h; ++row)
-        {
-            image_memcpy(dst, src_pitch, src, src_pitch);
-            src += src_pitch;
-            dst += dst_pitch;
-        }
-    }
-
 
     void color_dds_a4r5g6b5_to_r5g5b5(const void * src_pixel, void * dst_pixel)
     {
@@ -300,188 +254,114 @@ namespace graphics::image::formats
         dst->b = ((src & (0x1F << 0)) >> 0) * 0xFF / 0x1F;
     }
 
-    core::error_e dds_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_match, void * user_data)
+    core::error_e dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image)
     {
-        if (!pfn_match)
-            pfn_match = dds_rule_default;
-
-        const dds_header_t * header = (const dds_header_t *)buffer;
+        const dds_header_t * header = reinterpret_cast<const dds_header_t *>(buffer);
         if (header->magic != DDS_MAGIC)
             return error_bad_data;
         if (header->size != sizeof(dds_header_t) - sizeof(DDS_MAGIC))
             return error_bad_data;
 
-        buffer += sizeof(dds_header_t);
+        image_convert_fun pfn_convert = nullptr;
+        image_format format = {};
+        format.width = header->width;
+        format.height = header->height;
 
-
-        cmode_e color_mode = dds_get_cmode(header->pixel_format);
-
-        image_convert_rule_t rule = { image_format_dds, (int32_t)header->width, (int32_t)header->height, color_mode, user_data };
-        if (!pfn_match(&rule))
-            return error_bad_format;
-
-        img->width = rule.width;
-        img->height = rule.height;
-        img->bits = rule.dst_bits;
-        img->pitch = rule.dst_pitch;
-        img->length = rule.dst_length;
-        img->buffer = rule.dst_buffer;
-        img->src_mode = rule.src_mode;
-        img->dst_mode = rule.dst_mode;
-        img->flags = 0;
-
-        img->buffer = image_malloc(img->length);
-        //! dds 不使用调色板
-        rule.image_convert_fun(rule.width, rule.height,
-            rule.pixel_convert_fun,
-            nullptr, 0,
-            buffer, rule.src_stride, rule.src_pitch,
-            img->buffer, rule.dst_stride, rule.dst_pitch, 0);
-        return error_ok;
-    }
-
-    cmode_e dds_get_cmode(const dds_pixel_format_t & pixel_format)
-    {
-        cmode_e color_mode = cmode_none;
-
-        if (pixel_format.flags & DDSPF_ALPHA_ONLY)
+        if (header->pixel_format.flags & DDSPF_ALPHA_ONLY)
         {
-            color_mode = cmode_gray8;
+            format.format = format_gray8;
         }
-            // 四字符编码
-        else if (pixel_format.flags & DDSPF_FOURCC)
+        // 四字符编码
+        else if (header->pixel_format.flags & DDSPF_FOURCC)
         {
             // dx10 编码
-            if (pixel_format.dxt_format == dxt_format_dx10)
-                color_mode = cmode_dx10;
+            if (header->pixel_format.dxt_format == dxt_format_dx10)
+            {
+                pfn_convert = nullptr;
+            }
             else
             {
-                switch (pixel_format.dxt_format)
+                switch (header->pixel_format.dxt_format)
                 {
                 case dxt_format_dxt1:
-                    color_mode = cmode_bc1;
+                    format.format = format_r8g8b8;
+                    pfn_convert = dds_convert_bc1;
                     break;
                 case dxt_format_dxt2:
-                    color_mode = cmode_bc2;
-                    break;
                 case dxt_format_dxt3:
-                    color_mode = cmode_bc2;
+                    format.format = format_r8g8b8;
+                    pfn_convert = dds_convert_bc2;
                     break;
                 case dxt_format_dxt4:
-                    color_mode = cmode_bc3;
-                    break;
-                case dxt_format_dxt5:
-                    color_mode = cmode_bc3;
+                    format.format = format_r8g8b8;
+                    pfn_convert = dds_convert_bc3;
                     break;
                 case dxt_format_ati1:
                     break;
                 case dxt_format_ati2:
                     break;
                 case dxt_format_a16b16g16r16:
-                    color_mode = cmode_a16b16g16r16;
+                    format.format = format_a16b16g16r16;
+                    pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_r16f:
-                    color_mode = cmode_r16f;
+                    format.format = format_r16f;
+                    pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_g16r16f:
-                    color_mode = cmode_g16r16f;
+                    format.format = format_g16r16f;
+                    pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_a16b16g16r16f:
-                    color_mode = cmode_a16b16g16r16f;
+                    format.format = format_a16b16g16r16f;
+                    pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_r32f:
-                    color_mode = cmode_r32f;
+                    format.format = format_r32f;
+                    pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_g32r32f:
-                    color_mode = cmode_g32r32f;
+                    format.format = format_g32r32f;
+                    pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_a32b32g32r32f:
-                    color_mode = cmode_a32b32g32r32f;
+                    format.format = format_a32b32g32r32f;
+                    pfn_convert = image_convert_ex;
                     break;
                 default:
+                    pfn_convert = nullptr;
                     break;
                 }
             }
         }
-            // RGB 直接编码
-        else if (pixel_format.flags & DDSPF_RGB)
+        // RGB 直接编码
+        else if (header->pixel_format.flags & DDSPF_RGB)
         {
-            color_mode = cmode_from_mask_abgr(pixel_format.color_mask, pixel_format.bit_count);
+            format.format = format_from_mask_abgr(header->pixel_format.color_mask, header->pixel_format.bit_count);
+            pfn_convert = image_convert_ex;
         }
-        else { }
-        return color_mode;
-    }
+        else {}
 
-    cmode_e dds_get_cmode(dxgi_format_e format)
-    {
-        switch (format)
+        if (!pfn_convert)
+            return error_not_supported;
+
+        image.data.format = format;
+        if (ictx.get_format)
+            image.data.format = ictx.get_format(image_type_bmp, format);
+
+        ictx.pfn_alloc(image.data);
+        image.pfn_free = ictx.pfn_free;
+
+        image_data_t src_data = {};
+        src_data.data = (byte_t *)buffer + sizeof(dds_header_t);
+        src_data.pitch = align_to<int32_t>(format.width * (format_bits(format.format) / 8), 4);
+
+        error_e err = pfn_convert(ictx, src_data, image.data);
+        if (err < 0)
         {
-        case dxgi_format_r8g8_typeless:
-        case dxgi_format_r8g8_unorm:
-        case dxgi_format_r8g8_uint:
-        case dxgi_format_r8g8_snorm:
-        case dxgi_format_r8g8_sint:
-            return cmode_r8g8;
-
-        case dxgi_format_r8g8b8a8_typeless:
-        case dxgi_format_r8g8b8a8_unorm:
-        case dxgi_format_r8g8b8a8_unorm_srgb:
-        case dxgi_format_r8g8b8a8_uint:
-        case dxgi_format_r8g8b8a8_snorm:
-        case dxgi_format_r8g8b8a8_sint:
-            return cmode_a8b8g8r8;
-
-        default:
-            return cmode_none;
+            image.pfn_free(image.data);
+            return err;
         }
-    }
-
-    void dds_get_pitch(cmode_e cmode, int32_t width, int32_t height, int32_t * row, int32_t * col, int32_t * pitch)
-    {
-        int32_t _row = height;
-        int32_t _col = width;
-        int32_t _pitch = 0;
-        int32_t bits = 0;
-        switch (cmode)
-        {
-        case cmode_gray8:
-            bits = 8;
-            break;
-        case cmode_r8g8:
-            bits = 16;
-            break;
-        case cmode_a8r8g8b8:
-            bits = 32;
-            break;
-        case cmode_bc1:
-            bits = sizeof(dds_texel_bc1_t);
-            _col = (_col + 3) / 4;
-            _col = (_row + 3) / 4;
-            break;
-        case cmode_bc2:
-            bits = sizeof(dds_texel_bc2_t);
-            _col = (_col + 3) / 4;
-            _col = (_row + 3) / 4;
-            break;
-        case cmode_bc3:
-            bits = sizeof(dds_texel_bc3_t);
-            _col = (_col + 3) / 4;
-            _col = (_row + 3) / 4;
-            break;
-        default:
-            bits = cmode_bits(cmode);
-            break;
-        }
-
-        _pitch = align_to_4(_col * bits / 8);
-        if (row) *row = _row;
-        if (col) *col = _col;
-        if (pitch) *pitch = _pitch;
-    }
-
-    bool dds_rule_default(image_convert_rule_t * rule)
-    {
-        return false;
+        return error_ok;
     }
 }

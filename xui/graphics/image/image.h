@@ -5,140 +5,91 @@ namespace graphics::image
     /**
     * 图像格式
     */
-    typedef enum tag_image_format_e
+    enum image_type
     {
-        image_format_invalid = 0,
-        image_format_bmp = core::make_fourcc('b', 'm', 'p', 0),
-        image_format_tga = core::make_fourcc('t', 'g', 'a', 0),
-        image_format_png = core::make_fourcc('p', 'n', 'g', 0),
-        image_format_jpg = core::make_fourcc('j', 'p', 'g', 0),
-        image_format_dds = core::make_fourcc('d', 'd', 's', 0),
-        image_format_user = core::make_fourcc('u', 's', 'e', 'r'),
-    } image_format_e;
+        image_type_none = 0,
+        image_type_bmp = core::make_fourcc('b', 'm', 'p', 0),
+        image_type_tga = core::make_fourcc('t', 'g', 'a', 0),
+        image_type_png = core::make_fourcc('p', 'n', 'g', 0),
+        image_type_jpeg = core::make_fourcc('j', 'p', 'g', 0),
+        image_type_dds = core::make_fourcc('d', 'd', 's', 0),
+        image_type_user = core::make_fourcc('u', 's', 'e', 'r'),
+    };
 
     //////////////////////////////////////////////////////////////////////////
     /// 颜色模式
-    enum cmode_e
+    enum format
     {
-        cmode_none = 0,
-        cmode_gray1,
-        cmode_gray2,
-        cmode_gray4,
-        cmode_gray8,
+        format_none = 0,
+        format_gray1,
+        format_gray2,
+        format_gray4,
+        format_gray8,
 
-        cmode_r3g3b2,
+        format_r3g3b2,
 
         //---------------------------------16 bits
-        cmode_r8g8,
-        cmode_r5g6b5,
-        cmode_b5g6r5,
-        cmode_a1r5g5b5,
-        cmode_a1b5g5r5,
-        cmode_x1r5g5b5,
-        cmode_x1b5g5r5,
-        cmode_a4r4g4b4,
-        cmode_x4r4g4b4,
-        cmode_a8r3g3b2,
+        format_r8g8,
+        format_r5g6b5,
+        format_b5g6r5,
+        format_a1r5g5b5,
+        format_a1b5g5r5,
+        format_x1r5g5b5,
+        format_x1b5g5r5,
+        format_a4r4g4b4,
+        format_x4r4g4b4,
+        format_a8r3g3b2,
 
         //---------------------------------24 bits
-        cmode_r8g8b8,
-        cmode_b8g8r8,
-        cmode_a8r5g6b5,
-        cmode_a8b5g6r5,
-        cmode_a8x1r5g5b5,
-        cmode_a8x1b5g5r5,
+        format_r8g8b8,
+        format_b8g8r8,
+        format_a8r5g6b5,
+        format_a8b5g6r5,
+        format_a8x1r5g5b5,
+        format_a8x1b5g5r5,
 
         //---------------------------------32 bits
-        cmode_a8r8g8b8,
-        cmode_x8r8g8b8,
-        cmode_a8b8g8r8,
-        cmode_x8b8g8r8,
-        cmode_r8g8b8a8,
-        cmode_r8g8b8x8,
-        cmode_b8g8r8a8,
-        cmode_b8g8r8x8,
+        format_a8r8g8b8,
+        format_x8r8g8b8,
+        format_a8b8g8r8,
+        format_x8b8g8r8,
+        format_r8g8b8a8,
+        format_r8g8b8x8,
+        format_b8g8r8a8,
+        format_b8g8r8x8,
 
-        cmode_g16r16,
+        format_g16r16,
 
-        cmode_a2r10g10b10,
-        cmode_a2b10g10r10,
+        format_a2r10g10b10,
+        format_a2b10g10r10,
 
         //---------------------------------
-        cmode_a16b16g16r16,
+        format_a16b16g16r16,
 
-        cmode_r16f,
-        cmode_g16r16f,
-        cmode_a16b16g16r16f,
-        cmode_r32f,
-        cmode_g32r32f,
-        cmode_b32g32r32f,
-        cmode_a32b32g32r32f,
+        format_r16f,
+        format_g16r16f,
+        format_a16b16g16r16f,
+        format_r32f,
+        format_g32r32f,
+        format_b32g32r32f,
+        format_a32b32g32r32f,
 
-        cmode_x32y32z32f,
+        format_x32y32z32f,
 
-        cmode_index4_rle2_x8r8g8b8,
-        cmode_index8_rle2_x8r8g8b8,
+        format_yuv,
+        format_cmyk,
+        format_ycck,
 
-        cmode_rle_gray8,
-        cmode_rle_x1r5g5b5,
-        cmode_rle_r8g8b8,
-        cmode_rle_a8r8g8b8,
-
-        cmode_index1_x8r8g8b8,
-        cmode_index2_x8r8g8b8,
-
-        cmode_index4_r8g8b8,
-        cmode_index4_x8r8g8b8,
-        cmode_index4_a8r8g8b8,
-
-        cmode_index8_gray8,
-        cmode_index8_x1r5g5b5,
-        cmode_index8_r8g8b8,
-        cmode_index8_x8r8g8b8,
-        cmode_index8_a8r8g8b8,
-
-        cmode_yuv,
-        cmode_cmyk,
-        cmode_ycck,
-
-        cmode_bc1,
-        // r5g6b5
-        cmode_bc2,
-        // a8r5g6b5
-        cmode_bc3,
-        // a8r5g6b5
-        cmode_bc4,
-        cmode_bc5,
-        cmode_dx10,
-
-
-        cmode_d24s8,
-        //cmode_dx100 = cmode_dx1 + 99, // keep..
+        //format_dx100 = format_dx1 + 99, // keep..
+        format_count,
     };
 
-    const char * cmode_text(cmode_e cmode);
+    const char * format_text(format cmode);
 
     /**
     * 只能处理 argb 格式。
     */
-    int32_t cmode_bits(cmode_e cmode);
-
-    struct image_data_t
-    {
-        int32_t width;
-        int32_t height;
-        int32_t bits;
-        int32_t pitch;
-        int32_t length;
-        cmode_e src_mode;
-        cmode_e dst_mode;
-        int32_t flags;
-
-        byte_t * buffer;
-    };
-
-    bool image_data_malloc(image_data_t * data);
-    void image_data_free(image_data_t * data);
+    int32_t format_bits(format cmode);
 
 #pragma pack(push, 1)
 
@@ -149,7 +100,7 @@ namespace graphics::image
         int32_t pitch;
         int32_t bits;
         int32_t length;
-        cmode_e mode;
+        format mode;
         const byte_t * buffer;
     };
 
@@ -350,6 +301,12 @@ namespace graphics::image
     };
 #pragma pack(pop)
 
+    template<typename T>
+    inline T align_to(T val, T align)
+    {
+        return (val + align - 1) / align * align;
+    }
+
     int32_t align_to_2(int32_t val);
     int32_t align_to_4(int32_t val);
 
@@ -373,51 +330,70 @@ namespace graphics::image
         uint32_t a = 0;
     };
 
+    struct image_format
+    {
+        int32_t width = 0;
+        int32_t height = 0;
+        format format = format_none;
+    };
+
+    inline bool operator == (const image_format & lhs, const image_format & rhs)
+    {
+        return lhs.width == rhs.width && lhs.height == rhs.height && lhs.format == rhs.format;
+    }
+
+    inline bool operator != (const image_format & lhs, const image_format & rhs)
+    {
+        return !operator==(lhs, rhs);
+    }
 
     // 转换时是否需要翻转行序
     const int32_t IMAGE_CONVERT_FLIP_Y = 0x1;
 
-    typedef void (*pixel_convert_fun_t)(const void * src_pixel, void * dst_pixel);
+    typedef byte_t *(*image_buffer_alloc_fun)(image_format format);
+    typedef void(*image_buffer_free_fun)(byte_t * ptr);
 
-    /// 以下用于支持颜色之间的相互转换
-    typedef void (*image_convert_fun_t)(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun, const byte_t * palette, int32_t pal_stride,
-        const byte_t * src, int32_t src_strike, int32_t src_pitch,
-        byte_t * dst, int32_t dst_strike, int32_t dst_pitch, int32_t flags);
+    typedef void(*pixel_convert_fun)(const void * src_pixel, void * dst_pixel);
+    typedef core::error_e(*image_convert_fun)(struct image_codec_context & ctx, const struct image_data_t & src, struct image_data_t & dst);
 
-    struct image_convert_rule_t
+    struct image_data_t
     {
-        image_format_e format;
-        //----------------------------------- 输入部分
-        int32_t width;
-        int32_t height;
-        cmode_e src_mode;
-        void * user_data;
+        image_format format;
+        int32_t pitch = 0;
+        byte_t * data = nullptr;
+        byte_t * palette = nullptr;
+        int32_t palette_size = 0;
+    };
+    void image_buffer_alloc_default(image_data_t & data);
+    void image_buffer_free(image_data_t & data);
+    pixel_convert_fun image_get_samapler(format src, format dst);
+    image_format image_get_format(image_type type, image_format format);
 
-        //-----------------------------------输出部分
-        cmode_e dst_mode;
-
-        pixel_convert_fun_t pixel_convert_fun;
-        image_convert_fun_t image_convert_fun;
-
-        //! 调色板的颜色位数（如果有调色板的话）
-        int32_t pal_bits;
-        //! 调色板的颜色跨度（如果有调色板的话）
-        int32_t pal_stride;
-
-        int32_t src_bits;
-        int32_t src_stride;
-        int32_t src_pitch;
-
-        int32_t dst_bits;
-        int32_t dst_stride;
-        int32_t dst_pitch;
-
-        int32_t dst_length;
-        byte_t * dst_buffer;
+    struct image_t
+    {
+        image_data_t data;
+        decltype(image_buffer_free) * pfn_free = nullptr;
     };
 
-    typedef bool (*image_convert_rule_fun_t)(image_convert_rule_t * rule);
+    struct image_codec_context
+    {
+        image_type type = image_type_none;
+
+        decltype(image_get_format) * get_format = nullptr;
+        decltype(image_get_samapler) * get_sampler = nullptr;
+        decltype(image_buffer_alloc_default) * pfn_alloc = nullptr;
+        decltype(image_buffer_free) * pfn_free = nullptr;
+    };
+
+    struct image_converter
+    {
+        format format = format_none;
+        image_convert_fun image_convert_fun = nullptr;
+        pixel_convert_fun pixel_convert_fun = nullptr;
+    };
+
+
+    typedef bool (*image_convert_rule_fun_t)(image_codec_context * rule);
 
     typedef core::error_e (*image_save_write_fun_t)(const void * buffer, int32_t size, void * userdata);
     typedef core::error_e (*image_save_fun_t)(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata);
@@ -472,142 +448,33 @@ namespace graphics::image
         memcpy_s(dst, dst_size, src, length);
     }
 
-    core::error_e image_load(std::string path, image_data_t * img,
-        image_format_e image_format = image_format_invalid,
-        image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
+    core::error_e image_load(std::string path, image_t & img);
 
-    image_format_e image_get_format(const byte_t * buffer, int32_t length);
+    image_type image_get_type(const byte_t * buffer, int32_t length);
 
-
-    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
-
-    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_format_e image_format,
-        image_convert_rule_fun_t pfn_rule = nullptr, void * user_data = nullptr);
-
-    /**
-    * 用 src 所指定的颜色填充 dst。
-    * src 只提供 1 个像素的颜色信息。
-    */
-    void image_convert_fill_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun, const byte_t * palette,
-        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
+    core::error_e image_create(const byte_t * buffer, int32_t length, image_t & img);
+    core::error_e image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & img);
 
     /**
     * 复制图像，dst 和 src 具有相同的颜色格式。
     * 目标图像的 width 和 height 不能小于 源图像。
     */
-    void image_convert_copy_ex(int32_t /*width*/, int32_t height,
-        pixel_convert_fun_t /*conv_fun*/,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t /*src_stride*/, int32_t src_pitch,
-        byte_t * dst, int32_t /*dst_stride*/, int32_t dst_pitch,
-        int32_t flags);
+    core::error_e image_convert_copy_ex(image_codec_context & icctx, const image_data_t & src, const image_data_t & dst);
 
     /**
     * image_convert_ex 只能将一种 rgb 格式转换成另一种 rgb 格式，
     * 不能进行调色板、压缩等操作。
     */
-    void image_convert_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
-
-    /**
-    * 每读取一个字节，生成 8 个像素。同时，src 前进 src_stride，dst 前进 dst_stride * 8。
-    * 每读取一行，src_line 前进 src_pitch，dst_line 前进 dst_pitch。
-    * @param width 图像的宽度
-    * @param height 图像的高度
-    * @param conv_fun 像素的格式转换
-    * @param pal 调色板，可以为 nullptr
-    * @param src 索引数组
-    * @param src_stride 每读取一个字节（生成 8 个像素），src 前进的字节大小。
-    * @param src_pitch 每读取一行（生成 width 个像素），src 前进的字节大小。
-    * @param dst 输出目标
-    * @param dst_stride 每生成一个像素，dst 前进的字节大小
-    * @param dst_pitch 每读生成一行（生成 width 个像素），src 前进的字节大小。
-    * @param flags 标志位，参见...
-    */
-    void image_convert_index1_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
-
-    /**
-    * 每读取一个字节，生成 4 个像素。同时，src 前进 src_stride，dst 前进 dst_stride * 4。
-    * 每读取一行，src_line 前进 src_pitch，dst_line 前进 dst_pitch。
-    * @param width 图像的宽度
-    * @param height 图像的高度
-    * @param conv_fun 像素的格式转换
-    * @param pal 调色板，可以为 nullptr
-    * @param src 索引数组
-    * @param src_stride 每读取一个字节（生成 4 个像素），src 前进的字节大小。
-    * @param src_pitch 每读取一行（生成 width 个像素），src 前进的字节大小。
-    * @param dst 输出目标
-    * @param dst_stride 每生成一个像素，dst 前进的字节大小
-    * @param dst_pitch 每读生成一行（生成 width 个像素），src 前进的字节大小。
-    * @param flags 标志位，参见...
-    */
-    void image_convert_index2_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
-
-    /**
-    * 每读取一个字节，生成 2 个像素。同时，src 前进 src_stride，dst 前进 dst_stride * 2。
-    * 每读取一行，src_line 前进 src_pitch，dst_line 前进 dst_pitch。
-    * @param width 图像的宽度
-    * @param height 图像的高度
-    * @param conv_fun 像素的格式转换
-    * @param pal 调色板，可以为 nullptr
-    * @param src 索引数组
-    * @param src_stride 每读取一个字节（生成两个像素），src 前进的字节大小。
-    * @param src_pitch 每读取一行（生成 width 个像素），src 前进的字节大小。
-    * @param dst 输出目标
-    * @param dst_stride 每生成一个像素，dst 前进的字节大小
-    * @param dst_pitch 每读生成一行（生成 width 个像素），src 前进的字节大小。
-    * @param flags 标志位，参见...
-    */
-    void image_convert_index4_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
-    /**
-    * 每读取一个字节，生成 1 个像素。同时，src 前进 src_stride，dst 前进 dst_stride * 1。
-    * 每读取一行，src_line 前进 src_pitch，dst_line 前进 dst_pitch。
-    * @param width 图像的宽度
-    * @param height 图像的高度
-    * @param conv_fun 像素的格式转换
-    * @param pal 调色板，可以为 nullptr
-    * @param src 索引数组
-    * @param src_stride 每读取一个字节（生成 1 个像素），src 前进的字节大小。
-    * @param src_pitch 每读取一行（生成 width 个像素），src 前进的字节大小。
-    * @param dst 输出目标
-    * @param dst_stride 每生成一个像素，dst 前进的字节大小
-    * @param dst_pitch 每读生成一行（生成 width 个像素），src 前进的字节大小。
-    * @param flags 标志位，参见...
-    */
-    void image_convert_index8_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
+    core::error_e image_convert_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error_e image_convert_index1_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error_e image_convert_index2_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error_e image_convert_index4_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error_e image_convert_index8_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
 
 
     // 根据颜色掩码计算颜色类型
-    cmode_e cmode_from_mask_abgr(const color_mask_abgr_t & mask, int32_t bits);
+    format format_from_mask_abgr(const color_mask_abgr_t & mask, int32_t bits);
+
 
     //////////////////////////////////////////////////////////////////////////
     /// 以下用于支持颜色之间的相互转换

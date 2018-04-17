@@ -120,7 +120,7 @@ namespace graphics::image::formats
         int32_t width = (int32_t)cinfo.image_width;
         int32_t height = (int32_t)cinfo.image_height;
 
-        image_convert_rule_t rule = { image_format_jpg, width, height, cmode_b8g8r8, user_data };
+        image_codec_context rule = { image_type_jpeg, width, height, format_b8g8r8, user_data };
         if (!pfn_match(&rule))
         {
             //jpeg_finish_decompress(&cinfo);
@@ -151,8 +151,7 @@ namespace graphics::image::formats
             img->height = rule.height;
             img->bits = rule.dst_bits;
             img->pitch = rule.dst_pitch;
-            img->length = rule.dst_length;
-            img->buffer = rule.dst_buffer;
+            img->length = rule.dst_pitch * rule.dst_height;
             img->src_mode = rule.src_mode;
             img->dst_mode = rule.dst_mode;
             img->flags = 0;
@@ -164,12 +163,11 @@ namespace graphics::image::formats
             img->height = rule.height;
             img->bits = rule.dst_bits;
             img->pitch = rule.dst_pitch;
-            img->length = rule.dst_length;
-            img->buffer = rule.dst_buffer;
+            img->length = rule.dst_pitch * rule.dst_height;
             img->src_mode = rule.src_mode;
             img->dst_mode = rule.dst_mode;
             img->flags = 0;
-            img->buffer = image_malloc(rule.dst_length);
+            img->buffer = image_malloc(img->length);
 
             rule.image_convert_fun(rule.width, rule.height,
                 rule.pixel_convert_fun,
@@ -181,7 +179,7 @@ namespace graphics::image::formats
         return error_ok;
     }
 
-    bool jpg_rule_default(image_convert_rule_t * rule)
+    bool jpg_rule_default(image_codec_context * rule)
     {
         return false;
     }

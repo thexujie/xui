@@ -37,95 +37,103 @@ namespace graphics::image::formats
     }
 
 
-    core::error_e tga_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_rule, void * user_data)
+    core::error_e tga_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image)
     {
-        image_clear(img, sizeof(image_data_t));
-        if (!pfn_rule)
-            pfn_rule = tga_rule_default;
-
-        const tga_header_t * header = (const tga_header_t *)buffer;
+        const tga_header_t * header = reinterpret_cast<const tga_header_t *>(buffer);
         buffer += sizeof(tga_header_t) + header->info_length/* 跳过图像信息字段 */;
         tga_format_e tga_format = (tga_format_e)header->commpress;
 
-        int32_t width = (int32_t)header->width;
-        int32_t height = (int32_t)header->height;
-        int32_t flags = 0;
-        // 从上到下存储
-        if (!(header->flags & TGAF_FLIPY))
-            flags |= IMAGE_CONVERT_FLIP_Y;
+        image_convert_fun pfn_convert = nullptr;
+        image_format format = {};
+        format.width = header->width;
+        format.height = header->height;
 
         const byte_t * conv_buffer = buffer;
         const byte_t * conv_palette = nullptr;
-        cmode_e src_mode = cmode_none;
         switch (tga_format)
         {
         case tga_format_rgb:
             switch (header->bit_count)
             {
             case 8:
-                src_mode = cmode_gray8;
+                format.format = format_gray8;
+                pfn_convert = image_convert_ex;
                 break;
             case 16:
-                src_mode = cmode_x1r5g5b5;
+                format.format = format_x1r5g5b5;
+                pfn_convert = image_convert_ex;
                 break;
             case 24:
-                src_mode = cmode_r8g8b8;
+                format.format = format_r8g8b8;
+                pfn_convert = image_convert_ex;
                 break;
             case 32:
-                src_mode = cmode_a8r8g8b8;
+                format.format = format_a8r8g8b8;
+                pfn_convert = image_convert_ex;
                 break;
             default:
+                pfn_convert = nullptr;
                 break;
             }
             break;
         case tga_format_gray:
-            src_mode = cmode_gray8;
+            format.format = format_gray8;
+            pfn_convert = image_convert_ex;
             break;
         case tga_format_index:
             conv_palette = buffer;
             switch (header->color_bit)
             {
             case 8:
-                src_mode = cmode_index8_gray8;
+                format.format = format_gray8;
+                pfn_convert = image_convert_index8_ex;
                 conv_buffer = buffer + header->color_count * 1;
                 break;
             case 16:
-                src_mode = cmode_index8_x1r5g5b5;
+                format.format = format_x1r5g5b5;
+                pfn_convert = image_convert_index8_ex;
                 conv_buffer = buffer + header->color_count * 2;
                 break;
             case 24:
-                src_mode = cmode_index8_r8g8b8;
+                format.format = format_r8g8b8;
+                pfn_convert = image_convert_index8_ex;
                 conv_buffer = buffer + header->color_count * 3;
                 break;
             case 32:
-                src_mode = cmode_index8_a8r8g8b8;
+                format.format = format_a8r8g8b8;
+                pfn_convert = image_convert_index8_ex;
                 conv_buffer = buffer + header->color_count * 4;
                 break;
             default:
+                pfn_convert = nullptr;
                 break;
             }
             break;
 
         case tga_format_rle_gray:
-            src_mode = cmode_rle_gray8;
+            pfn_convert = nullptr;
             break;
         case tga_format_rle_rgb:
             switch (header->bit_count)
             {
             case 8:
-                src_mode = cmode_rle_gray8;
+                format.format = format_gray8;
+                pfn_convert = image_convert_tga_rle8;
                 break;
             case 16:
-                src_mode = cmode_rle_x1r5g5b5;
+                format.format = format_x1r5g5b5;
+                pfn_convert = image_convert_tga_rle8;
                 break;
             case 24:
-                src_mode = cmode_rle_r8g8b8;
+                format.format = format_r8g8b8;
+                pfn_convert = image_convert_tga_rle8;
                 break;
             case 32:
-                src_mode = cmode_rle_a8r8g8b8;
+                format.format = format_a8r8g8b8;
+                pfn_convert = image_convert_tga_rle8;
                 break;
             default:
+                pfn_convert = nullptr;
                 break;
             }
             break;
@@ -133,100 +141,96 @@ namespace graphics::image::formats
             //tga_rle_index(header, buffer, img, src_strike, dst_strike, conv_func);
             break;
         default:
+            pfn_convert = nullptr;
             break;
         }
 
-        image_convert_rule_t rule = { image_format_tga, width, height, src_mode, user_data };
-        if (!pfn_rule(&rule))
-            return error_bad_format;
+        if (!pfn_convert)
+            return error_not_supported;
 
-        img->width = rule.width;
-        img->height = rule.height;
-        img->bits = rule.dst_bits;
-        img->pitch = rule.dst_pitch;
-        img->length = rule.dst_length;
-        img->buffer = rule.dst_buffer;
-        img->src_mode = rule.src_mode;
-        img->dst_mode = rule.dst_mode;
-        img->flags = flags;
+        image.data.format = format;
+        if (ictx.get_format)
+            image.data.format = ictx.get_format(image_type_bmp, format);
 
-        img->buffer = image_malloc(rule.dst_length);
+        ictx.pfn_alloc(image.data);
+        image.pfn_free = ictx.pfn_free;
 
-        rule.image_convert_fun(rule.width, rule.height,
-            rule.pixel_convert_fun,
-            conv_palette, rule.pal_stride,
-            conv_buffer, rule.src_stride, rule.src_pitch,
-            img->buffer, rule.dst_stride, rule.dst_pitch, flags);
+        image_data_t src_data = {};
+        src_data.format = format;
+        src_data.pitch = align_to<int32_t>(format.width * (format_bits(format.format) / 8), 4);
+        src_data.data = (byte_t *)conv_buffer;
+        src_data.palette = (byte_t *)conv_palette;
+
+        if (header->flags & TGAF_FLIPY)
+            src_data.pitch = -src_data.pitch;
+
+        error_e err = pfn_convert(ictx, src_data, image.data);
+        if (err < 0)
+        {
+            image.pfn_free(image.data);
+            return err;
+        }
         return error_ok;
     }
 
-    bool tga_rule_default(image_convert_rule_t * rule)
+    core::error_e tga_save(const image_data_t & data, std::string path)
     {
-        if (!rule)
-            return false;
-
-        switch (rule->src_mode)
+        switch (format_bits(data.format.format))
         {
-        case cmode_rle_a8r8g8b8:
-            rule->dst_mode = cmode_a8r8g8b8;
-            rule->pixel_convert_fun = color_32_to_32;
-            rule->image_convert_fun = image_convert_tga_rle8;
-
-            rule->src_bits = 32;
-            rule->src_stride = 4;
-            rule->src_pitch = rule->width * 4;
-
-            rule->dst_bits = 32;
-            rule->dst_stride = 4;
-            rule->dst_pitch = rule->width * 4;
-
-            rule->dst_length = rule->dst_pitch * rule->height;
-            break;
-        case cmode_a8r8g8b8:
-            rule->dst_mode = cmode_a8r8g8b8;
-            rule->pixel_convert_fun = color_32_to_32;
-            rule->image_convert_fun = image_convert_copy_ex;
-
-            rule->src_bits = 32;
-            rule->src_stride = 4;
-            rule->src_pitch = rule->width * 4;
-
-            rule->dst_bits = 32;
-            rule->dst_stride = 4;
-            rule->dst_pitch = rule->width * 4;
-
-            rule->dst_length = rule->dst_pitch * rule->height;
+        case 8:
+        case 16:
+        case 24:
+        case 32:
             break;
         default:
-            rule->image_convert_fun = nullptr;
-            break;
+            return error_not_supported;
         }
-        return rule->image_convert_fun != nullptr;
+
+        std::fstream fs;
+        fs.open(path, std::ios::out | std::ios::binary | std::ios::trunc);
+        if (!fs.good())
+            return error_io;
+
+        tga_header_t header = {};
+        header.color_type = tga_color_type_rgb;
+        header.commpress = data.format.format == format_gray8 ? tga_format_gray : tga_format_rgb;
+        header.width = (uint16_t)data.format.width;
+        header.height = (uint16_t)data.format.height;
+        header.bit_count = (uint8_t)format_bits(data.format.format);
+        header.flags = data.pitch < 0 ? TGAF_FLIPY : 0;
+
+        fs.write((const char *)&header, sizeof(tga_header_t));
+        fs.write((const char *)data.data, std::abs(data.pitch) * data.format.height);
+        fs.write((const char *)TGA_TAIL, sizeof(TGA_TAIL)); // 包括 null
+        return error_ok;
     }
 
-    void image_convert_tga_rle8(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e image_convert_tga_rle8(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        byte_t * dst_line = dst;
-        const uint8_t * src_pixel = (const uint8_t *)src;
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        if (!pfn_resampler)
+            return error_not_supported;
+
+        int32_t src_stride = format_bits(src.format.format) / 8;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+        const byte_t * src_pixel = src.data;
+        byte_t * dst_line = dst.data;
         byte_t * dst_pixel = nullptr;
 
-        int32_t pitch = dst_pitch;
-        if (flags & IMAGE_CONVERT_FLIP_Y)
+        int32_t dst_pitch = dst.pitch;
+        if (src.pitch < 0)
         {
-            dst_line += (height - 1) * pitch;
-            pitch = -pitch;
+            dst_line = dst.data + (src.format.height - 1) * dst.pitch;
+            dst_pitch = -dst_pitch;
         }
 
+
+
         int32_t state = 0;
-        for (int32_t row = 0, col = 0; row != height; ++row)
+        for (int32_t row = 0, col = 0; row != src.format.height; ++row)
         {
             dst_pixel = dst_line;
-            for (col = 0; col != width; ++col)
+            for (col = 0; col != src.format.width; ++col)
             {
                 if (state == 0)
                 {
@@ -241,7 +245,7 @@ namespace graphics::image::formats
                 // 连续的、不重复的
                 if (state > 0)
                 {
-                    conv_fun(src_pixel, dst_pixel);
+                    pfn_resampler(src_pixel, dst_pixel);
                     dst_pixel += dst_stride;
                     src_pixel += src_stride;
                     --state;
@@ -249,58 +253,15 @@ namespace graphics::image::formats
                     // 连续、重复的
                 else
                 {
-                    conv_fun(src_pixel, dst_pixel);
+                    pfn_resampler(src_pixel, dst_pixel);
                     dst_pixel += dst_stride;
                     ++state;
                     if (state == 0)
                         src_pixel += src_stride;
                 }
             }
-            dst_line += pitch;
+            dst_line += dst_pitch;
         }
-    }
-
-    error_e tga_save(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata)
-    {
-        return tga_save_ex(data, pfn_write, userdata, tga_format_rgb);
-    }
-
-    error_e tga_save_ex(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata,
-        tga_format_e format)
-    {
-        if (!data || !pfn_write)
-            return error_args;
-
-        if (format == tga_format_rgb)
-        {
-            bool support = false;
-            switch (data->bits)
-            {
-            case 8:
-            case 16:
-            case 24:
-            case 32:
-                support = true;
-                break;
-            default:
-                break;
-            }
-            if (!support)
-                return error_bad_format;
-
-            tga_header_t header = {};
-            header.color_type = tga_color_type_rgb;
-            header.commpress = tga_format_rgb;
-            header.width = (uint16_t)data->width;
-            header.height = (uint16_t)data->height;
-            header.bit_count = (uint8_t)data->bits;
-            header.flags = TGAF_FLIPY;
-
-            pfn_write(&header, sizeof(tga_header_t), userdata);
-            pfn_write(data->buffer, data->length, userdata);
-            pfn_write(TGA_TAIL, sizeof(TGA_TAIL), userdata); // 包括 null
-            return error_ok;
-        }
-        return error_bad_format;
+        return error_ok;
     }
 }

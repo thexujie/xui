@@ -38,29 +38,29 @@ namespace graphics::image::formats
         if (info->height > 0)
             flags |= IMAGE_CONVERT_FLIP_Y;
 
-        cmode_e src_mode = cmode_none;
+        format src_mode = format_none;
         byte_t * pallete = nullptr;
         byte_t * src = buffer;
         switch (info->bit_count)
         {
         case 4:
-            src_mode = cmode_index4_a8r8g8b8;
+            src_mode = format_index4_a8r8g8b8;
             pallete = buffer;
             src = pallete + 16 * 4;
             break;
         case 8:
-            src_mode = cmode_index8_a8r8g8b8;
+            src_mode = format_index8_a8r8g8b8;
             pallete = buffer;
             src = pallete + 256 * 4;
             break;
         case 16:
-            src_mode = cmode_x1r5g5b5;
+            src_mode = format_x1r5g5b5;
             break;
         case 24:
-            src_mode = cmode_r8g8b8;
+            src_mode = format_r8g8b8;
             break;
         case 32:
-            src_mode = cmode_a8r8g8b8;
+            src_mode = format_a8r8g8b8;
             break;
         default:
             return 4;
@@ -68,7 +68,7 @@ namespace graphics::image::formats
 
         int32_t width = (int32_t)plane->width;
         int32_t height = (int32_t)plane->height;
-        image_convert_rule_t rule = { image_format_bmp, width, height, src_mode, nullptr };
+        image_codec_context rule = { image_type_bmp, width, height, src_mode, nullptr };
         if (bmp_rule_default(&rule))
         {
             image_data_t bmp;

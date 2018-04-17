@@ -95,19 +95,9 @@ namespace graphics::image::formats
 
 
     bool is_tga_data(const byte_t * buffer, int32_t length);
-    core::error_e tga_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
+    core::error_e tga_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image);
+    core::error_e tga_save(const image_data_t & data, std::string path);
 
-    bool tga_rule_default(image_convert_rule_t * rule);
+    core::error_e image_convert_tga_rle8(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
 
-    void image_convert_tga_rle8(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags);
-
-    core::error_e tga_save(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata);
-    core::error_e tga_save_ex(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata,
-        tga_format_e format);
 }

@@ -132,9 +132,5 @@ namespace graphics::image::formats
 #pragma pack(pop)
 
     bool is_png_data(const byte_t * pBuffer, int32_t length);
-    core::error_e png_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_match = nullptr, void * user_data = nullptr);
-    bool png_rule_default(image_convert_rule_t * rule);
-
-    const image_convert_fun_t image_convert_png_use_src = (image_convert_fun_t)- 1;
+    core::error_e png_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image);
 }

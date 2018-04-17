@@ -18,8 +18,7 @@ namespace graphics::image
     using namespace core;
     using namespace graphics::image::formats;
 
-    error_e image_load(std::string path, image_data_t * img, image_format_e image_format,
-        image_convert_rule_fun_t pfn_rule, void * user_data)
+    error_e image_load(std::string path, image_t & img)
     {
         std::wstring pathw = core::string::u8_ucs2(path);
         std::fstream fs;
@@ -37,182 +36,158 @@ namespace graphics::image
             return error_io;
         fs.close();
 
-        return image_create(buffer.get(), (int32_t)length, img, image_format, pfn_rule, user_data);
+        return image_create(buffer.get(), (int32_t)length, img);
     }
 
-    image_format_e image_get_format(const byte_t * buffer, int32_t length)
+    image_type image_get_type(const byte_t * buffer, int32_t length)
     {
         if (is_bmp_data(buffer, length))
-            return image_format_bmp;
+            return image_type_bmp;
         if (is_png_data(buffer, length))
-            return image_format_png;
-        if (is_jpg_data(buffer, length))
-            return image_format_jpg;
+            return image_type_png;
+        //if (is_jpg_data(buffer, length))
+        //    return image_type_jpeg;
         if (is_tga_data(buffer, length))
-            return image_format_tga;
+            return image_type_tga;
         if (is_dds_data(buffer, length))
-            return image_format_dds;
-        return image_format_invalid;
+            return image_type_dds;
+        return image_type_none;
     }
 
-    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img,
-        image_convert_rule_fun_t pfn_rule, void * user_data)
+    core::error_e image_create(const byte_t * buffer, int32_t length, image_t & img)
     {
-        return image_create(buffer, length, img, image_get_format(buffer, length), pfn_rule, user_data);
+        image_codec_context ictx;
+        ictx.get_format = image_get_format;
+        ictx.get_sampler = image_get_samapler;
+        ictx.pfn_alloc = image_buffer_alloc_default;
+        ictx.pfn_free = image_buffer_free;
+        return image_create(ictx, buffer, length, img);
     }
 
-    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t * img, image_format_e image_format,
-        image_convert_rule_fun_t pfn_rule, void * user_data)
+    core::error_e image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & img)
     {
-        if (image_format == image_format_invalid)
-            image_format = image_get_format(buffer, length);
+        if(ictx.type == image_type_none)
+            ictx.type = image_get_type(buffer, length);
 
-        switch (image_format)
+        switch (ictx.type)
         {
-        case image_format_bmp:
-            return bmp_create(buffer, length, img, pfn_rule, user_data);
-        case image_format_tga:
-            return tga_create(buffer, length, img, pfn_rule, user_data);
-        case image_format_png:
-            return png_create(buffer, length, img, pfn_rule, user_data);
-        case image_format_jpg:
-            return jpg_create(buffer, length, img, pfn_rule, user_data);
-        case image_format_dds:
-            return dds_create(buffer, length, img, pfn_rule, user_data);
+        case image_type_bmp:
+            return bmp_create(ictx, buffer, length, img);
+        case image_type_tga:
+            return tga_create(ictx, buffer, length, img);
+        case image_type_png:
+            return png_create(ictx, buffer, length, img);
+        ////case image_type_jpeg:
+        ////    return jpg_create(buffer, length, img, pfn_rule, user_data);
+        case image_type_dds:
+            return dds_create(ictx, buffer, length, img);
         default:
             return error_bad_format;
         }
     }
 
-
-    void image_convert_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t *, int32_t,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e  image_convert_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        const byte_t * src_line = src;
-        const byte_t * src_pixel = nullptr;
-        byte_t * dst_line = dst;
-        byte_t * dst_pixel = nullptr;
-
-        int32_t pitch = dst_pitch;
-        if (flags & IMAGE_CONVERT_FLIP_Y)
+        if (src.format == dst.format && src.pitch == dst.pitch)
         {
-            dst_line += (height - 1) * dst_pitch;
-            pitch = -dst_pitch;
+            image_memcpy(dst.data, dst.format.height * std::abs(dst.pitch), src.data, src.format.height * std::abs(src.pitch));
+            return error_ok;
         }
 
-        for (int32_t row = 0, col = 0; row != height; ++row)
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        assert(pfn_resampler);
+        if (!pfn_resampler)
+            return error_not_supported;
+        
+        int32_t src_stride = format_bits(src.format.format) / 8;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+
+        const byte_t * src_line = src.data;
+        byte_t * dst_line = dst.data;
+
+        if (src.pitch < 0)
+            src_line = src.data + (src.format.height - 1) * -src.pitch;
+
+        for (int32_t row = 0, col = 0; row != src.format.height; ++row)
         {
-            src_pixel = src_line;
-            dst_pixel = dst_line;
-            for (col = 0; col != width; ++col)
+            const byte_t * src_pixel = src_line;
+            byte_t * dst_pixel = dst_line;
+            for (col = 0; col != src.format.width; ++col)
             {
-                conv_fun(src_pixel, dst_pixel);
+                pfn_resampler(src_pixel, dst_pixel);
                 src_pixel += src_stride;
                 dst_pixel += dst_stride;
             }
-            src_line += src_pitch;
-            dst_line += pitch;
+            src_line += src.pitch;
+            dst_line += dst.pitch;
         }
+        return error_ok;
     }
 
-    void image_convert_fill_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun, const byte_t * palette,
-        const byte_t * src, int32_t /*src_stride*/, int32_t /*src_pitch*/,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e image_convert_copy_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        byte_t * dst_line = dst;
-        byte_t * dst_pixel = nullptr;
+        if (src.pitch != dst.pitch)
+            return error_not_supported;
 
-        int32_t pitch = dst_pitch;
-        if (flags & IMAGE_CONVERT_FLIP_Y)
+        if (src.format == dst.format)
         {
-            dst_line += (height - 1) * dst_pitch;
-            pitch = -pitch;
+            image_memcpy(dst.data, dst.format.height * std::abs(dst.pitch), src.data, src.format.height * std::abs(src.pitch));
+            return error_ok;
         }
 
-        for (int32_t row = 0, col = 0; row != height; ++row)
+        const byte_t * src_line = src.data;
+        byte_t * dst_line = dst.data;
+
+        if (src.pitch < 0)
+            src_line = src.data + (src.format.height - 1) * src.pitch;
+
+        for (int32_t row = 0, col = 0; row != src.format.height; ++row)
         {
-            dst_pixel = dst_line;
-            for (col = 0; col != width; ++col)
-            {
-                conv_fun(src, dst_pixel);
-                ++dst_pixel;
-            }
-            dst_line += pitch;
+            image_memcpy(dst_line, std::abs(dst.pitch), src_line, std::abs(src.pitch));
+            src_line += src.pitch;
+            dst_line += dst.pitch;
         }
+        return error_ok;
     }
 
-    void image_convert_copy_ex(int32_t /*width*/, int32_t height,
-        pixel_convert_fun_t /*conv_fun*/,
-        const byte_t * /*pal*/, int32_t /*pal_stride*/,
-        const byte_t * src, int32_t /*src_strike*/, int32_t src_pitch,
-        byte_t * dst, int32_t /*dst_strike*/, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e image_convert_index1_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        const byte_t * src_line = src;
-        const byte_t * src_pixel = nullptr;
-        byte_t * dst_line = dst;
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        if (!pfn_resampler)
+            return error_not_supported;
+
+        const byte_t * src_pixel = src.data;
+        byte_t * dst_line = dst.data;
         byte_t * dst_pixel = nullptr;
 
-        int32_t pitch = src_pitch ? src_pitch : dst_pitch;
-        if (flags & IMAGE_CONVERT_FLIP_Y)
+        int32_t dst_pitch = dst.pitch;
+        if (src.pitch < 0)
         {
-            src_line += (height - 1) * src_pitch;
-            pitch = -pitch;
+            dst_line = dst.data + (dst.format.height - 1) * dst.pitch;
+            dst_pitch = -dst_pitch;
         }
 
-        for (int32_t row = 0; row != height; ++row)
+        int32_t src_stride = format_bits(src.format.format) / 8;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+
+        for (int32_t row = 0, col = 0; row != src.format.height; ++row)
         {
-            src_pixel = src_line;
             dst_pixel = dst_line;
-            image_memcpy(dst_line, src_pitch, src_line, src_pitch);
-            src_line += pitch;
-            dst_line += src_pitch;
-        }
-    }
-
-    void image_convert_index1_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
-    {
-        const byte_t * src_line = src;
-        const byte_t * src_pixel = nullptr;
-        byte_t * dst_line = dst;
-        byte_t * dst_pixel = nullptr;
-
-        if (flags & IMAGE_CONVERT_FLIP_Y)
-        {
-            src_line += (height - 1) * src_pitch;
-            src_pitch = -src_pitch;
-        }
-
-        for (int32_t row = 0, col = 0; row != height; ++row)
-        {
-            src_pixel = src_line;
-            dst_pixel = dst_line;
-            for (col = 0; col != width; ++col)
+            for (col = 0; col != src.format.width; ++col)
             {
 #pragma pack(push, 1)
                 union
                 {
                     struct
                     {
-                        byte_t v7 : 1;
-                        byte_t v6 : 1;
-                        byte_t v5 : 1;
-                        byte_t v4 : 1;
-                        byte_t v3 : 1;
-                        byte_t v2 : 1;
-                        byte_t v1 : 1;
-                        byte_t v0 : 1;
+                        uint8_t v7 : 1;
+                        uint8_t v6 : 1;
+                        uint8_t v5 : 1;
+                        uint8_t v4 : 1;
+                        uint8_t v3 : 1;
+                        uint8_t v2 : 1;
+                        uint8_t v1 : 1;
+                        uint8_t v0 : 1;
                     };
 
                     byte_t v;
@@ -223,242 +198,245 @@ namespace graphics::image
                 {
                 case 0:
                     v = *src_pixel;
-                    conv_fun(pal + v0 * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + v0 * src_stride, dst_pixel);
                     break;
                 case 1:
-                    conv_fun(pal + v1 * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + v1 * src_stride, dst_pixel);
                     break;
                 case 2:
-                    conv_fun(pal + v2 * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + v2 * src_stride, dst_pixel);
                     break;
                 case 3:
-                    conv_fun(pal + v3 * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + v3 * src_stride, dst_pixel);
                     break;
                 case 4:
-                    conv_fun(pal + v4 * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + v4 * src_stride, dst_pixel);
                     break;
                 case 5:
-                    conv_fun(pal + v5 * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + v5 * src_stride, dst_pixel);
                     break;
                 case 6:
-                    conv_fun(pal + v6 * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + v6 * src_stride, dst_pixel);
                     break;
                 case 7:
-                    conv_fun(pal + v7 * pal_stride, dst_pixel);
-                    src_pixel += src_stride;
+                    pfn_resampler(src.palette + v7 * src_stride, dst_pixel);
+                    src_pixel += 1;
                     break;
                 default:
                     break;
                 }
                 dst_pixel += dst_stride;
             }
-            src_line += src_pitch;
             dst_line += dst_pitch;
         }
+
+        return error_ok;
     }
 
-    void image_convert_index2_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e image_convert_index2_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        const byte_t * src_line = src;
-        const byte_t * src_pixel = nullptr;
-        byte_t * dst_line = dst;
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        if (!pfn_resampler)
+            return error_not_supported;
+
+        const byte_t * src_pixel = src.data;
+        byte_t * dst_line = dst.data;
         byte_t * dst_pixel = nullptr;
 
-        if (flags & IMAGE_CONVERT_FLIP_Y)
+        int32_t dst_pitch = dst.pitch;
+        if (src.pitch < 0)
         {
-            src_line += (height - 1) * src_pitch;
-            src_pitch = -src_pitch;
+            dst_line = dst.data + (dst.format.height - 1) * dst.pitch;
+            dst_pitch = -dst_pitch;
         }
 
-        for (int32_t row = 0, col = 0; row != height; ++row)
+        int32_t src_stride = format_bits(src.format.format) / 8;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+
+        for (int32_t row = 0, col = 0; row != src.format.height; ++row)
         {
-            src_pixel = src_line;
             dst_pixel = dst_line;
-            for (col = 0; col != width; ++col)
+            for (col = 0; col != src.format.width; ++col)
             {
 #pragma pack(push, 1)
                 union
                 {
                     struct
                     {
-                        byte_t d : 2;
-                        byte_t c : 2;
-                        byte_t b : 2;
-                        byte_t a : 2;
+                        uint8_t index3 : 2;
+                        uint8_t index2 : 2;
+                        uint8_t index1 : 2;
+                        uint8_t idnex0 : 2;
                     };
 
-                    byte_t v;
+                    byte_t index;
                 };
 #pragma pack(pop)
                 switch (col & 0x3)
                 {
                 case 0:
-                    v = *src_pixel;
-                    conv_fun(pal + a * pal_stride, dst_pixel);
+                    index = *src_pixel;
+                    pfn_resampler(src.palette + idnex0 * src_stride, dst_pixel);
                     break;
                 case 1:
-                    conv_fun(pal + b * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + index1 * src_stride, dst_pixel);
                     break;
                 case 2:
-                    conv_fun(pal + c * pal_stride, dst_pixel);
+                    pfn_resampler(src.palette + index2 * src_stride, dst_pixel);
                     break;
                 case 3:
-                    conv_fun(pal + d * pal_stride, dst_pixel);
-                    src_pixel += src_stride;
+                    pfn_resampler(src.palette + index3 * src_stride, dst_pixel);
+                    src_pixel += 1;
                     break;
                 default:
                     break;
                 }
                 dst_pixel += dst_stride;
             }
-            src_line += src_pitch;
             dst_line += dst_pitch;
         }
+        return error_ok;
     }
 
-    void image_convert_index4_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e image_convert_index4_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        const byte_t * src_line = src;
-        const byte_t * src_pixel = nullptr;
-        byte_t * dst_line = dst;
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        if (!pfn_resampler)
+            return error_not_supported;
+
+        const byte_t * src_pixel = src.data;
+        byte_t * dst_line = dst.data;
         byte_t * dst_pixel = nullptr;
 
-        if (flags & IMAGE_CONVERT_FLIP_Y)
+        int32_t dst_pitch = dst.pitch;
+        if (src.pitch < 0)
         {
-            src_line += (height - 1) * src_pitch;
-            src_pitch = -src_pitch;
+            dst_line = dst.data + (dst.format.height - 1) * dst.pitch;
+            dst_pitch = -dst.pitch;
         }
 
-        for (int32_t row = 0, col = 0; row != height; ++row)
+        int32_t src_stride = format_bits(src.format.format) / 8;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+
+        for (int32_t row = 0; row != src.format.height; ++row)
         {
-            src_pixel = src_line;
             dst_pixel = dst_line;
-            for (col = 0; col != width; ++col)
+            for (int32_t col = 0; col != src.format.width; ++col)
             {
 #pragma pack(push, 1)
                 union
                 {
                     struct
                     {
-                        byte_t b : 4;
-                        byte_t a : 4;
+                        uint8_t index0 : 4;
+                        uint8_t index1 : 4;
                     };
 
-                    byte_t v;
+                    byte_t index;
                 };
 #pragma pack(pop)
                 if (col & 0x1)
                 {
-                    conv_fun(pal + b * pal_stride, dst_pixel);
-                    src_pixel += src_stride;
+                    pfn_resampler(src.palette + index0 * src_stride, dst_pixel);
+                    src_pixel += 1;
                 }
                 else
                 {
-                    v = *src_pixel;
-                    conv_fun(pal + a * pal_stride, dst_pixel);
+                    index = *src_pixel;
+                    pfn_resampler(src.palette + index1 * src_stride, dst_pixel);
                 }
                 dst_pixel += dst_stride;
             }
-            src_line += src_pitch;
             dst_line += dst_pitch;
         }
+        return error_ok;
     }
 
-    void image_convert_index8_ex(int32_t width, int32_t height,
-        pixel_convert_fun_t conv_fun,
-        const byte_t * pal, int32_t pal_stride,
-        const byte_t * src, int32_t src_stride, int32_t src_pitch,
-        byte_t * dst, int32_t dst_stride, int32_t dst_pitch,
-        int32_t flags)
+    core::error_e image_convert_index8_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
-        const byte_t * src_line = src;
-        const byte_t * src_pixel = nullptr;
-        byte_t * dst_line = dst;
-        byte_t * dst_pixel = nullptr;
+        pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
+        if (!pfn_resampler)
+            return error_not_supported;
 
-        if (flags & IMAGE_CONVERT_FLIP_Y)
+        byte_t * dst_line = dst.data;
+        int32_t dst_pitch = dst.pitch;
+        if (src.pitch < 0)
         {
-            src_line += (height - 1) * src_pitch;
-            src_pitch = -src_pitch;
+            dst_line = dst.data + (dst.format.height - 1) * dst.pitch;
+            dst_pitch = -dst_pitch;
         }
 
-        for (int32_t row = 0, col = 0; row != height; ++row)
+        const uint8_t * src_pixel = (const uint8_t *)src.data;
+        byte_t * dst_pixel = nullptr;
+        int32_t src_stride = format_bits(src.format.format) / 8;
+        int32_t dst_stride = format_bits(dst.format.format) / 8;
+
+        for (int32_t row = 0, col = 0; row != src.format.height; ++row)
         {
-            src_pixel = src_line;
             dst_pixel = dst_line;
-            for (col = 0; col != width; ++col)
+            for (col = 0; col != src.format.width; ++col)
             {
-                conv_fun(pal + *src_pixel * pal_stride, dst_pixel);
-                src_pixel += src_stride;
+                pfn_resampler(src.palette + *src_pixel * src_stride, dst_pixel);
+                src_pixel += 1;
                 dst_pixel += dst_stride;
             }
-            src_line += src_pitch;
             dst_line += dst_pitch;
         }
+        return error_ok;
     }
 
 
-    int32_t cmode_bits(cmode_e cmode)
+    int32_t format_bits(format cmode)
     {
         switch (cmode)
         {
-        case cmode_gray1: return 1;
-        case cmode_gray2: return 2;
-        case cmode_gray4: return 4;
-        case cmode_gray8: return 8;
+        case format_gray1: return 1;
+        case format_gray2: return 2;
+        case format_gray4: return 4;
+        case format_gray8: return 8;
 
-        case cmode_r3g3b2:
+        case format_r3g3b2:
             return 8;
 
-        case cmode_r8g8b8:
-        case cmode_b8g8r8:
+        case format_r8g8b8:
+        case format_b8g8r8:
             return 24;
 
-        case cmode_r5g6b5:
-        case cmode_a1r5g5b5:
-        case cmode_a1b5g5r5:
-        case cmode_x1r5g5b5:
-        case cmode_x1b5g5r5:
-        case cmode_a4r4g4b4:
-        case cmode_x4r4g4b4:
-        case cmode_a8r3g3b2:
+        case format_r5g6b5:
+        case format_a1r5g5b5:
+        case format_a1b5g5r5:
+        case format_x1r5g5b5:
+        case format_x1b5g5r5:
+        case format_a4r4g4b4:
+        case format_x4r4g4b4:
+        case format_a8r3g3b2:
             return 16;
 
-        case cmode_a8r8g8b8:
-        case cmode_x8r8g8b8:
-        case cmode_a8b8g8r8:
-        case cmode_x8b8g8r8:
-        case cmode_r8g8b8a8:
-        case cmode_r8g8b8x8:
-        case cmode_b8g8r8a8:
-        case cmode_b8g8r8x8:
-        case cmode_g16r16:
-        case cmode_a2r10g10b10:
-        case cmode_a2b10g10r10:
+        case format_a8r8g8b8:
+        case format_x8r8g8b8:
+        case format_a8b8g8r8:
+        case format_x8b8g8r8:
+        case format_r8g8b8a8:
+        case format_r8g8b8x8:
+        case format_b8g8r8a8:
+        case format_b8g8r8x8:
+        case format_g16r16:
+        case format_a2r10g10b10:
+        case format_a2b10g10r10:
             return 32;
 
-        case cmode_a16b16g16r16:
+        case format_a16b16g16r16:
             return 64;
 
-        case cmode_r16f: return 16;
-        case cmode_g16r16f: return 32;
-        case cmode_a16b16g16r16f: return 64;
-        case cmode_r32f: return 32;
-        case cmode_g32r32f: return 64;
-        case cmode_b32g32r32f: return 96;
-        case cmode_a32b32g32r32f: return 128;
+        case format_r16f: return 16;
+        case format_g16r16f: return 32;
+        case format_a16b16g16r16f: return 64;
+        case format_r32f: return 32;
+        case format_g32r32f: return 64;
+        case format_b32g32r32f: return 96;
+        case format_a32b32g32r32f: return 128;
 
-        case cmode_x32y32z32f: return 96;
+        case format_x32y32z32f: return 96;
 
         default:
             return 0;
@@ -467,79 +445,53 @@ namespace graphics::image
 
 #define COLOR_MODE_TEXT(mode) case mode: return (#mode)
 
-    const char * cmode_text(cmode_e cmode)
+    const char * format_text(format cmode)
     {
         switch (cmode)
         {
-        COLOR_MODE_TEXT(cmode_none);
-        COLOR_MODE_TEXT(cmode_gray2);
-        COLOR_MODE_TEXT(cmode_gray4);
-        COLOR_MODE_TEXT(cmode_gray8);
+        COLOR_MODE_TEXT(format_none);
+        COLOR_MODE_TEXT(format_gray2);
+        COLOR_MODE_TEXT(format_gray4);
+        COLOR_MODE_TEXT(format_gray8);
 
-        COLOR_MODE_TEXT(cmode_r8g8b8);
-        COLOR_MODE_TEXT(cmode_a8r8g8b8);
-        COLOR_MODE_TEXT(cmode_x8r8g8b8);
+        COLOR_MODE_TEXT(format_r8g8b8);
+        COLOR_MODE_TEXT(format_a8r8g8b8);
+        COLOR_MODE_TEXT(format_x8r8g8b8);
 
-        COLOR_MODE_TEXT(cmode_b8g8r8);
-        COLOR_MODE_TEXT(cmode_a8b8g8r8);
-        COLOR_MODE_TEXT(cmode_x8b8g8r8);
+        COLOR_MODE_TEXT(format_b8g8r8);
+        COLOR_MODE_TEXT(format_a8b8g8r8);
+        COLOR_MODE_TEXT(format_x8b8g8r8);
 
-        COLOR_MODE_TEXT(cmode_yuv);
-        COLOR_MODE_TEXT(cmode_cmyk);
-        COLOR_MODE_TEXT(cmode_ycck);
+        COLOR_MODE_TEXT(format_yuv);
+        COLOR_MODE_TEXT(format_cmyk);
+        COLOR_MODE_TEXT(format_ycck);
 
-        COLOR_MODE_TEXT(cmode_r5g6b5);
-        COLOR_MODE_TEXT(cmode_a8r5g6b5);
-        COLOR_MODE_TEXT(cmode_a1r5g5b5);
-        COLOR_MODE_TEXT(cmode_a1b5g5r5);
-        COLOR_MODE_TEXT(cmode_x1r5g5b5);
-        COLOR_MODE_TEXT(cmode_a4r4g4b4);
-        COLOR_MODE_TEXT(cmode_x4r4g4b4);
-        COLOR_MODE_TEXT(cmode_g16r16);
-        COLOR_MODE_TEXT(cmode_a16b16g16r16);
-        COLOR_MODE_TEXT(cmode_r3g3b2);
+        COLOR_MODE_TEXT(format_r5g6b5);
+        COLOR_MODE_TEXT(format_a8r5g6b5);
+        COLOR_MODE_TEXT(format_a1r5g5b5);
+        COLOR_MODE_TEXT(format_a1b5g5r5);
+        COLOR_MODE_TEXT(format_x1r5g5b5);
+        COLOR_MODE_TEXT(format_a4r4g4b4);
+        COLOR_MODE_TEXT(format_x4r4g4b4);
+        COLOR_MODE_TEXT(format_g16r16);
+        COLOR_MODE_TEXT(format_a16b16g16r16);
+        COLOR_MODE_TEXT(format_r3g3b2);
 
-        COLOR_MODE_TEXT(cmode_r8g8b8a8);
-        COLOR_MODE_TEXT(cmode_r8g8b8x8);
+        COLOR_MODE_TEXT(format_r8g8b8a8);
+        COLOR_MODE_TEXT(format_r8g8b8x8);
 
-        COLOR_MODE_TEXT(cmode_r16f);
-        COLOR_MODE_TEXT(cmode_g16r16f);
-        COLOR_MODE_TEXT(cmode_a16b16g16r16f);
-        COLOR_MODE_TEXT(cmode_r32f);
-        COLOR_MODE_TEXT(cmode_g32r32f);
-        COLOR_MODE_TEXT(cmode_a32b32g32r32f);
+        COLOR_MODE_TEXT(format_r16f);
+        COLOR_MODE_TEXT(format_g16r16f);
+        COLOR_MODE_TEXT(format_a16b16g16r16f);
+        COLOR_MODE_TEXT(format_r32f);
+        COLOR_MODE_TEXT(format_g32r32f);
+        COLOR_MODE_TEXT(format_a32b32g32r32f);
 
-        COLOR_MODE_TEXT(cmode_x32y32z32f);
+        COLOR_MODE_TEXT(format_x32y32z32f);
 
-        COLOR_MODE_TEXT(cmode_index4_a8r8g8b8);
-        COLOR_MODE_TEXT(cmode_index8_a8r8g8b8);
-        COLOR_MODE_TEXT(cmode_index1_x8r8g8b8);
-        COLOR_MODE_TEXT(cmode_index2_x8r8g8b8);
-        COLOR_MODE_TEXT(cmode_index4_x8r8g8b8);
-        COLOR_MODE_TEXT(cmode_index8_x8r8g8b8);
-        COLOR_MODE_TEXT(cmode_index4_rle2_x8r8g8b8);
-        COLOR_MODE_TEXT(cmode_index8_rle2_x8r8g8b8);
-
-        COLOR_MODE_TEXT(cmode_rle_gray8);
-        COLOR_MODE_TEXT(cmode_rle_x1r5g5b5);
-        COLOR_MODE_TEXT(cmode_rle_r8g8b8);
-        COLOR_MODE_TEXT(cmode_rle_a8r8g8b8);
-
-        COLOR_MODE_TEXT(cmode_index4_r8g8b8);
-
-        COLOR_MODE_TEXT(cmode_index8_gray8);
-        COLOR_MODE_TEXT(cmode_index8_x1r5g5b5);
-        COLOR_MODE_TEXT(cmode_index8_r8g8b8);
-
-        COLOR_MODE_TEXT(cmode_d24s8);
         default:
             return _T("color_mode unkonwn");
         }
-    }
-
-    int32_t align_to_2(int32_t val)
-    {
-        return val + 1 & ~1;
     }
 
     int32_t align_to_4(int32_t val)
@@ -591,6 +543,18 @@ namespace graphics::image
         return (uint8_t)(fval * 0xFF);
     }
 
+
+    void image_buffer_alloc_default(image_data_t & data)
+    {
+        data.pitch = align_to<int32_t>(data.format.width * (format_bits(data.format.format) / 8), 4);
+        data.data = (byte_t *)malloc(data.format.height * data.pitch);
+    }
+
+    void image_buffer_free(image_data_t & data)
+    {
+        free(data.data);
+    }
+
     static bool mask_equal(const color_mask_abgr_t & ma, const color_mask_abgr_t & mb)
     {
         return
@@ -600,73 +564,102 @@ namespace graphics::image
             ma.a == mb.a;
     }
 
-    cmode_e cmode_from_mask_abgr(const color_mask_abgr_t & mask, int32_t bits)
+    format format_from_mask_abgr(const color_mask_abgr_t & mask, int32_t bits)
     {
         switch (bits)
         {
         case 8:
             if (mask_equal(mask, MASK_R3G3B2))
-                return cmode_r3g3b2;
+                return format_r3g3b2;
             break;
         case 16:
             if (mask_equal(mask, MASK_A8R3G3B2))
-                return cmode_a8r3g3b2;
+                return format_a8r3g3b2;
             if (mask_equal(mask, MASK_A4R4G4B4))
-                return cmode_a4r4g4b4;
+                return format_a4r4g4b4;
             if (mask_equal(mask, MASK_X4R4G4B4))
-                return cmode_x4r4g4b4;
+                return format_x4r4g4b4;
             if (mask_equal(mask, MASK_A0R5G6B5))
-                return cmode_r5g6b5;
+                return format_r5g6b5;
             if (mask_equal(mask, MASK_X1R5G5B5))
-                return cmode_x1r5g5b5;
+                return format_x1r5g5b5;
             if (mask_equal(mask, MASK_A1R5G5B5))
-                return cmode_a1r5g5b5;
+                return format_a1r5g5b5;
             break;
         case 24:
             if (mask_equal(mask, MASK_R8G8B8))
-                return cmode_r8g8b8;
+                return format_r8g8b8;
             if (mask_equal(mask, MASK_B8G8R8))
-                return cmode_b8g8r8;
+                return format_b8g8r8;
             break;
         case 32:
             if (mask_equal(mask, MASK_X8R8G8B8))
-                return cmode_x8r8g8b8;
+                return format_x8r8g8b8;
             if (mask_equal(mask, MASK_A8R8G8B8))
-                return cmode_a8r8g8b8;
+                return format_a8r8g8b8;
             if (mask_equal(mask, MASK_R8G8B8X8))
-                return cmode_r8g8b8x8;
+                return format_r8g8b8x8;
             if (mask_equal(mask, MASK_R8G8B8A8))
-                return cmode_r8g8b8a8;
+                return format_r8g8b8a8;
             if (mask_equal(mask, MASK_X8B8G8R8))
-                return cmode_x8b8g8r8;
+                return format_x8b8g8r8;
             if (mask_equal(mask, MASK_A8B8G8R8))
-                return cmode_a8b8g8r8;
+                return format_a8b8g8r8;
 
-            // dds file format cmode_a2b10g10r10 is error, it should be cmode_a2r10g10b10.
+            // dds file format format_a2b10g10r10 is error, it should be format_a2r10g10b10.
             if (mask_equal(mask, MASK_A2R10G10B10))
-                return cmode_a2b10g10r10;
+                return format_a2b10g10r10;
             if (mask_equal(mask, MASK_A2B10G10R10))
-                return cmode_a2r10g10b10;
+                return format_a2r10g10b10;
 
 
             if (mask_equal(mask, MASK_G16R16))
-                return cmode_g16r16;
+                return format_g16r16;
             break;
         }
-        return cmode_none;
+        return format_none;
     }
 
-    bool image_data_malloc(image_data_t * data)
+    pixel_convert_fun image_get_samapler(format src, format dst)
     {
-        data->buffer = (byte_t *)malloc(data->length);
-        return data->buffer != nullptr;
+        static pixel_convert_fun pfns[format_count][format_count] = {};
+        if(!pfns[format_gray8][format_gray8])
+        {
+            pfns[format_gray8][format_gray8] = color_8_to_8;
+            pfns[format_gray8][format_r3g3b2] = color_8_to_8;
+            pfns[format_gray8][format_r8g8b8] = color_gray8_to_r8g8b8;
+            pfns[format_gray8][format_x8r8g8b8] = color_gray8_to_x8r8g8b8;
+
+            pfns[format_r5g6b5][format_r5g6b5] = color_16_to_16;
+            pfns[format_b5g6r5][format_b5g6r5] = color_16_to_16;
+            pfns[format_r8g8b8][format_r8g8b8] = color_24_to_24;
+            pfns[format_r8g8b8][format_x8r8g8b8] = color_r8g8b8_to_x8r8g8b8;
+            pfns[format_b8g8r8][format_b8g8r8] = color_24_to_24;
+            pfns[format_b8g8r8][format_r8g8b8] = color_r8g8b8_to_b8g8r8;
+            pfns[format_x1r5g5b5][format_x1r5g5b5] = color_16_to_16;
+            pfns[format_x1r5g5b5][format_r8g8b8] = color_x1r5g5b5_to_r8g8b8;
+            pfns[format_a4r4g4b4][format_a4r4g4b4] = color_16_to_16;
+
+            pfns[format_a8r8g8b8][format_a8r8g8b8] = color_32_to_32;
+            pfns[format_a8b8g8r8][format_a8b8g8r8] = color_32_to_32;
+            pfns[format_a8b8g8r8][format_a8r8g8b8] = color_a8b8g8r8_to_a8r8g8b8;
+            pfns[format_x8r8g8b8][format_x8r8g8b8] = color_32_to_32;
+            pfns[format_x8b8g8r8][format_x8b8g8r8] = color_32_to_32;
+        }
+        return pfns[src][dst];
     }
 
-    void image_data_free(image_data_t * data)
+    image_format image_get_format(image_type type, image_format format)
     {
-        free((void *)data->buffer);
+        image_format result = format;
+        switch(format.format)
+        {
+        case format_b8g8r8: result.format = format_r8g8b8; break;
+        case format_a8b8g8r8: result.format = format_a8r8g8b8; break;
+        default: break;
+        }
+        return result;
     }
-
 
     //////////////////////////////////////////////////////////////////////////
     /// color_a_to_b
