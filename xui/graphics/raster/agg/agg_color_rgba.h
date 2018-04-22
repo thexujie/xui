@@ -246,6 +246,8 @@ namespace agg
     //===================================================================rgba8
     struct rgba8
     {
+        static const int bytes = 4;
+
         typedef int8u value_type;
         typedef int32u calc_type;
         typedef int32 long_type;

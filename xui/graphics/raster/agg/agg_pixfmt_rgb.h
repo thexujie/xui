@@ -812,13 +812,9 @@ namespace agg
 
     typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba8, order_rgb>, rendering_buffer> pixel_accessor_rgb24; //----pixel_accessor_rgb24
     typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba8, order_bgr>, rendering_buffer> pixel_accessor_bgr24; //----pixel_accessor_bgr24
-    typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba16, order_rgb>, rendering_buffer> pixel_accessor_rgb48; //----pixel_accessor_rgb48
-    typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba16, order_bgr>, rendering_buffer> pixel_accessor_bgr48; //----pixel_accessor_bgr48
 
     typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_rgb>, rendering_buffer> pixel_accessor_rgb24_pre; //----pixel_accessor_rgb24_pre
     typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_bgr>, rendering_buffer> pixel_accessor_bgr24_pre; //----pixel_accessor_bgr24_pre
-    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba16, order_rgb>, rendering_buffer> pixel_accessor_rgb48_pre; //----pixel_accessor_rgb48_pre
-    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba16, order_bgr>, rendering_buffer> pixel_accessor_bgr48_pre; //----pixel_accessor_bgr48_pre
 
     //-----------------------------------------------------pixel_accessor_rgb24_gamma
     template<class Gamma>
