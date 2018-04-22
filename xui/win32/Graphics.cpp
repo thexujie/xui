@@ -143,9 +143,10 @@ namespace win32
 
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect)
     {
-        auto & data = image.data();
+        auto & data = image.image();
         agg::pixfmt_bgra32 pixf(_rbuf);
-        agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
+        //agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
+        agg::renderer_base renb(pixf);
 
         agg::path_storage ps;
         ps.move_to(rect.x, rect.y);
@@ -158,19 +159,20 @@ namespace win32
 
         agg::rendering_buffer img_buf;
         img_buf.attach((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
-        agg::pixfmt_bgra32 img_pixf(img_buf);
 
         agg::span_interpolator_linear<> interpolator(
             agg::trans_affine_translation(-rect.x, -rect.y) *
             agg::trans_affine_scaling(data.format.width / (double)rect.cx, data.format.height / (double)rect.cy));
-        agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+
+        agg::pixfmt_rgb24 img_pixf(img_buf);
+        agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_rgb24, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
         agg::span_allocator<agg::rgba8> sa;
         agg::render_scanlines_aa(_raster, _sl, renb, sa, sg);
     }
 
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
     {
-        auto & data = image.data();
+        auto & data = image.image();
         agg::pixfmt_bgra32 pixf(_rbuf);
         agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
 

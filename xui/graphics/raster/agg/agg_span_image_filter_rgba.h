@@ -194,8 +194,7 @@ namespace agg
 
     //====================================span_image_filter_rgba_bilinear_clip
     template<class Source, class Interpolator>
-    class span_image_filter_rgba_bilinear_clip :
-        public span_image_filter<Source, Interpolator>
+    class span_image_filter_rgba_bilinear_clip : public span_image_filter<Source, Interpolator>
     {
     public:
         typedef Source source_type;
