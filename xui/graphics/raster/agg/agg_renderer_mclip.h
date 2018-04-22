@@ -36,26 +36,26 @@ namespace agg
     class renderer_mclip
     {
     public:
-        typedef PixelFormat pixfmt_type;
-        typedef typename pixfmt_type::color_type color_type;
-        typedef typename pixfmt_type::row_data row_data;
-        typedef renderer_base<pixfmt_type> base_ren_type;
+        typedef PixelFormat pixel_accessor_type;
+        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename pixel_accessor_type::row_data row_data;
+        typedef renderer_base<pixel_accessor_type> base_ren_type;
 
         //--------------------------------------------------------------------
-        explicit renderer_mclip(pixfmt_type & pixf) :
+        explicit renderer_mclip(pixel_accessor_type & pixf) :
             m_ren(pixf),
             m_curr_cb(0),
             m_bounds(m_ren.xmin(), m_ren.ymin(), m_ren.xmax(), m_ren.ymax()) {}
 
-        void attach(pixfmt_type & pixf)
+        void attach(pixel_accessor_type & pixf)
         {
             m_ren.attach(pixf);
             reset_clipping(true);
         }
 
         //--------------------------------------------------------------------
-        const pixfmt_type & ren() const { return m_ren.ren(); }
-        pixfmt_type & ren() { return m_ren.ren(); }
+        const pixel_accessor_type & ren() const { return m_ren.ren(); }
+        pixel_accessor_type & ren() { return m_ren.ren(); }
 
         //--------------------------------------------------------------------
         unsigned width() const { return m_ren.width(); }

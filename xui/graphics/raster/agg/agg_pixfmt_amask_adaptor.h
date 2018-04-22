@@ -32,14 +32,14 @@
 
 namespace agg
 {
-    //==================================================pixfmt_amask_adaptor
+    //==================================================pixel_accessor_amask_adaptor
     template<class PixFmt, class AlphaMask>
-    class pixfmt_amask_adaptor
+    class pixel_accessor_amask_adaptor
     {
     public:
-        typedef PixFmt pixfmt_type;
-        typedef typename pixfmt_type::color_type color_type;
-        typedef typename pixfmt_type::row_data row_data;
+        typedef PixFmt pixel_accessor_type;
+        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename pixel_accessor_type::row_data row_data;
         typedef AlphaMask amask_type;
         typedef typename amask_type::cover_type cover_type;
 
@@ -68,10 +68,10 @@ namespace agg
 
 
     public:
-        pixfmt_amask_adaptor(pixfmt_type & pixf, const amask_type & mask) :
+        pixel_accessor_amask_adaptor(pixel_accessor_type & pixf, const amask_type & mask) :
             m_pixf(&pixf), m_mask(&mask), m_span() {}
 
-        void attach_pixfmt(pixfmt_type & pixf) { m_pixf = &pixf; }
+        void attach_pixfmt(pixel_accessor_type & pixf) { m_pixf = &pixf; }
         void attach_alpha_mask(const amask_type & mask) { m_mask = &mask; }
 
         //--------------------------------------------------------------------
@@ -237,7 +237,7 @@ namespace agg
         }
 
     private:
-        pixfmt_type * m_pixf;
+        pixel_accessor_type * m_pixf;
         const amask_type * m_mask;
         pod_array<cover_type> m_span;
     };

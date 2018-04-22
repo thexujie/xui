@@ -35,26 +35,26 @@ namespace agg
     class renderer_base
     {
     public:
-        typedef PixelFormat pixfmt_type;
-        typedef typename pixfmt_type::color_type color_type;
-        typedef typename pixfmt_type::row_data row_data;
+        typedef PixelFormat pixel_accessor_type;
+        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename pixel_accessor_type::row_data row_data;
 
         //--------------------------------------------------------------------
         renderer_base() : m_ren(0), m_clip_box(1, 1, 0, 0) {}
 
-        explicit renderer_base(pixfmt_type & ren) :
+        explicit renderer_base(pixel_accessor_type & ren) :
             m_ren(&ren),
             m_clip_box(0, 0, ren.width() - 1, ren.height() - 1) {}
 
-        void attach(pixfmt_type & ren)
+        void attach(pixel_accessor_type & ren)
         {
             m_ren = &ren;
             m_clip_box = rect_i(0, 0, ren.width() - 1, ren.height() - 1);
         }
 
         //--------------------------------------------------------------------
-        const pixfmt_type & ren() const { return *m_ren; }
-        pixfmt_type & ren() { return *m_ren; }
+        const pixel_accessor_type & ren() const { return *m_ren; }
+        pixel_accessor_type & ren() { return *m_ren; }
 
         //--------------------------------------------------------------------
         unsigned width() const { return m_ren->width(); }
@@ -732,7 +732,7 @@ namespace agg
         }
 
     private:
-        pixfmt_type * m_ren;
+        pixel_accessor_type * m_ren;
         rect_i m_clip_box;
     };
 }

@@ -283,7 +283,7 @@ namespace agg
     // when creating. For example, on typical Intel Pentium hardware 
     // row_ptr_cache speeds span_image_filter_rgb_nn up to 10%
     //
-    // It's used only in short hand typedefs like pixfmt_rgba32 and can be 
+    // It's used only in short hand typedefs like pixel_accessor_rgba32 and can be 
     // redefined in agg_config.h
     // In real applications you can use both, depending on your needs
     //------------------------------------------------------------------------

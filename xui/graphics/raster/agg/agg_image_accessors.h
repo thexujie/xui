@@ -34,30 +34,30 @@ namespace agg
     class image_accessor_clip
     {
     public:
-        typedef PixFmt pixfmt_type;
-        typedef typename pixfmt_type::color_type color_type;
-        typedef typename pixfmt_type::order_type order_type;
-        typedef typename pixfmt_type::value_type value_type;
+        typedef PixFmt pixel_accessor_type;
+        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename pixel_accessor_type::order_type order_type;
+        typedef typename pixel_accessor_type::value_type value_type;
 
-        enum pix_width_e { pix_width = pixfmt_type::pix_width };
+        enum pix_width_e { pix_width = pixel_accessor_type::pix_width };
 
         image_accessor_clip() {}
 
-        explicit image_accessor_clip(const pixfmt_type & pixf,
+        explicit image_accessor_clip(const pixel_accessor_type & pixf,
             const color_type & bk) :
             m_pixf(&pixf)
         {
-            pixfmt_type::make_pix(m_bk_buf, bk);
+            pixel_accessor_type::make_pix(m_bk_buf, bk);
         }
 
-        void attach(const pixfmt_type & pixf)
+        void attach(const pixel_accessor_type & pixf)
         {
             m_pixf = &pixf;
         }
 
         void background_color(const color_type & bk)
         {
-            pixfmt_type::make_pix(m_bk_buf, bk);
+            pixel_accessor_type::make_pix(m_bk_buf, bk);
         }
 
     private:
@@ -106,7 +106,7 @@ namespace agg
         }
 
     private:
-        const pixfmt_type * m_pixf;
+        const pixel_accessor_type * m_pixf;
         int8u m_bk_buf[4];
         int m_x, m_x0, m_y;
         const int8u * m_pix_ptr;
@@ -118,19 +118,19 @@ namespace agg
     class image_accessor_no_clip
     {
     public:
-        typedef PixFmt pixfmt_type;
-        typedef typename pixfmt_type::color_type color_type;
-        typedef typename pixfmt_type::order_type order_type;
-        typedef typename pixfmt_type::value_type value_type;
+        typedef PixFmt pixel_accessor_type;
+        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename pixel_accessor_type::order_type order_type;
+        typedef typename pixel_accessor_type::value_type value_type;
 
-        enum pix_width_e { pix_width = pixfmt_type::pix_width };
+        enum pix_width_e { pix_width = pixel_accessor_type::pix_width };
 
         image_accessor_no_clip() {}
 
-        explicit image_accessor_no_clip(const pixfmt_type & pixf) :
+        explicit image_accessor_no_clip(const pixel_accessor_type & pixf) :
             m_pixf(&pixf) {}
 
-        void attach(const pixfmt_type & pixf)
+        void attach(const pixel_accessor_type & pixf)
         {
             m_pixf = &pixf;
         }
@@ -154,7 +154,7 @@ namespace agg
         }
 
     private:
-        const pixfmt_type * m_pixf;
+        const pixel_accessor_type * m_pixf;
         int m_x, m_y;
         const int8u * m_pix_ptr;
     };
@@ -165,19 +165,19 @@ namespace agg
     class image_accessor_clone
     {
     public:
-        typedef PixFmt pixfmt_type;
-        typedef typename pixfmt_type::color_type color_type;
-        typedef typename pixfmt_type::order_type order_type;
-        typedef typename pixfmt_type::value_type value_type;
+        typedef PixFmt pixel_accessor_type;
+        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename pixel_accessor_type::order_type order_type;
+        typedef typename pixel_accessor_type::value_type value_type;
 
-        enum pix_width_e { pix_width = pixfmt_type::pix_width };
+        enum pix_width_e { pix_width = pixel_accessor_type::pix_width };
 
         image_accessor_clone() {}
 
-        explicit image_accessor_clone(const pixfmt_type & pixf) :
+        explicit image_accessor_clone(const pixel_accessor_type & pixf) :
             m_pixf(&pixf) {}
 
-        void attach(const pixfmt_type & pixf)
+        void attach(const pixel_accessor_type & pixf)
         {
             m_pixf = &pixf;
         }
@@ -229,7 +229,7 @@ namespace agg
         }
 
     private:
-        const pixfmt_type * m_pixf;
+        const pixel_accessor_type * m_pixf;
         int m_x, m_x0, m_y;
         const int8u * m_pix_ptr;
     };
@@ -240,21 +240,21 @@ namespace agg
     class image_accessor_wrap
     {
     public:
-        typedef PixFmt pixfmt_type;
-        typedef typename pixfmt_type::color_type color_type;
-        typedef typename pixfmt_type::order_type order_type;
-        typedef typename pixfmt_type::value_type value_type;
+        typedef PixFmt pixel_accessor_type;
+        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename pixel_accessor_type::order_type order_type;
+        typedef typename pixel_accessor_type::value_type value_type;
 
-        enum pix_width_e { pix_width = pixfmt_type::pix_width };
+        enum pix_width_e { pix_width = pixel_accessor_type::pix_width };
 
         image_accessor_wrap() {}
 
-        explicit image_accessor_wrap(const pixfmt_type & pixf) :
+        explicit image_accessor_wrap(const pixel_accessor_type & pixf) :
             m_pixf(&pixf),
             m_wrap_x(pixf.width()),
             m_wrap_y(pixf.height()) {}
 
-        void attach(const pixfmt_type & pixf)
+        void attach(const pixel_accessor_type & pixf)
         {
             m_pixf = &pixf;
         }
@@ -279,7 +279,7 @@ namespace agg
         }
 
     private:
-        const pixfmt_type * m_pixf;
+        const pixel_accessor_type * m_pixf;
         const int8u * m_row_ptr;
         int m_x;
         WrapX m_wrap_x;

@@ -122,9 +122,9 @@ namespace agg
     };
 
 
-    //=================================================pixfmt_alpha_blend_gray
+    //=================================================pixel_accessor_alpha_blend_gray
     template<class Blender, class RenBuf, unsigned Step = 1, unsigned Offset = 0>
-    class pixfmt_alpha_blend_gray
+    class pixel_accessor_alpha_blend_gray
     {
     public:
         typedef RenBuf rbuf_type;
@@ -185,7 +185,7 @@ namespace agg
 
     public:
         //--------------------------------------------------------------------
-        explicit pixfmt_alpha_blend_gray(rbuf_type & rb) :
+        explicit pixel_accessor_alpha_blend_gray(rbuf_type & rb) :
             m_rbuf(&rb) {}
 
         void attach(rbuf_type & rb) { m_rbuf = &rb; }
@@ -674,8 +674,8 @@ namespace agg
     typedef blender_gray<gray16> blender_gray16;
     typedef blender_gray_pre<gray16> blender_gray16_pre;
 
-    typedef pixfmt_alpha_blend_gray<blender_gray8, rendering_buffer> pixfmt_gray8; //----pixfmt_gray8
-    typedef pixfmt_alpha_blend_gray<blender_gray8_pre, rendering_buffer> pixfmt_gray8_pre; //----pixfmt_gray8_pre
-    typedef pixfmt_alpha_blend_gray<blender_gray16, rendering_buffer> pixfmt_gray16; //----pixfmt_gray16
-    typedef pixfmt_alpha_blend_gray<blender_gray16_pre, rendering_buffer> pixfmt_gray16_pre; //----pixfmt_gray16_pre
+    typedef pixel_accessor_alpha_blend_gray<blender_gray8, rendering_buffer> pixel_accessor_gray8; //----pixel_accessor_gray8
+    typedef pixel_accessor_alpha_blend_gray<blender_gray8_pre, rendering_buffer> pixel_accessor_gray8_pre; //----pixel_accessor_gray8_pre
+    typedef pixel_accessor_alpha_blend_gray<blender_gray16, rendering_buffer> pixel_accessor_gray16; //----pixel_accessor_gray16
+    typedef pixel_accessor_alpha_blend_gray<blender_gray16_pre, rendering_buffer> pixel_accessor_gray16_pre; //----pixel_accessor_gray16_pre
 }

@@ -25,10 +25,10 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 {
     auto buffer = pixmap->buffer();
     rbuf.attach((agg::int8u *)buffer.data, buffer.size.cx, buffer.size.cy, buffer.flip_y ? -buffer.pitch : buffer.pitch);
-    agg::pixfmt_bgra32 pixf(rbuf);
-    agg::pixfmt_bgra32_pre pixf_pre(rbuf);
-    agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
-    agg::renderer_base<agg::pixfmt_bgra32_pre> ren_pre(pixf_pre);
+    agg::pixel_accessor_bgra32 pixf(rbuf);
+    agg::pixel_accessor_bgra32_pre pixf_pre(rbuf);
+    agg::renderer_base<agg::pixel_accessor_bgra32> renb(pixf);
+    agg::renderer_base<agg::pixel_accessor_bgra32_pre> ren_pre(pixf_pre);
 
     //renb.clear(agg::rgba(1, 1, 1));
 
@@ -106,8 +106,8 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 
     //m_gray8_buf.resize(size.cx * size.cy);
     //m_gray8_rbuf.attach(m_gray8_buf.data(), size.cx, size.cy, size.cx);
-    //agg::pixfmt_gray8 pixf_gray8(m_gray8_rbuf);
-    //agg::renderer_base<agg::pixfmt_gray8> renb_gray8(pixf_gray8);
+    //agg::pixel_accessor_gray8 pixf_gray8(m_gray8_rbuf);
+    //agg::renderer_base<agg::pixel_accessor_gray8> renb_gray8(pixf_gray8);
 
     //renb_gray8.clear(agg::gray8(0));
 
@@ -117,7 +117,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 
     //core::math::pt32_t pos = { 400, 200 };
     //agg::rendering_buffer rbuf2;
-    //agg::pixfmt_gray8 pixf2(rbuf2);
+    //agg::pixel_accessor_gray8 pixf2(rbuf2);
     //if (pixf2.attach(pixf_gray8, int(shadow_bounds.x1), int(shadow_bounds.y1), int(shadow_bounds.x2), int(shadow_bounds.y2)))
     //{
     //    //agg::stack_blur<agg::rgba8, agg::stack_blur_calc_rgb<>> stack_blur;
@@ -191,16 +191,16 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 
     agg::rendering_buffer img_buf;
     img_buf.attach((agg::int8u *)img.data, img.format.width, img.format.height, img.pitch);
-    agg::pixfmt_bgra32 img_pixf(img_buf);
-    //agg::image_accessor_clip<agg::pixfmt_bgra32> img_src(img_pixf, agg::rgba_pre(0, 0.4, 0, 0.5));
+    agg::pixel_accessor_bgra32 img_pixf(img_buf);
+    //agg::image_accessor_clip<agg::pixel_accessor_bgra32> img_src(img_pixf, agg::rgba_pre(0, 0.4, 0, 0.5));
     //agg::render_scanlines_aa_solid(raster, sl, renb, agg::tools::rgba(colors::Black));
 
     agg::span_interpolator_linear<> interpolator( 
         agg::trans_affine_scaling(img.format.width / (double)rect.cx, img.format.height / (double)rect.cy) *
         agg::trans_affine_translation(rect.x, rect.y));
 
-    agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
-    //agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_bgr24, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+    agg::span_image_filter_rgba_bilinear_clip<agg::pixel_accessor_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+    //agg::span_image_filter_rgb_bilinear_clip<agg::pixel_accessor_bgr24, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
 
     agg::span_allocator<agg::rgba8> sa;
     agg::render_scanlines_aa(raster, sl, renb, sa, sg);

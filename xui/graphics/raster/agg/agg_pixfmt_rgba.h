@@ -1807,9 +1807,9 @@ namespace agg
     };
 
 
-    //=================================================pixfmt_alpha_blend_rgba
+    //=================================================pixel_accessor_alpha_blend_rgba
     template<class Blender, class RenBuf, class PixelT = int32u>
-    class pixfmt_alpha_blend_rgba
+    class pixel_accessor_alpha_blend_rgba
     {
     public:
         typedef RenBuf rbuf_type;
@@ -1831,8 +1831,8 @@ namespace agg
         };
 
         //--------------------------------------------------------------------
-        pixfmt_alpha_blend_rgba() : m_rbuf(0) {}
-        explicit pixfmt_alpha_blend_rgba(rbuf_type & rb) : m_rbuf(&rb) {}
+        pixel_accessor_alpha_blend_rgba() : m_rbuf(0) {}
+        explicit pixel_accessor_alpha_blend_rgba(rbuf_type & rb) : m_rbuf(&rb) {}
         void attach(rbuf_type & rb) { m_rbuf = &rb; }
 
         //--------------------------------------------------------------------
@@ -2464,9 +2464,9 @@ namespace agg
     };
 
 
-    //================================================pixfmt_custom_blend_rgba
+    //================================================pixel_accessor_custom_blend_rgba
     template<class Blender, class RenBuf>
-    class pixfmt_custom_blend_rgba
+    class pixel_accessor_custom_blend_rgba
     {
     public:
         typedef RenBuf rbuf_type;
@@ -2487,9 +2487,9 @@ namespace agg
 
 
         //--------------------------------------------------------------------
-        pixfmt_custom_blend_rgba() : m_rbuf(0), m_comp_op(3) {}
+        pixel_accessor_custom_blend_rgba() : m_rbuf(0), m_comp_op(3) {}
 
-        explicit pixfmt_custom_blend_rgba(rbuf_type & rb, unsigned comp_op = 3) :
+        explicit pixel_accessor_custom_blend_rgba(rbuf_type & rb, unsigned comp_op = 3) :
             m_rbuf(&rb),
             m_comp_op(comp_op) {}
 
@@ -2905,61 +2905,62 @@ namespace agg
 
 
     //-----------------------------------------------------------------------
-    typedef blender_rgba<rgba8, order_rgba> blender_rgba32; //----blender_rgba32
-    typedef blender_rgba<rgba8, order_argb> blender_argb32; //----blender_argb32
-    typedef blender_rgba<rgba8, order_abgr> blender_abgr32; //----blender_abgr32
-    typedef blender_rgba<rgba8, order_bgra> blender_bgra32; //----blender_bgra32
+    //typedef blender_rgba<rgba8, order_rgba> blender_rgba32; //----blender_rgba32
+    //typedef blender_rgba<rgba8, order_argb> blender_argb32; //----blender_argb32
+    //typedef blender_rgba<rgba8, order_abgr> blender_abgr32; //----blender_abgr32
+    //typedef blender_rgba<rgba8, order_bgra> blender_bgra32; //----blender_bgra32
 
-    typedef blender_rgba_pre<rgba8, order_rgba> blender_rgba32_pre; //----blender_rgba32_pre
-    typedef blender_rgba_pre<rgba8, order_argb> blender_argb32_pre; //----blender_argb32_pre
-    typedef blender_rgba_pre<rgba8, order_abgr> blender_abgr32_pre; //----blender_abgr32_pre
-    typedef blender_rgba_pre<rgba8, order_bgra> blender_bgra32_pre; //----blender_bgra32_pre
+    //typedef blender_rgba_pre<rgba8, order_rgba> blender_rgba32_pre; //----blender_rgba32_pre
+    //typedef blender_rgba_pre<rgba8, order_argb> blender_argb32_pre; //----blender_argb32_pre
+    //typedef blender_rgba_pre<rgba8, order_abgr> blender_abgr32_pre; //----blender_abgr32_pre
+    //typedef blender_rgba_pre<rgba8, order_bgra> blender_bgra32_pre; //----blender_bgra32_pre
 
-    typedef blender_rgba_plain<rgba8, order_rgba> blender_rgba32_plain; //----blender_rgba32_plain
-    typedef blender_rgba_plain<rgba8, order_argb> blender_argb32_plain; //----blender_argb32_plain
-    typedef blender_rgba_plain<rgba8, order_abgr> blender_abgr32_plain; //----blender_abgr32_plain
-    typedef blender_rgba_plain<rgba8, order_bgra> blender_bgra32_plain; //----blender_bgra32_plain
+    //typedef blender_rgba_plain<rgba8, order_rgba> blender_rgba32_plain; //----blender_rgba32_plain
+    //typedef blender_rgba_plain<rgba8, order_argb> blender_argb32_plain; //----blender_argb32_plain
+    //typedef blender_rgba_plain<rgba8, order_abgr> blender_abgr32_plain; //----blender_abgr32_plain
+    //typedef blender_rgba_plain<rgba8, order_bgra> blender_bgra32_plain; //----blender_bgra32_plain
 
-    typedef blender_rgba<rgba16, order_rgba> blender_rgba64; //----blender_rgba64
-    typedef blender_rgba<rgba16, order_argb> blender_argb64; //----blender_argb64
-    typedef blender_rgba<rgba16, order_abgr> blender_abgr64; //----blender_abgr64
-    typedef blender_rgba<rgba16, order_bgra> blender_bgra64; //----blender_bgra64
+    //typedef blender_rgba<rgba16, order_rgba> blender_rgba64; //----blender_rgba64
+    //typedef blender_rgba<rgba16, order_argb> blender_argb64; //----blender_argb64
+    //typedef blender_rgba<rgba16, order_abgr> blender_abgr64; //----blender_abgr64
+    //typedef blender_rgba<rgba16, order_bgra> blender_bgra64; //----blender_bgra64
 
-    typedef blender_rgba_pre<rgba16, order_rgba> blender_rgba64_pre; //----blender_rgba64_pre
-    typedef blender_rgba_pre<rgba16, order_argb> blender_argb64_pre; //----blender_argb64_pre
-    typedef blender_rgba_pre<rgba16, order_abgr> blender_abgr64_pre; //----blender_abgr64_pre
-    typedef blender_rgba_pre<rgba16, order_bgra> blender_bgra64_pre; //----blender_bgra64_pre
+    //typedef blender_rgba_pre<rgba16, order_rgba> blender_rgba64_pre; //----blender_rgba64_pre
+    //typedef blender_rgba_pre<rgba16, order_argb> blender_argb64_pre; //----blender_argb64_pre
+    //typedef blender_rgba_pre<rgba16, order_abgr> blender_abgr64_pre; //----blender_abgr64_pre
+    //typedef blender_rgba_pre<rgba16, order_bgra> blender_bgra64_pre; //----blender_bgra64_pre
 
 
     //-----------------------------------------------------------------------
     typedef int32u pixel32_type;
-    typedef pixfmt_alpha_blend_rgba<blender_rgba32, rendering_buffer, pixel32_type> pixfmt_rgba32; //----pixfmt_rgba32
-    typedef pixfmt_alpha_blend_rgba<blender_argb32, rendering_buffer, pixel32_type> pixfmt_argb32; //----pixfmt_argb32
-    typedef pixfmt_alpha_blend_rgba<blender_abgr32, rendering_buffer, pixel32_type> pixfmt_abgr32; //----pixfmt_abgr32
-    typedef pixfmt_alpha_blend_rgba<blender_bgra32, rendering_buffer, pixel32_type> pixfmt_bgra32; //----pixfmt_bgra32
 
-    typedef pixfmt_alpha_blend_rgba<blender_rgba32_pre, rendering_buffer, pixel32_type> pixfmt_rgba32_pre; //----pixfmt_rgba32_pre
-    typedef pixfmt_alpha_blend_rgba<blender_argb32_pre, rendering_buffer, pixel32_type> pixfmt_argb32_pre; //----pixfmt_argb32_pre
-    typedef pixfmt_alpha_blend_rgba<blender_abgr32_pre, rendering_buffer, pixel32_type> pixfmt_abgr32_pre; //----pixfmt_abgr32_pre
-    typedef pixfmt_alpha_blend_rgba<blender_bgra32_pre, rendering_buffer, pixel32_type> pixfmt_bgra32_pre; //----pixfmt_bgra32_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba8, order_rgba>, rendering_buffer, pixel32_type> pixel_accessor_rgba32; //----pixel_accessor_rgba32
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba8, order_argb>, rendering_buffer, pixel32_type> pixel_accessor_argb32; //----pixel_accessor_argb32
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba8, order_abgr>, rendering_buffer, pixel32_type> pixel_accessor_abgr32; //----pixel_accessor_abgr32
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba8, order_bgra>, rendering_buffer, pixel32_type> pixel_accessor_bgra32; //----pixel_accessor_bgra32
 
-    typedef pixfmt_alpha_blend_rgba<blender_rgba32_plain, rendering_buffer, pixel32_type> pixfmt_rgba32_plain; //----pixfmt_rgba32_plain
-    typedef pixfmt_alpha_blend_rgba<blender_argb32_plain, rendering_buffer, pixel32_type> pixfmt_argb32_plain; //----pixfmt_argb32_plain
-    typedef pixfmt_alpha_blend_rgba<blender_abgr32_plain, rendering_buffer, pixel32_type> pixfmt_abgr32_plain; //----pixfmt_abgr32_plain
-    typedef pixfmt_alpha_blend_rgba<blender_bgra32_plain, rendering_buffer, pixel32_type> pixfmt_bgra32_plain; //----pixfmt_bgra32_plain
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_rgba>, rendering_buffer, pixel32_type> pixel_accessor_rgba32_pre; //----pixel_accessor_rgba32_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_argb>, rendering_buffer, pixel32_type> pixel_accessor_argb32_pre; //----pixel_accessor_argb32_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_abgr>, rendering_buffer, pixel32_type> pixel_accessor_abgr32_pre; //----pixel_accessor_abgr32_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_bgra>, rendering_buffer, pixel32_type> pixel_accessor_bgra32_pre; //----pixel_accessor_bgra32_pre
+
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_rgba>, rendering_buffer, pixel32_type> pixel_accessor_rgba32_plain; //----pixel_accessor_rgba32_plain
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_argb>, rendering_buffer, pixel32_type> pixel_accessor_argb32_plain; //----pixel_accessor_argb32_plain
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_abgr>, rendering_buffer, pixel32_type> pixel_accessor_abgr32_plain; //----pixel_accessor_abgr32_plain
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_bgra>, rendering_buffer, pixel32_type> pixel_accessor_bgra32_plain; //----pixel_accessor_bgra32_plain
 
     struct pixel64_type
     {
         int16u c[4];
     };
 
-    typedef pixfmt_alpha_blend_rgba<blender_rgba64, rendering_buffer, pixel64_type> pixfmt_rgba64; //----pixfmt_rgba64
-    typedef pixfmt_alpha_blend_rgba<blender_argb64, rendering_buffer, pixel64_type> pixfmt_argb64; //----pixfmt_argb64
-    typedef pixfmt_alpha_blend_rgba<blender_abgr64, rendering_buffer, pixel64_type> pixfmt_abgr64; //----pixfmt_abgr64
-    typedef pixfmt_alpha_blend_rgba<blender_bgra64, rendering_buffer, pixel64_type> pixfmt_bgra64; //----pixfmt_bgra64
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba16, order_rgba>, rendering_buffer, pixel64_type> pixel_accessor_rgba64; //----pixel_accessor_rgba64
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba16, order_argb>, rendering_buffer, pixel64_type> pixel_accessor_argb64; //----pixel_accessor_argb64
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba16, order_abgr>, rendering_buffer, pixel64_type> pixel_accessor_abgr64; //----pixel_accessor_abgr64
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba16, order_bgra>, rendering_buffer, pixel64_type> pixel_accessor_bgra64; //----pixel_accessor_bgra64
 
-    typedef pixfmt_alpha_blend_rgba<blender_rgba64_pre, rendering_buffer, pixel64_type> pixfmt_rgba64_pre; //----pixfmt_rgba64_pre
-    typedef pixfmt_alpha_blend_rgba<blender_argb64_pre, rendering_buffer, pixel64_type> pixfmt_argb64_pre; //----pixfmt_argb64_pre
-    typedef pixfmt_alpha_blend_rgba<blender_abgr64_pre, rendering_buffer, pixel64_type> pixfmt_abgr64_pre; //----pixfmt_abgr64_pre
-    typedef pixfmt_alpha_blend_rgba<blender_bgra64_pre, rendering_buffer, pixel64_type> pixfmt_bgra64_pre; //----pixfmt_bgra64_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba16, order_rgba>, rendering_buffer, pixel64_type> pixel_accessor_rgba64_pre; //----pixel_accessor_rgba64_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba16, order_argb>, rendering_buffer, pixel64_type> pixel_accessor_argb64_pre; //----pixel_accessor_argb64_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba16, order_abgr>, rendering_buffer, pixel64_type> pixel_accessor_abgr64_pre; //----pixel_accessor_abgr64_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba16, order_bgra>, rendering_buffer, pixel64_type> pixel_accessor_bgra64_pre; //----pixel_accessor_bgra64_pre
 }

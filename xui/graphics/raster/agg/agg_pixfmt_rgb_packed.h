@@ -788,9 +788,9 @@ namespace agg
     };
 
 
-    //===========================================pixfmt_alpha_blend_rgb_packed
+    //===========================================pixel_accessor_alpha_blend_rgb_packed
     template<class Blender, class RenBuf>
-    class pixfmt_alpha_blend_rgb_packed
+    class pixel_accessor_alpha_blend_rgb_packed
     {
     public:
         typedef RenBuf rbuf_type;
@@ -830,7 +830,7 @@ namespace agg
 
     public:
         //--------------------------------------------------------------------
-        explicit pixfmt_alpha_blend_rgb_packed(rbuf_type & rb) : m_rbuf(&rb) {}
+        explicit pixel_accessor_alpha_blend_rgb_packed(rbuf_type & rb) : m_rbuf(&rb) {}
         void attach(rbuf_type & rb) { m_rbuf = &rb; }
 
         //--------------------------------------------------------------------
@@ -1199,32 +1199,32 @@ namespace agg
         Blender m_blender;
     };
 
-    typedef pixfmt_alpha_blend_rgb_packed<blender_rgb555, rendering_buffer> pixfmt_rgb555; //----pixfmt_rgb555
-    typedef pixfmt_alpha_blend_rgb_packed<blender_rgb565, rendering_buffer> pixfmt_rgb565; //----pixfmt_rgb565
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb555, rendering_buffer> pixel_accessor_rgb555; //----pixel_accessor_rgb555
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb565, rendering_buffer> pixel_accessor_rgb565; //----pixel_accessor_rgb565
 
-    typedef pixfmt_alpha_blend_rgb_packed<blender_rgb555_pre, rendering_buffer> pixfmt_rgb555_pre; //----pixfmt_rgb555_pre
-    typedef pixfmt_alpha_blend_rgb_packed<blender_rgb565_pre, rendering_buffer> pixfmt_rgb565_pre; //----pixfmt_rgb565_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb555_pre, rendering_buffer> pixel_accessor_rgb555_pre; //----pixel_accessor_rgb555_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_pre, rendering_buffer> pixel_accessor_rgb565_pre; //----pixel_accessor_rgb565_pre
 
-    typedef pixfmt_alpha_blend_rgb_packed<blender_rgbAAA, rendering_buffer> pixfmt_rgbAAA; //----pixfmt_rgbAAA
-    typedef pixfmt_alpha_blend_rgb_packed<blender_bgrAAA, rendering_buffer> pixfmt_bgrAAA; //----pixfmt_bgrAAA
-    typedef pixfmt_alpha_blend_rgb_packed<blender_rgbBBA, rendering_buffer> pixfmt_rgbBBA; //----pixfmt_rgbBBA
-    typedef pixfmt_alpha_blend_rgb_packed<blender_bgrABB, rendering_buffer> pixfmt_bgrABB; //----pixfmt_bgrABB
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA, rendering_buffer> pixel_accessor_rgbAAA; //----pixel_accessor_rgbAAA
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA, rendering_buffer> pixel_accessor_bgrAAA; //----pixel_accessor_bgrAAA
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA, rendering_buffer> pixel_accessor_rgbBBA; //----pixel_accessor_rgbBBA
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB, rendering_buffer> pixel_accessor_bgrABB; //----pixel_accessor_bgrABB
 
-    typedef pixfmt_alpha_blend_rgb_packed<blender_rgbAAA_pre, rendering_buffer> pixfmt_rgbAAA_pre; //----pixfmt_rgbAAA_pre
-    typedef pixfmt_alpha_blend_rgb_packed<blender_bgrAAA_pre, rendering_buffer> pixfmt_bgrAAA_pre; //----pixfmt_bgrAAA_pre
-    typedef pixfmt_alpha_blend_rgb_packed<blender_rgbBBA_pre, rendering_buffer> pixfmt_rgbBBA_pre; //----pixfmt_rgbBBA_pre
-    typedef pixfmt_alpha_blend_rgb_packed<blender_bgrABB_pre, rendering_buffer> pixfmt_bgrABB_pre; //----pixfmt_bgrABB_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA_pre, rendering_buffer> pixel_accessor_rgbAAA_pre; //----pixel_accessor_rgbAAA_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA_pre, rendering_buffer> pixel_accessor_bgrAAA_pre; //----pixel_accessor_bgrAAA_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA_pre, rendering_buffer> pixel_accessor_rgbBBA_pre; //----pixel_accessor_rgbBBA_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB_pre, rendering_buffer> pixel_accessor_bgrABB_pre; //----pixel_accessor_bgrABB_pre
 
 
-    //-----------------------------------------------------pixfmt_rgb555_gamma
+    //-----------------------------------------------------pixel_accessor_rgb555_gamma
     template<class Gamma>
-    class pixfmt_rgb555_gamma :
-        public pixfmt_alpha_blend_rgb_packed<blender_rgb555_gamma<Gamma>,
+    class pixel_accessor_rgb555_gamma :
+        public pixel_accessor_alpha_blend_rgb_packed<blender_rgb555_gamma<Gamma>,
                                              rendering_buffer>
     {
     public:
-        pixfmt_rgb555_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb_packed<blender_rgb555_gamma<Gamma>,
+        pixel_accessor_rgb555_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb_packed<blender_rgb555_gamma<Gamma>,
                                           rendering_buffer>(rb)
         {
             this->blender().gamma(g);
@@ -1232,29 +1232,29 @@ namespace agg
     };
 
 
-    //-----------------------------------------------------pixfmt_rgb565_gamma
+    //-----------------------------------------------------pixel_accessor_rgb565_gamma
     template<class Gamma>
-    class pixfmt_rgb565_gamma :
-        public pixfmt_alpha_blend_rgb_packed<blender_rgb565_gamma<Gamma>, rendering_buffer>
+    class pixel_accessor_rgb565_gamma :
+        public pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_gamma<Gamma>, rendering_buffer>
     {
     public:
-        pixfmt_rgb565_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb_packed<blender_rgb565_gamma<Gamma>, rendering_buffer>(rb)
+        pixel_accessor_rgb565_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_gamma<Gamma>, rendering_buffer>(rb)
         {
             this->blender().gamma(g);
         }
     };
 
 
-    //-----------------------------------------------------pixfmt_rgbAAA_gamma
+    //-----------------------------------------------------pixel_accessor_rgbAAA_gamma
     template<class Gamma>
-    class pixfmt_rgbAAA_gamma :
-        public pixfmt_alpha_blend_rgb_packed<blender_rgbAAA_gamma<Gamma>,
+    class pixel_accessor_rgbAAA_gamma :
+        public pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA_gamma<Gamma>,
                                              rendering_buffer>
     {
     public:
-        pixfmt_rgbAAA_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb_packed<blender_rgbAAA_gamma<Gamma>,
+        pixel_accessor_rgbAAA_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA_gamma<Gamma>,
                                           rendering_buffer>(rb)
         {
             this->blender().gamma(g);
@@ -1262,15 +1262,15 @@ namespace agg
     };
 
 
-    //-----------------------------------------------------pixfmt_bgrAAA_gamma
+    //-----------------------------------------------------pixel_accessor_bgrAAA_gamma
     template<class Gamma>
-    class pixfmt_bgrAAA_gamma :
-        public pixfmt_alpha_blend_rgb_packed<blender_bgrAAA_gamma<Gamma>,
+    class pixel_accessor_bgrAAA_gamma :
+        public pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA_gamma<Gamma>,
                                              rendering_buffer>
     {
     public:
-        pixfmt_bgrAAA_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb_packed<blender_bgrAAA_gamma<Gamma>,
+        pixel_accessor_bgrAAA_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA_gamma<Gamma>,
                                           rendering_buffer>(rb)
         {
             this->blender().gamma(g);
@@ -1278,15 +1278,15 @@ namespace agg
     };
 
 
-    //-----------------------------------------------------pixfmt_rgbBBA_gamma
+    //-----------------------------------------------------pixel_accessor_rgbBBA_gamma
     template<class Gamma>
-    class pixfmt_rgbBBA_gamma :
-        public pixfmt_alpha_blend_rgb_packed<blender_rgbBBA_gamma<Gamma>,
+    class pixel_accessor_rgbBBA_gamma :
+        public pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA_gamma<Gamma>,
                                              rendering_buffer>
     {
     public:
-        pixfmt_rgbBBA_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb_packed<blender_rgbBBA_gamma<Gamma>,
+        pixel_accessor_rgbBBA_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA_gamma<Gamma>,
                                           rendering_buffer>(rb)
         {
             this->blender().gamma(g);
@@ -1294,15 +1294,15 @@ namespace agg
     };
 
 
-    //-----------------------------------------------------pixfmt_bgrABB_gamma
+    //-----------------------------------------------------pixel_accessor_bgrABB_gamma
     template<class Gamma>
-    class pixfmt_bgrABB_gamma :
-        public pixfmt_alpha_blend_rgb_packed<blender_bgrABB_gamma<Gamma>,
+    class pixel_accessor_bgrABB_gamma :
+        public pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB_gamma<Gamma>,
                                              rendering_buffer>
     {
     public:
-        pixfmt_bgrABB_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb_packed<blender_bgrABB_gamma<Gamma>,
+        pixel_accessor_bgrABB_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB_gamma<Gamma>,
                                           rendering_buffer>(rb)
         {
             this->blender().gamma(g);

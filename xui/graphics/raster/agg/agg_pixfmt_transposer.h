@@ -29,21 +29,21 @@
 
 namespace agg
 {
-    //=======================================================pixfmt_transposer
+    //=======================================================pixel_accessor_transposer
     template<class PixFmt>
-    class pixfmt_transposer
+    class pixel_accessor_transposer
     {
     public:
-        typedef PixFmt pixfmt_type;
-        typedef typename pixfmt_type::color_type color_type;
-        typedef typename pixfmt_type::row_data row_data;
+        typedef PixFmt pixel_accessor_type;
+        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename pixel_accessor_type::row_data row_data;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
         //--------------------------------------------------------------------
-        pixfmt_transposer() : m_pixf(0) {}
-        explicit pixfmt_transposer(pixfmt_type & pixf) : m_pixf(&pixf) {}
-        void attach(pixfmt_type & pixf) { m_pixf = &pixf; }
+        pixel_accessor_transposer() : m_pixf(0) {}
+        explicit pixel_accessor_transposer(pixel_accessor_type & pixf) : m_pixf(&pixf) {}
+        void attach(pixel_accessor_type & pixf) { m_pixf = &pixf; }
 
         //--------------------------------------------------------------------
         AGG_INLINE unsigned width() const { return m_pixf->height(); }
@@ -158,6 +158,6 @@ namespace agg
         }
 
     private:
-        pixfmt_type * m_pixf;
+        pixel_accessor_type * m_pixf;
     };
 }

@@ -179,9 +179,9 @@ namespace agg
     };
 
 
-    //==================================================pixfmt_alpha_blend_rgb
+    //==================================================pixel_accessor_alpha_blend_rgb
     template<class Blender, class RenBuf>
-    class pixfmt_alpha_blend_rgb
+    class pixel_accessor_alpha_blend_rgb
     {
     public:
         typedef RenBuf rbuf_type;
@@ -244,7 +244,7 @@ namespace agg
 
     public:
         //--------------------------------------------------------------------
-        explicit pixfmt_alpha_blend_rgb(rbuf_type & rb) :
+        explicit pixel_accessor_alpha_blend_rgb(rbuf_type & rb) :
             m_rbuf(&rb) {}
 
         void attach(rbuf_type & rb) { m_rbuf = &rb; }
@@ -810,63 +810,63 @@ namespace agg
         Blender m_blender;
     };
 
-    typedef pixfmt_alpha_blend_rgb<blender_rgb<rgba8, order_rgb>, rendering_buffer> pixfmt_rgb24; //----pixfmt_rgb24
-    typedef pixfmt_alpha_blend_rgb<blender_rgb<rgba8, order_bgr>, rendering_buffer> pixfmt_bgr24; //----pixfmt_bgr24
-    typedef pixfmt_alpha_blend_rgb<blender_rgb<rgba16, order_rgb>, rendering_buffer> pixfmt_rgb48; //----pixfmt_rgb48
-    typedef pixfmt_alpha_blend_rgb<blender_rgb<rgba16, order_bgr>, rendering_buffer> pixfmt_bgr48; //----pixfmt_bgr48
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba8, order_rgb>, rendering_buffer> pixel_accessor_rgb24; //----pixel_accessor_rgb24
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba8, order_bgr>, rendering_buffer> pixel_accessor_bgr24; //----pixel_accessor_bgr24
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba16, order_rgb>, rendering_buffer> pixel_accessor_rgb48; //----pixel_accessor_rgb48
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba16, order_bgr>, rendering_buffer> pixel_accessor_bgr48; //----pixel_accessor_bgr48
 
-    typedef pixfmt_alpha_blend_rgb<blender_rgb_pre<rgba8, order_rgb>, rendering_buffer> pixfmt_rgb24_pre; //----pixfmt_rgb24_pre
-    typedef pixfmt_alpha_blend_rgb<blender_rgb_pre<rgba8, order_bgr>, rendering_buffer> pixfmt_bgr24_pre; //----pixfmt_bgr24_pre
-    typedef pixfmt_alpha_blend_rgb<blender_rgb_pre<rgba16, order_rgb>, rendering_buffer> pixfmt_rgb48_pre; //----pixfmt_rgb48_pre
-    typedef pixfmt_alpha_blend_rgb<blender_rgb_pre<rgba16, order_bgr>, rendering_buffer> pixfmt_bgr48_pre; //----pixfmt_bgr48_pre
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_rgb>, rendering_buffer> pixel_accessor_rgb24_pre; //----pixel_accessor_rgb24_pre
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_bgr>, rendering_buffer> pixel_accessor_bgr24_pre; //----pixel_accessor_bgr24_pre
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba16, order_rgb>, rendering_buffer> pixel_accessor_rgb48_pre; //----pixel_accessor_rgb48_pre
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba16, order_bgr>, rendering_buffer> pixel_accessor_bgr48_pre; //----pixel_accessor_bgr48_pre
 
-    //-----------------------------------------------------pixfmt_rgb24_gamma
+    //-----------------------------------------------------pixel_accessor_rgb24_gamma
     template<class Gamma>
-    class pixfmt_rgb24_gamma :
-        public pixfmt_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_rgb, Gamma>, rendering_buffer>
+    class pixel_accessor_rgb24_gamma :
+        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_rgb, Gamma>, rendering_buffer>
     {
     public:
-        pixfmt_rgb24_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_rgb, Gamma>, rendering_buffer>(rb)
+        pixel_accessor_rgb24_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_rgb, Gamma>, rendering_buffer>(rb)
         {
             this->blender().gamma(g);
         }
     };
 
-    //-----------------------------------------------------pixfmt_bgr24_gamma
+    //-----------------------------------------------------pixel_accessor_bgr24_gamma
     template<class Gamma>
-    class pixfmt_bgr24_gamma :
-        public pixfmt_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_bgr, Gamma>, rendering_buffer>
+    class pixel_accessor_bgr24_gamma :
+        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_bgr, Gamma>, rendering_buffer>
     {
     public:
-        pixfmt_bgr24_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_bgr, Gamma>, rendering_buffer>(rb)
+        pixel_accessor_bgr24_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_bgr, Gamma>, rendering_buffer>(rb)
         {
             this->blender().gamma(g);
         }
     };
 
-    //-----------------------------------------------------pixfmt_rgb48_gamma
+    //-----------------------------------------------------pixel_accessor_rgb48_gamma
     template<class Gamma>
-    class pixfmt_rgb48_gamma :
-        public pixfmt_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_rgb, Gamma>, rendering_buffer>
+    class pixel_accessor_rgb48_gamma :
+        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_rgb, Gamma>, rendering_buffer>
     {
     public:
-        pixfmt_rgb48_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_rgb, Gamma>, rendering_buffer>(rb)
+        pixel_accessor_rgb48_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_rgb, Gamma>, rendering_buffer>(rb)
         {
             this->blender().gamma(g);
         }
     };
 
-    //-----------------------------------------------------pixfmt_bgr48_gamma
+    //-----------------------------------------------------pixel_accessor_bgr48_gamma
     template<class Gamma>
-    class pixfmt_bgr48_gamma :
-        public pixfmt_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_bgr, Gamma>, rendering_buffer>
+    class pixel_accessor_bgr48_gamma :
+        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_bgr, Gamma>, rendering_buffer>
     {
     public:
-        pixfmt_bgr48_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixfmt_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_bgr, Gamma>, rendering_buffer>(rb)
+        pixel_accessor_bgr48_gamma(rendering_buffer & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_bgr, Gamma>, rendering_buffer>(rb)
         {
             this->blender().gamma(g);
         }

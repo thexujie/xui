@@ -195,7 +195,7 @@ namespace agg
         template<class Img>
         void blur_y(Img & img, unsigned radius)
         {
-            pixfmt_transposer<Img> img2(img);
+            pixel_accessor_transposer<Img> img2(img);
             blur_x(img2, radius);
         }
 
@@ -204,7 +204,7 @@ namespace agg
         void blur(Img & img, unsigned radius)
         {
             blur_x(img, radius);
-            pixfmt_transposer<Img> img2(img);
+            pixel_accessor_transposer<Img> img2(img);
             blur_x(img2, radius);
         }
 
@@ -1172,7 +1172,7 @@ namespace agg
         template<class Img>
         void blur_y(Img & img, double radius)
         {
-            pixfmt_transposer<Img> img2(img);
+            pixel_accessor_transposer<Img> img2(img);
             blur_x(img2, radius);
         }
 
@@ -1181,7 +1181,7 @@ namespace agg
         void blur(Img & img, double radius)
         {
             blur_x(img, radius);
-            pixfmt_transposer<Img> img2(img);
+            pixel_accessor_transposer<Img> img2(img);
             blur_x(img2, radius);
         }
 
