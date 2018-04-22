@@ -145,7 +145,7 @@ namespace win32
     {
         auto & data = image.image();
         agg::pixel_accessor_alpha_blend_rgba<agg::pixfmt_bgra32> acc32(_rbuf);
-        agg::renderer_base<agg::pixel_accessor_bgra32> render(acc32);
+        agg::renderer_base<agg::pixel_accessor_alpha_blend_rgba<agg::pixfmt_rgba<agg::rgba8, agg::order_bgra>>> render(acc32);
 
         agg::path_storage ps;
         ps.move_to(rect.x, rect.y);

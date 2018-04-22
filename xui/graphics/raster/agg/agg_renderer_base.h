@@ -35,25 +35,24 @@ namespace agg
     class renderer_base
     {
     public:
-        typedef Accessor pixel_accessor_type;
-        typedef typename pixel_accessor_type::color_type color_type;
+        typedef typename Accessor::color_type color_type;
 
         //--------------------------------------------------------------------
         renderer_base() : m_ren(0), m_clip_box(1, 1, 0, 0) {}
 
-        explicit renderer_base(pixel_accessor_type & ren) :
+        explicit renderer_base(Accessor & ren) :
             m_ren(&ren),
             m_clip_box(0, 0, ren.width() - 1, ren.height() - 1) {}
 
-        void attach(pixel_accessor_type & ren)
+        void attach(Accessor & ren)
         {
             m_ren = &ren;
             m_clip_box = rect_i(0, 0, ren.width() - 1, ren.height() - 1);
         }
 
         //--------------------------------------------------------------------
-        const pixel_accessor_type & ren() const { return *m_ren; }
-        pixel_accessor_type & ren() { return *m_ren; }
+        const Accessor & ren() const { return *m_ren; }
+        Accessor & ren() { return *m_ren; }
 
         //--------------------------------------------------------------------
         unsigned width() const { return m_ren->width(); }
@@ -731,7 +730,7 @@ namespace agg
         }
 
     private:
-        pixel_accessor_type * m_ren;
+        Accessor * m_ren;
         rect_i m_clip_box;
     };
 }
