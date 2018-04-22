@@ -84,7 +84,7 @@ namespace agg
 
     //=========================================================blender_rgb
     template<class ColorT, class Order>
-    struct blender_rgb
+    struct pixfmt_rgb
     {
         typedef ColorT color_type;
         typedef Order order_type;
@@ -180,15 +180,12 @@ namespace agg
 
 
     //==================================================pixel_accessor_alpha_blend_rgb
-    template<class Blender, class RenBuf>
-    class pixel_accessor_alpha_blend_rgb
+    template<typename PixelT, typename Blender>
+    class pixel_accessor_alpha_blend_rgb : public pixel_accessor<PixelT>
     {
     public:
-        typedef RenBuf rbuf_type;
-        typedef Blender blender_type;
-        typedef typename rbuf_type::row_data row_data;
-        typedef typename blender_type::color_type color_type;
-        typedef typename blender_type::order_type order_type;
+        typedef typename PixelT::color_type color_type;
+        typedef typename PixelT::order_type order_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -244,10 +241,10 @@ namespace agg
 
     public:
         //--------------------------------------------------------------------
-        explicit pixel_accessor_alpha_blend_rgb(rbuf_type & rb) :
-            m_rbuf(&rb) {}
+        explicit pixel_accessor_alpha_blend_rgb(row_accessor & racc) :
+            m_rbuf(racc) {}
 
-        void attach(rbuf_type & rb) { m_rbuf = &rb; }
+        void attach(row_accessor & rb) { m_rbuf = &rb; }
 
         //--------------------------------------------------------------------
         template<class PixFmt>
@@ -257,7 +254,7 @@ namespace agg
             if (r.clip(rect_i(0, 0, pixf.width() - 1, pixf.height() - 1)))
             {
                 int stride = pixf.stride();
-                m_rbuf->attach(pixf.pix_ptr(r.x1, stride < 0 ? r.y2 : r.y1),
+                m_rbuf.attach(pixf.pix_ptr(r.x1, stride < 0 ? r.y2 : r.y1),
                     (r.x2 - r.x1) + 1,
                     (r.y2 - r.y1) + 1,
                     stride);
@@ -270,24 +267,24 @@ namespace agg
         Blender & blender() { return m_blender; }
 
         //--------------------------------------------------------------------
-        AGG_INLINE unsigned width() const { return m_rbuf->width(); }
-        AGG_INLINE unsigned height() const { return m_rbuf->height(); }
-        AGG_INLINE int stride() const { return m_rbuf->stride(); }
+        AGG_INLINE unsigned width() const { return m_rbuf.width(); }
+        AGG_INLINE unsigned height() const { return m_rbuf.height(); }
+        AGG_INLINE int stride() const { return m_rbuf.stride(); }
 
         //--------------------------------------------------------------------
-        AGG_INLINE int8u * row_ptr(int y) { return m_rbuf->row_ptr(y); }
-        AGG_INLINE const int8u * row_ptr(int y) const { return m_rbuf->row_ptr(y); }
-        AGG_INLINE row_data row(int y) const { return m_rbuf->row(y); }
+        AGG_INLINE int8u * row_ptr(int y) { return m_rbuf.row_ptr(y); }
+        AGG_INLINE const int8u * row_ptr(int y) const { return m_rbuf.row_ptr(y); }
+        AGG_INLINE const_row_info<int8u> row(int y) const { return m_rbuf.row(y); }
 
         //--------------------------------------------------------------------
         AGG_INLINE int8u * pix_ptr(int x, int y)
         {
-            return m_rbuf->row_ptr(y) + x * pix_width;
+            return m_rbuf.row_ptr(y) + x * pix_width;
         }
 
         AGG_INLINE const int8u * pix_ptr(int x, int y) const
         {
-            return m_rbuf->row_ptr(y) + x * pix_width;
+            return m_rbuf.row_ptr(y) + x * pix_width;
         }
 
         //--------------------------------------------------------------------
@@ -301,7 +298,7 @@ namespace agg
         //--------------------------------------------------------------------
         AGG_INLINE color_type pixel(int x, int y) const
         {
-            value_type * p = (value_type*)m_rbuf->row_ptr(y) + x + x + x;
+            value_type * p = (value_type*)m_rbuf.row_ptr(y) + x + x + x;
             return color_type(p[order_type::R],
                 p[order_type::G],
                 p[order_type::B]);
@@ -310,7 +307,7 @@ namespace agg
         //--------------------------------------------------------------------
         AGG_INLINE void copy_pixel(int x, int y, const color_type & c)
         {
-            value_type * p = (value_type*)m_rbuf->row_ptr(x, y, 1) + x + x + x;
+            value_type * p = (value_type*)m_rbuf.row_ptr(x, y, 1) + x + x + x;
             p[order_type::R] = c.r;
             p[order_type::G] = c.g;
             p[order_type::B] = c.b;
@@ -319,7 +316,7 @@ namespace agg
         //--------------------------------------------------------------------
         AGG_INLINE void blend_pixel(int x, int y, const color_type & c, int8u cover)
         {
-            copy_or_blend_pix((value_type*)m_rbuf->row_ptr(x, y, 1) + x + x + x, c, cover);
+            copy_or_blend_pix((value_type*)m_rbuf.row_ptr(x, y, 1) + x + x + x, c, cover);
         }
 
 
@@ -328,7 +325,7 @@ namespace agg
             unsigned len,
             const color_type & c)
         {
-            value_type * p = (value_type*)m_rbuf->row_ptr(x, y, len) + x + x + x;
+            value_type * p = (value_type*)m_rbuf.row_ptr(x, y, len) + x + x + x;
             do
             {
                 p[order_type::R] = c.r;
@@ -348,7 +345,7 @@ namespace agg
             do
             {
                 value_type * p = (value_type*)
-                    m_rbuf->row_ptr(x, y++, 1) + x + x + x;
+                    m_rbuf.row_ptr(x, y++, 1) + x + x + x;
                 p[order_type::R] = c.r;
                 p[order_type::G] = c.g;
                 p[order_type::B] = c.b;
@@ -366,7 +363,7 @@ namespace agg
             if (c.a)
             {
                 value_type * p = (value_type*)
-                    m_rbuf->row_ptr(x, y, len) + x + x + x;
+                    m_rbuf.row_ptr(x, y, len) + x + x + x;
 
                 calc_type alpha = (calc_type(c.a) * (calc_type(cover) + 1)) >> 8;
                 if (alpha == base_mask)
@@ -408,7 +405,7 @@ namespace agg
                     do
                     {
                         p = (value_type*)
-                            m_rbuf->row_ptr(x, y++, 1) + x + x + x;
+                            m_rbuf.row_ptr(x, y++, 1) + x + x + x;
 
                         p[order_type::R] = c.r;
                         p[order_type::G] = c.g;
@@ -421,7 +418,7 @@ namespace agg
                     do
                     {
                         p = (value_type*)
-                            m_rbuf->row_ptr(x, y++, 1) + x + x + x;
+                            m_rbuf.row_ptr(x, y++, 1) + x + x + x;
 
                         m_blender.blend_pix(p, c.r, c.g, c.b, alpha, cover);
                     }
@@ -440,7 +437,7 @@ namespace agg
             if (c.a)
             {
                 value_type * p = (value_type*)
-                    m_rbuf->row_ptr(x, y, len) + x + x + x;
+                    m_rbuf.row_ptr(x, y, len) + x + x + x;
 
                 do
                 {
@@ -474,7 +471,7 @@ namespace agg
                 do
                 {
                     value_type * p = (value_type*)
-                        m_rbuf->row_ptr(x, y++, 1) + x + x + x;
+                        m_rbuf.row_ptr(x, y++, 1) + x + x + x;
 
                     calc_type alpha = (calc_type(c.a) * (calc_type(*covers) + 1)) >> 8;
                     if (alpha == base_mask)
@@ -500,7 +497,7 @@ namespace agg
             const color_type * colors)
         {
             value_type * p = (value_type*)
-                m_rbuf->row_ptr(x, y, len) + x + x + x;
+                m_rbuf.row_ptr(x, y, len) + x + x + x;
 
             do
             {
@@ -522,7 +519,7 @@ namespace agg
             do
             {
                 value_type * p = (value_type*)
-                    m_rbuf->row_ptr(x, y++, 1) + x + x + x;
+                    m_rbuf.row_ptr(x, y++, 1) + x + x + x;
                 p[order_type::R] = colors->r;
                 p[order_type::G] = colors->g;
                 p[order_type::B] = colors->b;
@@ -540,7 +537,7 @@ namespace agg
             int8u cover)
         {
             value_type * p = (value_type*)
-                m_rbuf->row_ptr(x, y, len) + x + x + x;
+                m_rbuf.row_ptr(x, y, len) + x + x + x;
 
             if (covers)
             {
@@ -588,7 +585,7 @@ namespace agg
                 do
                 {
                     p = (value_type*)
-                        m_rbuf->row_ptr(x, y++, 1) + x + x + x;
+                        m_rbuf.row_ptr(x, y++, 1) + x + x + x;
 
                     copy_or_blend_pix(p, *colors++, *covers++);
                 }
@@ -601,7 +598,7 @@ namespace agg
                     do
                     {
                         p = (value_type*)
-                            m_rbuf->row_ptr(x, y++, 1) + x + x + x;
+                            m_rbuf.row_ptr(x, y++, 1) + x + x + x;
 
                         copy_or_blend_pix(p, *colors++);
                     }
@@ -612,7 +609,7 @@ namespace agg
                     do
                     {
                         p = (value_type*)
-                            m_rbuf->row_ptr(x, y++, 1) + x + x + x;
+                            m_rbuf.row_ptr(x, y++, 1) + x + x + x;
 
                         copy_or_blend_pix(p, *colors++, cover);
                     }
@@ -628,12 +625,12 @@ namespace agg
             unsigned y;
             for (y = 0; y < height(); ++y)
             {
-                row_data r = m_rbuf->row(y);
+                row_data r = m_rbuf.row(y);
                 if (r.ptr)
                 {
                     unsigned len = r.x2 - r.x1 + 1;
                     value_type * p = (value_type*)
-                        m_rbuf->row_ptr(r.x1, y, len) + r.x1 * 3;
+                        m_rbuf.row_ptr(r.x1, y, len) + r.x1 * 3;
                     do
                     {
                         f(p);
@@ -668,7 +665,7 @@ namespace agg
             const int8u * p = from.row_ptr(ysrc);
             if (p)
             {
-                memmove(m_rbuf->row_ptr(xdst, ydst, len) + xdst * pix_width,
+                memmove(m_rbuf.row_ptr(xdst, ydst, len) + xdst * pix_width,
                     p + xsrc * pix_width,
                     len * pix_width);
             }
@@ -690,7 +687,7 @@ namespace agg
             {
                 psrc += xsrc * 4;
                 value_type * pdst =
-                    (value_type*)m_rbuf->row_ptr(xdst, ydst, len) + xdst * 3;
+                    (value_type*)m_rbuf.row_ptr(xdst, ydst, len) + xdst * 3;
 
                 if (cover == 255)
                 {
@@ -751,7 +748,7 @@ namespace agg
             if (psrc)
             {
                 value_type * pdst =
-                    (value_type*)m_rbuf->row_ptr(xdst, ydst, len) + xdst * 3;
+                    (value_type*)m_rbuf.row_ptr(xdst, ydst, len) + xdst * 3;
                 do
                 {
                     copy_or_blend_pix(pdst,
@@ -778,7 +775,7 @@ namespace agg
             if (psrc)
             {
                 value_type * pdst =
-                    (value_type*)m_rbuf->row_ptr(xdst, ydst, len) + xdst * 3;
+                    (value_type*)m_rbuf.row_ptr(xdst, ydst, len) + xdst * 3;
 
                 if (cover == 255)
                 {
@@ -806,12 +803,15 @@ namespace agg
         }
 
     private:
-        rbuf_type * m_rbuf;
+        row_accessor & m_rbuf;
         Blender m_blender;
     };
 
-    typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba8, order_rgb>, rendering_buffer_8u> pixel_accessor_rgb24; //----pixel_accessor_rgb24
-    typedef pixel_accessor_alpha_blend_rgb<blender_rgb<rgba8, order_bgr>, rendering_buffer_8u> pixel_accessor_bgr24; //----pixel_accessor_bgr24
+    typedef pixfmt_rgb<rgba8, order_rgb> pixfmt_rgb24;
+    typedef pixfmt_rgb<rgba8, order_bgr> pixfmt_bgr24;
+
+    typedef pixel_accessor_alpha_blend_rgb<pixfmt_rgb<rgba8, order_rgb>, rendering_buffer_8u> pixel_accessor_rgb24; //----pixel_accessor_rgb24
+    typedef pixel_accessor_alpha_blend_rgb<pixfmt_rgb<rgba8, order_bgr>, rendering_buffer_8u> pixel_accessor_bgr24; //----pixel_accessor_bgr24
 
     typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_rgb>, rendering_buffer_8u> pixel_accessor_rgb24_pre; //----pixel_accessor_rgb24_pre
     typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_bgr>, rendering_buffer_8u> pixel_accessor_bgr24_pre; //----pixel_accessor_bgr24_pre

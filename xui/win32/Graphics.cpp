@@ -164,8 +164,9 @@ namespace win32
             agg::trans_affine_scaling(data.format.width / (double)rect.cx, data.format.height / (double)rect.cy));
 
         agg::pixel_accessor_bgra32 img_pixf(img_buf);
-        agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
-        agg::span_allocator<agg::rgba8> sa;
+        //agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+        agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+        agg::span_allocator<agg::pixfmt_bgra32> sa;
         agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
     }
 
@@ -186,14 +187,14 @@ namespace win32
 
         agg::rendering_buffer_8u img_buf;
         img_buf.attach((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
-        agg::pixel_accessor_bgra32 img_pixf(img_buf);
+        agg::pixel_accessor_bgr24 img_pixf(img_buf);
 
         agg::span_interpolator_linear<> interpolator(
             agg::trans_affine_translation(-rect.x + region.x, -rect.y + region.y) *
             agg::trans_affine_scaling(region.width / (double)rect.cx, region.height / (double)rect.cy));
 
-        agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
-        agg::span_allocator<agg::rgba8> sa;
+        agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgr24, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+        agg::span_allocator<agg::pixfmt_bgr24> sa;
         agg::render_scanlines_aa(_raster, _sl, renb, sa, sg);
     }
 
