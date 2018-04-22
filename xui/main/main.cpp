@@ -273,12 +273,11 @@ int main()
     graphics->DrawLine({ cx / 2, 0 }, { cx / 2, cy }, colors::Red, 1);
     graphics->DrawLine({ 0, 0 }, { cx, cy}, colors::Red, 1);
     graphics->DrawLine({ cx, 0 }, { 0, cy }, colors::Red, 1);
-    //graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
-    //graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
+    graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
 
-    ////graphics->FillRect({ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Green);
-    //graphics->DrawRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
-    //graphics->DrawRoundRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
+    graphics->FillRect({ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Green);
+    graphics->DrawRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
+    graphics->DrawRoundRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
 
     graphics->DrawString(u8"MMMM", { cx / 2, cy / 2 }, { "", 10 }, colors::Red, core::math::align::centerXY);
 
@@ -287,20 +286,20 @@ int main()
     //graphics->DrawString(u8"RBRB", colors::Green, { "", 10 }, { cx / 2, cy / 2 }, core::math::align::rightBottom);
     //graphics->DrawString(u8"LBLB", colors::Blue, { "", 10 }, { cx / 2, cy / 2 }, core::math::align::leftBottom);
 
-    graphics->DrawString(u8"LTLT", { cx / 2, cy / 2 }, { "", 10 }, colors::Black, core::math::align::leftCenterY);
-    graphics->DrawString(u8"RTRT", { cx / 2, cy / 2 }, { "", 10 }, colors::Gray, core::math::align::topCenterX);
-    graphics->DrawString(u8"RBRB", { cx / 2, cy / 2 }, { "", 10 }, colors::Green, core::math::align::rightCenterY);
-    graphics->DrawString(u8"LBLB", { cx / 2, cy / 2 }, { "", 10 }, colors::Blue, core::math::align::bottomCenterX);
+    graphics->DrawString(u8"LTLT", { cx / 2, cy / 2 }, { "", 20 }, colors::Black, core::math::align::leftCenterY);
+    graphics->DrawString(u8"RTRT", { cx / 2, cy / 2 }, { "", 20 }, colors::Gray, core::math::align::topCenterX);
+    graphics->DrawString(u8"RBRB", { cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::math::align::rightCenterY);
+    graphics->DrawString(u8"LBLB", { cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::math::align::bottomCenterX);
 
-    graphics->DrawString(u8"LTLT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Red, core::math::align::leftTop);
-    graphics->DrawString(u8"RTRT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Yellow, core::math::align::rightTop);
-    graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Green, core::math::align::rightBottom);
-    graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Blue, core::math::align::leftBottom);
+    graphics->DrawString(u8"LTLT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Red, core::math::align::leftTop);
+    graphics->DrawString(u8"RTRT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Yellow, core::math::align::rightTop);
+    graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::math::align::rightBottom);
+    graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::math::align::leftBottom);
 
-    graphics->DrawString(u8"LTLT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Red, core::math::align::leftCenterY);
-    graphics->DrawString(u8"RTRT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Yellow, core::math::align::topCenterX);
-    graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Green, core::math::align::rightCenterY);
-    graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 10 }, colors::Blue, core::math::align::bottomCenterX);
+    graphics->DrawString(u8"LTLT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Red, core::math::align::leftCenterY);
+    graphics->DrawString(u8"RTRT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Yellow, core::math::align::topCenterX);
+    graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::math::align::rightCenterY);
+    graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::math::align::bottomCenterX);
 
     //auto cm = std::make_shared<graphics::Image>("lcw.tga");
     //cm->Save("cm.bmp");

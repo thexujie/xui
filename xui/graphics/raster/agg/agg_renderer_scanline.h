@@ -134,7 +134,7 @@ namespace agg
                     auto span = sl.span(index++);
                     if (span.len > 0)
                     {
-                        ren.blend_solid_hspan(span.len, y, (unsigned)span.len, ren_color, span.covers);
+                        ren.blend_solid_hspan(span.x, y, (unsigned)span.len, ren_color, span.covers);
                     }
                     else
                     {
