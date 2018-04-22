@@ -254,7 +254,7 @@ namespace graphics::image::formats
         dst->b = ((src & (0x1F << 0)) >> 0) * 0xFF / 0x1F;
     }
 
-    core::error_e dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image)
+    core::error_e dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
     {
         const dds_header_t * header = reinterpret_cast<const dds_header_t *>(buffer);
         if (header->magic != DDS_MAGIC)
@@ -345,11 +345,11 @@ namespace graphics::image::formats
         if (!pfn_convert)
             return error_not_supported;
 
-        image.data.format = format;
+        image.format = format;
         if (ictx.get_format)
-            image.data.format = ictx.get_format(image_type_bmp, format);
+            image.format = ictx.get_format(image_type_bmp, format);
 
-        ictx.pfn_alloc(image.data, 4);
+        ictx.pfn_alloc(image, 4);
         image.pfn_free = ictx.pfn_free;
 
         image_data_t src_data = {};
@@ -357,10 +357,10 @@ namespace graphics::image::formats
         src_data.data = (byte_t *)buffer + sizeof(dds_header_t);
         src_data.pitch = align_to<int32_t>(format.width * (format_bits(format.format) / 8), 4);
 
-        error_e err = pfn_convert(ictx, src_data, image.data);
+        error_e err = pfn_convert(ictx, src_data, image);
         if (err < 0)
         {
-            image.pfn_free(image.data);
+            image.pfn_free(image);
             image = {};
             return err;
         }

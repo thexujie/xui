@@ -10,13 +10,13 @@ namespace graphics
         ~Image();
         Image(std::string path);
 
-        operator bool() const { return !!_image.data.data; }
-        si32_t size() const { return { _image.data.format.width, _image.data.format.height}; }
-        image::format cmode() const { return _image.data.format.format; }
-        const image::image_t & image() const { return _image; }
+        operator bool() const { return !!_image.data; }
+        si32_t size() const { return { _image.format.width, _image.format.height}; }
+        image::format cmode() const { return _image.format.format; }
+        const image::image_data_t & image() const { return _image; }
         core::error_e Save(std::string path) const;
 
     private:
-        image::image_t _image;
+        image::image_data_t _image;
     };
 }

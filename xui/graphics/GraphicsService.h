@@ -43,7 +43,7 @@ namespace graphics
         virtual ~IGraphicsImage() = default;
         virtual si32_t size() const = 0;
         virtual image::format cmode() const = 0;
-        virtual const image::image_t & image() const = 0;
+        virtual const image::image_data_t & image() const = 0;
         virtual core::error_e Save(std::string path) const = 0;
     };
 

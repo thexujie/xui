@@ -350,15 +350,17 @@ namespace graphics::image
         return !operator==(lhs, rhs);
     }
 
+    struct image_data_t;
     // 转换时是否需要翻转行序
     const int32_t IMAGE_CONVERT_FLIP_Y = 0x1;
-
     typedef byte_t *(*image_buffer_alloc_fun)(image_format format);
     typedef void(*image_buffer_free_fun)(byte_t * ptr);
 
     typedef void(*pixel_convert_fun)(const void * src_pixel, void * dst_pixel);
-    typedef core::error_e(*image_convert_fun)(struct image_codec_context & ctx, const struct image_data_t & src, struct image_data_t & dst);
+    typedef core::error_e(*image_convert_fun)(struct image_codec_context & ctx, const image_data_t & src, image_data_t & dst);
 
+    void image_buffer_alloc_default(image_data_t & data, int32_t align = 4);
+    void image_buffer_free(image_data_t & data);
     struct image_data_t
     {
         image_format format;
@@ -366,17 +368,11 @@ namespace graphics::image
         byte_t * data = nullptr;
         byte_t * palette = nullptr;
         int32_t palette_size = 0;
-    };
-    void image_buffer_alloc_default(image_data_t & data, int32_t align = 4);
-    void image_buffer_free(image_data_t & data);
-    pixel_convert_fun image_get_samapler(format src, format dst);
-    image_format image_get_format(image_type type, image_format format);
-
-    struct image_t
-    {
-        image_data_t data;
         decltype(image_buffer_free) * pfn_free = nullptr;
     };
+
+    pixel_convert_fun image_get_samapler(format src, format dst);
+    image_format image_get_format(image_type type, image_format format);
 
     struct image_codec_context
     {
@@ -451,12 +447,12 @@ namespace graphics::image
         memcpy_s(dst, dst_size, src, length);
     }
 
-    core::error_e image_load(std::string path, image_t & img);
+    core::error_e image_load(std::string path, image_data_t & img);
 
     image_type image_get_type(const byte_t * buffer, int32_t length);
 
-    core::error_e image_create(const byte_t * buffer, int32_t length, image_t & img);
-    core::error_e image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & img);
+    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t & img);
+    core::error_e image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & img);
 
     /**
     * 复制图像，dst 和 src 具有相同的颜色格式。

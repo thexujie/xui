@@ -73,7 +73,7 @@ namespace graphics::image::formats
     }
 
     // 创建一幅JPEG图片的字节数组
-    core::error_e jpg_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image)
+    core::error_e jpg_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
     {
         byte_t ** rows = nullptr;
         // 解压信息
@@ -134,11 +134,11 @@ namespace graphics::image::formats
         jpeg_finish_decompress(&cinfo);
         jpeg_destroy_decompress(&cinfo);
 
-        image.data.format = format;
+        image.format = format;
         if (ictx.get_format)
-            image.data.format = ictx.get_format(image_type_jpeg, format);
+            image.format = ictx.get_format(image_type_jpeg, format);
 
-        ictx.pfn_alloc(image.data, 4);
+        ictx.pfn_alloc(image, 4);
         image.pfn_free = ictx.pfn_free;
 
         image_data_t src_data = {};
@@ -146,10 +146,10 @@ namespace graphics::image::formats
         src_data.data = src_buffer;
         src_data.pitch = src_pitch;
 
-        error_e err = image_convert_ex(ictx, src_data, image.data);
+        error_e err = image_convert_ex(ictx, src_data, image);
         if (err < 0)
         {
-            image.pfn_free(image.data);
+            image.pfn_free(image);
             return err;
         }
         return error_ok;

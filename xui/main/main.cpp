@@ -186,17 +186,17 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     raster.add_path(ps);
 
     auto[fileData, fileSize] = core::io::readFullFile("lcw.tga");
-    graphics::image::image_t img;
+    graphics::image::image_data_t img;
     graphics::image::image_create(fileData.get(), fileSize, img);
 
     agg::rendering_buffer img_buf;
-    img_buf.attach((agg::int8u *)img.data.data, img.data.format.width, img.data.format.height, img.data.pitch);
+    img_buf.attach((agg::int8u *)img.data, img.format.width, img.format.height, img.pitch);
     agg::pixfmt_bgra32 img_pixf(img_buf);
     //agg::image_accessor_clip<agg::pixfmt_bgra32> img_src(img_pixf, agg::rgba_pre(0, 0.4, 0, 0.5));
     //agg::render_scanlines_aa_solid(raster, sl, renb, agg::tools::rgba(colors::Black));
 
     agg::span_interpolator_linear<> interpolator( 
-        agg::trans_affine_scaling(img.data.format.width / (double)rect.cx, img.data.format.height / (double)rect.cy) *
+        agg::trans_affine_scaling(img.format.width / (double)rect.cx, img.format.height / (double)rect.cy) *
         agg::trans_affine_translation(rect.x, rect.y));
 
     agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);

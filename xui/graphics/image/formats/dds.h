@@ -505,5 +505,5 @@ namespace graphics::image::formats
     void dds_dxt5(dds_header_t * header, byte_t * buffer, dds_image_data_t * dds);
 
     bool is_dds_data(const byte_t * buffer, int32_t length);
-    core::error_e dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image);
+    core::error_e dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image);
 }

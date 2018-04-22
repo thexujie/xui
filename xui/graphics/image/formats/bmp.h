@@ -102,7 +102,7 @@ namespace graphics::image::formats
 #pragma pack(pop)
 
     bool is_bmp_data(const byte_t * buffer, int32_t length);
-    core::error_e bmp_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image);
+    core::error_e bmp_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image);
     core::error_e bmp_save(const image_data_t & data, std::string path);
     /**
     * Bmp 文件的 rle index4 压缩方式，使用索引色。

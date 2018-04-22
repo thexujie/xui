@@ -37,7 +37,7 @@ namespace graphics::image::formats
     }
 
 
-    core::error_e tga_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & image)
+    core::error_e tga_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
     {
         const tga_header_t * header = reinterpret_cast<const tga_header_t *>(buffer);
         buffer += sizeof(tga_header_t) + header->info_length/* Ìø¹ýÍ¼ÏñÐÅÏ¢×Ö¶Î */;
@@ -148,11 +148,11 @@ namespace graphics::image::formats
         if (!pfn_convert)
             return error_not_supported;
 
-        image.data.format = format;
+        image.format = format;
         if (ictx.get_format)
-            image.data.format = ictx.get_format(image_type_bmp, format);
+            image.format = ictx.get_format(image_type_bmp, format);
 
-        ictx.pfn_alloc(image.data, 4);
+        ictx.pfn_alloc(image, 4);
         image.pfn_free = ictx.pfn_free;
 
         image_data_t src_data = {};
@@ -164,10 +164,10 @@ namespace graphics::image::formats
         if (!(header->flags & TGAF_TOP_TO_BOTTOM))
             src_data.pitch = -src_data.pitch;
 
-        error_e err = pfn_convert(ictx, src_data, image.data);
+        error_e err = pfn_convert(ictx, src_data, image);
         if (err < 0)
         {
-            image.pfn_free(image.data);
+            image.pfn_free(image);
             return err;
         }
         return error_ok;

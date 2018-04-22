@@ -18,7 +18,7 @@ namespace graphics::image
     using namespace core;
     using namespace graphics::image::formats;
 
-    error_e image_load(std::string path, image_t & img)
+    error_e image_load(std::string path, image_data_t & img)
     {
         std::wstring pathw = core::string::u8_ucs2(path);
         std::fstream fs;
@@ -54,7 +54,7 @@ namespace graphics::image
         return image_type_none;
     }
 
-    core::error_e image_create(const byte_t * buffer, int32_t length, image_t & img)
+    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t & img)
     {
         image_codec_context ictx;
         ictx.get_format = image_get_format;
@@ -64,7 +64,7 @@ namespace graphics::image
         return image_create(ictx, buffer, length, img);
     }
 
-    core::error_e image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_t & img)
+    core::error_e image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & img)
     {
         if(ictx.type == image_type_none)
             ictx.type = image_get_type(buffer, length);
