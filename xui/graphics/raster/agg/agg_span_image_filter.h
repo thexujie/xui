@@ -32,11 +32,11 @@
 namespace agg
 {
     //-------------------------------------------------------span_image_filter
-    template<class Source, class Interpolator>
-    class span_image_filter
+    template<class PixelT, class Interpolator>
+    class span_image_filter : public span_generator<PixelT>
     {
     public:
-        typedef Source source_type;
+        typedef pixel_accessor<PixelT> source_type;
         typedef Interpolator interpolator_type;
 
         //--------------------------------------------------------------------

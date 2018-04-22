@@ -42,6 +42,10 @@ namespace agg
         virtual unsigned height() const = 0;
         virtual int stride() const = 0;
 
+        virtual int8u * row_ptr(int y) = 0;
+        virtual const int8u * row_ptr(int y) const = 0;
+        virtual const_row_info<int8u> row(int y) const = 0;
+
         virtual color_type pixel(int x, int y) const = 0;
         virtual void copy_pixel(int x, int y, const color_type & c) = 0;
         virtual void copy_hline(int x, int y, unsigned len, const color_type & c) = 0;

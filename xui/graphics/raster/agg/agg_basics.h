@@ -584,4 +584,17 @@ namespace agg
     {
         return fabs(v1 - v2) <= double(epsilon);
     }
+
+
+    template<typename PixelT>
+    class span_generator
+    {
+    public:
+        typedef typename PixelT::color_type color_type;
+
+        virtual ~span_generator() = default;
+
+        virtual void prepare() = 0;
+        virtual void generate(color_type * span, int x, int y, unsigned len) = 0;
+    };
 }

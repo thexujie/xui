@@ -62,6 +62,8 @@ namespace graphics
             return;
 
         agg::path_storage ps;
+        ps.move_to(start.x, start.y);
+        ps.line_to(end.x, end.y);
         agg::conv_stroke<agg::path_storage> pg(ps);
         pg.width(width);
 

@@ -183,8 +183,8 @@ namespace agg
 
 
     //======================================================render_scanline_aa
-    template<class CoverT, class BaseRenderer, class SpanAllocator, class SpanGenerator>
-    void render_scanline_aa(const scanline<CoverT> & sl, BaseRenderer & ren, SpanAllocator & alloc, SpanGenerator & span_gen)
+    template<class CoverT, class Pixel>
+    void render_scanline_aa(const scanline<CoverT> & sl, agg::renderer_base<Pixel> ren, span_allocator<typename Pixel::color_type> & alloc, span_generator<Pixel> & span_gen)
     {
         int y = sl.y();
 
@@ -197,15 +197,15 @@ namespace agg
             if (span.len < 0)
                 span.len = -span.len;
 
-            typename BaseRenderer::color_type * colors = alloc.allocate(span.len);
+            typename Pixel::color_type * colors = alloc.allocate(span.len);
             span_gen.generate(colors, span.x, y, span.len);
             ren.blend_color_hspan(span.x, y, span.len, colors, (span.len < 0) ? 0 : span.covers, *span.covers);
         }
     }
 
     //=====================================================render_scanlines_aa
-    template<class CoverT, class BaseRenderer, class SpanGenerator>
-    void render_scanlines_aa(rasterizer & ras, scanline<CoverT> & sl, BaseRenderer & ren, span_allocator<typename BaseRenderer::color_type> & alloc, SpanGenerator & span_gen)
+    template<class CoverT, class Pixel>
+    void render_scanlines_aa(rasterizer & ras, scanline<CoverT> & sl, agg::renderer_base<Pixel> & ren, span_allocator<typename Pixel::color_type> & alloc, span_generator<Pixel> & span_gen)
     {
         if (ras.rewind_scanlines())
         {

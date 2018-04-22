@@ -20,7 +20,7 @@ agg::rasterizer_scanline_aa<> raster;
 agg::scanline_u8 sl;
 
 
-#if 1
+#if 0
 void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 {
     auto buffer = pixmap->buffer();
@@ -199,7 +199,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
         agg::trans_affine_scaling(img.format.width / (double)rect.cx, img.format.height / (double)rect.cy) *
         agg::trans_affine_translation(rect.x, rect.y));
 
-    agg::span_image_filter_rgba_bilinear_clip<agg::pixel_accessor_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+    agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
     //agg::span_image_filter_rgb_bilinear_clip<agg::pixel_accessor_bgr24, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
 
     agg::span_allocator<agg::rgba8> sa;
@@ -273,12 +273,12 @@ int main()
     graphics->DrawLine({ cx / 2, 0 }, { cx / 2, cy }, colors::Red, 1);
     graphics->DrawLine({ 0, 0 }, { cx, cy}, colors::Red, 1);
     graphics->DrawLine({ cx, 0 }, { 0, cy }, colors::Red, 1);
-    graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
-    graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
+    //graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
+    //graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
 
-    //graphics->FillRect({ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Green);
-    graphics->DrawRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
-    graphics->DrawRoundRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
+    ////graphics->FillRect({ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Green);
+    //graphics->DrawRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
+    //graphics->DrawRoundRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
 
     graphics->DrawString(u8"MMMM", { cx / 2, cy / 2 }, { "", 10 }, colors::Red, core::math::align::centerXY);
 
