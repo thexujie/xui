@@ -191,6 +191,7 @@ namespace win32
         agg::span_interpolator_linear<> interpolator(
             agg::trans_affine_translation(-rect.x + region.x, -rect.y + region.y) *
             agg::trans_affine_scaling(region.width / (double)rect.cx, region.height / (double)rect.cy));
+
         agg::span_image_filter_rgba_bilinear_clip<agg::pixel_accessor_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
         agg::span_allocator<agg::rgba8> sa;
         agg::render_scanlines_aa(_raster, _sl, renb, sa, sg);

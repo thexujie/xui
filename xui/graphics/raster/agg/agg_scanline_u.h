@@ -34,6 +34,7 @@
 #pragma once
 
 #include "agg_array.h"
+#include "agg_renderer_scanline.h"
 
 namespace agg
 {
@@ -115,23 +116,11 @@ namespace agg
     // are better, because switching between two different areas of memory 
     // (that can be very large) occurs less frequently.
     //------------------------------------------------------------------------
-    class scanline_u8
+    class scanline_u8 : public scanline<uint8_t>
     {
     public:
         typedef scanline_u8 self_type;
-        typedef int8u cover_type;
         typedef int16 coord_type;
-
-        //--------------------------------------------------------------------
-        struct span
-        {
-            coord_type x;
-            coord_type len;
-            cover_type * covers;
-        };
-
-        typedef span * iterator;
-        typedef const span * const_iterator;
 
         //--------------------------------------------------------------------
         scanline_u8() :
@@ -225,10 +214,11 @@ namespace agg
 
         //--------------------------------------------------------------------
         int y() const { return m_y; }
-        unsigned num_spans() const { return unsigned(m_cur_span - &m_spans[0]); }
-        const_iterator begin() const { return &m_spans[1]; }
-        iterator begin() { return &m_spans[1]; }
-
+        int num_spans() const { return m_cur_span - &m_spans[0]; }
+        SpanT span(int index) const
+        {
+            return m_spans[index + 1];
+        }
     private:
         scanline_u8(const self_type &);
         const self_type & operator =(const self_type &);
@@ -238,8 +228,8 @@ namespace agg
         int m_last_x;
         int m_y;
         pod_array<cover_type> m_covers;
-        pod_array<span> m_spans;
-        span * m_cur_span;
+        pod_array<SpanT> m_spans;
+        SpanT * m_cur_span;
     };
 
 

@@ -27,9 +27,51 @@
 
 #include "agg_basics.h"
 #include "agg_renderer_base.h"
+#include "agg_span_allocator.h"
 
 namespace agg
 {
+    class scanline_base
+    {
+    public:
+        virtual ~scanline_base() = default;
+        virtual void reset(int min_x, int max_x) = 0;
+        virtual void add_cell(int x, unsigned cover) = 0;
+        virtual void add_cells(int x, unsigned len, const cover_type * covers) = 0;
+        virtual void add_span(int x, unsigned len, unsigned cover) = 0;
+        virtual void finalize(int y) = 0;
+        virtual void reset_spans() = 0;
+        virtual int y() const = 0;
+        virtual int num_spans() const = 0;
+    };
+
+    class rasterizer
+    {
+    public:
+        virtual ~rasterizer() = default;
+        virtual bool rewind_scanlines() = 0;
+        virtual int min_x() const = 0;
+        virtual int min_y() const = 0;
+        virtual int max_x() const = 0;
+        virtual int max_y() const = 0;
+        virtual bool sweep_scanline(scanline_base & sl) = 0;
+    };
+
+    template<typename CoverT>
+    class scanline : public scanline_base
+    {
+    public:
+        typedef typename CoverT cover_type;
+
+        struct SpanT
+        {
+            int x = 0;
+            int len = 0;
+            const CoverT * covers = nullptr;
+        };
+        virtual SpanT span(int index) const = 0;
+    };
+
     //================================================render_scanline_aa_solid
     template<class Scanline, class BaseRenderer, class ColorT>
     void render_scanline_aa_solid(const Scanline & sl,
@@ -85,26 +127,19 @@ namespace agg
                 // like Microsoft Visual C++ v6.0
                 //-------------------------------
                 int y = sl.y();
-                unsigned num_spans = sl.num_spans();
-                typename Scanline::const_iterator span = sl.begin();
-
-                for (;;)
+                int num_spans = sl.num_spans();
+                int index = 0;
+                while (index < num_spans)
                 {
-                    int x = span->x;
-                    if (span->len > 0)
+                    auto span = sl.span(index++);
+                    if (span.len > 0)
                     {
-                        ren.blend_solid_hspan(x, y, (unsigned)span->len,
-                            ren_color,
-                            span->covers);
+                        ren.blend_solid_hspan(span.len, y, (unsigned)span.len, ren_color, span.covers);
                     }
                     else
                     {
-                        ren.blend_hline(x, y, (unsigned)(x - span->len - 1),
-                            ren_color,
-                            *(span->covers));
+                        ren.blend_hline(span.x, y, (unsigned)(span.x - span.len - 1), ren_color, *(span.covers));
                     }
-                    if (--num_spans == 0) break;
-                    ++span;
                 }
             }
         }
@@ -148,33 +183,29 @@ namespace agg
 
 
     //======================================================render_scanline_aa
-    template<class Scanline, class BaseRenderer, class SpanAllocator, class SpanGenerator>
-    void render_scanline_aa(const Scanline & sl, BaseRenderer & ren, SpanAllocator & alloc, SpanGenerator & span_gen)
+    template<class CoverT, class BaseRenderer, class SpanAllocator, class SpanGenerator>
+    void render_scanline_aa(const scanline<CoverT> & sl, BaseRenderer & ren, SpanAllocator & alloc, SpanGenerator & span_gen)
     {
         int y = sl.y();
 
-        unsigned num_spans = sl.num_spans();
-        typename Scanline::const_iterator span = sl.begin();
-        for (;;)
+        int num_spans = sl.num_spans();
+        int index = 0;
+        while(index < num_spans)
         {
-            int x = span->x;
-            int len = span->len;
-            const typename Scanline::cover_type * covers = span->covers;
+            typename scanline<CoverT>::SpanT span = sl.span(index++);
 
-            if (len < 0) len = -len;
-            typename BaseRenderer::color_type * colors = alloc.allocate(len);
-            span_gen.generate(colors, x, y, len);
-            ren.blend_color_hspan(x, y, len, colors, (span->len < 0) ? 0 : covers, *covers);
+            if (span.len < 0)
+                span.len = -span.len;
 
-            if (--num_spans == 0)
-                break;
-            ++span;
+            typename BaseRenderer::color_type * colors = alloc.allocate(span.len);
+            span_gen.generate(colors, span.x, y, span.len);
+            ren.blend_color_hspan(span.x, y, span.len, colors, (span.len < 0) ? 0 : span.covers, *span.covers);
         }
     }
 
     //=====================================================render_scanlines_aa
-    template<class Rasterizer, class Scanline, class BaseRenderer, class SpanAllocator, class SpanGenerator>
-    void render_scanlines_aa(Rasterizer & ras, Scanline & sl, BaseRenderer & ren, SpanAllocator & alloc, SpanGenerator & span_gen)
+    template<class CoverT, class BaseRenderer, class SpanGenerator>
+    void render_scanlines_aa(rasterizer & ras, scanline<CoverT> & sl, BaseRenderer & ren, span_allocator<typename BaseRenderer::color_type> & alloc, SpanGenerator & span_gen)
     {
         if (ras.rewind_scanlines())
         {
