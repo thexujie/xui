@@ -214,8 +214,8 @@ namespace agg
         base_ren_type & ren() { return *m_ren; }
 
         //--------------------------------------------------------------------
-        const rendering_buffer & rbuf() const { return m_ren->rbuf(); }
-        rendering_buffer & rbuf() { return m_ren->rbuf(); }
+        const rendering_buffer_8u & rbuf() const { return m_ren->rbuf(); }
+        rendering_buffer_8u & rbuf() { return m_ren->rbuf(); }
 
     private:
         base_ren_type * m_ren;

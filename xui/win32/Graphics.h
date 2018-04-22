@@ -53,6 +53,6 @@ namespace win32
         agg::rasterizer_scanline_aa<> _raster;
         agg::scanline_u8 _sl;
 
-        agg::rendering_buffer _rbuf;
+        agg::render_buffer<uint8_t> _rbuf;
     };
 }

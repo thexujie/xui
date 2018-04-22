@@ -144,7 +144,7 @@ namespace win32
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect)
     {
         auto & data = image.image();
-        agg::pixel_accessor_alpha_blend_rgba<agg::pixfmt_bgra32, agg::rendering_buffer> acc32(_rbuf);
+        agg::pixel_accessor_alpha_blend_rgba<agg::pixfmt_bgra32> acc32(_rbuf);
         agg::renderer_base<agg::pixel_accessor_bgra32> render(acc32);
 
         agg::path_storage ps;
@@ -156,7 +156,7 @@ namespace win32
         _raster.reset();
         _raster.add_path(ps);
 
-        agg::rendering_buffer img_buf;
+        agg::rendering_buffer_8u img_buf;
         img_buf.attach((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
 
         agg::span_interpolator_linear<> interpolator(
@@ -184,7 +184,7 @@ namespace win32
         _raster.reset();
         _raster.add_path(ps);
 
-        agg::rendering_buffer img_buf;
+        agg::rendering_buffer_8u img_buf;
         img_buf.attach((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
         agg::pixel_accessor_bgra32 img_pixf(img_buf);
 

@@ -15,7 +15,7 @@
 
 using namespace core;
 
-agg::rendering_buffer rbuf;
+agg::rendering_buffer_8u rbuf;
 agg::rasterizer_scanline_aa<> raster;
 agg::scanline_u8 sl;
 
@@ -189,7 +189,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     graphics::image::image_data_t img;
     graphics::image::image_create(fileData.get(), fileSize, img);
 
-    agg::rendering_buffer img_buf;
+    agg::rendering_buffer_8u img_buf;
     img_buf.attach((agg::int8u *)img.data, img.format.width, img.format.height, img.pitch);
     agg::pixel_accessor_bgra32 img_pixf(img_buf);
     //agg::image_accessor_clip<agg::pixel_accessor_bgra32> img_src(img_pixf, agg::rgba_pre(0, 0.4, 0, 0.5));

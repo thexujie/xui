@@ -674,8 +674,8 @@ namespace agg
     typedef blender_gray<gray16> blender_gray16;
     typedef blender_gray_pre<gray16> blender_gray16_pre;
 
-    typedef pixel_accessor_alpha_blend_gray<blender_gray8, rendering_buffer> pixel_accessor_gray8; //----pixel_accessor_gray8
-    typedef pixel_accessor_alpha_blend_gray<blender_gray8_pre, rendering_buffer> pixel_accessor_gray8_pre; //----pixel_accessor_gray8_pre
-    typedef pixel_accessor_alpha_blend_gray<blender_gray16, rendering_buffer> pixel_accessor_gray16; //----pixel_accessor_gray16
-    typedef pixel_accessor_alpha_blend_gray<blender_gray16_pre, rendering_buffer> pixel_accessor_gray16_pre; //----pixel_accessor_gray16_pre
+    typedef pixel_accessor_alpha_blend_gray<blender_gray8, rendering_buffer_8u> pixel_accessor_gray8; //----pixel_accessor_gray8
+    typedef pixel_accessor_alpha_blend_gray<blender_gray8_pre, rendering_buffer_8u> pixel_accessor_gray8_pre; //----pixel_accessor_gray8_pre
+    typedef pixel_accessor_alpha_blend_gray<blender_gray16, rendering_buffer_8u> pixel_accessor_gray16; //----pixel_accessor_gray16
+    typedef pixel_accessor_alpha_blend_gray<blender_gray16_pre, rendering_buffer_8u> pixel_accessor_gray16_pre; //----pixel_accessor_gray16_pre
 }

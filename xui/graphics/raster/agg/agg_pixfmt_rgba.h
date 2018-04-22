@@ -1808,12 +1808,10 @@ namespace agg
 
 
     //=================================================pixel_accessor_alpha_blend_rgba
-    template<class PixelT, class RenBuf>
+    template<class PixelT>
     class pixel_accessor_alpha_blend_rgba
     {
     public:
-        typedef RenBuf rbuf_type;
-        typedef typename rbuf_type::row_data row_data;
         typedef PixelT pixel_type;
         typedef typename PixelT::color_type color_type;
         typedef typename PixelT::order_type order_type;
@@ -1831,8 +1829,8 @@ namespace agg
 
         //--------------------------------------------------------------------
         pixel_accessor_alpha_blend_rgba() : m_rbuf(0) {}
-        explicit pixel_accessor_alpha_blend_rgba(rbuf_type & rb) : m_rbuf(&rb) {}
-        void attach(rbuf_type & rb) { m_rbuf = &rb; }
+        explicit pixel_accessor_alpha_blend_rgba(row_accessor & racc) : m_rbuf(&racc) {}
+        void attach(row_accessor & racc) { m_rbuf = &racc; }
 
         //--------------------------------------------------------------------
         template<class PixFmt>
@@ -1859,7 +1857,7 @@ namespace agg
         //--------------------------------------------------------------------
         AGG_INLINE int8u * row_ptr(int y) { return m_rbuf->row_ptr(y); }
         AGG_INLINE const int8u * row_ptr(int y) const { return m_rbuf->row_ptr(y); }
-        AGG_INLINE row_data row(int y) const { return m_rbuf->row(y); }
+        AGG_INLINE const_row_info<int8u> row(int y) const { return m_rbuf->row(y); }
 
         //--------------------------------------------------------------------
         AGG_INLINE int8u * pix_ptr(int x, int y)
@@ -2036,7 +2034,7 @@ namespace agg
                         do
                         {
                             p = (value_type*)m_rbuf->row_ptr(x, y++, 1) + (x << 2);
-                            blender_type::blend_pix(p, c.r, c.g, c.b, alpha);
+                            pixel_type::blend_pix(p, c.r, c.g, c.b, alpha);
                         }
                         while (--len);
                     }
@@ -2045,7 +2043,7 @@ namespace agg
                         do
                         {
                             p = (value_type*)m_rbuf->row_ptr(x, y++, 1) + (x << 2);
-                            blender_type::blend_pix(p, c.r, c.g, c.b, alpha, cover);
+                            pixel_type::blend_pix(p, c.r, c.g, c.b, alpha, cover);
                         }
                         while (--len);
                     }
@@ -2459,7 +2457,7 @@ namespace agg
         }
 
     private:
-        rbuf_type * m_rbuf;
+        row_accessor * m_rbuf;
     };
 
 
@@ -2936,18 +2934,18 @@ namespace agg
     //-----------------------------------------------------------------------
     typedef int32u pixel32_type;
 
-    typedef pixel_accessor_alpha_blend_rgba<pixfmt_rgba<rgba8, order_rgba>, rendering_buffer> pixel_accessor_rgba32; //----pixel_accessor_rgba32
-    typedef pixel_accessor_alpha_blend_rgba<pixfmt_rgba<rgba8, order_argb>, rendering_buffer> pixel_accessor_argb32; //----pixel_accessor_argb32
-    typedef pixel_accessor_alpha_blend_rgba<pixfmt_rgba<rgba8, order_abgr>, rendering_buffer> pixel_accessor_abgr32; //----pixel_accessor_abgr32
-    typedef pixel_accessor_alpha_blend_rgba<pixfmt_rgba<rgba8, order_bgra>, rendering_buffer> pixel_accessor_bgra32; //----pixel_accessor_bgra32
+    typedef pixel_accessor_alpha_blend_rgba<pixfmt_rgba<rgba8, order_rgba>> pixel_accessor_rgba32; //----pixel_accessor_rgba32
+    typedef pixel_accessor_alpha_blend_rgba<pixfmt_rgba<rgba8, order_argb>> pixel_accessor_argb32; //----pixel_accessor_argb32
+    typedef pixel_accessor_alpha_blend_rgba<pixfmt_rgba<rgba8, order_abgr>> pixel_accessor_abgr32; //----pixel_accessor_abgr32
+    typedef pixel_accessor_alpha_blend_rgba<pixfmt_rgba<rgba8, order_bgra>> pixel_accessor_bgra32; //----pixel_accessor_bgra32
 
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_rgba>, rendering_buffer> pixel_accessor_rgba32_pre; //----pixel_accessor_rgba32_pre
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_argb>, rendering_buffer> pixel_accessor_argb32_pre; //----pixel_accessor_argb32_pre
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_abgr>, rendering_buffer> pixel_accessor_abgr32_pre; //----pixel_accessor_abgr32_pre
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_bgra>, rendering_buffer> pixel_accessor_bgra32_pre; //----pixel_accessor_bgra32_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_rgba>> pixel_accessor_rgba32_pre; //----pixel_accessor_rgba32_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_argb>> pixel_accessor_argb32_pre; //----pixel_accessor_argb32_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_abgr>> pixel_accessor_abgr32_pre; //----pixel_accessor_abgr32_pre
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba8, order_bgra>> pixel_accessor_bgra32_pre; //----pixel_accessor_bgra32_pre
 
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_rgba>, rendering_buffer> pixel_accessor_rgba32_plain; //----pixel_accessor_rgba32_plain
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_argb>, rendering_buffer> pixel_accessor_argb32_plain; //----pixel_accessor_argb32_plain
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_abgr>, rendering_buffer> pixel_accessor_abgr32_plain; //----pixel_accessor_abgr32_plain
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_bgra>, rendering_buffer> pixel_accessor_bgra32_plain; //----pixel_accessor_bgra32_plain
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_rgba>> pixel_accessor_rgba32_plain; //----pixel_accessor_rgba32_plain
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_argb>> pixel_accessor_argb32_plain; //----pixel_accessor_argb32_plain
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_abgr>> pixel_accessor_abgr32_plain; //----pixel_accessor_abgr32_plain
+    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_bgra>> pixel_accessor_bgra32_plain; //----pixel_accessor_bgra32_plain
 }

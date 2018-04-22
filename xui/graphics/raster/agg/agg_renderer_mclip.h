@@ -302,7 +302,7 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        void copy_from(const rendering_buffer & from,
+        void copy_from(const rendering_buffer_8u & from,
             const rect_i * rc = 0,
             int x_to = 0,
             int y_to = 0)

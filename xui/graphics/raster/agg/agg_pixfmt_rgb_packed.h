@@ -1199,33 +1199,33 @@ namespace agg
         Blender m_blender;
     };
 
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb555, rendering_buffer> pixel_accessor_rgb555; //----pixel_accessor_rgb555
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb565, rendering_buffer> pixel_accessor_rgb565; //----pixel_accessor_rgb565
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb555, rendering_buffer_8u> pixel_accessor_rgb555; //----pixel_accessor_rgb555
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb565, rendering_buffer_8u> pixel_accessor_rgb565; //----pixel_accessor_rgb565
 
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb555_pre, rendering_buffer> pixel_accessor_rgb555_pre; //----pixel_accessor_rgb555_pre
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_pre, rendering_buffer> pixel_accessor_rgb565_pre; //----pixel_accessor_rgb565_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb555_pre, rendering_buffer_8u> pixel_accessor_rgb555_pre; //----pixel_accessor_rgb555_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_pre, rendering_buffer_8u> pixel_accessor_rgb565_pre; //----pixel_accessor_rgb565_pre
 
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA, rendering_buffer> pixel_accessor_rgbAAA; //----pixel_accessor_rgbAAA
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA, rendering_buffer> pixel_accessor_bgrAAA; //----pixel_accessor_bgrAAA
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA, rendering_buffer> pixel_accessor_rgbBBA; //----pixel_accessor_rgbBBA
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB, rendering_buffer> pixel_accessor_bgrABB; //----pixel_accessor_bgrABB
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA, rendering_buffer_8u> pixel_accessor_rgbAAA; //----pixel_accessor_rgbAAA
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA, rendering_buffer_8u> pixel_accessor_bgrAAA; //----pixel_accessor_bgrAAA
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA, rendering_buffer_8u> pixel_accessor_rgbBBA; //----pixel_accessor_rgbBBA
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB, rendering_buffer_8u> pixel_accessor_bgrABB; //----pixel_accessor_bgrABB
 
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA_pre, rendering_buffer> pixel_accessor_rgbAAA_pre; //----pixel_accessor_rgbAAA_pre
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA_pre, rendering_buffer> pixel_accessor_bgrAAA_pre; //----pixel_accessor_bgrAAA_pre
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA_pre, rendering_buffer> pixel_accessor_rgbBBA_pre; //----pixel_accessor_rgbBBA_pre
-    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB_pre, rendering_buffer> pixel_accessor_bgrABB_pre; //----pixel_accessor_bgrABB_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA_pre, rendering_buffer_8u> pixel_accessor_rgbAAA_pre; //----pixel_accessor_rgbAAA_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA_pre, rendering_buffer_8u> pixel_accessor_bgrAAA_pre; //----pixel_accessor_bgrAAA_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA_pre, rendering_buffer_8u> pixel_accessor_rgbBBA_pre; //----pixel_accessor_rgbBBA_pre
+    typedef pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB_pre, rendering_buffer_8u> pixel_accessor_bgrABB_pre; //----pixel_accessor_bgrABB_pre
 
 
     //-----------------------------------------------------pixel_accessor_rgb555_gamma
     template<class Gamma>
     class pixel_accessor_rgb555_gamma :
         public pixel_accessor_alpha_blend_rgb_packed<blender_rgb555_gamma<Gamma>,
-                                             rendering_buffer>
+                                             rendering_buffer_8u>
     {
     public:
-        pixel_accessor_rgb555_gamma(rendering_buffer & rb, const Gamma & g) :
+        pixel_accessor_rgb555_gamma(rendering_buffer_8u & rb, const Gamma & g) :
             pixel_accessor_alpha_blend_rgb_packed<blender_rgb555_gamma<Gamma>,
-                                          rendering_buffer>(rb)
+                                          rendering_buffer_8u>(rb)
         {
             this->blender().gamma(g);
         }
@@ -1235,11 +1235,11 @@ namespace agg
     //-----------------------------------------------------pixel_accessor_rgb565_gamma
     template<class Gamma>
     class pixel_accessor_rgb565_gamma :
-        public pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_gamma<Gamma>, rendering_buffer>
+        public pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_gamma<Gamma>, rendering_buffer_8u>
     {
     public:
-        pixel_accessor_rgb565_gamma(rendering_buffer & rb, const Gamma & g) :
-            pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_gamma<Gamma>, rendering_buffer>(rb)
+        pixel_accessor_rgb565_gamma(rendering_buffer_8u & rb, const Gamma & g) :
+            pixel_accessor_alpha_blend_rgb_packed<blender_rgb565_gamma<Gamma>, rendering_buffer_8u>(rb)
         {
             this->blender().gamma(g);
         }
@@ -1250,12 +1250,12 @@ namespace agg
     template<class Gamma>
     class pixel_accessor_rgbAAA_gamma :
         public pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA_gamma<Gamma>,
-                                             rendering_buffer>
+                                             rendering_buffer_8u>
     {
     public:
-        pixel_accessor_rgbAAA_gamma(rendering_buffer & rb, const Gamma & g) :
+        pixel_accessor_rgbAAA_gamma(rendering_buffer_8u & rb, const Gamma & g) :
             pixel_accessor_alpha_blend_rgb_packed<blender_rgbAAA_gamma<Gamma>,
-                                          rendering_buffer>(rb)
+                                          rendering_buffer_8u>(rb)
         {
             this->blender().gamma(g);
         }
@@ -1266,12 +1266,12 @@ namespace agg
     template<class Gamma>
     class pixel_accessor_bgrAAA_gamma :
         public pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA_gamma<Gamma>,
-                                             rendering_buffer>
+                                             rendering_buffer_8u>
     {
     public:
-        pixel_accessor_bgrAAA_gamma(rendering_buffer & rb, const Gamma & g) :
+        pixel_accessor_bgrAAA_gamma(rendering_buffer_8u & rb, const Gamma & g) :
             pixel_accessor_alpha_blend_rgb_packed<blender_bgrAAA_gamma<Gamma>,
-                                          rendering_buffer>(rb)
+                                          rendering_buffer_8u>(rb)
         {
             this->blender().gamma(g);
         }
@@ -1282,12 +1282,12 @@ namespace agg
     template<class Gamma>
     class pixel_accessor_rgbBBA_gamma :
         public pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA_gamma<Gamma>,
-                                             rendering_buffer>
+                                             rendering_buffer_8u>
     {
     public:
-        pixel_accessor_rgbBBA_gamma(rendering_buffer & rb, const Gamma & g) :
+        pixel_accessor_rgbBBA_gamma(rendering_buffer_8u & rb, const Gamma & g) :
             pixel_accessor_alpha_blend_rgb_packed<blender_rgbBBA_gamma<Gamma>,
-                                          rendering_buffer>(rb)
+                                          rendering_buffer_8u>(rb)
         {
             this->blender().gamma(g);
         }
@@ -1298,12 +1298,12 @@ namespace agg
     template<class Gamma>
     class pixel_accessor_bgrABB_gamma :
         public pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB_gamma<Gamma>,
-                                             rendering_buffer>
+                                             rendering_buffer_8u>
     {
     public:
-        pixel_accessor_bgrABB_gamma(rendering_buffer & rb, const Gamma & g) :
+        pixel_accessor_bgrABB_gamma(rendering_buffer_8u & rb, const Gamma & g) :
             pixel_accessor_alpha_blend_rgb_packed<blender_bgrABB_gamma<Gamma>,
-                                          rendering_buffer>(rb)
+                                          rendering_buffer_8u>(rb)
         {
             this->blender().gamma(g);
         }

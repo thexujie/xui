@@ -31,13 +31,12 @@
 namespace agg
 {
     //-----------------------------------------------------------renderer_base
-    template<class PixelFormat>
+    template<class Accessor>
     class renderer_base
     {
     public:
-        typedef PixelFormat pixel_accessor_type;
+        typedef Accessor pixel_accessor_type;
         typedef typename pixel_accessor_type::color_type color_type;
-        typedef typename pixel_accessor_type::row_data row_data;
 
         //--------------------------------------------------------------------
         renderer_base() : m_ren(0), m_clip_box(1, 1, 0, 0) {}

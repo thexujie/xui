@@ -146,7 +146,7 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        void copy_from(const rendering_buffer & from,
+        void copy_from(const rendering_buffer_8u & from,
             int xdst, int ydst,
             int xsrc, int ysrc,
             unsigned len)
