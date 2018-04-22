@@ -65,7 +65,9 @@ namespace agg
             area = 0;
         }
 
-        void style(const cell_aa &) {}
+        void style(const cell_aa &)
+        {
+        }
 
         int not_equal(int ex, int ey, const cell_aa &) const
         {
@@ -105,7 +107,7 @@ namespace agg
     //
     // filling_rule() and gamma() can be called anytime before "sweeping".
     //------------------------------------------------------------------------
-    template<class Clip=rasterizer_sl_clip_int>
+    template <class Clip=rasterizer_sl_clip_int>
     class rasterizer_scanline_aa
     {
         enum status
@@ -145,7 +147,7 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        template<class GammaF>
+        template <class GammaF>
         rasterizer_scanline_aa(const GammaF & gamma_function) :
             m_outline(),
             m_clipper(m_outline),
@@ -166,7 +168,7 @@ namespace agg
         void auto_close(bool flag) { m_auto_close = flag; }
 
         //--------------------------------------------------------------------
-        template<class GammaF>
+        template <class GammaF>
         void gamma(const GammaF & gamma_function)
         {
             int i;
@@ -194,7 +196,7 @@ namespace agg
         void edge_d(double x1, double y1, double x2, double y2);
 
         //-------------------------------------------------------------------
-        template<class VertexSource>
+        template <class VertexSource>
         void add_path(VertexSource & vs, unsigned path_id = 0)
         {
             double x;
@@ -239,12 +241,13 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        template<class Scanline>
+        template <class Scanline>
         bool sweep_scanline(Scanline & sl)
         {
             for (;;)
             {
-                if (m_scan_y > m_outline.max_y()) return false;
+                if (m_scan_y > m_outline.max_y()) 
+                    return false;
                 sl.reset_spans();
                 unsigned num_cells = m_outline.scanline_num_cells(m_scan_y);
                 const cell_aa * const* cells = m_outline.scanline_cells(m_scan_y);
@@ -322,7 +325,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::reset()
     {
         m_outline.reset();
@@ -330,24 +333,24 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::filling_rule(filling_rule_e filling_rule)
     {
         m_filling_rule = filling_rule;
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::clip_box(double x1, double y1,
-        double x2, double y2)
+                                                double x2, double y2)
     {
         reset();
         m_clipper.clip_box(conv_type::upscale(x1), conv_type::upscale(y1),
-            conv_type::upscale(x2), conv_type::upscale(y2));
+                           conv_type::upscale(x2), conv_type::upscale(y2));
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::reset_clipping()
     {
         reset();
@@ -355,7 +358,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::close_polygon()
     {
         if (m_status == status_line_to)
@@ -366,49 +369,49 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::move_to(int x, int y)
     {
         if (m_outline.sorted()) reset();
         if (m_auto_close) close_polygon();
         m_clipper.move_to(m_start_x = conv_type::downscale(x),
-            m_start_y = conv_type::downscale(y));
+                          m_start_y = conv_type::downscale(y));
         m_status = status_move_to;
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::line_to(int x, int y)
     {
         m_clipper.line_to(m_outline,
-            conv_type::downscale(x),
-            conv_type::downscale(y));
+                          conv_type::downscale(x),
+                          conv_type::downscale(y));
         m_status = status_line_to;
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::move_to_d(double x, double y)
     {
         if (m_outline.sorted()) reset();
         if (m_auto_close) close_polygon();
         m_clipper.move_to(m_start_x = conv_type::upscale(x),
-            m_start_y = conv_type::upscale(y));
+                          m_start_y = conv_type::upscale(y));
         m_status = status_move_to;
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::line_to_d(double x, double y)
     {
         m_clipper.line_to(m_outline,
-            conv_type::upscale(x),
-            conv_type::upscale(y));
+                          conv_type::upscale(x),
+                          conv_type::upscale(y));
         m_status = status_line_to;
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::add_vertex(double x, double y, unsigned cmd)
     {
         if (is_move_to(cmd))
@@ -426,32 +429,32 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::edge(int x1, int y1, int x2, int y2)
     {
         if (m_outline.sorted()) reset();
         m_clipper.move_to(conv_type::downscale(x1), conv_type::downscale(y1));
         m_clipper.line_to(m_outline,
-            conv_type::downscale(x2),
-            conv_type::downscale(y2));
+                          conv_type::downscale(x2),
+                          conv_type::downscale(y2));
         m_status = status_move_to;
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::edge_d(double x1, double y1,
-        double x2, double y2)
+                                              double x2, double y2)
     {
         if (m_outline.sorted()) reset();
         m_clipper.move_to(conv_type::upscale(x1), conv_type::upscale(y1));
         m_clipper.line_to(m_outline,
-            conv_type::upscale(x2),
-            conv_type::upscale(y2));
+                          conv_type::upscale(x2),
+                          conv_type::upscale(y2));
         m_status = status_move_to;
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     void rasterizer_scanline_aa<Clip>::sort()
     {
         if (m_auto_close) close_polygon();
@@ -459,10 +462,11 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     AGG_INLINE bool rasterizer_scanline_aa<Clip>::rewind_scanlines()
     {
-        if (m_auto_close) close_polygon();
+        if (m_auto_close)
+            close_polygon();
         m_outline.sort_cells();
         if (m_outline.total_cells() == 0)
         {
@@ -474,7 +478,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     AGG_INLINE bool rasterizer_scanline_aa<Clip>::navigate_scanline(int y)
     {
         if (m_auto_close) close_polygon();
@@ -490,7 +494,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    template<class Clip>
+    template <class Clip>
     bool rasterizer_scanline_aa<Clip>::hit_test(int tx, int ty)
     {
         if (!navigate_scanline(ty)) return false;

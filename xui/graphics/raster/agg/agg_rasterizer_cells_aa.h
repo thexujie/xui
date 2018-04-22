@@ -631,7 +631,8 @@ namespace agg
     template<class Cell>
     void rasterizer_cells_aa<Cell>::sort_cells()
     {
-        if (m_sorted) return; //Perform sort only the first time.
+        if (m_sorted)
+            return; //Perform sort only the first time.
 
         add_curr_cell();
         m_curr_cell.x = 0x7FFFFFFF;
@@ -639,7 +640,8 @@ namespace agg
         m_curr_cell.cover = 0;
         m_curr_cell.area = 0;
 
-        if (m_num_cells == 0) return;
+        if (m_num_cells == 0)
+            return;
 
         // DBG: Check to see if min/max works well.
         //for(unsigned nc = 0; nc < m_num_cells; nc++)

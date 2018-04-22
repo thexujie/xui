@@ -143,7 +143,7 @@ namespace win32
 
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect)
     {
-        auto & data = image.image();
+        auto & data = image.data();
         agg::pixfmt_bgra32 pixf(_rbuf);
         agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
 
@@ -170,7 +170,7 @@ namespace win32
 
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
     {
-        auto & data = image.image();
+        auto & data = image.data();
         agg::pixfmt_bgra32 pixf(_rbuf);
         agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
 

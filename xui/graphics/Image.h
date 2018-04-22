@@ -13,7 +13,7 @@ namespace graphics
         operator bool() const { return !!_image.data; }
         si32_t size() const { return { _image.format.width, _image.format.height}; }
         image::format cmode() const { return _image.format.format; }
-        const image::image_data_t & image() const { return _image; }
+        const image::image_data_t & data() const { return _image; }
         core::error_e Save(std::string path) const;
 
     private:

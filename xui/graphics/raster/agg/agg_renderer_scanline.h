@@ -148,10 +148,8 @@ namespace agg
 
 
     //======================================================render_scanline_aa
-    template<class Scanline, class BaseRenderer,
-             class SpanAllocator, class SpanGenerator>
-    void render_scanline_aa(const Scanline & sl, BaseRenderer & ren,
-        SpanAllocator & alloc, SpanGenerator & span_gen)
+    template<class Scanline, class BaseRenderer, class SpanAllocator, class SpanGenerator>
+    void render_scanline_aa(const Scanline & sl, BaseRenderer & ren, SpanAllocator & alloc, SpanGenerator & span_gen)
     {
         int y = sl.y();
 
@@ -168,16 +166,15 @@ namespace agg
             span_gen.generate(colors, x, y, len);
             ren.blend_color_hspan(x, y, len, colors, (span->len < 0) ? 0 : covers, *covers);
 
-            if (--num_spans == 0) break;
+            if (--num_spans == 0)
+                break;
             ++span;
         }
     }
 
     //=====================================================render_scanlines_aa
-    template<class Rasterizer, class Scanline, class BaseRenderer,
-             class SpanAllocator, class SpanGenerator>
-    void render_scanlines_aa(Rasterizer & ras, Scanline & sl, BaseRenderer & ren,
-        SpanAllocator & alloc, SpanGenerator & span_gen)
+    template<class Rasterizer, class Scanline, class BaseRenderer, class SpanAllocator, class SpanGenerator>
+    void render_scanlines_aa(Rasterizer & ras, Scanline & sl, BaseRenderer & ren, SpanAllocator & alloc, SpanGenerator & span_gen)
     {
         if (ras.rewind_scanlines())
         {
