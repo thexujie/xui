@@ -2931,6 +2931,9 @@ namespace agg
     //typedef blender_rgba_pre<rgba16, order_bgra> blender_bgra64_pre; //----blender_bgra64_pre
 
 
+    typedef blender_rgba<rgba8, order_rgba> pixfmt_rgba;
+    typedef blender_rgba<rgba8, order_bgra> pixfmt_bgra;
+
     //-----------------------------------------------------------------------
     typedef int32u pixel32_type;
 
@@ -2948,19 +2951,4 @@ namespace agg
     typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_argb>, rendering_buffer, pixel32_type> pixel_accessor_argb32_plain; //----pixel_accessor_argb32_plain
     typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_abgr>, rendering_buffer, pixel32_type> pixel_accessor_abgr32_plain; //----pixel_accessor_abgr32_plain
     typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_bgra>, rendering_buffer, pixel32_type> pixel_accessor_bgra32_plain; //----pixel_accessor_bgra32_plain
-
-    struct pixel64_type
-    {
-        int16u c[4];
-    };
-
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba16, order_rgba>, rendering_buffer, pixel64_type> pixel_accessor_rgba64; //----pixel_accessor_rgba64
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba16, order_argb>, rendering_buffer, pixel64_type> pixel_accessor_argb64; //----pixel_accessor_argb64
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba16, order_abgr>, rendering_buffer, pixel64_type> pixel_accessor_abgr64; //----pixel_accessor_abgr64
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba<rgba16, order_bgra>, rendering_buffer, pixel64_type> pixel_accessor_bgra64; //----pixel_accessor_bgra64
-
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba16, order_rgba>, rendering_buffer, pixel64_type> pixel_accessor_rgba64_pre; //----pixel_accessor_rgba64_pre
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba16, order_argb>, rendering_buffer, pixel64_type> pixel_accessor_argb64_pre; //----pixel_accessor_argb64_pre
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba16, order_abgr>, rendering_buffer, pixel64_type> pixel_accessor_abgr64_pre; //----pixel_accessor_abgr64_pre
-    typedef pixel_accessor_alpha_blend_rgba<blender_rgba_pre<rgba16, order_bgra>, rendering_buffer, pixel64_type> pixel_accessor_bgra64_pre; //----pixel_accessor_bgra64_pre
 }
