@@ -25,10 +25,10 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 {
     auto buffer = pixmap->buffer();
     rbuf.attach((agg::int8u *)buffer.data, buffer.size.cx, buffer.size.cy, buffer.flip_y ? -buffer.pitch : buffer.pitch);
-    agg::pixel_accessor_bgra32 pixf(rbuf);
+    agg::pixel_accessor_alpha_blend_rgba<agg::pixfmt_bgra32> pixf(rbuf);
     agg::pixel_accessor_bgra32_pre pixf_pre(rbuf);
-    agg::renderer_base<agg::pixel_accessor_bgra32> renb(pixf);
-    agg::renderer_base<agg::pixel_accessor_bgra32_pre> ren_pre(pixf_pre);
+    agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
+    agg::renderer_base<agg::pixfmt_bgra32_pre> ren_pre(pixf_pre);
 
     //renb.clear(agg::rgba(1, 1, 1));
 

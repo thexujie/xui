@@ -30,33 +30,55 @@
 
 namespace agg
 {
+    template<typename PixelT>
+    class pixel_accessor
+    {
+    public:
+        typedef typename PixelT::color_type color_type;
+
+        virtual ~pixel_accessor() = default;
+
+        virtual unsigned width() const = 0;
+        virtual unsigned height() const = 0;
+        virtual int stride() const = 0;
+
+        virtual color_type pixel(int x, int y) const = 0;
+        virtual void copy_pixel(int x, int y, const color_type & c) = 0;
+        virtual void copy_hline(int x, int y, unsigned len, const color_type & c) = 0;
+        virtual void copy_vline(int x, int y, unsigned len, const color_type & c) = 0;
+        virtual void blend_hline(int x1, int y, unsigned len, const color_type & c, cover_type cover) = 0;
+        virtual void blend_vline(int x1, int y, unsigned len, const color_type & c, cover_type cover) = 0;
+        virtual void blend_solid_hspan(int x, int y, unsigned len, const color_type & c, const int8u * covers) = 0;
+        virtual void blend_solid_vspan(int x, int y, unsigned len, const color_type & c, const int8u * covers) = 0;
+        virtual void blend_color_hspan(int x, int y, unsigned len, const color_type * colors, const int8u * covers, int8u cover) = 0;
+    };
+
     //-----------------------------------------------------------renderer_base
-    template<class Accessor>
+    template<typename PixelT>
     class renderer_base
     {
     public:
-        typedef typename Accessor::color_type color_type;
+        typedef pixel_accessor<PixelT> Accessor;
+        typedef typename PixelT::color_type color_type;
 
         //--------------------------------------------------------------------
-        renderer_base() : m_ren(0), m_clip_box(1, 1, 0, 0) {}
-
-        explicit renderer_base(Accessor & ren) :
-            m_ren(&ren),
-            m_clip_box(0, 0, ren.width() - 1, ren.height() - 1) {}
+        explicit renderer_base(Accessor & accessor) :
+            _accessor(accessor),
+            m_clip_box(0, 0, accessor.width() - 1, accessor.height() - 1) {}
 
         void attach(Accessor & ren)
         {
-            m_ren = &ren;
+            _accessor = &ren;
             m_clip_box = rect_i(0, 0, ren.width() - 1, ren.height() - 1);
         }
 
         //--------------------------------------------------------------------
-        const Accessor & ren() const { return *m_ren; }
-        Accessor & ren() { return *m_ren; }
+        const Accessor & ren() const { return _accessor; }
+        Accessor & ren() { return _accessor; }
 
         //--------------------------------------------------------------------
-        unsigned width() const { return m_ren->width(); }
-        unsigned height() const { return m_ren->height(); }
+        unsigned width() const { return _accessor.width(); }
+        unsigned height() const { return _accessor.height(); }
 
         //--------------------------------------------------------------------
         bool clip_box(int x1, int y1, int x2, int y2)
@@ -132,7 +154,7 @@ namespace agg
             {
                 for (y = 0; y < height(); y++)
                 {
-                    m_ren->copy_hline(0, y, width(), c);
+                    _accessor.copy_hline(0, y, width(), c);
                 }
             }
         }
@@ -143,7 +165,7 @@ namespace agg
         {
             if (inbox(x, y))
             {
-                m_ren->copy_pixel(x, y, c);
+                _accessor.copy_pixel(x, y, c);
             }
         }
 
@@ -152,14 +174,14 @@ namespace agg
         {
             if (inbox(x, y))
             {
-                m_ren->blend_pixel(x, y, c, cover);
+                _accessor.blend_pixel(x, y, c, cover);
             }
         }
 
         //--------------------------------------------------------------------
         color_type pixel(int x, int y) const
         {
-            return inbox(x, y) ? m_ren->pixel(x, y) : color_type::no_color();
+            return inbox(x, y) ? _accessor.pixel(x, y) : color_type::no_color();
         }
 
         //--------------------------------------------------------------------
@@ -179,7 +201,7 @@ namespace agg
             if (x1 < xmin()) x1 = xmin();
             if (x2 > xmax()) x2 = xmax();
 
-            m_ren->copy_hline(x1, y, x2 - x1 + 1, c);
+            _accessor.copy_hline(x1, y, x2 - x1 + 1, c);
         }
 
         //--------------------------------------------------------------------
@@ -199,7 +221,7 @@ namespace agg
             if (y1 < ymin()) y1 = ymin();
             if (y2 > ymax()) y2 = ymax();
 
-            m_ren->copy_vline(x, y1, y2 - y1 + 1, c);
+            _accessor.copy_vline(x, y1, y2 - y1 + 1, c);
         }
 
         //--------------------------------------------------------------------
@@ -220,7 +242,7 @@ namespace agg
             if (x1 < xmin()) x1 = xmin();
             if (x2 > xmax()) x2 = xmax();
 
-            m_ren->blend_hline(x1, y, x2 - x1 + 1, c, cover);
+            _accessor.blend_hline(x1, y, x2 - x1 + 1, c, cover);
         }
 
         //--------------------------------------------------------------------
@@ -241,7 +263,7 @@ namespace agg
             if (y1 < ymin()) y1 = ymin();
             if (y2 > ymax()) y2 = ymax();
 
-            m_ren->blend_vline(x, y1, y2 - y1 + 1, c, cover);
+            _accessor.blend_vline(x, y1, y2 - y1 + 1, c, cover);
         }
 
 
@@ -255,7 +277,7 @@ namespace agg
                 int y;
                 for (y = rc.y1; y <= rc.y2; y++)
                 {
-                    m_ren->copy_hline(rc.x1, y, unsigned(rc.x2 - rc.x1 + 1), c);
+                    _accessor.copy_hline(rc.x1, y, unsigned(rc.x2 - rc.x1 + 1), c);
                 }
             }
         }
@@ -271,7 +293,7 @@ namespace agg
                 int y;
                 for (y = rc.y1; y <= rc.y2; y++)
                 {
-                    m_ren->blend_hline(rc.x1,
+                    _accessor.blend_hline(rc.x1,
                         y,
                         unsigned(rc.x2 - rc.x1 + 1),
                         c,
@@ -300,7 +322,7 @@ namespace agg
                 len = xmax() - x + 1;
                 if (len <= 0) return;
             }
-            m_ren->blend_solid_hspan(x, y, len, c, covers);
+            _accessor.blend_solid_hspan(x, y, len, c, covers);
         }
 
         //--------------------------------------------------------------------
@@ -323,7 +345,7 @@ namespace agg
                 len = ymax() - y + 1;
                 if (len <= 0) return;
             }
-            m_ren->blend_solid_vspan(x, y, len, c, covers);
+            _accessor.blend_solid_vspan(x, y, len, c, covers);
         }
 
 
@@ -346,7 +368,7 @@ namespace agg
                 len = xmax() - x + 1;
                 if (len <= 0) return;
             }
-            m_ren->copy_color_hspan(x, y, len, colors);
+            _accessor.copy_color_hspan(x, y, len, colors);
         }
 
 
@@ -369,7 +391,7 @@ namespace agg
                 len = ymax() - y + 1;
                 if (len <= 0) return;
             }
-            m_ren->copy_color_vspan(x, y, len, colors);
+            _accessor.copy_color_vspan(x, y, len, colors);
         }
 
 
@@ -396,7 +418,7 @@ namespace agg
                 len = xmax() - x + 1;
                 if (len <= 0) return;
             }
-            m_ren->blend_color_hspan(x, y, len, colors, covers, cover);
+            _accessor.blend_color_hspan(x, y, len, colors, covers, cover);
         }
 
         //--------------------------------------------------------------------
@@ -422,7 +444,7 @@ namespace agg
                 len = ymax() - y + 1;
                 if (len <= 0) return;
             }
-            m_ren->blend_color_vspan(x, y, len, colors, covers, cover);
+            _accessor.blend_color_vspan(x, y, len, colors, covers, cover);
         }
 
         //--------------------------------------------------------------------
@@ -504,7 +526,7 @@ namespace agg
                 }
                 while (rc.y2 > 0)
                 {
-                    m_ren->copy_from(src,
+                    _accessor.copy_from(src,
                         rdst.x1, rdst.y1,
                         rsrc.x1, rsrc.y1,
                         rc.x2);
@@ -570,7 +592,7 @@ namespace agg
                             }
                             if (len > 0)
                             {
-                                m_ren->blend_from(src,
+                                _accessor.blend_from(src,
                                     x1dst, rdst.y1,
                                     x1src, rsrc.y1,
                                     len,
@@ -641,7 +663,7 @@ namespace agg
                             }
                             if (len > 0)
                             {
-                                m_ren->blend_from_color(src,
+                                _accessor.blend_from_color(src,
                                     color,
                                     x1dst, rdst.y1,
                                     x1src, rsrc.y1,
@@ -713,7 +735,7 @@ namespace agg
                             }
                             if (len > 0)
                             {
-                                m_ren->blend_from_lut(src,
+                                _accessor.blend_from_lut(src,
                                     color_lut,
                                     x1dst, rdst.y1,
                                     x1src, rsrc.y1,
@@ -730,7 +752,7 @@ namespace agg
         }
 
     private:
-        Accessor * m_ren;
+        Accessor & _accessor;
         rect_i m_clip_box;
     };
 }

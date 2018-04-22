@@ -109,7 +109,7 @@ namespace win32
             int32_t cx = GetDeviceCaps(*_hdc, VERTRES);
             int32_t cy = GetDeviceCaps(*_hdc, HORZRES);
             agg::pixel_accessor_bgra32 pixf(_rbuf);
-            agg::renderer_base<agg::pixel_accessor_bgra32> renderer(pixf);
+            agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
             renderer.clear(agg::tools::rgba(color));
         }
     }
@@ -143,9 +143,9 @@ namespace win32
 
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect)
     {
-        auto & data = image.image();
+        auto & data = image.data();
         agg::pixel_accessor_alpha_blend_rgba<agg::pixfmt_bgra32> acc32(_rbuf);
-        agg::renderer_base<agg::pixel_accessor_alpha_blend_rgba<agg::pixfmt_rgba<agg::rgba8, agg::order_bgra>>> render(acc32);
+        agg::renderer_base<agg::pixfmt_bgra32> render(acc32);
 
         agg::path_storage ps;
         ps.move_to(rect.x, rect.y);
@@ -171,9 +171,9 @@ namespace win32
 
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
     {
-        auto & data = image.image();
+        auto & data = image.data();
         agg::pixel_accessor_bgra32 pixf(_rbuf);
-        agg::renderer_base<agg::pixel_accessor_bgra32> renb(pixf);
+        agg::renderer_base<agg::pixfmt_bgra32> renb(pixf);
 
         agg::path_storage ps;
         ps.move_to(rect.x, rect.y);
@@ -204,7 +204,7 @@ namespace win32
     void Graphics::FillPath(graphics::raster::path & path, core::color32 color)
     {
         agg::pixel_accessor_bgra32 pixf(_rbuf);
-        agg::renderer_base<agg::pixel_accessor_bgra32> renderer(pixf);
+        agg::renderer_base<agg::pixfmt_bgra32> renderer(pixf);
 
         _raster.reset();
         _raster.add_path(path);
