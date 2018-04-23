@@ -1809,7 +1809,7 @@ namespace agg
 
     //=================================================pixel_accessor_alpha_blend_rgba
     template<typename PixelT>
-    class pixel_accessor_alpha_blend_rgba : public pixel_accessor<PixelT>
+    class pixel_accessor_alpha_blend_rgba : public pixel_blender<PixelT>
     {
     public:
         typedef PixelT pixel_type;

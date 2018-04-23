@@ -156,18 +156,25 @@ namespace win32
         _raster.reset();
         _raster.add_path(ps);
 
-        agg::rendering_buffer_8u img_buf;
-        img_buf.attach((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
+        agg::rendering_buffer_8u img_buffer((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
 
         agg::span_interpolator_linear<> interpolator(
             agg::trans_affine_translation(-rect.x, -rect.y) *
             agg::trans_affine_scaling(data.format.width / (double)rect.cx, data.format.height / (double)rect.cy));
 
-        agg::pixel_accessor_bgra32 img_pixf(img_buf);
+        agg::blender_rgb24<agg::pixfmt_bgr24> blender;
+        agg::pixel_accessor_bgr24 img_pixf(img_buffer, blender);
         //agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
-        agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+        agg::span_image_filter_rgb_bilinear_clip<agg::order_bgr, agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
         agg::span_allocator<agg::pixfmt_bgra32> sa;
         agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
+
+
+        //agg::blender_rgb24<agg::pixfmt_bgr24> blender;
+        //agg::pixel_accessor_bgr24 img_pixf(img_buffer, blender);
+        //agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_bgr24, agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+        //agg::span_allocator<agg::pixfmt_bgra32> sa;
+        //agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
     }
 
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
@@ -185,16 +192,16 @@ namespace win32
         _raster.reset();
         _raster.add_path(ps);
 
-        agg::rendering_buffer_8u img_buf;
-        img_buf.attach((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
-        agg::pixel_accessor_bgr24 img_pixf(img_buf);
+        agg::rendering_buffer_8u img_buffer((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
+        agg::blender_rgb24<agg::pixfmt_bgr24> blender;
+        agg::pixel_accessor_alpha_blend_rgb<agg::pixfmt_bgr24> img_accessor(img_buffer, blender);
 
         agg::span_interpolator_linear<> interpolator(
             agg::trans_affine_translation(-rect.x + region.x, -rect.y + region.y) *
             agg::trans_affine_scaling(region.width / (double)rect.cx, region.height / (double)rect.cy));
 
-        agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgr24, agg::span_interpolator_linear<>> sg(img_pixf, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
-        agg::span_allocator<agg::pixfmt_bgr24> sa;
+        agg::span_image_filter_rgb_bilinear_clip<agg::order_bgr, agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(img_accessor, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+        agg::span_allocator<agg::pixfmt_bgra32> sa;
         agg::render_scanlines_aa(_raster, _sl, renb, sa, sg);
     }
 

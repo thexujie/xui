@@ -587,14 +587,30 @@ namespace agg
 
 
     template<typename PixelT>
-    class span_generator
+    class span_colorer
     {
     public:
         typedef typename PixelT::color_type color_type;
 
-        virtual ~span_generator() = default;
+        virtual ~span_colorer() = default;
 
         virtual void prepare() = 0;
         virtual void generate(color_type * span, int x, int y, unsigned len) = 0;
+    };
+
+
+    template<typename PixelT>
+    class blender
+    {
+    public:
+        typedef typename PixelT::order_type order_type;
+        typedef typename PixelT::value_type value_type;
+        typedef typename PixelT::color_type color_type;
+        typedef typename PixelT::color_type::calc_type calc_type;
+
+        enum base_scale_e { base_shift = color_type::base_shift };
+
+        virtual ~blender() = default;
+        virtual void blend_pix(value_type * p, unsigned cr, unsigned cg, unsigned cb, unsigned alpha, unsigned cover = 0) = 0;
     };
 }

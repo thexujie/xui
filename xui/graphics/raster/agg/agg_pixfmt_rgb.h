@@ -180,8 +180,8 @@ namespace agg
 
 
     //==================================================pixel_accessor_alpha_blend_rgb
-    template<typename PixelT, typename Blender>
-    class pixel_accessor_alpha_blend_rgb : public pixel_accessor<PixelT>
+    template<typename PixelT>
+    class pixel_accessor_alpha_blend_rgb : public pixel_blender<PixelT>
     {
     public:
         typedef typename PixelT::color_type color_type;
@@ -189,6 +189,7 @@ namespace agg
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
+        typedef typename blender<PixelT> blender_type;
         enum base_scale_e
         {
             base_shift = color_type::base_shift,
@@ -241,10 +242,10 @@ namespace agg
 
     public:
         //--------------------------------------------------------------------
-        explicit pixel_accessor_alpha_blend_rgb(row_accessor & racc) :
-            m_rbuf(racc) {}
+        explicit pixel_accessor_alpha_blend_rgb(row_accessor & racc, blender_type & blender) :
+            m_rbuf(racc), m_blender(blender) {}
 
-        void attach(row_accessor & rb) { m_rbuf = &rb; }
+        //void attach(row_accessor & rb) { m_rbuf = rb; }
 
         //--------------------------------------------------------------------
         template<class PixFmt>
@@ -264,7 +265,7 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        Blender & blender() { return m_blender; }
+        blender_type & blender() { return m_blender; }
 
         //--------------------------------------------------------------------
         AGG_INLINE unsigned width() const { return m_rbuf.width(); }
@@ -436,8 +437,7 @@ namespace agg
         {
             if (c.a)
             {
-                value_type * p = (value_type*)
-                    m_rbuf.row_ptr(x, y, len) + x + x + x;
+                value_type * p = (value_type*)m_rbuf.row_ptr(x, y, len) + x + x + x;
 
                 do
                 {
@@ -804,26 +804,26 @@ namespace agg
 
     private:
         row_accessor & m_rbuf;
-        Blender m_blender;
+        blender_type & m_blender;
     };
 
     typedef pixfmt_rgb<rgba8, order_rgb> pixfmt_rgb24;
     typedef pixfmt_rgb<rgba8, order_bgr> pixfmt_bgr24;
 
-    typedef pixel_accessor_alpha_blend_rgb<pixfmt_rgb<rgba8, order_rgb>, rendering_buffer_8u> pixel_accessor_rgb24; //----pixel_accessor_rgb24
-    typedef pixel_accessor_alpha_blend_rgb<pixfmt_rgb<rgba8, order_bgr>, rendering_buffer_8u> pixel_accessor_bgr24; //----pixel_accessor_bgr24
+    typedef pixel_accessor_alpha_blend_rgb<pixfmt_rgb<rgba8, order_rgb>> pixel_accessor_rgb24; //----pixel_accessor_rgb24
+    typedef pixel_accessor_alpha_blend_rgb<pixfmt_rgb<rgba8, order_bgr>> pixel_accessor_bgr24; //----pixel_accessor_bgr24
 
-    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_rgb>, rendering_buffer_8u> pixel_accessor_rgb24_pre; //----pixel_accessor_rgb24_pre
-    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_bgr>, rendering_buffer_8u> pixel_accessor_bgr24_pre; //----pixel_accessor_bgr24_pre
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_rgb>> pixel_accessor_rgb24_pre; //----pixel_accessor_rgb24_pre
+    typedef pixel_accessor_alpha_blend_rgb<blender_rgb_pre<rgba8, order_bgr>> pixel_accessor_bgr24_pre; //----pixel_accessor_bgr24_pre
 
     //-----------------------------------------------------pixel_accessor_rgb24_gamma
     template<class Gamma>
     class pixel_accessor_rgb24_gamma :
-        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_rgb, Gamma>, rendering_buffer_8u>
+        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_rgb, Gamma>>
     {
     public:
         pixel_accessor_rgb24_gamma(rendering_buffer_8u & rb, const Gamma & g) :
-            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_rgb, Gamma>, rendering_buffer_8u>(rb)
+            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_rgb, Gamma>>(rb)
         {
             this->blender().gamma(g);
         }
@@ -832,11 +832,11 @@ namespace agg
     //-----------------------------------------------------pixel_accessor_bgr24_gamma
     template<class Gamma>
     class pixel_accessor_bgr24_gamma :
-        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_bgr, Gamma>, rendering_buffer_8u>
+        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_bgr, Gamma>>
     {
     public:
         pixel_accessor_bgr24_gamma(rendering_buffer_8u & rb, const Gamma & g) :
-            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_bgr, Gamma>, rendering_buffer_8u>(rb)
+            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba8, order_bgr, Gamma>>(rb)
         {
             this->blender().gamma(g);
         }
@@ -845,11 +845,11 @@ namespace agg
     //-----------------------------------------------------pixel_accessor_rgb48_gamma
     template<class Gamma>
     class pixel_accessor_rgb48_gamma :
-        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_rgb, Gamma>, rendering_buffer_8u>
+        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_rgb, Gamma>>
     {
     public:
         pixel_accessor_rgb48_gamma(rendering_buffer_8u & rb, const Gamma & g) :
-            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_rgb, Gamma>, rendering_buffer_8u>(rb)
+            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_rgb, Gamma>>(rb)
         {
             this->blender().gamma(g);
         }
@@ -858,13 +858,25 @@ namespace agg
     //-----------------------------------------------------pixel_accessor_bgr48_gamma
     template<class Gamma>
     class pixel_accessor_bgr48_gamma :
-        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_bgr, Gamma>, rendering_buffer_8u>
+        public pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_bgr, Gamma>>
     {
     public:
         pixel_accessor_bgr48_gamma(rendering_buffer_8u & rb, const Gamma & g) :
-            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_bgr, Gamma>, rendering_buffer_8u>(rb)
+            pixel_accessor_alpha_blend_rgb<blender_rgb_gamma<rgba16, order_bgr, Gamma>>(rb)
         {
             this->blender().gamma(g);
+        }
+    };
+
+    template<class PixelT>
+    struct blender_rgb24 : public blender<PixelT>
+    {
+        //--------------------------------------------------------------------
+        void blend_pix(value_type * p, unsigned cr, unsigned cg, unsigned cb, unsigned alpha, unsigned cover = 0)
+        {
+            p[order_type::R] += (value_type)(((cr - p[order_type::R]) * alpha) >> base_shift);
+            p[order_type::G] += (value_type)(((cg - p[order_type::G]) * alpha) >> base_shift);
+            p[order_type::B] += (value_type)(((cb - p[order_type::B]) * alpha) >> base_shift);
         }
     };
 }

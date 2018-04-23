@@ -42,14 +42,14 @@ namespace agg
     //==============================================span_image_filter_rgba_nn
     template<class Source, class Interpolator>
     class span_image_filter_rgba_nn :
-        public span_image_filter<Source, Interpolator>
+        public span_image_filter<Source, Source, Interpolator>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
         typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -93,14 +93,14 @@ namespace agg
     //=========================================span_image_filter_rgba_bilinear
     template<class Source, class Interpolator>
     class span_image_filter_rgba_bilinear :
-        public span_image_filter<Source, Interpolator>
+        public span_image_filter<Source, Source, Interpolator>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
         typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -194,13 +194,13 @@ namespace agg
 
     //====================================span_image_filter_rgba_bilinear_clip
     template<class PixelT, class Interpolator>
-    class span_image_filter_rgba_bilinear_clip : public span_image_filter<PixelT, Interpolator>
+    class span_image_filter_rgba_bilinear_clip : public span_image_filter<PixelT, PixelT, Interpolator>
     {
     public:
         typedef typename PixelT::color_type color_type;
         typedef typename PixelT::order_type order_type;
         typedef Interpolator interpolator_type;
-        typedef span_image_filter<PixelT, interpolator_type> base_type;
+        typedef span_image_filter<PixelT, PixelT, interpolator_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -434,14 +434,14 @@ namespace agg
     //==============================================span_image_filter_rgba_2x2
     template<class Source, class Interpolator>
     class span_image_filter_rgba_2x2 :
-        public span_image_filter<Source, Interpolator>
+        public span_image_filter<Source, Source, Interpolator>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
         typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -557,14 +557,14 @@ namespace agg
     //==================================================span_image_filter_rgba
     template<class Source, class Interpolator>
     class span_image_filter_rgba :
-        public span_image_filter<Source, Interpolator>
+        public span_image_filter<Source, Source, Interpolator>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
         typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 

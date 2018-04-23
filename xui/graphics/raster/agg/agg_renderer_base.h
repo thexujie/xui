@@ -47,6 +47,14 @@ namespace agg
         virtual const_row_info<int8u> row(int y) const = 0;
 
         virtual color_type pixel(int x, int y) const = 0;
+    };
+
+    template<typename PixelT>
+    class pixel_blender : public pixel_accessor<PixelT>
+    {
+    public:
+        typedef typename PixelT::color_type color_type;
+
         virtual void copy_pixel(int x, int y, const color_type & c) = 0;
         virtual void copy_hline(int x, int y, unsigned len, const color_type & c) = 0;
         virtual void copy_vline(int x, int y, unsigned len, const color_type & c) = 0;
@@ -62,7 +70,7 @@ namespace agg
     class renderer_base
     {
     public:
-        typedef pixel_accessor<PixelT> Accessor;
+        typedef pixel_blender<PixelT> Accessor;
         typedef typename PixelT::color_type color_type;
 
         //--------------------------------------------------------------------

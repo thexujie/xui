@@ -58,18 +58,21 @@ namespace agg
     };
 
     template<typename CoverT>
+    struct span
+    {
+        int x = 0;
+        int len = 0;
+        const CoverT * covers = nullptr;
+    };
+
+    template<typename CoverT>
     class scanline : public scanline_base
     {
     public:
         typedef typename CoverT cover_type;
+        typedef span<CoverT> span_type;
 
-        struct SpanT
-        {
-            int x = 0;
-            int len = 0;
-            const CoverT * covers = nullptr;
-        };
-        virtual SpanT span(int index) const = 0;
+        virtual span<CoverT> span(int index) const = 0;
     };
 
     //================================================render_scanline_aa_solid
@@ -184,7 +187,7 @@ namespace agg
 
     //======================================================render_scanline_aa
     template<class CoverT, class PixelT>
-    void render_scanline_aa(const scanline<CoverT> & sl, agg::renderer_base<PixelT> ren, span_allocator<PixelT> & alloc, span_generator<PixelT> & span_gen)
+    void render_scanline_aa(const scanline<CoverT> & sl, agg::renderer_base<PixelT> ren, span_allocator<PixelT> & alloc, span_colorer<PixelT> & span_gen)
     {
         int y = sl.y();
 
@@ -192,7 +195,7 @@ namespace agg
         int index = 0;
         while(index < num_spans)
         {
-            typename scanline<CoverT>::SpanT span = sl.span(index++);
+            span<CoverT> span = sl.span(index++);
 
             if (span.len < 0)
                 span.len = -span.len;
@@ -205,7 +208,7 @@ namespace agg
 
     //=====================================================render_scanlines_aa
     template<class CoverT, class PixelT>
-    void render_scanlines_aa(rasterizer & ras, scanline<CoverT> & sl, agg::renderer_base<PixelT> & ren, span_allocator<PixelT> & alloc, span_generator<PixelT> & span_gen)
+    void render_scanlines_aa(rasterizer & ras, scanline<CoverT> & sl, agg::renderer_base<PixelT> & ren, span_allocator<PixelT> & alloc, span_colorer<PixelT> & span_gen)
     {
         if (ras.rewind_scanlines())
         {

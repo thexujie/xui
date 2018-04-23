@@ -252,12 +252,12 @@ int main()
     
     graphics->Clear(colors::LightGray);
 
-    auto image = std::make_shared<graphics::Image>("lcw.tga");
+    //auto image = std::make_shared<graphics::Image>("lcw.tga");
     //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, core::math::align::leftTop);
     //graphics->DrawImage(*image, { 160, 10 }, core::math::align::leftTop);
     //graphics->DrawImage(*image, { 200, 20 }, core::math::align::leftTop);
     //graphics->DrawImage(*image, { 200, 20, 400, 100 });
-    graphics->DrawImage(*image, math::rc32_t{100, 100, 500, 100}, core::math::rc32_t{ 100, 0, 194, 215});
+    //graphics->DrawImage(*image, math::rc32_t{100, 100, 500, 100}, core::math::rc32_t{ 100, 0, 194, 215});
 
     //graphics->DrawImage(*(image.get()), { 0, 0, cx / 4, cy / 4 }, core::math::align::bottomCenterX);
     //graphics->DrawImage(*(image.get()), { cx / 4, 0, cx / 4, cy / 4 });
@@ -313,7 +313,7 @@ int main()
     graphics->FillRect({ 100, 160, 200, 50 }, 0x80ff0000);
     graphics->DrawRect({ 100, 220, 200, 50 }, colors::Red, 2.0f);
 
-    graphics->DrawImage(graphics::Image("png/png2.png"), { 100, 100 }, math::align::leftTop);
+    graphics->DrawImage(graphics::Image("dota2.jpg"), { 100, 100 }, math::align::leftTop);
 
     //testAgg(pixmap);
     pixmap->Save("out.bmp");

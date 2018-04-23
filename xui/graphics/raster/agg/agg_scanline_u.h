@@ -215,7 +215,7 @@ namespace agg
         //--------------------------------------------------------------------
         int y() const { return m_y; }
         int num_spans() const { return m_cur_span - &m_spans[0]; }
-        SpanT span(int index) const
+        span_type span(int index) const
         {
             return m_spans[index + 1];
         }
@@ -228,8 +228,8 @@ namespace agg
         int m_last_x;
         int m_y;
         pod_array<cover_type> m_covers;
-        pod_array<SpanT> m_spans;
-        SpanT * m_cur_span;
+        pod_array<span_type> m_spans;
+        span_type * m_cur_span;
     };
 
 

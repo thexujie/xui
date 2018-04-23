@@ -32,11 +32,11 @@
 namespace agg
 {
     //-------------------------------------------------------span_image_filter
-    template<class PixelT, class Interpolator>
-    class span_image_filter : public span_generator<PixelT>
+    template<class SrcPixelT, class DstPixelT, class Interpolator>
+    class span_image_filter : public span_colorer<DstPixelT>
     {
     public:
-        typedef pixel_accessor<PixelT> source_type;
+        typedef pixel_blender<SrcPixelT> source_type;
         typedef Interpolator interpolator_type;
 
         //--------------------------------------------------------------------
@@ -99,12 +99,12 @@ namespace agg
     //==============================================span_image_resample_affine
     template<class Source>
     class span_image_resample_affine :
-        public span_image_filter<Source, span_interpolator_linear<trans_affine>>
+        public span_image_filter<Source, Source, span_interpolator_linear<trans_affine>>
     {
     public:
         typedef Source source_type;
         typedef span_interpolator_linear<trans_affine> interpolator_type;
-        typedef span_image_filter<source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
 
         //--------------------------------------------------------------------
         span_image_resample_affine() :
@@ -182,12 +182,12 @@ namespace agg
     //=====================================================span_image_resample
     template<class Source, class Interpolator>
     class span_image_resample :
-        public span_image_filter<Source, Interpolator>
+        public span_image_filter<Source, Source, Interpolator>
     {
     public:
         typedef Source source_type;
         typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
 
         //--------------------------------------------------------------------
         span_image_resample() :
