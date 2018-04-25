@@ -94,7 +94,7 @@ namespace agg
     {
     public:
         typedef Source source_type;
-        typedef span_interpolator_linear<trans_affine> interpolator_type;
+        typedef span_interpolator_linear<> interpolator_type;
         typedef span_image_filter<source_type, source_type> base_type;
 
         //--------------------------------------------------------------------

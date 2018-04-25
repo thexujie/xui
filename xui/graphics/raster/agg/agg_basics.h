@@ -599,19 +599,25 @@ namespace agg
     };
 
 
-    template<typename PixelT>
+    //template<typename PixelT>
+    //class blender
+    //{
+    //public:
+    //    typedef typename PixelT::order_type order_type;
+    //    typedef typename PixelT::value_type value_type;
+    //    typedef typename PixelT::color_type color_type;
+    //    typedef typename PixelT::color_type::calc_type calc_type;
+
+    //    enum base_scale_e { base_shift = color_type::base_shift };
+
+    //    virtual ~blender() = default;
+    //    virtual void blend_pix(value_type * p, unsigned cr, unsigned cg, unsigned cb, unsigned alpha, unsigned cover = 0) = 0;
+    //};
+
+    template<typename SrcPixelT, typename DstPixelT>
     class blender
     {
-    public:
-        typedef typename PixelT::order_type order_type;
-        typedef typename PixelT::value_type value_type;
-        typedef typename PixelT::color_type color_type;
-        typedef typename PixelT::color_type::calc_type calc_type;
-
-        enum base_scale_e { base_shift = color_type::base_shift };
-
-        virtual ~blender() = default;
-        virtual void blend_pix(value_type * p, unsigned cr, unsigned cg, unsigned cb, unsigned alpha, unsigned cover = 0) = 0;
+        void blend_pix(const SrcPixelT & srcPixel, const SrcPixelT & dstPixel, unsigned cover = 0) {}
     };
 
     class span_interpolator

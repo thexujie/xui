@@ -242,8 +242,13 @@ namespace agg
         return t;
     }
 
-
     //===================================================================rgba8
+    struct rgb8
+    {
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+    };
     struct rgba8
     {
         static const int bytes = 4;

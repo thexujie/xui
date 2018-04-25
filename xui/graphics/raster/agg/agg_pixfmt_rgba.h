@@ -2949,4 +2949,17 @@ namespace agg
     typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_argb>> pixel_accessor_argb32_plain; //----pixel_accessor_argb32_plain
     typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_abgr>> pixel_accessor_abgr32_plain; //----pixel_accessor_abgr32_plain
     typedef pixel_accessor_alpha_blend_rgba<blender_rgba_plain<rgba8, order_bgra>> pixel_accessor_bgra32_plain; //----pixel_accessor_bgra32_plain
+
+
+    //template<class PixelT>
+    //struct blender_rgb24 : public blender<PixelT>
+    //{
+    //    //--------------------------------------------------------------------
+    //    void blend_pix(value_type * p, unsigned cr, unsigned cg, unsigned cb, unsigned alpha, unsigned cover = 0)
+    //    {
+    //        p[order_type::R] += (value_type)(((cr - p[order_type::R]) * alpha) >> base_shift);
+    //        p[order_type::G] += (value_type)(((cg - p[order_type::G]) * alpha) >> base_shift);
+    //        p[order_type::B] += (value_type)(((cb - p[order_type::B]) * alpha) >> base_shift);
+    //    }
+    //};
 }
