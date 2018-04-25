@@ -313,7 +313,7 @@ int main()
     graphics->FillRect({ 100, 160, 200, 50 }, 0x80ff0000);
     graphics->DrawRect({ 100, 220, 200, 50 }, colors::Red, 2.0f);
 
-    graphics->DrawImage(graphics::Image("dota2.jpg"), { 100, 100, 300, 300});
+    graphics->DrawImage(graphics::Image("dota2.jpg"), { 100, 100, 300, 200});
 
     //testAgg(pixmap);
     pixmap->Save("out.bmp");
