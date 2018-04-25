@@ -162,12 +162,20 @@ namespace win32
             agg::trans_affine_translation(-rect.x, -rect.y) *
             agg::trans_affine_scaling(data.format.width / (double)rect.cx, data.format.height / (double)rect.cy));
 
-        agg::pixfmt_bgr24 pixel_accessor(img_buffer);
-        agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_bgr24, agg::span_interpolator_linear<>> sg(pixel_accessor, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
-
-        agg::span_allocator<agg::rgba8> sa;
-        agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
-
+        if(data.format.format == graphics::image::format_r8g8b8)
+        {
+            agg::pixfmt_bgr24 pixel_accessor(img_buffer);
+            agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_bgr24, agg::span_interpolator_linear<>> sg(pixel_accessor, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+            agg::span_allocator<agg::rgba8> sa;
+            agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
+        }
+        else if (data.format.format == graphics::image::format_a8r8g8b8)
+        {
+            agg::pixfmt_bgra32 pixel_accessor(img_buffer);
+            agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(pixel_accessor, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+            agg::span_allocator<agg::rgba8> sa;
+            agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
+        }
     }
 
     void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region)
@@ -187,16 +195,25 @@ namespace win32
 
         agg::rendering_buffer img_buffer((agg::int8u *)data.data, data.format.width, data.format.height, data.pitch);
 
-
         agg::span_interpolator_linear<> interpolator(
-            agg::trans_affine_translation(-rect.x + region.x, -rect.y + region.y) *
-            agg::trans_affine_scaling(region.width / (double)rect.cx, region.height / (double)rect.cy));
+            agg::trans_affine_translation(-rect.x, -rect.y) *
+            agg::trans_affine_scaling(region.cx / (double)rect.cx, (double)region.cy / rect.cy)*
+            agg::trans_affine_translation(region.x, region.y));
 
-        agg::pixfmt_bgr24 pixel_accessor(img_buffer);
-        agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_bgr24, agg::span_interpolator_linear<>> sg(pixel_accessor, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
-
-        agg::span_allocator<agg::rgba8> sa;
-        agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
+        if (data.format.format == graphics::image::format_r8g8b8)
+        {
+            agg::pixfmt_bgr24 pixel_accessor(img_buffer);
+            agg::span_image_filter_rgb_bilinear_clip<agg::pixfmt_bgr24, agg::span_interpolator_linear<>> sg(pixel_accessor, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+            agg::span_allocator<agg::rgba8> sa;
+            agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
+        }
+        else if (data.format.format == graphics::image::format_a8r8g8b8)
+        {
+            agg::pixfmt_bgra32 pixel_accessor(img_buffer);
+            agg::span_image_filter_rgba_bilinear_clip<agg::pixfmt_bgra32, agg::span_interpolator_linear<>> sg(pixel_accessor, agg::rgba_pre(0, 0, 0, 0.5), interpolator);
+            agg::span_allocator<agg::rgba8> sa;
+            agg::render_scanlines_aa(_raster, _sl, render, sa, sg);
+        }
     }
 
     void Graphics::DrawString(graphics::IGraphicsString & str, core::math::pt32_t point)

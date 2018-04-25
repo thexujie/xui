@@ -245,8 +245,8 @@ int main()
     win32::Win32App app;
     //testImages();
 
-    int32_t cx = 1280;
-    int32_t cy = 720;
+    int32_t cx = 1920;
+    int32_t cy = 1080;
     std::shared_ptr<graphics::Pixmap> pixmap = std::make_shared<graphics::Pixmap>(graphics::si32_t{ cx, cy });
     auto graphics = std::make_shared<graphics::Graphics>(pixmap);
     
@@ -313,7 +313,12 @@ int main()
     graphics->FillRect({ 100, 160, 200, 50 }, 0x80ff0000);
     graphics->DrawRect({ 100, 220, 200, 50 }, colors::Red, 2.0f);
 
-    graphics->DrawImage(graphics::Image("dota2.jpg"), { 100, 100, 300, 200});
+    //graphics->DrawImage(graphics::Image("dota2.jpg"), { 100, 100, 300, 200 });
+    //graphics->DrawImage(graphics::Image("dota2.jpg"), { 410, 100, 300, 200 });
+    //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 0, 1920, 1080 });
+    //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 540, 960, 540 });
+    graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720}, { 500, 80, 960, 960 });
+    graphics->DrawRect({ 100, 100, 1280, 720 }, 0xffff0000, 2);
 
     //testAgg(pixmap);
     pixmap->Save("out.bmp");
