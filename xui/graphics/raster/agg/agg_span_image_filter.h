@@ -36,7 +36,7 @@ namespace agg
     class span_image_filter : public span_colorer<DstPixelT>
     {
     public:
-        typedef pixel_blender<SrcPixelT> source_type;
+        typedef pixel_accessor<SrcPixelT> source_type;
         typedef Interpolator interpolator_type;
 
         //--------------------------------------------------------------------

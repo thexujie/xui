@@ -186,15 +186,15 @@ namespace agg
 
 
     //=====================================span_image_filter_rgb_bilinear_clip
-    template<class SrcOrderT, class DstPixelT, class Interpolator>
-    class span_image_filter_rgb_bilinear_clip : public span_image_filter<pixfmt_rgb<rgba8, SrcOrderT>, DstPixelT, Interpolator>
+    template<class SrcPixelT, class DstPixelT, class Interpolator>
+    class span_image_filter_rgb_bilinear_clip : public span_image_filter<SrcPixelT, DstPixelT, Interpolator>
     {
     public:
-        typedef typename SrcOrderT order_type;
+        typedef typename SrcPixelT::order_type order_type;
         typedef typename DstPixelT::color_type color_type;
 
         typedef Interpolator interpolator_type;
-        typedef span_image_filter<pixfmt_rgb<rgba8, SrcOrderT>, DstPixelT, interpolator_type> base_type;
+        typedef span_image_filter<SrcPixelT, DstPixelT, interpolator_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
