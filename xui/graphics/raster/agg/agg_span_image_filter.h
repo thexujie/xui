@@ -32,41 +32,32 @@
 namespace agg
 {
     //-------------------------------------------------------span_image_filter
-    template<class SrcPixelT, class DstPixelT, class Interpolator>
+    template<class SrcPixelT, class DstPixelT>
     class span_image_filter : public span_colorer<DstPixelT>
     {
     public:
         typedef pixel_accessor<SrcPixelT> source_type;
-        typedef Interpolator interpolator_type;
 
         //--------------------------------------------------------------------
-        span_image_filter() {}
-
         span_image_filter(source_type & src,
-            interpolator_type & interpolator,
+            span_interpolator & interpolator,
             const image_filter_lut * filter) :
-            m_src(&src),
-            m_interpolator(&interpolator),
+            m_src(src),
+            m_interpolator(interpolator),
             m_filter(filter),
             m_dx_dbl(0.5),
             m_dy_dbl(0.5),
             m_dx_int(image_subpixel_scale / 2),
             m_dy_int(image_subpixel_scale / 2) {}
 
-        void attach(source_type & v) { m_src = &v; }
-
         //--------------------------------------------------------------------
-        source_type & source() { return *m_src; }
-        const source_type & source() const { return *m_src; }
+        source_type & source() { return m_src; }
+        const source_type & source() const { return m_src; }
         const image_filter_lut & filter() const { return *m_filter; }
         int filter_dx_int() const { return m_dx_int; }
         int filter_dy_int() const { return m_dy_int; }
         double filter_dx_dbl() const { return m_dx_dbl; }
         double filter_dy_dbl() const { return m_dy_dbl; }
-
-        //--------------------------------------------------------------------
-        void interpolator(interpolator_type & v) { m_interpolator = &v; }
-        void filter(const image_filter_lut & v) { m_filter = &v; }
 
         void filter_offset(double dx, double dy)
         {
@@ -79,15 +70,15 @@ namespace agg
         void filter_offset(double d) { filter_offset(d, d); }
 
         //--------------------------------------------------------------------
-        interpolator_type & interpolator() { return *m_interpolator; }
+        span_interpolator & interpolator() { return m_interpolator; }
 
         //--------------------------------------------------------------------
         void prepare() {}
 
         //--------------------------------------------------------------------
-    private:
-        source_type * m_src;
-        interpolator_type * m_interpolator;
+    protected:
+        source_type & m_src;
+        span_interpolator & m_interpolator;
         const image_filter_lut * m_filter;
         double m_dx_dbl;
         double m_dy_dbl;
@@ -99,12 +90,12 @@ namespace agg
     //==============================================span_image_resample_affine
     template<class Source>
     class span_image_resample_affine :
-        public span_image_filter<Source, Source, span_interpolator_linear<trans_affine>>
+        public span_image_filter<Source, Source>
     {
     public:
         typedef Source source_type;
         typedef span_interpolator_linear<trans_affine> interpolator_type;
-        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type> base_type;
 
         //--------------------------------------------------------------------
         span_image_resample_affine() :
@@ -139,7 +130,7 @@ namespace agg
             double scale_x;
             double scale_y;
 
-            base_type::interpolator().transformer().scaling_abs(&scale_x, &scale_y);
+            base_type::span_interpolator().transformer().scaling_abs(&scale_x, &scale_y);
 
             if (scale_x * scale_y > m_scale_limit)
             {
@@ -180,14 +171,13 @@ namespace agg
 
 
     //=====================================================span_image_resample
-    template<class Source, class Interpolator>
+    template<class Source>
     class span_image_resample :
-        public span_image_filter<Source, Source, Interpolator>
+        public span_image_filter<Source, Source>
     {
     public:
         typedef Source source_type;
-        typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type> base_type;
 
         //--------------------------------------------------------------------
         span_image_resample() :
@@ -197,7 +187,7 @@ namespace agg
 
         //--------------------------------------------------------------------
         span_image_resample(source_type & src,
-            interpolator_type & inter,
+            span_interpolator & inter,
             const image_filter_lut & filter) :
             base_type(src, inter, &filter),
             m_scale_limit(20),

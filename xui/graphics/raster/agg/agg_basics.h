@@ -613,4 +613,13 @@ namespace agg
         virtual ~blender() = default;
         virtual void blend_pix(value_type * p, unsigned cr, unsigned cg, unsigned cb, unsigned alpha, unsigned cover = 0) = 0;
     };
+
+    class span_interpolator
+    {
+    public:
+        virtual ~span_interpolator() = default;
+        virtual void begin(double x, double y, unsigned len) = 0;
+        virtual void increase() = 0;
+        virtual void coordinates(int * x, int * y) const = 0;
+    };
 }

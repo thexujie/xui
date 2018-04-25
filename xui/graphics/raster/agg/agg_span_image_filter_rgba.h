@@ -40,16 +40,15 @@
 namespace agg
 {
     //==============================================span_image_filter_rgba_nn
-    template<class Source, class Interpolator>
+    template<class Source>
     class span_image_filter_rgba_nn :
-        public span_image_filter<Source, Source, Interpolator>
+        public span_image_filter<Source, Source>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
-        typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -63,17 +62,17 @@ namespace agg
         span_image_filter_rgba_nn() {}
 
         span_image_filter_rgba_nn(source_type & src,
-            interpolator_type & inter) :
+            span_interpolator & inter) :
             base_type(src, inter, 0) {}
 
         //--------------------------------------------------------------------
         void generate(color_type * span, int x, int y, unsigned len)
         {
-            base_type::interpolator().begin(x + base_type::filter_dx_dbl(),
+            base_type::span_interpolator().begin(x + base_type::filter_dx_dbl(),
                 y + base_type::filter_dy_dbl(), len);
             do
             {
-                base_type::interpolator().coordinates(&x, &y);
+                base_type::span_interpolator().coordinates(&x, &y);
                 const value_type * fg_ptr = (const value_type*)
                     base_type::source().span(x >> image_subpixel_shift,
                         y >> image_subpixel_shift,
@@ -83,7 +82,7 @@ namespace agg
                 span->b = fg_ptr[order_type::B];
                 span->a = fg_ptr[order_type::A];
                 ++span;
-                ++base_type::interpolator();
+                ++base_type::span_interpolator();
             }
             while (--len);
         }
@@ -91,16 +90,15 @@ namespace agg
 
 
     //=========================================span_image_filter_rgba_bilinear
-    template<class Source, class Interpolator>
+    template<class Source>
     class span_image_filter_rgba_bilinear :
-        public span_image_filter<Source, Source, Interpolator>
+        public span_image_filter<Source, Source>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
-        typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -114,14 +112,14 @@ namespace agg
         span_image_filter_rgba_bilinear() {}
 
         span_image_filter_rgba_bilinear(source_type & src,
-            interpolator_type & inter) :
+            span_interpolator & inter) :
             base_type(src, inter, 0) {}
 
 
         //--------------------------------------------------------------------
         void generate(color_type * span, int x, int y, unsigned len)
         {
-            base_type::interpolator().begin(x + base_type::filter_dx_dbl(),
+            base_type::span_interpolator().begin(x + base_type::filter_dx_dbl(),
                 y + base_type::filter_dy_dbl(), len);
 
             calc_type fg[4];
@@ -132,7 +130,7 @@ namespace agg
                 int x_hr;
                 int y_hr;
 
-                base_type::interpolator().coordinates(&x_hr, &y_hr);
+                base_type::span_interpolator().coordinates(&x_hr, &y_hr);
 
                 x_hr -= base_type::filter_dx_int();
                 y_hr -= base_type::filter_dy_int();
@@ -185,7 +183,7 @@ namespace agg
                 span->a = value_type(fg[order_type::A] >> (image_subpixel_shift * 2));
 
                 ++span;
-                ++base_type::interpolator();
+                ++base_type::span_interpolator();
             }
             while (--len);
         }
@@ -193,14 +191,13 @@ namespace agg
 
 
     //====================================span_image_filter_rgba_bilinear_clip
-    template<class PixelT, class Interpolator>
-    class span_image_filter_rgba_bilinear_clip : public span_image_filter<PixelT, PixelT, Interpolator>
+    template<class PixelT>
+    class span_image_filter_rgba_bilinear_clip : public span_image_filter<PixelT, PixelT>
     {
     public:
         typedef typename PixelT::color_type color_type;
         typedef typename PixelT::order_type order_type;
-        typedef Interpolator interpolator_type;
-        typedef span_image_filter<PixelT, PixelT, interpolator_type> base_type;
+        typedef span_image_filter<PixelT, PixelT> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -215,7 +212,7 @@ namespace agg
 
         span_image_filter_rgba_bilinear_clip(source_type & src,
             const color_type & back_color,
-            interpolator_type & inter) :
+            span_interpolator & inter) :
             base_type(src, inter, 0),
             m_back_color(back_color) {}
 
@@ -226,7 +223,7 @@ namespace agg
         //--------------------------------------------------------------------
         void generate(color_type * span, int x, int y, unsigned len)
         {
-            base_type::interpolator().begin(x + base_type::filter_dx_dbl(), y + base_type::filter_dy_dbl(), len);
+            base_type::span_interpolator().begin(x + base_type::filter_dx_dbl(), y + base_type::filter_dy_dbl(), len);
 
             calc_type fg[4];
             value_type back_r = m_back_color.r;
@@ -243,7 +240,7 @@ namespace agg
                 int x_hr;
                 int y_hr;
 
-                base_type::interpolator().coordinates(&x_hr, &y_hr);
+                base_type::span_interpolator().coordinates(&x_hr, &y_hr);
 
                 x_hr -= base_type::filter_dx_int();
                 y_hr -= base_type::filter_dy_int();
@@ -421,7 +418,7 @@ namespace agg
                 span->b = (value_type)fg[order_type::B];
                 span->a = (value_type)fg[order_type::A];
                 ++span;
-                ++base_type::interpolator();
+                ++base_type::span_interpolator();
             }
             while (--len);
         }
@@ -432,16 +429,15 @@ namespace agg
 
 
     //==============================================span_image_filter_rgba_2x2
-    template<class Source, class Interpolator>
+    template<class Source>
     class span_image_filter_rgba_2x2 :
-        public span_image_filter<Source, Source, Interpolator>
+        public span_image_filter<Source, Source>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
-        typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -455,7 +451,7 @@ namespace agg
         span_image_filter_rgba_2x2() {}
 
         span_image_filter_rgba_2x2(source_type & src,
-            interpolator_type & inter,
+            span_interpolator & inter,
             const image_filter_lut & filter) :
             base_type(src, inter, &filter) {}
 
@@ -463,7 +459,7 @@ namespace agg
         //--------------------------------------------------------------------
         void generate(color_type * span, int x, int y, unsigned len)
         {
-            base_type::interpolator().begin(x + base_type::filter_dx_dbl(),
+            base_type::span_interpolator().begin(x + base_type::filter_dx_dbl(),
                 y + base_type::filter_dy_dbl(), len);
 
             calc_type fg[4];
@@ -478,7 +474,7 @@ namespace agg
                 int x_hr;
                 int y_hr;
 
-                base_type::interpolator().coordinates(&x_hr, &y_hr);
+                base_type::span_interpolator().coordinates(&x_hr, &y_hr);
 
                 x_hr -= base_type::filter_dx_int();
                 y_hr -= base_type::filter_dy_int();
@@ -547,7 +543,7 @@ namespace agg
                 span->b = (value_type)fg[order_type::B];
                 span->a = (value_type)fg[order_type::A];
                 ++span;
-                ++base_type::interpolator();
+                ++base_type::span_interpolator();
             }
             while (--len);
         }
@@ -555,16 +551,15 @@ namespace agg
 
 
     //==================================================span_image_filter_rgba
-    template<class Source, class Interpolator>
+    template<class Source>
     class span_image_filter_rgba :
-        public span_image_filter<Source, Source, Interpolator>
+        public span_image_filter<Source, Source>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
-        typedef Interpolator interpolator_type;
-        typedef span_image_filter<source_type, source_type, interpolator_type> base_type;
+        typedef span_image_filter<source_type, source_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::calc_type calc_type;
 
@@ -578,14 +573,14 @@ namespace agg
         span_image_filter_rgba() {}
 
         span_image_filter_rgba(source_type & src,
-            interpolator_type & inter,
+            span_interpolator & inter,
             const image_filter_lut & filter) :
             base_type(src, inter, &filter) {}
 
         //--------------------------------------------------------------------
         void generate(color_type * span, int x, int y, unsigned len)
         {
-            base_type::interpolator().begin(x + base_type::filter_dx_dbl(),
+            base_type::span_interpolator().begin(x + base_type::filter_dx_dbl(),
                 y + base_type::filter_dy_dbl(), len);
 
             int fg[4];
@@ -600,7 +595,7 @@ namespace agg
 
             do
             {
-                base_type::interpolator().coordinates(&x, &y);
+                base_type::span_interpolator().coordinates(&x, &y);
 
                 x -= base_type::filter_dx_int();
                 y -= base_type::filter_dy_int();
@@ -666,7 +661,7 @@ namespace agg
                 span->b = (value_type)fg[order_type::B];
                 span->a = (value_type)fg[order_type::A];
                 ++span;
-                ++base_type::interpolator();
+                ++base_type::span_interpolator();
             }
             while (--len);
         }
@@ -706,7 +701,7 @@ namespace agg
         //--------------------------------------------------------------------
         void generate(color_type * span, int x, int y, unsigned len)
         {
-            base_type::interpolator().begin(x + base_type::filter_dx_dbl(),
+            base_type::span_interpolator().begin(x + base_type::filter_dx_dbl(),
                 y + base_type::filter_dy_dbl(), len);
 
             long_type fg[4];
@@ -723,7 +718,7 @@ namespace agg
 
             do
             {
-                base_type::interpolator().coordinates(&x, &y);
+                base_type::span_interpolator().coordinates(&x, &y);
 
                 x += base_type::filter_dx_int() - radius_x;
                 y += base_type::filter_dy_int() - radius_y;
@@ -788,7 +783,7 @@ namespace agg
                 span->a = (value_type)fg[order_type::A];
 
                 ++span;
-                ++base_type::interpolator();
+                ++base_type::span_interpolator();
             }
             while (--len);
         }
@@ -796,16 +791,15 @@ namespace agg
 
 
     //==============================================span_image_resample_rgba
-    template<class Source, class Interpolator>
+    template<class Source>
     class span_image_resample_rgba :
-        public span_image_resample<Source, Interpolator>
+        public span_image_resample<Source>
     {
     public:
         typedef Source source_type;
         typedef typename source_type::color_type color_type;
         typedef typename source_type::order_type order_type;
-        typedef Interpolator interpolator_type;
-        typedef span_image_resample<source_type, interpolator_type> base_type;
+        typedef span_image_resample<source_type> base_type;
         typedef typename color_type::value_type value_type;
         typedef typename color_type::long_type long_type;
 
@@ -820,14 +814,14 @@ namespace agg
         span_image_resample_rgba() {}
 
         span_image_resample_rgba(source_type & src,
-            interpolator_type & inter,
+            span_interpolator & inter,
             const image_filter_lut & filter) :
             base_type(src, inter, filter) {}
 
         //--------------------------------------------------------------------
         void generate(color_type * span, int x, int y, unsigned len)
         {
-            base_type::interpolator().begin(x + base_type::filter_dx_dbl(),
+            base_type::span_interpolator().begin(x + base_type::filter_dx_dbl(),
                 y + base_type::filter_dy_dbl(), len);
             long_type fg[4];
 
@@ -841,8 +835,8 @@ namespace agg
                 int ry;
                 int rx_inv = image_subpixel_scale;
                 int ry_inv = image_subpixel_scale;
-                base_type::interpolator().coordinates(&x, &y);
-                base_type::interpolator().local_scale(&rx, &ry);
+                base_type::span_interpolator().coordinates(&x, &y);
+                base_type::span_interpolator().local_scale(&rx, &ry);
                 base_type::adjust_scale(&rx, &ry);
 
                 rx_inv = image_subpixel_scale * image_subpixel_scale / rx;
@@ -916,7 +910,7 @@ namespace agg
                 span->a = (value_type)fg[order_type::A];
 
                 ++span;
-                ++base_type::interpolator();
+                ++base_type::span_interpolator();
             }
             while (--len);
         }

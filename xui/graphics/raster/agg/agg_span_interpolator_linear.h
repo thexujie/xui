@@ -33,7 +33,7 @@ namespace agg
 {
     //================================================span_interpolator_linear
     template<class Transformer = trans_affine, unsigned SubpixelShift = 8>
-    class span_interpolator_linear
+    class span_interpolator_linear : public span_interpolator
     {
     public:
         typedef Transformer trans_type;
@@ -90,6 +90,12 @@ namespace agg
         }
 
         //----------------------------------------------------------------
+        void increase()
+        {
+            ++m_li_x;
+            ++m_li_y;
+        }
+
         void operator++()
         {
             ++m_li_x;
