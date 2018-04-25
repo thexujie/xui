@@ -617,7 +617,10 @@ namespace agg
     template<typename SrcPixelT, typename DstPixelT>
     class blender
     {
-        void blend_pix(const SrcPixelT & srcPixel, const SrcPixelT & dstPixel, unsigned cover = 0) {}
+    public:
+        typedef typename SrcPixelT::color_type src_color_type;
+        typedef typename DstPixelT::color_type dst_color_type;
+        void blend(const src_color_type & src, dst_color_type & dst, unsigned cover = 0) {}
     };
 
     class span_interpolator

@@ -37,7 +37,6 @@
 #pragma once
 
 #include "agg_array.h"
-#include "agg_pixfmt_transposer.h"
 
 namespace agg
 {
