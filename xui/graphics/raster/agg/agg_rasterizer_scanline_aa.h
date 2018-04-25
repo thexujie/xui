@@ -42,7 +42,6 @@
 #include "agg_rasterizer_cells_aa.h"
 #include "agg_rasterizer_sl_clip.h"
 #include "agg_gamma_functions.h"
-#include "agg_renderer_scanline.h"
 
 
 namespace agg
@@ -109,7 +108,7 @@ namespace agg
     // filling_rule() and gamma() can be called anytime before "sweeping".
     //------------------------------------------------------------------------
     template <class Clip=rasterizer_sl_clip_int>
-    class rasterizer_scanline_aa : public rasterizer
+    class rasterizer_scanline_aa
     {
         enum status
         {
@@ -242,7 +241,8 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        bool sweep_scanline(scanline_base & sl)
+        template <class Scanline>
+        bool sweep_scanline(Scanline & sl)
         {
             for (;;)
             {

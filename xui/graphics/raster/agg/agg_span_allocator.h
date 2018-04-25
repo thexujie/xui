@@ -30,11 +30,11 @@
 namespace agg
 {
     //----------------------------------------------------------span_allocator
-    template<class Pixel>
+    template<class ColorT>
     class span_allocator
     {
     public:
-        typedef typename Pixel::color_type color_type;
+        typedef ColorT color_type;
 
         //--------------------------------------------------------------------
         AGG_INLINE color_type * allocate(unsigned span_len)

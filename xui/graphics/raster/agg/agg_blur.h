@@ -37,6 +37,7 @@
 #pragma once
 
 #include "agg_array.h"
+#include "agg_pixfmt_transposer.h"
 
 namespace agg
 {
@@ -194,7 +195,7 @@ namespace agg
         template<class Img>
         void blur_y(Img & img, unsigned radius)
         {
-            pixel_accessor_transposer<Img> img2(img);
+            pixfmt_transposer<Img> img2(img);
             blur_x(img2, radius);
         }
 
@@ -203,7 +204,7 @@ namespace agg
         void blur(Img & img, unsigned radius)
         {
             blur_x(img, radius);
-            pixel_accessor_transposer<Img> img2(img);
+            pixfmt_transposer<Img> img2(img);
             blur_x(img2, radius);
         }
 
@@ -1171,7 +1172,7 @@ namespace agg
         template<class Img>
         void blur_y(Img & img, double radius)
         {
-            pixel_accessor_transposer<Img> img2(img);
+            pixfmt_transposer<Img> img2(img);
             blur_x(img2, radius);
         }
 
@@ -1180,7 +1181,7 @@ namespace agg
         void blur(Img & img, double radius)
         {
             blur_x(img, radius);
-            pixel_accessor_transposer<Img> img2(img);
+            pixfmt_transposer<Img> img2(img);
             blur_x(img2, radius);
         }
 

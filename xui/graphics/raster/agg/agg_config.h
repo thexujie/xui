@@ -38,4 +38,4 @@
 //
 // You can still use both of them simultaneouslyin your applications 
 // This #define is used only for default rendering_buffer type,
-// in short hand typedefs like pixel_accessor_rgba32.
+// in short hand typedefs like pixfmt_rgba32.

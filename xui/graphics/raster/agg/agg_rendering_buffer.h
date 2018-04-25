@@ -29,31 +29,15 @@
 
 namespace agg
 {
+    //===========================================================row_accessor
+    template<class T>
     class row_accessor
     {
     public:
-        virtual ~row_accessor() = default;
-        virtual const int8u * row_ptr(int y) const = 0;
-        virtual int8u * row_ptr(int y) = 0;
-        virtual int8u * row_ptr(int, int y, unsigned) = 0;
-        virtual void attach(int8u * buf, unsigned width, unsigned height, int stride) = 0;
-        virtual const_row_info<int8u> row(int y) const = 0;
+        typedef const_row_info<T> row_data;
 
-        //AGG_INLINE T * buf() { return m_buf; }
-        //AGG_INLINE const T * buf() const { return m_buf; }
-        virtual unsigned width() const = 0;
-        virtual unsigned height() const = 0;
-        virtual int stride() const = 0;
-        virtual unsigned stride_abs() const = 0;
-    };
-
-    //===========================================================row_accessor
-    template<class T>
-    class render_buffer : public row_accessor
-    {
-    public:
         //-------------------------------------------------------------------
-        render_buffer() :
+        row_accessor() :
             m_buf(0),
             m_start(0),
             m_width(0),
@@ -61,7 +45,7 @@ namespace agg
             m_stride(0) { }
 
         //--------------------------------------------------------------------
-        render_buffer(int8u * buf, unsigned width, unsigned height, int stride) :
+        row_accessor(T * buf, unsigned width, unsigned height, int stride) :
             m_buf(0),
             m_start(0),
             m_width(0),
@@ -73,9 +57,9 @@ namespace agg
 
 
         //--------------------------------------------------------------------
-        void attach(int8u * buf, unsigned width, unsigned height, int stride)
+        void attach(T * buf, unsigned width, unsigned height, int stride)
         {
-            m_buf = m_start = reinterpret_cast<T *>(buf);
+            m_buf = m_start = buf;
             m_width = width;
             m_height = height;
             m_stride = stride;
@@ -97,11 +81,17 @@ namespace agg
         }
 
         //--------------------------------------------------------------------
-        AGG_INLINE const T * row_ptr(int y) const { return m_start + y * m_stride; }
-        AGG_INLINE int8u * row_ptr(int y) { return (int8u *)(m_start + y * m_stride); }
-        AGG_INLINE int8u * row_ptr(int, int y, unsigned) { return (int8u *)(m_start + y * m_stride); }
+        AGG_INLINE T * row_ptr(int, int y, unsigned)
+        {
+            return m_start + y * m_stride;
+        }
 
-        AGG_INLINE const_row_info<T> row(int y) const { return const_row_info<T>(0, m_width - 1, row_ptr(y)); }
+        AGG_INLINE T * row_ptr(int y) { return m_start + y * m_stride; }
+        AGG_INLINE const T * row_ptr(int y) const { return m_start + y * m_stride; }
+        AGG_INLINE row_data row(int y) const
+        {
+            return row_data(0, m_width - 1, row_ptr(y));
+        }
 
         //--------------------------------------------------------------------
         template<class RenBuf>
@@ -293,7 +283,7 @@ namespace agg
     // when creating. For example, on typical Intel Pentium hardware 
     // row_ptr_cache speeds span_image_filter_rgb_nn up to 10%
     //
-    // It's used only in short hand typedefs like pixel_accessor_rgba32 and can be 
+    // It's used only in short hand typedefs like pixfmt_rgba32 and can be 
     // redefined in agg_config.h
     // In real applications you can use both, depending on your needs
     //------------------------------------------------------------------------
@@ -301,6 +291,6 @@ namespace agg
     typedef AGG_RENDERING_BUFFER rendering_buffer;
 #else
     //  typedef row_ptr_cache<int8u> rendering_buffer;
-    typedef render_buffer<int8u> rendering_buffer_8u;
+    typedef row_accessor<int8u> rendering_buffer;
 #endif
 }

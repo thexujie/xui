@@ -64,9 +64,9 @@ namespace agg
         };
 
         alpha_mask_u8() : m_rbuf(0) {}
-        explicit alpha_mask_u8(rendering_buffer_8u & rbuf) : m_rbuf(&rbuf) {}
+        explicit alpha_mask_u8(rendering_buffer & rbuf) : m_rbuf(&rbuf) {}
 
-        void attach(rendering_buffer_8u & rbuf) { m_rbuf = &rbuf; }
+        void attach(rendering_buffer & rbuf) { m_rbuf = &rbuf; }
 
         MaskF & mask_function() { return m_mask_function; }
         const MaskF & mask_function() const { return m_mask_function; }
@@ -309,7 +309,7 @@ namespace agg
         alpha_mask_u8(const self_type &);
         const self_type & operator =(const self_type &);
 
-        rendering_buffer_8u * m_rbuf;
+        rendering_buffer * m_rbuf;
         MaskF m_mask_function;
     };
 
@@ -368,9 +368,9 @@ namespace agg
         };
 
         amask_no_clip_u8() : m_rbuf(0) {}
-        explicit amask_no_clip_u8(rendering_buffer_8u & rbuf) : m_rbuf(&rbuf) {}
+        explicit amask_no_clip_u8(rendering_buffer & rbuf) : m_rbuf(&rbuf) {}
 
-        void attach(rendering_buffer_8u & rbuf) { m_rbuf = &rbuf; }
+        void attach(rendering_buffer & rbuf) { m_rbuf = &rbuf; }
 
         MaskF & mask_function() { return m_mask_function; }
         const MaskF & mask_function() const { return m_mask_function; }
@@ -455,7 +455,7 @@ namespace agg
         amask_no_clip_u8(const self_type &);
         const self_type & operator =(const self_type &);
 
-        rendering_buffer_8u * m_rbuf;
+        rendering_buffer * m_rbuf;
         MaskF m_mask_function;
     };
 

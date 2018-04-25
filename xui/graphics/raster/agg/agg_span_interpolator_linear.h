@@ -32,10 +32,12 @@
 namespace agg
 {
     //================================================span_interpolator_linear
-    template<unsigned SubpixelShift = 8>
+    template<class Transformer = trans_affine, unsigned SubpixelShift = 8>
     class span_interpolator_linear
     {
     public:
+        typedef Transformer trans_type;
+
         enum subpixel_scale_e
         {
             subpixel_shift = SubpixelShift,
@@ -44,18 +46,18 @@ namespace agg
 
         //--------------------------------------------------------------------
         span_interpolator_linear() {}
-        span_interpolator_linear(const trans_affine & trans) : m_trans(trans) {}
+        span_interpolator_linear(const trans_type & trans) : m_trans(&trans) {}
 
-        span_interpolator_linear(const trans_affine & trans,
+        span_interpolator_linear(const trans_type & trans,
             double x, double y, unsigned len) :
-            m_trans(trans)
+            m_trans(&trans)
         {
             begin(x, y, len);
         }
 
         //----------------------------------------------------------------
-        const trans_affine & transformer() const { return m_trans; }
-        void transformer(const trans_affine & trans) { m_trans = trans; }
+        const trans_type & transformer() const { return *m_trans; }
+        void transformer(const trans_type & trans) { m_trans = &trans; }
 
         //----------------------------------------------------------------
         void begin(double x, double y, unsigned len)
@@ -65,13 +67,13 @@ namespace agg
 
             tx = x;
             ty = y;
-            m_trans.transform(&tx, &ty);
+            m_trans->transform(&tx, &ty);
             int x1 = iround(tx * subpixel_scale);
             int y1 = iround(ty * subpixel_scale);
 
             tx = x + len;
             ty = y;
-            m_trans.transform(&tx, &ty);
+            m_trans->transform(&tx, &ty);
             int x2 = iround(tx * subpixel_scale);
             int y2 = iround(ty * subpixel_scale);
 
@@ -102,7 +104,7 @@ namespace agg
         }
 
     private:
-        trans_affine m_trans;
+        const trans_type * m_trans;
         dda2_line_interpolator m_li_x;
         dda2_line_interpolator m_li_y;
     };

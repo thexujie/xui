@@ -15,7 +15,7 @@
 
 using namespace core;
 
-agg::rendering_buffer_8u rbuf;
+agg::rendering_buffer rbuf;
 agg::rasterizer_scanline_aa<> raster;
 agg::scanline_u8 sl;
 

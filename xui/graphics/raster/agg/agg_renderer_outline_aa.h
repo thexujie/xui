@@ -645,22 +645,22 @@ namespace agg
             cover_type * p0 = base_type::m_covers + base_type::max_half_width + 2;
             cover_type * p1 = p0;
 
-            *p1++ = (cover_type)base_type::_accessor.cover(s1);
+            *p1++ = (cover_type)base_type::m_ren.cover(s1);
 
             dy = 1;
             while ((dist = base_type::m_dist[dy] - s1) <= base_type::m_width)
             {
-                *p1++ = (cover_type)base_type::_accessor.cover(dist);
+                *p1++ = (cover_type)base_type::m_ren.cover(dist);
                 ++dy;
             }
 
             dy = 1;
             while ((dist = base_type::m_dist[dy] + s1) <= base_type::m_width)
             {
-                *--p0 = (cover_type)base_type::_accessor.cover(dist);
+                *--p0 = (cover_type)base_type::m_ren.cover(dist);
                 ++dy;
             }
-            base_type::_accessor.blend_solid_vspan(base_type::m_x,
+            base_type::m_ren.blend_solid_vspan(base_type::m_x,
                 base_type::m_y - dy + 1,
                 unsigned(p1 - p0),
                 p0);
@@ -676,22 +676,22 @@ namespace agg
             cover_type * p0 = base_type::m_covers + base_type::max_half_width + 2;
             cover_type * p1 = p0;
 
-            *p1++ = (cover_type)base_type::_accessor.cover(s1);
+            *p1++ = (cover_type)base_type::m_ren.cover(s1);
 
             dx = 1;
             while ((dist = base_type::m_dist[dx] - s1) <= base_type::m_width)
             {
-                *p1++ = (cover_type)base_type::_accessor.cover(dist);
+                *p1++ = (cover_type)base_type::m_ren.cover(dist);
                 ++dx;
             }
 
             dx = 1;
             while ((dist = base_type::m_dist[dx] + s1) <= base_type::m_width)
             {
-                *--p0 = (cover_type)base_type::_accessor.cover(dist);
+                *--p0 = (cover_type)base_type::m_ren.cover(dist);
                 ++dx;
             }
-            base_type::_accessor.blend_solid_hspan(base_type::m_x - dx + 1,
+            base_type::m_ren.blend_solid_hspan(base_type::m_x - dx + 1,
                 base_type::m_y,
                 unsigned(p1 - p0),
                 p0);
@@ -812,7 +812,7 @@ namespace agg
             *p1 = 0;
             if (dist_start <= 0)
             {
-                *p1 = (cover_type)base_type::_accessor.cover(s1);
+                *p1 = (cover_type)base_type::m_ren.cover(s1);
             }
             ++p1;
 
@@ -823,7 +823,7 @@ namespace agg
                 *p1 = 0;
                 if (dist_start <= 0)
                 {
-                    *p1 = (cover_type)base_type::_accessor.cover(dist);
+                    *p1 = (cover_type)base_type::m_ren.cover(dist);
                 }
                 ++p1;
                 ++dy;
@@ -837,12 +837,12 @@ namespace agg
                 *--p0 = 0;
                 if (dist_start <= 0)
                 {
-                    *p0 = (cover_type)base_type::_accessor.cover(dist);
+                    *p0 = (cover_type)base_type::m_ren.cover(dist);
                 }
                 ++dy;
             }
 
-            base_type::_accessor.blend_solid_vspan(base_type::m_x,
+            base_type::m_ren.blend_solid_vspan(base_type::m_x,
                 base_type::m_y - dy + 1,
                 unsigned(p1 - p0),
                 p0);
@@ -864,7 +864,7 @@ namespace agg
             *p1 = 0;
             if (dist_start <= 0)
             {
-                *p1 = (cover_type)base_type::_accessor.cover(s1);
+                *p1 = (cover_type)base_type::m_ren.cover(s1);
             }
             ++p1;
 
@@ -875,7 +875,7 @@ namespace agg
                 *p1 = 0;
                 if (dist_start <= 0)
                 {
-                    *p1 = (cover_type)base_type::_accessor.cover(dist);
+                    *p1 = (cover_type)base_type::m_ren.cover(dist);
                 }
                 ++p1;
                 ++dx;
@@ -889,11 +889,11 @@ namespace agg
                 *--p0 = 0;
                 if (dist_start <= 0)
                 {
-                    *p0 = (cover_type)base_type::_accessor.cover(dist);
+                    *p0 = (cover_type)base_type::m_ren.cover(dist);
                 }
                 ++dx;
             }
-            base_type::_accessor.blend_solid_hspan(base_type::m_x - dx + 1,
+            base_type::m_ren.blend_solid_hspan(base_type::m_x - dx + 1,
                 base_type::m_y,
                 unsigned(p1 - p0),
                 p0);
@@ -948,7 +948,7 @@ namespace agg
             *p1 = 0;
             if (dist_end > 0)
             {
-                *p1 = (cover_type)base_type::_accessor.cover(s1);
+                *p1 = (cover_type)base_type::m_ren.cover(s1);
                 ++npix;
             }
             ++p1;
@@ -960,7 +960,7 @@ namespace agg
                 *p1 = 0;
                 if (dist_end > 0)
                 {
-                    *p1 = (cover_type)base_type::_accessor.cover(dist);
+                    *p1 = (cover_type)base_type::m_ren.cover(dist);
                     ++npix;
                 }
                 ++p1;
@@ -975,12 +975,12 @@ namespace agg
                 *--p0 = 0;
                 if (dist_end > 0)
                 {
-                    *p0 = (cover_type)base_type::_accessor.cover(dist);
+                    *p0 = (cover_type)base_type::m_ren.cover(dist);
                     ++npix;
                 }
                 ++dy;
             }
-            base_type::_accessor.blend_solid_vspan(base_type::m_x,
+            base_type::m_ren.blend_solid_vspan(base_type::m_x,
                 base_type::m_y - dy + 1,
                 unsigned(p1 - p0),
                 p0);
@@ -1003,7 +1003,7 @@ namespace agg
             *p1 = 0;
             if (dist_end > 0)
             {
-                *p1 = (cover_type)base_type::_accessor.cover(s1);
+                *p1 = (cover_type)base_type::m_ren.cover(s1);
                 ++npix;
             }
             ++p1;
@@ -1015,7 +1015,7 @@ namespace agg
                 *p1 = 0;
                 if (dist_end > 0)
                 {
-                    *p1 = (cover_type)base_type::_accessor.cover(dist);
+                    *p1 = (cover_type)base_type::m_ren.cover(dist);
                     ++npix;
                 }
                 ++p1;
@@ -1030,12 +1030,12 @@ namespace agg
                 *--p0 = 0;
                 if (dist_end > 0)
                 {
-                    *p0 = (cover_type)base_type::_accessor.cover(dist);
+                    *p0 = (cover_type)base_type::m_ren.cover(dist);
                     ++npix;
                 }
                 ++dx;
             }
-            base_type::_accessor.blend_solid_hspan(base_type::m_x - dx + 1,
+            base_type::m_ren.blend_solid_hspan(base_type::m_x - dx + 1,
                 base_type::m_y,
                 unsigned(p1 - p0),
                 p0);
@@ -1159,7 +1159,7 @@ namespace agg
             {
                 if (dist_start <= 0)
                 {
-                    *p1 = (cover_type)base_type::_accessor.cover(s1);
+                    *p1 = (cover_type)base_type::m_ren.cover(s1);
                 }
                 ++npix;
             }
@@ -1173,7 +1173,7 @@ namespace agg
                 *p1 = 0;
                 if (dist_end > 0 && dist_start <= 0)
                 {
-                    *p1 = (cover_type)base_type::_accessor.cover(dist);
+                    *p1 = (cover_type)base_type::m_ren.cover(dist);
                     ++npix;
                 }
                 ++p1;
@@ -1190,12 +1190,12 @@ namespace agg
                 *--p0 = 0;
                 if (dist_end > 0 && dist_start <= 0)
                 {
-                    *p0 = (cover_type)base_type::_accessor.cover(dist);
+                    *p0 = (cover_type)base_type::m_ren.cover(dist);
                     ++npix;
                 }
                 ++dy;
             }
-            base_type::_accessor.blend_solid_vspan(base_type::m_x,
+            base_type::m_ren.blend_solid_vspan(base_type::m_x,
                 base_type::m_y - dy + 1,
                 unsigned(p1 - p0),
                 p0);
@@ -1222,7 +1222,7 @@ namespace agg
             {
                 if (dist_start <= 0)
                 {
-                    *p1 = (cover_type)base_type::_accessor.cover(s1);
+                    *p1 = (cover_type)base_type::m_ren.cover(s1);
                 }
                 ++npix;
             }
@@ -1236,7 +1236,7 @@ namespace agg
                 *p1 = 0;
                 if (dist_end > 0 && dist_start <= 0)
                 {
-                    *p1 = (cover_type)base_type::_accessor.cover(dist);
+                    *p1 = (cover_type)base_type::m_ren.cover(dist);
                     ++npix;
                 }
                 ++p1;
@@ -1253,12 +1253,12 @@ namespace agg
                 *--p0 = 0;
                 if (dist_end > 0 && dist_start <= 0)
                 {
-                    *p0 = (cover_type)base_type::_accessor.cover(dist);
+                    *p0 = (cover_type)base_type::m_ren.cover(dist);
                     ++npix;
                 }
                 ++dx;
             }
-            base_type::_accessor.blend_solid_hspan(base_type::m_x - dx + 1,
+            base_type::m_ren.blend_solid_hspan(base_type::m_x - dx + 1,
                 base_type::m_y,
                 unsigned(p1 - p0),
                 p0);
