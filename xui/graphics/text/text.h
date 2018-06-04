@@ -1,6 +1,7 @@
 #pragma once
 
 #include "font.h"
+#include "core/unicode.h"
 
 namespace graphics::text
 {
@@ -10,6 +11,45 @@ namespace graphics::text
         int32_t y;
         int32_t w;
         int32_t h;
+    };
+
+    // range
+    struct range_t
+    {
+        int32_t index = -1;
+        int32_t length = 0;
+
+        range_t operator + (const range_t & rhs)
+        {
+            if (index < 0 || !length)
+                return rhs;
+
+            if (rhs.index < 0 || !rhs.length)
+                return *this;
+
+            if (index + length == rhs.index)
+                return { index, rhs.index + rhs.length };
+
+            if (rhs.index + rhs.length == index)
+                return { rhs.index, index + length };
+
+            return { -1, 0 };
+        }
+
+        range_t & operator += (const range_t & rhs)
+        {
+            if (index < 0 || !length)
+                *this = rhs;
+            else if (rhs.index < 0 || !rhs.length)
+                ;
+            else if (index + length == rhs.index)
+                *this = { index, length + rhs.length };
+            else if (rhs.index + rhs.length == index)
+                *this = { rhs.index, length + rhs.length };
+            else
+                *this = { -1, 0 };
+            return *this;
+        }
     };
 
 
@@ -30,116 +70,13 @@ namespace graphics::text
         TextParagraphTagCharCountMask = 0xF,
     };
 
-    // range
-    struct tlrange_t
-    {
-        int32_t index;
-        int32_t length;
-    };
 
     // text range
-    struct trange_t
-    {
-        int32_t index;
-        int32_t length;
-    };
+    using trange_t = range_t;
 
     // glyph range
-    struct grange_t
-    {
-        int32_t index;
-        int32_t length;
-    };
+    using grange_t = range_t;
 
     // cluster range
-    struct crange_t
-    {
-        int32_t index;
-        int32_t length;
-    };
-
-    // line range
-    struct lrange_t
-    {
-        int32_t index;
-        int32_t length;
-    };
-
-    struct doc_paragraph_t
-    {
-        // 文本范围
-        trange_t trange;
-        // 段落标记
-        paragraph_tag_e tag;
-    };
-
-    /**
-    * 表示一个显示在布局中的独立单元，一个或者更多个 char_16 一起表示一个 cluster。
-    */
-    struct tl_cluster_t
-    {
-        // cluster 索引
-        int32_t cluster;
-        // 行号
-        int32_t line;
-        // 段落
-        int32_t para;
-        // 文本范围
-        trange_t trange;
-        // cluster 在布局中的位置
-        tlrect_t tlrect;
-
-        bool whitespace : 1;
-        //! 是否禁止在该字符处换行
-        bool softbreak : 1;
-        //! 是否是段落标记
-        bool paragraphtag : 1;
-        //! 是否是连字符
-        bool softhyphen : 1;
-        //! 是否是从右到左的阅读顺序
-        bool right2left : 1;
-        //! 是否是行标记
-        bool linetag : 1;
-    };
-
-    struct tl_line_t
-    {
-        int32_t line;
-        int32_t para;
-        trange_t trange;
-        crange_t crange;
-        tlrect_t tlrect;
-    };
-
-    struct tl_para_t
-    {
-        int32_t para;
-        trange_t trange;
-        crange_t crange;
-        lrange_t lrange;
-        tlrect_t tlrect;
-    };
-
-    // 表示矩形范围
-    struct tl_range_t
-    {
-        int32_t line;
-        int32_t para;
-        trange_t trange;
-        crange_t crange;
-        tlrect_t tlrect;
-    };
-
-    struct tl_metrics_t
-    {
-        int32_t length;
-
-        int32_t tl_x;
-        int32_t tl_y;
-        int32_t tl_width;
-        int32_t tl_height;
-
-        int32_t cluster_length;
-        int32_t line_length;
-    };
+    using crange_t = range_t;
 }

@@ -1,6 +1,7 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "core/app.h"
+#include "core/counter_acc.h"
 #include "core/math/vec2.h"
 #include "graphics/GraphicsService.h"
 #include "graphics/Graphics.h"
@@ -12,6 +13,7 @@
 #include "graphics/Image.h"
 #include "graphics/raster/agg.h"
 #include "core/io/filestream.h"
+#include "win32/uniscribe/script.h"
 
 using namespace core;
 
@@ -212,7 +214,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
 
 void testImages()
 {
-    std::make_shared<graphics::Image>(u8"jpg/¶Ô±È.jpg")->Save(core::string::format("out/jpg_", u8"¶Ô±È", ".tga"));
+    std::make_shared<graphics::Image>(u8"jpg/å¯¹æ¯”.jpg")->Save(core::string::format("out/jpg_", u8"å¯¹æ¯”", ".tga"));
     for(auto & path : core::io::allPaths("bmp"))
     {
         if(path.u8string().find(".bmp") != std::string::npos)
@@ -305,9 +307,9 @@ int main()
     //cm->Save("cm.bmp");
     //graphics->DrawImage(*cm.get(), { 10, 10 }, 0);
     //graphics->DrawImage(*cm.get(), { 50, 50 }, 0);
-    graphics->DrawString(u8"¸÷Î»°¡Á½¸ö½ð¶îÍÛÀ²¹ØöÂ¶ûÍÚ¾ò¸÷Î»¼×¹ÇÎÄ°¢Áô¸ö¿ÕÎ»¹ýÁËÍú¼¾°²¸çÀ­½úÎÄ¹«À´Î§¹Û", { 10, 10, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
-    graphics->DrawString(u8"¸÷Î»°¡Á½¸ö½ð¶îÍÛÀ²¹ØöÂ¶ûÍÚ¾ò¸÷Î»¼×¹ÇÎÄ°¢Áô¸ö¿ÕÎ»¹ýÁËÍú¼¾°²¸çÀ­½úÎÄ¹«À´Î§¹Û", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, core::math::align::leftTop);
-    auto si = graphics->MeasureString(u8"¸÷Î»°¡Á½¸ö½ð¶îÍÛÀ²¹ØöÂ¶ûÍÚ¾ò¸÷Î»¼×¹ÇÎÄ°¢Áô¸ö¿Õ\r\nÎ»¹ýÁËÍú¼¾°²¸çÀ­½úÎÄ¹«À´Î§¹Û", {"", 10 });
+    graphics->DrawString(u8"å„ä½å•Šä¸¤ä¸ªé‡‘é¢å“‡å•¦å…³é›Žå°”æŒ–æŽ˜å„ä½ç”²éª¨æ–‡é˜¿ç•™ä¸ªç©ºä½è¿‡äº†æ—ºå­£å®‰å“¥æ‹‰æ™‹æ–‡å…¬æ¥å›´è§‚", { 10, 10, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
+    graphics->DrawString(u8"å„ä½å•Šä¸¤ä¸ªé‡‘é¢å“‡å•¦å…³é›Žå°”æŒ–æŽ˜å„ä½ç”²éª¨æ–‡é˜¿ç•™ä¸ªç©ºä½è¿‡äº†æ—ºå­£å®‰å“¥æ‹‰æ™‹æ–‡å…¬æ¥å›´è§‚", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, core::math::align::leftTop);
+    auto si = graphics->MeasureString(u8"å„ä½å•Šä¸¤ä¸ªé‡‘é¢å“‡å•¦å…³é›Žå°”æŒ–æŽ˜å„ä½ç”²éª¨æ–‡é˜¿ç•™ä¸ªç©º\r\nä½è¿‡äº†æ—ºå­£å®‰å“¥æ‹‰æ™‹æ–‡å…¬æ¥å›´è§‚", {"", 10 });
 
     graphics->DrawRect({ 100, 100, 200, 50 }, colors::Red, 2.0f);
     graphics->FillRect({ 100, 160, 200, 50 }, 0x80ff0000);
@@ -317,8 +319,38 @@ int main()
     //graphics->DrawImage(graphics::Image("dota2.jpg"), { 410, 100, 300, 200 });
     //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 0, 1920, 1080 });
     //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 540, 960, 540 });
-    graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720}, { 500, 80, 960, 960 });
+    graphics->DrawImage(graphics::Image("1920.png"), math::pt32_t{ 100, 100 }, { 500, 80, 960, 960 }, math::align::leftTop);
     graphics->DrawRect({ 100, 100, 1280, 720 }, 0xffff0000, 2);
+
+    core::counter_acc<float, 3> cps;
+    //while(true)
+    //{
+    //    graphics->DrawString(u8"å„ä½å•Šä¸¤ä¸ªé‡‘é¢å“‡å•¦å…³é›Žå°”æŒ–æŽ˜å„ä½ç”²éª¨æ–‡é˜¿ç•™ä¸ªç©ºä½è¿‡äº†æ—ºå­£å®‰å“¥æ‹‰æ™‹æ–‡å…¬æ¥å›´è§‚", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, core::math::align::leftTop);
+    //    cps.acc(1);
+    //    printf("\r%.1f", cps.avg());
+    //}
+
+    win32::uniscribe::ScriptItem item;
+    item.SetText(L"å„ä½å•Šä¸¤ä¸ªé‡‘é¢å“‡å•¦å…³é›Žå°”æŒ–æŽ˜å„ä½ç”²éª¨æ–‡é˜¿ç•™ä¸ªç©ºä½è¿‡äº†æ—ºå­£å®‰å“¥æ‹‰æ™‹æ–‡å…¬æ¥å›´è§‚");
+
+    while (true)
+    {
+        //item.SetText(L"ØªÛ•ØªÙ‚Ù‰Ù‚ 0 Ù‚Ù‰Ù„Ø¯Ù‰ 1 ØªÛ•ØªÙ‚Ù‰Ù‚ 2 Ù‚Ù‰Ù„Ø¯Ù‰ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹å ABCD EFGHI ðªš¥ðªš¥ðªš¥ ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹å ABCD EFGHI ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹å ABCD EFGHI 3 ØªÛ•ØªÙ‚Ù‰Ù‚ 4 Ù‚Ù‰Ù„Ø¯Ù‰ 5 ØªÛ•ØªÙ‚Ù‰Ù‚ 6 Ù‚Ù‰Ù„Ø¯Ù‰ 7 ØªÛ•ØªÙ‚Ù‰Ù‚ 8 Ù‚Ù‰Ù„Ø¯Ù‰ 9 ");
+        item.Itemize();
+        item.SetFont(0, item.NumClusters() / 2, { "", 40, 0, graphics::text::font::cleartype });
+        item.SetFont(item.NumClusters() / 2, item.NumClusters() / 2, { "", 20, 0, graphics::text::font::cleartype });
+        item.SetColor(0, item.NumClusters()/3, 0xff);
+        item.SetColor(item.NumClusters()/3, item.NumClusters()/3, 0xff0000);
+
+        item.Slice();
+        item.Shape();
+        item.Layout(0, 600, win32::uniscribe::wrapmode_word);
+        graphics->DrawString(item, { 1200, 50, 300, 100 }, {"", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
+        cps.acc(1);
+        printf("\r%.1f", cps.avg());
+    }
+
+    //item.Draw(hdc2, drawX, drawY, { drawX, drawY, rc.right - frameSize * 2, rc.bottom - frameSize * 2 });
 
     //testAgg(pixmap);
     pixmap->Save("out.bmp");

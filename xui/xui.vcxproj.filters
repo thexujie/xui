@@ -86,20 +86,11 @@
     <ClCompile Include="win32\Win32App.cpp">
       <Filter>win32</Filter>
     </ClCompile>
-    <ClCompile Include="win32\uniscribe\UspInc.cpp">
-      <Filter>win32\uniscribe</Filter>
-    </ClCompile>
     <ClCompile Include="win32\com_ptr.cpp">
       <Filter>win32</Filter>
     </ClCompile>
     <ClCompile Include="win32\dll.cpp">
       <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\uniscribe\CTextLayoutUsp.cpp">
-      <Filter>win32\uniscribe</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\uniscribe\CUspFactory.cpp">
-      <Filter>win32\uniscribe</Filter>
     </ClCompile>
     <ClCompile Include="graphics\image\formats\bmp.cpp">
       <Filter>graphics\image\formats</Filter>
@@ -190,6 +181,15 @@
     </ClCompile>
     <ClCompile Include="graphics\raster\agg\agg_vpgen_segmentator.cpp">
       <Filter>graphics\raster\agg</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\uniscribe\script.cpp">
+      <Filter>win32\uniscribe</Filter>
+    </ClCompile>
+    <ClCompile Include="core\unicode.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\uniscribe\ScriptService.cpp">
+      <Filter>win32\uniscribe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,20 +329,11 @@
     <ClInclude Include="win32\win32.h">
       <Filter>win32</Filter>
     </ClInclude>
-    <ClInclude Include="win32\uniscribe\UspInc.h">
-      <Filter>win32\uniscribe</Filter>
-    </ClInclude>
     <ClInclude Include="win32\com_ptr.h">
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="win32\dll.h">
       <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\uniscribe\CTextLayoutUsp.h">
-      <Filter>win32\uniscribe</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\uniscribe\CUspFactory.h">
-      <Filter>win32\uniscribe</Filter>
     </ClInclude>
     <ClInclude Include="graphics\text\text.h">
       <Filter>graphics\text</Filter>
@@ -748,6 +739,18 @@
     </ClInclude>
     <ClInclude Include="graphics\raster\agg\agg_vpgen_segmentator.h">
       <Filter>graphics\raster\agg</Filter>
+    </ClInclude>
+    <ClInclude Include="core\counter_acc.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\uniscribe\script.h">
+      <Filter>win32\uniscribe</Filter>
+    </ClInclude>
+    <ClInclude Include="core\unicode.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\uniscribe\ScriptService.h">
+      <Filter>win32\uniscribe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

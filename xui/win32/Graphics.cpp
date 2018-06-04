@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "win32/windows.h"
 #include "core/io/filestream.h"
+#include "uniscribe/script.h"
 
 namespace win32
 {
@@ -218,7 +219,8 @@ namespace win32
 
     void Graphics::DrawString(graphics::IGraphicsString & str, core::math::pt32_t point)
     {
-        
+        win32::uniscribe::ScriptItem & item = dynamic_cast<win32::uniscribe::ScriptItem &>(str);
+        item.Draw(*_hdc, point.x, point.y, { });
     }
 
     void Graphics::FillPath(graphics::raster::path & path, core::color32 color)

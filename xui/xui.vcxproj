@@ -33,9 +33,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -47,6 +49,10 @@
     <OutDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\$(ProjectName).$(ProjectGuid)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\</OutDir>
+    <IntDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\$(ProjectName).$(ProjectGuid)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -55,6 +61,7 @@
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;../deps/FreeImage/lib/x64/</AdditionalLibraryDirectories>
@@ -73,7 +80,19 @@
       <AdditionalIncludeDirectories>./;../deps/FreeImage/include/</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\app.cpp" />
@@ -92,6 +111,7 @@
     <ClCompile Include="core\network\socket.cpp" />
     <ClCompile Include="core\string.cpp" />
     <ClCompile Include="core\system.cpp" />
+    <ClCompile Include="core\unicode.cpp" />
     <ClCompile Include="graphics\Graphics.cpp" />
     <ClCompile Include="graphics\GraphicsService.cpp" />
     <ClCompile Include="graphics\Image.cpp" />
@@ -140,18 +160,8 @@
     <ClCompile Include="win32\GDIObjectCache.cpp" />
     <ClCompile Include="win32\Graphics.cpp" />
     <ClCompile Include="win32\GraphicsService.cpp" />
-    <ClCompile Include="win32\uniscribe\CTextLayoutUsp.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="win32\uniscribe\CUspFactory.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="win32\uniscribe\UspInc.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="win32\uniscribe\script.cpp" />
+    <ClCompile Include="win32\uniscribe\ScriptService.cpp" />
     <ClCompile Include="win32\Win32App.cpp" />
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
@@ -160,6 +170,7 @@
     <ClInclude Include="core\base64.h" />
     <ClInclude Include="core\color32.h" />
     <ClInclude Include="core\core.h" />
+    <ClInclude Include="core\counter_acc.h" />
     <ClInclude Include="core\error.h" />
     <ClInclude Include="core\io\buffer.h" />
     <ClInclude Include="core\io\filestream.h" />
@@ -189,6 +200,7 @@
     <ClInclude Include="core\path.h" />
     <ClInclude Include="core\string.h" />
     <ClInclude Include="core\system.h" />
+    <ClInclude Include="core\unicode.h" />
     <ClInclude Include="graphics\GraphicsService.h" />
     <ClInclude Include="graphics\Image.h" />
     <ClInclude Include="graphics\image\formats\bmp.h" />
@@ -336,18 +348,8 @@
     <ClInclude Include="win32\GDIObjectCache.h" />
     <ClInclude Include="win32\Graphics.h" />
     <ClInclude Include="win32\GraphicsService.h" />
-    <ClInclude Include="win32\uniscribe\CTextLayoutUsp.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="win32\uniscribe\CUspFactory.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="win32\uniscribe\UspInc.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="win32\uniscribe\script.h" />
+    <ClInclude Include="win32\uniscribe\ScriptService.h" />
     <ClInclude Include="win32\win32.h" />
     <ClInclude Include="win32\Win32App.h" />
     <ClInclude Include="win32\windows.h" />

@@ -96,7 +96,7 @@ namespace core::math
             return is_point_in(point.x, point.y);
         }
 
-        bool is_empty() const { return cx <= 0 || cy <= 0; }
+        bool empty() const { return cx <= 0 || cy <= 0; }
 
         void set_empty()
         {
@@ -165,9 +165,9 @@ namespace core::math
 
         rect operator |(const rect & another) const
         {
-            if (another.is_empty())
+            if (another.empty())
                 return *this;
-            else if (is_empty())
+            else if (empty())
                 return another;
             else
             {
@@ -181,9 +181,9 @@ namespace core::math
 
         rect & operator |=(const rect & another)
         {
-            if (!another.is_empty())
+            if (!another.empty())
             {
-                if (is_empty())
+                if (empty())
                     * this = another;
                 else
                 {
@@ -201,9 +201,9 @@ namespace core::math
 
         rect operator &(const rect & another) const
         {
-            if (another.is_empty())
+            if (another.empty())
                 return *this;
-            else if (is_empty())
+            else if (empty())
                 return another;
             else
             {
@@ -221,7 +221,7 @@ namespace core::math
 
         rect & operator &=(const rect & another)
         {
-            if (another.is_empty() || is_empty())
+            if (another.empty() || empty())
                 set_empty();
             else
             {

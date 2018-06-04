@@ -188,6 +188,26 @@ namespace graphics
         PopClip();
     }
 
+    void Graphics::DrawString(IGraphicsString & str, pt32_t point, text::font font, color32 color, int32_t flags)
+    {
+        if (!_graphics)
+            return;
+        if (!_graphics)
+            return;
+
+        _graphics->DrawString(str, point);
+    }
+
+    void Graphics::DrawString(IGraphicsString & str, rc32_t rect, text::font font, color32 color, int32_t flags)
+    {
+        if (!_graphics)
+            return;
+        if (!_graphics)
+            return;
+
+        _graphics->DrawString(str, rect.position);
+    }
+
     void Graphics::DrawImage(const Image & image, pt32_t point, int32_t flags)
     {
         if (!_graphics)
