@@ -331,9 +331,9 @@ int main()
     //}
 
     win32::uniscribe::ScriptItem item;
-    item.SetText(L"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观");
+    item.SetText(L"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来drawXpfg围观HRESULT hResult = ScriptTextOut(hdc, font.cache, drawXpfg");
 
-    while (true)
+    //while (true)
     {
         //item.SetText(L"تەتقىق 0 قىلدى 1 تەتقىق 2 قىلدى一二三四五六七八九十 ABCD EFGHI 𪚥𪚥𪚥 一二三四五六七八九十 ABCD EFGHI 一二三四五六七八九十 ABCD EFGHI 3 تەتقىق 4 قىلدى 5 تەتقىق 6 قىلدى 7 تەتقىق 8 قىلدى 9 ");
         item.Itemize();

@@ -98,7 +98,7 @@ namespace win32::uniscribe
             vfont.metrics.size = font.size;
             vfont.metrics.height = tm.tmHeight;
             vfont.metrics.ascent = tm.tmAscent;
-            vfont.metrics.descent = tm.tmDescent;
+            vfont.metrics.decent = tm.tmDescent;
             vfont.metrics.linespace = tm.tmHeight;
             vfont.metrics.weight = tm.tmWeight;
 
@@ -108,7 +108,7 @@ namespace win32::uniscribe
         return ifont;
     }
 
-    view_font_t ScriptService::GetFont(int32_t ifont)
+    const view_font_t &  ScriptService::GetFont(int32_t ifont) const
     {
         return _fonts[ifont];
     }

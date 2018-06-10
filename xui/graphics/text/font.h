@@ -70,7 +70,7 @@ namespace graphics::text
         int32_t size = 0;
         int32_t height = 0;
         int32_t ascent = 0;
-        int32_t descent = 0;
+        int32_t decent = 0;
         int32_t linespace = 0;
         int32_t weight = 0;
     };

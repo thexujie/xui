@@ -21,7 +21,7 @@ namespace win32::uniscribe
 
         HDC GetHDC() const { return _hdc; }
         int32_t MapFont(const graphics::text::font & font);
-        view_font_t GetFont(int32_t ifont);
+        const view_font_t & GetFont(int32_t ifont) const;
 
         graphics::text::font GetFontFallBack(const graphics::text::font & font, int32_t iLanguage, const wchar_t * text, int32_t length);
 

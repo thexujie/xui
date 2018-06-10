@@ -83,9 +83,9 @@ namespace win32::uniscribe
 
                 const SCRIPT_LOGATTR & attr_first = attrs[itext];
                 if (attr_first.fSoftBreak)
-                    cluster.softbreak = true;
+                    cluster.flags |= scp_cluster::softbreak;
                 if (attr_first.fWhiteSpace)
-                    cluster.whitespace = true;
+                    cluster.flags |= scp_cluster::whitespace;
 
                 // check the next char.
                 while (itext < attrs.size() - 1)
@@ -96,9 +96,9 @@ namespace win32::uniscribe
                         break;
 
                     if (tattr.fSoftBreak)
-                        cluster.softbreak = true;
+                        cluster.flags |= scp_cluster::softbreak;
                     if (tattr.fWhiteSpace)
-                        cluster.whitespace = true;
+                        cluster.flags |= scp_cluster::whitespace;
 
                     ++cluster.trange.length;
                     ++itext;
@@ -388,7 +388,8 @@ namespace win32::uniscribe
                 cluster.grange.length = -cluster.grange.length;
             }
 
-            cluster.height = _service->GetFont(cluster.format.font).metrics.height;
+            const view_font_t & vfont = _service->GetFont(cluster.format.font);
+            cluster.height = vfont.metrics.height;
             for (int32_t iglyph = 0; iglyph < cluster.grange.length; ++iglyph)
                 cluster.advance += _glyph_advances[cluster.grange.index + iglyph];
         }
@@ -420,7 +421,7 @@ namespace win32::uniscribe
             {
                 scp_cluster & cluster = _clusters[icluster];
                 cluster.run = irun;
-                if (cluster.softbreak || cluster.whitespace)
+                if (cluster.flags & (scp_cluster::whitespace | scp_cluster::softbreak))
                     icluster_break = icluster;
 
                 if (icluster - icluster_last < 1 || iadvance + cluster.advance < width)
@@ -486,6 +487,10 @@ namespace win32::uniscribe
                 const scp_cluster & cluster = _clusters[line.crange.index + icluster];
                 if((cluster.run != view.run || cluster.format.color != view.color) && view.crange.length)
                 {
+                    const view_font_t & vfont = _service->GetFont(_runs[view.run].font);
+                    view.height = vfont.metrics.height;
+                    view.ascent = vfont.metrics.ascent;
+                    view.decent = vfont.metrics.decent;
                     _views.push_back(view);
                     view.index = _views.size();
                     view.line = iline;
@@ -505,6 +510,10 @@ namespace win32::uniscribe
 
             if (view.crange.length)
             {
+                const view_font_t & vfont = _service->GetFont(_runs[view.run].font);
+                view.height = vfont.metrics.height;
+                view.ascent = vfont.metrics.ascent;
+                view.decent = vfont.metrics.decent;
                 _views.push_back(view);
                 view.index = _views.size();
                 view.line = iline;
@@ -532,6 +541,14 @@ namespace win32::uniscribe
         for (int32_t iline = 0; iline < _lines.size(); ++iline)
         {
             scp_line & line = _lines[iline];
+
+            for (int32_t iview = 0; iview < line.vrange.length; ++iview)
+            {
+                const scp_view & view = _views[iview];
+                line.ascent = std::max(line.ascent, view.ascent);
+                line.decent = std::max(line.decent, view.decent);
+            }
+
             if(line.crange.length > 0)
             {
                 const scp_cluster & cluster_beg = _clusters[line.crange.index];
@@ -573,7 +590,7 @@ namespace win32::uniscribe
         HGDIOBJ hOldFont = nullptr;
         int32_t drawX = x;
         int32_t drawY = rect.y;
-        RECT rc = { rect.x, rect.y, rect.right(), rect.bottom() };
+        RECT rcClip = { rect.x, rect.y, rect.right(), rect.bottom() };
 
         for(int32_t iline = 0; iline < _lines.size(); ++iline)
         {
@@ -596,7 +613,7 @@ namespace win32::uniscribe
 
                 ::SetTextColor(hdc, view.color);
 
-                HRESULT hResult = ScriptTextOut(hdc, font.cache, drawX + run_x, drawY, rect.empty() ? 0 : ETO_CLIPPED, &rc,
+                HRESULT hResult = ScriptTextOut(hdc, font.cache, drawX + run_x, drawY + line.ascent - font.metrics.ascent, rect.empty() ? 0 : ETO_CLIPPED, &rcClip,
                     &item.sa, nullptr, 0,
                     _glyphs.data() + view.grange.index, view.grange.length,
                     _glyph_advances.data() + view.grange.index,

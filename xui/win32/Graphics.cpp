@@ -243,7 +243,7 @@ namespace win32
         metrics.size = font.size;
         metrics.height = tm.tmHeight;
         metrics.ascent = tm.tmAscent;
-        metrics.descent= tm.tmDescent;
+        metrics.decent= tm.tmDescent;
         metrics.linespace = tm.tmHeight;
         metrics.weight = tm.tmWeight;
         return metrics;
