@@ -40,7 +40,7 @@ namespace graphics
         void DrawString(std::string str, pt32_t point, text::font font, color32 color, int32_t flags);
         void DrawString(std::string str, rc32_t rect, text::font font, color32 color, int32_t flags);
         void DrawString(IGraphicsString & str, pt32_t point, text::font font, color32 color, int32_t flags);
-        void DrawString(IGraphicsString & str, rc32_t rect, text::font font, color32 color, int32_t flags);
+        void DrawString(IGraphicsString & str, pt32_t point);
 
         void DrawImage(const Image & image, pt32_t point, int32_t flags);
         void DrawImage(const Image & image, rc32_t rect, int32_t flags);
