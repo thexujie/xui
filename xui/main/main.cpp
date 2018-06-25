@@ -98,7 +98,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     //shadow_bounds.x2 = shape_bounds.x2 + radius;
     //shadow_bounds.y2 = shape_bounds.y2 + radius;
 
-    //core::math::si64f_t size = { shadow_bounds.x2, shadow_bounds.y2 };
+    //core::math::si64f size = { shadow_bounds.x2, shadow_bounds.y2 };
 
 
     ////agg::render_scanlines_aa_solid(raster, sl, renb, agg::rgba(0.2, 0.3, 0));
@@ -117,7 +117,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     //raster.add_path(shape);
     //agg::render_scanlines_aa_solid(raster, sl, renb_gray8, agg::gray8(255));
 
-    //core::math::pt32_t pos = { 400, 200 };
+    //core::math::pt32i pos = { 400, 200 };
     //agg::rendering_buffer rbuf2;
     //agg::pixel_accessor_gray8 pixf2(rbuf2);
     //if (pixf2.attach(pixf_gray8, int(shadow_bounds.x1), int(shadow_bounds.y1), int(shadow_bounds.x2), int(shadow_bounds.y2)))
@@ -178,7 +178,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     //agg::conv_stroke<agg::path_storage> pg(ps);
     //pg.width(2.0);
 
-    core::math::rc32_t rect{0, 0, 800, 600};
+    core::math::rc32i rect{0, 0, 800, 600};
     ps.move_to(rect.x, rect.y);
     ps.line_to(rect.right(), rect.y);
     ps.line_to(rect.right(), rect.bottom());
@@ -253,7 +253,7 @@ int main()
 
     int32_t cx = 1920;
     int32_t cy = 1080;
-    std::shared_ptr<graphics::Pixmap> pixmap = std::make_shared<graphics::Pixmap>(graphics::si32_t{ cx, cy });
+    std::shared_ptr<graphics::Pixmap> pixmap = std::make_shared<graphics::Pixmap>(core::math::si32i{ cx, cy });
     auto graphics = std::make_shared<graphics::Graphics>(pixmap);
     
     graphics->Clear(colors::LightGray);
@@ -263,7 +263,7 @@ int main()
     //graphics->DrawImage(*image, { 160, 10 }, core::math::align::leftTop);
     //graphics->DrawImage(*image, { 200, 20 }, core::math::align::leftTop);
     //graphics->DrawImage(*image, { 200, 20, 400, 100 });
-    //graphics->DrawImage(*image, math::rc32_t{100, 100, 500, 100}, core::math::rc32_t{ 100, 0, 194, 215});
+    //graphics->DrawImage(*image, math::rc32i{100, 100, 500, 100}, core::math::rc32i{ 100, 0, 194, 215});
 
     //graphics->DrawImage(*(image.get()), { 0, 0, cx / 4, cy / 4 }, core::math::align::bottomCenterX);
     //graphics->DrawImage(*(image.get()), { cx / 4, 0, cx / 4, cy / 4 });
@@ -279,11 +279,11 @@ int main()
     graphics->DrawLine({ cx / 2, 0 }, { cx / 2, cy }, colors::Red, 1);
     graphics->DrawLine({ 0, 0 }, { cx, cy}, colors::Red, 1);
     graphics->DrawLine({ cx, 0 }, { 0, cy }, colors::Red, 1);
-    graphics->DrawEllipse(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
+    graphics->DrawEllipse(math::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
 
     graphics->FillRect({ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Green);
-    graphics->DrawRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
-    graphics->DrawRoundRect(math::rc32_t{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
+    graphics->DrawRect(math::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
+    graphics->DrawRoundRect(math::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
 
     graphics->DrawString(u8"MMMM", { cx / 2, cy / 2 }, { "", 10 }, colors::Red, core::math::align::centerXY);
 
@@ -323,34 +323,40 @@ int main()
     //graphics->DrawImage(graphics::Image("dota2.jpg"), { 410, 100, 300, 200 });
     //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 0, 1920, 1080 });
     //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 540, 960, 540 });
-    graphics->DrawImage(graphics::Image("1920.png"), math::pt32_t{ 100, 100 }, { 500, 80, 960, 960 }, math::align::leftTop);
+    graphics->DrawImage(graphics::Image("1920.png"), math::pt32i{ 100, 100 }, { 500, 80, 960, 960 }, math::align::leftTop);
     graphics->DrawRect({ 100, 100, 1280, 720 }, 0xffff0000, 2);
 
     core::counter_acc<float, 3> cps;
     //while(true)
     //{
-    //    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
+    //    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
     //    cps.acc(1);
     //    printf("\r%.1f", cps.avg());
     //}
 
+    while(true)
+    {
+        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
+        cps.acc(1);
+        printf("\r%.1f", cps.avg());
+    }
+
     win32::uniscribe::ScriptItem item;
-    item.SetText(L"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观");
-    //item.SetText(L"تەتقىق 0 قىلدى 1 تەتقىق 2 قىلدى一二三四五六七八九十 ABCD EFGHI 𪚥𪚥𪚥 一二三四五六七八九十 ABCD EFGHI 一二三四五六七八九十 ABCD EFGHI 3 تەتقىق 4 قىلدى 5 تەتقىق 6 قىلدى 7 تەتقىق 8 قىلدى 9 ");
-    item.Itemize();
-    item.SetFont(0, item.NumClusters(), { "", 40, 0, graphics::text::font::cleartype });
-    item.SetColor(0, item.NumClusters(), 0xff0000);
-    //item.SetFont(0, item.NumClusters() / 2, { "", 40, 0, graphics::text::font::cleartype });
-    //item.SetFont(item.NumClusters() / 2, item.NumClusters() / 2, { "", 20, 0, graphics::text::font::cleartype });
-    //item.SetColor(0, item.NumClusters() / 3, 0xff);
-    //item.SetColor(item.NumClusters() / 3, item.NumClusters() / 3, 0xff0000);
-
-    item.Slice();
-    item.Shape();
-    item.Layout(0, 600, win32::uniscribe::wrapmode_word);
-
     while (true)
     {
+        item.SetText(L"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观");
+        //item.SetText(L"تەتقىق 0 قىلدى 1 تەتقىق 2 قىلدى一二三四五六七八九十 ABCD EFGHI 𪚥𪚥𪚥 一二三四五六七八九十 ABCD EFGHI 一二三四五六七八九十 ABCD EFGHI 3 تەتقىق 4 قىلدى 5 تەتقىق 6 قىلدى 7 تەتقىق 8 قىلدى 9 ");
+        item.Itemize();
+        item.SetFont(0, item.NumClusters(), { "", 40, 0, graphics::text::font::cleartype });
+        item.SetColor(0, item.NumClusters(), 0x0);
+        //item.SetFont(0, item.NumClusters() / 2, { "", 40, 0, graphics::text::font::cleartype });
+        //item.SetFont(item.NumClusters() / 2, item.NumClusters() / 2, { "", 20, 0, graphics::text::font::cleartype });
+        //item.SetColor(0, item.NumClusters() / 3, 0xff);
+        //item.SetColor(item.NumClusters() / 3, item.NumClusters() / 3, 0xff0000);
+
+        item.Slice();
+        item.Shape();
+        item.Layout(0, 600, win32::uniscribe::wrapmode_word);
         graphics->DrawString(item, { 10, 400 });
         cps.acc(1);
         printf("\r%.1f", cps.avg());

@@ -307,6 +307,6 @@ namespace core::math
         };
     };
 
-    typedef rect<int32_t> rc32_t;
-    typedef rect<float32_t> rc32f_t;
+    typedef rect<int32_t> rc32i;
+    typedef rect<float32_t> rc32f;
 }

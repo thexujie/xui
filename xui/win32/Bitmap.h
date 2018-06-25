@@ -12,11 +12,11 @@ namespace win32
         ~Bitmap() = default;
 
         Bitmap(std::shared_ptr<HDC> hdc);
-        Bitmap(std::shared_ptr<HDC> hdc, core::math::si32_t size);
+        Bitmap(std::shared_ptr<HDC> hdc, core::math::si32i size);
 
     public: // IBuffer
         byte_t * data() const { return _data; }
-        core::math::si32_t size() const { return _size; }
+        core::math::si32i size() const { return _size; }
         int32_t pitch() const { return _pitch; }
         std::shared_ptr<HDC> hdc() const { return _hdc; }
         HBITMAP handle() const { return _handle; }
@@ -32,7 +32,7 @@ namespace win32
         byte_t * _data = nullptr;
         int32_t _strike = 0;
         int32_t _pitch = 0;
-        core::math::si32_t _size;
+        core::math::si32i _size;
 
         std::shared_ptr<HDC> _hdc;
         HBITMAP _handle = nullptr;

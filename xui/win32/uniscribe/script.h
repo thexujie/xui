@@ -12,7 +12,6 @@
 namespace win32::uniscribe
 {
     using namespace graphics::text;
-    LOGFONTW MappingFont(const font & font);
 
     enum wrapmode_e
     {
@@ -140,7 +139,7 @@ namespace win32::uniscribe
         // layout all clusters
         void Layout(int32_t start, int32_t width, wrapmode_e wrapmode);
 
-        void Draw(HDC hdc, int32_t x, int32_t y, core::math::rc32_t rect);
+        void Draw(HDC hdc, int32_t x, int32_t y, core::math::rc32i rect);
 
         void SetFont(int32_t index, int32_t length, const font & font);
         void SetColor(int32_t index, int32_t length, int32_t color);
@@ -149,7 +148,7 @@ namespace win32::uniscribe
 
     public:
         void Clear();
-        core::math::si32_t Size() const;
+        core::math::si32i Size() const;
 
     private:
         std::shared_ptr<ScriptService> _service;

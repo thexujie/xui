@@ -191,6 +191,9 @@
     <ClCompile Include="win32\uniscribe\ScriptService.cpp">
       <Filter>win32\uniscribe</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\text\font.cpp">
+      <Filter>graphics\text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

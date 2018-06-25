@@ -147,6 +147,7 @@
     <ClCompile Include="graphics\raster\agg\agg_vpgen_clip_polygon.cpp" />
     <ClCompile Include="graphics\raster\agg\agg_vpgen_clip_polyline.cpp" />
     <ClCompile Include="graphics\raster\agg\agg_vpgen_segmentator.cpp" />
+    <ClCompile Include="graphics\text\font.cpp" />
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

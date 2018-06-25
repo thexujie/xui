@@ -6,7 +6,7 @@ namespace graphics
     using namespace core;
     using namespace core::math;
 
-    Pixmap::Pixmap(si32_t size)
+    Pixmap::Pixmap(si32i size)
     {
         _pixmap = GraphicsService().CreatePixmap(size);
     }
@@ -20,7 +20,7 @@ namespace graphics
         return _pixmap->buffer();
     }
 
-    si32_t Pixmap::size() const
+    si32i Pixmap::size() const
     {
         if (!_pixmap)
             return {};

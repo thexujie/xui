@@ -19,7 +19,7 @@ namespace win32
             left = (int32_t)x; top = (int32_t)y;
             right = (int32_t)(x + w); bottom = (int32_t)(y + h);
         }
-        winrect_t(const core::math::rc32_t & rect)
+        winrect_t(const core::math::rc32i & rect)
         {
             left = (int32_t)rect.x; top = (int32_t)rect.y;
             right = (int32_t)rect.right(); bottom = (int32_t)rect.bottom();
@@ -29,4 +29,6 @@ namespace win32
         int32_t height() const { return bottom - top; }
     };
 
+    LOGFONTW MappingFont(const graphics::text::font & font);
+    LOGFONTW MappingFont(HDC hdc, const graphics::text::font & font);
 }

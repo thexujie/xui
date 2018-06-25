@@ -6,7 +6,7 @@ namespace agg
     class path_adaptor : public graphics::raster::path
     {
     public:
-        void push(core::math::pt64f_t coord, agg::path_commands_e cmd)
+        void push(core::math::pt64f coord, agg::path_commands_e cmd)
         {
             _data[_index].coord = coord;
             _data[_index].cmd = cmd;
@@ -39,7 +39,7 @@ namespace agg
         struct vertex_t
         {
             uint32_t cmd = agg::path_cmd_stop;
-            core::math::pt64f_t coord;
+            core::math::pt64f coord;
         };
 
         uint32_t status = 0;

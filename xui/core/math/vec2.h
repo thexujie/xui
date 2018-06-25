@@ -211,11 +211,11 @@ namespace core::math
         };
     };
 
-    typedef vec2<int32_t> si32_t;
-    typedef vec2<float32_t> si32f_t;
-    typedef vec2<float64_t> si64f_t;
+    typedef vec2<int32_t> si32i;
+    typedef vec2<float32_t> si32f;
+    typedef vec2<float64_t> si64f;
 
-    typedef vec2<int32_t> pt32_t;
-    typedef vec2<float32_t> pt32f_t;
-    typedef vec2<float64_t> pt64f_t;
+    typedef vec2<int32_t> pt32i;
+    typedef vec2<float32_t> pt32f;
+    typedef vec2<float64_t> pt64f;
 }

@@ -1,50 +1,10 @@
 #include "stdafx.h"
 #include "ScriptService.h"
 #include "core/unicode.h"
+#include "win32/windows.h"
 
 namespace win32::uniscribe
 {
-    static LOGFONTW MappingFont(const graphics::text::font & font)
-    {
-        LOGFONTW logfont = {};
-        if (font.family[0])
-            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8_u16(font.family).data(), -1);
-        else
-            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8_u16(win32::defaultFont().family).data(), -1);
-
-        if(font.size > 0)
-        {
-            HDC hdcScreen = GetDC(NULL);
-            int iDpiY = GetDeviceCaps(hdcScreen, LOGPIXELSY);
-            ReleaseDC(NULL, hdcScreen);
-            logfont.lfWidth = 0;
-            logfont.lfHeight = -(int32_t)(font.size * iDpiY / 72);
-        }
-        else
-            logfont.lfHeight = font.size;
-        logfont.lfWeight = static_cast<int32_t>(font.weight);
-
-        logfont.lfItalic = static_cast<uint8_t>(font.flags & graphics::text::font::italic);
-        logfont.lfUnderline = static_cast<uint8_t>(font.flags & graphics::text::font::underline);
-        //logfont.lfStrikeOut = static_cast<uint8_t>(font.flags & font::underline);
-        //logFont.lfCharSet = static_cast<uint8_t>(font.charset);
-        logfont.lfCharSet = DEFAULT_CHARSET;
-        logfont.lfOutPrecision = OUT_DEFAULT_PRECIS;
-        logfont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-
-        if (font.flags & graphics::text::font::gray)
-            logfont.lfQuality = NONANTIALIASED_QUALITY;
-        else if (font.flags & graphics::text::font::anti)
-            logfont.lfQuality = ANTIALIASED_QUALITY;
-        else if (font.flags & graphics::text::font::cleartype)
-            logfont.lfQuality = CLEARTYPE_QUALITY;
-        else
-            logfont.lfQuality = CLEARTYPE_QUALITY;
-        logfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
-        return logfont;
-    }
-
-
     ScriptService::ScriptService()
     {
         HDC hdcScreen = GetDC(NULL);
@@ -86,7 +46,7 @@ namespace win32::uniscribe
         {
             ifont = _fonts.size();
 
-            LOGFONTW logFont = MappingFont(font);
+            LOGFONTW logFont = win32::MappingFont(font);
             HFONT hFont = CreateFontIndirectW(&logFont);
             if (!hFont)
                 throw 0();

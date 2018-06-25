@@ -4,19 +4,19 @@
 
 namespace graphics
 {
-    Graphics::Graphics(si32_t size): _graphics(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(size))) { }
+    Graphics::Graphics(core::math::si32i size): _graphics(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(size))) { }
 
     Graphics::Graphics(std::shared_ptr<IGraphics> graphics) : _graphics(graphics) { }
 
     Graphics::Graphics(std::shared_ptr<Pixmap> pixmap): _graphics(GraphicsService().CreateGraphics(pixmap->handle())) { }
 
-    void Graphics::PushOrign(pt32_t point)
+    void Graphics::PushOrign(core::math::pt32i point)
     {
         if (_graphics)
             _graphics->PushOrign(point);
     }
 
-    pt32_t Graphics::GetOrign() const
+    core::math::pt32i Graphics::GetOrign() const
     {
         if (_graphics)
             return _graphics->GetOrign();
@@ -29,13 +29,13 @@ namespace graphics
             _graphics->PopOrign();
     }
 
-    void Graphics::PushClip(rc32_t rect)
+    void Graphics::PushClip(core::math::rc32i rect)
     {
         if (_graphics)
             _graphics->PushClip(rect);
     }
 
-    rc32_t Graphics::GetClip() const
+    core::math::rc32i Graphics::GetClip() const
     {
         if (_graphics)
             return _graphics->GetClip();
@@ -48,7 +48,7 @@ namespace graphics
             _graphics->PopClip();
     }
 
-    void Graphics::Clear(color32 color)
+    void Graphics::Clear(core::color32 color)
     {
         if (!_graphics)
             return;
@@ -56,7 +56,7 @@ namespace graphics
         _graphics->Clear(color);
     }
 
-    void Graphics::DrawLine(pt32_t start, pt32_t end, color32 color, float32_t width)
+    void Graphics::DrawLine(core::math::pt32i start, core::math::pt32i end, core::color32 color, float32_t width)
     {
         if (!_graphics)
             return;
@@ -70,7 +70,7 @@ namespace graphics
         _graphics->FillPath(pg, color);
     }
 
-    void Graphics::DrawEllipse(rc32_t ellipse, color32 color, float32_t width)
+    void Graphics::DrawEllipse(core::math::rc32i ellipse, core::color32 color, float32_t width)
     {
         if (!_graphics)
             return;
@@ -80,7 +80,7 @@ namespace graphics
         _graphics->FillPath(stroke, color);
     }
 
-    void Graphics::FillEllipse(rc32_t ellipse, color32 color)
+    void Graphics::FillEllipse(core::math::rc32i ellipse, core::color32 color)
     {
         if (!_graphics)
             return;
@@ -89,7 +89,7 @@ namespace graphics
         _graphics->FillPath(path, color);
     }
 
-    void Graphics::DrawRect(rc32_t rect, color32 color, float32_t width)
+    void Graphics::DrawRect(core::math::rc32i rect, core::color32 color, float32_t width)
     {
         if (!_graphics)
             return;
@@ -105,7 +105,7 @@ namespace graphics
         _graphics->FillPath(stroke, color);
     }
 
-    void Graphics::FillRect(rc32_t rect, color32 color)
+    void Graphics::FillRect(core::math::rc32i rect, core::color32 color)
     {
         if (!_graphics)
             return;
@@ -119,7 +119,7 @@ namespace graphics
         _graphics->FillPath(path, color);
     }
 
-    void Graphics::DrawRoundRect(core::math::rc32_t rect, core::color32 color, float32_t width, float32_t radius)
+    void Graphics::DrawRoundRect(core::math::rc32i rect, core::color32 color, float32_t width, float32_t radius)
     {
         if (!_graphics)
             return;
@@ -130,7 +130,7 @@ namespace graphics
         _graphics->FillPath(stroke, color);
     }
 
-    void Graphics::FillRoundRect(core::math::rc32_t rect, core::color32 color, float32_t radius)
+    void Graphics::FillRoundRect(core::math::rc32i rect, core::color32 color, float32_t radius)
     {
         if (!_graphics)
             return;
@@ -139,7 +139,7 @@ namespace graphics
         _graphics->FillPath(path, color);
     }
 
-    void Graphics::DrawString(const std::string & str, pt32_t point, const text::font & font, color32 color, int32_t flags)
+    void Graphics::DrawString(const std::string & str, core::math::pt32i point, const text::font & font, core::color32 color, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -147,7 +147,7 @@ namespace graphics
         _graphics->DrawString(str, point, font, color, flags);
     }
 
-    void Graphics::DrawString(const std::string & str, rc32_t rect, const text::font & font, color32 color, int32_t flags)
+    void Graphics::DrawString(const std::string & str, core::math::rc32i rect, const text::font & font, core::color32 color, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -155,17 +155,7 @@ namespace graphics
         _graphics->DrawString(str, rect, font, color, flags);
     }
 
-    void Graphics::DrawString(IGraphicsString & str, pt32_t point, const text::font & font, color32 color, int32_t flags)
-    {
-        if (!_graphics)
-            return;
-        if (!_graphics)
-            return;
-
-        _graphics->DrawString(str, point);
-    }
-
-    void Graphics::DrawString(IGraphicsString & str, pt32_t point)
+    void Graphics::DrawString(IGraphicsString & str, core::math::pt32i point, const text::font & font, core::color32 color, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -173,7 +163,15 @@ namespace graphics
         _graphics->DrawString(str, point);
     }
 
-    void Graphics::DrawImage(const Image & image, pt32_t point, int32_t flags)
+    void Graphics::DrawString(IGraphicsString & str, core::math::pt32i point)
+    {
+        if (!_graphics)
+            return;
+
+        _graphics->DrawString(str, point);
+    }
+
+    void Graphics::DrawImage(const Image & image, core::math::pt32i point, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -194,12 +192,12 @@ namespace graphics
         _graphics->DrawImage(image, point);
     }
 
-    void Graphics::DrawImage(const Image & image, rc32_t rect, int32_t flags)
+    void Graphics::DrawImage(const Image & image, core::math::rc32i rect, int32_t flags)
     {
         if (!_graphics)
             return;
 
-        pt32_t point;
+        core::math::pt32i point;
         auto size = image.size();
         if (flags & core::math::align::right)
             point.x = rect.right() - size.cx;
@@ -220,7 +218,7 @@ namespace graphics
         _graphics->PopClip();
     }
 
-    void Graphics::DrawImage(const Image & image, pt32_t point, rc32_t region, int32_t flags)
+    void Graphics::DrawImage(const Image & image, core::math::pt32i point, core::math::rc32i region, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -245,7 +243,7 @@ namespace graphics
         _graphics->DrawImage(image, point, region);
     }
 
-    void Graphics::DrawImage(const Image & image, rc32_t rect, rc32_t region, int32_t flags)
+    void Graphics::DrawImage(const Image & image, core::math::rc32i rect, core::math::rc32i region, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -255,7 +253,7 @@ namespace graphics
         if (region.bottom() > image.size().cy)
             region.setBottom(image.size().cy);
 
-        pt32_t point;
+        core::math::pt32i point;
         if (flags & core::math::align::right)
             point.x = rect.right() - region.cx;
         else if (flags & core::math::align::centerX)
@@ -276,7 +274,7 @@ namespace graphics
     }
 
 
-    void Graphics::DrawImage(const Image & image, rc32_t rect)
+    void Graphics::DrawImage(const Image & image, core::math::rc32i rect)
     {
         if (!_graphics)
             return;
@@ -284,7 +282,7 @@ namespace graphics
         _graphics->DrawImage(image, rect);
     }
 
-    void Graphics::DrawImage(const Image & image, rc32_t rect, rc32_t region)
+    void Graphics::DrawImage(const Image & image, core::math::rc32i rect, core::math::rc32i region)
     {
         if (!_graphics)
             return;
@@ -308,7 +306,7 @@ namespace graphics
         return _graphics->GetFontMetrics(font);
     }
 
-    si32_t Graphics::MeasureString(std::string str, text::font font)
+    core::math::si32i Graphics::MeasureString(std::string str, text::font font)
     {
         if (!_graphics)
             return {};

@@ -84,8 +84,7 @@ namespace win32
         if (iter != _fonts.end())
             return iter->second;
 
-        LOGFONTW logFont = {};
-        FontToLOGFONT(*_hdc.get(), font, logFont);
+        LOGFONTW logFont = win32::MappingFont(*_hdc.get(), font);
 
         HFONT hFont = CreateFontIndirectW(&logFont);
         std::hash<graphics::text::font>{}(font);
