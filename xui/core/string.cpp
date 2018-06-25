@@ -112,7 +112,7 @@ namespace core { namespace string
 #endif
     }
 
-    std::string ucs2_u8(const wchar_t * text, int32_t length)
+    std::string u16_u8(const wchar_t * text, int32_t length)
     {
         if (length < 0)
             length = (int32_t)std::wcslen(text);
@@ -133,7 +133,7 @@ namespace core { namespace string
         return str;
     }
 
-    std::string ucs2_ansi(const wchar_t * text, int32_t length)
+    std::string u16_ansi(const wchar_t * text, int32_t length)
     {
         if (length < 0)
             length = (int32_t)std::wcslen(text);
@@ -147,7 +147,7 @@ namespace core { namespace string
         return str;
     }
 
-    std::wstring u8_ucs2(const char * text, int32_t length)
+    std::wstring u8_u16(const char * text, int32_t length)
     {
         if (length < 0)
             length = (int32_t)std::strlen(text);
@@ -164,7 +164,7 @@ namespace core { namespace string
         return ucs2;
     }
 
-    std::wstring ansi_ucs2(const char * text, int32_t length)
+    std::wstring ansi_u16(const char * text, int32_t length)
     {
         if (length < 0)
             length = std::strlen(text);
@@ -189,22 +189,22 @@ namespace core { namespace string
 
     std::string usc2_u8(std::wstring str)
     {
-        return ucs2_u8(str.c_str(), (int32_t)str.length());
+        return u16_u8(str.c_str(), (int32_t)str.length());
     }
 
     std::string usc2_ansi(std::wstring str)
     {
-        return ucs2_ansi(str.c_str(), (int32_t)str.length());
+        return u16_ansi(str.c_str(), (int32_t)str.length());
     }
 
-    std::wstring u8_ucs2(std::string str)
+    std::wstring u8_u16(std::string str)
     {
-        return u8_ucs2(str.c_str(), (int32_t)str.length());
+        return u8_u16(str.c_str(), (int32_t)str.length());
     }
 
-    std::string ucs2_u8(std::wstring str)
+    std::string u16_u8(std::wstring str)
     {
-        return ucs2_u8(str.c_str(), (int32_t)str.length());
+        return u16_u8(str.c_str(), (int32_t)str.length());
     }
 
     std::string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes)

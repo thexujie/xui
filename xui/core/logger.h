@@ -30,12 +30,12 @@ inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_
 
 inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const wchar_t * _Val)
 {
-    return _Ostr << core::string::ucs2_u8(_Val);
+    return _Ostr << core::string::u16_u8(_Val);
 }
 
 inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const wchar_t * _Val)
 {
-    return _Ostr << core::string::ucs2_u8(_Val);
+    return _Ostr << core::string::u16_u8(_Val);
 }
 
 namespace core

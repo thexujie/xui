@@ -8,14 +8,20 @@ namespace win32::uniscribe
     {
         LOGFONTW logfont = {};
         if (font.family[0])
-            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8_ucs2(font.family).data(), -1);
+            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8_u16(font.family).data(), -1);
         else
-            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8_ucs2(win32::defaultFont().family).data(), -1);
+            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8_u16(win32::defaultFont().family).data(), -1);
 
-        //int iDpiY = GetDeviceCaps(hdc, LOGPIXELSY);
-        logfont.lfWidth = 0;
-        //logFont.lfHeight = (int32_t)(-font.size * 72 / iDpiY);
-        logfont.lfHeight = -static_cast<int32_t>(font.size);
+        if(font.size > 0)
+        {
+            HDC hdcScreen = GetDC(NULL);
+            int iDpiY = GetDeviceCaps(hdcScreen, LOGPIXELSY);
+            ReleaseDC(NULL, hdcScreen);
+            logfont.lfWidth = 0;
+            logfont.lfHeight = -(int32_t)(font.size * iDpiY / 72);
+        }
+        else
+            logfont.lfHeight = font.size;
         logfont.lfWeight = static_cast<int32_t>(font.weight);
 
         logfont.lfItalic = static_cast<uint8_t>(font.flags & graphics::text::font::italic);

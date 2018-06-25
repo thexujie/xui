@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Graphics.h"
 #include "win32/windows.h"
 #include "core/io/filestream.h"
@@ -120,7 +120,7 @@ namespace win32
         if(!*_hdc || !_objCache)
             return;
 
-        std::wstring strw = core::string::u8_ucs2(str);
+        std::wstring strw = core::string::u8_u16(str);
         SetFont(_objCache->GetFont(font));
 
         ::SetTextColor(*_hdc, AffineColor(color).argb & 0x00FFFFFF);
@@ -217,6 +217,75 @@ namespace win32
         }
     }
 
+    void Graphics::DrawString(const std::string & str, core::math::pt32_t point, const graphics::text::font & font, core::color32 color, int32_t flags)
+    {
+        if (!*_hdc || !_objCache)
+            return;
+
+        auto strW = core::string::u8_u16(str);
+        if(_scpItemTemp.Text() != strW)
+        {
+            _scpItemTemp.SetText(strW);
+            _scpItemTemp.Itemize();
+            _scpItemTemp.SetFont(0, _scpItemTemp.NumClusters(), font);
+            _scpItemTemp.SetColor(0, _scpItemTemp.NumClusters(), color);
+            _scpItemTemp.Slice();
+            _scpItemTemp.Shape();
+            _scpItemTemp.Layout(0, -1, win32::uniscribe::wrapmode_none);
+        }
+
+        math::si32_t size = _scpItemTemp.Size();
+        if (flags & core::math::align::right)
+            point.x -= size.cx;
+        else if (flags & core::math::align::centerX)
+            point.x -= size.cx / 2;
+        else {}
+
+        if (flags & core::math::align::bottom)
+            point.y -= size.cy;
+        else if (flags & core::math::align::centerY)
+            point.y -= size.cy / 2;
+        else {}
+
+        _scpItemTemp.Draw(*_hdc, point.x, point.y, {});
+    }
+
+    void Graphics::DrawString(const std::string & str, core::math::rc32_t rect, const graphics::text::font & font, core::color32 color, int32_t flags)
+    {
+        if (!*_hdc || !_objCache)
+            return;
+
+        auto strW = core::string::u8_u16(str);
+        if (_scpItemTemp.Text() != strW)
+        {
+            _scpItemTemp.SetText(strW);
+            _scpItemTemp.Itemize();
+            _scpItemTemp.SetFont(0, _scpItemTemp.NumClusters(), font);
+            _scpItemTemp.SetColor(0, _scpItemTemp.NumClusters(), color);
+            _scpItemTemp.Slice();
+            _scpItemTemp.Shape();
+            _scpItemTemp.Layout(0, -1, win32::uniscribe::wrapmode_none);
+        }
+
+        math::si32_t size = _scpItemTemp.Size();
+        core::math::pt32_t point = rect.leftTop();
+        if (flags & core::math::align::right)
+            point.x = rect.right() - size.cx;
+        else if (flags & core::math::align::centerX)
+            point.x = rect.x + (rect.cx - size.cx) / 2;
+        else
+            point.x = rect.x;
+
+        if (flags & core::math::align::bottom)
+            point.y = rect.bottom() - size.cy;
+        else if (flags & core::math::align::centerY)
+            point.y = rect.y + (rect.cy - size.cy) / 2;
+        else
+            point.y = rect.y;
+
+        _scpItemTemp.Draw(*_hdc, point.x, point.y, {});
+    }
+
     void Graphics::DrawString(graphics::IGraphicsString & str, core::math::pt32_t point)
     {
         win32::uniscribe::ScriptItem & item = dynamic_cast<win32::uniscribe::ScriptItem &>(str);
@@ -254,13 +323,14 @@ namespace win32
         if(!*_hdc || !_objCache)
             return {};
 
-        std::wstring strw = core::string::u8_ucs2(str);
-        int32_t fit = 0;
-        SIZE size = {};
-
-        SetFont(_objCache->GetFont(font));
-        ::GetTextExtentExPointW(*_hdc, strw.c_str(), (int32_t)strw.length(), std::numeric_limits<uint32_t>::max() / 2, &fit, NULL, &size);
-        return { size.cx, size.cy };
+        win32::uniscribe::ScriptItem item;
+        item.SetText(core::string::u8_u16(str));
+        item.Itemize();
+        item.SetFont(0, item.NumClusters(), font);
+        item.Slice();
+        item.Shape();
+        item.Layout(0, -1, win32::uniscribe::wrapmode_none);
+        return item.Size();
     }
 
     color32 Graphics::AffineColor(color32 color)

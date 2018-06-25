@@ -37,9 +37,9 @@ namespace graphics
         void DrawRoundRect(core::math::rc32_t rect, core::color32 color, float32_t width, float32_t radius);
         void FillRoundRect(core::math::rc32_t rect, core::color32 color, float32_t radius);
 
-        void DrawString(std::string str, pt32_t point, text::font font, color32 color, int32_t flags);
-        void DrawString(std::string str, rc32_t rect, text::font font, color32 color, int32_t flags);
-        void DrawString(IGraphicsString & str, pt32_t point, text::font font, color32 color, int32_t flags);
+        void DrawString(const std::string & str, pt32_t point, const text::font & font, color32 color, int32_t flags);
+        void DrawString(const std::string & str, rc32_t rect, const text::font & font, color32 color, int32_t flags);
+        void DrawString(IGraphicsString & str, pt32_t point, const text::font & font, color32 color, int32_t flags);
         void DrawString(IGraphicsString & str, pt32_t point);
 
         void DrawImage(const Image & image, pt32_t point, int32_t flags);

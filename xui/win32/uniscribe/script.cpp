@@ -37,6 +37,11 @@ namespace win32::uniscribe
     {
     }
 
+    void ScriptItem::SetText(std::wstring text)
+    {
+        _text = text;
+    }
+
     core::error_e ScriptItem::Itemize()
     {
         if (!_service)
@@ -423,7 +428,7 @@ namespace win32::uniscribe
                 if (cluster.softbreak || cluster.whitespace)
                     icluster_break = icluster;
 
-                if (icluster - icluster_last < 1 || iadvance + cluster.advance < width)
+                if (width < 0 || icluster - icluster_last < 1 || iadvance + cluster.advance < width)
                 {
                     // ²»ÓÃ»»ÐÐ
                 }
@@ -569,10 +574,9 @@ namespace win32::uniscribe
     void ScriptItem::Draw(HDC hdc, int32_t x, int32_t y, core::math::rc32_t rect)
     {
         ::SetBkMode(hdc, TRANSPARENT);
-        ::SetTextColor(hdc, 0x0000ff);
         HGDIOBJ hOldFont = nullptr;
         int32_t drawX = x;
-        int32_t drawY = rect.y;
+        int32_t drawY = y;
         RECT rc = { rect.x, rect.y, rect.right(), rect.bottom() };
 
         for(int32_t iline = 0; iline < _lines.size(); ++iline)
@@ -596,7 +600,7 @@ namespace win32::uniscribe
 
                 ::SetTextColor(hdc, view.color);
 
-                HRESULT hResult = ScriptTextOut(hdc, font.cache, drawX + run_x, drawY, rect.empty() ? 0 : ETO_CLIPPED, &rc,
+                HRESULT hResult = ScriptTextOut(hdc, font.cache, drawX + run_x, drawY, rect.empty() ? 0 : ETO_CLIPPED, NULL,
                     &item.sa, nullptr, 0,
                     _glyphs.data() + view.grange.index, view.grange.length,
                     _glyph_advances.data() + view.grange.index,
@@ -630,5 +634,24 @@ namespace win32::uniscribe
     {
         for (int32_t icluster = index; icluster < index + length; ++icluster)
             _clusters[icluster].format.color = color;
+    }
+
+    void ScriptItem::Clear()
+    {
+        
+    }
+
+    core::math::si32_t ScriptItem::Size() const
+    {
+        if (_lines.empty())
+            return {};
+
+        core::math::si32_t size;
+        for (auto & line : _lines)
+        {
+            size.cx = std::max(size.cx, line.width);
+            size.cy += line.height;
+        }
+        return size;
     }
 }

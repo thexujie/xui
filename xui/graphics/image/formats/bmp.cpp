@@ -233,7 +233,7 @@ namespace graphics::image::formats
             return error_not_supported;
 
         std::fstream fs;
-        fs.open(core::string::u8_ucs2(path), std::ios::out | std::ios::binary | std::ios::trunc);
+        fs.open(core::string::u8_u16(path), std::ios::out | std::ios::binary | std::ios::trunc);
         if (!fs.good())
             return error_io;
 

@@ -4,6 +4,7 @@
 #include "Bitmap.h"
 #include "GDIObjectCache.h"
 #include "win32/windows.h"
+#include "uniscribe/script.h"
 
 namespace win32
 {
@@ -28,6 +29,9 @@ namespace win32
         void DrawImage(const graphics::IGraphicsImage & image, core::math::pt32_t point, core::math::rc32_t region);
         void DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect);
         void DrawImage(const graphics::IGraphicsImage & image, core::math::rc32_t rect, core::math::rc32_t region);
+
+        void DrawString(const std::string & str, core::math::pt32_t point, const graphics::text::font & font, core::color32 color, int32_t flags);
+        void DrawString(const std::string & str, core::math::rc32_t rect, const graphics::text::font & font, core::color32 color, int32_t flags);
         void DrawString(graphics::IGraphicsString & str, core::math::pt32_t point);
 
     public:
@@ -54,5 +58,7 @@ namespace win32
         agg::scanline_u8 _sl;
 
         agg::rendering_buffer _rbuf;
+
+        win32::uniscribe::ScriptItem _scpItemTemp;
     };
 }

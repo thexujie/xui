@@ -139,56 +139,23 @@ namespace graphics
         _graphics->FillPath(path, color);
     }
 
-    void Graphics::DrawString(std::string str, pt32_t point, text::font font, color32 color, int32_t flags)
+    void Graphics::DrawString(const std::string & str, pt32_t point, const text::font & font, color32 color, int32_t flags)
     {
         if (!_graphics)
             return;
 
-        si32_t size = _graphics->MeasureString(str, font);
-        if (flags & core::math::align::right)
-            point.x -= size.cx;
-        else if (flags & core::math::align::centerX)
-            point.x -= size.cx / 2;
-        else {}
-
-        if (flags & core::math::align::bottom)
-            point.y -= size.cy;
-        else if (flags & core::math::align::centerY)
-            point.y -= size.cy / 2;
-        else {}
-
-        _graphics->DrawString(str, point, font, color);
+        _graphics->DrawString(str, point, font, color, flags);
     }
 
-    void Graphics::DrawString(std::string str, rc32_t rect, text::font font, color32 color, int32_t flags)
+    void Graphics::DrawString(const std::string & str, rc32_t rect, const text::font & font, color32 color, int32_t flags)
     {
         if (!_graphics)
             return;
-        if (!_graphics)
-            return;
 
-        pt32_t point;
-        si32_t size = _graphics->MeasureString(str, font);
-        if (flags & core::math::align::right)
-            point.x = rect.right() - size.cx;
-        else if (flags & core::math::align::centerX)
-            point.x = rect.centerX() - size.cx / 2;
-        else
-            point.x = rect.x;
-
-        if (flags & core::math::align::bottom)
-            point.y = rect.bottom() - size.cy;
-        else if (flags & core::math::align::centerY)
-            point.y = rect.centerY() - size.cy / 2;
-        else
-            point.y = rect.y;
-
-        PushClip(rect);
-        _graphics->DrawString(str, point, font, color);
-        PopClip();
+        _graphics->DrawString(str, rect, font, color, flags);
     }
 
-    void Graphics::DrawString(IGraphicsString & str, pt32_t point, text::font font, color32 color, int32_t flags)
+    void Graphics::DrawString(IGraphicsString & str, pt32_t point, const text::font & font, color32 color, int32_t flags)
     {
         if (!_graphics)
             return;
@@ -200,8 +167,6 @@ namespace graphics
 
     void Graphics::DrawString(IGraphicsString & str, pt32_t point)
     {
-        if (!_graphics)
-            return;
         if (!_graphics)
             return;
 

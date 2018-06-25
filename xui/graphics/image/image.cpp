@@ -20,7 +20,7 @@ namespace graphics::image
 
     error_e image_load(std::string path, image_data_t & img)
     {
-        std::wstring pathw = core::string::u8_ucs2(path);
+        std::wstring pathw = core::string::u8_u16(path);
         std::fstream fs;
         fs.open(pathw.c_str(), std::ios::in | std::ios::binary);
         if (!fs.good())

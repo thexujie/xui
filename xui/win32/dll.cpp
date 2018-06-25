@@ -28,7 +28,7 @@ namespace win32
         free();
         if (!path.empty())
         {
-            std::wstring pathw = core::string::u8_ucs2(path);
+            std::wstring pathw = core::string::u8_u16(path);
             _handle = ::LoadLibraryW(pathw.c_str());
             if (!_handle)
                 logger::war() << __FUNCTION__" LoadLibraryW failed " << winerr_str(GetLastError());

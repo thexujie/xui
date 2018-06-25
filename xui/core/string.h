@@ -13,17 +13,17 @@ namespace core { namespace string
 
     std::string ansi_u8(const char8_t * text, int32_t length);
     std::string u8_ansi(const char8_t * text, int32_t length);
-    std::string ucs2_u8(const char16_t * text, int32_t length);
-    std::string ucs2_ansi(const char16_t * text, int32_t length);
-    std::wstring u8_ucs2(const char8_t * text, int32_t length);
-    std::wstring ansi_ucs2(const char8_t * text, int32_t length);
+    std::string u16_u8(const char16_t * text, int32_t length);
+    std::string u16_ansi(const char16_t * text, int32_t length);
+    std::wstring u8_u16(const char8_t * text, int32_t length);
+    std::wstring ansi_u16(const char8_t * text, int32_t length);
 
     std::string ansi_u8(std::string str);
     std::string u8_ansi(std::string str);
     std::string usc2_u8(std::wstring str);
     std::string usc2_ansi(std::wstring str);
-    std::wstring u8_ucs2(std::string str);
-    std::string ucs2_u8(std::wstring str);
+    std::wstring u8_u16(std::string str);
+    std::string u16_u8(std::wstring str);
 
     struct less_ic
     {

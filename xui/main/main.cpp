@@ -242,8 +242,12 @@ void testImages()
     }
 }
 
+#include <ShellScalingAPI.h>
+#pragma comment(lib, "Shcore.lib")
+
 int main()
 {
+    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
     win32::Win32App app;
     //testImages();
 
@@ -323,12 +327,12 @@ int main()
     graphics->DrawRect({ 100, 100, 1280, 720 }, 0xffff0000, 2);
 
     core::counter_acc<float, 3> cps;
-    while(true)
-    {
-        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
-        cps.acc(1);
-        printf("\r%.1f", cps.avg());
-    }
+    //while(true)
+    //{
+    //    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
+    //    cps.acc(1);
+    //    printf("\r%.1f", cps.avg());
+    //}
 
     win32::uniscribe::ScriptItem item;
     item.SetText(L"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观");

@@ -127,7 +127,9 @@ namespace win32::uniscribe
         ScriptItem();
         ~ScriptItem();
 
-        void SetText(std::wstring text) { _text = text; }
+        void SetText(std::wstring text);
+        const std::wstring & Text() { return _text; }
+
         // generate scripts and clusters(by ScriptBreak).
         core::error_e Itemize();
         // generate runs for different font(name¡¢size¡¢bold¡¢italic...)
@@ -144,6 +146,10 @@ namespace win32::uniscribe
         void SetColor(int32_t index, int32_t length, int32_t color);
 
         int32_t NumClusters() const { return _clusters.size(); }
+
+    public:
+        void Clear();
+        core::math::si32_t Size() const;
 
     private:
         std::shared_ptr<ScriptService> _service;

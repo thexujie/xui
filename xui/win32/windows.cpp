@@ -165,7 +165,7 @@ namespace win32
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
         graphics::text::font font;
-        font.family = core::string::ucs2_u8(metrics.lfMessageFont.lfFaceName);
+        font.family = core::string::u16_u8(metrics.lfMessageFont.lfFaceName);
         font.size = metrics.lfMessageFont.lfHeight;
         return font;
     }

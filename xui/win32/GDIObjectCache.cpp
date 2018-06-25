@@ -10,9 +10,9 @@ namespace win32
     void FontToLOGFONT(HDC hdc, const text::font & font, LOGFONTW & logFont)
     {
         if (font.family.empty())
-            textcpy(logFont.lfFaceName, LF_FACESIZE, core::string::u8_ucs2(win32::defaultFont().family).c_str(), -1);
+            textcpy(logFont.lfFaceName, LF_FACESIZE, core::string::u8_u16(win32::defaultFont().family).c_str(), -1);
         else
-            textcpy(logFont.lfFaceName, LF_FACESIZE, core::string::u8_ucs2(font.family).c_str(), -1);
+            textcpy(logFont.lfFaceName, LF_FACESIZE, core::string::u8_u16(font.family).c_str(), -1);
 
         int iDpiY = GetDeviceCaps(hdc, LOGPIXELSY);
         logFont.lfWidth = 0;

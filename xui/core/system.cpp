@@ -11,7 +11,7 @@ namespace core
     {
         wchar_t szPath[MAX_PATH] = {};
         DWORD dwLength = ::GetTempPathW(MAX_PATH, szPath);
-        return core::filesystem::path(core::string::ucs2_u8(std::wstring(szPath, dwLength)));
+        return core::filesystem::path(core::string::u16_u8(std::wstring(szPath, dwLength)));
     }
 
     core::filesystem::path appdata_path()
@@ -20,7 +20,7 @@ namespace core
         BOOL bSucc = ::SHGetSpecialFolderPathW(NULL, szPath, CSIDL_APPDATA, FALSE);
         if (!bSucc)
             return temp_path();
-        return core::filesystem::path(core::string::ucs2_u8(std::wstring(szPath, std::wcslen(szPath))));
+        return core::filesystem::path(core::string::u16_u8(std::wstring(szPath, std::wcslen(szPath))));
     }
 
     core::filesystem::path process_path()
