@@ -47,6 +47,16 @@ namespace win32::uniscribe
 
     struct scp_cluster
     {
+        enum
+        {
+            whitespace = 0x0001,
+            softbreak = 0x0002,
+            paragraphtag = 0x0004,
+            softhyphen = 0x0008,
+            right2left = 0x0010,
+            linetag = 0x0020,
+        };
+
 #ifdef _DEBUG
         std::wstring _text;
 #endif
@@ -58,21 +68,12 @@ namespace win32::uniscribe
 
         int32_t x = 0;
         int32_t y = 0;
+
         int32_t height = 0;
 
         scp_format format;
 
-        bool whitespace  = false;
-        //! 该字符后是否是建议的换行位置.
-        bool softbreak = false;
-        //! 是否是段落标记
-        bool paragraphtag = false;
-        //! 是否是连字符
-        bool softhyphen = false;
-        //! 是否是从右到左的阅读顺序
-        bool right2left = false;
-        //! 是否是行标记
-        bool linetag = false;
+        int32_t flags = 0;
     };
 
     struct scp_run
@@ -102,7 +103,11 @@ namespace win32::uniscribe
         int32_t color = -1;
         crange_t crange;
         grange_t grange;
+
         int32_t width = 0;
+        int32_t height = 0;
+        int32_t ascent = 0;
+        int32_t decent = 0;
     };
 
     struct scp_line
@@ -116,6 +121,9 @@ namespace win32::uniscribe
 
         int32_t width = 0;
         int32_t height = 0;
+
+        int32_t ascent = 0;
+        int32_t decent = 0;
     };
 
 
