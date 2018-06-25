@@ -4,7 +4,6 @@
 #include <vector>
 #include <usp10.h>
 #include "graphics/text/text.h"
-#include "core/math/rect.h"
 #include "ScriptService.h"
 #include "graphics/GraphicsService.h"
 #pragma comment(lib, "usp10.lib")
@@ -139,7 +138,7 @@ namespace win32::uniscribe
         // layout all clusters
         void Layout(int32_t start, int32_t width, wrapmode_e wrapmode);
 
-        void Draw(HDC hdc, int32_t x, int32_t y, core::math::rc32i rect);
+        void Draw(HDC hdc, int32_t x, int32_t y, core::rc32i rect);
 
         void SetFont(int32_t index, int32_t length, const font & font);
         void SetColor(int32_t index, int32_t length, int32_t color);
@@ -148,7 +147,7 @@ namespace win32::uniscribe
 
     public:
         void Clear();
-        core::math::si32i Size() const;
+        core::si32i Size() const;
 
     private:
         std::shared_ptr<ScriptService> _service;

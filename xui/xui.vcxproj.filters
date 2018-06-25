@@ -56,9 +56,6 @@
     <ClCompile Include="core\math\xmm\quat4.cpp">
       <Filter>core\math\xmm</Filter>
     </ClCompile>
-    <ClCompile Include="core\math\math.cpp">
-      <Filter>core\math</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\GraphicsService.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -194,6 +191,9 @@
     <ClCompile Include="graphics\text\font.cpp">
       <Filter>graphics\text</Filter>
     </ClCompile>
+    <ClCompile Include="core\math.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -248,24 +248,6 @@
     <ClInclude Include="graphics\Pixmap.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="core\math\align.h">
-      <Filter>core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\edge.h">
-      <Filter>core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\rect.h">
-      <Filter>core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\vec2.h">
-      <Filter>core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\vec3.h">
-      <Filter>core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\vec4.h">
-      <Filter>core\math</Filter>
-    </ClInclude>
     <ClInclude Include="core\math\xmm\float2.h">
       <Filter>core\math\xmm</Filter>
     </ClInclude>
@@ -292,9 +274,6 @@
     </ClInclude>
     <ClInclude Include="core\math\xmm\xm\xmi_argb.h">
       <Filter>core\math\xmm\xm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\math.h">
-      <Filter>core\math</Filter>
     </ClInclude>
     <ClInclude Include="graphics\GraphicsService.h">
       <Filter>graphics</Filter>
@@ -754,6 +733,27 @@
     </ClInclude>
     <ClInclude Include="win32\uniscribe\ScriptService.h">
       <Filter>win32\uniscribe</Filter>
+    </ClInclude>
+    <ClInclude Include="core\align.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\edge.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\rect.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vec2.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vec3.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vec4.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@
 
 namespace win32
 {
-    std::shared_ptr<graphics::IGraphicsPixmap> GraphicsService::CreatePixmap(core::math::si32i size)
+    std::shared_ptr<graphics::IGraphicsPixmap> GraphicsService::CreatePixmap(core::si32i size)
     {
         if (!_hdc)
         {

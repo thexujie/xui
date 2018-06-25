@@ -1,6 +1,6 @@
 #pragma once
 
-namespace core::math
+namespace core
 {
     template<typename ValT>
     class vec3

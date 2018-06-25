@@ -3,7 +3,7 @@
 #include "align.h"
 #include "vec2.h"
 
-namespace core::math
+namespace core
 {
     /************************************************************************/
     /* @brief rectangle 通常表示的有效矩形区域是不包含其右边和下边最后一排像素的。

@@ -100,7 +100,7 @@
     <ClCompile Include="core\error.cpp" />
     <ClCompile Include="core\io\filestream.cpp" />
     <ClCompile Include="core\logger.cpp" />
-    <ClCompile Include="core\math\math.cpp" />
+    <ClCompile Include="core\math.cpp" />
     <ClCompile Include="core\math\xmm\float2.cpp" />
     <ClCompile Include="core\math\xmm\float3.cpp" />
     <ClCompile Include="core\math\xmm\float4.cpp" />
@@ -167,23 +167,19 @@
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\align.h" />
     <ClInclude Include="core\app.h" />
     <ClInclude Include="core\base64.h" />
     <ClInclude Include="core\color32.h" />
     <ClInclude Include="core\core.h" />
     <ClInclude Include="core\counter_acc.h" />
+    <ClInclude Include="core\edge.h" />
     <ClInclude Include="core\error.h" />
     <ClInclude Include="core\io\buffer.h" />
     <ClInclude Include="core\io\filestream.h" />
     <ClInclude Include="core\io\stream.h" />
     <ClInclude Include="core\logger.h" />
-    <ClInclude Include="core\math\align.h" />
-    <ClInclude Include="core\math\edge.h" />
-    <ClInclude Include="core\math\math.h" />
-    <ClInclude Include="core\math\rect.h" />
-    <ClInclude Include="core\math\vec2.h" />
-    <ClInclude Include="core\math\vec3.h" />
-    <ClInclude Include="core\math\vec4.h" />
+    <ClInclude Include="core\math.h" />
     <ClInclude Include="core\math\xmm\float2.h" />
     <ClInclude Include="core\math\xmm\float3.h" />
     <ClInclude Include="core\math\xmm\float4.h" />
@@ -199,9 +195,13 @@
     <ClInclude Include="core\network\socket.h" />
     <ClInclude Include="core\object.h" />
     <ClInclude Include="core\path.h" />
+    <ClInclude Include="core\rect.h" />
     <ClInclude Include="core\string.h" />
     <ClInclude Include="core\system.h" />
     <ClInclude Include="core\unicode.h" />
+    <ClInclude Include="core\vec2.h" />
+    <ClInclude Include="core\vec3.h" />
+    <ClInclude Include="core\vec4.h" />
     <ClInclude Include="graphics\GraphicsService.h" />
     <ClInclude Include="graphics\Image.h" />
     <ClInclude Include="graphics\image\formats\bmp.h" />

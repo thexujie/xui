@@ -1,7 +1,6 @@
 #pragma once
 
-
-namespace core::math
+namespace core
 {
     enum AxisE
     {

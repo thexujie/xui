@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace core::math
+namespace core
 {
     /**
     * @brief 四舍五入，小于 0.5f 的舍去，大于或等于 0.5f 的补齐 1.0f。
@@ -75,8 +75,8 @@ namespace core::math
 #include "rect.h"
 #include "edge.h"
 
-#include "xmm/float2.h"
-#include "xmm/float3.h"
-#include "xmm/float4.h"
-#include "xmm/float4x4.h"
-#include "xmm/quat4.h"
+#include "math/xmm/float2.h"
+#include "math/xmm/float3.h"
+#include "math/xmm/float4.h"
+#include "math/xmm/float4x4.h"
+#include "math/xmm/quat4.h"

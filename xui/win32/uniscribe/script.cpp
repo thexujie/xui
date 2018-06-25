@@ -571,7 +571,7 @@ namespace win32::uniscribe
         }
     }
 
-    void ScriptItem::Draw(HDC hdc, int32_t x, int32_t y, core::math::rc32i rect)
+    void ScriptItem::Draw(HDC hdc, int32_t x, int32_t y, core::rc32i rect)
     {
         ::SetBkMode(hdc, TRANSPARENT);
         HGDIOBJ hOldFont = nullptr;
@@ -641,12 +641,12 @@ namespace win32::uniscribe
         
     }
 
-    core::math::si32i ScriptItem::Size() const
+    core::si32i ScriptItem::Size() const
     {
         if (_lines.empty())
             return {};
 
-        core::math::si32i size;
+        core::si32i size;
         for (auto & line : _lines)
         {
             size.cx = std::max(size.cx, line.width);

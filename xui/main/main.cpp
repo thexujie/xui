@@ -2,7 +2,7 @@
 
 #include "core/app.h"
 #include "core/counter_acc.h"
-#include "core/math/vec2.h"
+#include "core/vec2.h"
 #include "graphics/GraphicsService.h"
 #include "graphics/Graphics.h"
 #include "win32/Bitmap.h"
@@ -117,7 +117,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     //raster.add_path(shape);
     //agg::render_scanlines_aa_solid(raster, sl, renb_gray8, agg::gray8(255));
 
-    //core::math::pt32i pos = { 400, 200 };
+    //core::pt32i pos = { 400, 200 };
     //agg::rendering_buffer rbuf2;
     //agg::pixel_accessor_gray8 pixf2(rbuf2);
     //if (pixf2.attach(pixf_gray8, int(shadow_bounds.x1), int(shadow_bounds.y1), int(shadow_bounds.x2), int(shadow_bounds.y2)))
@@ -178,7 +178,7 @@ void testAgg(std::shared_ptr<graphics::Pixmap> & pixmap)
     //agg::conv_stroke<agg::path_storage> pg(ps);
     //pg.width(2.0);
 
-    core::math::rc32i rect{0, 0, 800, 600};
+    core::rc32i rect{0, 0, 800, 600};
     ps.move_to(rect.x, rect.y);
     ps.line_to(rect.right(), rect.y);
     ps.line_to(rect.right(), rect.bottom());
@@ -253,24 +253,24 @@ int main()
 
     int32_t cx = 1920;
     int32_t cy = 1080;
-    std::shared_ptr<graphics::Pixmap> pixmap = std::make_shared<graphics::Pixmap>(core::math::si32i{ cx, cy });
+    std::shared_ptr<graphics::Pixmap> pixmap = std::make_shared<graphics::Pixmap>(core::si32i{ cx, cy });
     auto graphics = std::make_shared<graphics::Graphics>(pixmap);
     
     graphics->Clear(colors::LightGray);
 
     //auto image = std::make_shared<graphics::Image>("lcw.tga");
-    //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, core::math::align::leftTop);
-    //graphics->DrawImage(*image, { 160, 10 }, core::math::align::leftTop);
-    //graphics->DrawImage(*image, { 200, 20 }, core::math::align::leftTop);
+    //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, core::align::leftTop);
+    //graphics->DrawImage(*image, { 160, 10 }, core::align::leftTop);
+    //graphics->DrawImage(*image, { 200, 20 }, core::align::leftTop);
     //graphics->DrawImage(*image, { 200, 20, 400, 100 });
-    //graphics->DrawImage(*image, math::rc32i{100, 100, 500, 100}, core::math::rc32i{ 100, 0, 194, 215});
+    //graphics->DrawImage(*image, core::rc32i{100, 100, 500, 100}, core::rc32i{ 100, 0, 194, 215});
 
-    //graphics->DrawImage(*(image.get()), { 0, 0, cx / 4, cy / 4 }, core::math::align::bottomCenterX);
+    //graphics->DrawImage(*(image.get()), { 0, 0, cx / 4, cy / 4 }, core::align::bottomCenterX);
     //graphics->DrawImage(*(image.get()), { cx / 4, 0, cx / 4, cy / 4 });
 
-    //graphics->DrawImage(*(image.get()), { 0, 0, cx / 2, cy / 4 }, core::math::align::bottomCenterX);
+    //graphics->DrawImage(*(image.get()), { 0, 0, cx / 2, cy / 4 }, core::align::bottomCenterX);
 
-    //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, { 20, 300, 600, 200 }, core::math::align::leftTop);
+    //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4 }, { 20, 300, 600, 200 }, core::align::leftTop);
 
     //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4, cx / 2, cy / 2 }, { 20, 300, 600, 200 });
     //graphics->DrawLine({ cx / 2, cy }, { cx / 2, 0 },  colors::Yellow, 1);
@@ -279,40 +279,40 @@ int main()
     graphics->DrawLine({ cx / 2, 0 }, { cx / 2, cy }, colors::Red, 1);
     graphics->DrawLine({ 0, 0 }, { cx, cy}, colors::Red, 1);
     graphics->DrawLine({ cx, 0 }, { 0, cy }, colors::Red, 1);
-    graphics->DrawEllipse(math::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
+    graphics->DrawEllipse(core::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Red, 2.0f);
 
     graphics->FillRect({ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::Green);
-    graphics->DrawRect(math::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
-    graphics->DrawRoundRect(math::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
+    graphics->DrawRect(core::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }.expand(-1), colors::Red, 1);
+    graphics->DrawRoundRect(core::rc32i{ cx / 4, cy / 4, cx / 2, cy / 2 }, colors::White, 5, 50);
 
-    graphics->DrawString(u8"MMMM", { cx / 2, cy / 2 }, { "", 10 }, colors::Red, core::math::align::centerXY);
+    graphics->DrawString(u8"MMMM", { cx / 2, cy / 2 }, { "", 10 }, colors::Red, core::align::centerXY);
 
-    //graphics->DrawString(u8"LTLT", colors::Black, { "", 10 }, { cx / 2, cy / 2 }, core::math::align::leftTop);
-    //graphics->DrawString(u8"RTRT", colors::Gray, { "", 10 }, { cx / 2, cy / 2 }, core::math::align::rightTop);
-    //graphics->DrawString(u8"RBRB", colors::Green, { "", 10 }, { cx / 2, cy / 2 }, core::math::align::rightBottom);
-    //graphics->DrawString(u8"LBLB", colors::Blue, { "", 10 }, { cx / 2, cy / 2 }, core::math::align::leftBottom);
+    //graphics->DrawString(u8"LTLT", colors::Black, { "", 10 }, { cx / 2, cy / 2 }, core::align::leftTop);
+    //graphics->DrawString(u8"RTRT", colors::Gray, { "", 10 }, { cx / 2, cy / 2 }, core::align::rightTop);
+    //graphics->DrawString(u8"RBRB", colors::Green, { "", 10 }, { cx / 2, cy / 2 }, core::align::rightBottom);
+    //graphics->DrawString(u8"LBLB", colors::Blue, { "", 10 }, { cx / 2, cy / 2 }, core::align::leftBottom);
 
-    graphics->DrawString(u8"LTLT", { cx / 2, cy / 2 }, { "", 20 }, colors::Black, core::math::align::leftCenterY);
-    graphics->DrawString(u8"RTRT", { cx / 2, cy / 2 }, { "", 20 }, colors::Gray, core::math::align::topCenterX);
-    graphics->DrawString(u8"RBRB", { cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::math::align::rightCenterY);
-    graphics->DrawString(u8"LBLB", { cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::math::align::bottomCenterX);
+    graphics->DrawString(u8"LTLT", { cx / 2, cy / 2 }, { "", 20 }, colors::Black, core::align::leftCenterY);
+    graphics->DrawString(u8"RTRT", { cx / 2, cy / 2 }, { "", 20 }, colors::Gray, core::align::topCenterX);
+    graphics->DrawString(u8"RBRB", { cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::align::rightCenterY);
+    graphics->DrawString(u8"LBLB", { cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::align::bottomCenterX);
 
-    graphics->DrawString(u8"LTLT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Red, core::math::align::leftTop);
-    graphics->DrawString(u8"RTRT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Yellow, core::math::align::rightTop);
-    graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::math::align::rightBottom);
-    graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::math::align::leftBottom);
+    graphics->DrawString(u8"LTLT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Red, core::align::leftTop);
+    graphics->DrawString(u8"RTRT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Yellow, core::align::rightTop);
+    graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::align::rightBottom);
+    graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::align::leftBottom);
 
-    graphics->DrawString(u8"LTLT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Red, core::math::align::leftCenterY);
-    graphics->DrawString(u8"RTRT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Yellow, core::math::align::topCenterX);
-    graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::math::align::rightCenterY);
-    graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::math::align::bottomCenterX);
+    graphics->DrawString(u8"LTLT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Red, core::align::leftCenterY);
+    graphics->DrawString(u8"RTRT", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Yellow, core::align::topCenterX);
+    graphics->DrawString(u8"RBRB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Green, core::align::rightCenterY);
+    graphics->DrawString(u8"LBLB", { cx / 4, cy / 4, cx / 2, cy / 2 }, { "", 20 }, colors::Blue, core::align::bottomCenterX);
 
     //auto cm = std::make_shared<graphics::Image>("lcw.tga");
     //cm->Save("cm.bmp");
     //graphics->DrawImage(*cm.get(), { 10, 10 }, 0);
     //graphics->DrawImage(*cm.get(), { 50, 50 }, 0);
-    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 10, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
-    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, core::math::align::leftTop);
+    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 10, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::align::leftTop);
+    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, core::align::leftTop);
     auto si = graphics->MeasureString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空\r\n位过了旺季安哥拉晋文公来围观", {"", 10 });
 
     graphics->DrawRect({ 100, 100, 200, 50 }, colors::Red, 2.0f);
@@ -323,20 +323,20 @@ int main()
     //graphics->DrawImage(graphics::Image("dota2.jpg"), { 410, 100, 300, 200 });
     //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 0, 1920, 1080 });
     //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 540, 960, 540 });
-    graphics->DrawImage(graphics::Image("1920.png"), math::pt32i{ 100, 100 }, { 500, 80, 960, 960 }, math::align::leftTop);
+    graphics->DrawImage(graphics::Image("1920.png"), core::pt32i{ 100, 100 }, { 500, 80, 960, 960 }, core::align::leftTop);
     graphics->DrawRect({ 100, 100, 1280, 720 }, 0xffff0000, 2);
 
     core::counter_acc<float, 3> cps;
     //while(true)
     //{
-    //    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
+    //    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::align::leftTop);
     //    cps.acc(1);
     //    printf("\r%.1f", cps.avg());
     //}
 
     while(true)
     {
-        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::math::align::leftTop);
+        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::align::leftTop);
         cps.acc(1);
         printf("\r%.1f", cps.avg());
     }

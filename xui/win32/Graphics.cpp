@@ -21,15 +21,15 @@ namespace win32
         _raster.clip_box(0, 0, buffer.size.cx, buffer.size.cy);
     }
 
-    void Graphics::PushOrign(core::math::pt32i point)
+    void Graphics::PushOrign(core::pt32i point)
     {
-        core::math::pt32i temp = point;
+        core::pt32i temp = point;
         if (!_origns.empty())
             temp += _origns.top();
         _origns.push(temp);
     }
 
-    core::math::pt32i Graphics::GetOrign() const
+    core::pt32i Graphics::GetOrign() const
     {
         if (_origns.empty())
             return {};
@@ -42,11 +42,11 @@ namespace win32
         _origns.pop();
     }
 
-    void Graphics::PushClip(core::math::rc32i rect)
+    void Graphics::PushClip(core::rc32i rect)
     {
         if (!_origns.empty())
         {
-            core::math::pt32i orign = _origns.top();
+            core::pt32i orign = _origns.top();
             rect.x += orign.x;
             rect.y += orign.y;
         }
@@ -69,7 +69,7 @@ namespace win32
             ::SelectClipRgn(*_hdc, NULL);
     }
 
-    core::math::rc32i Graphics::GetClip() const
+    core::rc32i Graphics::GetClip() const
     {
         if (_clips.empty())
             return {};
@@ -115,7 +115,7 @@ namespace win32
         }
     }
 
-    void Graphics::DrawString(std::string str, core::math::pt32i point, graphics::text::font font, core::color32 color)
+    void Graphics::DrawString(std::string str, core::pt32i point, graphics::text::font font, core::color32 color)
     {
         if(!*_hdc || !_objCache)
             return;
@@ -132,17 +132,17 @@ namespace win32
         ::TextOutW(*_hdc, point.x, point.y + tm.tmExternalLeading, strw.c_str(), (int32_t)strw.length());
     }
 
-    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::pt32i point)
+    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::pt32i point)
     {
         DrawImage(image, { point, image.size() });
     }
 
-    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::pt32i point, core::math::rc32i region)
+    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::pt32i point, core::rc32i region)
     {
-        DrawImage(image, core::math::rc32i(point, region.size), region);
+        DrawImage(image, core::rc32i(point, region.size), region);
     }
 
-    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32i rect)
+    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::rc32i rect)
     {
         auto & data = image.data();
         agg::pixfmt_bgra32 pixf(_rbuf);
@@ -179,7 +179,7 @@ namespace win32
         }
     }
 
-    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::math::rc32i rect, core::math::rc32i region)
+    void Graphics::DrawImage(const graphics::IGraphicsImage & image, core::rc32i rect, core::rc32i region)
     {
         auto & data = image.data();
         agg::pixfmt_bgra32 pixf(_rbuf);
@@ -217,7 +217,7 @@ namespace win32
         }
     }
 
-    void Graphics::DrawString(const std::string & str, core::math::pt32i point, const graphics::text::font & font, core::color32 color, int32_t flags)
+    void Graphics::DrawString(const std::string & str, core::pt32i point, const graphics::text::font & font, core::color32 color, int32_t flags)
     {
         if (!*_hdc || !_objCache)
             return;
@@ -234,23 +234,23 @@ namespace win32
             _scpItemTemp.Layout(0, -1, win32::uniscribe::wrapmode_none);
         }
 
-        math::si32i size = _scpItemTemp.Size();
-        if (flags & core::math::align::right)
+        core::si32i size = _scpItemTemp.Size();
+        if (flags & core::align::right)
             point.x -= size.cx;
-        else if (flags & core::math::align::centerX)
+        else if (flags & core::align::centerX)
             point.x -= size.cx / 2;
         else {}
 
-        if (flags & core::math::align::bottom)
+        if (flags & core::align::bottom)
             point.y -= size.cy;
-        else if (flags & core::math::align::centerY)
+        else if (flags & core::align::centerY)
             point.y -= size.cy / 2;
         else {}
 
         _scpItemTemp.Draw(*_hdc, point.x, point.y, {});
     }
 
-    void Graphics::DrawString(const std::string & str, core::math::rc32i rect, const graphics::text::font & font, core::color32 color, int32_t flags)
+    void Graphics::DrawString(const std::string & str, core::rc32i rect, const graphics::text::font & font, core::color32 color, int32_t flags)
     {
         if (!*_hdc || !_objCache)
             return;
@@ -267,18 +267,18 @@ namespace win32
             _scpItemTemp.Layout(0, -1, win32::uniscribe::wrapmode_none);
         }
 
-        math::si32i size = _scpItemTemp.Size();
-        core::math::pt32i point = rect.leftTop();
-        if (flags & core::math::align::right)
+        core::si32i size = _scpItemTemp.Size();
+        core::pt32i point = rect.leftTop();
+        if (flags & core::align::right)
             point.x = rect.right() - size.cx;
-        else if (flags & core::math::align::centerX)
+        else if (flags & core::align::centerX)
             point.x = rect.x + (rect.cx - size.cx) / 2;
         else
             point.x = rect.x;
 
-        if (flags & core::math::align::bottom)
+        if (flags & core::align::bottom)
             point.y = rect.bottom() - size.cy;
-        else if (flags & core::math::align::centerY)
+        else if (flags & core::align::centerY)
             point.y = rect.y + (rect.cy - size.cy) / 2;
         else
             point.y = rect.y;
@@ -286,7 +286,7 @@ namespace win32
         _scpItemTemp.Draw(*_hdc, point.x, point.y, {});
     }
 
-    void Graphics::DrawString(graphics::IGraphicsString & str, core::math::pt32i point)
+    void Graphics::DrawString(graphics::IGraphicsString & str, core::pt32i point)
     {
         win32::uniscribe::ScriptItem & item = dynamic_cast<win32::uniscribe::ScriptItem &>(str);
         item.Draw(*_hdc, point.x, point.y, { });
@@ -318,7 +318,7 @@ namespace win32
         return metrics;
     }
 
-    core::math::si32i Graphics::MeasureString(std::string str, graphics::text::font font)
+    core::si32i Graphics::MeasureString(std::string str, graphics::text::font font)
     {
         if(!*_hdc || !_objCache)
             return {};

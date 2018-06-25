@@ -11,7 +11,7 @@ namespace win32
         
     }
 
-    Bitmap::Bitmap(std::shared_ptr<HDC> hdc, core::math::si32i size) : _hdc(hdc)
+    Bitmap::Bitmap(std::shared_ptr<HDC> hdc, core::si32i size) : _hdc(hdc)
     {
         int32_t strike = 4;
         int32_t pitch = size.cx * strike;

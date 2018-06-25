@@ -2,7 +2,7 @@
 
 #include "vec2.h"
 
-namespace core::math
+namespace core
 {
     template<typename ValT>
     class edge_tmpl
