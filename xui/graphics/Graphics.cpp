@@ -155,15 +155,7 @@ namespace graphics
         _graphics->DrawString(str, rect, font, color, flags);
     }
 
-    void Graphics::DrawString(IGraphicsString & str, core::pt32i point, const text::font & font, core::color32 color, int32_t flags)
-    {
-        if (!_graphics)
-            return;
-
-        _graphics->DrawString(str, point);
-    }
-
-    void Graphics::DrawString(IGraphicsString & str, core::pt32i point)
+    void Graphics::DrawString(const IGraphicsString & str, core::pt32i point)
     {
         if (!_graphics)
             return;

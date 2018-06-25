@@ -32,7 +32,7 @@ namespace win32
 
         void DrawString(const std::string & str, core::pt32i point, const graphics::text::font & font, core::color32 color, int32_t flags);
         void DrawString(const std::string & str, core::rc32i rect, const graphics::text::font & font, core::color32 color, int32_t flags);
-        void DrawString(graphics::IGraphicsString & str, core::pt32i point);
+        void DrawString(const graphics::IGraphicsString & str, core::pt32i point);
 
     public:
         void FillPath(graphics::raster::path & path, core::color32 color);

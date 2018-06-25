@@ -571,7 +571,7 @@ namespace win32::uniscribe
         }
     }
 
-    void ScriptItem::Draw(HDC hdc, int32_t x, int32_t y, core::rc32i rect)
+    void ScriptItem::Draw(HDC hdc, int32_t x, int32_t y, core::rc32i rect) const
     {
         ::SetBkMode(hdc, TRANSPARENT);
         HGDIOBJ hOldFont = nullptr;

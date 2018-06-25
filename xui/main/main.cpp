@@ -334,33 +334,9 @@ int main()
     //    printf("\r%.1f", cps.avg());
     //}
 
-    while(true)
-    {
-        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::align::leftTop);
+        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 100, 100, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Aqua, core::align::leftTop);
         cps.acc(1);
         printf("\r%.1f", cps.avg());
-    }
-
-    win32::uniscribe::ScriptItem item;
-    while (true)
-    {
-        item.SetText(L"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观");
-        //item.SetText(L"تەتقىق 0 قىلدى 1 تەتقىق 2 قىلدى一二三四五六七八九十 ABCD EFGHI 𪚥𪚥𪚥 一二三四五六七八九十 ABCD EFGHI 一二三四五六七八九十 ABCD EFGHI 3 تەتقىق 4 قىلدى 5 تەتقىق 6 قىلدى 7 تەتقىق 8 قىلدى 9 ");
-        item.Itemize();
-        item.SetFont(0, item.NumClusters(), { "", 40, 0, graphics::text::font::cleartype });
-        item.SetColor(0, item.NumClusters(), 0x0);
-        //item.SetFont(0, item.NumClusters() / 2, { "", 40, 0, graphics::text::font::cleartype });
-        //item.SetFont(item.NumClusters() / 2, item.NumClusters() / 2, { "", 20, 0, graphics::text::font::cleartype });
-        //item.SetColor(0, item.NumClusters() / 3, 0xff);
-        //item.SetColor(item.NumClusters() / 3, item.NumClusters() / 3, 0xff0000);
-
-        item.Slice();
-        item.Shape();
-        item.Layout(0, 600, win32::uniscribe::wrapmode_word);
-        graphics->DrawString(item, { 10, 400 });
-        cps.acc(1);
-        printf("\r%.1f", cps.avg());
-    }
 
     //item.Draw(hdc2, drawX, drawY, { drawX, drawY, rc.right - frameSize * 2, rc.bottom - frameSize * 2 });
 

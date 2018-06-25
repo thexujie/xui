@@ -223,16 +223,13 @@ namespace win32
             return;
 
         auto strW = core::string::u8_u16(str);
-        if(_scpItemTemp.Text() != strW)
-        {
-            _scpItemTemp.SetText(strW);
-            _scpItemTemp.Itemize();
-            _scpItemTemp.SetFont(0, _scpItemTemp.NumClusters(), font);
-            _scpItemTemp.SetColor(0, _scpItemTemp.NumClusters(), color);
-            _scpItemTemp.Slice();
-            _scpItemTemp.Shape();
-            _scpItemTemp.Layout(0, -1, win32::uniscribe::wrapmode_none);
-        }
+        _scpItemTemp.SetText(strW);
+        _scpItemTemp.Itemize();
+        _scpItemTemp.SetFont(0, _scpItemTemp.NumClusters(), font);
+        _scpItemTemp.SetColor(0, _scpItemTemp.NumClusters(), color);
+        _scpItemTemp.Slice();
+        _scpItemTemp.Shape();
+        _scpItemTemp.Layout(0, -1, win32::uniscribe::wrapmode_none);
 
         core::si32i size = _scpItemTemp.Size();
         if (flags & core::align::right)
@@ -252,20 +249,17 @@ namespace win32
 
     void Graphics::DrawString(const std::string & str, core::rc32i rect, const graphics::text::font & font, core::color32 color, int32_t flags)
     {
-        if (!*_hdc || !_objCache)
+        if (!*_hdc || !_objCache || rect.empty())
             return;
 
         auto strW = core::string::u8_u16(str);
-        if (_scpItemTemp.Text() != strW)
-        {
-            _scpItemTemp.SetText(strW);
-            _scpItemTemp.Itemize();
-            _scpItemTemp.SetFont(0, _scpItemTemp.NumClusters(), font);
-            _scpItemTemp.SetColor(0, _scpItemTemp.NumClusters(), color);
-            _scpItemTemp.Slice();
-            _scpItemTemp.Shape();
-            _scpItemTemp.Layout(0, -1, win32::uniscribe::wrapmode_none);
-        }
+        _scpItemTemp.SetText(strW);
+        _scpItemTemp.Itemize();
+        _scpItemTemp.SetFont(0, _scpItemTemp.NumClusters(), font);
+        _scpItemTemp.SetColor(0, _scpItemTemp.NumClusters(), color);
+        _scpItemTemp.Slice();
+        _scpItemTemp.Shape();
+        _scpItemTemp.Layout(0, rect.cx, win32::uniscribe::wrapmode_word);
 
         core::si32i size = _scpItemTemp.Size();
         core::pt32i point = rect.leftTop();
@@ -286,9 +280,9 @@ namespace win32
         _scpItemTemp.Draw(*_hdc, point.x, point.y, {});
     }
 
-    void Graphics::DrawString(graphics::IGraphicsString & str, core::pt32i point)
+    void Graphics::DrawString(const graphics::IGraphicsString & str, core::pt32i point)
     {
-        win32::uniscribe::ScriptItem & item = dynamic_cast<win32::uniscribe::ScriptItem &>(str);
+        const win32::uniscribe::ScriptItem & item = dynamic_cast<const win32::uniscribe::ScriptItem &>(str);
         item.Draw(*_hdc, point.x, point.y, { });
     }
 

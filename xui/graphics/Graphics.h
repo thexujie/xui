@@ -38,8 +38,7 @@ namespace graphics
 
         void DrawString(const std::string & str, core::pt32i point, const text::font & font, core::color32 color, int32_t flags);
         void DrawString(const std::string & str, core::rc32i rect, const text::font & font, core::color32 color, int32_t flags);
-        void DrawString(IGraphicsString & str, core::pt32i point, const text::font & font, core::color32 color, int32_t flags);
-        void DrawString(IGraphicsString & str, core::pt32i point);
+        void DrawString(const IGraphicsString & str, core::pt32i point);
 
         void DrawImage(const Image & image, core::pt32i point, int32_t flags);
         void DrawImage(const Image & image, core::rc32i rect, int32_t flags);

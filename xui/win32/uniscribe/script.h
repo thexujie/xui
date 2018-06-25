@@ -138,7 +138,7 @@ namespace win32::uniscribe
         // layout all clusters
         void Layout(int32_t start, int32_t width, wrapmode_e wrapmode);
 
-        void Draw(HDC hdc, int32_t x, int32_t y, core::rc32i rect);
+        void Draw(HDC hdc, int32_t x, int32_t y, core::rc32i rect) const;
 
         void SetFont(int32_t index, int32_t length, const font & font);
         void SetColor(int32_t index, int32_t length, int32_t color);
