@@ -88,9 +88,9 @@ namespace win32::uniscribe
 
                 const SCRIPT_LOGATTR & attr_first = attrs[itext];
                 if (attr_first.fSoftBreak)
-                    cluster.softbreak = true;
+                    cluster.flags |= scp_cluster::softbreak;
                 if (attr_first.fWhiteSpace)
-                    cluster.whitespace = true;
+                    cluster.flags |= scp_cluster::whitespace;
 
                 // check the next char.
                 while (itext < attrs.size() - 1)
@@ -101,9 +101,9 @@ namespace win32::uniscribe
                         break;
 
                     if (tattr.fSoftBreak)
-                        cluster.softbreak = true;
+                        cluster.flags |= scp_cluster::softbreak;
                     if (tattr.fWhiteSpace)
-                        cluster.whitespace = true;
+                        cluster.flags |= scp_cluster::whitespace;
 
                     ++cluster.trange.length;
                     ++itext;
@@ -425,7 +425,7 @@ namespace win32::uniscribe
             {
                 scp_cluster & cluster = _clusters[icluster];
                 cluster.run = irun;
-                if (cluster.softbreak || cluster.whitespace)
+                if (cluster.flags & (scp_cluster::softbreak | scp_cluster::whitespace))
                     icluster_break = icluster;
 
                 if (width < 0 || icluster - icluster_last < 1 || iadvance + cluster.advance < width)

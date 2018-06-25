@@ -64,7 +64,7 @@ namespace win32::uniscribe
             vfont.metrics.size = font.size;
             vfont.metrics.height = tm.tmHeight;
             vfont.metrics.ascent = tm.tmAscent;
-            vfont.metrics.decent = tm.tmDescent;
+            vfont.metrics.descent = tm.tmDescent;
             vfont.metrics.linespace = tm.tmHeight;
             vfont.metrics.weight = tm.tmWeight;
 
