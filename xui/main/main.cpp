@@ -327,12 +327,12 @@ int main()
     graphics->DrawRect({ 100, 100, 1280, 720 }, 0xffff0000, 2);
 
     core::counter_acc<float, 3> cps;
-    //while(true)
-    //{
-    //    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::align::leftTop);
-    //    cps.acc(1);
-    //    printf("\r%.1f", cps.avg());
-    //}
+    while(true)
+    {
+        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, core::align::leftTop);
+        cps.acc(1);
+        printf("\r%.1f", cps.avg());
+    }
 
         graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 100, 100, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Aqua, core::align::leftTop);
         cps.acc(1);

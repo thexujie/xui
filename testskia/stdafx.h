@@ -52,26 +52,11 @@ typedef std::string u8string;
 typedef std::wstring u16string;
 typedef char byte_t;
 
-#include "common/error.h"
-#include "common/system.h"
-#include "common/logger.h"
-#include "common/path.h"
 
 #include <guiddef.h>
 
 #include "resource.h"
 
-inline double_t get_time_hr()
-{
-    auto now = std::chrono::high_resolution_clock::now();
-    auto nowmcs = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
-    return nowmcs / 1000000.0;
-}
-
-inline double_t get_time_now_ms()
-{
-    return get_time_hr() * 1000;
-}
 
 //#if defined(_DEBUG)
 //#define _CRTDBG_MAP_ALLOC

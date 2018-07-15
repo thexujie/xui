@@ -1,0 +1,307 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="core\error.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\logger.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\system.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\string.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\network\addr.cpp">
+      <Filter>core\network</Filter>
+    </ClCompile>
+    <ClCompile Include="core\network\http.cpp">
+      <Filter>core\network</Filter>
+    </ClCompile>
+    <ClCompile Include="core\network\socket.cpp">
+      <Filter>core\network</Filter>
+    </ClCompile>
+    <ClCompile Include="core\io\filestream.cpp">
+      <Filter>core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\image.cpp">
+      <Filter>graphics\image</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Graphics.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Pixmap.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\float2.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\float3.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\float4.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\float4x4.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math\xmm\quat4.cpp">
+      <Filter>core\math\xmm</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\GraphicsService.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="core\app.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Image.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\bmp.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\dds.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\jpg.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\png.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\image\formats\tga.cpp">
+      <Filter>graphics\image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="core\unicode.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\text\font.cpp">
+      <Filter>graphics\text</Filter>
+    </ClCompile>
+    <ClCompile Include="core\math.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\skia\SkiaGraphics.cpp">
+      <Filter>graphics\skia</Filter>
+    </ClCompile>
+    <ClCompile Include="core\invokable.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\core.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\windows.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="core\error.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\logger.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\path.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\system.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\string.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\base64.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\network\addr.h">
+      <Filter>core\network</Filter>
+    </ClInclude>
+    <ClInclude Include="core\network\http.h">
+      <Filter>core\network</Filter>
+    </ClInclude>
+    <ClInclude Include="core\network\socket.h">
+      <Filter>core\network</Filter>
+    </ClInclude>
+    <ClInclude Include="core\io\buffer.h">
+      <Filter>core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="core\io\filestream.h">
+      <Filter>core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="core\io\stream.h">
+      <Filter>core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\image.h">
+      <Filter>graphics\image</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Graphics.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Pixmap.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\float2.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\float3.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\float4.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\float4x4.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\quat4.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xm\xm.h">
+      <Filter>core\math\xmm\xm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xm\xmf.h">
+      <Filter>core\math\xmm\xm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xm\xmi.h">
+      <Filter>core\math\xmm\xm</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xm\xmi_argb.h">
+      <Filter>core\math\xmm\xm</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\GraphicsService.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="core\app.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\color32.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\object.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm\xmm.h">
+      <Filter>core\math\xmm</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Image.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\text\text.h">
+      <Filter>graphics\text</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\text\font.h">
+      <Filter>graphics\text</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\bmp.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\dds.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\jpg.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\png.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\image\formats\tga.h">
+      <Filter>graphics\image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="core\counter_acc.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\unicode.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\align.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\edge.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\rect.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vec2.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vec3.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vec4.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\skia\SkiaGraphics.h">
+      <Filter>graphics\skia</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\windows.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\win32.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="core\invokable.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{e66dda2f-c3a6-461a-8a88-89379ad27427}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\network">
+      <UniqueIdentifier>{78b849b8-1f55-4870-a9f1-1786828a6c0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\io">
+      <UniqueIdentifier>{f04b9ca1-3ee7-48f3-b7da-66c8c1a693e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{749c32a9-4ad8-41c4-ac68-4c8f72da806d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\image">
+      <UniqueIdentifier>{7c7dde39-a045-4635-a52c-0af3676d3882}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\math">
+      <UniqueIdentifier>{cb6c943e-d954-4c9b-9492-3fdf01283f00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\math\xmm">
+      <UniqueIdentifier>{83016ac8-564d-4584-8649-a90857206961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\math\xmm\xm">
+      <UniqueIdentifier>{3078cc9c-008f-43a2-8ab9-173d04cd0f4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\text">
+      <UniqueIdentifier>{b55f09cb-d7eb-48f0-a007-a1505b064964}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\image\formats">
+      <UniqueIdentifier>{1212c281-62d5-4205-a647-d12b274a2777}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics\skia">
+      <UniqueIdentifier>{24e94b74-1226-4644-ae9c-e92ef487af0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32">
+      <UniqueIdentifier>{a922c3df-cef3-4095-8e1e-894a73330830}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="core\math\xmm\xm\xmf_base.inl">
+      <Filter>core\math\xmm\xm</Filter>
+    </None>
+    <None Include="core\math\xmm\xm\xmf_matr.inl">
+      <Filter>core\math\xmm\xm</Filter>
+    </None>
+    <None Include="core\math\xmm\xm\xmf_quat.inl">
+      <Filter>core\math\xmm\xm</Filter>
+    </None>
+    <None Include="core\math\xmm\xm\xmf_vec.inl">
+      <Filter>core\math\xmm\xm</Filter>
+    </None>
+  </ItemGroup>
+</Project>
