@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="SkTDArray&lt;*&gt;">
+		<DisplayString>{{count={fCount}, reserve={fReserve}, array={fArray}}}</DisplayString>
+		<Expand>
+			<Item Name="count" ExcludeView="simple" >fCount</Item>
+			<Item Name="reserve" ExcludeView="simple">fReserve</Item>
+			<ArrayItems>
+				<Size>fCount</Size>
+				<ValuePointer>fArray</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+	<Type Name="SkTDPQueue&lt;*,*&gt;">
+		<DisplayString>{fArray}</DisplayString>
+		<Expand>
+			<ExpandedItem>fArray</ExpandedItem>
+		</Expand>
+	</Type>
+
+	<Type Name="skshaper::BiDiRunIterator">
+		<DisplayString>{{BiDiRunIterator}}</DisplayString>
+	</Type>
+	<Type Name="skshaper::ScriptRunIterator">
+		<DisplayString>{{ScriptRunIterator}}</DisplayString>
+	</Type>
+	<Type Name="skshaper::FontRunIterator">
+		<DisplayString>{{FontRunIterator}}</DisplayString>
+	</Type>
+</AutoVisualizer>

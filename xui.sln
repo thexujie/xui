@@ -9,6 +9,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testskia", "testskia\testsk
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x", "x\x.vcxproj", "{0CD56909-021A-4656-BAF7-C1183FD6DFF8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EA5B00CE-9F6E-4DC0-A261-FC7606435520}"
+	ProjectSection(SolutionItems) = preProject
+		skia.natvis = skia.natvis
+		xui.natvis = xui.natvis
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

@@ -111,7 +111,7 @@ size_t SkUTF16_FromUnichar(SkUnichar uni, uint16_t dst[])
 }
 
 
-namespace
+namespace skshaper
 {
 	template<class T, void(*P)(T *)>
 	using resource = std::unique_ptr<T, SkFunctionWrapper<void, T, P>>;
@@ -238,7 +238,10 @@ namespace
 			while(fUTF16LogicalPosition < endPosition)
 			{
 				level = ubidi_getLevelAt(fBidi.get(), fUTF16LogicalPosition);
-				if(level != fLevel) { break; }
+				if(level != fLevel)
+				{
+				    break;
+				}
 				u = SkUTF8_NextUnichar(&fEndOfCurrentRun);
 				fUTF16LogicalPosition += SkUTF16_FromUnichar(u, nullptr);
 			}
@@ -465,10 +468,10 @@ namespace
 
 	static constexpr bool is_LTR(UBiDiLevel level) { return (level & 1) == 0; }
 
-	static void append(SkTextBlobBuilder * b, const ShapedRun & run, int start, int end, SkPoint * p)
+	static void append(SkTextBlobBuilder * builder, const ShapedRun & run, int start, int end, SkPoint * pts)
 	{
 		unsigned len = end - start;
-		auto runBuffer = b->allocRunTextPos(run.fPaint, len, run.fUtf8End - run.fUtf8Start, SkString());
+		auto runBuffer = builder->allocRunTextPos(run.fPaint, len, run.fUtf8End - run.fUtf8Start, SkString());
 		memcpy(runBuffer.utf8text, run.fUtf8Start, run.fUtf8End - run.fUtf8Start);
 
 		for(unsigned i = 0; i < len; i++)
@@ -478,9 +481,9 @@ namespace
 			runBuffer.glyphs[i] = glyph.fID;
 			runBuffer.clusters[i] = glyph.fCluster;
 			reinterpret_cast<SkPoint*>(runBuffer.pos)[i] =
-				SkPoint::Make(p->fX + glyph.fOffset.fX, p->fY - glyph.fOffset.fY);
-			p->fX += glyph.fAdvance.fX;
-			p->fY += glyph.fAdvance.fY;
+				SkPoint::Make(pts->fX + glyph.fOffset.fX, pts->fY - glyph.fOffset.fY);
+			pts->fX += glyph.fAdvance.fX;
+			pts->fY += glyph.fAdvance.fY;
 		}
 	}
 
@@ -535,6 +538,7 @@ namespace
 	};
 } // namespace
 
+using namespace skshaper;
 struct SkShaper::Impl
 {
 	HBFont fHarfBuzzFont;
@@ -602,10 +606,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder * builder,
 		if(!script) { return point; }
 		runSegmenter.insert(script);
 
-		SkTLazy<FontRunIterator> maybeFont(FontRunIterator::Make(utf8, utf8Bytes,
-			fImpl->fTypeface,
-			fImpl->fHarfBuzzFont.get(),
-			std::move(fontMgr)));
+		SkTLazy<FontRunIterator> maybeFont(FontRunIterator::Make(utf8, utf8Bytes, fImpl->fTypeface, fImpl->fHarfBuzzFont.get(), std::move(fontMgr)));
 		FontRunIterator * font = maybeFont.getMaybeNull();
 		if(!font) { return point; }
 		runSegmenter.insert(font);
