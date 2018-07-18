@@ -4,11 +4,14 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SkShaper.h" />
+    <ClInclude Include="scrptrun.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="testskia.cpp" />
     <ClCompile Include="SkShaper.cpp" />
+    <ClCompile Include="test_icu.cpp" />
+    <ClCompile Include="scrptrun.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

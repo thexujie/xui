@@ -53,9 +53,12 @@ bool decode_file(const char* filename, SkBitmap* bitmap, SkColorType colorType =
 }
 
 
+void test_icu();
 int app_main(int argc, const wchar_t * argv[])
 {
 #if 1
+    test_icu();
+
     const int width = 1920;
     const int height = 1080;
 
