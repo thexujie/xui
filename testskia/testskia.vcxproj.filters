@@ -3,10 +3,12 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SkShaper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="testskia.cpp" />
+    <ClCompile Include="SkShaper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

@@ -206,4 +206,4 @@ FakesAssemblies/
 # Git files
 .git/
 
-/externals
+/externals/
