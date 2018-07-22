@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Graphics.h"
-
+#include "skia/skia.h"
 #include <SkCanvas.h>
 
 namespace graphics
@@ -20,7 +20,7 @@ namespace graphics
     Graphics::Graphics(std::shared_ptr<Bitmap> pixmap)
     {
         _pixmap = pixmap;
-        _native = std::make_shared<SkCanvas>(*pixmap->native());
+        _native = std::make_shared<SkCanvas>(pixmap->native());
     }
 
     void Graphics::Clear(core::color32 color)
@@ -31,15 +31,16 @@ namespace graphics
         _native->clear(color);
     }
 
-    void Graphics::drawLine(core::pt32f start, core::pt32f end, core::color32 color, float32_t width)
+    void Graphics::drawLine(core::pt32f start, core::pt32f end, const Style & style)
     {
         if (!_native)
             return;
 
         SkPaint paint;
-        paint.setColor(color);
-        paint.setStrokeWidth(width);
-        paint.setAntiAlias(true);
+        paint.setColor(style._stokeColor);
+        paint.setStrokeWidth(style._width);
+        paint.setStyle(to(style._mode));
+        paint.setAntiAlias(style._aa);
         _native->drawLine({ start.x, start.y }, { end.x, end.y }, paint);
     }
 
@@ -100,7 +101,7 @@ namespace graphics
             return;
     }
 
-    void Graphics::DrawImage(const Image & image, core::pt32i point, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::pt32f point, int32_t flags)
     {
         if (!_native)
             return;
@@ -118,10 +119,10 @@ namespace graphics
             point.y -= size.cy / 2;
         else {}
 
-        //_native->DrawImage(image, point);
+        _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::DrawImage(const Image & image, core::rc32f rect, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::rc32f rect, int32_t flags)
     {
         if (!_native)
             return;
@@ -142,20 +143,13 @@ namespace graphics
         else
             point.y = rect.y;
 
-        //_native->PushClip(rect);
-        //_native->DrawImage(image, point);
-        //_native->PopClip();
+        _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::DrawImage(const Image & image, core::pt32i point, core::rc32f region, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32i region, int32_t flags)
     {
         if (!_native)
             return;
-
-        if (region.right() > image.size().cx)
-            region.setRight(image.size().cx);
-        if (region.bottom() > image.size().cy)
-            region.setBottom(image.size().cy);
 
         if (flags & core::align::right)
             point.x = point.x - region.cx;
@@ -169,18 +163,33 @@ namespace graphics
             point.y = point.y - region.cy / 2;
         else {}
 
-        //_native->DrawImage(image, point, region);
+        _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), nullptr);
     }
 
-    void Graphics::DrawImage(const Image & image, core::rc32f rect, core::rc32f region, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, int32_t flags)
     {
         if (!_native)
             return;
 
-        if (region.right() > image.size().cx)
-            region.setRight(image.size().cx);
-        if (region.bottom() > image.size().cy)
-            region.setBottom(image.size().cy);
+        if (flags & core::align::right)
+            point.x = point.x - region.cx;
+        else if (flags & core::align::centerX)
+            point.x = point.x - region.cx / 2;
+        else {}
+
+        if (flags & core::align::bottom)
+            point.y = point.y - region.cy;
+        else if (flags & core::align::centerY)
+            point.y = point.y - region.cy / 2;
+        else {}
+
+        _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), nullptr);
+    }
+
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region, int32_t flags)
+    {
+        if (!_native)
+            return;
 
         core::pt32i point;
         if (flags & core::align::right)
@@ -197,26 +206,54 @@ namespace graphics
         else
             point.y = rect.y;
 
-        //_native->PushClip(rect);
-        //_native->DrawImage(image, point, region);
-        //_native->PopClip();
+        _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-
-    void Graphics::DrawImage(const Image & image, core::rc32f rect)
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region, int32_t flags)
     {
         if (!_native)
             return;
 
-        //_native->DrawImage(image, rect);
+        core::pt32i point;
+        if (flags & core::align::right)
+            point.x = rect.right() - region.cx;
+        else if (flags & core::align::centerX)
+            point.x = rect.centerX() - region.cx / 2;
+        else
+            point.x = rect.x;
+
+        if (flags & core::align::bottom)
+            point.y = rect.bottom() - region.cy;
+        else if (flags & core::align::centerY)
+            point.y = rect.centerY() - region.cy / 2;
+        else
+            point.y = rect.y;
+
+        _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::DrawImage(const Image & image, core::rc32f rect, core::rc32f region)
+    void Graphics::drawImage(const Image & image, core::rc32f rect)
     {
         if (!_native)
             return;
 
-        //_native->DrawImage(image, rect, region);
+        _native->drawImageRect(&image.native(), skia::from(rect), nullptr);
+    }
+
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region)
+    {
+        if (!_native)
+            return;
+
+        _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), nullptr);
+    }
+
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region)
+    {
+        if (!_native)
+            return;
+
+        _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), nullptr);
     }
 
     void Graphics::FillPath(graphics::raster::path & path, core::color32 color)

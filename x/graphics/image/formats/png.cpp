@@ -3,8 +3,6 @@
 #include "../deps/libpng/png.h"
 #include "../deps/libpng/pngstruct.h"
 #include "dds.h"
-#pragma comment(lib, "libpng.lib")
-#pragma comment(lib, "zlib.lib")
 
 namespace graphics::image::formats
 {

@@ -13,8 +13,6 @@ namespace graphics
 
     Image::~Image()
     {
-        if (_image.data)
-            _image.pfn_free(_image);
     }
 
     Image::Image(std::string path)
@@ -35,5 +33,26 @@ namespace graphics
         _native->asLegacyBitmap(&bitmap);
         SkFILEWStream stream(path.c_str());
         return SkEncodeImage(&stream, bitmap, skia::to(type), quality) ? core::error_ok : core::error_inner;
+    }
+
+    int32_t Image::width() const
+    {
+        if (!_native)
+            return 0;
+        return _native->width();
+    }
+
+    int32_t Image::height() const
+    {
+        if (!_native)
+            return 0;
+        return _native->height();
+    }
+
+    core::si32i Image::size() const
+    {
+        if (!_native)
+            return {};
+        return { _native->width(), _native->height() };
     }
 }

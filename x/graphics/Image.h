@@ -12,14 +12,17 @@ namespace graphics
         ~Image();
         Image(std::string path);
 
-        operator bool() const { return !!_image.data; }
-        core::si32i size() const { return { _image.format.width, _image.format.height}; }
-        image::format cmode() const { return _image.format.format; }
-        const image::image_data_t & data() const { return _image; }
+        operator bool() const { return !!_native; }
+        int32_t width() const;
+        int32_t height() const;
+        core::si32i size() const;
+        //image::format cmode() const { return _image.format.format; }
         core::error_e Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100) const;
 
+        std::shared_ptr<SkImage> native_share() { return _native; }
+        SkImage & native() { return *_native; }
+        const SkImage & native() const { return *_native; }
     private:
-        image::image_data_t _image;
         std::shared_ptr<SkImage> _native;
     };
 }

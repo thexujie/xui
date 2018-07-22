@@ -80,14 +80,19 @@ int main()
     //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4, cx / 2, cy / 2 }, { 20, 300, 600, 200 });
     //graphics->drawLine({ cx / 2, cy }, { cx / 2, 0 },  colors::Yellow, 1);
 
-    graphics->drawLine({ 0.f, cy / 2.f }, { (float)cx, cy / 2.f }, colors::Red, 1.f);
-    graphics->drawLine({ cx / 2.f, 0 }, { cx / 2.f, (float)cy }, colors::Red, 1);
-    graphics->drawLine({ 0, 0 }, { (float)cx, (float)cy}, colors::Red, 1);
-    graphics->drawLine({ (float)cx, 0 }, { 0, (float)cy }, colors::Red, 1);
-    graphics->drawEllipse({ cx / 4.f, cy / 4.f, cx / 4.f, cy / 4.f }, graphics::Style(graphics::DrawMode::Fill).stoke(colors::Red).width(2));
-    graphics->drawEllipse({ cx / 4.f, cy / 2.f + 10.0f, cx / 4.f, cy / 4.f }, graphics::Style(graphics::DrawMode::StrokeFill).stoke(colors::Red).width(2));
+    graphics->drawLine(pt32f(0, cy / 2), pt32f(cx, cy / 2), graphics::Style().stoke(colors::Red));
+    graphics->drawLine(pt32f(cx / 2, 0), pt32f(cx / 2, cy), graphics::Style().stoke(colors::Red));
+    graphics->drawLine(pt32f(0, 0), pt32f(cx, cy), graphics::Style().stoke(colors::Red));
+    graphics->drawLine(pt32f(cx, 0), pt32f(0, cy), graphics::Style().stoke(colors::Red));
 
-    graphics->drawRoundRect({ cx / 4.f, cy / 4.f, cx / 2.f, cy / 2.f }, 50, 50, graphics::Style().stoke(colors::Green).width(4));
+
+
+    //graphics->drawImage(graphics::Image("1920.png"), rc32f(cx / 4, cy / 4, cx / 2, cy / 2));
+    //graphics->drawImage(graphics::Image("1920.png"), rc32f(cx / 4, cy / 4, cx / 2, cy / 2));
+    graphics->drawEllipse(rc32f(0, 0, cx, cy), graphics::Style(graphics::DrawMode::Stroke).stoke(colors::Red).width(2));
+    graphics->drawEllipse(rc32f(cx / 4, cy / 4, cx / 2, cy / 2), graphics::Style(graphics::DrawMode::StrokeFill).stoke(0x4000ff00).width(2));
+
+    graphics->drawRoundRect(rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), 50, 50, graphics::Style().stoke(colors::Green).width(4));
 
     graphics->DrawString(u8"MMMM", { cx / 2, cy / 2 }, { "", 10 }, colors::Red, align::centerXY);
 
@@ -101,15 +106,15 @@ int main()
     graphics->DrawString(u8"RBRB", { cx / 2, cy / 2 }, { "", 20 }, colors::Green, align::rightCenterY);
     graphics->DrawString(u8"LBLB", { cx / 2, cy / 2 }, { "", 20 }, colors::Blue, align::bottomCenterX);
 
-    graphics->DrawString(u8"LTLT", rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), { "", 20 }, colors::Red, align::leftTop);
-    graphics->DrawString(u8"RTRT", rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), { "", 20 }, colors::Yellow, align::rightTop);
-    graphics->DrawString(u8"RBRB", rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), { "", 20 }, colors::Green, align::rightBottom);
-    graphics->DrawString(u8"LBLB", rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), { "", 20 }, colors::Blue, align::leftBottom);
-                                  
-    graphics->DrawString(u8"LTLT", rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), { "", 20 }, colors::Red, align::leftCenterY);
-    graphics->DrawString(u8"RTRT", rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), { "", 20 }, colors::Yellow, align::topCenterX);
-    graphics->DrawString(u8"RBRB", rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), { "", 20 }, colors::Green, align::rightCenterY);
-    graphics->DrawString(u8"LBLB", rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), { "", 20 }, colors::Blue, align::bottomCenterX);
+    graphics->DrawString(u8"LTLT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Red, align::leftTop);
+    graphics->DrawString(u8"RTRT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Yellow, align::rightTop);
+    graphics->DrawString(u8"RBRB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Green, align::rightBottom);
+    graphics->DrawString(u8"LBLB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Blue, align::leftBottom);
+
+    graphics->DrawString(u8"LTLT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Red, align::leftCenterY);
+    graphics->DrawString(u8"RTRT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Yellow, align::topCenterX);
+    graphics->DrawString(u8"RBRB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Green, align::rightCenterY);
+    graphics->DrawString(u8"LBLB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Blue, align::bottomCenterX);
 
     //auto cm = std::make_shared<graphics::Image>("lcw.tga");
     //cm->Save("cm.bmp");
@@ -119,14 +124,14 @@ int main()
     graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, align::leftTop);
     auto si = graphics->MeasureString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空\r\n位过了旺季安哥拉晋文公来围观", {"", 10 });
 
-    graphics->drawRectangle({ 100, 100, 200, 50 }, graphics::Style().stoke(colors::Red));
-    graphics->drawRectangle({ 100, 220, 200, 50 }, graphics::Style().stoke(colors::Red));
+    //graphics->drawRectangle({ 100, 100, 200, 50 }, graphics::Style().stoke(colors::Red));
+    //graphics->drawRectangle({ 100, 220, 200, 50 }, graphics::Style().stoke(colors::Red));
 
-    //graphics->DrawImage(graphics::Image("dota2.jpg"), { 100, 100, 300, 200 });
-    //graphics->DrawImage(graphics::Image("dota2.jpg"), { 410, 100, 300, 200 });
-    //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 0, 1920, 1080 });
-    //graphics->DrawImage(graphics::Image("1920.png"), { 100, 100, 1280, 720 }, { 0, 540, 960, 540 });
-    graphics->DrawImage(graphics::Image("1920.png"), pt32i{ 100, 100 }, { 500, 80, 960, 960 }, align::leftTop);
+    //graphics->drawImage(graphics::Image("dota2.jpg"), { 100, 100, 300, 200 });
+    //graphics->drawImage(graphics::Image("dota2.jpg"), { 410, 100, 300, 200 });
+    //graphics->drawImage(graphics::Image("1920.png"), rc32f{ 100, 100, 1280, 720 }, rc32i{ 0, 0, 1920, 1080 });
+    //graphics->drawImage(graphics::Image("1920.png"), rc32f{ 100, 100, 1280, 720 }, rc32i{ 0, 540, 960, 540 });
+    //graphics->drawImage(graphics::Image("1920.png"), { 100, 100 }, rc32i{ 500, 80, 960, 960 }, align::leftTop);
 
     counter_fps<float, 3> cps;
     //while(true)

@@ -75,7 +75,7 @@ namespace graphics
 
     public:
         void Clear(core::color32 color);
-        void drawLine(core::pt32f start, core::pt32f end, core::color32 color, float32_t width);
+        void drawLine(core::pt32f start, core::pt32f end, const Style & style);
 
         void drawEllipse(core::rc32f ellipse, const Style & style);
         void drawRectangle(core::rc32f rect, const Style & style);
@@ -85,18 +85,26 @@ namespace graphics
         void DrawString(const std::string & str, core::rc32f rect, const text::font & font, core::color32 color, int32_t flags);
         void DrawString(const IGraphicsString & str, core::pt32i point);
 
-        void DrawImage(const Image & image, core::pt32i point, int32_t flags);
-        void DrawImage(const Image & image, core::rc32f rect, int32_t flags);
-        void DrawImage(const Image & image, core::pt32i point, core::rc32f region, int32_t flags);
-        void DrawImage(const Image & image, core::rc32f rect, core::rc32f region, int32_t flags);
+        void drawImage(const Image & image, core::pt32f point, int32_t flags);
+        void drawImage(const Image & image, core::rc32f rect, int32_t flags);
+        void drawImage(const Image & image, core::pt32f point, core::rc32i region, int32_t flags);
+        void drawImage(const Image & image, core::pt32f point, core::rc32f region, int32_t flags);
+        void drawImage(const Image & image, core::rc32f rect, core::rc32i region, int32_t flags);
+        void drawImage(const Image & image, core::rc32f rect, core::rc32f region, int32_t flags);
 
-        void DrawImage(const Image & image, core::rc32f rect);
-        void DrawImage(const Image & image, core::rc32f rect, core::rc32f region);
+        void drawImage(const Image & image, core::rc32f rect);
+        void drawImage(const Image & image, core::rc32f rect, core::rc32i region);
+        void drawImage(const Image & image, core::rc32f rect, core::rc32f region);
 
     public:
         void FillPath(graphics::raster::path & path, core::color32 color);
         text::fontmetrics GetFontMetrics(text::font font);
         core::si32i MeasureString(std::string str, text::font font);
+
+    public:
+        std::shared_ptr<SkCanvas> native_share() { return _native; }
+        SkCanvas & native() { return *_native; }
+        const SkCanvas & native() const { return *_native; }
 
     private:
         std::shared_ptr<Bitmap> _pixmap;
