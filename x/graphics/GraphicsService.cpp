@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GraphicsService.h"
 #include "core/app.h"
+#include "skia/skia.h"
 
 namespace graphics
 {

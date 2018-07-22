@@ -5,6 +5,7 @@
 #include "Image.h"
 
 class SkCanvas;
+class SkTextBlobBuilder;
 
 namespace graphics
 {
@@ -64,6 +65,47 @@ namespace graphics
         bool _aa = true;
     };
 
+    struct StringFormat
+    {
+        StringFormat(){}
+        StringFormat(const text::font & font) : _font(font) {}
+
+        StringFormat & font(const text::font & font)
+        {
+            _font = font;
+            return *this;
+        }
+
+        StringFormat & color(core::color32 color)
+        {
+            _color = color;
+            return *this;
+        }
+
+        StringFormat & lcd(bool lcd)
+        {
+            _lcd = lcd;
+            return *this;
+        }
+
+        StringFormat & weight(int32_t weight)
+        {
+            _font.weight = (text::font_weight)weight;
+            return *this;
+        }
+
+        StringFormat & align(core::align align)
+        {
+            _align = align;
+            return *this;
+        }
+
+        text::font _font;
+        core::color32 _color = core::colors::Black;
+        bool _lcd = true;
+        core::align _align = core::align::leftTop;
+    };
+
     class Graphics
     {
     public:
@@ -81,9 +123,9 @@ namespace graphics
         void drawRectangle(core::rc32f rect, const Style & style);
         void drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const Style & style);
 
-        void DrawString(const std::string & str, core::pt32i point, const text::font & font, core::color32 color, int32_t flags);
-        void DrawString(const std::string & str, core::rc32f rect, const text::font & font, core::color32 color, int32_t flags);
-        void DrawString(const IGraphicsString & str, core::pt32i point);
+        void drawString(const std::string & str, core::pt32f point, const StringFormat & format);
+        void drawString(const std::string & str, core::rc32f rect, const StringFormat & format);
+        void drawString(const IGraphicsString & str, core::pt32i point);
 
         void drawImage(const Image & image, core::pt32f point, int32_t flags);
         void drawImage(const Image & image, core::rc32f rect, int32_t flags);
@@ -109,5 +151,6 @@ namespace graphics
     private:
         std::shared_ptr<Bitmap> _pixmap;
         std::shared_ptr<SkCanvas> _native;
+        std::shared_ptr<SkTextBlobBuilder> _blobBuilder;
     };
 }

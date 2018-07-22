@@ -189,22 +189,14 @@ namespace win32
 
         logfont.lfWeight = static_cast<int32_t>(font.weight);
 
-        logfont.lfItalic = static_cast<uint8_t>(font.flags & graphics::text::font::italic);
-        logfont.lfUnderline = static_cast<uint8_t>(font.flags & graphics::text::font::underline);
+        logfont.lfItalic = static_cast<uint8_t>(font.slant);
+        logfont.lfUnderline = static_cast<uint8_t>(0);
         //logfont.lfStrikeOut = static_cast<uint8_t>(font.flags & font::underline);
         //logFont.lfCharSet = static_cast<uint8_t>(font.charset);
         logfont.lfCharSet = DEFAULT_CHARSET;
         logfont.lfOutPrecision = OUT_DEFAULT_PRECIS;
         logfont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
 
-        if (font.flags & graphics::text::font::gray)
-            logfont.lfQuality = NONANTIALIASED_QUALITY;
-        else if (font.flags & graphics::text::font::anti)
-            logfont.lfQuality = ANTIALIASED_QUALITY;
-        else if (font.flags & graphics::text::font::cleartype)
-            logfont.lfQuality = CLEARTYPE_QUALITY;
-        else
-            logfont.lfQuality = CLEARTYPE_QUALITY;
         logfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
         return logfont;
     }

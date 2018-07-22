@@ -68,4 +68,5 @@ namespace win32
         return ost << "Windows " << version_str(ver) << " [" << ver.major << "." << ver.minor << "." << ver.pack << "." << ver.build << "]";
     }
     graphics::text::font defaultFont();
+    graphics::text::font defaultFont();
 }

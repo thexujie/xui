@@ -472,7 +472,7 @@ namespace skshaper
 
     static constexpr bool is_LTR(UBiDiLevel level) { return (level & 1) == 0; }
 
-    static void append(SkTextBlobBuilder & builder, const ShapedRun & run, int glyphStart, int glyphEnd, SkPoint point)
+    static void append(SkTextBlobBuilder & builder, const ShapedRun & run, int glyphStart, int glyphEnd, SkPoint & point)
     {
         int len = glyphEnd - glyphStart;
         SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(run.fPaint, len, run.fUtf8End - run.fUtf8Start, SkString());
@@ -589,7 +589,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
     size_t utf8Bytes,
     bool leftToRight,
     SkPoint point,
-    SkScalar width) const
+    SkScalar width, SkRect & rect) const
 {
     sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
     UBiDiLevel defaultLevel = leftToRight ? UBIDI_DEFAULT_LTR : UBIDI_DEFAULT_RTL;
@@ -741,7 +741,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
                 previousBreak = glyphIterator;
             }
             SkScalar glyphWidth = glyph->fAdvance.fX;
-            if (widthSoFar + glyphWidth < width)
+            if (width < 0 || widthSoFar + glyphWidth < width)
             {
                 widthSoFar += glyphWidth;
                 glyphIterator.next();
@@ -771,6 +771,8 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
 
     // Reorder the runs and glyphs per line and write them out.
     SkPoint currentPoint = point;
+    rect.fLeft = point.fX;
+    rect.fTop = point.fY;
     {
         ShapedRunGlyphIterator previousBreak(runs);
         ShapedRunGlyphIterator glyphIterator(runs);
@@ -795,7 +797,8 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             }
 
             // Nothing can be written until the baseline is known.
-            if (!(nextGlyph == nullptr || nextGlyph->fMustLineBreakBefore)) { continue; }
+            if (!(nextGlyph == nullptr || nextGlyph->fMustLineBreakBefore))
+                continue;
 
             currentPoint.fY -= maxAscent;
 
@@ -805,6 +808,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             SkAutoSTMalloc<4, int32_t> logicalFromVisual(numRuns);
             ubidi_reorderVisual(runLevels, numRuns, logicalFromVisual);
 
+            rect.fLeft = SkTMin(rect.fLeft, currentPoint.fX);
             for (int i = 0; i < numRuns; ++i)
             {
                 int logicalIndex = previousBreak.fRunIndex + logicalFromVisual[i];
@@ -817,6 +821,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
                                         : runs[logicalIndex].fNumGlyphs;
                 append(builder, runs[logicalIndex], startGlyphIndex, endGlyphIndex, currentPoint);
             }
+            rect.fRight = SkTMax(rect.fRight, currentPoint.fX);
 
             currentPoint.fY += maxDescent + maxLeading;
             currentPoint.fX = point.fX;
@@ -827,6 +832,6 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             previousBreak = glyphIterator;
         }
     }
-
+    rect.fBottom = currentPoint.fY;
     return currentPoint;
 }

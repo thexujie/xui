@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "Graphics.h"
 #include "skia/skia.h"
-#include <SkCanvas.h>
+#include "skia/SkShaper.h"
+#include <SkScalar.h>
+#include <SkTextBlob.h>
 
 namespace graphics
 {
@@ -83,19 +85,78 @@ namespace graphics
         _native->drawRoundRect({ rect.x, rect.y, rect.right(), rect.bottom()}, rx, ry, paint);
     }
 
-    void Graphics::DrawString(const std::string & str, core::pt32i point, const text::font & font, core::color32 color, int32_t flags)
+    void Graphics::drawString(const std::string & str, core::pt32f point, const StringFormat & format)
     {
         if (!_native)
             return;
+
+        SkPaint paint;
+        paint.setAntiAlias(true);
+        paint.setLCDRenderText(format._lcd);
+        paint.setColor(format._color);
+        paint.setTextSize(format._font.size);
+        SkShaper shaper(SkTypeface::MakeFromName(format._font.family.c_str(), SkFontStyle(format._font.weight, format._font.width, (SkFontStyle::Slant)format._font.slant)));
+        if (!_blobBuilder)
+            _blobBuilder = std::make_shared<SkTextBlobBuilder>();
+        SkRect rcBlob;
+        SkPoint end = shaper.shape(*_blobBuilder, paint, str.c_str(), str.length(), true, {}, -1, rcBlob);
+
+        if (format._align & core::align::right)
+            point.x -= rcBlob.width();
+        else if (format._align & core::align::centerX)
+            point.x -= rcBlob.width() / 2;
+        else {}
+
+        if (format._align & core::align::bottom)
+            point.y -= rcBlob.height();
+        else if (format._align & core::align::centerY)
+            point.y -= rcBlob.height() / 2;
+        else {}
+
+        sk_sp<SkTextBlob> blob = _blobBuilder->make();
+        _native->drawTextBlob(blob, point.x, point.y, paint);
     }
 
-    void Graphics::DrawString(const std::string & str, core::rc32f rect, const text::font & font, core::color32 color, int32_t flags)
+    void Graphics::drawString(const std::string & str, core::rc32f rect, const StringFormat & format)
     {
         if (!_native)
             return;
+
+        if (!_native)
+            return;
+
+        SkPaint paint;
+        paint.setAntiAlias(true);
+        paint.setLCDRenderText(format._lcd);
+        paint.setColor(format._color);
+        paint.setTextSize(format._font.size);
+        SkShaper shaper(SkTypeface::MakeFromName(format._font.family.c_str(), SkFontStyle(format._font.weight, format._font.width, (SkFontStyle::Slant)format._font.slant)));
+
+        if (!_blobBuilder)
+            _blobBuilder = std::make_shared<SkTextBlobBuilder>();
+        SkRect rcBlob;
+        SkPoint end = shaper.shape(*_blobBuilder, paint, str.c_str(), str.length(), true, {}, rect.cx, rcBlob);
+
+        core::pt32f point = rect.leftTop();
+        if (format._align & core::align::right)
+            point.x = rect.right() - rcBlob.width();
+        else if (format._align & core::align::centerX)
+            point.x = (rect.cx - rcBlob.width()) / 2;
+        else {}
+
+        if (format._align & core::align::bottom)
+            point.y = rect.bottom() - rcBlob.height();
+        else if (format._align & core::align::centerY)
+            point.y = (rect.cy - rcBlob.height()) / 2;
+        else {}
+
+        sk_sp<SkTextBlob> blob = _blobBuilder->make();
+        _native->clipRect(skia::from(rect));
+        _native->drawTextBlob(blob, point.x, point.y, paint);
+        _native->clipRect(SkRect());
     }
 
-    void Graphics::DrawString(const IGraphicsString & str, core::pt32i point)
+    void Graphics::drawString(const IGraphicsString & str, core::pt32i point)
     {
         if (!_native)
             return;

@@ -3,17 +3,6 @@
 
 namespace graphics::text
 {
-    const int32_t FONT_WEIGHT_BOLD = 800;
-    const int32_t FONT_WEIGHT_NORMAL = 400;
-    const int32_t FONT_SIZE_SCALE = 10000;
-
-    enum font_level
-    {
-        system = 0,
-        gray,
-        cleartype,
-    };
-
     struct fontmetrics
     {
         int32_t size = 0;
@@ -24,27 +13,45 @@ namespace graphics::text
         int32_t weight = 0;
     };
 
+    enum font_weight : uint16_t
+    {
+        Weight_Invisible = 0,
+        Weight_Thin = 100,
+        Weight_ExtraLight = 200,
+        Weight_Light = 300,
+        Weight_Normal = 400,
+        Weight_Medium = 500,
+        Weight_SemiBold = 600,
+        Weight_Bold = 700,
+        Weight_ExtraBold = 800,
+        Weight_BlackBold = 900,
+        Weight_ExtraBlackBold = 1000,
+    };
+
+    enum font_width : uint8_t
+    {
+        Width_UltraCondensed = 1,
+        Width_ExtraCondensed = 2,
+        Width_Condensed = 3,
+        Width_SemiCondensed = 4,
+        Width_Normal = 5,
+        Width_SemiExpanded = 6,
+        Width_Expanded = 7,
+        Width_ExtraExpanded = 8,
+        Width_UltraExpanded = 9,
+    };
+
+    enum font_slant : uint8_t
+    {
+        Slant_Upright = 0,
+        Slant_Italic,
+        Slant_Oblique,
+    };
+
     struct font
     {
-        enum flag_e
-        {
-            italic = 0x0001,
-            underline = 0x0002,
-
-            gray = 0x0010,
-            anti = 0x0020,
-            cleartype = 0x0040,
-        };
-
-        font() = default;
-
-        font(const char * _family, float_t _size = 0, int32_t _weight = FONT_WEIGHT_NORMAL, int32_t _flags = 0)
-        {
-            family = _family;
-            size = std::roundf(_size * FONT_SIZE_SCALE) / (float_t)FONT_SIZE_SCALE;
-            weight = _weight > 0 ? _weight : FONT_WEIGHT_NORMAL;
-            flags = _flags;
-        }
+        font();
+        font(const char * _family, float_t _size = 0, int32_t _weight = Weight_Normal, int32_t _width = Width_Normal, int32_t _slant = Slant_Upright, int32_t flags_ = 0);
 
         font(const font & another) = default;
 
@@ -53,6 +60,8 @@ namespace graphics::text
             family = another.family;
             size = another.size;
             weight = another.weight;
+            width = another.width;
+            slant = another.slant;
             flags = another.flags;
             return *this;
         }
@@ -60,8 +69,10 @@ namespace graphics::text
         bool operator ==(const font & another) const
         {
             return core::string::equal_ic()(family, another.family) &&
-                std::abs(size - another.size) < 1.0f / FONT_SIZE_SCALE &&
+                std::fabs(size - another.size) <  std::numeric_limits<float32_t>::epsilon() &&
                 weight == another.weight &&
+                width == another.width &&
+                slant == another.slant &&
                 flags == another.flags;
         }
 
@@ -74,8 +85,12 @@ namespace graphics::text
 
         std::string family;
         float_t size = 0;
-        int32_t weight = FONT_WEIGHT_NORMAL;
+        font_weight weight : 16;
+        font_width width : 4;
+        font_slant slant : 4;
         int32_t flags = 0;
+
+        static void makeDefault(font & font);
     };
 }
 
@@ -88,7 +103,7 @@ namespace std
         size_t operator()(const graphics::text::font & font) const
         {
             size_t h1 = std::hash<std::string>()(font.family);
-            size_t h2 = std::hash<int32_t>()(static_cast<int32_t>(font.size * graphics::text::FONT_SIZE_SCALE));
+            size_t h2 = std::hash<float32_t>()(font.size);
             size_t h3 = std::hash<int32_t>()(font.weight);
             size_t h4 = std::hash<int32_t>()(font.flags);
             return h1 ^ (h2 << 1) ^ (h3 << 1) ^ (h4 << 1);
@@ -101,7 +116,7 @@ namespace std
         constexpr bool operator()(const graphics::text::font & lhs, const graphics::text::font & rhs) const
         {
             return lhs.family < rhs.family ||
-                static_cast<int32_t>(lhs.size * graphics::text::FONT_SIZE_SCALE) < static_cast<int32_t>(rhs.size * graphics::text::FONT_SIZE_SCALE) ||
+                lhs.size < rhs.size ||
                 lhs.weight < rhs.weight ||
                 lhs.flags < rhs.flags;
         }

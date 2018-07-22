@@ -22,19 +22,13 @@ namespace win32
             logFont.lfHeight = font.size;
 
         logFont.lfWeight = font.weight;
-        logFont.lfItalic = !!(font.flags & text::font::italic);
-        logFont.lfUnderline = !!(font.flags & text::font::underline);
+        logFont.lfItalic = font.slant;
+        logFont.lfUnderline = 0;
         logFont.lfStrikeOut = FALSE;
         //logFont.lfCharSet = (uint_8)(font.charset);
         logFont.lfCharSet = DEFAULT_CHARSET;
         logFont.lfOutPrecision = OUT_DEFAULT_PRECIS;
         logFont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-        if (font.flags & text::font::gray)
-            logFont.lfQuality = DRAFT_QUALITY;
-        else if (font.flags & text::font::anti)
-            logFont.lfQuality = ANTIALIASED_QUALITY;
-        else
-            logFont.lfQuality = CLEARTYPE_QUALITY;
         logFont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     }
 

@@ -56,8 +56,8 @@ int main()
     win32::Win32App app;
     //testImages();
 
-    int32_t cx = 1920;
-    int32_t cy = 1080;
+    int32_t cx = 1280;
+    int32_t cy = 720;
     std::shared_ptr<graphics::Bitmap> pixmap = std::make_shared<graphics::Bitmap>(si32i{ cx, cy });
     auto graphics = std::make_shared<graphics::Graphics>(pixmap);
     
@@ -94,35 +94,39 @@ int main()
 
     graphics->drawRoundRect(rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), 50, 50, graphics::Style().stoke(colors::Green).width(4));
 
-    graphics->DrawString(u8"MMMM", { cx / 2, cy / 2 }, { "", 10 }, colors::Red, align::centerXY);
+    //graphics->drawString(u8"一二三四五六七八九十", pt32f( cx / 2, cy / 2), graphics::StringFormat({ "", 16 }).color(colors::Red).weight(graphics::text::Weight_ExtraBlackBold).align(core::align::rightBottom));
+    //graphics->drawString(u8"一二三四五六七八九十", pt32f( cx / 2, cy / 2), graphics::StringFormat({ "", 16 }).color(colors::Green).weight(graphics::text::Weight_Bold).align(core::align::leftBottom));
+    //graphics->drawString(u8"一二三四五六七八九十", pt32f( cx / 2, cy / 2), graphics::StringFormat({ "", 16 }).color(colors::Blue).weight(graphics::text::Weight_Bold).align(core::align::leftTop));
+    //graphics->drawString(u8"一二三四五六七八九十", pt32f( cx / 2, cy / 2), graphics::StringFormat({ "", 16 }).color(colors::PeachPuff).weight(graphics::text::Weight_Bold).align(core::align::rightTop));
+
 
     //graphics->DrawString(u8"LTLT", colors::Black, { "", 10 }, { cx / 2, cy / 2 }, align::leftTop);
     //graphics->DrawString(u8"RTRT", colors::Gray, { "", 10 }, { cx / 2, cy / 2 }, align::rightTop);
     //graphics->DrawString(u8"RBRB", colors::Green, { "", 10 }, { cx / 2, cy / 2 }, align::rightBottom);
     //graphics->DrawString(u8"LBLB", colors::Blue, { "", 10 }, { cx / 2, cy / 2 }, align::leftBottom);
 
-    graphics->DrawString(u8"LTLT", { cx / 2, cy / 2 }, { "", 20 }, colors::Black, align::leftCenterY);
-    graphics->DrawString(u8"RTRT", { cx / 2, cy / 2 }, { "", 20 }, colors::Gray, align::topCenterX);
-    graphics->DrawString(u8"RBRB", { cx / 2, cy / 2 }, { "", 20 }, colors::Green, align::rightCenterY);
-    graphics->DrawString(u8"LBLB", { cx / 2, cy / 2 }, { "", 20 }, colors::Blue, align::bottomCenterX);
+    //graphics->drawString(u8"LTLT", { cx / 2, cy / 2 }, { "", 20 }, colors::Black, align::leftCenterY);
+    //graphics->drawString(u8"RTRT", { cx / 2, cy / 2 }, { "", 20 }, colors::Gray, align::topCenterX);
+    //graphics->drawString(u8"RBRB", { cx / 2, cy / 2 }, { "", 20 }, colors::Green, align::rightCenterY);
+    //graphics->drawString(u8"LBLB", { cx / 2, cy / 2 }, { "", 20 }, colors::Blue, align::bottomCenterX);
 
-    graphics->DrawString(u8"LTLT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Red, align::leftTop);
-    graphics->DrawString(u8"RTRT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Yellow, align::rightTop);
-    graphics->DrawString(u8"RBRB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Green, align::rightBottom);
-    graphics->DrawString(u8"LBLB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Blue, align::leftBottom);
+    //graphics->drawString(u8"LTLT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Red, align::leftTop);
+    //graphics->drawString(u8"RTRT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Yellow, align::rightTop);
+    //graphics->drawString(u8"RBRB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Green, align::rightBottom);
+    //graphics->drawString(u8"LBLB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Blue, align::leftBottom);
 
-    graphics->DrawString(u8"LTLT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Red, align::leftCenterY);
-    graphics->DrawString(u8"RTRT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Yellow, align::topCenterX);
-    graphics->DrawString(u8"RBRB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Green, align::rightCenterY);
-    graphics->DrawString(u8"LBLB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Blue, align::bottomCenterX);
+    //graphics->drawString(u8"LTLT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Red, align::leftCenterY);
+    //graphics->drawString(u8"RTRT", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Yellow, align::topCenterX);
+    //graphics->drawString(u8"RBRB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Green, align::rightCenterY);
+    //graphics->drawString(u8"LBLB", rc32f(cx / 4, cy / 4, cx / 2, cy / 2), { "", 20 }, colors::Blue, align::bottomCenterX);
 
     //auto cm = std::make_shared<graphics::Image>("lcw.tga");
     //cm->Save("cm.bmp");
     //graphics->DrawImage(*cm.get(), { 10, 10 }, 0);
     //graphics->DrawImage(*cm.get(), { 50, 50 }, 0);
-    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 10, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, align::leftTop);
-    graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, align::leftTop);
-    auto si = graphics->MeasureString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空\r\n位过了旺季安哥拉晋文公来围观", {"", 10 });
+    //graphics->drawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 10, 300, 100 }, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, align::leftTop);
+    //graphics->drawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, align::leftTop);
+    //auto si = graphics->MeasureString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空\r\n位过了旺季安哥拉晋文公来围观", {"", 10 });
 
     //graphics->drawRectangle({ 100, 100, 200, 50 }, graphics::Style().stoke(colors::Red));
     //graphics->drawRectangle({ 100, 220, 200, 50 }, graphics::Style().stoke(colors::Red));
@@ -134,16 +138,18 @@ int main()
     //graphics->drawImage(graphics::Image("1920.png"), { 100, 100 }, rc32i{ 500, 80, 960, 960 }, align::leftTop);
 
     counter_fps<float, 3> cps;
-    //while(true)
+    while(true)
     {
-        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Black, align::leftTop);
+        graphics->drawString(u8"Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/", rc32f(cx / 2, cy / 2, cx / 2, cy / 2),
+            graphics::StringFormat({ "", 20 }).color(colors::Black).align(align::rightBottom));
+        //graphics->drawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600 }, { "", 40, 0 });
         cps.acc(1);
         printf("\r%.1f", cps.fps());
     }
 
-        graphics->DrawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 100, 100, 600, 600}, { "", 40, 0, graphics::text::font::cleartype }, colors::Aqua, align::leftTop);
-        cps.acc(1);
-        printf("\r%.1f", cps.fps());
+    //graphics->drawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 100, 100, 600, 600 }, { "", 40, 0 });
+    cps.acc(1);
+    printf("\r%.1f", cps.fps());
 
     //item.Draw(hdc2, drawX, drawY, { drawX, drawY, rc.right - frameSize * 2, rc.bottom - frameSize * 2 });
 

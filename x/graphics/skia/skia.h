@@ -6,6 +6,9 @@
 #include <SkBitmap.h>
 #include <SkStream.h>
 #include <SkImage.h>
+#include <SkCanvas.h>
+#include <SkString.h>
+#include <SkTypeface.h>
 
 namespace graphics::skia
 {
