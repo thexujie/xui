@@ -1,130 +1,108 @@
 #include "stdafx.h"
 #include "Graphics.h"
 
+#include <SkCanvas.h>
+
 namespace graphics
 {
-    Graphics::Graphics(core::si32i size): _graphics(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(size))) { }
-
-    Graphics::Graphics(std::shared_ptr<IGraphics> graphics) : _graphics(graphics) { }
-
-    Graphics::Graphics(std::shared_ptr<Pixmap> pixmap): _graphics(GraphicsService().CreateGraphics(pixmap->handle())) { }
-
-    void Graphics::PushOrign(core::pt32i point)
+    inline SkPaint::Style to(DrawMode style)
     {
-        if (_graphics)
-            _graphics->PushOrign(point);
+        if (style == DrawMode::Stroke)
+            return SkPaint::kStroke_Style;
+        if (style == DrawMode::Fill)
+            return SkPaint::kFill_Style;
+        //if (style == DrawMode::StrokeFill)
+            return SkPaint::kStrokeAndFill_Style;
     }
 
-    core::pt32i Graphics::GetOrign() const
-    {
-        if (_graphics)
-            return _graphics->GetOrign();
-        return {};
-    }
+    //Graphics::Graphics(core::si32i size): _native(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(size))) { }
 
-    void Graphics::PopOrign()
+    Graphics::Graphics(std::shared_ptr<Bitmap> pixmap)
     {
-        if (_graphics)
-            _graphics->PopOrign();
-    }
-
-    void Graphics::PushClip(core::rc32i rect)
-    {
-        if (_graphics)
-            _graphics->PushClip(rect);
-    }
-
-    core::rc32i Graphics::GetClip() const
-    {
-        if (_graphics)
-            return _graphics->GetClip();
-        return {};
-    }
-
-    void Graphics::PopClip()
-    {
-        if (_graphics)
-            _graphics->PopClip();
+        _pixmap = pixmap;
+        _native = std::make_shared<SkCanvas>(*pixmap->native());
     }
 
     void Graphics::Clear(core::color32 color)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
-        _graphics->Clear(color);
+        _native->clear(color);
     }
 
-    void Graphics::DrawLine(core::pt32i start, core::pt32i end, core::color32 color, float32_t width)
+    void Graphics::drawLine(core::pt32f start, core::pt32f end, core::color32 color, float32_t width)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
+        SkPaint paint;
+        paint.setColor(color);
+        paint.setStrokeWidth(width);
+        paint.setAntiAlias(true);
+        _native->drawLine({ start.x, start.y }, { end.x, end.y }, paint);
     }
 
-    void Graphics::DrawEllipse(core::rc32i ellipse, core::color32 color, float32_t width)
+    void Graphics::drawEllipse(core::rc32f ellipse, const Style & style)
     {
-        if (!_graphics)
+        if (!_native)
             return;
+
+        SkPaint paint;
+        paint.setColor(style._stokeColor);
+        paint.setStrokeWidth(style._width);
+        paint.setStyle(to(style._mode));
+        paint.setAntiAlias(style._aa);
+        _native->drawOval({ ellipse.x, ellipse.y, ellipse.right(), ellipse.bottom() }, paint);
     }
 
-    void Graphics::FillEllipse(core::rc32i ellipse, core::color32 color)
+    void Graphics::drawRectangle(core::rc32f rect, const Style & style)
     {
-        if (!_graphics)
+        if (!_native)
             return;
+
+        SkPaint paint;
+        paint.setColor(style._stokeColor);
+        paint.setStrokeWidth(style._width);
+        paint.setStyle(to(style._mode));
+        paint.setAntiAlias(style._aa);
+        _native->drawRect({ rect.x, rect.y, rect.right(), rect.bottom()}, paint);
     }
 
-    void Graphics::DrawRect(core::rc32i rect, core::color32 color, float32_t width)
+    void Graphics::drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const Style & style)
     {
-        if (!_graphics)
+        if (!_native)
             return;
-    }
 
-    void Graphics::FillRect(core::rc32i rect, core::color32 color)
-    {
-        if (!_graphics)
-            return;
-    }
-
-    void Graphics::DrawRoundRect(core::rc32i rect, core::color32 color, float32_t width, float32_t radius)
-    {
-        if (!_graphics)
-            return;
-    }
-
-    void Graphics::FillRoundRect(core::rc32i rect, core::color32 color, float32_t radius)
-    {
-        if (!_graphics)
-            return;
+        SkPaint paint;
+        paint.setColor(style._stokeColor);
+        paint.setStrokeWidth(style._width);
+        paint.setStyle(to(style._mode));
+        paint.setAntiAlias(style._aa);
+        _native->drawRoundRect({ rect.x, rect.y, rect.right(), rect.bottom()}, rx, ry, paint);
     }
 
     void Graphics::DrawString(const std::string & str, core::pt32i point, const text::font & font, core::color32 color, int32_t flags)
     {
-        if (!_graphics)
+        if (!_native)
             return;
-
-        _graphics->DrawString(str, point, font, color, flags);
     }
 
-    void Graphics::DrawString(const std::string & str, core::rc32i rect, const text::font & font, core::color32 color, int32_t flags)
+    void Graphics::DrawString(const std::string & str, core::rc32f rect, const text::font & font, core::color32 color, int32_t flags)
     {
-        if (!_graphics)
+        if (!_native)
             return;
-
-        _graphics->DrawString(str, rect, font, color, flags);
     }
 
     void Graphics::DrawString(const IGraphicsString & str, core::pt32i point)
     {
-        if (!_graphics)
+        if (!_native)
             return;
-
-        _graphics->DrawString(str, point);
     }
 
     void Graphics::DrawImage(const Image & image, core::pt32i point, int32_t flags)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
         auto size = image.size();
@@ -140,12 +118,12 @@ namespace graphics
             point.y -= size.cy / 2;
         else {}
 
-        _graphics->DrawImage(image, point);
+        //_native->DrawImage(image, point);
     }
 
-    void Graphics::DrawImage(const Image & image, core::rc32i rect, int32_t flags)
+    void Graphics::DrawImage(const Image & image, core::rc32f rect, int32_t flags)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
         core::pt32i point;
@@ -164,14 +142,14 @@ namespace graphics
         else
             point.y = rect.y;
 
-        _graphics->PushClip(rect);
-        _graphics->DrawImage(image, point);
-        _graphics->PopClip();
+        //_native->PushClip(rect);
+        //_native->DrawImage(image, point);
+        //_native->PopClip();
     }
 
-    void Graphics::DrawImage(const Image & image, core::pt32i point, core::rc32i region, int32_t flags)
+    void Graphics::DrawImage(const Image & image, core::pt32i point, core::rc32f region, int32_t flags)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
         if (region.right() > image.size().cx)
@@ -191,12 +169,12 @@ namespace graphics
             point.y = point.y - region.cy / 2;
         else {}
 
-        _graphics->DrawImage(image, point, region);
+        //_native->DrawImage(image, point, region);
     }
 
-    void Graphics::DrawImage(const Image & image, core::rc32i rect, core::rc32i region, int32_t flags)
+    void Graphics::DrawImage(const Image & image, core::rc32f rect, core::rc32f region, int32_t flags)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
         if (region.right() > image.size().cx)
@@ -219,49 +197,49 @@ namespace graphics
         else
             point.y = rect.y;
 
-        _graphics->PushClip(rect);
-        _graphics->DrawImage(image, point, region);
-        _graphics->PopClip();
+        //_native->PushClip(rect);
+        //_native->DrawImage(image, point, region);
+        //_native->PopClip();
     }
 
 
-    void Graphics::DrawImage(const Image & image, core::rc32i rect)
+    void Graphics::DrawImage(const Image & image, core::rc32f rect)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
-        _graphics->DrawImage(image, rect);
+        //_native->DrawImage(image, rect);
     }
 
-    void Graphics::DrawImage(const Image & image, core::rc32i rect, core::rc32i region)
+    void Graphics::DrawImage(const Image & image, core::rc32f rect, core::rc32f region)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
-        _graphics->DrawImage(image, rect, region);
+        //_native->DrawImage(image, rect, region);
     }
 
     void Graphics::FillPath(graphics::raster::path & path, core::color32 color)
     {
-        if (!_graphics)
+        if (!_native)
             return;
 
-        _graphics->FillPath(path, color);
+        //_native->FillPath(path, color);
     }
 
     text::fontmetrics Graphics::GetFontMetrics(text::font font)
     {
-        if (!_graphics)
+        if (!_native)
             return {};
-
-        return _graphics->GetFontMetrics(font);
+        return {};
+        //return _native->GetFontMetrics(font);
     }
 
     core::si32i Graphics::MeasureString(std::string str, text::font font)
     {
-        if (!_graphics)
+        if (!_native)
             return {};
 
-        return _graphics->MeasureString(str, font);
+        //return _native->MeasureString(str, font);
     }
 }

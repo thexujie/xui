@@ -32,9 +32,6 @@
     <ClCompile Include="graphics\Graphics.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\Pixmap.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="core\math\xmm\float2.cpp">
       <Filter>core\math\xmm</Filter>
     </ClCompile>
@@ -95,6 +92,12 @@
     <ClCompile Include="win32\windows.cpp">
       <Filter>win32</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\skia\SkShaper.cpp">
+      <Filter>graphics\skia</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Bitmap.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -138,9 +141,6 @@
       <Filter>graphics\image</Filter>
     </ClInclude>
     <ClInclude Include="graphics\Graphics.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\Pixmap.h">
       <Filter>graphics</Filter>
     </ClInclude>
     <ClInclude Include="core\math\xmm\float2.h">
@@ -209,9 +209,6 @@
     <ClInclude Include="graphics\image\formats\tga.h">
       <Filter>graphics\image\formats</Filter>
     </ClInclude>
-    <ClInclude Include="core\counter_acc.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="core\unicode.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -250,6 +247,18 @@
     </ClInclude>
     <ClInclude Include="core\core.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\counter_fps.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\skia\SkShaper.h">
+      <Filter>graphics\skia</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Bitmap.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\skia\skia.h">
+      <Filter>graphics\skia</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

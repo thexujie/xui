@@ -30,7 +30,7 @@ typedef double float64_t;
 #include "core/color32.h"
 #include "core/object.h"
 #include "core/invokable.h"
-#include "core/counter_acc.h"
+#include "core/counter_fps.h"
 
 namespace core
 {
@@ -2646,3 +2646,8 @@ namespace core
 
 #pragma endregion
 }
+
+#include "vec2.h"
+#include "vec3.h"
+#include "vec4.h"
+

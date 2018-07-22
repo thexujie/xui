@@ -36,23 +36,15 @@
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Condition="Exists('$(SolutionDir)\$(SolutionName).cpp.default.props')" Project="$(SolutionDir)\$(SolutionName).cpp.default.props" />
   <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\$(ProjectName).$(ProjectGuid)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\$(ProjectName).$(ProjectGuid)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\$(ProjectName).$(ProjectGuid)\</IntDir>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -77,11 +69,14 @@
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>./;../deps/FreeImage/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
+    <Lib>
+      <AdditionalDependencies>../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/lib64/icuuc.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -122,8 +117,15 @@
     <ClCompile Include="graphics\image\formats\png.cpp" />
     <ClCompile Include="graphics\image\formats\tga.cpp" />
     <ClCompile Include="graphics\image\image.cpp" />
-    <ClCompile Include="graphics\Pixmap.cpp" />
-    <ClCompile Include="graphics\skia\SkiaGraphics.cpp" />
+    <ClCompile Include="graphics\Bitmap.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="graphics\skia\SkiaGraphics.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="graphics\skia\SkShaper.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="graphics\text\font.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -139,7 +141,7 @@
     <ClInclude Include="core\base64.h" />
     <ClInclude Include="core\color32.h" />
     <ClInclude Include="core\core.h" />
-    <ClInclude Include="core\counter_acc.h" />
+    <ClInclude Include="core\counter_fps.h" />
     <ClInclude Include="core\edge.h" />
     <ClInclude Include="core\error.h" />
     <ClInclude Include="core\invokable.h" />
@@ -179,8 +181,10 @@
     <ClInclude Include="graphics\image\formats\tga.h" />
     <ClInclude Include="graphics\image\image.h" />
     <ClInclude Include="graphics\Graphics.h" />
-    <ClInclude Include="graphics\Pixmap.h" />
+    <ClInclude Include="graphics\Bitmap.h" />
+    <ClInclude Include="graphics\skia\skia.h" />
     <ClInclude Include="graphics\skia\SkiaGraphics.h" />
+    <ClInclude Include="graphics\skia\SkShaper.h" />
     <ClInclude Include="graphics\text\font.h" />
     <ClInclude Include="graphics\text\text.h" />
     <ClInclude Include="stdafx.h" />

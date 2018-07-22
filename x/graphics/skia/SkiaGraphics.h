@@ -4,6 +4,8 @@
 
 namespace graphics::skia
 {
+    class Bitmap;
+
     class SkiaGraphics : public IGraphics
     {
     public:

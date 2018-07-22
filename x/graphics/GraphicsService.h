@@ -8,7 +8,7 @@
 
 namespace graphics
 {
-    struct pixmap_buffer
+    struct bitmap_buffer
     {
         byte_t * data = nullptr;
         core::si32i size;
@@ -27,7 +27,7 @@ namespace graphics
     {
     public:
         virtual ~IGraphicsPixmap() = default;
-        virtual pixmap_buffer buffer() const = 0;
+        virtual bitmap_buffer buffer() const = 0;
         virtual core::si32i size() const = 0;
         virtual core::error_e Save(std::string path) const = 0;
     };
@@ -85,9 +85,6 @@ namespace graphics
     {
     public:
         virtual ~IGraphicsService() = default;
-        virtual std::shared_ptr<graphics::IGraphicsPixmap> CreatePixmap(core::si32i) = 0;
-        virtual std::shared_ptr<graphics::IGraphicsImage> CreateString(std::string str, graphics::text::font font, core::color32 color) = 0;
-        virtual std::shared_ptr<graphics::IGraphics> CreateGraphics(std::shared_ptr<core::Object> pixmap) = 0;
         virtual text::fontmetrics FontMetrics(const text::font & font) = 0;
     };
 

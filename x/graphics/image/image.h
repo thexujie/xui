@@ -449,6 +449,7 @@ namespace graphics::image
 
     core::error_e image_load(std::string path, image_data_t & img);
 
+    image_type image_get_type_from_ext(const char * ext, int32_t length = -1);
     image_type image_get_type(const byte_t * buffer, int32_t length);
 
     core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t & img);

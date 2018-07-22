@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "SkiaGraphics.h"
 
+#include <SkBitmap.h>
+
 namespace graphics::skia
 {
     SkiaGraphics::SkiaGraphics()
     {
-
     }
 
     SkiaGraphics::~SkiaGraphics()

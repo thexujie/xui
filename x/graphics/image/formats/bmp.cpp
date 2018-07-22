@@ -357,7 +357,7 @@ namespace graphics::image::formats
                         }
                     }
                     break;
-                default: // 连续的、不重复的（Absolute Mode）
+                default: // 连续的、不重复的（Absolute DrawMode）
                     count = *src_pixel++;
                     for (int32_t cnt = 0; cnt < count; ++cnt, dst_pixel += dst_stride)
                     {

@@ -11,9 +11,6 @@
     <ClCompile Include="win32\Bitmap.cpp">
       <Filter>win32</Filter>
     </ClCompile>
-    <ClCompile Include="win32\Graphics.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="win32\GDIObjectCache.cpp">
       <Filter>win32</Filter>
     </ClCompile>
@@ -42,9 +39,6 @@
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="win32\Bitmap.h">
-      <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\Graphics.h">
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="win32\GDIObjectCache.h">

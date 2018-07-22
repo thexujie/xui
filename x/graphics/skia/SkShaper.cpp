@@ -26,6 +26,8 @@
 #include "SkTo.h"
 #include "SkTypeface.h"
 
+#include "win32/windows.h"
+
 #define ICU_UTIL_DATA_SYMBOL "icudt" U_ICU_VERSION_SHORT "_dat"
 #define ICU_UTIL_DATA_SHARED_MODULE_NAME _T("icudt62.dll")
 

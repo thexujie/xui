@@ -20,7 +20,8 @@
 #include "../x/core/core.h"
 #include "SkGraphics.h"
 #include "SkShaper.h"
-//#include "../x/core/counter_acc.h"
+#include "SkImage.h"
+//#include "../x/core/counter_fps.h"
 //#include "../x/core/invokable.h"
 //#include "../x/core/logger.h"
 
@@ -32,6 +33,7 @@
 bool decode_file(const char* filename, SkBitmap* bitmap, SkColorType colorType = kN32_SkColorType, bool requireUnpremul = false) 
 {
     sk_sp<SkData> data(SkData::MakeFromFileName(filename));
+    SkImage::MakeFromEncoded(data);
     std::unique_ptr<SkCodec> codec = SkCodec::MakeFromData(data);
     if (!codec)
     {
@@ -81,7 +83,7 @@ int app_main(int argc, const wchar_t * argv[])
 	SkPaint paint00;
 	paint00.setColor(0xffff0000);
 
-    core::counter_acc<double, 3> acc;
+    core::counter_fps<double, 3> acc;
     int index = 1;
     while(++index)
     {
@@ -93,7 +95,7 @@ int app_main(int argc, const wchar_t * argv[])
                 canvas.drawBitmap(bmp, 10 + col * (bmp.width() + 10), 10 + row * (bmp.height() + 10));
         }
         acc.acc(1);
-        printf("\rfps=%lf", acc.avg());
+        printf("\rfps=%lf", acc.fps());
         SkPaint paint0;
         paint0.setColor(0xF0FFFFFF);
         canvas.drawRect({0, 0, 1280, 720}, paint0);
@@ -151,19 +153,32 @@ int app_main(int argc, const wchar_t * argv[])
                 paint.setLCDRenderText(true);
                 paint.setColor(0xff000000);
 
+                core::counter_fps<float, 3> cpf(1s);
 				int w = 500;
-                for (int i = 9; i < 24; i += 2)
+                while(true)
                 {
-                    SkTextBlobBuilder builder;
-                    paint.setTextSize(SkIntToScalar(i));
-					//canvas.drawLine(SkPoint{ 0.0f, 0.0f }, SkPoint{(float) w, 0.0f }, paint);
-					//SkPoint end = shaper.shape(&builder, paint, str.c_str(), str.length(), true, { margin, margin }, w - margin);
-					SkPoint end = shaper.shape(&builder, paint, str.c_str(), str.length(), true, { }, w);
-					//SkPoint end = shaper.shape(&builder, paint, gText, strlen(gText), true, { margin, margin }, w - margin);
-					canvas.drawRect({ 0, 0, 500, end.y() }, paint00);
-					paint00.setColor((i * 0x11) | 0xff000000);
-                    canvas.drawTextBlob(builder.make(), 0, 0, paint);
-                    canvas.translate(0, end.y());
+                    for (int i = 20; i < 24; i += 2)
+                    {
+                        sk_sp<SkTextBlob> blob;
+                        {
+                            SkTextBlobBuilder builder;
+                            paint.setTextSize(SkIntToScalar(i));
+                            SkPoint end = shaper.shape(builder, paint, str.c_str(), str.length(), true, {}, w);
+                            blob = builder.make();
+                        }
+                        //canvas.drawLine(SkPoint{ 0.0f, 0.0f }, SkPoint{(float) w, 0.0f }, paint);
+                        //SkPoint end = shaper.shape(&builder, paint, str.c_str(), str.length(), true, { margin, margin }, w - margin);
+                        //SkPoint end = shaper.shape(&builder, paint, gText, strlen(gText), true, { margin, margin }, w - margin);
+                        //canvas.drawRect({ 0, 0, 500, end.y() }, paint00);
+                        //paint00.setColor((i * 0x11) | 0xff000000);
+                        while (true)
+                        {
+                            canvas.drawTextBlob(blob, 0, 0, paint);
+                            //canvas.translate(0, end.y());
+                            cpf.acc(1);
+                            printf("\rfps=%f", cpf.fps());
+                        }
+                    }
                 }
             }
             //{

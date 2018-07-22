@@ -4,6 +4,9 @@
 #include "image/formats/bmp.h"
 #include "image/formats/tga.h"
 
+#include "skia/skia.h"
+#include <SkImage.h>
+
 namespace graphics
 {
     using namespace core;
@@ -16,22 +19,21 @@ namespace graphics
 
     Image::Image(std::string path)
     {
-        //_image = GraphicsService().CreateImage(path);
-        auto[data, size] = core::io::readFullFile(path);
-        if (data)
-            graphics::image::image_create(data.get(), (int32_t)size, _image);
+        sk_sp<SkData> data(SkData::MakeFromFileName(path.c_str()));
+        _native.reset(SkImage::MakeFromEncoded(data).release(), [](SkImage * ptr) { if(ptr) SkSafeUnref(ptr); });
     }
 
-    core::error_e Image::Save(std::string path) const
+    core::error_e Image::Save(std::string path, image::image_type type, int32_t quality) const
     {
-        if (!_image.data)
-            return error_state;
+        if (!_native)
+            return core::error_nullptr;
 
-        if (path.rfind(".bmp") != std::string::npos)
-            return image::formats::bmp_save(_image, path);
-        else if (path.rfind(".tga") != std::string::npos)
-            return image::formats::tga_save(_image, path);
-        else
-            return image::formats::bmp_save(_image, path);
+        if (type == image::image_type_none)
+            type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
+
+        SkBitmap bitmap;
+        _native->asLegacyBitmap(&bitmap);
+        SkFILEWStream stream(path.c_str());
+        return SkEncodeImage(&stream, bitmap, skia::to(type), quality) ? core::error_ok : core::error_inner;
     }
 }

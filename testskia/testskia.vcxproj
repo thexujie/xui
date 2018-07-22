@@ -164,10 +164,9 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>./;E:\github\google\skia\include\config;E:\github\google\skia\include\core;E:\github\google\skia\include\codec;E:\github\google\skia\include\gpu</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../x/;../externals;../externals/skia/include/config;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/private;../externals/skia/src/core;../externals/icu/include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PreprocessorDefinitions>NDEBUG;D_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -175,7 +174,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../deps/;../deps/ffmpeg/lib/$(PlatformTarget)/;../deps/IVSRCore/lib/$(PlatformTarget)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>version.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/lib64/icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -188,6 +187,7 @@
     <ClCompile Include="scrptrun.cpp" />
     <ClCompile Include="SkShaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../externals/icu/include/;../externals/harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../externals/icu/include/;../externals/harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="testskia.cpp" />
     <ClCompile Include="stdafx.cpp">
