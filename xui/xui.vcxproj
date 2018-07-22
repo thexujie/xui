@@ -123,9 +123,6 @@
     <ClInclude Include="win32\windows.h" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="xui.natvis" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\x\x.vcxproj">
       <Project>{0cd56909-021a-4656-baf7-c1183fd6dff8}</Project>
     </ProjectReference>

@@ -77,7 +77,4 @@
       <UniqueIdentifier>{1563d03b-b08a-447f-ac87-6a14c3db607e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="xui.natvis" />
-  </ItemGroup>
 </Project>
