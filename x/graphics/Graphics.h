@@ -22,7 +22,7 @@ namespace graphics
         Graphics(std::shared_ptr<Bitmap> pixmap);
 
     public:
-        void Clear(core::color32 color);
+        void clear(core::color32 color);
         void drawLine(core::pt32f start, core::pt32f end, const PathStyle & style);
 
         void drawEllipse(core::rc32f ellipse, const PathStyle & style);

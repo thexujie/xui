@@ -64,7 +64,7 @@ int main()
     std::shared_ptr<graphics::Bitmap> bitmap = std::make_shared<graphics::Bitmap>(si32i{ cx, cy });
     graphics::Graphics graphics(bitmap);
     
-    graphics.Clear(colors::LightGray);
+    graphics.clear(colors::LightGray);
 
     //auto image = std::make_shared<graphics::Image>("lcw.tga");
     //graphics.DrawImage(*(image.get()), { cx / 4, cy / 4 }, align::leftTop);

@@ -7,16 +7,6 @@
 
 namespace graphics
 {
-    inline SkPaint::Style to(PathMode style)
-    {
-        if (style == PathMode::Stroke)
-            return SkPaint::kStroke_Style;
-        if (style == PathMode::Fill)
-            return SkPaint::kFill_Style;
-        //if (style == PathMode::StrokeFill)
-            return SkPaint::kStrokeAndFill_Style;
-    }
-
     //Graphics::Graphics(core::si32i size): _native(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(size))) { }
 
     Graphics::Graphics(std::shared_ptr<Bitmap> pixmap)
@@ -25,7 +15,7 @@ namespace graphics
         _native = std::make_shared<SkCanvas>(pixmap->native());
     }
 
-    void Graphics::Clear(core::color32 color)
+    void Graphics::clear(core::color32 color)
     {
         if (!_native)
             return;
@@ -39,10 +29,7 @@ namespace graphics
             return;
 
         SkPaint paint;
-        paint.setColor(style._stokeColor);
-        paint.setStrokeWidth(style._width);
-        paint.setStyle(to(style._mode));
-        paint.setAntiAlias(style._aa);
+        style.apply(paint);
         _native->drawLine({ start.x, start.y }, { end.x, end.y }, paint);
     }
 
@@ -52,10 +39,7 @@ namespace graphics
             return;
 
         SkPaint paint;
-        paint.setColor(style._stokeColor);
-        paint.setStrokeWidth(style._width);
-        paint.setStyle(to(style._mode));
-        paint.setAntiAlias(style._aa);
+        style.apply(paint);
         _native->drawOval({ ellipse.x, ellipse.y, ellipse.right(), ellipse.bottom() }, paint);
     }
 
@@ -65,10 +49,7 @@ namespace graphics
             return;
 
         SkPaint paint;
-        paint.setColor(style._stokeColor);
-        paint.setStrokeWidth(style._width);
-        paint.setStyle(to(style._mode));
-        paint.setAntiAlias(style._aa);
+        style.apply(paint);
         _native->drawRect({ rect.x, rect.y, rect.right(), rect.bottom()}, paint);
     }
 
@@ -78,10 +59,7 @@ namespace graphics
             return;
 
         SkPaint paint;
-        paint.setColor(style._stokeColor);
-        paint.setStrokeWidth(style._width);
-        paint.setStyle(to(style._mode));
-        paint.setAntiAlias(style._aa);
+        style.apply(paint);
         _native->drawRoundRect({ rect.x, rect.y, rect.right(), rect.bottom()}, rx, ry, paint);
     }
 

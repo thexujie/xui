@@ -9,6 +9,8 @@
 #include <SkCanvas.h>
 #include <SkString.h>
 #include <SkTypeface.h>
+#include "graphics/image/image.h"
+#include "graphics/PathStyle.h"
 
 namespace graphics::skia
 {
@@ -45,4 +47,14 @@ namespace graphics::skia
 
     inline core::si32i & size(SkISize & sksize) { return *(core::si32i *)&sksize; }
     inline const core::si32i & size(const SkISize & sksize) { return *(const core::si32i *)&sksize; }
+
+    inline SkPaint::Style to(PathMode style)
+    {
+        if (style == PathMode::Stroke)
+            return SkPaint::kStroke_Style;
+        if (style == PathMode::Fill)
+            return SkPaint::kFill_Style;
+        //if (style == PathMode::StrokeFill)
+        return SkPaint::kStrokeAndFill_Style;
+    }
 }

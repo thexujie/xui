@@ -1,5 +1,7 @@
 #pragma once
 
+class SkPaint;
+
 namespace graphics
 {
     enum class PathMode
@@ -49,6 +51,8 @@ namespace graphics
             _aa = aa;
             return *this;
         }
+
+        void apply(SkPaint & paint) const;
 
         PathMode _mode = PathMode::Stroke;
         float32_t _width = 1.0f;
