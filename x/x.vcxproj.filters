@@ -98,6 +98,9 @@
     <ClCompile Include="graphics\font.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\StringFormat.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -257,7 +260,10 @@
     <ClInclude Include="graphics\font.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\text.h">
+    <ClInclude Include="graphics\StringFormat.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\PathStyle.h">
       <Filter>graphics</Filter>
     </ClInclude>
   </ItemGroup>

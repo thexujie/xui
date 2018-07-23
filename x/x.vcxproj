@@ -124,6 +124,7 @@
     <ClCompile Include="graphics\skia\SkShaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="graphics\StringFormat.cpp" />
     <ClCompile Include="graphics\TextBlob.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -181,9 +182,10 @@
     <ClInclude Include="graphics\image\image.h" />
     <ClInclude Include="graphics\Graphics.h" />
     <ClInclude Include="graphics\Bitmap.h" />
+    <ClInclude Include="graphics\PathStyle.h" />
     <ClInclude Include="graphics\skia\skia.h" />
     <ClInclude Include="graphics\skia\SkShaper.h" />
-    <ClInclude Include="graphics\text.h" />
+    <ClInclude Include="graphics\StringFormat.h" />
     <ClInclude Include="graphics\TextBlob.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="win32\win32.h" />

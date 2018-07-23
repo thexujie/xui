@@ -7,13 +7,13 @@
 
 namespace graphics
 {
-    inline SkPaint::Style to(DrawMode style)
+    inline SkPaint::Style to(PathMode style)
     {
-        if (style == DrawMode::Stroke)
+        if (style == PathMode::Stroke)
             return SkPaint::kStroke_Style;
-        if (style == DrawMode::Fill)
+        if (style == PathMode::Fill)
             return SkPaint::kFill_Style;
-        //if (style == DrawMode::StrokeFill)
+        //if (style == PathMode::StrokeFill)
             return SkPaint::kStrokeAndFill_Style;
     }
 
@@ -42,7 +42,7 @@ namespace graphics
         _native->clear(color);
     }
 
-    void Graphics::drawLine(core::pt32f start, core::pt32f end, const Style & style)
+    void Graphics::drawLine(core::pt32f start, core::pt32f end, const PathStyle & style)
     {
         if (!_native)
             return;
@@ -55,7 +55,7 @@ namespace graphics
         _native->drawLine({ start.x, start.y }, { end.x, end.y }, paint);
     }
 
-    void Graphics::drawEllipse(core::rc32f ellipse, const Style & style)
+    void Graphics::drawEllipse(core::rc32f ellipse, const PathStyle & style)
     {
         if (!_native)
             return;
@@ -68,7 +68,7 @@ namespace graphics
         _native->drawOval({ ellipse.x, ellipse.y, ellipse.right(), ellipse.bottom() }, paint);
     }
 
-    void Graphics::drawRectangle(core::rc32f rect, const Style & style)
+    void Graphics::drawRectangle(core::rc32f rect, const PathStyle & style)
     {
         if (!_native)
             return;
@@ -81,7 +81,7 @@ namespace graphics
         _native->drawRect({ rect.x, rect.y, rect.right(), rect.bottom()}, paint);
     }
 
-    void Graphics::drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const Style & style)
+    void Graphics::drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const PathStyle & style)
     {
         if (!_native)
             return;
@@ -125,9 +125,6 @@ namespace graphics
 
     void Graphics::drawString(const std::string & str, core::rc32f rect, const StringFormat & format)
     {
-        if (!_native)
-            return;
-
         if (!_native)
             return;
 

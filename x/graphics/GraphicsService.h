@@ -3,8 +3,8 @@
 #include "core/vec2.h"
 #include "core/rect.h"
 #include "image/image.h"
-#include "text.h"
 #include "raster/path.h"
+#include "font.h"
 
 namespace graphics
 {

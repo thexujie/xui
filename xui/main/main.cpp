@@ -82,19 +82,19 @@ int main()
     //graphics->DrawImage(*(image.get()), { cx / 4, cy / 4, cx / 2, cy / 2 }, { 20, 300, 600, 200 });
     //graphics->drawLine({ cx / 2, cy }, { cx / 2, 0 },  colors::Yellow, 1);
 
-    graphics->drawLine(pt32f(0, cy / 2), pt32f(cx, cy / 2), graphics::Style().stoke(colors::Red));
-    graphics->drawLine(pt32f(cx / 2, 0), pt32f(cx / 2, cy), graphics::Style().stoke(colors::Red));
-    graphics->drawLine(pt32f(0, 0), pt32f(cx, cy), graphics::Style().stoke(colors::Red));
-    graphics->drawLine(pt32f(cx, 0), pt32f(0, cy), graphics::Style().stoke(colors::Red));
+    graphics->drawLine(pt32f(0, cy / 2), pt32f(cx, cy / 2), graphics::PathStyle().stoke(colors::Red));
+    graphics->drawLine(pt32f(cx / 2, 0), pt32f(cx / 2, cy), graphics::PathStyle().stoke(colors::Red));
+    graphics->drawLine(pt32f(0, 0), pt32f(cx, cy), graphics::PathStyle().stoke(colors::Red));
+    graphics->drawLine(pt32f(cx, 0), pt32f(0, cy), graphics::PathStyle().stoke(colors::Red));
 
 
 
     graphics->drawImage(graphics::Image("960.png"), rc32f(cx / 4, cy / 4, cx / 2, cy / 2));
     //graphics->drawImage(graphics::Image("1920.png"), rc32f(cx / 4, cy / 4, cx / 2, cy / 2));
-    graphics->drawEllipse(rc32f(0, 0, cx, cy), graphics::Style(graphics::DrawMode::Stroke).stoke(colors::Red).width(2));
-    graphics->drawEllipse(rc32f(cx / 4, cy / 4, cx / 2, cy / 2), graphics::Style(graphics::DrawMode::StrokeFill).stoke(0x4000ff00).width(2));
+    graphics->drawEllipse(rc32f(0, 0, cx, cy), graphics::PathStyle(graphics::PathMode::Stroke).stoke(colors::Red).width(2));
+    graphics->drawEllipse(rc32f(cx / 4, cy / 4, cx / 2, cy / 2), graphics::PathStyle(graphics::PathMode::StrokeFill).stoke(0x4000ff00).width(2));
 
-    graphics->drawRoundRect(rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), 50, 50, graphics::Style().stoke(colors::Green).width(4));
+    graphics->drawRoundRect(rc32f( cx / 4, cy / 4, cx / 2, cy / 2 ), 50, 50, graphics::PathStyle().stoke(colors::Green).width(4));
 
     //graphics->drawString(u8"一二三四五六七八九十", pt32f( cx / 2, cy / 2), graphics::StringFormat({ "", 16 }).color(colors::Red).weight(graphics::text::Weight_ExtraBlackBold).align(core::align::rightBottom));
     //graphics->drawString(u8"一二三四五六七八九十", pt32f( cx / 2, cy / 2), graphics::StringFormat({ "", 16 }).color(colors::Green).weight(graphics::text::Weight_Bold).align(core::align::leftBottom));
@@ -130,8 +130,8 @@ int main()
     //graphics->drawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 50, 300, 100 }, { "", 40, 0, graphics::text::font::gray }, colors::Black, align::leftTop);
     //auto si = graphics->MeasureString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空\r\n位过了旺季安哥拉晋文公来围观", {"", 10 });
 
-    //graphics->drawRectangle({ 100, 100, 200, 50 }, graphics::Style().stoke(colors::Red));
-    //graphics->drawRectangle({ 100, 220, 200, 50 }, graphics::Style().stoke(colors::Red));
+    //graphics->drawRectangle({ 100, 100, 200, 50 }, graphics::PathStyle().stoke(colors::Red));
+    //graphics->drawRectangle({ 100, 220, 200, 50 }, graphics::PathStyle().stoke(colors::Red));
 
     //graphics->drawImage(graphics::Image("dota2.jpg"), { 100, 100, 300, 200 });
     //graphics->drawImage(graphics::Image("dota2.jpg"), { 410, 100, 300, 200 });

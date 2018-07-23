@@ -1,12 +1,16 @@
 #include "stdafx.h"
 #include "TextBlob.h"
 
-
-TextBlob::TextBlob()
+namespace graphics
 {
-}
+
+    TextBlob::TextBlob()
+    {
+    }
 
 
-TextBlob::~TextBlob()
-{
+    TextBlob::~TextBlob()
+    {
+    }
+
 }

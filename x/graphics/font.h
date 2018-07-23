@@ -81,16 +81,12 @@ namespace graphics
             return !operator==(another);
         }
 
-        fontmetrics metrics() const;
-
         std::string family;
         float_t size = 0;
         font_weight weight : 16;
         font_width width : 4;
         font_slant slant : 4;
         int32_t flags = 0;
-
-        static void makeDefault(font & font);
     };
 }
 

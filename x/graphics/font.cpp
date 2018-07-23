@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "font.h"
-#include "graphics/GraphicsService.h"
 #include "win32/windows.h"
 
 namespace graphics
@@ -40,15 +39,5 @@ namespace graphics
         width = font_width(_width);
         slant = font_slant(_slant);
         flags = flags_;
-    }
-
-    fontmetrics font::metrics() const
-    {
-        return graphics::GraphicsService().FontMetrics(*this);
-    }
-
-    void font::makeDefault(font & font)
-    {
-        font = win32::defaultFont();
     }
 }
