@@ -108,6 +108,7 @@
     <ClCompile Include="core\string.cpp" />
     <ClCompile Include="core\system.cpp" />
     <ClCompile Include="core\unicode.cpp" />
+    <ClCompile Include="graphics\font.cpp" />
     <ClCompile Include="graphics\Graphics.cpp" />
     <ClCompile Include="graphics\GraphicsService.cpp" />
     <ClCompile Include="graphics\Image.cpp" />
@@ -120,13 +121,10 @@
     <ClCompile Include="graphics\Bitmap.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="graphics\skia\SkiaGraphics.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
     <ClCompile Include="graphics\skia\SkShaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="graphics\text\font.cpp" />
+    <ClCompile Include="graphics\TextBlob.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -172,6 +170,7 @@
     <ClInclude Include="core\vec2.h" />
     <ClInclude Include="core\vec3.h" />
     <ClInclude Include="core\vec4.h" />
+    <ClInclude Include="graphics\font.h" />
     <ClInclude Include="graphics\GraphicsService.h" />
     <ClInclude Include="graphics\Image.h" />
     <ClInclude Include="graphics\image\formats\bmp.h" />
@@ -183,10 +182,9 @@
     <ClInclude Include="graphics\Graphics.h" />
     <ClInclude Include="graphics\Bitmap.h" />
     <ClInclude Include="graphics\skia\skia.h" />
-    <ClInclude Include="graphics\skia\SkiaGraphics.h" />
     <ClInclude Include="graphics\skia\SkShaper.h" />
-    <ClInclude Include="graphics\text\font.h" />
-    <ClInclude Include="graphics\text\text.h" />
+    <ClInclude Include="graphics\text.h" />
+    <ClInclude Include="graphics\TextBlob.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="win32\win32.h" />
     <ClInclude Include="win32\windows.h" />

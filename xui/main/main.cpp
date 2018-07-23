@@ -49,7 +49,9 @@ void testImages()
 #include <ShellScalingAPI.h>
 #pragma comment(lib, "Shcore.lib")
 
-#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
+//#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
+#pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
+
 int main()
 {
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
@@ -87,7 +89,7 @@ int main()
 
 
 
-    //graphics->drawImage(graphics::Image("1920.png"), rc32f(cx / 4, cy / 4, cx / 2, cy / 2));
+    graphics->drawImage(graphics::Image("960.png"), rc32f(cx / 4, cy / 4, cx / 2, cy / 2));
     //graphics->drawImage(graphics::Image("1920.png"), rc32f(cx / 4, cy / 4, cx / 2, cy / 2));
     graphics->drawEllipse(rc32f(0, 0, cx, cy), graphics::Style(graphics::DrawMode::Stroke).stoke(colors::Red).width(2));
     graphics->drawEllipse(rc32f(cx / 4, cy / 4, cx / 2, cy / 2), graphics::Style(graphics::DrawMode::StrokeFill).stoke(0x4000ff00).width(2));
@@ -140,7 +142,7 @@ int main()
     counter_fps<float, 3> cps;
     while(true)
     {
-        graphics->drawString(u8"Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/Windows/System32/imm32/", rc32f(cx / 2, cy / 2, cx / 2, cy / 2),
+        graphics->drawString(u8"一二三四五六七八九十ABCD EFGHI𪚥𪚥𪚥ยิ้ยิ้تىلىشۆھرەت زاكىر ئۈرۈمچى شەھىرىدە تەكشۈرۈپ 123456 تەتقىق قىلدى", rc32f(cx / 2, cy / 2, cx / 2, cy / 2),
             graphics::StringFormat({ "", 20 }).color(colors::Black).align(align::rightBottom));
         //graphics->drawString(u8"各位啊两个金额哇啦关雎尔挖掘各位甲骨文阿留个空位过了旺季安哥拉晋文公来围观", { 10, 400, 600, 600 }, { "", 40, 0 });
         cps.acc(1);

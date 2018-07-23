@@ -4,14 +4,14 @@
 
 namespace win32
 {
-    graphics::text::fontmetrics GraphicsService::FontMetrics(const graphics::text::font & font)
+    graphics::fontmetrics GraphicsService::FontMetrics(const graphics::font & font)
     {
         TEXTMETRICW tm = {};
         HDC hdcScreen = GetDC(NULL);
         ::GetTextMetricsW(*_hdc, &tm);
         ::ReleaseDC(NULL, hdcScreen);
 
-        graphics::text::fontmetrics metrics;
+        graphics::fontmetrics metrics;
         metrics.size = font.size;
         metrics.height = tm.tmHeight;
         metrics.ascent = tm.tmAscent;

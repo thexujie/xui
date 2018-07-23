@@ -3,7 +3,7 @@
 #include "font.h"
 #include "core/unicode.h"
 
-namespace graphics::text
+namespace graphics
 {
     struct tlrect_t
     {

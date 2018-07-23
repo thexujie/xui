@@ -3,7 +3,7 @@
 #include "graphics/GraphicsService.h"
 #include "win32/windows.h"
 
-namespace graphics::text
+namespace graphics
 {
     font::font() : weight(Weight_Normal), width(Width_Normal), slant(Slant_Upright)
     {

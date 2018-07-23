@@ -159,18 +159,18 @@ namespace win32
         return "Unknown";
     }
 
-    graphics::text::font defaultFont()
+    graphics::font defaultFont()
     {
         NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
-        graphics::text::font font;
+        graphics::font font;
         font.family = core::string::u16_u8(metrics.lfMessageFont.lfFaceName);
         font.size = metrics.lfMessageFont.lfHeight;
         return font;
     }
 
-    LOGFONTW MappingFont(HDC hdc, const graphics::text::font & font)
+    LOGFONTW MappingFont(HDC hdc, const graphics::font & font)
     {
         LOGFONTW logfont = {};
         if (font.family[0])
@@ -200,7 +200,7 @@ namespace win32
         return logfont;
     }
 
-    LOGFONTW MappingFont(const graphics::text::font & font)
+    LOGFONTW MappingFont(const graphics::font & font)
     {
         HDC hdcScreen = GetDC(NULL);
         LOGFONTW logfont = MappingFont(hdcScreen, font);

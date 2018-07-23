@@ -7,7 +7,7 @@ namespace win32
     using namespace core;
     using namespace graphics;
 
-    void FontToLOGFONT(HDC hdc, const text::font & font, LOGFONTW & logFont)
+    void FontToLOGFONT(HDC hdc, const font & font, LOGFONTW & logFont)
     {
         if (font.family.empty())
             textcpy(logFont.lfFaceName, LF_FACESIZE, core::string::u8_u16(win32::defaultFont().family).c_str(), -1);
@@ -72,7 +72,7 @@ namespace win32
         return brushptr;
     }
 
-    std::shared_ptr<HFONT> GDIObjectCache::GetFont(const graphics::text::font & font)
+    std::shared_ptr<HFONT> GDIObjectCache::GetFont(const graphics::font & font)
     {
         auto iter = _fonts.find(font);
         if (iter != _fonts.end())
@@ -81,7 +81,7 @@ namespace win32
         LOGFONTW logFont = win32::MappingFont(*_hdc.get(), font);
 
         HFONT hFont = CreateFontIndirectW(&logFont);
-        std::hash<graphics::text::font>{}(font);
+        std::hash<graphics::font>{}(font);
 
         std::shared_ptr<HFONT> fontptr = std::make_shared<HFONT>(hFont);
         _fonts[font] = fontptr;

@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics/text/font.h"
+#include "graphics/font.h"
 #include "win32/windows.h"
 
 namespace win32
@@ -12,11 +12,11 @@ namespace win32
 
         std::shared_ptr<HPEN> GetPen(const core::color32 color, float32_t width);
         std::shared_ptr<HBRUSH> GetBrush(const core::color32 color);
-        std::shared_ptr<HFONT> GetFont(const graphics::text::font & font);
+        std::shared_ptr<HFONT> GetFont(const graphics::font & font);
 
     private:
         std::shared_ptr<HDC> _hdc = nullptr;
-        std::map<graphics::text::font, std::shared_ptr<HFONT>> _fonts;
+        std::map<graphics::font, std::shared_ptr<HFONT>> _fonts;
         std::map<std::tuple<const core::color32, float32_t>, std::shared_ptr<HPEN>> _pens;
         std::map<const core::color32, std::shared_ptr<HBRUSH>> _brushs;
     };

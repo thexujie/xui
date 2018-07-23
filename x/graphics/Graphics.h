@@ -27,7 +27,6 @@ namespace graphics
         {
 
         }
-
         Style & mode(DrawMode mode)
         {
             _mode = mode;
@@ -68,9 +67,9 @@ namespace graphics
     struct StringFormat
     {
         StringFormat(){}
-        StringFormat(const text::font & font) : _font(font) {}
+        StringFormat(const font & font) : _font(font) {}
 
-        StringFormat & font(const text::font & font)
+        StringFormat & font(const font & font)
         {
             _font = font;
             return *this;
@@ -90,7 +89,7 @@ namespace graphics
 
         StringFormat & weight(int32_t weight)
         {
-            _font.weight = (text::font_weight)weight;
+            _font.weight = (graphics::font_weight)weight;
             return *this;
         }
 
@@ -100,10 +99,17 @@ namespace graphics
             return *this;
         }
 
-        text::font _font;
+        StringFormat & hint(bool hint)
+        {
+            _hint = hint;
+            return *this;
+        }
+
+        graphics::font _font;
         core::color32 _color = core::colors::Black;
-        bool _lcd = true;
         core::align _align = core::align::leftTop;
+        bool _lcd = true;
+        bool _hint = true;
     };
 
     class Graphics
@@ -140,8 +146,8 @@ namespace graphics
 
     public:
         void FillPath(graphics::raster::path & path, core::color32 color);
-        text::fontmetrics GetFontMetrics(text::font font);
-        core::si32i MeasureString(std::string str, text::font font);
+        fontmetrics GetFontMetrics(font font);
+        core::si32i MeasureString(std::string str, font font);
 
     public:
         std::shared_ptr<SkCanvas> native_share() { return _native; }

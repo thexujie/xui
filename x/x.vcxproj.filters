@@ -74,14 +74,8 @@
     <ClCompile Include="core\unicode.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\text\font.cpp">
-      <Filter>graphics\text</Filter>
-    </ClCompile>
     <ClCompile Include="core\math.cpp">
       <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\skia\SkiaGraphics.cpp">
-      <Filter>graphics\skia</Filter>
     </ClCompile>
     <ClCompile Include="core\invokable.cpp">
       <Filter>core</Filter>
@@ -96,6 +90,12 @@
       <Filter>graphics\skia</Filter>
     </ClCompile>
     <ClCompile Include="graphics\Bitmap.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\TextBlob.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\font.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,12 +188,6 @@
     <ClInclude Include="graphics\Image.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\text\text.h">
-      <Filter>graphics\text</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\text\font.h">
-      <Filter>graphics\text</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\image\formats\bmp.h">
       <Filter>graphics\image\formats</Filter>
     </ClInclude>
@@ -233,9 +227,6 @@
     <ClInclude Include="core\vec4.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\skia\SkiaGraphics.h">
-      <Filter>graphics\skia</Filter>
-    </ClInclude>
     <ClInclude Include="win32\windows.h">
       <Filter>win32</Filter>
     </ClInclude>
@@ -259,6 +250,15 @@
     </ClInclude>
     <ClInclude Include="graphics\skia\skia.h">
       <Filter>graphics\skia</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\TextBlob.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\font.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\text.h">
+      <Filter>graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -285,9 +285,6 @@
     </Filter>
     <Filter Include="core\math\xmm\xm">
       <UniqueIdentifier>{3078cc9c-008f-43a2-8ab9-173d04cd0f4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="graphics\text">
-      <UniqueIdentifier>{b55f09cb-d7eb-48f0-a007-a1505b064964}</UniqueIdentifier>
     </Filter>
     <Filter Include="graphics\image\formats">
       <UniqueIdentifier>{1212c281-62d5-4205-a647-d12b274a2777}</UniqueIdentifier>

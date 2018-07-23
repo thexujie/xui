@@ -288,7 +288,7 @@ namespace win32::uniscribe
                 // 需要查找后备字体
                 if (fallback == fallback_prepare)
                 {
-                    graphics::text::font fontfb = _service->GetFontFallBack(font.font, run.sa.eScript, _text.c_str() + run.trange.index, run.trange.length);
+                    graphics::font fontfb = _service->GetFontFallBack(font.font, run.sa.eScript, _text.c_str() + run.trange.index, run.trange.length);
                     if (!fontfb.family.empty())
                     {
                         ifont_new = _service->MapFont(fontfb);

@@ -3,7 +3,7 @@
 #include "core/vec2.h"
 #include "core/rect.h"
 #include "image/image.h"
-#include "text/text.h"
+#include "text.h"
 #include "raster/path.h"
 
 namespace graphics
@@ -62,7 +62,7 @@ namespace graphics
 
         virtual void Clear(core::color32 color) = 0;
 
-        virtual void DrawString(std::string str, core::pt32i point, graphics::text::font font, core::color32 color) = 0;
+        virtual void DrawString(std::string str, core::pt32i point, graphics::font font, core::color32 color) = 0;
 
         virtual void DrawImage(const graphics::IGraphicsImage & image, core::pt32i point) = 0;
         virtual void DrawImage(const graphics::IGraphicsImage & image, core::pt32i point, core::rc32i region) = 0;
@@ -70,22 +70,22 @@ namespace graphics
         virtual void DrawImage(const graphics::IGraphicsImage & image, core::rc32i rect, core::rc32i region) = 0;
 
 
-        virtual void DrawString(const std::string & str, core::pt32i point, const text::font & font, core::color32 color, int32_t flags) = 0;
-        virtual void DrawString(const std::string & str, core::rc32i rect, const text::font & font, core::color32 color, int32_t flags) = 0;
+        virtual void DrawString(const std::string & str, core::pt32i point, const font & font, core::color32 color, int32_t flags) = 0;
+        virtual void DrawString(const std::string & str, core::rc32i rect, const font & font, core::color32 color, int32_t flags) = 0;
         //void DrawString(std::string str, rc32i rect, text::font font, color32 color, int32_t flags);
         virtual void DrawString(const graphics::IGraphicsString & str, core::pt32i point) = 0;
 
         virtual void FillPath(graphics::raster::path & path, core::color32 color) = 0;
 
-        virtual graphics::text::fontmetrics GetFontMetrics(graphics::text::font font) = 0;
-        virtual core::si32i MeasureString(std::string str, graphics::text::font font) = 0;
+        virtual graphics::fontmetrics GetFontMetrics(graphics::font font) = 0;
+        virtual core::si32i MeasureString(std::string str, graphics::font font) = 0;
     };
 
     class IGraphicsService : public core::Object
     {
     public:
         virtual ~IGraphicsService() = default;
-        virtual text::fontmetrics FontMetrics(const text::font & font) = 0;
+        virtual fontmetrics FontMetrics(const font & font) = 0;
     };
 
     IGraphicsService & GraphicsService();

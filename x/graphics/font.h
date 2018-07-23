@@ -1,7 +1,7 @@
 #pragma once
 #include "core/string.h"
 
-namespace graphics::text
+namespace graphics
 {
     struct fontmetrics
     {
@@ -97,10 +97,10 @@ namespace graphics::text
 namespace std
 {
     template<>
-    struct hash<graphics::text::font>
+    struct hash<graphics::font>
     {
     public:
-        size_t operator()(const graphics::text::font & font) const
+        size_t operator()(const graphics::font & font) const
         {
             size_t h1 = std::hash<std::string>()(font.family);
             size_t h2 = std::hash<float32_t>()(font.size);
@@ -111,9 +111,9 @@ namespace std
     };
 
     template<>
-    struct less<graphics::text::font>
+    struct less<graphics::font>
     {
-        constexpr bool operator()(const graphics::text::font & lhs, const graphics::text::font & rhs) const
+        constexpr bool operator()(const graphics::font & lhs, const graphics::font & rhs) const
         {
             return lhs.family < rhs.family ||
                 lhs.size < rhs.size ||

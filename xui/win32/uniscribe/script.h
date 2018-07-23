@@ -3,14 +3,14 @@
 #include <string>
 #include <vector>
 #include <usp10.h>
-#include "graphics/text/text.h"
+#include "graphics/text.h"
 #include "ScriptService.h"
 #include "graphics/GraphicsService.h"
 #pragma comment(lib, "usp10.lib")
 
 namespace win32::uniscribe
 {
-    using namespace graphics::text;
+    using namespace graphics;
 
     enum wrapmode_e
     {

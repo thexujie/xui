@@ -3,7 +3,7 @@
 #include "win32.h"
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "graphics/text/font.h"
+#include "graphics/font.h"
 #include "core/rect.h"
 
 namespace win32
@@ -29,6 +29,6 @@ namespace win32
         int32_t height() const { return bottom - top; }
     };
 
-    LOGFONTW MappingFont(const graphics::text::font & font);
-    LOGFONTW MappingFont(HDC hdc, const graphics::text::font & font);
+    LOGFONTW MappingFont(const graphics::font & font);
+    LOGFONTW MappingFont(HDC hdc, const graphics::font & font);
 }
