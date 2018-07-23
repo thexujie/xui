@@ -2,6 +2,8 @@
 #include "core/align.h"
 #include "font.h"
 
+class SkPaint;
+
 namespace graphics
 {
     struct StringFormat
@@ -44,6 +46,8 @@ namespace graphics
             _hint = hint;
             return *this;
         }
+
+        void apply(SkPaint & paint) const;
 
         graphics::font _font;
         core::color32 _color = core::colors::Black;

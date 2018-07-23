@@ -17,15 +17,6 @@ namespace graphics
             return SkPaint::kStrokeAndFill_Style;
     }
 
-    inline void apply(const  StringFormat & format, SkPaint & paint)
-    {
-        paint.setAntiAlias(true);
-        paint.setLCDRenderText(format._lcd);
-        paint.setColor(format._color);
-        paint.setTextSize(format._font.size);
-        paint.setAutohinted(format._hint);
-    }
-
     //Graphics::Graphics(core::si32i size): _native(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(size))) { }
 
     Graphics::Graphics(std::shared_ptr<Bitmap> pixmap)
@@ -100,7 +91,7 @@ namespace graphics
             return;
 
         SkPaint paint;
-        apply(format, paint);
+        format.apply(paint);
         SkShaper shaper(SkTypeface::MakeFromName(format._font.family.c_str(), SkFontStyle(format._font.weight, format._font.width, (SkFontStyle::Slant)format._font.slant)));
         if (!_blobBuilder)
             _blobBuilder = std::make_shared<SkTextBlobBuilder>();
@@ -129,7 +120,8 @@ namespace graphics
             return;
 
         SkPaint paint;
-        apply(format, paint);
+        format.apply(paint);
+
         SkShaper shaper(SkTypeface::MakeFromName(format._font.family.c_str(), SkFontStyle(format._font.weight, format._font.width, (SkFontStyle::Slant)format._font.slant)));
 
         if (!_blobBuilder)
@@ -156,15 +148,14 @@ namespace graphics
         _native->clipRect(SkRect());
     }
 
-    void Graphics::drawString(const IGraphicsString & str, core::pt32i point)
+    void Graphics::drawTextBlob(const graphics::TextBlob & blob, core::pt32f point)
     {
         if (!_native)
             return;
 
         SkPaint paint;
 
-        sk_sp<SkTextBlob> blob = _blobBuilder->make();
-        _native->drawTextBlob(blob, point.x, point.y, paint);
+        _native->drawTextBlob(blob.native_ptr(), point.x, point.y, paint);
     }
 
     void Graphics::drawImage(const Image & image, core::pt32f point, int32_t flags)

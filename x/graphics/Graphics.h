@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphicsService.h"
+#include "TextBlob.h"
 #include "Bitmap.h"
 #include "Image.h"
 #include "PathStyle.h"
@@ -30,7 +31,7 @@ namespace graphics
 
         void drawString(const std::string & str, core::pt32f point, const StringFormat & format);
         void drawString(const std::string & str, core::rc32f rect, const StringFormat & format);
-        void drawString(const IGraphicsString & str, core::pt32i point);
+        void drawTextBlob(const graphics::TextBlob & blob, core::pt32f point);
 
         void drawImage(const Image & image, core::pt32f point, int32_t flags);
         void drawImage(const Image & image, core::rc32f rect, int32_t flags);
@@ -49,9 +50,11 @@ namespace graphics
         core::si32i MeasureString(std::string str, font font);
 
     public:
-        std::shared_ptr<SkCanvas> native_share() { return _native; }
+        std::shared_ptr<SkCanvas> native_shared() { return _native; }
         SkCanvas & native() { return *_native; }
         const SkCanvas & native() const { return *_native; }
+        SkCanvas * native_ptr() { return _native.get(); }
+        const SkCanvas * native_ptr() const { return _native.get(); }
 
     private:
         std::shared_ptr<Bitmap> _pixmap;
