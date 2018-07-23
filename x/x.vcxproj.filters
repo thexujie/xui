@@ -104,6 +104,33 @@
     <ClCompile Include="graphics\PathStyle.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="controls\Form.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\Control.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\component\Component.cpp">
+      <Filter>controls\component</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\component\Interactable.cpp">
+      <Filter>controls\component</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\component\Renderable.cpp">
+      <Filter>controls\component</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\component\Scene.cpp">
+      <Filter>controls\component</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\Image.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\renderables\Image.cpp">
+      <Filter>controls\renderables</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\Container.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -269,6 +296,36 @@
     <ClInclude Include="graphics\PathStyle.h">
       <Filter>graphics</Filter>
     </ClInclude>
+    <ClInclude Include="controls\Form.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Control.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="core\event.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\Component.h">
+      <Filter>controls\component</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\Interactable.h">
+      <Filter>controls\component</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\Renderable.h">
+      <Filter>controls\component</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\Scene.h">
+      <Filter>controls\component</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Image.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\renderables\Image.h">
+      <Filter>controls\renderables</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Container.h">
+      <Filter>controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -303,6 +360,15 @@
     </Filter>
     <Filter Include="win32">
       <UniqueIdentifier>{a922c3df-cef3-4095-8e1e-894a73330830}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="controls">
+      <UniqueIdentifier>{5c640a45-f3a4-4380-aef9-51ddbb21efc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="controls\component">
+      <UniqueIdentifier>{ffef13bd-9f74-4212-a93e-6e015552c663}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="controls\renderables">
+      <UniqueIdentifier>{0858b256-5a76-46f9-b474-872ead193a26}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

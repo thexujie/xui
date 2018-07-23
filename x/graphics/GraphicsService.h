@@ -29,7 +29,7 @@ namespace graphics
         virtual ~IGraphicsPixmap() = default;
         virtual bitmap_buffer buffer() const = 0;
         virtual core::si32i size() const = 0;
-        virtual core::error_e Save(std::string path) const = 0;
+        virtual core::error Save(std::string path) const = 0;
     };
 
     class IGraphicsImage : public IGraphicsItem
@@ -39,7 +39,7 @@ namespace graphics
         virtual core::si32i size() const = 0;
         virtual image::format cmode() const = 0;
         virtual const image::image_data_t & data() const = 0;
-        virtual core::error_e Save(std::string path) const = 0;
+        virtual core::error Save(std::string path) const = 0;
     };
 
     class IGraphicsString : public IGraphicsItem

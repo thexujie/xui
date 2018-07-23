@@ -90,6 +90,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="controls\component\Component.cpp" />
+    <ClCompile Include="controls\component\Interactable.cpp" />
+    <ClCompile Include="controls\component\Renderable.cpp" />
+    <ClCompile Include="controls\component\Scene.cpp" />
+    <ClCompile Include="controls\Container.cpp" />
+    <ClCompile Include="controls\Control.cpp" />
+    <ClCompile Include="controls\Form.cpp" />
+    <ClCompile Include="controls\Image.cpp" />
+    <ClCompile Include="controls\renderables\Image.cpp" />
     <ClCompile Include="core\app.cpp" />
     <ClCompile Include="core\core.cpp" />
     <ClCompile Include="core\error.cpp" />
@@ -136,6 +145,15 @@
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="controls\component\Component.h" />
+    <ClInclude Include="controls\component\Interactable.h" />
+    <ClInclude Include="controls\component\Renderable.h" />
+    <ClInclude Include="controls\component\Scene.h" />
+    <ClInclude Include="controls\Container.h" />
+    <ClInclude Include="controls\Control.h" />
+    <ClInclude Include="controls\Form.h" />
+    <ClInclude Include="controls\Image.h" />
+    <ClInclude Include="controls\renderables\Image.h" />
     <ClInclude Include="core\align.h" />
     <ClInclude Include="core\app.h" />
     <ClInclude Include="core\base64.h" />
@@ -144,6 +162,7 @@
     <ClInclude Include="core\counter_fps.h" />
     <ClInclude Include="core\edge.h" />
     <ClInclude Include="core\error.h" />
+    <ClInclude Include="core\event.h" />
     <ClInclude Include="core\invokable.h" />
     <ClInclude Include="core\io\buffer.h" />
     <ClInclude Include="core\io\filestream.h" />

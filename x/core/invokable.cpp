@@ -62,7 +62,7 @@ namespace core
         return *this;
     }
 
-    error_e invokable_helper::add(std::weak_ptr<iinvokable> invoker)
+    error invokable_helper::add(std::weak_ptr<iinvokable> invoker)
     {
         if(!_thread)
             return error_state;
@@ -92,7 +92,7 @@ namespace core
         }
     }
 
-    error_e invokable_helper::trigger()
+    error invokable_helper::trigger()
     {
         if(_id != GetCurrentThreadId())
             return error_state;

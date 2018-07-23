@@ -32,7 +32,7 @@ namespace graphics
         return skia::size(_native->dimensions());
     }
 
-    core::error_e Bitmap::Save(std::string path, image::image_type type, int32_t quality)
+    core::error Bitmap::Save(std::string path, image::image_type type, int32_t quality)
     {
         if (!_native)
             return core::error_nullptr;

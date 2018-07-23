@@ -31,6 +31,7 @@ typedef double float64_t;
 #include "core/object.h"
 #include "core/invokable.h"
 #include "core/counter_fps.h"
+#include "core/event.h"
 
 namespace core
 {

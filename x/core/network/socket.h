@@ -29,18 +29,18 @@ namespace core::network
         ~socket();
 
         socket_state state() const;
-        core::error_e set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write);
-        core::error_e connect(std::string host, port_t port, std::chrono::microseconds timeout);
-        core::error_e connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
+        core::error set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write);
+        core::error connect(std::string host, port_t port, std::chrono::microseconds timeout);
+        core::error connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
         void close();
 
-        core::error_e select(std::chrono::microseconds timeout);
+        core::error select(std::chrono::microseconds timeout);
 
-        std::tuple<core::error_e, int64_t> send(std::shared_ptr<byte_t> buffer, int64_t nbytes);
-        std::tuple<core::error_e, int64_t> send(std::vector<byte_t> & buffer, int64_t nbyte);
+        std::tuple<core::error, int64_t> send(std::shared_ptr<byte_t> buffer, int64_t nbytes);
+        std::tuple<core::error, int64_t> send(std::vector<byte_t> & buffer, int64_t nbyte);
 
-        std::tuple<core::error_e, int64_t> recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes);
-        std::tuple<core::error_e, int64_t> recieve(std::vector<byte_t> & buffer, int64_t nbyte);
+        std::tuple<core::error, int64_t> recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes);
+        std::tuple<core::error, int64_t> recieve(std::vector<byte_t> & buffer, int64_t nbyte);
 
     protected:
         void * _fd = invalid_fd;

@@ -2,7 +2,7 @@
 
 namespace core
 {
-    enum error_e : int32_t
+    enum error : int32_t
     {
         error_generic = std::numeric_limits<int32_t>::min(),
         error_inner,
@@ -42,5 +42,5 @@ namespace core
         flag_clear = 0x0004,
     };
 
-    const char * error_str(error_e err);
+    const char * error_str(error err);
 }

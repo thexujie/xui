@@ -21,7 +21,7 @@ namespace graphics
         _native.reset(SkImage::MakeFromEncoded(data).release(), [](SkImage * ptr) { if(ptr) SkSafeUnref(ptr); });
     }
 
-    core::error_e Image::Save(std::string path, image::image_type type, int32_t quality) const
+    core::error Image::Save(std::string path, image::image_type type, int32_t quality) const
     {
         if (!_native)
             return core::error_nullptr;

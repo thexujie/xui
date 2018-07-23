@@ -91,17 +91,17 @@ namespace core
         void set_lg(log_e lg) { _lg = lg; }
         log_e lg() const { return _lg; }
 
-        error_e open(std::string path);
+        error open(std::string path);
         void close();
         void flush();
 
-        error_e write(log_e lg, std::string text);
-        error_e write(log_e lg, std::string_view text);
+        error write(log_e lg, std::string text);
+        error write(log_e lg, std::string_view text);
 
-        error_e line(log_e lg);
-        error_e line(log_e lg, std::string text);
-        error_e line(log_e lg, std::string_view text);
-        error_e line(log_e lg, const char * text, int32_t length = -1);
+        error line(log_e lg);
+        error line(log_e lg, std::string text);
+        error line(log_e lg, std::string_view text);
+        error line(log_e lg, const char * text, int32_t length = -1);
 
         operator std::fstream &() { return _fs; }
 
@@ -128,7 +128,7 @@ namespace core
         static logger_stream err();
 
     private:
-        error_e _write_time(log_e lg);
+        error _write_time(log_e lg);
 
     private:
         log_e _lg = log_e::log_dbg;

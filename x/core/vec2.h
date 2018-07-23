@@ -30,7 +30,13 @@ namespace core
             h = 0;
         }
 
-        bool is_empty() const { return w == 0 || h == 0; }
+        bool empty() const
+        {
+            if (std::is_floating_point<ValT>::value)
+                return std::abs(w) < std::numeric_limits<ValT>::epsilon() || std::abs(h) < std::numeric_limits<ValT>::epsilon();
+            else
+                return w == 0 || h == 0;
+        }
 
         vec2 & operator =(const vec2 & vec)
         {
@@ -125,12 +131,16 @@ namespace core
         //--------------------------------------------------±»Ωœ‘ÀÀ„
         bool operator ==(const vec2 & vec) const
         {
-            return x == vec.x && y == vec.y;
+            if (std::is_floating_point<ValT>::value)
+                return std::fabs(x - vec.x) < std::numeric_limits<ValT>::epsilon() &&
+                std::fabs(y - vec.y) < std::numeric_limits<ValT>::epsilon();
+            else
+                return x == vec.x && y == vec.y;
         }
 
         bool operator !=(const vec2 & vec) const
         {
-            return x != vec.x || y != vec.y;
+            return !operator ==(vec);
         }
 
         bool operator <(const vec2 & vec) const

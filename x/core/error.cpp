@@ -39,7 +39,7 @@ namespace core
         { ERROR_TAG(error_pendding), "pendding" },
     };
 
-    const char * error_str(error_e err)
+    const char * error_str(error err)
     {
         for (const error_entry & entry : error_entries)
         {

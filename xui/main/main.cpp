@@ -13,6 +13,8 @@
 #include "core/io/filestream.h"
 #include "win32/uniscribe/script.h"
 #include "graphics/TextBlob.h"
+#include "controls/Container.h"
+#include "controls/Image.h"
 
 using namespace core;
 
@@ -63,8 +65,19 @@ int main()
     int32_t cy = 720;
     std::shared_ptr<graphics::Bitmap> bitmap = std::make_shared<graphics::Bitmap>(si32i{ cx, cy });
     graphics::Graphics graphics(bitmap);
-    
     graphics.clear(colors::LightGray);
+
+    auto container = std::make_shared<controls::Container>();
+    auto scene = std::make_shared<controls::component::Scene>();
+    auto image = std::make_shared<controls::Image>("960.png");
+
+    container->addControl(image);
+    container->addControl(image);
+    container->enteringScene(scene);
+    container->enterScene(scene);
+
+    scene->render(graphics);
+    bitmap->Save("scene.png");
 
     //auto image = std::make_shared<graphics::Image>("lcw.tga");
     //graphics.DrawImage(*(image.get()), { cx / 4, cy / 4 }, align::leftTop);

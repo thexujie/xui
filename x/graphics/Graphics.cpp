@@ -136,44 +136,44 @@ namespace graphics
         _native->drawTextBlob(blob.native_ptr(), point.x, point.y, paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::align align)
     {
         if (!_native)
             return;
 
         auto size = image.size();
-        if (flags & core::align::right)
+        if (align & core::align::right)
             point.x -= size.cx;
-        else if (flags & core::align::centerX)
+        else if (align & core::align::centerX)
             point.x -= size.cx / 2;
         else {}
 
-        if (flags & core::align::bottom)
+        if (align & core::align::bottom)
             point.y -= size.cy;
-        else if (flags & core::align::centerY)
+        else if (align & core::align::centerY)
             point.y -= size.cy / 2;
         else {}
 
         _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::align align)
     {
         if (!_native)
             return;
 
         core::pt32i point;
         auto size = image.size();
-        if (flags & core::align::right)
+        if (align & core::align::right)
             point.x = rect.right() - size.cx;
-        else if (flags & core::align::centerX)
+        else if (align & core::align::centerX)
             point.x = rect.centerX() - size.cx / 2;
         else
             point.x = rect.x;
 
-        if (flags & core::align::bottom)
+        if (align & core::align::bottom)
             point.y = rect.bottom() - size.cy;
-        else if (flags & core::align::centerY)
+        else if (align & core::align::centerY)
             point.y = rect.centerY() - size.cy / 2;
         else
             point.y = rect.y;
@@ -181,62 +181,62 @@ namespace graphics
         _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32i region, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32i region, core::align align)
     {
         if (!_native)
             return;
 
-        if (flags & core::align::right)
+        if (align & core::align::right)
             point.x = point.x - region.cx;
-        else if (flags & core::align::centerX)
+        else if (align & core::align::centerX)
             point.x = point.x - region.cx / 2;
         else {}
 
-        if (flags & core::align::bottom)
+        if (align & core::align::bottom)
             point.y = point.y - region.cy;
-        else if (flags & core::align::centerY)
+        else if (align & core::align::centerY)
             point.y = point.y - region.cy / 2;
         else {}
 
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, core::align align)
     {
         if (!_native)
             return;
 
-        if (flags & core::align::right)
+        if (align & core::align::right)
             point.x = point.x - region.cx;
-        else if (flags & core::align::centerX)
+        else if (align & core::align::centerX)
             point.x = point.x - region.cx / 2;
         else {}
 
-        if (flags & core::align::bottom)
+        if (align & core::align::bottom)
             point.y = point.y - region.cy;
-        else if (flags & core::align::centerY)
+        else if (align & core::align::centerY)
             point.y = point.y - region.cy / 2;
         else {}
 
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region, core::align align)
     {
         if (!_native)
             return;
 
         core::pt32i point;
-        if (flags & core::align::right)
+        if (align & core::align::right)
             point.x = rect.right() - region.cx;
-        else if (flags & core::align::centerX)
+        else if (align & core::align::centerX)
             point.x = rect.centerX() - region.cx / 2;
         else
             point.x = rect.x;
 
-        if (flags & core::align::bottom)
+        if (align & core::align::bottom)
             point.y = rect.bottom() - region.cy;
-        else if (flags & core::align::centerY)
+        else if (align & core::align::centerY)
             point.y = rect.centerY() - region.cy / 2;
         else
             point.y = rect.y;
@@ -244,25 +244,33 @@ namespace graphics
         _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region, int32_t flags)
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region, core::align align)
     {
         if (!_native)
             return;
 
         core::pt32i point;
-        if (flags & core::align::right)
+        if (align & core::align::right)
             point.x = rect.right() - region.cx;
-        else if (flags & core::align::centerX)
+        else if (align & core::align::centerX)
             point.x = rect.centerX() - region.cx / 2;
         else
             point.x = rect.x;
 
-        if (flags & core::align::bottom)
+        if (align & core::align::bottom)
             point.y = rect.bottom() - region.cy;
-        else if (flags & core::align::centerY)
+        else if (align & core::align::centerY)
             point.y = rect.centerY() - region.cy / 2;
         else
             point.y = rect.y;
+
+        _native->drawImage(&image.native(), point.x, point.y, nullptr);
+    }
+
+    void Graphics::drawImage(const Image & image, core::pt32f point)
+    {
+        if (!_native)
+            return;
 
         _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }

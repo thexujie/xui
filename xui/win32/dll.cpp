@@ -23,7 +23,7 @@ namespace win32
         free();
     }
 
-    core::error_e dll::load(std::string path)
+    core::error dll::load(std::string path)
     {
         free();
         if (!path.empty())

@@ -73,7 +73,7 @@ namespace graphics::image::formats
     }
 
     // 创建一幅JPEG图片的字节数组
-    core::error_e jpg_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
+    core::error jpg_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
     {
         byte_t ** rows = nullptr;
         // 解压信息
@@ -146,7 +146,7 @@ namespace graphics::image::formats
         src_data.data = src_buffer;
         src_data.pitch = src_pitch;
 
-        error_e err = image_convert_ex(ictx, src_data, image);
+        error err = image_convert_ex(ictx, src_data, image);
         if (err < 0)
         {
             image.pfn_free(image);

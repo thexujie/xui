@@ -342,9 +342,9 @@ namespace graphics::image::formats
     /// dxt Ñ¹Ëõ
     /// 
 
-    core::error_e dds_convert_bc1(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
-    core::error_e dds_convert_bc2(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
-    core::error_e dds_convert_bc3(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error dds_convert_bc1(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error dds_convert_bc2(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error dds_convert_bc3(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
 
     void color_dds_a4r5g6b5_to_r5g5b5(const void * src_pixel, void * dst_pixel);
     void color_dds_a4r5g6b5_to_r8g8b8(const void * src_pixel, void * dst_pixel);
@@ -505,5 +505,5 @@ namespace graphics::image::formats
     void dds_dxt5(dds_header_t * header, byte_t * buffer, dds_image_data_t * dds);
 
     bool is_dds_data(const byte_t * buffer, int32_t length);
-    core::error_e dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image);
+    core::error dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image);
 }

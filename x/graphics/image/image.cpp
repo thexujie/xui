@@ -18,7 +18,7 @@ namespace graphics::image
     using namespace core;
     using namespace graphics::image::formats;
 
-    error_e image_load(std::string path, image_data_t & img)
+    error image_load(std::string path, image_data_t & img)
     {
         std::wstring pathw = core::string::u8_u16(path);
         std::fstream fs;
@@ -85,7 +85,7 @@ namespace graphics::image
         return image_type_none;
     }
 
-    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t & img)
+    core::error image_create(const byte_t * buffer, int32_t length, image_data_t & img)
     {
         image_codec_context ictx;
         ictx.get_format = image_get_format;
@@ -95,7 +95,7 @@ namespace graphics::image
         return image_create(ictx, buffer, length, img);
     }
 
-    core::error_e image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & img)
+    core::error image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & img)
     {
         if(ictx.type == image_type_none)
             ictx.type = image_get_type(buffer, length);
@@ -117,7 +117,7 @@ namespace graphics::image
         }
     }
 
-    core::error_e  image_convert_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error  image_convert_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         if (src.format == dst.format && src.pitch == dst.pitch)
         {
@@ -155,7 +155,7 @@ namespace graphics::image
         return error_ok;
     }
 
-    core::error_e image_convert_copy_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error image_convert_copy_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         if (src.pitch != dst.pitch)
             return error_not_supported;
@@ -181,7 +181,7 @@ namespace graphics::image
         return error_ok;
     }
 
-    core::error_e image_convert_index1_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error image_convert_index1_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
@@ -265,7 +265,7 @@ namespace graphics::image
         return error_ok;
     }
 
-    core::error_e image_convert_index2_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error image_convert_index2_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
@@ -330,7 +330,7 @@ namespace graphics::image
         return error_ok;
     }
 
-    core::error_e image_convert_index4_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error image_convert_index4_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
@@ -384,7 +384,7 @@ namespace graphics::image
         return error_ok;
     }
 
-    core::error_e image_convert_index8_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error image_convert_index8_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)

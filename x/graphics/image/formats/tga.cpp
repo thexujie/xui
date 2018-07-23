@@ -37,7 +37,7 @@ namespace graphics::image::formats
     }
 
 
-    core::error_e tga_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
+    core::error tga_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
     {
         const tga_header_t * header = reinterpret_cast<const tga_header_t *>(buffer);
         buffer += sizeof(tga_header_t) + header->info_length/* Ìø¹ýÍ¼ÏñÐÅÏ¢×Ö¶Î */;
@@ -164,7 +164,7 @@ namespace graphics::image::formats
         if (!(header->flags & TGAF_TOP_TO_BOTTOM))
             src_data.pitch = -src_data.pitch;
 
-        error_e err = pfn_convert(ictx, src_data, image);
+        error err = pfn_convert(ictx, src_data, image);
         if (err < 0)
         {
             image.pfn_free(image);
@@ -173,7 +173,7 @@ namespace graphics::image::formats
         return error_ok;
     }
 
-    core::error_e tga_save(const image_data_t & data, std::string path)
+    core::error tga_save(const image_data_t & data, std::string path)
     {
         assert(data.pitch > 0);
         switch (format_bits(data.format.format))
@@ -208,7 +208,7 @@ namespace graphics::image::formats
         return error_ok;
     }
 
-    core::error_e image_convert_tga_rle8(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error image_convert_tga_rle8(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)

@@ -6,7 +6,7 @@ namespace core
     {
     public:
         virtual ~iinvokable() {}
-        virtual error_e trigger() = 0;
+        virtual error trigger() = 0;
     };
 
     class invokable_helper
@@ -16,11 +16,11 @@ namespace core
 	    ~invokable_helper();
 
         invokable_helper & ref();
-        error_e add(std::weak_ptr<iinvokable> invoker);
+        error add(std::weak_ptr<iinvokable> invoker);
 
         // 只应该在主线程退出时（进程的最后一个线程退出后）调用，其他时候调用结果都是未知的（会 delete mutex）
         void clear();
-        error_e trigger();
+        error trigger();
     private:
         uint32_t _id = 0;
         void * _thread = nullptr;
@@ -39,7 +39,7 @@ namespace core
         invokable() = default;
         ~invokable() = default;
 
-        error_e invoke(std::function<void(void)> func)
+        error invoke(std::function<void(void)> func)
         {
             std::lock_guard<std::mutex> lock(_mtxInvokable);
             _invoker_functions.push_back(func);
@@ -47,7 +47,7 @@ namespace core
             return error_ok;
         }
 
-        error_e trigger()
+        error trigger()
         {
             std::vector<std::function<void()>> invoker_functions;
             {

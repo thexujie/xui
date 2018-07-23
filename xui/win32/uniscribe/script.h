@@ -211,11 +211,11 @@ namespace win32::uniscribe
         const std::wstring & Text() { return _text; }
 
         // generate scripts and clusters(by ScriptBreak).
-        core::error_e Itemize();
+        core::error Itemize();
         // generate runs for different font(name¡¢size¡¢bold¡¢italic...)
-        core::error_e Slice();
+        core::error Slice();
         // generate glyphs for each run, and calculate widths of all clusters and runs.
-        core::error_e Shape();
+        core::error Shape();
 
         // layout all clusters
         void Layout(int32_t start, int32_t width, wrapmode_e wrapmode);

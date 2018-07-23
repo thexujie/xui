@@ -42,7 +42,7 @@ namespace win32::uniscribe
         _text = text;
     }
 
-    core::error_e ScriptItem::Itemize()
+    core::error ScriptItem::Itemize()
     {
         if (!_service)
             return error_state;
@@ -124,7 +124,7 @@ namespace win32::uniscribe
         return error_ok;
     }
 
-    core::error_e ScriptItem::Slice()
+    core::error ScriptItem::Slice()
     {
         if (!_service)
             return error_state;
@@ -183,7 +183,7 @@ namespace win32::uniscribe
         return error_ok;
     }
 
-    core::error_e ScriptItem::Shape()
+    core::error ScriptItem::Shape()
     {
         if (!_service)
             return error_state;

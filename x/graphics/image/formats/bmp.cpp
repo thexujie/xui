@@ -20,7 +20,7 @@ namespace graphics::image::formats
         return true;
     }
 
-    core::error_e bmp_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
+    core::error bmp_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
     {
         const bmp_simple_header_t * header = reinterpret_cast<const bmp_simple_header_t *>(buffer);
         if (header->type != BMP_MAGIC)
@@ -217,7 +217,7 @@ namespace graphics::image::formats
         src_data.palette = const_cast<byte_t *>(conv_palette);
         src_data.palette_size = 0;
 
-        error_e err = pfn_convert(ictx, src_data, image);
+        error err = pfn_convert(ictx, src_data, image);
         if(err < 0)
         {
             image.pfn_free(image);
@@ -226,7 +226,7 @@ namespace graphics::image::formats
         return error_ok;
     }
 
-    core::error_e bmp_save(const image_data_t & data, std::string path)
+    core::error bmp_save(const image_data_t & data, std::string path)
     {
         color_mask_abgr_t mask = mask_from_format_abgr(data.format.format);
         if (!mask)
@@ -264,7 +264,7 @@ namespace graphics::image::formats
         return error_ok;
     }
 
-    core::error_e image_convert_bmp_index4_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error image_convert_bmp_index4_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         assert(dst.pitch > 0);
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
@@ -383,7 +383,7 @@ namespace graphics::image::formats
         return error_ok;
     }
 
-    core::error_e image_convert_bmp_index8_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error image_convert_bmp_index8_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         assert(dst.pitch > 0);
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);

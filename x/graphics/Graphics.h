@@ -33,13 +33,14 @@ namespace graphics
         void drawString(const std::string & str, core::rc32f rect, const StringFormat & format);
         void drawTextBlob(const graphics::TextBlob & blob, core::pt32f point);
 
-        void drawImage(const Image & image, core::pt32f point, int32_t flags);
-        void drawImage(const Image & image, core::rc32f rect, int32_t flags);
-        void drawImage(const Image & image, core::pt32f point, core::rc32i region, int32_t flags);
-        void drawImage(const Image & image, core::pt32f point, core::rc32f region, int32_t flags);
-        void drawImage(const Image & image, core::rc32f rect, core::rc32i region, int32_t flags);
-        void drawImage(const Image & image, core::rc32f rect, core::rc32f region, int32_t flags);
+        void drawImage(const Image & image, core::pt32f point, core::align align);
+        void drawImage(const Image & image, core::rc32f rect, core::align align);
+        void drawImage(const Image & image, core::pt32f point, core::rc32i region, core::align align);
+        void drawImage(const Image & image, core::pt32f point, core::rc32f region, core::align align);
+        void drawImage(const Image & image, core::rc32f rect, core::rc32i region, core::align align);
+        void drawImage(const Image & image, core::rc32f rect, core::rc32f region, core::align align);
 
+        void drawImage(const Image & image, core::pt32f point);
         void drawImage(const Image & image, core::rc32f rect);
         void drawImage(const Image & image, core::rc32f rect, core::rc32i region);
         void drawImage(const Image & image, core::rc32f rect, core::rc32f region);

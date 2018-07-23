@@ -25,7 +25,7 @@ namespace win32
 
     public:
         graphics::bitmap_buffer buffer() const;
-        core::error_e Save(std::string path) const;
+        core::error Save(std::string path) const;
 
     private:
         byte_t * _data = nullptr;

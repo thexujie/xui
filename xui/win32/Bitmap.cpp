@@ -63,7 +63,7 @@ namespace win32
         return { _data, _size, _strike, _pitch, false };
     }
 
-    core::error_e Bitmap::Save(std::string path) const
+    core::error Bitmap::Save(std::string path) const
     {
         if (!_handle)
             return error_state;

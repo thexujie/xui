@@ -102,16 +102,16 @@ namespace graphics::image::formats
 #pragma pack(pop)
 
     bool is_bmp_data(const byte_t * buffer, int32_t length);
-    core::error_e bmp_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image);
-    core::error_e bmp_save(const image_data_t & data, std::string path);
+    core::error bmp_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image);
+    core::error bmp_save(const image_data_t & data, std::string path);
     /**
     * Bmp 文件的 rle index4 压缩方式，使用索引色。
     * rle 压缩 src_stride 和 src_pitch 没有意义。
     */
-    core::error_e image_convert_bmp_index4_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error image_convert_bmp_index4_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
     /**
     * Bmp 文件的 rle index8 压缩方式，使用索引色。
     * rle 压缩 src_stride 和 src_pitch 没有意义。
     */
-    core::error_e image_convert_bmp_index8_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error image_convert_bmp_index8_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
 }

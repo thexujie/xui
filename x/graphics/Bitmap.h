@@ -17,7 +17,7 @@ namespace graphics
         operator bool() const { return !!_native; }
         bitmap_buffer buffer() const;
         core::si32i size() const;
-        core::error_e Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100);
+        core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100);
 
         std::shared_ptr<SkBitmap> native_shared() { return _native; }
         SkBitmap & native() { return *_native; }
@@ -25,7 +25,7 @@ namespace graphics
         SkBitmap * native_ptr() { return _native.get(); }
         const SkBitmap * native_ptr() const { return _native.get(); }
     private:
-        core::error_e _state = core::error_ok;
+        core::error _state = core::error_ok;
         std::shared_ptr<SkBitmap> _native = nullptr;
         core::si32i _size;
     };

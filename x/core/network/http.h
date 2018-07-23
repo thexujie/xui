@@ -47,27 +47,27 @@ namespace core::network
         socket_state state() const;
         std::shared_ptr<socket> socket() const;
 
-        core::error_e set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write);
-        core::error_e connect(std::string host, port_t port, std::chrono::microseconds timeout);
-        core::error_e connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
+        core::error set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write);
+        core::error connect(std::string host, port_t port, std::chrono::microseconds timeout);
+        core::error connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
         void close();
 
-        std::tuple<core::error_e, int64_t> send(const u8string & text);
-        std::tuple<core::error_e, int64_t> read(std::shared_ptr<byte_t> buffer, int64_t nbytes);
+        std::tuple<core::error, int64_t> send(const u8string & text);
+        std::tuple<core::error, int64_t> read(std::shared_ptr<byte_t> buffer, int64_t nbytes);
 
         //数据较少，可以一次性接收
-        std::tuple<core::error_e, std::shared_ptr<http_response>> recieve();
-        std::tuple<core::error_e, std::shared_ptr<http_response>, int64_t> recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes);
-        std::tuple<core::error_e, std::shared_ptr<http_response>> recieve(std::function<void(std::shared_ptr<byte_t>, int64_t)> callback);
+        std::tuple<core::error, std::shared_ptr<http_response>> recieve();
+        std::tuple<core::error, std::shared_ptr<http_response>, int64_t> recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes);
+        std::tuple<core::error, std::shared_ptr<http_response>> recieve(std::function<void(std::shared_ptr<byte_t>, int64_t)> callback);
 
-        std::tuple<core::error_e, std::shared_ptr<http_response>> request(const u8string & text);
-        std::tuple<core::error_e, std::shared_ptr<http_response>, int64_t> request(const u8string & text, std::shared_ptr<byte_t> buffer, int64_t nbytes);
-        std::tuple<core::error_e, std::shared_ptr<http_response>> request(const u8string & text, std::function<void(std::shared_ptr<byte_t>, int64_t)> callback);
+        std::tuple<core::error, std::shared_ptr<http_response>> request(const u8string & text);
+        std::tuple<core::error, std::shared_ptr<http_response>, int64_t> request(const u8string & text, std::shared_ptr<byte_t> buffer, int64_t nbytes);
+        std::tuple<core::error, std::shared_ptr<http_response>> request(const u8string & text, std::function<void(std::shared_ptr<byte_t>, int64_t)> callback);
 
     private:
-        core::error_e parse_header(const std::string line, http_response & response);
-        core::error_e parse_line(const std::string line, http_response & response);
-        core::error_e parse_response(http_response & response);
+        core::error parse_header(const std::string line, http_response & response);
+        core::error parse_line(const std::string line, http_response & response);
+        core::error parse_response(http_response & response);
 
     protected:
         std::shared_ptr<network::socket> _socket;

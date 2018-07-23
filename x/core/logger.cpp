@@ -63,7 +63,7 @@ namespace core
         std::stringstream fs;
     }
 
-    error_e logger::open(std::string path)
+    error logger::open(std::string path)
     {
         if (path.empty())
             return error_args;
@@ -89,7 +89,7 @@ namespace core
             _fs.flush();
     }
 
-    error_e logger::write(log_e lg, std::string text)
+    error logger::write(log_e lg, std::string text)
     {
         if (!_fs.good())
             return error_state;
@@ -100,7 +100,7 @@ namespace core
         return _fs.good() ? error_ok : error_io;
     }
 
-    error_e logger::write(log_e lg, std::string_view text)
+    error logger::write(log_e lg, std::string_view text)
     {
         if (!_fs.good())
             return error_state;
@@ -111,7 +111,7 @@ namespace core
         return _fs.good() ? error_ok : error_io;
     }
 
-    error_e logger::line(log_e lg)
+    error logger::line(log_e lg)
     {
         if (!_fs.good())
             return error_state;
@@ -125,7 +125,7 @@ namespace core
         return _fs.good() ? error_ok : error_io;
     }
 
-    error_e logger::line(log_e lg, std::string text)
+    error logger::line(log_e lg, std::string text)
     {
         if (!_fs.good())
             return error_state;
@@ -140,7 +140,7 @@ namespace core
         return _fs.good() ? error_ok : error_io;
     }
 
-    error_e logger::line(log_e lg, std::string_view text)
+    error logger::line(log_e lg, std::string_view text)
     {
         if (!_fs.good())
             return error_state;
@@ -157,7 +157,7 @@ namespace core
         return _fs.good() ? error_ok : error_io;
     }
 
-    error_e logger::line(log_e lg, const char * text, int32_t length)
+    error logger::line(log_e lg, const char * text, int32_t length)
     {
         if (!_fs.good())
             return error_state;
@@ -173,7 +173,7 @@ namespace core
         return _fs.good() ? error_ok : error_io;
     }
 
-    error_e logger::_write_time(log_e lg)
+    error logger::_write_time(log_e lg)
     {
         if (!_fs.good())
             return error_state;

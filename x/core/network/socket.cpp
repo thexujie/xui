@@ -31,7 +31,7 @@ namespace core::network
         return _state;
     }
 
-    error_e socket::set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write)
+    error socket::set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write)
     {
         _timeout_read = timeout_read;
         _timeout_send = timeout_write;
@@ -45,7 +45,7 @@ namespace core::network
         return error_ok;
     }
 
-    error_e socket::connect(std::string host, port_t port, std::chrono::microseconds timeout)
+    error socket::connect(std::string host, port_t port, std::chrono::microseconds timeout)
     {
         std::vector<netaddr> addrs = host2addrs(host);
         if (addrs.empty())
@@ -53,7 +53,7 @@ namespace core::network
         return connect(addrs[std::random_device()() % addrs.size()], port, timeout);
     }
 
-    error_e socket::connect(netaddr addr, port_t port, std::chrono::microseconds timeout)
+    error socket::connect(netaddr addr, port_t port, std::chrono::microseconds timeout)
     {
         if (_state != socket_state_closed)
             return error_state;
@@ -96,7 +96,7 @@ namespace core::network
         }
     }
 
-    error_e socket::select(std::chrono::microseconds timeout)
+    error socket::select(std::chrono::microseconds timeout)
     {
         if (_state != socket_state_connected)
             return error_state;
@@ -126,7 +126,7 @@ namespace core::network
         return error_ok;
     }
 
-    std::tuple<error_e, int64_t> socket::send(std::shared_ptr<byte_t> buffer, int64_t nbytes)
+    std::tuple<error, int64_t> socket::send(std::shared_ptr<byte_t> buffer, int64_t nbytes)
     {
         if (_fd == invalid_fd)
             return { error_state, 0 };
@@ -143,12 +143,12 @@ namespace core::network
             return { error_ok, ret };
     }
 
-    std::tuple<error_e, int64_t> socket::send(std::vector<byte_t> & buffer, int64_t nbytes)
+    std::tuple<error, int64_t> socket::send(std::vector<byte_t> & buffer, int64_t nbytes)
     {
         return recieve(std::shared_ptr<byte_t>(buffer.data(), [](void *) {}), nbytes);
     }
 
-    std::tuple<error_e, int64_t> socket::recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes)
+    std::tuple<error, int64_t> socket::recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes)
     {
         if (_fd == invalid_fd || _state != socket_state_connected)
             return { error_state, 0 };
@@ -167,7 +167,7 @@ namespace core::network
             return { error_ok, ret };
     }
 
-    std::tuple<error_e, int64_t> socket::recieve(std::vector<byte_t> & buffer, int64_t nbytes)
+    std::tuple<error, int64_t> socket::recieve(std::vector<byte_t> & buffer, int64_t nbytes)
     {
         return recieve(std::shared_ptr<byte_t>(buffer.data(), [](void *) {}), nbytes);
     }

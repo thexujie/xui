@@ -357,7 +357,7 @@ namespace graphics::image
     typedef void(*image_buffer_free_fun)(byte_t * ptr);
 
     typedef void(*pixel_convert_fun)(const void * src_pixel, void * dst_pixel);
-    typedef core::error_e(*image_convert_fun)(struct image_codec_context & ctx, const image_data_t & src, image_data_t & dst);
+    typedef core::error(*image_convert_fun)(struct image_codec_context & ctx, const image_data_t & src, image_data_t & dst);
 
     void image_buffer_alloc_default(image_data_t & data, int32_t align = 4);
     void image_buffer_free(image_data_t & data);
@@ -394,8 +394,8 @@ namespace graphics::image
 
     typedef bool (*image_convert_rule_fun_t)(image_codec_context * rule);
 
-    typedef core::error_e (*image_save_write_fun_t)(const void * buffer, int32_t size, void * userdata);
-    typedef core::error_e (*image_save_fun_t)(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata);
+    typedef core::error (*image_save_write_fun_t)(const void * buffer, int32_t size, void * userdata);
+    typedef core::error (*image_save_fun_t)(const image_data_t * data, image_save_write_fun_t pfn_write, void * userdata);
 
     const color_mask_abgr_t MASK_R3G3B2 = { 0x00E0, 0x001C, 0x0003, 0x0000 };
 
@@ -447,29 +447,29 @@ namespace graphics::image
         memcpy_s(dst, dst_size, src, length);
     }
 
-    core::error_e image_load(std::string path, image_data_t & img);
+    core::error image_load(std::string path, image_data_t & img);
 
     image_type image_get_type_from_ext(const char * ext, int32_t length = -1);
     image_type image_get_type(const byte_t * buffer, int32_t length);
 
-    core::error_e image_create(const byte_t * buffer, int32_t length, image_data_t & img);
-    core::error_e image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & img);
+    core::error image_create(const byte_t * buffer, int32_t length, image_data_t & img);
+    core::error image_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & img);
 
     /**
     * 复制图像，dst 和 src 具有相同的颜色格式。
     * 目标图像的 width 和 height 不能小于 源图像。
     */
-    core::error_e image_convert_copy_ex(image_codec_context & icctx, const image_data_t & src, const image_data_t & dst);
+    core::error image_convert_copy_ex(image_codec_context & icctx, const image_data_t & src, const image_data_t & dst);
 
     /**
     * image_convert_ex 只能将一种 rgb 格式转换成另一种 rgb 格式，
     * 不能进行调色板、压缩等操作。
     */
-    core::error_e image_convert_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
-    core::error_e image_convert_index1_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
-    core::error_e image_convert_index2_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
-    core::error_e image_convert_index4_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
-    core::error_e image_convert_index8_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error image_convert_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error image_convert_index1_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error image_convert_index2_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error image_convert_index4_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
+    core::error image_convert_index8_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
 
 
     // 根据颜色掩码计算颜色类型

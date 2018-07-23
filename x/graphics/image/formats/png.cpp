@@ -44,7 +44,7 @@ namespace graphics::image::formats
         return true;
     }
 
-    core::error_e png_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
+    core::error png_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
     {
         png_source buff;
         buff.buffer = buffer;
@@ -174,7 +174,7 @@ namespace graphics::image::formats
         src_data.data = src_buffer;
         src_data.pitch = src_pitch;
 
-        error_e err = pfn_convert(ictx, src_data, image);
+        error err = pfn_convert(ictx, src_data, image);
         if (err < 0)
         {
             image.pfn_free(image);

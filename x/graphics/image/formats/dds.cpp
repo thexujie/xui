@@ -88,7 +88,7 @@ namespace graphics::image::formats
         indices[3][3] = (index2 >> 13) & 0x7;
     }
 
-    core::error_e dds_convert_bc1(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error dds_convert_bc1(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
@@ -126,7 +126,7 @@ namespace graphics::image::formats
         return error_ok;
     }
 
-    core::error_e dds_convert_bc2(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error dds_convert_bc2(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
@@ -171,7 +171,7 @@ namespace graphics::image::formats
     }
 
 
-    core::error_e dds_convert_bc3(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
+    core::error dds_convert_bc3(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
@@ -254,7 +254,7 @@ namespace graphics::image::formats
         dst->b = ((src & (0x1F << 0)) >> 0) * 0xFF / 0x1F;
     }
 
-    core::error_e dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
+    core::error dds_create(image_codec_context & ictx, const byte_t * buffer, int32_t length, image_data_t & image)
     {
         const dds_header_t * header = reinterpret_cast<const dds_header_t *>(buffer);
         if (header->magic != DDS_MAGIC)
@@ -357,7 +357,7 @@ namespace graphics::image::formats
         src_data.data = (byte_t *)buffer + sizeof(dds_header_t);
         src_data.pitch = align_to<int32_t>(format.width * (format_bits(format.format) / 8), 4);
 
-        error_e err = pfn_convert(ictx, src_data, image);
+        error err = pfn_convert(ictx, src_data, image);
         if (err < 0)
         {
             image.pfn_free(image);
