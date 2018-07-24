@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "float2.h"
-#include "xmm.h"
+#include "math/xmm.h"
 
-namespace core::math::xmm
+namespace core
 {
+    using namespace math::xm;
+
     float2 float2::operator +() const
     {
         return *this;

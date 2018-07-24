@@ -1,16 +1,18 @@
 #pragma once
 
-#include "xm/xm.h"
+#include "math/xmm.h"
 
-namespace core::math::xmm
+namespace core
 {
+    typedef float32_t float1;
+
     struct float2
     {
         inline float2() : x(0), y(0) { }
 
         inline float2(const float2 & another) : x(another.x), y(another.y) { }
 
-        inline float2(const xmf & v) : x(xmv_x(v)), y(xmv_y(v)) { }
+        inline float2(const math::xm::xmf & v) : x(xmv_x(v)), y(xmv_y(v)) { }
 
         inline float2(float32_t _x, float32_t _y) : x(_x), y(_y) { }
 
@@ -26,15 +28,15 @@ namespace core::math::xmm
         inline float32_t & operator[](int32_t iIndex) { return ((float32_t *)this)[iIndex]; }
         inline const float32_t & operator[](int32_t iIndex) const { return ((const float32_t *)this)[iIndex]; }
 
-        inline operator xmf() const
+        inline operator math::xm::xmf() const
         {
-            return xmf(x, y, 0.0f, 0.0f);
+            return math::xm::xmf(x, y, 0.0f, 0.0f);
         }
 
-        inline float2 & operator =(xmf v)
+        inline float2 & operator =(math::xm::xmf v)
         {
-            x = xmv_x(v);
-            y = xmv_y(v);
+            x = math::xm::xmv_x(v);
+            y = math::xm::xmv_y(v);
             return *this;
         }
 
@@ -94,12 +96,12 @@ namespace core::math::xmm
         };
     };
 
-    inline float2 operator *(float1 rate, float2 vec)
+    inline float2 operator *(float32_t rate, float2 vec)
     {
         return vec * rate;
     }
 
-    inline float2 operator /(float1 rate, float2 vec)
+    inline float2 operator /(float32_t rate, float2 vec)
     {
         return vec / rate;
     }

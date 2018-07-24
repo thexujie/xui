@@ -2,7 +2,7 @@
 
 #include "xm.h"
 
-namespace core::math::xmm
+namespace core::math::xm
 {
     const xmi xmi_0 = { 0, 0, 0, 0 };
     const xmi xmi_255 = { 255, 255, 255, 255 };

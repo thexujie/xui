@@ -19,29 +19,25 @@ namespace controls
 
         core::rc32f rect_old = _rect;
         _rect = rect;
-        if (rect_old.position != _rect.position)
-            posChanged(rect_old.position, _rect.position);
-        if (rect_old.size != _rect.size)
-            sizeChanged(rect_old.size, _rect.size);
-        rectChanged(rect_old, _rect);
+        onRectChanged(rect_old, _rect);
     }
 
     void Control::setPos(const core::pt32f & pos)
     {
         if (_rect.position == pos)
             return;
-        core::pt32f pos_old = _rect.position; 
+        core::rc32f rect_old = _rect;
         _rect.position = pos;
-        posChanged(pos_old, _rect.position);
+        onRectChanged(rect_old, _rect);
     }
 
     void Control::setSize(const core::si32f & size)
     {
         if (_rect.size == size)
             return;
-        core::si32f size_old = _rect.size;
+        core::rc32f rect_old = _rect;
         _rect.size = size;
-        posChanged(size_old, _rect.size);
+        onRectChanged(rect_old, _rect);
     }
 
     std::shared_ptr<component::Scene> Control::scene() const
@@ -67,5 +63,10 @@ namespace controls
     void Control::leaveScene(std::shared_ptr<component::Scene> & scene)
     {
         _scene.reset();
+    }
+
+    void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to)
+    {
+        rectChanged(from, to);
     }
 }

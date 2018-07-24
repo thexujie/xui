@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "float4.h"
-#include "xmm.h"
+#include "math/xmm.h"
 
-namespace core::math::xmm
+namespace core
 {
+    using namespace math::xm;
+
     float32_t float4::length() const
     {
         return xmv_x(xm_vec_length(*this));

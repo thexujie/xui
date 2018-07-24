@@ -54,6 +54,17 @@ namespace graphics
 
         void apply(SkPaint & paint) const;
 
+        bool operator == (const PathStyle & another) const
+        {
+            return _mode == another._mode &&
+                _width == another._width &&
+                _fillColor == another._fillColor &&
+                _stokeColor == another._stokeColor &&
+                _aa == another._aa;
+        }
+
+        bool operator != (const PathStyle & another) const { return !operator==(another); }
+
         PathMode _mode = PathMode::Stroke;
         float32_t _width = 1.0f;
         core::color32 _fillColor = core::colors::Transparent;

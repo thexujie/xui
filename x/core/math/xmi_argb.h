@@ -2,7 +2,7 @@
 
 #include "xm.h"
 
-namespace core::math::xmm
+namespace core::math::xm
 {
     inline xmi argb_mul(xmi c1, xmi c2)
     {

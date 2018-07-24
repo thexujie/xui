@@ -1,9 +1,8 @@
 #pragma once
 
-#include "xm/xm.h"
 #include "float2.h"
 
-namespace core::math::xmm
+namespace core
 {
     struct float3
     {
@@ -11,7 +10,7 @@ namespace core::math::xmm
 
         inline float3(const float3 & another) : x(another.x), y(another.y), z(another.z) { }
 
-        inline float3(const xmf & m128) : x(xmv_x(m128)), y(xmv_y(m128)), z(xmv_z(m128)) { }
+        inline float3(const math::xm::xmf & m128) : x(xmv_x(m128)), y(xmv_y(m128)), z(xmv_z(m128)) { }
 
         inline float3(float32_t _x, float32_t _y, float32_t _z) : x(_x), y(_y), z(_z) { }
 
@@ -28,13 +27,13 @@ namespace core::math::xmm
         inline float32_t & operator[](int32_t iIndex) { return ((float32_t *)this)[iIndex]; }
         inline const float32_t & operator[](int32_t iIndex) const { return ((const float32_t *)this)[iIndex]; }
 
-        inline operator xmf() const { return xm_vec_set(x, y, z, 0); }
+        inline operator math::xm::xmf() const { return math::xm::xmf(x, y, z, 0.0f); }
 
-        inline float3 & operator =(xmf v)
+        inline float3 & operator =(const math::xm::xmf & v)
         {
-            x = xmv_x(v);
-            y = xmv_y(v);
-            z = xmv_z(v);
+            x = math::xm::xmv_x(v);
+            y = math::xm::xmv_y(v);
+            z = math::xm::xmv_z(v);
             return *this;
         }
 
@@ -97,8 +96,8 @@ namespace core::math::xmm
 
         inline bool operator ==(const float3 & vec) const
         {
-            xmf diff = xm_vec_abs(xm_vec_sub(*this, vec));
-            return !!xmi_x(xm_vec_less(diff, xmf_epsilon));
+            math::xm::xmf diff = math::xm::xm_vec_abs(math::xm::xm_vec_sub(*this, vec));
+            return !!math::xm::xmi_x(xm_vec_less(diff, math::xm::xmf_epsilon));
         }
 
         inline bool operator !=(const float3 & vec) const

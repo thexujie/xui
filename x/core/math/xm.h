@@ -19,7 +19,7 @@ using namespace DirectX;
 
 #define xm_shuffle(fp0, fp1, fp2, fp3) (((fp0) << 0) | ((fp1) << 2) | ((fp2) << 4) | ((fp3 << 6)))
 
-namespace core::math::xmm
+namespace core::math::xm
 {
     union xmt
     {
@@ -133,12 +133,13 @@ namespace core::math::xmm
         xmf & operator[](int32_t iIndex) { return ((xmf *)this)[iIndex]; }
         const xmf & operator[](int32_t iIndex) const { return ((xmf *)this)[iIndex]; }
     };
-}
 
-#include "xmi.h"
-#include "xmf.h"
-#include "xmi_argb.h"
-#include "xm/xmf_base.inl"
-#include "xm/xmf_vec.inl"
-#include "xm/xmf_quat.inl"
-#include "xm/xmf_matr.inl"
+    inline float32_t xmv_x(const xmf & v) { return v.fx; }
+    inline float32_t xmv_y(const xmf & v) { return v.fy; }
+    inline float32_t xmv_z(const xmf & v) { return v.fz; }
+    inline float32_t xmv_w(const xmf & v) { return v.fw; }
+    inline int32_t xmi_x(const xmf & v) { return v.ix; }
+    inline int32_t xmi_y(const xmf & v) { return v.iy; }
+    inline int32_t xmi_z(const xmf & v) { return v.iz; }
+    inline int32_t xmi_w(const xmf & v) { return v.iw; }
+}

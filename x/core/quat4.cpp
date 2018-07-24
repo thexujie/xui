@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "quat4.h"
-#include "xmm.h"
 
-namespace core::math::xmm
+namespace core
 {
+    using namespace math::xm;
+
     float32_t quat4::length() const
     {
         return xmv_x(xm_vec_length(*this));

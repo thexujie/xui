@@ -8,23 +8,23 @@
 			<Item Name="ui32">aui</Item>
 		</Expand>
 	</Type>
-  <Type Name="core::math::vec2&lt;*&gt;">
+  <Type Name="core::vec2&lt;*&gt;">
     <DisplayString>{{{x}, {y}}}</DisplayString>
   </Type>
-	<Type Name="core::math::vec3&lt;*&gt;">
+	<Type Name="core::vec3&lt;*&gt;">
 		<DisplayString>{{{x}, {y}, {z}}}</DisplayString>
 	</Type>
-  <Type Name="core::math::size&lt;*&gt;">
+  <Type Name="core::size&lt;*&gt;">
     <DisplayString>{{{w}, {h}}}</DisplayString>
   </Type>
-	<Type Name="core::math::rect&lt;*&gt;">
+	<Type Name="core::rect&lt;*&gt;">
 		<DisplayString>{{({x},{y}),[{cx},{cy}]}}</DisplayString>
 	</Type>
-	<Type Name="graphics::text::font">
+	<Type Name="graphics::font">
 		<DisplayString>{{{family}, {size}}}</DisplayString>
 	</Type>
   
-  <Type Name="core::math::xmm::float2">
+  <Type Name="core::float2">
     <DisplayString>{{{x}, {y}}}</DisplayString>
     <Expand>
       <Item Name="x">x</Item>
@@ -32,7 +32,7 @@
       <Item Name="af">af</Item>
     </Expand>
   </Type>
-  <Type Name="core::math::xmm::float3">
+  <Type Name="core::float3">
     <DisplayString>{{{x}, {y}, {z}}}</DisplayString>
     <Expand>
       <Item Name="x">x</Item>
@@ -41,7 +41,7 @@
       <Item Name="af">af</Item>
     </Expand>
   </Type>
-  <Type Name="core::math::xmm::float4">
+  <Type Name="core::float4">
     <DisplayString>{{{x}, {y}, {z}, {w}}}</DisplayString>
     <Expand>
       <Item Name="x">x</Item>
@@ -53,7 +53,7 @@
       <Item Name="aui">aui</Item>
     </Expand>
   </Type>
-  <Type Name="core::math::xmm::float4x4">
+  <Type Name="core::float4x4">
     <DisplayString>{{{row0},...}}</DisplayString>
     <Expand>
       <Item Name="[0]">row0</Item>

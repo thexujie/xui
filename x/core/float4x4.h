@@ -1,10 +1,9 @@
 #pragma once
 
-#include "xm/xm.h"
 #include "float4.h"
 #include "quat4.h"
 
-namespace core::math::xmm
+namespace core
 {
     struct float4x4
     {
@@ -29,7 +28,7 @@ namespace core::math::xmm
             row2(_20, _21, _22, _23),
             row3(_30, _31, _32, _33) { }
 
-        float4x4(const xmm & matrix) :
+        float4x4(const math::xm::xmm & matrix) :
             row0(matrix.row0), row1(matrix.row1), row2(matrix.row2), row3(matrix.row3) { }
 
         float4 & operator[](int32_t iIndex) { return ((float4 *)this)[iIndex]; }
@@ -44,7 +43,7 @@ namespace core::math::xmm
             return *this;
         }
 
-        float4x4 & operator=(const xmm & matrix)
+        float4x4 & operator=(const math::xm::xmm & matrix)
         {
             row0 = matrix.row0;
             row1 = matrix.row1;
@@ -53,9 +52,9 @@ namespace core::math::xmm
             return *this;
         }
 
-        operator xmm() const
+        operator math::xm::xmm() const
         {
-            xmm matrix;
+            math::xm::xmm matrix;
             matrix.row0 = row0;
             matrix.row1 = row1;
             matrix.row2 = row2;
@@ -119,7 +118,7 @@ namespace core::math::xmm
         };
     };
 
-    const float4x4 f4x4_identity = { xmf_row0, xmf_row1, xmf_row2, xmf_row3 };
+    const float4x4 f4x4_identity = { math::xm::xmf_row0, math::xm::xmf_row1, math::xm::xmf_row2, math::xm::xmf_row3 };
 
     //! 初始化为单位矩阵
     inline void float4x4_identity(float4x4 & matrix)
@@ -130,20 +129,20 @@ namespace core::math::xmm
     //! 矩阵相乘
     inline float4x4 float4x4_multiply(const float4x4 & matr1, const float4x4 & matr2)
     {
-        return xm_matr_mul(matr1, matr2);
+        return math::xm::xm_matr_mul(matr1, matr2);
     }
 
     //! 矩阵转置
     inline float4x4 float4x4_transpose(const float4x4 & matrix)
     {
-        return xm_matr_transpose(matrix);
+        return math::xm::xm_matr_transpose(matrix);
     }
 
     //! 矩阵求逆
     inline float4x4 float4x4_invert(const float4x4 & matrix, float4 * pDeterminant)
     {
-        xmf determinant;
-        xmm m = xm_matr_invert(matrix, &determinant);
+        math::xm::xmf determinant;
+        math::xm::xmm m = xm_matr_invert(matrix, &determinant);
         if (pDeterminant)
             *pDeterminant = determinant;
         return m;
@@ -152,84 +151,84 @@ namespace core::math::xmm
     //! 获取一个平移矩阵
     inline float4x4 float4x4_translate(const float3 & pos)
     {
-        return xm_matr_translate(pos);
+        return math::xm::xm_matr_translate(pos);
     }
 
     //! inline（xyzw）
     inline float4x4 float4x4_rotate(const float3 & rot)
     {
-        return xm_matr_rotate(rot);
+        return math::xm::xm_matr_rotate(rot);
     }
 
     //! 获取一个旋转矩阵（四元数）
     inline float4x4 float4x4_rotation_quat(const quat4 & quat)
     {
-        return xm_matr_rotate_quat(quat);
+        return math::xm::xm_matr_rotate_quat(quat);
     }
 
     //! 获取一个绕固定轴的旋转矩阵
     inline float4x4 float4x4_rotation_axis(const float4 & axis, float32_t angle)
     {
-        return xm_matr_rotate_axis(axis, angle);
+        return math::xm::xm_matr_rotate_axis(axis, angle);
     }
 
     //! 获取一个缩放矩阵（xyz）
     inline float4x4 float4x4_scale(const float3 & scl)
     {
-        return xm_matr_scale(scl);
+        return math::xm::xm_matr_scale(scl);
     }
 
     //! 透视矩阵
     inline float4x4 float4x4_perspective_lh(float32_t fovy, float32_t aspect, float32_t z_near, float32_t z_far)
     {
-        return xmm_matr_perspective_lh(fovy, aspect, z_near, z_far);
+        return math::xm::xmm_matr_perspective_lh(fovy, aspect, z_near, z_far);
     }
 
     inline float4x4 float4x4_perspective_rh(float32_t fovy, float32_t aspect, float32_t z_near, float32_t z_far)
     {
-        return xmm_matr_perspective_rh(fovy, aspect, z_near, z_far);
+        return math::xm::xmm_matr_perspective_rh(fovy, aspect, z_near, z_far);
     }
 
     inline float4x4 float4x4_orthogona_lh(float32_t width, float32_t height, float32_t z_near, float32_t z_far)
     {
-        return xm_matr_orthogona_lh(width, height, z_near, z_far);
+        return math::xm::xm_matr_orthogona_lh(width, height, z_near, z_far);
     }
 
     inline float4x4 float4x4_orthogona_rh(float32_t width, float32_t height, float32_t z_near, float32_t z_far)
     {
-        return xm_matr_orthogona_rh(width, height, z_near, z_far);
+        return math::xm::xm_matr_orthogona_rh(width, height, z_near, z_far);
     }
 
 
     inline float4x4 float4x4_lookat_lh(const float4 & eye, const float4 & at, const float4 & up)
     {
-        return xm_matr_lookat_lh(eye, at, up);
+        return math::xm::xm_matr_lookat_lh(eye, at, up);
     }
 
     inline float4x4 float4x4_lookat_rh(const float4 & eye, const float4 & at, const float4 & up)
     {
-        return xm_matr_lookat_rh(eye, at, up);
+        return math::xm::xm_matr_lookat_rh(eye, at, up);
     }
 
     inline float4x4 float4x4_lookto_lh(const float4 & eye, const float4 & direction, const float4 & up)
     {
-        return xm_matr_lookto_lh(eye, direction, up);
+        return math::xm::xm_matr_lookto_lh(eye, direction, up);
     }
 
     inline float4x4 float4x4_lookto_rh(const float4 & eye, const float4 & direction, const float4 & up)
     {
-        return xm_matr_lookto_rh(eye, direction, up);
+        return math::xm::xm_matr_lookto_rh(eye, direction, up);
     }
 
     inline float4x4 float4x4_transform(const float3 & pos, const float3 & rot, const float3 & scl)
     {
         float4 angles(rot, 0.0f);
-        quat4 quat = xmf_quat_rot_from_angles(angles);
-        return xm_matr_transform(pos, quat, scl);
+        quat4 quat = math::xm::xmf_quat_rot_from_angles(angles);
+        return math::xm::xm_matr_transform(pos, quat, scl);
     }
 
     inline float4x4 float4x4_transform(const float3 & pos, const quat4 & rot, const float3 & scl)
     {
-        return xm_matr_transform(pos, rot, scl);
+        return math::xm::xm_matr_transform(pos, rot, scl);
     }
 }

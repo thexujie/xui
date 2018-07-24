@@ -1,18 +1,17 @@
 #pragma once
-#include "renderables/Image.h"
+#include "renderables/Rectangle.h"
 #include "Control.h"
 
 namespace controls
 {
-    class Image : public Control
+    class Rectangle : public Control
     {
     public:
-        Image();
-        explicit Image(std::string path);
-        ~Image();
+        Rectangle();
+        explicit Rectangle(const core::rc32f & rect);
+        ~Rectangle();
 
-        void setImage(std::string path);
-        void setImage(std::shared_ptr<graphics::Image> image);
+        void setPathStyle(const graphics::PathStyle & style);
 
     public:
         void enteringScene(std::shared_ptr<component::Scene> & scene) override;
@@ -21,6 +20,7 @@ namespace controls
         void onRectChanged(const core::rc32f & from, const core::rc32f & to) override;
 
     private:
-        std::shared_ptr<renderables::Image> _image;
+        graphics::PathStyle _style;
+        std::shared_ptr<renderables::Rectangle> _rectangle;
     };
 }

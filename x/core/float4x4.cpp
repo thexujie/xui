@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "float4x4.h"
-#include "xmm.h"
+#include "math/xmm.h"
 
-namespace core::math::xmm
+namespace core
 {
+    using namespace math::xm;
+
     float4x4 & float4x4::identity()
     {
         *this = f4x4_identity;

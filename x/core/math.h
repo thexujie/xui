@@ -67,16 +67,3 @@ namespace core
     float32_t pow(float32_t val, float32_t exp);
     float32_t lerp(float32_t min, float32_t max, float32_t determinant);
 }
-
-#include "align.h"
-#include "vec2.h"
-#include "vec3.h"
-#include "vec4.h"
-#include "rect.h"
-#include "edge.h"
-
-#include "math/xmm/float2.h"
-#include "math/xmm/float3.h"
-#include "math/xmm/float4.h"
-#include "math/xmm/float4x4.h"
-#include "math/xmm/quat4.h"

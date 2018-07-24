@@ -17,6 +17,8 @@ namespace controls::component
         public:
         Component() = default;
         Component(ComponentType type):_type(type) {}
+        Component(ComponentType type, const core::pt32f & pos) : _type(type), _pos(pos) {}
+
         virtual ~Component() = default;
 
         ComponentType type() const { return _type; }

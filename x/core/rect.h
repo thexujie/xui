@@ -96,15 +96,19 @@ namespace core
             return is_point_in(point.x, point.y);
         }
 
-        bool empty() const { return cx <= 0 || cy <= 0; }
+        bool empty() const
+        {
+            if (std::is_floating_point<RT>::value)
+                return std::abs(cx) < std::numeric_limits<RT>::epsilon() || std::abs(cy) < std::numeric_limits<RT>::epsilon();
+            else
+                return cx <= 0 || cy <= 0;
+        }
 
         void set_empty()
         {
             cx = 0;
             cy = 0;
         }
-
-        bool is_valid() const { return cx > 0 && cy > 0; }
 
         rect expand(RT expand) const
         {
@@ -124,7 +128,7 @@ namespace core
         bool intersect(const rect & another, rect & result) const
         {
             result = operator &(another);
-            return result.is_valid();
+            return !result.empty();
         }
 
         // ²¢¼¯
@@ -240,7 +244,19 @@ namespace core
 
         bool operator ==(const rect & another) const
         {
-            return x == another.x && y == another.y && cx == another.cx && cy == another.cy;
+            if (empty() && another.empty())
+                return true;
+
+            if (empty() || another.empty())
+                return false;
+
+            if (std::is_floating_point<RT>::value)
+                return std::abs(x - another.x) < std::numeric_limits<RT>::epsilon() &&
+                std::abs(y - another.y) < std::numeric_limits<RT>::epsilon() &&
+                std::abs(cx - another.cx) < std::numeric_limits<RT>::epsilon() &&
+                std::abs(cy - another.cy) < std::numeric_limits<RT>::epsilon();
+            else
+                return x == another.x && y == another.y && cx == another.cx && cy == another.cy;
         }
 
         bool operator !=(const rect & another) const { return !operator==(another); }

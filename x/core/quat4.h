@@ -1,8 +1,8 @@
 #pragma once
 
-#include "xm/xm.h"
+#include "math/xmm.h"
 
-namespace core::math::xmm
+namespace core
 {
     struct quat4
     {
@@ -12,7 +12,7 @@ namespace core::math::xmm
 
         quat4(const quat4 & another) : x(another.x), y(another.y), z(another.z), w(another.w) { }
 
-        quat4(const xmf & v) : x(xmv_x(v)), y(xmv_y(v)), z(xmv_z(v)), w(xmv_w(v)) { }
+        quat4(const math::xm::xmf & v) : x(xmv_x(v)), y(xmv_y(v)), z(xmv_z(v)), w(xmv_w(v)) { }
 
         quat4(float32_t arr[4]) : x(arr[0]), y(arr[1]), z(arr[2]), w(arr[3]) { }
 
@@ -28,13 +28,13 @@ namespace core::math::xmm
             return *this;
         }
 
-        quat4 & operator =(const xmf & v)
+        quat4 & operator =(const math::xm::xmf & v)
         {
             const float32_t * value = (const float32_t *)&v;
-            x = xmv_x(v);
-            y = xmv_y(v);
-            z = xmv_z(v);
-            w = xmv_w(v);
+            x = math::xm::xmv_x(v);
+            y = math::xm::xmv_y(v);
+            z = math::xm::xmv_z(v);
+            w = math::xm::xmv_w(v);
             return *this;
         }
 
@@ -49,7 +49,7 @@ namespace core::math::xmm
 
         operator const float32_t *() const { return af; }
         operator float32_t *() { return af; }
-        operator xmf() const { return xm_vec_set(x, y, z, w); }
+        operator math::xm::xmf() const { return math::xm::xm_vec_set(x, y, z, w); }
 
         float32_t length() const;
         float32_t length_sq() const;

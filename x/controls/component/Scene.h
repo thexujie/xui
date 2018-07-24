@@ -13,8 +13,8 @@ namespace controls::component
         ~Scene();
 
     public:
-        core::error addComponent(std::shared_ptr<Component> component);
-        core::error removeComponent(std::shared_ptr<Component> component);
+        core::error addRenderable(std::shared_ptr<Renderable> component);
+        core::error removeRenderable(std::shared_ptr<Renderable> component);
 
         const std::list<std::shared_ptr<Renderable>> & renderables() const { return _renderables; }
         const std::list<std::shared_ptr<Interactable>> & interactables() const { return _interactables; }

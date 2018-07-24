@@ -32,21 +32,6 @@
     <ClCompile Include="graphics\Graphics.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="core\math\xmm\float2.cpp">
-      <Filter>core\math\xmm</Filter>
-    </ClCompile>
-    <ClCompile Include="core\math\xmm\float3.cpp">
-      <Filter>core\math\xmm</Filter>
-    </ClCompile>
-    <ClCompile Include="core\math\xmm\float4.cpp">
-      <Filter>core\math\xmm</Filter>
-    </ClCompile>
-    <ClCompile Include="core\math\xmm\float4x4.cpp">
-      <Filter>core\math\xmm</Filter>
-    </ClCompile>
-    <ClCompile Include="core\math\xmm\quat4.cpp">
-      <Filter>core\math\xmm</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\GraphicsService.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -125,11 +110,35 @@
     <ClCompile Include="controls\Image.cpp">
       <Filter>controls</Filter>
     </ClCompile>
+    <ClCompile Include="controls\Container.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\renderables\Rectangle.cpp">
+      <Filter>controls\renderables</Filter>
+    </ClCompile>
     <ClCompile Include="controls\renderables\Image.cpp">
       <Filter>controls\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Container.cpp">
+    <ClCompile Include="controls\Rectangle.cpp">
       <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\component\Layout.cpp">
+      <Filter>controls\component</Filter>
+    </ClCompile>
+    <ClCompile Include="core\float2.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\float3.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\float4.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\float4x4.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\quat4.cpp">
+      <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -176,33 +185,6 @@
     <ClInclude Include="graphics\Graphics.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="core\math\xmm\float2.h">
-      <Filter>core\math\xmm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\float3.h">
-      <Filter>core\math\xmm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\float4.h">
-      <Filter>core\math\xmm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\float4x4.h">
-      <Filter>core\math\xmm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\quat4.h">
-      <Filter>core\math\xmm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\xm\xm.h">
-      <Filter>core\math\xmm\xm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\xm\xmf.h">
-      <Filter>core\math\xmm\xm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\xm\xmi.h">
-      <Filter>core\math\xmm\xm</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\xm\xmi_argb.h">
-      <Filter>core\math\xmm\xm</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\GraphicsService.h">
       <Filter>graphics</Filter>
     </ClInclude>
@@ -214,9 +196,6 @@
     </ClInclude>
     <ClInclude Include="core\object.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\math\xmm\xmm.h">
-      <Filter>core\math\xmm</Filter>
     </ClInclude>
     <ClInclude Include="graphics\Image.h">
       <Filter>graphics</Filter>
@@ -317,13 +296,55 @@
     <ClInclude Include="controls\component\Scene.h">
       <Filter>controls\component</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Image.h">
+    <ClInclude Include="controls\Container.h">
       <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\renderables\Rectangle.h">
+      <Filter>controls\renderables</Filter>
     </ClInclude>
     <ClInclude Include="controls\renderables\Image.h">
       <Filter>controls\renderables</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Container.h">
+    <ClInclude Include="controls\Image.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Rectangle.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\Layout.h">
+      <Filter>controls\component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\float2.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\float3.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\float4.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\float4x4.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\quat4.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xm.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmf.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmi.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmi_argb.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math\xmm.h">
+      <Filter>core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\attribute.h">
       <Filter>controls</Filter>
     </ClInclude>
   </ItemGroup>
@@ -346,12 +367,6 @@
     <Filter Include="core\math">
       <UniqueIdentifier>{cb6c943e-d954-4c9b-9492-3fdf01283f00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="core\math\xmm">
-      <UniqueIdentifier>{83016ac8-564d-4584-8649-a90857206961}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="core\math\xmm\xm">
-      <UniqueIdentifier>{3078cc9c-008f-43a2-8ab9-173d04cd0f4e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="graphics\image\formats">
       <UniqueIdentifier>{1212c281-62d5-4205-a647-d12b274a2777}</UniqueIdentifier>
     </Filter>
@@ -372,17 +387,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="core\math\xmm\xm\xmf_base.inl">
-      <Filter>core\math\xmm\xm</Filter>
+    <None Include="core\math\xmf_base.inl">
+      <Filter>core\math</Filter>
     </None>
-    <None Include="core\math\xmm\xm\xmf_matr.inl">
-      <Filter>core\math\xmm\xm</Filter>
+    <None Include="core\math\xmf_matr.inl">
+      <Filter>core\math</Filter>
     </None>
-    <None Include="core\math\xmm\xm\xmf_quat.inl">
-      <Filter>core\math\xmm\xm</Filter>
+    <None Include="core\math\xmf_quat.inl">
+      <Filter>core\math</Filter>
     </None>
-    <None Include="core\math\xmm\xm\xmf_vec.inl">
-      <Filter>core\math\xmm\xm</Filter>
+    <None Include="core\math\xmf_vec.inl">
+      <Filter>core\math</Filter>
     </None>
   </ItemGroup>
 </Project>

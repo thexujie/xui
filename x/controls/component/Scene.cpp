@@ -14,38 +14,24 @@ namespace controls::component
 
     }
 
-    core::error Scene::addComponent(std::shared_ptr<Component> component)
+    core::error Scene::addRenderable(std::shared_ptr<Renderable> component)
     {
         if (!component)
             return core::error_args;
 
         component->enteringScene(*this);
-        switch (component->type())
-        {
-        case ComponentType::Renderable:
-            _renderables.push_back(std::dynamic_pointer_cast<Renderable>(component));
-            break;
-        default:
-            break;
-        }
+        _renderables.push_back(std::dynamic_pointer_cast<Renderable>(component));
         component->enterScene(*this);
         return core::error_ok;
     }
 
-    core::error Scene::removeComponent(std::shared_ptr<Component> component)
+    core::error Scene::removeRenderable(std::shared_ptr<Renderable> component)
     {
         if (!component)
             return core::error_args;
 
         component->leavingScene(*this);
-        switch (component->type())
-        {
-        case ComponentType::Renderable:
-            _renderables.remove(std::dynamic_pointer_cast<Renderable>(component));
-            break;
-        default:
-            break;
-        }
+        _renderables.remove(component);
         component->leaveScene(*this);
         return core::error_ok;
     }

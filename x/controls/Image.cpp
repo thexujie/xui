@@ -22,29 +22,40 @@ namespace controls
     {
         auto image = std::make_shared<graphics::Image>(path);
         _image->setImage(image);
+        _image->setPos(_rect.center());
+        _image->setSize(_rect.size);
     }
 
     void Image::setImage(std::shared_ptr<graphics::Image> image)
     {
         _image->setImage(image);
+        _image->setPos(_rect.center());
+        _image->setSize(_rect.size);
     }
 
     void Image::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
-        _image->setPos(pos());
-        _image->setSize(size());
+        _image->setPos(_rect.center());
+        _image->setSize(_rect.size);
         Control::enteringScene(scene);
     }
 
     void Image::enterScene(std::shared_ptr<component::Scene> & scene)
     {
-        scene->addComponent(std::dynamic_pointer_cast<component::Component>(_image));
+        scene->addRenderable(_image);
         Control::enterScene(scene);
     }
 
     void Image::leaveScene(std::shared_ptr<component::Scene> & scene)
     {
-        scene->removeComponent(std::dynamic_pointer_cast<component::Component>(_image));
+        scene->removeRenderable(_image);
         Control::leaveScene(scene);
+    }
+
+    void Image::onRectChanged(const core::rc32f & from, const core::rc32f & to)
+    {
+        _image->setPos(_rect.center());
+        _image->setSize(_rect.size);
+        Control::onRectChanged(from, to);
     }
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "component/Scene.h"
+#include "attribute.h"
 
 namespace controls
 {
@@ -22,13 +23,17 @@ namespace controls
         virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
         virtual void leaveScene(std::shared_ptr<component::Scene> & scene);
 
+        virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
+
     public:
-        core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
-        core::event<void(const core::pt32f & from, const core::pt32f & to)> sizeChanged;
         core::event<void(const core::rc32f & from, const core::rc32f & to)> rectChanged;
 
     protected:
         std::weak_ptr<component::Scene> _scene;
         core::rc32f _rect;
+
+        core::float4 _border;
+        core::float2 _padding;
+        attribute<core::color32> _backgroundColor;
     };
 }

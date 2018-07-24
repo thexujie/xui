@@ -1,9 +1,8 @@
 #pragma once
 
-#include "xm/xm.h"
 #include "float3.h"
 
-namespace core::math::xmm
+namespace core
 {
     struct float4x4;
 
@@ -19,7 +18,7 @@ namespace core::math::xmm
 
         float4(const float3 & another, float32_t _w) : x(another.x), y(another.y), z(another.z), w(_w) { }
 
-        float4(const xmf & v) : x(xmv_x(v)), y(xmv_y(v)), z(xmv_z(v)), w(xmv_w(v)) { }
+        float4(const math::xm::xmf & v) : x(xmv_x(v)), y(xmv_y(v)), z(xmv_z(v)), w(xmv_w(v)) { }
 
         float4(const float32_t (&arr)[4]) : x(arr[0]), y(arr[1]), z(arr[2]), w(arr[3]) { }
 
@@ -35,7 +34,7 @@ namespace core::math::xmm
             return *this;
         }
 
-        float4 & operator =(const xmf & v)
+        float4 & operator =(const math::xm::xmf & v)
         {
             const float32_t * value = (const float32_t *)&v;
             x = xmv_x(v);
@@ -56,7 +55,7 @@ namespace core::math::xmm
 
         operator const float32_t *() const { return af; }
         operator float32_t *() { return af; }
-        operator xmf() const { return xm_vec_set(x, y, z, w); }
+        operator math::xm::xmf() const { return math::xm::xm_vec_set(x, y, z, w); }
         operator float3() const { return xyz; }
 
         float32_t length() const;
