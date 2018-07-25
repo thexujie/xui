@@ -7,7 +7,7 @@ namespace controls::renderables
     {
     public:
         Rectangle() = default;
-        Rectangle(const core::rc32f & rect) : Renderable(rect.position) {}
+        Rectangle(const core::rc32f & rect) : Renderable(rect) {}
         ~Rectangle() = default;
 
         void setPathStyle(const graphics::PathStyle & style) { _style = style; }

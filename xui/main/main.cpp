@@ -69,7 +69,7 @@ int main()
     graphics.clear(colors::LightGray);
 
     auto scene = std::make_shared<controls::component::Scene>();
-    auto container = std::make_shared<controls::View>();
+    auto container = std::make_shared<controls::Control>();
     auto image = std::make_shared<controls::Image>("960.png");
 
     container->addControl(image);

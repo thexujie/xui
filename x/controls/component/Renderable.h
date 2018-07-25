@@ -8,7 +8,7 @@ namespace controls::component
     {
     public:
         Renderable() : Component(ComponentType::Renderable) {}
-        Renderable(const core::pt32f & pos) : Component(ComponentType::Renderable, pos) {}
+        Renderable(const core::rc32f & rect) : Component(ComponentType::Renderable, rect) {}
         ~Renderable() = default;
 
         virtual void render(graphics::Graphics & graphics) const;

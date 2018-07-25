@@ -5,10 +5,9 @@ namespace controls::renderables
 {
     void Rectangle::render(graphics::Graphics & graphics) const
     {
-        if (_size.empty())
+        if (_rect.empty())
             return;
 
-        if(!_size.empty())
-            graphics.drawRectangle({ pos() - _size * 0.5f, _size }, graphics::PathStyle(graphics::PathMode::Stroke));
+        graphics.drawRectangle(_rect, _style);
     }
 }

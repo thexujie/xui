@@ -140,6 +140,9 @@
     <ClCompile Include="controls\View.cpp">
       <Filter>controls</Filter>
     </ClCompile>
+    <ClCompile Include="controls\Container.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -349,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="core\unit.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Container.h">
+      <Filter>controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

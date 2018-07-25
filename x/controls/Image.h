@@ -1,10 +1,10 @@
 #pragma once
 #include "renderables/Image.h"
-#include "View.h"
+#include "Control.h"
 
 namespace controls
 {
-    class Image : public View
+    class Image : public Control
     {
     public:
         Image();
