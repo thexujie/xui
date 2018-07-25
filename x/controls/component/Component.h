@@ -17,13 +17,18 @@ namespace controls::component
         public:
         Component() = default;
         Component(ComponentType type):_type(type) {}
-        Component(ComponentType type, const core::pt32f & pos) : _type(type), _pos(pos) {}
+        Component(ComponentType type, const core::rc32f & rect) : _type(type), _rect(rect) {}
 
         virtual ~Component() = default;
 
         ComponentType type() const { return _type; }
-        void setPos(const core::pt32f & pt);
-        core::pt32f pos() const;
+
+        void setPos(const core::pt32f & pos) { _rect.position = pos; }
+        core::pt32f pos() const { return _rect.position; }
+        void setSize(const core::si32f & size) { _rect.size = size; }
+        core::si32f size() const { return _rect.size; }
+        void setRect(const core::rc32f & rect) { _rect = rect; }
+        core::rc32f rect() const { return _rect; }
 
     protected:
         virtual void enteringScene(Scene & scene);
@@ -33,6 +38,6 @@ namespace controls::component
 
     protected:
         ComponentType _type;
-        core::pt32f _pos;
+        core::rc32f _rect;
     };
 }

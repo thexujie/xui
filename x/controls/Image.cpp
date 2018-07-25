@@ -37,25 +37,25 @@ namespace controls
     {
         _image->setPos(_rect.center());
         _image->setSize(_rect.size);
-        Control::enteringScene(scene);
+        View::enteringScene(scene);
     }
 
     void Image::enterScene(std::shared_ptr<component::Scene> & scene)
     {
         scene->addRenderable(_image);
-        Control::enterScene(scene);
+        View::enterScene(scene);
     }
 
     void Image::leaveScene(std::shared_ptr<component::Scene> & scene)
     {
         scene->removeRenderable(_image);
-        Control::leaveScene(scene);
+        View::leaveScene(scene);
     }
 
     void Image::onRectChanged(const core::rc32f & from, const core::rc32f & to)
     {
         _image->setPos(_rect.center());
         _image->setSize(_rect.size);
-        Control::onRectChanged(from, to);
+        View::onRectChanged(from, to);
     }
 }

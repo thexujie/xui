@@ -36,13 +36,15 @@ namespace graphics
 
         PathStyle & fill(core::color32 color)
         {
-            _fillColor = color;
+            _mode = PathMode::Fill;
+            _color = color;
             return *this;
         }
 
         PathStyle & stoke(core::color32 color)
         {
-            _stokeColor = color;
+            _mode = PathMode::Stroke;
+            _color = color;
             return *this;
         }
 
@@ -58,8 +60,7 @@ namespace graphics
         {
             return _mode == another._mode &&
                 _width == another._width &&
-                _fillColor == another._fillColor &&
-                _stokeColor == another._stokeColor &&
+                _color == another._color &&
                 _aa == another._aa;
         }
 
@@ -67,8 +68,7 @@ namespace graphics
 
         PathMode _mode = PathMode::Stroke;
         float32_t _width = 1.0f;
-        core::color32 _fillColor = core::colors::Transparent;
-        core::color32 _stokeColor = core::colors::Black;
+        core::color32 _color = core::colors::Transparent;
         bool _aa = true;
     };
 

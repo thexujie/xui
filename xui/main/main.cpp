@@ -13,7 +13,7 @@
 #include "core/io/filestream.h"
 #include "win32/uniscribe/script.h"
 #include "graphics/TextBlob.h"
-#include "controls/Container.h"
+#include "controls/View.h"
 #include "controls/Image.h"
 
 using namespace core;
@@ -55,179 +55,12 @@ void testImages()
 //#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
 #pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
 
-class attr_base_base
-{
-public:
-    attr_base_base() {}
-    virtual ~attr_base_base() {}
-
-    virtual const void * get_data() const = 0;
-    virtual void set_data(const void *) = 0;
-};
-
-class attr
-{
-public:
-    attr() {}
-    attr(int id_, const char * name_) : id(id_), name(name_){}
-    virtual ~attr() {}
-
-    int id = -1;
-    const char * name = nullptr;
-
-    virtual const std::type_info & get_type() const { throw core::error_not_supported; }
-    virtual const void * get_data(void * pthis) const { throw core::error_not_supported; }
-    virtual void set_data(void * pthis, const void *) { throw core::error_not_supported; }
-};
-
-template<typename T, typename ClassT>
-class attr_reader
-{
-public:
-    attr_reader(attr & attr_) :attr(attr_) {}
-
-    attr & attr;
-
-    const T & get(ClassT * pthis) const
-    {
-        return *(const T *)attr.get_data(pthis);
-    }
-
-    void set(ClassT * pthis, const T & val)
-    {
-        return attr.set_data(pthis, &val);
-    }
-};
-
-
-template<typename T, typename ClassT, void (ClassT::*setter)(const T &), const T & (ClassT::*getter)() const>
-class meta_attr : public attr
-{
-public:
-    meta_attr(int id, const char * name) :attr(id, name){}
-    ~meta_attr(){}
-
-    const std::type_info & get_type() const
-    {
-        return typeid (T);
-    }
-    const void * get_data(void * pthis) const
-    {
-        return &get((ClassT *)pthis);
-    }
-
-    void set_data(void * pthis, const void * data)
-    {
-        set((ClassT *)pthis, *(const T *)data);
-    }
-
-    const T & get_data(ClassT * pthis) const
-    {
-        return (pthis->*getter)();
-    }
-
-    void set_data(ClassT * pthis, const T & val) const
-    {
-        return (pthis->*setter)(val);
-    }
-
-    const T & get(ClassT * pthis) const
-    {
-        return (pthis->*getter)();
-    }
-
-    void set(ClassT * pthis, const T & val) const
-    {
-        return (pthis->*setter)(val);
-    }
-};
-
-template<typename T, typename ClassT, const T & (ClassT::*getter)() const>
-class meta_attr_r : public attr
-{
-public:
-    meta_attr_r(int id, const char * name) :attr(id, name) {}
-    ~meta_attr_r() {}
-
-    const std::type_info & get_type() const
-    {
-        return typeid (T);
-    }
-
-    const void * get_data(void * pthis) const
-    {
-        return &get((ClassT *)pthis);
-    }
-
-    const T & get(ClassT * pthis) const
-    {
-        return (pthis->*getter)();
-    }
-};
-
-template<typename T, typename ClassT, void (ClassT::*setter)(const T &)>
-class meta_attr_w
-{
-public:
-    meta_attr_w() {}
-    ~meta_attr_w() {}
-
-    void set(ClassT * pthis, const T & val) const
-    {
-        return (pthis->*setter)(val);
-    }
-};
-
-class meta_object
-{
-public:
-    attr ** attrs;
-};
-
-class Test
-{
-public:
-    core::rc32f _rect;
-    float4 _vec;
-
-    void setRect(const core::rc32f & rect) { _rect = rect; }
-    const core::rc32f & rect() const { return _rect; }
-    const float4 & vec() const { return _vec; }
-
-    static meta_object & meta()
-    {
-        static int id = 0;
-        static attr *attrs[] = 
-        {
-            new meta_attr<rc32f, Test, &Test::setRect, &Test::rect>(id++, "rect"),
-        };
-        static meta_object data = { attrs };
-        //meta_attr_r<float4, Test, &Test::vec>("vec")
-        return data;
-    };
-};
-
 
 int main()
 {
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
     win32::Win32App app;
     //testImages();
-
-    Test test;
-    test.setRect({ 10, 20, 30, 40 });
-    test._vec = float4(1,2,3,4);
-
-    auto md = Test::meta();
-    auto attr0 = md.attrs[0];
-    if(attr0->get_type() == typeid(rc32f))
-    {
-        attr_reader<rc32f, Test> reader(*attr0);
-        auto rc2 = reader.get(&test);
-        reader.set(&test, rc32f(50, 60, 70, 80));
-        rc2 = reader.get(&test);
-        rc2 = reader.get(&test);
-    }
 
     int32_t cx = 1280;
     int32_t cy = 720;
@@ -236,7 +69,7 @@ int main()
     graphics.clear(colors::LightGray);
 
     auto scene = std::make_shared<controls::component::Scene>();
-    auto container = std::make_shared<controls::Container>();
+    auto container = std::make_shared<controls::View>();
     auto image = std::make_shared<controls::Image>("960.png");
 
     container->addControl(image);

@@ -1,9 +1,9 @@
 #pragma once
-
+#include "View.h"
 
 namespace controls
 {
-    class Form
+    class Form : public View
     {
         
     };

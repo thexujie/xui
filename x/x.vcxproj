@@ -95,7 +95,7 @@
     <ClCompile Include="controls\component\Layout.cpp" />
     <ClCompile Include="controls\component\Renderable.cpp" />
     <ClCompile Include="controls\component\Scene.cpp" />
-    <ClCompile Include="controls\Container.cpp" />
+    <ClCompile Include="controls\View.cpp" />
     <ClCompile Include="controls\Control.cpp" />
     <ClCompile Include="controls\Form.cpp" />
     <ClCompile Include="controls\Image.cpp" />
@@ -154,7 +154,7 @@
     <ClInclude Include="controls\component\Layout.h" />
     <ClInclude Include="controls\component\Renderable.h" />
     <ClInclude Include="controls\component\Scene.h" />
-    <ClInclude Include="controls\Container.h" />
+    <ClInclude Include="controls\View.h" />
     <ClInclude Include="controls\Control.h" />
     <ClInclude Include="controls\Form.h" />
     <ClInclude Include="controls\Image.h" />
@@ -195,6 +195,7 @@
     <ClInclude Include="core\string.h" />
     <ClInclude Include="core\system.h" />
     <ClInclude Include="core\unicode.h" />
+    <ClInclude Include="core\unit.h" />
     <ClInclude Include="core\vec2.h" />
     <ClInclude Include="core\vec3.h" />
     <ClInclude Include="core\vec4.h" />

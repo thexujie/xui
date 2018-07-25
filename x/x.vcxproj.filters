@@ -92,9 +92,6 @@
     <ClCompile Include="controls\Form.cpp">
       <Filter>controls</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Control.cpp">
-      <Filter>controls</Filter>
-    </ClCompile>
     <ClCompile Include="controls\component\Component.cpp">
       <Filter>controls\component</Filter>
     </ClCompile>
@@ -108,9 +105,6 @@
       <Filter>controls\component</Filter>
     </ClCompile>
     <ClCompile Include="controls\Image.cpp">
-      <Filter>controls</Filter>
-    </ClCompile>
-    <ClCompile Include="controls\Container.cpp">
       <Filter>controls</Filter>
     </ClCompile>
     <ClCompile Include="controls\renderables\Rectangle.cpp">
@@ -139,6 +133,12 @@
     </ClCompile>
     <ClCompile Include="core\quat4.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\Control.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\View.cpp">
+      <Filter>controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,9 +278,6 @@
     <ClInclude Include="controls\Form.h">
       <Filter>controls</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Control.h">
-      <Filter>controls</Filter>
-    </ClInclude>
     <ClInclude Include="core\event.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -295,9 +292,6 @@
     </ClInclude>
     <ClInclude Include="controls\component\Scene.h">
       <Filter>controls\component</Filter>
-    </ClInclude>
-    <ClInclude Include="controls\Container.h">
-      <Filter>controls</Filter>
     </ClInclude>
     <ClInclude Include="controls\renderables\Rectangle.h">
       <Filter>controls\renderables</Filter>
@@ -346,6 +340,15 @@
     </ClInclude>
     <ClInclude Include="controls\attribute.h">
       <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Control.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\View.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="core\unit.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

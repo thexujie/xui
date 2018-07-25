@@ -3,18 +3,6 @@
 
 namespace controls::component
 {
-    void Component::setPos(const core::pt32f & pt)
-    {
-        if (pt == _pos)
-            return;
-        _pos = pt;
-    }
-
-    core::pt32f Component::pos() const
-    {
-        return _pos;
-    }
-
     void Component::enteringScene(Scene & scene)
     {
 

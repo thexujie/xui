@@ -37,6 +37,8 @@ namespace core
             return argb;
         }
 
+        bool visible() const { return a > 0; }
+
         union
         {
             uint32_t argb;

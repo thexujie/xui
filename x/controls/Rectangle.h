@@ -1,10 +1,10 @@
 #pragma once
 #include "renderables/Rectangle.h"
-#include "Control.h"
+#include "View.h"
 
 namespace controls
 {
-    class Rectangle : public Control
+    class Rectangle : public View
     {
     public:
         Rectangle();

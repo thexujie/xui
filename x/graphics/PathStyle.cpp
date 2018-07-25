@@ -7,7 +7,7 @@ namespace graphics
 {
     void PathStyle::apply(SkPaint & paint) const
     {
-        paint.setColor(_stokeColor);
+        paint.setColor(_color);
         paint.setStrokeWidth(_width);
         paint.setStyle(skia::to(_mode));
         paint.setAntiAlias(_aa);

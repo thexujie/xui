@@ -2648,6 +2648,7 @@ namespace core
 #pragma endregion
 }
 
+#include "unit.h"
 #include "align.h"
 #include "vec2.h"
 #include "vec3.h"

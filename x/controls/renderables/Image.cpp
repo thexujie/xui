@@ -18,14 +18,6 @@ namespace controls::renderables
 
     }
 
-    void Image::setSize(const core::si32f & si)
-    {
-        if (_size != si)
-            return;
-
-        _size = si;
-    }
-
     void Image::setImage(std::shared_ptr<graphics::Image> image)
     {
         _image = image;

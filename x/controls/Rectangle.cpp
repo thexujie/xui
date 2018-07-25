@@ -31,25 +31,25 @@ namespace controls
     {
         _rectangle->setPos(_rect.center());
         _rectangle->setSize(_rect.size);
-        Control::enteringScene(scene);
+        View::enteringScene(scene);
     }
 
     void Rectangle::enterScene(std::shared_ptr<component::Scene> & scene)
     {
         scene->addRenderable(_rectangle);
-        Control::enterScene(scene);
+        View::enterScene(scene);
     }
 
     void Rectangle::leaveScene(std::shared_ptr<component::Scene> & scene)
     {
         scene->removeRenderable(_rectangle);
-        Control::leaveScene(scene);
+        View::leaveScene(scene);
     }
 
     void Rectangle::onRectChanged(const core::rc32f & from, const core::rc32f & to)
     {
         _rectangle->setPos(_rect.center());
         _rectangle->setSize(_rect.size);
-        Control::onRectChanged(from, to);
+        View::onRectChanged(from, to);
     }
 }
