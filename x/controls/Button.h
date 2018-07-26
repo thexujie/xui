@@ -9,7 +9,6 @@ namespace controls
         Button();
         ~Button();
 
-        core::si32f contentSize() const;
         virtual void layoutContent();
         virtual void update();
 

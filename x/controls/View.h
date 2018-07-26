@@ -9,7 +9,7 @@ namespace controls
     class View :public component::Renderable
     {
     public:
-        View();
+        View(std::shared_ptr<Control> control);
         virtual ~View();
 
         std::shared_ptr<component::Scene> scene() const;
@@ -24,6 +24,7 @@ namespace controls
         virtual void render(graphics::Graphics & graphics) const;
     protected:
         std::weak_ptr<component::Scene> _scene;
+        std::weak_ptr<Control> _control;
         core::rc32f _rect;
         std::multimap<int32_t, std::shared_ptr<controls::component::Renderable>> _renderables;
     };

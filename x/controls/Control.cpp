@@ -27,7 +27,7 @@ namespace controls
     std::shared_ptr<View> Control::view() const
     {
         if(!_view)
-            const_cast<std::shared_ptr<View> &>(_view) = std::make_shared<View>();
+            const_cast<std::shared_ptr<View> &>(_view) = std::make_shared<View>(const_cast<Control *>(this)->shared_from_this());
         return _view;
     }
 

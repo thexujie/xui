@@ -3,7 +3,7 @@
 
 namespace controls
 {
-    View::View()
+    View::View(std::shared_ptr<Control> control) : _control(control)
     {
 
     }

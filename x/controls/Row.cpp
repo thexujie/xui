@@ -48,7 +48,7 @@ namespace controls
                 size.cy = std::max(control->height(), size.cy);
             }
 
-            _contentSize = size;
+            _view_content_size = size;
         }
     }
 }

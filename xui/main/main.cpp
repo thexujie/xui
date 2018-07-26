@@ -69,6 +69,27 @@ int main()
     std::shared_ptr<graphics::Bitmap> bitmap = std::make_shared<graphics::Bitmap>(si32i{ cx, cy });
     graphics::Graphics graphics(bitmap);
     graphics.clear(colors::LightGray);
+    graphics.drawRectangle(core::rc32f(0, 0, 400, 400), graphics::PathStyle().fill(colors::Red));
+    bitmap->Save("scene.png");
+    return 0;
+
+    {
+        counter_fps<float, 3> cps;
+        while (true)
+        {
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            graphics.drawRectangle(core::rc32f(100, 100, 400, 400), graphics::PathStyle().fill(colors::Red));
+            cps.acc(1);
+            printf("\r%.1f", cps.fps());
+        }
+    }
 
     auto scene = std::make_shared<controls::component::Scene>();
     auto container = std::make_shared<controls::Container>();

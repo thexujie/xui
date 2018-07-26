@@ -13,8 +13,6 @@ namespace controls
         void addControl(std::shared_ptr<Control> control);
         void removeControl(std::shared_ptr<Control> control);
 
-        virtual core::si32f contentSize() const { return _contentSize; }
-
         virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
         virtual void enterScene(std::shared_ptr<component::Scene> & scene);
         virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
@@ -23,6 +21,5 @@ namespace controls
         virtual void update();
     protected:
         std::list<std::shared_ptr<Control>> _controls;
-        core::si32f _contentSize;
     };
 }

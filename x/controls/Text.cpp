@@ -20,21 +20,21 @@ namespace controls
         
     }
 
-    void Text::enterScene(std::shared_ptr<component::Scene> & scene)
+    void Text::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
+        Control::enteringScene(scene);
         if (!_textBlob)
         {
             graphics::StringFormat format(font());
             format.color(color());
             _textBlob = std::make_shared<graphics::TextBlob>(_text, format);
         }
+        _view_content_size = _textBlob->size();
     }
 
-    core::si32f Text::contentSize() const
+    void Text::enterScene(std::shared_ptr<component::Scene> & scene)
     {
-        if (!_textBlob)
-            return {};
-        return _textBlob->size();
+        Control::enterScene(scene);
     }
 
     void Text::update()

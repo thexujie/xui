@@ -15,7 +15,6 @@ namespace controls
         void setImage(std::shared_ptr<graphics::Image> image);
         void setImageSize(const core::vec2<core::unit_value<float32_t>> & size);
 
-        core::si32f contentSize() const;
         virtual void layoutContent();
         virtual void update();
 

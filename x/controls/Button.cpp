@@ -14,13 +14,6 @@ namespace controls
         
     }
 
-    core::si32f Button::contentSize() const
-    {
-        if (!_textBlob)
-            return {};
-        return _textBlob->size();
-    }
-
     void Button::layoutContent()
     {
         if (!_textBlob)

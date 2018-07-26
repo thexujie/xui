@@ -51,7 +51,7 @@ namespace controls
         core::si32f dimension() const { return _view_rect.size; }
         float32_t width() const { return _view_rect.cx; }
         float32_t height() const { return _view_rect.cy; }
-        virtual core::si32f contentSize() const { return {}; }
+        core::si32f contentSize() const { return _view_content_size; }
         core::vec4f border() const { return _view_border; }
         core::vec4f margin() const { return _view_margin; }
 
@@ -130,5 +130,6 @@ namespace controls
         core::vec4f _view_border;
         core::vec4f _view_padding;
         core::vec4f _view_margin;
+        core::si32f _view_content_size;
     };
 }

@@ -13,6 +13,12 @@ namespace graphics
     {
         _pixmap = pixmap;
         _native = std::make_shared<SkCanvas>(pixmap->native());
+
+        SkMatrix matrix = SkMatrix::MakeTrans(400, 400);
+        matrix.postRotate(45);
+        _native->setMatrix(matrix);
+        //_native->translate(300, 200);
+        //_native->rotate(45);
     }
 
     void Graphics::clear(core::color32 color)

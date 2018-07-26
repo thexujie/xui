@@ -10,9 +10,9 @@ namespace controls
         Text(std::string text);
         ~Text();
 
-        virtual void enterScene(std::shared_ptr<component::Scene> & scene);
-        core::si32f contentSize() const;
-        virtual void update();
+        void enteringScene(std::shared_ptr<component::Scene> & scene) override;
+        void enterScene(std::shared_ptr<component::Scene> & scene) override;
+        void update() override;
 
     private:
         std::string _text;
