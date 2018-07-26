@@ -113,9 +113,6 @@
     <ClCompile Include="controls\renderables\Image.cpp">
       <Filter>controls\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Rectangle.cpp">
-      <Filter>controls</Filter>
-    </ClCompile>
     <ClCompile Include="controls\component\Layout.cpp">
       <Filter>controls\component</Filter>
     </ClCompile>
@@ -148,6 +145,15 @@
     </ClCompile>
     <ClCompile Include="controls\renderables\Text.cpp">
       <Filter>controls\renderables</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\Button.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\Element.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\Row.cpp">
+      <Filter>controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -308,9 +314,6 @@
     <ClInclude Include="controls\Image.h">
       <Filter>controls</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Rectangle.h">
-      <Filter>controls</Filter>
-    </ClInclude>
     <ClInclude Include="controls\component\Layout.h">
       <Filter>controls\component</Filter>
     </ClInclude>
@@ -364,6 +367,15 @@
     </ClInclude>
     <ClInclude Include="controls\renderables\Text.h">
       <Filter>controls\renderables</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Button.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Element.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Row.h">
+      <Filter>controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

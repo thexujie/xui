@@ -41,4 +41,12 @@ namespace controls
     {
         _renderables.emplace(std::make_pair(depth, renderable));
     }
+
+    void View::render(graphics::Graphics & graphics) const
+    {
+        for(auto & rendereable : _renderables)
+        {
+            rendereable.second->render(graphics);
+        }
+    }
 }

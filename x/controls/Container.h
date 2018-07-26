@@ -4,7 +4,6 @@
 
 namespace controls
 {
-
     class Container : public Control
     {
     public:
@@ -14,10 +13,16 @@ namespace controls
         void addControl(std::shared_ptr<Control> control);
         void removeControl(std::shared_ptr<Control> control);
 
-        void layout();
-        void layout(LayoutState & state, const core::si32f & size);
+        virtual core::si32f contentSize() const { return _contentSize; }
 
+        virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
+        virtual void enterScene(std::shared_ptr<component::Scene> & scene);
+        virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
+        virtual void leaveScene(std::shared_ptr<component::Scene> & scene);
+
+        virtual void update();
     protected:
         std::list<std::shared_ptr<Control>> _controls;
+        core::si32f _contentSize;
     };
 }

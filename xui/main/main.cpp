@@ -16,6 +16,8 @@
 #include "controls/View.h"
 #include "controls/Image.h"
 #include "controls/Container.h"
+#include "controls/Row.h"
+#include "controls/Text.h"
 
 using namespace core;
 
@@ -56,7 +58,6 @@ void testImages()
 //#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
 #pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
 
-
 int main()
 {
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
@@ -71,13 +72,20 @@ int main()
 
     auto scene = std::make_shared<controls::component::Scene>();
     auto container = std::make_shared<controls::Container>();
+    auto row = std::make_shared<controls::Row>();
+    auto text = std::make_shared<controls::Text>("ABCDEFG");
     auto image = std::make_shared<controls::Image>("960.png");
+    image->setImageSize({ 10em, auto_value });
+    auto text2 = std::make_shared<controls::Text>("XYZOPQRST");
 
-    container->addControl(image);
-    container->addControl(image);
-    container->enteringScene(scene);
-    container->enterScene(scene);
-
+    row->setSize({ 1280px, 720px });
+    row->addControl(text);
+    row->addControl(image);
+    row->addControl(text2);
+    row->enteringScene(scene);
+    row->enterScene(scene);
+    row->layout(rc32f());
+    row->update();
     scene->render(graphics);
     bitmap->Save("scene.png");
 

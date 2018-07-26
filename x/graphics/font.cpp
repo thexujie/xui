@@ -10,7 +10,7 @@ namespace graphics
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
         family = core::string::u16_u8(metrics.lfMessageFont.lfFaceName);
-        size = metrics.lfMessageFont.lfHeight;
+        size = std::abs(metrics.lfMessageFont.lfHeight);
     }
 
     font::font(const char * _family, float_t _size, int32_t _weight, int32_t _width, int32_t _slant, int32_t flags_)

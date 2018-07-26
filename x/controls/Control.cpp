@@ -14,47 +14,14 @@ namespace controls
         
     }
 
-    void Control::setRect(const core::rc32f & rect)
-    {
-        if (_view_rect == rect)
-            return;
-
-        core::rc32f rect_old = _view_rect;
-        _view_rect = rect;
-        onRectChanged(rect_old, _view_rect);
-    }
-
-    void Control::setPos(const core::pt32f & pos)
-    {
-        if (_view_rect.pos == pos)
-            return;
-        core::rc32f rect_old = _view_rect;
-        _view_rect.pos = pos;
-        onRectChanged(rect_old, _view_rect);
-    }
-
-    void Control::setSize(const core::si32f & size)
-    {
-        if (_view_rect.size == size)
-            return;
-        core::rc32f rect_old = _view_rect;
-        _view_rect.size = size;
-        onRectChanged(rect_old, _view_rect);
-    }
-
-    void Control::setMinSize(const unit_value<core::si32f> & minSize)
+    void Control::setMinSize(const core::unit_value<core::si32f> & minSize)
     {
         _minSize = minSize;
     }
 
-    void Control::setMaxSize(const unit_value<core::si32f> & minSize)
+    void Control::setMaxSize(const core::unit_value<core::si32f> & minSize)
     {
         _maxSize = minSize;
-    }
-
-    core::si32f Control::prefferdSize() const
-    {
-        return core::si32f();
     }
 
     std::shared_ptr<View> Control::view() const
@@ -88,7 +55,38 @@ namespace controls
             return _font;
     }
 
-    float32_t Control::map(const unit_value<float32_t> & value, float32_t ref) const
+    float32_t Control::calc(const core::unit_value<float32_t> & value) const
+    {
+        auto s = scene();
+        if (!s)
+            return {};
+
+        switch (value.unit)
+        {
+        case core::unit::px:
+            return value.value * s->ratio();
+        case core::unit::em:
+            return value.value * font().size * s->ratio();
+        case core::unit::pt:
+            return value.value * 72.0f * s->ratio();
+        case core::unit::dot:
+            return value.value;
+        default:
+            return value.value * s->ratio();
+        }
+    }
+
+    core::vec2f Control::calc(const core::vec2<core::unit_value<float32_t>> & value) const
+    {
+        return { calc(value.x), calc(value.y) };
+    }
+
+    core::vec4f Control::calc(const core::vec4<core::unit_value<float32_t>> & value) const
+    {
+        return { calc(value.x), calc(value.y), calc(value.cx), calc(value.cy) };
+    }
+
+    float32_t Control::map(const core::unit_value<float32_t> & value, float32_t ref) const
     {
         auto s = scene();
         if (!s)
@@ -108,12 +106,15 @@ namespace controls
         case core::unit::per:
             return value.value * ref;
             break;
+        case core::unit::dot:
+            return value.value;
+            break;
         default:
             return value.value * s->ratio();
         }
     }
 
-    core::vec2<float32_t> Control::map(const core::vec2<unit_value<float32_t>> & size) const
+    core::vec2<float32_t> Control::map(const core::vec2<core::unit_value<float32_t>> & size) const
     {
         auto s = scene();
         auto p = parent();
@@ -123,7 +124,7 @@ namespace controls
         return { map(size.x, p->width()), map(size.y, p->height()) };
     }
 
-    core::vec4<float32_t> Control::map(const core::vec4<unit_value<float32_t>> & rect) const
+    core::vec4<float32_t> Control::map(const core::vec4<core::unit_value<float32_t>> & rect) const
     {
         auto s = scene();
         auto p = parent();
@@ -144,7 +145,7 @@ namespace controls
 
     core::rc32f Control::contentBox() const
     {
-        return core::rc32f({}, _view_rect.size);
+        return core::rc32f(_view_rect.pos, _view_rect.size);
     }
 
     core::rc32f Control::box(control_box box) const
@@ -193,17 +194,24 @@ namespace controls
 
     void Control::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
-
+        scene->addRenderable(view());
     }
 
     void Control::enterScene(std::shared_ptr<component::Scene> & scene)
     {
         _scene = scene;
+        _view_border.bleft = calc(_border_left.width);
+        _view_border.btop = calc(_border_top.width);
+        _view_border.bright = calc(_border_right.width);
+        _view_border.bbottom = calc(_border_bottom.width);
+        _view_margin = calc(_margin);
+        _view_padding = calc(_paddding);
     }
 
     void Control::leavingScene(std::shared_ptr<component::Scene> & scene)
     {
-
+        if(_view)
+            scene->removeRenderable(_view);
     }
 
     void Control::leaveScene(std::shared_ptr<component::Scene> & scene)
@@ -211,49 +219,36 @@ namespace controls
         _scene.reset();
     }
 
-    void Control::layoutContent()
+    void Control::layout(const core::rc32f & rect)
     {
-        
-    }
-
-    void Control::layout(const core::pt32f & pos)
-    {
-        // size
         auto p = parent();
-        if (!p)
-            return;
-
-        layoutContent();
-
-        _view_border.bleft = map(_border_left.width, width());
-        _view_border.btop = map(_border_top.width, height());
-        _view_border.bright = map(_border_right.width, width());
-        _view_border.bbottom = map(_border_bottom.width, height());
-
-        if (_size.aviliable())
-            _view_rect.size = { map(_size.value.x, p->width()), map(_size.value.y, p->height()) };
-        else
-            _view_rect.size = contentSize() + _view_border.bsize();
-
-        // pos
-        //auto pos = map(_position.value);
-        switch(_layout_origin)
+        if(rect.empty())
         {
-        case position_origin::layout:
-            _view_rect.pos = pos;
-            break;
-        case position_origin::absolute:
-            _view_rect.pos = p->map(_position.value);
-            break;
-        case position_origin::fixed:
-            _view_rect.pos = p->map(_position.value);
-            break;
-        case position_origin::relative:
-            _view_rect.pos = pos + map(_position.value);
-        case position_origin::sticky: 
-            break;
-        default: 
-            break;
+            if (_size.aviliable())
+                _view_rect.size = { map(_size.value.x, p ? p->width() : 0), map(_size.value.y, p ? p->height() : 0) };
+            else
+                _view_rect.size = contentSize() + _view_padding.bsize() + _view_border.bsize();
+        }
+        else
+        {
+            switch (_layout_origin)
+            {
+            case position_origin::layout:
+                _view_rect.pos = rect.pos;
+                break;
+            case position_origin::absolute:
+                _view_rect.pos = p ? p->map(_position.value) : core::vec2f();
+                break;
+            case position_origin::fixed:
+                _view_rect.pos = p ? p->map(_position.value) : core::vec2f();
+                break;
+            case position_origin::relative:
+                _view_rect.pos = rect.pos + map(_position.value);
+            case position_origin::sticky:
+                break;
+            default:
+                break;
+            }
         }
     }
 

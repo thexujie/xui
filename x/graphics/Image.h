@@ -16,6 +16,8 @@ namespace graphics
         int32_t width() const;
         int32_t height() const;
         core::si32i size() const;
+        // width / height
+        float32_t aspect() const;
         //image::format cmode() const { return _image.format.format; }
         core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100) const;
 

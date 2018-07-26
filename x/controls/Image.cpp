@@ -28,12 +28,30 @@ namespace controls
         _image = image;
     }
 
+    void Image::setImageSize(const core::vec2<core::unit_value<float32_t>> & size)
+    {
+        _image_size = size;
+    }
+
     core::si32f Image::contentSize() const
     {
         if (!_image_size)
             return _image ? _image->size().to<float32_t>() : core::si32f();
 
-        return map(_image_size);
+        // ×ÔÊÊÓ¦¿í¶È
+
+        attribute<core::vec2<core::unit_value<float32_t>>> _size = _image_size;
+        if (_image_size.value.cx.nan() && !_image_size.value.cy.nan())
+            _size.value.cx = _image_size.value.cy * _image->aspect();
+        else if (!_image_size.value.cx.nan() && _image_size.value.cy.nan())
+            _size.value.cy = _image_size.value.cx / _image->aspect();
+        else if (_image_size.value.cx.nan() && _image_size.value.cy.nan())
+        {
+            _size.value.cx = core::unit_dot(_image->width());
+            _size.value.cy = core::unit_dot(_image->height());
+        }
+        else {}
+        return map(_size);
     }
 
     void Image::layoutContent()

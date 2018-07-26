@@ -3,15 +3,14 @@
 
 namespace controls
 {
-    class Text : public Control
+    class Button : public Control
     {
     public:
-        Text();
-        Text(std::string text);
-        ~Text();
+        Button();
+        ~Button();
 
-        virtual void enterScene(std::shared_ptr<component::Scene> & scene);
         core::si32f contentSize() const;
+        virtual void layoutContent();
         virtual void update();
 
     private:

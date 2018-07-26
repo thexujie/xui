@@ -55,4 +55,12 @@ namespace graphics
             return {};
         return { _native->width(), _native->height() };
     }
+
+    float32_t Image::aspect() const
+    {
+        if (!_native || !_native->width() || !_native->height())
+            return 1.0f;
+
+        return  _native->width() * 1.0f / _native->height();
+    }
 }

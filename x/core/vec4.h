@@ -396,9 +396,9 @@ namespace core
 
                     struct
                     {
-                        //! 矩形的横坐标。
+                        //! 左边界。
                         T bleft;
-                        //! 矩形的纵坐标。
+                        //! 上边界。
                         T btop;
                     };
                 };
@@ -413,7 +413,9 @@ namespace core
 
                     struct
                     {
+                        // 右边界
                         T bright;
+                        // 下边界
                         T bbottom;
                     };
 
@@ -439,4 +441,5 @@ namespace core
 
     typedef vec4<int32_t> rc32i;
     typedef vec4<float32_t> rc32f;
+    typedef vec4<float32_t> vec4f;
 }

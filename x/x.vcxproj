@@ -90,19 +90,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="controls\Button.cpp" />
     <ClCompile Include="controls\component\Component.cpp" />
     <ClCompile Include="controls\component\Interactable.cpp" />
     <ClCompile Include="controls\component\Layout.cpp" />
     <ClCompile Include="controls\component\Renderable.cpp" />
     <ClCompile Include="controls\component\Scene.cpp" />
     <ClCompile Include="controls\Container.cpp" />
+    <ClCompile Include="controls\Element.cpp" />
     <ClCompile Include="controls\renderables\Text.cpp" />
+    <ClCompile Include="controls\Row.cpp" />
     <ClCompile Include="controls\Text.cpp" />
     <ClCompile Include="controls\View.cpp" />
     <ClCompile Include="controls\Control.cpp" />
     <ClCompile Include="controls\Form.cpp" />
     <ClCompile Include="controls\Image.cpp" />
-    <ClCompile Include="controls\Rectangle.cpp" />
     <ClCompile Include="controls\renderables\Image.cpp" />
     <ClCompile Include="controls\renderables\Rectangle.cpp" />
     <ClCompile Include="core\app.cpp" />
@@ -152,19 +154,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controls\attribute.h" />
+    <ClInclude Include="controls\Button.h" />
     <ClInclude Include="controls\component\Component.h" />
     <ClInclude Include="controls\component\Interactable.h" />
     <ClInclude Include="controls\component\Layout.h" />
     <ClInclude Include="controls\component\Renderable.h" />
     <ClInclude Include="controls\component\Scene.h" />
     <ClInclude Include="controls\Container.h" />
+    <ClInclude Include="controls\Element.h" />
     <ClInclude Include="controls\renderables\Text.h" />
+    <ClInclude Include="controls\Row.h" />
     <ClInclude Include="controls\Text.h" />
     <ClInclude Include="controls\View.h" />
     <ClInclude Include="controls\Control.h" />
     <ClInclude Include="controls\Form.h" />
     <ClInclude Include="controls\Image.h" />
-    <ClInclude Include="controls\Rectangle.h" />
     <ClInclude Include="controls\renderables\Image.h" />
     <ClInclude Include="controls\renderables\Rectangle.h" />
     <ClInclude Include="core\align.h" />

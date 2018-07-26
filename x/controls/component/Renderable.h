@@ -11,6 +11,6 @@ namespace controls::component
         Renderable(const core::rc32f & rect) : Component(ComponentType::Renderable, rect) {}
         ~Renderable() = default;
 
-        virtual void render(graphics::Graphics & graphics) const;
+        virtual void render(graphics::Graphics & graphics) const = 0;
     };
 }

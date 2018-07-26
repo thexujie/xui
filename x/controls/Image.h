@@ -13,6 +13,7 @@ namespace controls
 
         void setImage(std::string path);
         void setImage(std::shared_ptr<graphics::Image> image);
+        void setImageSize(const core::vec2<core::unit_value<float32_t>> & size);
 
         core::si32f contentSize() const;
         virtual void layoutContent();
@@ -26,7 +27,7 @@ namespace controls
 
     private:
         std::shared_ptr<graphics::Image> _image;
-        attribute<core::vec2<unit_value<float32_t>>> _image_size;
+        attribute<core::vec2<core::unit_value<float32_t>>> _image_size;
         image_repeat _image_repeat = image_repeat::repeat;
     };
 }

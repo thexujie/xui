@@ -1,26 +1,27 @@
 #include "stdafx.h"
-#include "Text.h"
+#include "Button.h"
 #include "renderables/Text.h"
-
 
 namespace controls
 {
-    Text::Text()
+    Button::Button()
     {
         
     }
 
-    Text::Text(std::string text) : _text(text)
+    Button::~Button()
     {
         
     }
 
-    Text::~Text()
+    core::si32f Button::contentSize() const
     {
-        
+        if (!_textBlob)
+            return {};
+        return _textBlob->size();
     }
 
-    void Text::enterScene(std::shared_ptr<component::Scene> & scene)
+    void Button::layoutContent()
     {
         if (!_textBlob)
         {
@@ -30,14 +31,7 @@ namespace controls
         }
     }
 
-    core::si32f Text::contentSize() const
-    {
-        if (!_textBlob)
-            return {};
-        return _textBlob->size();
-    }
-
-    void Text::update()
+    void Button::update()
     {
         Control::update();
         if(_textBlob)

@@ -38,38 +38,6 @@ namespace controls
         T value;
     };
 
-    template<typename T>
-    struct unit_value
-    {
-        constexpr unit_value() :value() {}
-        constexpr unit_value(const T & value_, core::unit unit_) : value(value_), unit(unit_) {}
-
-        unit_value<T> operator + ( const unit_value<T> & another) const
-        {
-            if (unit != another.unit)
-                throw core::error_bad_format;
-
-            return unit_value<T>(value + another.value, unit);
-        }
-
-        unit_value<T> operator - (const unit_value<T> & another) const
-        {
-            if (unit != another.unit)
-                throw core::error_bad_format;
-
-            return unit_value<T>(value - another.value, unit);
-        }
-
-        T value;
-        core::unit unit = core::unit::px;
-    };
-
-    template<typename T>
-    constexpr unit_value<T> operator * (const T & val, core::unit unit)
-    {
-        return unit_value<T>(val, unit);
-    }
-
     enum class position_origin
     {
         // Ä¬ÈÏÎ»ÖÃ
@@ -86,7 +54,7 @@ namespace controls
 
     struct layout_size
     {
-        void set_absolutive(const unit_value<core::si32f> & size) { absolutive = size; }
+        void set_absolutive(const core::unit_value<core::si32f> & size) { absolutive = size; }
 
         enum class mode
         {
@@ -97,7 +65,7 @@ namespace controls
         };
 
         mode mode = mode::not_set;
-        unit_value<core::si32f> absolutive;
+        core::unit_value<core::si32f> absolutive;
     };
 
     enum class image_repeat
@@ -136,7 +104,7 @@ namespace controls
 
     struct conntrol_border
     {
-        unit_value<float32_t> width;
+        core::unit_value<float32_t> width;
         border_style style;
         core::color32 color;
     };

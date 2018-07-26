@@ -17,9 +17,17 @@
   <Type Name="core::size&lt;*&gt;">
     <DisplayString>{{{w}, {h}}}</DisplayString>
   </Type>
-	<Type Name="core::rect&lt;*&gt;">
-		<DisplayString>{{({x},{y}),[{cx},{cy}]}}</DisplayString>
+	<Type Name="core::vec4&lt;*&gt;">
+		<DisplayString>{{({x},{y}), [{cx},{cy}]}}</DisplayString>
 	</Type>
+	<Type Name="core::unit_value&lt;*&gt;">
+		<DisplayString Condition="unit==0">{value} px</DisplayString>
+		<DisplayString Condition="unit==1">{value} em</DisplayString>
+		<DisplayString Condition="unit==2">{value} pt</DisplayString>
+		<DisplayString Condition="unit==3">{value * 100} %</DisplayString>
+		<DisplayString Condition="unit==4">{value} dot</DisplayString>
+	</Type>
+
 	<Type Name="graphics::font">
 		<DisplayString>{{{family}, {size}}}</DisplayString>
 	</Type>
