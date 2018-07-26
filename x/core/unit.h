@@ -4,7 +4,6 @@ namespace core
 {
     enum class unit
     {
-        na = -1,
         // 像素
         px = 0,
         // 标准字符代销

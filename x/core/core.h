@@ -2653,7 +2653,6 @@ namespace core
 #include "vec2.h"
 #include "vec3.h"
 #include "vec4.h"
-#include "rect.h"
 #include "edge.h"
 
 #include "float2.h"

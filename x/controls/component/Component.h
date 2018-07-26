@@ -23,8 +23,8 @@ namespace controls::component
 
         ComponentType type() const { return _type; }
 
-        void setPos(const core::pt32f & pos) { _rect.position = pos; }
-        core::pt32f pos() const { return _rect.position; }
+        void setPos(const core::pt32f & pos) { _rect.pos = pos; }
+        core::pt32f pos() const { return _rect.pos; }
         void setSize(const core::si32f & size) { _rect.size = size; }
         core::si32f size() const { return _rect.size; }
         void setRect(const core::rc32f & rect) { _rect = rect; }

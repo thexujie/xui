@@ -29,8 +29,8 @@ namespace controls
 
     void Rectangle::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
-        _rectangle->setPos(_rect.center());
-        _rectangle->setSize(_rect.size);
+        _rectangle->setPos(_view_rect.center());
+        _rectangle->setSize(_view_rect.size);
         Control::enteringScene(scene);
     }
 
@@ -48,8 +48,8 @@ namespace controls
 
     void Rectangle::onRectChanged(const core::rc32f & from, const core::rc32f & to)
     {
-        _rectangle->setPos(_rect.center());
-        _rectangle->setSize(_rect.size);
+        _rectangle->setPos(_view_rect.center());
+        _rectangle->setSize(_view_rect.size);
         Control::onRectChanged(from, to);
     }
 }

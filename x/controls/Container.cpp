@@ -23,4 +23,13 @@ namespace controls
     {
 
     }
+
+    void Container::layout()
+    {
+    }
+
+    void Container::layout(LayoutState & state, const core::si32f & size)
+    {
+        
+    }
 }

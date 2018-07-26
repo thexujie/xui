@@ -15,7 +15,7 @@ namespace controls
         void setRect(const core::rc32f & rect);
         core::rc32f rect() const { return _rect; }
         void setPos(const core::pt32f & pos);
-        core::pt32f pos() const { return _rect.position; }
+        core::pt32f pos() const { return _rect.pos; }
         void setSize(const core::si32f & size);
         core::si32f size() const { return _rect.size; }
 

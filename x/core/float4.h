@@ -131,6 +131,19 @@ namespace core
                     float32_t z;
                     float32_t w;
                 };
+
+                struct
+                {
+                    float32_t left;
+                    float32_t top;
+                    float32_t right;
+                    float32_t bottom;
+                };
+                struct
+                {
+                    float2 leftTop;
+                    float2 rightBottom;
+                };
             };
 
             int32_t ai[4];

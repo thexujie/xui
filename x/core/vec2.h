@@ -6,7 +6,7 @@ namespace core
     class vec2
     {
     public:
-        vec2() : x(0), y(0) { }
+        vec2() : x(), y() { }
 
         vec2(ValT _x, ValT _y) : x(_x), y(_y) { }
 
@@ -169,10 +169,10 @@ namespace core
             return { (float32_t)x, (float32_t)y };
         }
 
-        template<typename ValT2>
-        vec2<ValT2> to() const
+        template<typename T2>
+        vec2<T2> to() const
         {
-            return { (ValT2)x, (ValT2)y };
+            return { (T2)x, (T2)y };
         }
 
     public:

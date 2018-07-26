@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/vec2.h"
-#include "core/rect.h"
+#include "core/vec4.h"
 #include "image/image.h"
 #include "raster/path.h"
 #include "font.h"

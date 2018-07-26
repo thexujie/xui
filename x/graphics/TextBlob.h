@@ -9,9 +9,11 @@ namespace graphics
     {
     public:
         TextBlob();
+        TextBlob(std::string str, const StringFormat & format);
         TextBlob(std::string str, int32_t width, const StringFormat & format);
         ~TextBlob();
 
+        const core::si32f & size() const { return _size; }
         void reset(std::string str, int32_t width, const StringFormat & format);
 
     public:
@@ -22,5 +24,6 @@ namespace graphics
         const SkTextBlob * native_ptr() const { return _native.get(); }
     private:
         std::shared_ptr<SkTextBlob> _native = nullptr;
+        core::si32f _size;
     };
 }

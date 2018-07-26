@@ -9,6 +9,11 @@ namespace graphics
     {
     }
 
+    TextBlob::TextBlob(std::string str, const StringFormat & format)
+    {
+        reset(str, -1, format);
+    }
+
     TextBlob::TextBlob(std::string str, int32_t width, const StringFormat & format)
     {
         reset(str, width, format);
@@ -28,7 +33,7 @@ namespace graphics
         SkTextBlobBuilder builder;
         SkRect rcBlob;
         SkPoint end = shaper.shape(builder, paint, str.c_str(), str.length(), true, {}, width, rcBlob);
-
+        _size = { rcBlob.width(), rcBlob.height() };
         _native = std::shared_ptr<SkTextBlob>(builder.make().release(), [](SkTextBlob * ptr) { if (ptr) SkSafeUnref(ptr); });
     }
 }

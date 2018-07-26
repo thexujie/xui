@@ -143,6 +143,12 @@
     <ClCompile Include="controls\Container.cpp">
       <Filter>controls</Filter>
     </ClCompile>
+    <ClCompile Include="controls\Text.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\renderables\Text.cpp">
+      <Filter>controls\renderables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -228,9 +234,6 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\math.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\rect.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\vec2.h">
@@ -356,6 +359,12 @@
     <ClInclude Include="controls\Container.h">
       <Filter>controls</Filter>
     </ClInclude>
+    <ClInclude Include="controls\Text.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\renderables\Text.h">
+      <Filter>controls\renderables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -394,6 +403,9 @@
     <Filter Include="controls\renderables">
       <UniqueIdentifier>{0858b256-5a76-46f9-b474-872ead193a26}</UniqueIdentifier>
     </Filter>
+    <Filter Include="samples">
+      <UniqueIdentifier>{01a7303d-087f-42bc-9c03-b9a2c9ec3601}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="core\math\xmf_base.inl">
@@ -407,6 +419,9 @@
     </None>
     <None Include="core\math\xmf_vec.inl">
       <Filter>core\math</Filter>
+    </None>
+    <None Include="samples\layout.xml">
+      <Filter>samples</Filter>
     </None>
   </ItemGroup>
 </Project>

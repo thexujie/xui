@@ -15,6 +15,7 @@
 #include "graphics/TextBlob.h"
 #include "controls/View.h"
 #include "controls/Image.h"
+#include "controls/Container.h"
 
 using namespace core;
 
@@ -69,7 +70,7 @@ int main()
     graphics.clear(colors::LightGray);
 
     auto scene = std::make_shared<controls::component::Scene>();
-    auto container = std::make_shared<controls::Control>();
+    auto container = std::make_shared<controls::Container>();
     auto image = std::make_shared<controls::Image>("960.png");
 
     container->addControl(image);

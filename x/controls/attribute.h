@@ -6,28 +6,36 @@ namespace controls
     class attribute
     {
     public:
-        attribute() : _value() {}
+        attribute() : value() {}
         ~attribute() {}
 
-        T & get() { return _value; }
-        const T & get() const{ return _value; }
-        void set(const T & value) { _value = value; }
+        T & get() { return value; }
+        const T & get() const{ return value; }
+        void set(const T & value_) { value = value_; }
 
-        attribute & operator = (const T & value)
+        attribute & operator = (const T & value_)
         {
-            _value = value;
+            _na = false;
+            value = value_;
             return *this;
         }
 
-        bool operator == (const T & value) const { return _value == value; }
-        bool operator != (const T & value) const { return _value != value; }
-        bool operator > (const T & value) const { return _value > value; }
-        bool operator < (const T & value) const { return _value < value; }
-        bool operator >= (const T & value) const { return _value >= value; }
-        bool operator <= (const T & value) const { return _value <= value; }
+        operator T & () { return value; }
+        operator const T & () const { return value; }
+        operator bool() const { return !_na; }
+        bool aviliable() const { return !_na; }
 
-    private:
-        T _value;
+        bool operator == (const T & value_) const { return value == value_; }
+        bool operator != (const T & value_) const { return value != value_; }
+        bool operator > (const T & value_) const { return value > value_; }
+        bool operator < (const T & value_) const { return value < value_; }
+        bool operator >= (const T & value_) const { return value >= value_; }
+        bool operator <= (const T & value_) const { return value <= value_; }
+
+
+    public:
+        bool _na = true;
+        T value;
     };
 
     template<typename T>
@@ -35,11 +43,25 @@ namespace controls
     {
         constexpr unit_value() :value() {}
         constexpr unit_value(const T & value_, core::unit unit_) : value(value_), unit(unit_) {}
-        bool set() const { return unit == core::unit::na; }
-        operator bool() const { return unit == core::unit::na; }
+
+        unit_value<T> operator + ( const unit_value<T> & another) const
+        {
+            if (unit != another.unit)
+                throw core::error_bad_format;
+
+            return unit_value<T>(value + another.value, unit);
+        }
+
+        unit_value<T> operator - (const unit_value<T> & another) const
+        {
+            if (unit != another.unit)
+                throw core::error_bad_format;
+
+            return unit_value<T>(value - another.value, unit);
+        }
 
         T value;
-        core::unit unit = core::unit::na;
+        core::unit unit = core::unit::px;
     };
 
     template<typename T>
@@ -48,22 +70,18 @@ namespace controls
         return unit_value<T>(val, unit);
     }
 
-
-    struct layout_position
+    enum class position_origin
     {
-        void set_relative(core::align pos) { relative = pos; mode = mode::relative; }
-        void set_absolutive(const unit_value<core::pt32f> & pos) { absolutive = pos;  mode = mode::absolutive; }
-
-        enum class mode
-        {
-            relative,
-            absolutive,
-            percentage,
-        };
-
-        mode mode = mode::relative;
-        core::align relative = core::align::leftTop;
-        unit_value<core::pt32f> absolutive;
+        // 默认位置
+        layout = 0,
+        // 相对于 parent 的位置
+        absolute,
+        // 相对于 scene 的位置
+        fixed,
+        //相对与 layout 的位置
+        relative,
+        // 同 relative，如果超出 scene 则相对于 fixed
+        sticky,
     };
 
     struct layout_size

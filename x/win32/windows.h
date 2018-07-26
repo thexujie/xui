@@ -4,7 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "graphics/font.h"
-#include "core/rect.h"
+#include "core/vec4.h"
 
 namespace win32
 {
