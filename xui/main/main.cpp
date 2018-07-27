@@ -96,10 +96,10 @@ int main()
     auto row = std::make_shared<controls::Row>();
     auto text = std::make_shared<controls::Text>("ABCDEFG");
     auto image = std::make_shared<controls::Image>("960.png");
-    image->setImageSize({ 10em, auto_value });
+    image->setImageSize({ 10_em, auto_value });
     auto text2 = std::make_shared<controls::Text>("XYZOPQRST");
 
-    row->setSize({ 1280px, 720px });
+    row->setSize({ 1280_px, 720_px });
     row->addControl(text);
     row->addControl(image);
     row->addControl(text2);

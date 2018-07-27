@@ -155,6 +155,9 @@
     <ClCompile Include="controls\Row.cpp">
       <Filter>controls</Filter>
     </ClCompile>
+    <ClCompile Include="core\float3x3.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -376,6 +379,9 @@
     </ClInclude>
     <ClInclude Include="controls\Row.h">
       <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="core\float3x3.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

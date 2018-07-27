@@ -8,19 +8,13 @@ namespace core
 
     struct float4
     {
-        float4() : x(0), y(0), z(0), w(0) { }
-
-        float4(float32_t _x, float32_t _y, float32_t _z, float32_t _w) : x(_x), y(_y), z(_z), w(_w) { }
-
-        float4(const float4 & another) : x(another.x), y(another.y), z(another.z), w(another.w) { }
-
-        float4(const float3 & another) : x(another.x), y(another.y), z(another.z), w(0) { }
-
-        float4(const float3 & another, float32_t _w) : x(another.x), y(another.y), z(another.z), w(_w) { }
-
-        float4(const math::xm::xmf & v) : x(xmv_x(v)), y(xmv_y(v)), z(xmv_z(v)), w(xmv_w(v)) { }
-
-        float4(const float32_t (&arr)[4]) : x(arr[0]), y(arr[1]), z(arr[2]), w(arr[3]) { }
+        constexpr float4() : x(0), y(0), z(0), w(0) { }
+        constexpr float4(float32_t _x, float32_t _y, float32_t _z, float32_t _w) : x(_x), y(_y), z(_z), w(_w) { }
+        constexpr float4(const float3 & another) : x(another.x), y(another.y), z(another.z), w(0) { }
+        constexpr float4(const float3 & another, float32_t _w) : x(another.x), y(another.y), z(another.z), w(_w) { }
+        constexpr float4(const math::xm::xmf & v) : x(xmv_x(v)), y(xmv_y(v)), z(xmv_z(v)), w(xmv_w(v)) { }
+        constexpr float4(const float32_t (&arr)[4]) : x(arr[0]), y(arr[1]), z(arr[2]), w(arr[3]) { }
+        constexpr float4(const float4 & another) : x(another.x), y(another.y), z(another.z), w(another.w) { }
 
         float32_t & operator[](int32_t iIndex) { return af[iIndex]; }
         const float32_t & operator[](int32_t iIndex) const { return ((const float32_t *)this)[iIndex]; }
@@ -177,4 +171,9 @@ namespace core
     {
         return vec / rate;
     }
+
+    constexpr static float4 _1000 = { 1, 0, 0, 0 };
+    constexpr static float4 _0100 = { 0, 1, 0, 0 };
+    constexpr static float4 _0010 = { 0, 0, 1, 0 };
+    constexpr static float4 _0001 = { 0, 0, 0, 1 };
 }

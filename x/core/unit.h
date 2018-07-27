@@ -61,52 +61,52 @@ namespace core
     namespace unit_literals
     {
 
-        constexpr unit_value<float32_t> operator "" px(unsigned long long  val)
+        constexpr unit_value<float32_t> operator "" _px(unsigned long long  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::px);
         }
 
-        constexpr unit_value<float32_t> operator "" em(unsigned long long  val)
+        constexpr unit_value<float32_t> operator "" _em(unsigned long long  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::em);
         }
 
-        constexpr unit_value<float32_t> operator "" pt(unsigned long long  val)
+        constexpr unit_value<float32_t> operator "" _pt(unsigned long long  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::pt);
         }
 
-        constexpr unit_value<float32_t> operator "" per(unsigned long long  val)
+        constexpr unit_value<float32_t> operator "" _per(unsigned long long  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::per);
         }
 
-        constexpr unit_value<float32_t> operator "" dot(unsigned long long  val)
+        constexpr unit_value<float32_t> operator "" _dot(unsigned long long  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::dot);
         }
 
-        constexpr unit_value<float32_t> operator "" px(long double  val)
+        constexpr unit_value<float32_t> operator "" _px(long double  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::px);
         }
 
-        constexpr unit_value<float32_t> operator "" em(long double  val)
+        constexpr unit_value<float32_t> operator "" _em(long double  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::em);
         }
 
-        constexpr unit_value<float32_t> operator "" pt(long double  val)
+        constexpr unit_value<float32_t> operator "" _pt(long double  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::pt);
         }
 
-        constexpr unit_value<float32_t> operator "" per(long double  val)
+        constexpr unit_value<float32_t> operator "" _per(long double  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::per);
         }
 
-        constexpr unit_value<float32_t> operator "" dot(long double  val)
+        constexpr unit_value<float32_t> operator "" _dot(long double  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::dot);
         }

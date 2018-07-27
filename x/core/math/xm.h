@@ -134,12 +134,12 @@ namespace core::math::xm
         const xmf & operator[](int32_t iIndex) const { return ((xmf *)this)[iIndex]; }
     };
 
-    inline float32_t xmv_x(const xmf & v) { return v.fx; }
-    inline float32_t xmv_y(const xmf & v) { return v.fy; }
-    inline float32_t xmv_z(const xmf & v) { return v.fz; }
-    inline float32_t xmv_w(const xmf & v) { return v.fw; }
-    inline int32_t xmi_x(const xmf & v) { return v.ix; }
-    inline int32_t xmi_y(const xmf & v) { return v.iy; }
-    inline int32_t xmi_z(const xmf & v) { return v.iz; }
-    inline int32_t xmi_w(const xmf & v) { return v.iw; }
+    constexpr float32_t xmv_x(const xmf & v) { return v.fx; }
+    constexpr float32_t xmv_y(const xmf & v) { return v.fy; }
+    constexpr float32_t xmv_z(const xmf & v) { return v.fz; }
+    constexpr float32_t xmv_w(const xmf & v) { return v.fw; }
+    constexpr int32_t xmi_x(const xmf & v) { return v.ix; }
+    constexpr int32_t xmi_y(const xmf & v) { return v.iy; }
+    constexpr int32_t xmi_z(const xmf & v) { return v.iz; }
+    constexpr int32_t xmi_w(const xmf & v) { return v.iw; }
 }

@@ -112,6 +112,7 @@
     <ClCompile Include="core\error.cpp" />
     <ClCompile Include="core\float2.cpp" />
     <ClCompile Include="core\float3.cpp" />
+    <ClCompile Include="core\float3x3.cpp" />
     <ClCompile Include="core\float4.cpp" />
     <ClCompile Include="core\float4x4.cpp" />
     <ClCompile Include="core\invokable.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="core\event.h" />
     <ClInclude Include="core\float2.h" />
     <ClInclude Include="core\float3.h" />
+    <ClInclude Include="core\float3x3.h" />
     <ClInclude Include="core\float4.h" />
     <ClInclude Include="core\float4x4.h" />
     <ClInclude Include="core\invokable.h" />
