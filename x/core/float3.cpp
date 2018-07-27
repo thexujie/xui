@@ -16,11 +16,6 @@ namespace core
         return xmv_x(xm_vec3_length_sq(*this));
     }
 
-    float32_t float3::dot(const float3 & vec) const
-    {
-        return xmv_x(xm_vec3_dot(*this, vec));
-    }
-
     float3 float3::cross(const float3 & vec) const
     {
         return xm_vec3_cross(*this, vec);

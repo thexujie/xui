@@ -21,11 +21,14 @@ namespace controls
         void clear();
         void insert(int32_t depth, std::shared_ptr<controls::component::Renderable> renderable);
 
+        void setTransform(const core::float3x2 & transform) { _transform = transform; }
+
         virtual void render(graphics::Graphics & graphics) const;
     protected:
         std::weak_ptr<component::Scene> _scene;
         std::weak_ptr<Control> _control;
         core::rc32f _rect;
+        core::float3x2 _transform;
         std::multimap<int32_t, std::shared_ptr<controls::component::Renderable>> _renderables;
     };
 }

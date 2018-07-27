@@ -44,9 +44,11 @@ namespace controls
 
     void View::render(graphics::Graphics & graphics) const
     {
+        graphics.setMatrix(_transform);
         for(auto & rendereable : _renderables)
         {
             rendereable.second->render(graphics);
         }
+        graphics.setMatrix(core::float3x2::identity);
     }
 }

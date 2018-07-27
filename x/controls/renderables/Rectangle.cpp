@@ -5,6 +5,7 @@ namespace controls::renderables
 {
     void Rectangle::render(graphics::Graphics & graphics) const
     {
+        Renderable::render(graphics);
         if (_rect.empty())
             return;
 

@@ -194,12 +194,12 @@ namespace controls
 
     void Control::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
+        _scene = scene;
         scene->addRenderable(view());
     }
 
     void Control::enterScene(std::shared_ptr<component::Scene> & scene)
     {
-        _scene = scene;
         _view_border.bleft = calc(_border_left.width);
         _view_border.btop = calc(_border_top.width);
         _view_border.bright = calc(_border_right.width);
@@ -212,11 +212,11 @@ namespace controls
     {
         if(_view)
             scene->removeRenderable(_view);
+        _scene.reset();
     }
 
     void Control::leaveScene(std::shared_ptr<component::Scene> & scene)
     {
-        _scene.reset();
     }
 
     void Control::layout(const core::rc32f & rect)
@@ -249,6 +249,7 @@ namespace controls
             default:
                 break;
             }
+            //view()->setTransform(core::float3x2::translate(_view_rect.x, _view_rect.y));
         }
     }
 

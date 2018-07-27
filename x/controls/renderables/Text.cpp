@@ -25,6 +25,7 @@ namespace controls::renderables
 
     void Text::render(graphics::Graphics & graphics) const
     {
+        Renderable::render(graphics);
         if (!_text)
             return;
 

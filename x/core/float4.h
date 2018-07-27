@@ -41,9 +41,9 @@ namespace core
         float4 & operator =(const float32_t (&arr)[4])
         {
             x = arr[0];
-            y = arr[0];
-            z = arr[0];
-            w = arr[0];
+            y = arr[1];
+            z = arr[2];
+            w = arr[3];
             return *this;
         }
 

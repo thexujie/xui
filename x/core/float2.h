@@ -79,6 +79,9 @@ namespace core
         float2 & operator /=(const float2 & vec);
 
         float2 & lerp(const float2 & min, const float2 & max, float32_t lerp);
+
+        float32_t dot(const float2 & vec) const { return x * vec.x + y * vec.y; }
+
     public:
         union
         {

@@ -10,13 +10,14 @@ namespace core
         constexpr float3(const math::xm::xmf & m128) : x(xmv_x(m128)), y(xmv_y(m128)), z(xmv_z(m128)) { }
         constexpr float3(float32_t _x, float32_t _y, float32_t _z) : x(_x), y(_y), z(_z) { }
         constexpr float3(const float32_t (&arr)[3]) : x(arr[0]), y(arr[1]), z(arr[2]) { }
+        constexpr float3(const float2 & xy, float32_t z) : x(xy.x), y(xy.y), z(z) { }
         constexpr float3(const float3 & another) : x(another.x), y(another.y), z(another.z) { }
 
         inline float3 & operator=(const float32_t (&arr)[3])
         {
             x = arr[0];
-            y = arr[0];
-            z = arr[0];
+            y = arr[1];
+            z = arr[2];
             return *this;
         }
 
@@ -58,9 +59,17 @@ namespace core
             return *this;
         }
 
+        inline float3 & set(const float3 & val)
+        {
+            x = val.x;
+            y = val.y;
+            z = val.z;
+            return *this;
+        }
+
         float32_t length() const;
         float32_t length_sq() const;
-        float32_t dot(const float3 & vec) const;
+        float32_t dot(const float3 & vec) const { return x * vec.x + y * vec.y + z * vec.z; }
         float3 cross(const float3 & vec) const;
         float3 abs() const;
 
@@ -127,6 +136,11 @@ namespace core
                 float1 yz;
             };
         };
+
+        public:
+            inline static float3 _100 = float3(1, 0, 0);
+            inline static float3 _010 = float3(0, 1, 0);
+            inline static float3 _001 = float3(0, 0, 1);
     };
 
     inline float3 operator *(float1 rate, float3 vec)

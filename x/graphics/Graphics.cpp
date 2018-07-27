@@ -13,12 +13,6 @@ namespace graphics
     {
         _pixmap = pixmap;
         _native = std::make_shared<SkCanvas>(pixmap->native());
-
-        SkMatrix matrix = SkMatrix::MakeTrans(400, 400);
-        matrix.postRotate(45);
-        _native->setMatrix(matrix);
-        //_native->translate(300, 200);
-        //_native->rotate(45);
     }
 
     void Graphics::clear(core::color32 color)
@@ -27,6 +21,14 @@ namespace graphics
             return;
 
         _native->clear(color);
+    }
+
+    void Graphics::setMatrix(const core::float3x2 & matrix)
+    {
+        if (!_native)
+            return;
+
+        _native->setMatrix(skia::to(matrix));
     }
 
     void Graphics::drawLine(core::pt32f start, core::pt32f end, const PathStyle & style)

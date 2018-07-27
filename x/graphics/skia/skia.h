@@ -57,4 +57,9 @@ namespace graphics::skia
         //if (style == PathMode::StrokeFill)
         return SkPaint::kStrokeAndFill_Style;
     }
+
+    inline SkMatrix to(const core::float3x2 & matrix)
+    {
+        return SkMatrix::MakeAll(matrix.sx, matrix.shx, matrix.tx, matrix.shy, matrix.sy, matrix.ty, 0, 0, 1);
+    }
 }

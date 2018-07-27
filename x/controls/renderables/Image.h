@@ -12,7 +12,7 @@ namespace controls::renderables
         ~Image();
 
         void setImage(std::shared_ptr<graphics::Image> image);
-        void setImageSize(const core::si32f & size) { _size = size; }
+        void setImageSize(const core::si32f & size) { _image_size = size; }
         void setRepeat(image_repeat repeat) { _repeat = repeat; }
 
         void render(graphics::Graphics & graphics) const;
@@ -20,6 +20,6 @@ namespace controls::renderables
     private:
         std::shared_ptr<graphics::Image> _image;
         image_repeat _repeat;
-        core::si32f _size;
+        core::si32f _image_size;
     };
 }

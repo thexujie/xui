@@ -38,6 +38,7 @@ namespace core::math::xm
     const uint32_t xm_swizzle_w = 3;
 
     const float32_t xm_pi = 3.141592654f;
+    const float32_t xm_eplison = 1.0e-12f;
     const float32_t xm_2pi = xm_pi * 2;
     const float32_t xm_1_of_1pi = 0.318309886f;
     const float32_t xm_1_of_2pi = 0.159154943f;

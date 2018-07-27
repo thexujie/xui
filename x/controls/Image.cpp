@@ -33,31 +33,10 @@ namespace controls
         _image_size = size;
     }
 
-    void Image::layoutContent()
+    core::si32f Image::_imageSize() const
     {
-        
-    }
-
-    void Image::update()
-    {
-        Control::update();
-        if (_image)
-        {
-            auto v = view();
-            auto item = std::make_shared<renderables::Image>(_image);
-            item->setRect(contentBox());
-            item->setImageSize(contentSize());
-            item->setRepeat(_image_repeat);
-            v->insert(0, item);
-        }
-    }
-
-    void Image::enteringScene(std::shared_ptr<component::Scene> & scene)
-    {
-        Control::enteringScene(scene);
-
         if (!_image_size)
-            _view_content_size = _image ? _image->size().to<float32_t>() : core::si32f();
+            return _image ? _image->size().to<float32_t>() : core::si32f();
         else
         {
             // ×ÔÊÊÓ¦¿í¶È
@@ -72,8 +51,33 @@ namespace controls
                 _size.value.cy = core::unit_dot(_image->height());
             }
             else {}
-            _view_content_size = map(_size);
+            return map(_size);
         }
+    }
+
+    void Image::layoutContent()
+    {
+        
+    }
+
+    void Image::update()
+    {
+        Control::update();
+        if (_image)
+        {
+            auto v = view();
+            auto item = std::make_shared<renderables::Image>(_image);
+            item->setRect(contentBox());
+            item->setImageSize(_imageSize());
+            item->setRepeat(_image_repeat);
+            v->insert(0, item);
+        }
+    }
+
+    void Image::enteringScene(std::shared_ptr<component::Scene> & scene)
+    {
+        Control::enteringScene(scene);
+        _view_content_size = _image ? _image->size().to<float32_t>() : core::si32f();
     }
 
     void Image::enterScene(std::shared_ptr<component::Scene> & scene)

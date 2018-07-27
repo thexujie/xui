@@ -23,6 +23,8 @@ namespace graphics
 
     public:
         void clear(core::color32 color);
+        void setMatrix(const core::float3x2 & matrix);
+
         void drawLine(core::pt32f start, core::pt32f end, const PathStyle & style);
 
         void drawEllipse(core::rc32f ellipse, const PathStyle & style);

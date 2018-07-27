@@ -45,6 +45,7 @@ namespace controls
                 rc.cx = control->width();
                 control->layout(rc);
                 margin = m.bright;
+                rc.x += rc.cx;
                 size.cy = std::max(control->height(), size.cy);
             }
 
