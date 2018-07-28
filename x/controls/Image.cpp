@@ -28,7 +28,7 @@ namespace controls
         _image = image;
     }
 
-    void Image::setImageSize(const core::vec2<core::unit_value<float32_t>> & size)
+    void Image::setImageSize(const core::vec2<core::dimensionf> & size)
     {
         _image_size = size;
     }
@@ -45,7 +45,7 @@ namespace controls
         else
         {
             // ×ÔÊÊÓ¦¿í¶È
-            attribute<core::vec2<core::unit_value<float32_t>>> _size = _image_size;
+            attribute<core::vec2<core::dimensionf>> _size = _image_size;
             if (_image_size.value.cx.nan() && !_image_size.value.cy.nan())
                 _size.value.cx = _image_size.value.cy * _image->aspect();
             else if (!_image_size.value.cx.nan() && _image_size.value.cy.nan())

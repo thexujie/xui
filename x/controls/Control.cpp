@@ -59,7 +59,7 @@ namespace controls
             return _font;
     }
 
-    float32_t Control::calc(const core::unit_value<float32_t> & value) const
+    float32_t Control::calc(const core::dimensionf & value) const
     {
         auto s = scene();
         if (!s)
@@ -80,12 +80,12 @@ namespace controls
         }
     }
 
-    core::vec2f Control::calc(const core::vec2<core::unit_value<float32_t>> & value) const
+    core::vec2f Control::calc(const core::vec2<core::dimensionf> & value) const
     {
         return { calc(value.x), calc(value.y) };
     }
 
-    core::vec4f Control::calc(const core::vec4<core::unit_value<float32_t>> & value) const
+    core::vec4f Control::calc(const core::vec4<core::dimensionf> & value) const
     {
         return { calc(value.x), calc(value.y), calc(value.cx), calc(value.cy) };
     }

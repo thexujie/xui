@@ -103,7 +103,7 @@ namespace controls
 
     struct conntrol_border
     {
-        core::unit_value<float32_t> width;
+        core::dimensionf width;
         border_style style;
         core::color32 color;
     };

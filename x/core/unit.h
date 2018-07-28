@@ -53,53 +53,53 @@ namespace core
 
     typedef unit_value<float32_t> dimensionf;
 
-    inline unit_value<float32_t> unit_px(float32_t val) { return unit_value<float32_t>(val, core::unit::px); }
-    inline unit_value<float32_t> unit_em(float32_t val) { return unit_value<float32_t>(val, core::unit::em); }
-    inline unit_value<float32_t> unit_pt(float32_t val) { return unit_value<float32_t>(val, core::unit::pt); }
-    inline unit_value<float32_t> unit_dot(float32_t val) { return unit_value<float32_t>(val, core::unit::dot); }
+    inline dimensionf unit_px(float32_t val) { return dimensionf(val, core::unit::px); }
+    inline dimensionf unit_em(float32_t val) { return dimensionf(val, core::unit::em); }
+    inline dimensionf unit_pt(float32_t val) { return dimensionf(val, core::unit::pt); }
+    inline dimensionf unit_dot(float32_t val) { return dimensionf(val, core::unit::dot); }
 
-    inline static const unit_value<float32_t> auto_value = unit_value<float32_t>(std::nan("0"), core::unit::px);
+    inline static const dimensionf auto_value = dimensionf(std::nan("0"), core::unit::px);
     namespace unit_literals
     {
 
-        constexpr unit_value<float32_t> operator "" _px(unsigned long long  val)
+        constexpr dimensionf operator "" _px(unsigned long long  val)
         {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::px);
+            return dimensionf(static_cast<float32_t>(val), core::unit::px);
         }
 
-        constexpr unit_value<float32_t> operator "" _em(unsigned long long  val)
+        constexpr dimensionf operator "" _em(unsigned long long  val)
         {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::em);
+            return dimensionf(static_cast<float32_t>(val), core::unit::em);
         }
 
-        constexpr unit_value<float32_t> operator "" _pt(unsigned long long  val)
+        constexpr dimensionf operator "" _pt(unsigned long long  val)
         {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::pt);
+            return dimensionf(static_cast<float32_t>(val), core::unit::pt);
         }
 
-        constexpr unit_value<float32_t> operator "" _dot(unsigned long long  val)
+        constexpr dimensionf operator "" _dot(unsigned long long  val)
         {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::dot);
+            return dimensionf(static_cast<float32_t>(val), core::unit::dot);
         }
 
-        constexpr unit_value<float32_t> operator "" _px(long double  val)
+        constexpr dimensionf operator "" _px(long double  val)
         {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::px);
+            return dimensionf(static_cast<float32_t>(val), core::unit::px);
         }
 
-        constexpr unit_value<float32_t> operator "" _em(long double  val)
+        constexpr dimensionf operator "" _em(long double  val)
         {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::em);
+            return dimensionf(static_cast<float32_t>(val), core::unit::em);
         }
 
-        constexpr unit_value<float32_t> operator "" _pt(long double  val)
+        constexpr dimensionf operator "" _pt(long double  val)
         {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::pt);
+            return dimensionf(static_cast<float32_t>(val), core::unit::pt);
         }
 
-        constexpr unit_value<float32_t> operator "" _dot(long double  val)
+        constexpr dimensionf operator "" _dot(long double  val)
         {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::dot);
+            return dimensionf(static_cast<float32_t>(val), core::unit::dot);
         }
     }
 }
