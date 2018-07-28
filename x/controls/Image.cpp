@@ -62,14 +62,8 @@ namespace controls
         }
     }
 
-    void Image::layoutContent()
+    void Image::updateContent()
     {
-        
-    }
-
-    void Image::update()
-    {
-        Control::update();
         if (_image)
         {
             auto v = view();

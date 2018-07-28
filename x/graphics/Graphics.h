@@ -6,6 +6,7 @@
 #include "Image.h"
 #include "PathStyle.h"
 #include "StringFormat.h"
+#include "Path.h"
 
 class SkCanvas;
 class SkTextBlobBuilder;
@@ -33,6 +34,8 @@ namespace graphics
         void drawEllipse(core::rc32f ellipse, const PathStyle & style);
         void drawRectangle(core::rc32f rect, const PathStyle & style);
         void drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const PathStyle & style);
+
+        void drawPath(const std::shared_ptr<graphics::Path> & path, const PathStyle & style);
 
         void drawString(const std::string & str, core::pt32f point, const StringFormat & format);
         void drawString(const std::string & str, core::rc32f rect, const StringFormat & format);

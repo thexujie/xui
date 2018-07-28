@@ -63,6 +63,7 @@ namespace controls
         void setPadding(const core::vec4<core::dimensionf> & padding) { _padding = padding; }
         void setBorderColors(const core::vec4<core::color32> & boderColors) { _border_colors = boderColors; }
         const core::vec4<core::color32> & boderColors() const { return _border_colors; }
+        std::array<core::pt32f, 4> boderPoints(core::align edge) const;
 
         virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
         virtual void enterScene(std::shared_ptr<component::Scene> & scene);
@@ -74,6 +75,7 @@ namespace controls
         virtual void layout(const core::rc32f & rect, const core::si32f & size);
 
         virtual void update();
+        virtual void updateContent() {}
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
 
     public:
@@ -81,6 +83,7 @@ namespace controls
 
     protected:
         void _updateBackground() const;
+        void _updateBorder() const;
         void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:

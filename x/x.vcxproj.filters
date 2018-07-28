@@ -158,6 +158,12 @@
     <ClCompile Include="core\float3x2.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\Path.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\renderables\Path.cpp">
+      <Filter>controls\renderables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -381,6 +387,15 @@
       <Filter>controls</Filter>
     </ClInclude>
     <ClInclude Include="core\float3x2.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Path.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\renderables\Path.h">
+      <Filter>controls\renderables</Filter>
+    </ClInclude>
+    <ClInclude Include="core\utils.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

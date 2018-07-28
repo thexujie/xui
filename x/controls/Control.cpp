@@ -2,6 +2,7 @@
 #include "Control.h"
 #include "renderables/Image.h"
 #include "renderables/Rectangle.h"
+#include "renderables/Path.h"
 
 namespace controls
 {
@@ -118,6 +119,33 @@ namespace controls
 
     void Control::invalid() { }
 
+    std::array<core::pt32f, 4> Control::boderPoints(core::align edge) const
+    {
+        auto bbox = borderBox();
+        auto border = calc(_border);
+        switch (edge)
+        {
+        case core::align::left:
+            return { bbox.leftBottom(), bbox.leftTop(),
+            { bbox.left() + border.bleft * 0.5f, bbox.top() + border.bleft * 0.5f },
+            { bbox.left() + border.bleft * 0.5f, bbox.bottom() - border.bleft * 0.5f } };
+        case core::align::top:
+            return { bbox.leftTop(), bbox.rightTop(),
+            { bbox.right() - border.btop * 0.5f, bbox.top() + border.btop * 0.5f },
+            { bbox.left() + border.btop * 0.5f, bbox.top() + border.btop * 0.5f } };
+        case core::align::right:
+            return { bbox.rightTop(), bbox.rightBottom(),
+            { bbox.right() - border.bright * 0.5f, bbox.bottom() - border.bright * 0.5f },
+            { bbox.right() - border.bright * 0.5f, bbox.top() + border.bright * 0.5f } };
+        case core::align::bottom:
+            return { bbox.rightBottom(), bbox.leftBottom(),
+            { bbox.left() + border.bbottom * 0.5f, bbox.bottom() - border.bbottom * 0.5f },
+            { bbox.right() - border.bbottom * 0.5f, bbox.bottom() - border.bbottom * 0.5f } };
+        default:
+            return {};
+        }
+    }
+
     void Control::setBackgroundColor(core::color32 color)
     {
         if (color == _background_color)
@@ -183,6 +211,8 @@ namespace controls
     {
         _view->clear();
         _updateBackground();
+        updateContent();
+        _updateBorder();
     }
 
     void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to)
@@ -193,7 +223,6 @@ namespace controls
     void Control::_updateBackground() const
     {
         auto v = view();
-        // ±³¾°
         if (_background_image)
         {
             auto image = std::make_shared<renderables::Image>(_background_image);
@@ -211,14 +240,39 @@ namespace controls
             v->insert(0, rectangle);
         }
         else {}
+    }
 
-        // ±ß¿ò
-        if(_border_colors)
+    void Control::_updateBorder() const
+    {
+        auto v = view();
+        if (_border && _border_colors)
         {
-            auto rectangle = std::make_shared<renderables::Rectangle>();
-            rectangle->setRect(borderBox());
-            rectangle->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x));
-            v->insert(0, rectangle);
+            if(std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
+                std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()))
+            {
+                auto item = std::make_shared<renderables::Rectangle>();
+                item->setRect(borderBox().expand(calc(_border) * -0.5f));
+                item->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x).width(calc(_border.value.x)));
+                v->insert(0, item);
+            }
+            else
+            {
+                auto border = calc(_border);
+                const core::align edges[4] = { core::align::left, core::align::top, core::align::right, core::align::bottom };
+                for(int32_t cnt = 0; cnt < 4; ++cnt)
+                {
+                    if (border[cnt] > 0 && _border_colors.value[cnt].visible())
+                    {
+                        auto path = std::make_shared<graphics::Path>();
+                        auto points = boderPoints(edges[cnt]);
+                        path->fromPoints(std::begin(points), std::end(points), true);
+
+                        auto item = std::make_shared<renderables::Path>(path);
+                        item->setPathStyle(graphics::PathStyle().stoke(_border_colors.value[cnt]));
+                        v->insert(0, item);
+                    }
+                }
+            }
         }
     }
 

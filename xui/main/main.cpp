@@ -92,22 +92,27 @@ int main()
     auto container = std::make_shared<controls::Container>();
     auto row = std::make_shared<controls::Row>();
     auto text = std::make_shared<controls::Text>(u8"ABCDEF这是一个很好的内容的G");
+    text->setBorder({ 2_px });
+    text->setBorderColors({colors::DimGray});
 
     auto image0 = std::make_shared<controls::Image>("applique0.jpg");
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
     image0->setImageFitting({ controls::image_fitting::repeat, controls::image_fitting::repeat });
-    image0->setPadding({ 0.2_em });
-    image0->setBorder({ 2_px });
-    image0->setBorderColors({ colors::Blue });
-    image0->setBackgroundColor(colors::Red);
+    image0->setPadding({ 1_em });
+    image0->setBorder({ 10_px, 20_px, 30_px, 40_px });
+    image0->setBorderColors({ colors::Blue, colors::Red, colors::DarkCyan, colors::Bisque });
+    //image0->setBackgroundColor(colors::Red);
 
     auto image = std::make_shared<controls::Image>("applique1.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
     image->setSize({20_em, 20_em});
     image->setImageFitting({ controls::image_fitting::repeat, controls::image_fitting::repeat });
+    image->setBorder({ 5_px });
+    image->setBorderColors({ colors::Azure });
+
     auto text2 = std::make_shared<controls::Text>("XYZOPQRST");
     text2->setBackgroundColor(colors::Green);
     text2->setPadding({1_em, 0.5_em});

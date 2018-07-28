@@ -14,6 +14,8 @@
 
 namespace graphics::skia
 {
+    // from : normal struct convert to Skia struct
+    // to : Skia struct convert to normal struct
     inline image::image_type to(SkEncodedImageFormat fmt)
     {
         switch(fmt)
@@ -34,7 +36,7 @@ namespace graphics::skia
         return SkIRect::MakeXYWH(rect.x, rect.y, rect.width, rect.height);
     }
 
-    inline SkEncodedImageFormat to(image::image_type fmt)
+    inline SkEncodedImageFormat from(image::image_type fmt)
     {
         switch (fmt)
         {
@@ -45,9 +47,12 @@ namespace graphics::skia
         }
     }
 
-    inline core::si32i & size(SkISize & sksize) { return *(core::si32i *)&sksize; }
-    inline const core::si32i & size(const SkISize & sksize) { return *(const core::si32i *)&sksize; }
-
+    inline core::si32i & to(SkISize & sksize) { return *(core::si32i *)&sksize; }
+    inline const core::si32i & to(const SkISize & sksize) { return *(const core::si32i *)&sksize; }
+    inline SkPoint from(const core::pt32f & pos)
+    {
+        return { pos.x, pos.y };
+    }
     inline SkPaint::Style from(PathMode style)
     {
         if (style == PathMode::Stroke)

@@ -69,7 +69,7 @@
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/effects</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -101,6 +101,7 @@
     <ClCompile Include="controls\component\Scene.cpp" />
     <ClCompile Include="controls\Container.cpp" />
     <ClCompile Include="controls\Element.cpp" />
+    <ClCompile Include="controls\renderables\Path.cpp" />
     <ClCompile Include="controls\renderables\Text.cpp" />
     <ClCompile Include="controls\Row.cpp" />
     <ClCompile Include="controls\Text.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="graphics\Bitmap.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="graphics\Path.cpp" />
     <ClCompile Include="graphics\PathStyle.cpp" />
     <ClCompile Include="graphics\skia\SkShaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -167,6 +169,7 @@
     <ClInclude Include="controls\component\Scene.h" />
     <ClInclude Include="controls\Container.h" />
     <ClInclude Include="controls\Element.h" />
+    <ClInclude Include="controls\renderables\Path.h" />
     <ClInclude Include="controls\renderables\Text.h" />
     <ClInclude Include="controls\Row.h" />
     <ClInclude Include="controls\Text.h" />
@@ -211,6 +214,7 @@
     <ClInclude Include="core\system.h" />
     <ClInclude Include="core\unicode.h" />
     <ClInclude Include="core\unit.h" />
+    <ClInclude Include="core\utils.h" />
     <ClInclude Include="core\vec2.h" />
     <ClInclude Include="core\vec3.h" />
     <ClInclude Include="core\vec4.h" />
@@ -225,6 +229,7 @@
     <ClInclude Include="graphics\image\image.h" />
     <ClInclude Include="graphics\Graphics.h" />
     <ClInclude Include="graphics\Bitmap.h" />
+    <ClInclude Include="graphics\Path.h" />
     <ClInclude Include="graphics\PathStyle.h" />
     <ClInclude Include="graphics\skia\skia.h" />
     <ClInclude Include="graphics\skia\SkShaper.h" />

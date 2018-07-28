@@ -32,7 +32,7 @@ namespace graphics
         SkBitmap bitmap;
         _native->asLegacyBitmap(&bitmap);
         SkFILEWStream stream(path.c_str());
-        return SkEncodeImage(&stream, bitmap, skia::to(type), quality) ? core::error_ok : core::error_inner;
+        return SkEncodeImage(&stream, bitmap, skia::from(type), quality) ? core::error_ok : core::error_inner;
     }
 
     int32_t Image::width() const

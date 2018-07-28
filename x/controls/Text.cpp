@@ -36,9 +36,8 @@ namespace controls
         Control::enterScene(scene);
     }
 
-    void Text::update()
+    void Text::updateContent()
     {
-        Control::update();
         _confirmBlob();
         if(_textBlob)
         {

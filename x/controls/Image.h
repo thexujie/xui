@@ -19,8 +19,7 @@ namespace controls
         core::si32f contentSize() const;
 
         core::si32f _imageSize() const;
-        virtual void layoutContent();
-        virtual void update();
+        virtual void updateContent();
 
     public:
         void enteringScene(std::shared_ptr<component::Scene> & scene) override;

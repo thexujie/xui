@@ -19,7 +19,7 @@ namespace graphics
 
         bitmap_buffer buffer = {};
         buffer.data = static_cast<byte_t *>(_native->getPixels());
-        buffer.size = skia::size(_native->dimensions());
+        buffer.size = skia::to(_native->dimensions());
         buffer.strike = 4;
         buffer.pitch = static_cast<int32_t>(_native->rowBytes());
         return buffer;
@@ -29,7 +29,7 @@ namespace graphics
     {
         if (!_native)
             return {};
-        return skia::size(_native->dimensions());
+        return skia::to(_native->dimensions());
     }
 
     core::error Bitmap::Save(std::string path, image::image_type type, int32_t quality)
@@ -41,6 +41,6 @@ namespace graphics
             type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
 
         SkFILEWStream stream(path.c_str());
-        return SkEncodeImage(&stream, *_native, skia::to(type), quality) ? core::error_ok : core::error_inner;
+        return SkEncodeImage(&stream, *_native, skia::from(type), quality) ? core::error_ok : core::error_inner;
     }
 }

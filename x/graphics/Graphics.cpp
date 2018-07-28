@@ -4,6 +4,8 @@
 #include "skia/SkShaper.h"
 #include <SkScalar.h>
 #include <SkTextBlob.h>
+#include <SkPathEffect.h>
+#include <SkDashPathEffect.h>
 
 namespace graphics
 {
@@ -93,6 +95,20 @@ namespace graphics
         SkPaint paint;
         style.apply(paint);
         _native->drawRoundRect({ rect.x, rect.y, rect.right(), rect.bottom()}, rx, ry, paint);
+    }
+
+    void Graphics::drawPath(const std::shared_ptr<graphics::Path> & path, const PathStyle & style)
+    {
+        if (!_native)
+            return;
+
+        SkPaint paint;
+        paint.setStrokeCap(SkPaint::kRound_Cap);
+        SkScalar intervals[] = { 10, 10 };
+        paint.setPathEffect(SkDashPathEffect::Make(intervals, SK_ARRAY_COUNT(intervals), 1));
+
+        style.apply(paint);
+        _native->drawPath(path->native(), paint);
     }
 
     void Graphics::drawString(const std::string & str, core::pt32f point, const StringFormat & format)

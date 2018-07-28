@@ -29,8 +29,11 @@ namespace core
         vec4(const vec4 & another)
             : x(another.x), y(another.y), cx(another.cx), cy(another.cy) { }
 
-        const T right() const { return x + cx; }
-        const T bottom() const { return y + cy; }
+        T left() const { return x; }
+        T top() const { return y; }
+        T right() const { return x + cx; }
+        T bottom() const { return y + cy; }
+
         const T centerX() const { return x + cx / 2; }
         const T centerY() const { return y + cy / 2; }
         void setLeft(T val) { x = val; }
@@ -122,6 +125,11 @@ namespace core
         vec4 expand(T expand) const
         {
             return vec4(x - expand, y - expand, cx + expand * 2, cy + expand * 2);
+        }
+
+        vec4 expand(const vec4 & bound) const
+        {
+            return vec4(x - bound.bleft, y - bound.btop, cx + bound.bleft + bound.bright, cy + bound.btop + bound.bbottom);
         }
 
         vec4 expand(const T & expandX, const T & expandY) const
@@ -364,8 +372,10 @@ namespace core
             else
                 return x == another.x && y == another.y && cx == another.cx && cy == another.cy;
         }
-
         bool operator !=(const vec4 & another) const { return !operator==(another); }
+
+        const T & operator[](int32_t index) const { return arr[index % 4]; }
+         T & operator[](int32_t index) { return arr[index % 4]; }
 
         template<typename RT2>
         explicit operator vec4<RT2>() const
@@ -376,8 +386,6 @@ namespace core
     public:
         union
         {
-            T at[4];
-
             struct
             {
                 //! ¾ØÐÎµÄÎ»ÖÃ¡£
@@ -448,6 +456,8 @@ namespace core
                     };
                 };
             };
+
+            std::array<T, 4> arr;
         };
     };
 
