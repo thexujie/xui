@@ -5,22 +5,25 @@
 
 namespace controls
 {
+    enum class layout_step
+    {
+        // 根据父控件大小来计算自己的大小
+        parent = 0,
+        // 根据最佳尺寸来计算自己的大小
+        preffer,
+        // 
+        layout
+    };
+
     class LayoutState
     {
-        enum class step
-        {
-            size = 0,
-            pos,
-        };
     public:
-        step step()
-        {
-            return step::size;
-        }
-        core::pt32f currPos()
-        {
-            return {};
-        }
+        bool finish() const { return !_numInvalid; }
+
+
+    private:
+        layout_step _step = layout_step::parent;
+        int32_t _numInvalid = 0;
     };
 
     class Control : public std::enable_shared_from_this<Control>
@@ -36,10 +39,13 @@ namespace controls
         void setSize(const core::vec2<core::unit_value<float32_t>> & size) { _size = size; }
         const core::vec2<core::unit_value<float32_t>> & size() const { return _size; }
         void setMinSize(const core::unit_value<core::si32f> & minSize);
-        core::unit_value<core::si32f> minSize() const { return _minSize; }
+        const core::vec2<core::unit_value<float32_t>> & minSize() const { return _minSize; }
         void setMaxSize(const core::unit_value<core::si32f> & minSize);
-        core::unit_value<core::si32f> maxSize() const { return _maxSize; }
+        const core::vec2<core::unit_value<float32_t>> & maxSize() const { return _maxSize; }
 
+        // expectSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
+        core::si32f expectSize() const;
+        virtual core::si32f expectContentSize() const { return core::si32f(); }
         std::shared_ptr<View> view() const;
         std::shared_ptr<component::Scene> scene() const { return _scene.lock(); }
         void setParent(std::shared_ptr<Control> parent) { _parent = parent; }
@@ -59,10 +65,6 @@ namespace controls
         core::vec2f calc(const core::vec2<core::unit_value<float32_t>> & value) const;
         core::vec4f calc(const core::vec4<core::unit_value<float32_t>> & value) const;
 
-        float32_t map(const core::unit_value<float32_t> & value, float32_t ref) const;
-        core::vec2<float32_t> map(const core::vec2<core::unit_value<float32_t>> & size) const;
-        core::vec4<float32_t> map(const core::vec4<core::unit_value<float32_t>> & rect) const;
-
        core::rc32f borderBox() const;
        core::rc32f paddingBox() const;
        core::rc32f contentBox() const;
@@ -80,7 +82,7 @@ namespace controls
         virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
         virtual void leaveScene(std::shared_ptr<component::Scene> & scene);
 
-        virtual void layout(const core::rc32f & rect);
+        virtual void layout(LayoutState & state, const core::rc32f & rect);
 
         virtual void update();
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
@@ -88,8 +90,9 @@ namespace controls
     public:
         core::event<void(const core::rc32f & from, const core::rc32f & to)> rectChanged;
 
-    private:
+    protected:
         void _updateBackground() const;
+        void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:
         std::weak_ptr<component::Scene> _scene;
@@ -104,11 +107,13 @@ namespace controls
         attribute<core::vec2<core::unit_value<float32_t>>> _pos;
         attribute<core::vec2<core::unit_value<float32_t>>> _size;
         attribute<core::vec4<core::unit_value<float32_t>>> _paddding;
+        attribute<core::vec4<core::unit_value<float32_t>>> _border_inner;
+        attribute<core::vec4<core::unit_value<float32_t>>> _border_outter;
         attribute<core::vec4<core::unit_value<float32_t>>> _margin;
+        attribute<core::vec2<core::unit_value<float32_t>>> _minSize;
+        attribute<core::vec2<core::unit_value<float32_t>>> _maxSize;
 
         attribute<graphics::font> _font;
-        core::unit_value<core::si32f> _minSize;
-        core::unit_value<core::si32f> _maxSize;
 
         // border
         // border 不接受 百分比 单位
@@ -123,7 +128,7 @@ namespace controls
         position_origin _background_position;
         attribute<core::vec2<core::unit_value<float32_t>>> _background_size;
         image_repeat _background_repeat = image_repeat::repeat;
-        control_box _background_origin = control_box::padding_box;
+        control_box _background_box = control_box::padding_box;
 
         // 布局之后
         core::rc32f _view_rect;

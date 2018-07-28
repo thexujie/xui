@@ -24,8 +24,7 @@
 		<DisplayString Condition="unit==0">{value} px</DisplayString>
 		<DisplayString Condition="unit==1">{value} em</DisplayString>
 		<DisplayString Condition="unit==2">{value} pt</DisplayString>
-		<DisplayString Condition="unit==3">{value * 100} %</DisplayString>
-		<DisplayString Condition="unit==4">{value} dot</DisplayString>
+		<DisplayString Condition="unit==3">{value} dot</DisplayString>
 	</Type>
 
 	<Type Name="graphics::font">

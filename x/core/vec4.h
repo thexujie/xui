@@ -46,7 +46,13 @@ namespace core
         vec2<T> bottomCenter() const { return vec2<T>(x + cx / 2, y + cy); }
         vec2<T> center() const { return vec2<T>(x + cx / 2, y + cy / 2); }
 
-        vec2<T> bsize() const { return vec2<T>(x + cx, y + cy); }
+        vec2<T> bleftTop() const { return vec2<T>(bleft, btop); }
+        vec2<T> brightTop() const { return vec2<T>(bright, btop); }
+        vec2<T> brightBottom() const { return vec2<T>(bright, bbottom); }
+        vec2<T> bleftBottom() const { return vec2<T>(bleft, bbottom); }
+        T bwidth() const { return bleft + bright; }
+        T bheight() const { return btop + bbottom; }
+        vec2<T> bsize() const { return vec2<T>(bleft + bright, btop + bbottom); }
 
         vec4 & operator =(const vec4 & rect)
         {

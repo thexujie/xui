@@ -33,6 +33,11 @@ namespace controls
         _image_size = size;
     }
 
+    core::si32f Image::expectContentSize() const
+    {
+        return _image ? _image->size().to<float32_t>() : core::si32f();
+    }
+
     core::si32f Image::_imageSize() const
     {
         if (!_image_size)
@@ -51,7 +56,7 @@ namespace controls
                 _size.value.cy = core::unit_dot(_image->height());
             }
             else {}
-            return map(_size);
+            return calc(_size);
         }
     }
 

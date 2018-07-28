@@ -10,8 +10,6 @@ namespace core
         em,
         // 点
         pt,
-        //百分比
-        per,
         //真实像素
         dot,
     };
@@ -46,15 +44,18 @@ namespace core
         unit_value<T> & operator *= (const T & ratio) const { value *= ratio;  return *this; }
         unit_value<T> & operator /= (const T & ratio) const { value *= ratio;  return *this; }
 
+        bool avi() const { return !std::isnan(value); }
         bool nan() const { return std::isnan(value); }
 
         T value;
         core::unit unit = core::unit::px;
     };
+
+    typedef unit_value<float32_t> dimensionf;
+
     inline unit_value<float32_t> unit_px(float32_t val) { return unit_value<float32_t>(val, core::unit::px); }
     inline unit_value<float32_t> unit_em(float32_t val) { return unit_value<float32_t>(val, core::unit::em); }
     inline unit_value<float32_t> unit_pt(float32_t val) { return unit_value<float32_t>(val, core::unit::pt); }
-    inline unit_value<float32_t> unit_per(float32_t val) { return unit_value<float32_t>(val, core::unit::per); }
     inline unit_value<float32_t> unit_dot(float32_t val) { return unit_value<float32_t>(val, core::unit::dot); }
 
     inline static const unit_value<float32_t> auto_value = unit_value<float32_t>(std::nan("0"), core::unit::px);
@@ -76,11 +77,6 @@ namespace core
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::pt);
         }
 
-        constexpr unit_value<float32_t> operator "" _per(unsigned long long  val)
-        {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::per);
-        }
-
         constexpr unit_value<float32_t> operator "" _dot(unsigned long long  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::dot);
@@ -99,11 +95,6 @@ namespace core
         constexpr unit_value<float32_t> operator "" _pt(long double  val)
         {
             return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::pt);
-        }
-
-        constexpr unit_value<float32_t> operator "" _per(long double  val)
-        {
-            return unit_value<float32_t>(static_cast<float32_t>(val), core::unit::per);
         }
 
         constexpr unit_value<float32_t> operator "" _dot(long double  val)

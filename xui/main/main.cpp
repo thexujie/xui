@@ -93,6 +93,7 @@ int main()
     auto row = std::make_shared<controls::Row>();
     auto text = std::make_shared<controls::Text>(u8"ABCDEF这是一个很好的内容的G");
     auto image = std::make_shared<controls::Image>("480.png");
+    image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
     auto text2 = std::make_shared<controls::Text>("XYZOPQRST");
 
@@ -102,6 +103,9 @@ int main()
     row->addControl(text2);
     row->enteringScene(scene);
     row->enterScene(scene);
+
+    auto size = row->expectSize();
+
     row->layout(rc32f());
     row->update();
     scene->render(graphics);

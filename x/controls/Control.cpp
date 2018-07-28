@@ -5,28 +5,32 @@
 
 namespace controls
 {
-    Control::Control()
-    {
-        
-    }
-    Control::~Control()
-    {
-        
-    }
+    Control::Control() { }
+    Control::~Control() { }
 
-    void Control::setMinSize(const core::unit_value<core::si32f> & minSize)
+    core::si32f Control::expectSize() const
     {
-        _minSize = minSize;
-    }
+        // 如果设置了固定大小，直接返回即可
+        if (_size.aviliable() && _size.value.cx.avi() && _size.value.cy.avi())
+            return calc(_size.value);
 
-    void Control::setMaxSize(const core::unit_value<core::si32f> & minSize)
-    {
-        _maxSize = minSize;
+        core::si32f size = expectContentSize() + calc(_paddding).bsize() + calc(_border_inner).bsize();
+        if (_size.aviliable())
+        {
+            if (_size.value.cx.avi())
+                size.cx = calc(_size.value.cx);
+            else if (_size.value.cy.avi())
+                size.cy = calc(_size.value.cy);
+            else {}
+        }
+
+        _adjustSizeMinMax(size);
+        return size;
     }
 
     std::shared_ptr<View> Control::view() const
     {
-        if(!_view)
+        if (!_view)
             const_cast<std::shared_ptr<View> &>(_view) = std::make_shared<View>(const_cast<Control *>(this)->shared_from_this());
         return _view;
     }
@@ -86,61 +90,14 @@ namespace controls
         return { calc(value.x), calc(value.y), calc(value.cx), calc(value.cy) };
     }
 
-    float32_t Control::map(const core::unit_value<float32_t> & value, float32_t ref) const
-    {
-        auto s = scene();
-        if (!s)
-            return {};
-
-        switch (value.unit)
-        {
-        case core::unit::px:
-            return value.value * s->ratio();
-            break;
-        case core::unit::em:
-            return value.value * font().size * s->ratio();
-            break;
-        case core::unit::pt:
-            return value.value * 72.0f * s->ratio();
-            break;
-        case core::unit::per:
-            return value.value * ref;
-            break;
-        case core::unit::dot:
-            return value.value;
-            break;
-        default:
-            return value.value * s->ratio();
-        }
-    }
-
-    core::vec2<float32_t> Control::map(const core::vec2<core::unit_value<float32_t>> & size) const
-    {
-        auto s = scene();
-        auto p = parent();
-        if (!s || !p)
-            return {};
-
-        return { map(size.x, p->width()), map(size.y, p->height()) };
-    }
-
-    core::vec4<float32_t> Control::map(const core::vec4<core::unit_value<float32_t>> & rect) const
-    {
-        auto s = scene();
-        auto p = parent();
-        if (!s || !p)
-            return {};
-        return { map(rect.x, p->width()), map(rect.y, p->height()), map(rect.cx, p->height()), map(rect.cy, p->height()) };
-    }
-
     core::rc32f Control::borderBox() const
     {
-        return core::rc32f(_view_border.leftTop(), _view_rect.size - _view_border.bsize());
+        return core::rc32f(_view_rect.pos + _view_border.bleftTop(), _view_rect.size + _view_border.bsize());
     }
 
     core::rc32f Control::paddingBox() const
     {
-        return core::rc32f({}, _view_rect.size);
+        return core::rc32f(_view_rect.pos + _view_padding.bleftTop(), _view_rect.size - _view_padding.bsize());
     }
 
     core::rc32f Control::contentBox() const
@@ -150,7 +107,7 @@ namespace controls
 
     core::rc32f Control::box(control_box box) const
     {
-        switch(box)
+        switch (box)
         {
         case control_box::border_box: return borderBox();
         case control_box::padding_box: return paddingBox();
@@ -159,10 +116,7 @@ namespace controls
         }
     }
 
-    void Control::invalid()
-    {
-        
-    }
+    void Control::invalid() { }
 
     void Control::setBackgroundColor(core::color32 color)
     {
@@ -210,22 +164,20 @@ namespace controls
 
     void Control::leavingScene(std::shared_ptr<component::Scene> & scene)
     {
-        if(_view)
+        if (_view)
             scene->removeRenderable(_view);
         _scene.reset();
     }
 
-    void Control::leaveScene(std::shared_ptr<component::Scene> & scene)
-    {
-    }
+    void Control::leaveScene(std::shared_ptr<component::Scene> & scene) { }
 
-    void Control::layout(const core::rc32f & rect)
+    void Control::layout(LayoutState & state, const core::rc32f & rect)
     {
         auto p = parent();
-        if(rect.empty())
+        if (rect.empty())
         {
             if (_size.aviliable())
-                _view_rect.size = { map(_size.value.x, p ? p->width() : 0), map(_size.value.y, p ? p->height() : 0) };
+                _view_rect.size = { calc(_size.value.cx), calc(_size.value.cy) };
             else
                 _view_rect.size = contentSize() + _view_padding.bsize() + _view_border.bsize();
         }
@@ -237,13 +189,13 @@ namespace controls
                 _view_rect.pos = rect.pos;
                 break;
             case position_origin::absolute:
-                _view_rect.pos = p ? p->map(_position.value) : core::vec2f();
+                _view_rect.pos = p ? p->calc(_position.value) : core::vec2f();
                 break;
             case position_origin::fixed:
-                _view_rect.pos = p ? p->map(_position.value) : core::vec2f();
+                _view_rect.pos = p ? p->calc(_position.value) : core::vec2f();
                 break;
             case position_origin::relative:
-                _view_rect.pos = rect.pos + map(_position.value);
+                _view_rect.pos = rect.pos + calc(_position.value);
             case position_origin::sticky:
                 break;
             default:
@@ -267,22 +219,57 @@ namespace controls
     void Control::_updateBackground() const
     {
         auto v = view();
-        if(_background_image)
+        if (_background_image)
         {
             auto image = std::make_shared<renderables::Image>(_background_image);
-            image->setRect(box(_background_origin));
-            if(_background_size.aviliable())
-                image->setImageSize(map(_background_size));
+            image->setRect(box(_background_box));
+            if (_background_size.aviliable())
+                image->setImageSize(calc(_background_size));
             image->setRepeat(_background_repeat);
             v->insert(0, image);
         }
-        else if(_background_color.visible())
+        else if (_background_color.visible())
         {
             auto rectangle = std::make_shared<renderables::Rectangle>();
-            rectangle->setRect(box(_background_origin));
+            rectangle->setRect(box(_background_box));
             rectangle->setPathStyle(graphics::PathStyle().fill(_background_color));
             v->insert(0, rectangle);
         }
         else {}
+    }
+
+    void Control::_adjustSizeMinMax(core::si32f & size) const
+    {
+        if (_minSize.aviliable())
+        {
+            if (_minSize.value.cx.avi())
+            {
+                float32_t val = calc(_minSize.value.cx);
+                if (size.cx < val)
+                    size.cx = val;
+            }
+            if (_minSize.value.cy.avi())
+            {
+                float32_t val = calc(_minSize.value.cy);
+                if (size.cy < val)
+                    size.cy = val;
+            }
+        }
+
+        if (_maxSize.aviliable())
+        {
+            if (_maxSize.value.cx.avi())
+            {
+                float32_t val = calc(_maxSize.value.cx);
+                if (size.cx > val)
+                    size.cx = val;
+            }
+            if (_maxSize.value.cy.avi())
+            {
+                float32_t val = calc(_maxSize.value.cy);
+                if (size.cy > val)
+                    size.cy = val;
+            }
+        }
     }
 }

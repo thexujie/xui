@@ -24,7 +24,7 @@ namespace core
             h += _cy * 2;
         }
 
-        void set_empty()
+        void clear()
         {
             w = 0;
             h = 0;

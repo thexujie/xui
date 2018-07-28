@@ -15,6 +15,18 @@
 		<button style="vtab" text="精彩回放设置" />
 	</col>
 
+	<stack width="80%">
+		<div>
+			<row row-align="center">
+				<text text="画质" />
+				<combobox width="70%" text="画质" />
+			</row>
+			<row row-align="center">
+				<text text="画质" />
+				<combobox width="70%" text="画质" />
+			</row>
+		</div>
+	</stack>
 	<col width="80%">
 		<div>根据您的硬件配置和上传<button size="25em 43em"></button>带宽选择合适的直播参数</div>
 		<grid cols="30% 70%">

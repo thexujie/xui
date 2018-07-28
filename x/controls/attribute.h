@@ -32,10 +32,9 @@ namespace controls
         bool operator >= (const T & value_) const { return value >= value_; }
         bool operator <= (const T & value_) const { return value <= value_; }
 
-
-    public:
-        bool _na = true;
         T value;
+    private:
+        bool _na = true;
     };
 
     enum class position_origin
