@@ -11,6 +11,6 @@ namespace controls
         virtual ~Element();
 
         void layout();
-        void layout(LayoutState & state, const core::si32f & size);
+        void layout(const core::si32f & size);
     };
 }

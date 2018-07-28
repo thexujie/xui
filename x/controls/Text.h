@@ -10,7 +10,7 @@ namespace controls
         Text(std::string text);
         ~Text();
 
-        core::si32f expectContentSize() const;
+        core::si32f contentSize() const;
         void enteringScene(std::shared_ptr<component::Scene> & scene) override;
         void enterScene(std::shared_ptr<component::Scene> & scene) override;
         void update() override;

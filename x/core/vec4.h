@@ -14,6 +14,12 @@ namespace core
     public:
         vec4() : x(), y(), cx(), cy() { }
 
+        vec4(T _t)
+            : x(_t), y(_t), cx(_t), cy(_t) { }
+
+        vec4(T _x, T _y)
+            : x(_x), y(_y), cx(_x), cy(_y) { }
+
         vec4(T _x, T _y, T _w, T _h)
             : x(_x), y(_y), cx(_w), cy(_h) { }
 

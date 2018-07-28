@@ -20,7 +20,7 @@ namespace controls
         
     }
 
-    core::si32f Text::expectContentSize() const
+    core::si32f Text::contentSize() const
     {
         _confirmBlob();
         return _textBlob ? _textBlob->size() : core::si32f();
@@ -29,13 +29,6 @@ namespace controls
     void Text::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
         Control::enteringScene(scene);
-        if (!_textBlob)
-        {
-            graphics::StringFormat format(font());
-            format.color(color());
-            _textBlob = std::make_shared<graphics::TextBlob>(_text, format);
-        }
-        _view_content_size = _textBlob->size();
     }
 
     void Text::enterScene(std::shared_ptr<component::Scene> & scene)
@@ -46,6 +39,7 @@ namespace controls
     void Text::update()
     {
         Control::update();
+        _confirmBlob();
         if(_textBlob)
         {
             auto v = view();

@@ -14,7 +14,9 @@ namespace controls::component
 
     public:
         float32_t ratio() const { return _ratio; }
-        const core::si32f size() const { return _size; }
+        const core::rc32f & rect() const { return _rect; }
+        const core::si32f & size() const { return _rect.size; }
+        const core::rc32f & viewRect() const { return _rect; }
 
     public:
         core::error addRenderable(std::shared_ptr<Renderable> component);
@@ -27,7 +29,7 @@ namespace controls::component
 
     protected:
         float32_t _ratio = 1.0f;
-        core::si32f _size;
+        core::rc32f _rect;
         std::list<std::shared_ptr<Renderable>> _renderables;
         std::list<std::shared_ptr<Interactable>> _interactables;
     };

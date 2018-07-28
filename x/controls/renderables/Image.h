@@ -13,13 +13,14 @@ namespace controls::renderables
 
         void setImage(std::shared_ptr<graphics::Image> image);
         void setImageSize(const core::si32f & size) { _image_size = size; }
-        void setRepeat(image_repeat repeat) { _repeat = repeat; }
+        void setImageFitting(const core::vec2<image_fitting> & fitting) { _fitting = fitting; }
 
         void render(graphics::Graphics & graphics) const;
 
     private:
         std::shared_ptr<graphics::Image> _image;
-        image_repeat _repeat;
+        core::vec2<image_fitting> _fitting;
+        core::rc32f _image_clip;
         core::si32f _image_size;
     };
 }

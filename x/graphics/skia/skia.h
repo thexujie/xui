@@ -48,7 +48,7 @@ namespace graphics::skia
     inline core::si32i & size(SkISize & sksize) { return *(core::si32i *)&sksize; }
     inline const core::si32i & size(const SkISize & sksize) { return *(const core::si32i *)&sksize; }
 
-    inline SkPaint::Style to(PathMode style)
+    inline SkPaint::Style from(PathMode style)
     {
         if (style == PathMode::Stroke)
             return SkPaint::kStroke_Style;
@@ -58,7 +58,7 @@ namespace graphics::skia
         return SkPaint::kStrokeAndFill_Style;
     }
 
-    inline SkMatrix to(const core::float3x2 & matrix)
+    inline SkMatrix from(const core::float3x2 & matrix)
     {
         return SkMatrix::MakeAll(matrix.sx, matrix.shx, matrix.tx, matrix.shy, matrix.sy, matrix.ty, 0, 0, 1);
     }

@@ -37,17 +37,24 @@ namespace controls
         bool _na = true;
     };
 
-    enum class position_origin
+    enum class image_fitting
+    {
+        none = 0,
+        scale,
+        repeat,
+    };
+
+    enum class layout_origin
     {
         // 默认位置
         layout = 0,
         // 相对于 parent 的位置
-        absolute,
+        parent,
         // 相对于 scene 的位置
-        fixed,
-        //相对与 layout 的位置
-        relative,
-        // 同 relative，如果超出 scene 则相对于 fixed
+        scene,
+        // 相对于 view 的位置
+        view,
+        // 同 layout，如果超出 scene 则相对于 view
         sticky,
     };
 
@@ -65,15 +72,6 @@ namespace controls
 
         mode mode = mode::not_set;
         core::unit_value<core::si32f> absolutive;
-    };
-
-    enum class image_repeat
-    {
-        repeat = 0,
-        repeat_x,
-        repeat_y,
-        repeat_none,
-        inherit,
     };
 
     enum class control_box

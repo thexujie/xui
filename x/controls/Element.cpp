@@ -18,7 +18,7 @@ namespace controls
     {
     }
 
-    void Element::layout(LayoutState & state, const core::si32f & size)
+    void Element::layout(const core::si32f & size)
     {
         
     }

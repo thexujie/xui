@@ -10,7 +10,7 @@ namespace controls
         Row();
         virtual ~Row();
 
-        core::si32f expectContentSize() const;
-        void layout(const core::rc32f & rect);
+        core::si32f contentSize() const;
+        void layout();
     };
 }

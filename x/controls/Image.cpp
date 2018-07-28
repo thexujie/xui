@@ -33,8 +33,10 @@ namespace controls
         _image_size = size;
     }
 
-    core::si32f Image::expectContentSize() const
+    core::si32f Image::contentSize() const
     {
+        if (_image_size.aviliable())
+            return calc(_image_size.value);
         return _image ? _image->size().to<float32_t>() : core::si32f();
     }
 
@@ -74,7 +76,7 @@ namespace controls
             auto item = std::make_shared<renderables::Image>(_image);
             item->setRect(contentBox());
             item->setImageSize(_imageSize());
-            item->setRepeat(_image_repeat);
+            item->setImageFitting(_image_fitting);
             v->insert(0, item);
         }
     }
@@ -82,7 +84,6 @@ namespace controls
     void Image::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
         Control::enteringScene(scene);
-        _view_content_size = _image ? _image->size().to<float32_t>() : core::si32f();
     }
 
     void Image::enterScene(std::shared_ptr<component::Scene> & scene)

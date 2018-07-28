@@ -15,61 +15,66 @@ namespace controls
         
     }
 
-    core::si32f Row::expectContentSize() const
+    core::si32f Row::contentSize() const
     {
         core::si32f size;
         float32_t margin = 0;
         for (auto & control : _controls)
         {
+            auto lo = control->layoutOrigin();
+            if (lo != layout_origin::layout && lo != layout_origin::sticky)
+                continue;
+
             auto m = control->margin();
             margin = std::max(margin, m.bleft);
             size.cx += margin;
-            auto esize = control->expectSize();
+            auto psize = control->prefferSize();
             margin = m.bright;
-            size.cx = size.cx + esize.cx;
-            size.cy = std::max(size.cy, esize.cy);
+            size.cx = size.cx + psize.cx;
+            size.cy = std::max(size.cy, psize.cy);
         }
         return size;
     }
 
-    void Row::layout(const core::rc32f & rect)
+    void Row::layout()
     {
-        LayoutState state;
-        Container::layout(state, rect);
-        if(rect.empty())
+        float32_t margin = 0;
+        core::si32f size = prefferSize();
+
+        core::rc32f rc;
+        rc.pos = paddingBox().leftTop();
+        rc.cy = size.cy;
+        for (auto & control : _controls)
         {
-            float32_t margin = 0;
-            core::si32f size;
-            size.clear();
-            margin = 0;
-            for (auto & control : _controls)
-            {
-                auto m = control->margin();
-                margin = std::max(margin, m.bleft);
-                size.cx += margin;
-                auto esize = control->expectSize();
-                margin = m.bright;
-                size.cx = size.cx + esize.cx;
-                size.cy = std::max(esize.cy, size.cy);
-            }
-            size.cx += margin;
+            auto m = control->margin();
+            auto ps = control->prefferSize();
+            auto lo = control->layoutOrigin();
 
-            core::rc32f rc;
-            rc.y = 0;
-            rc.cy = size.cy;
-            for (auto & control : _controls)
+            if (lo != layout_origin::layout && lo != layout_origin::sticky)
             {
-                auto m = control->margin();
-                margin = std::max(margin, m.bleft);
-                rc.x += margin;
-                rc.cx = control->width();
-                control->layout(state, rc);
-                margin = m.bright;
-                rc.x += rc.cx;
-                size.cy = std::max(control->height(), size.cy);
+                switch (lo)
+                {
+                case layout_origin::parent:
+                    control->layout(_rect, ps);
+                    break;
+                case layout_origin::scene:
+                    control->layout(scene()->rect(), ps);
+                    break;
+                case layout_origin::view:
+                    control->layout(scene()->viewRect(), ps);
+                    break;
+                default:
+                    break;
+                }
+                continue;
             }
 
-            _view_content_size = size;
+            margin = std::max(margin, m.bleft);
+            rc.x += margin;
+            rc.size = ps;
+            control->layout(rc, ps);
+            margin = m.bright;
+            rc.x += rc.cx;
         }
     }
 }

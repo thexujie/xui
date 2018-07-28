@@ -9,7 +9,7 @@ namespace graphics
     {
         paint.setColor(_color);
         paint.setStrokeWidth(_width);
-        paint.setStyle(skia::to(_mode));
+        paint.setStyle(skia::from(_mode));
         paint.setAntiAlias(_aa);
     }
 }

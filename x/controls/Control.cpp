@@ -8,13 +8,13 @@ namespace controls
     Control::Control() { }
     Control::~Control() { }
 
-    core::si32f Control::expectSize() const
+    core::si32f Control::prefferSize() const
     {
         // 如果设置了固定大小，直接返回即可
         if (_size.aviliable() && _size.value.cx.avi() && _size.value.cy.avi())
             return calc(_size.value);
 
-        core::si32f size = expectContentSize() + calc(_paddding).bsize() + calc(_border_inner).bsize();
+        core::si32f size = contentSize() + calc(_padding).bsize();
         if (_size.aviliable())
         {
             if (_size.value.cx.avi())
@@ -92,17 +92,17 @@ namespace controls
 
     core::rc32f Control::borderBox() const
     {
-        return core::rc32f(_view_rect.pos + _view_border.bleftTop(), _view_rect.size + _view_border.bsize());
+        return core::rc32f(_rect.pos + _view_border.bleftTop(), _rect.size + _view_border.bsize());
     }
 
     core::rc32f Control::paddingBox() const
     {
-        return core::rc32f(_view_rect.pos + _view_padding.bleftTop(), _view_rect.size - _view_padding.bsize());
+        return core::rc32f(_rect.pos, _rect.size);
     }
 
     core::rc32f Control::contentBox() const
     {
-        return core::rc32f(_view_rect.pos, _view_rect.size);
+        return core::rc32f(_rect.pos + _view_padding.bleftTop(), _rect.size - _view_padding.bsize());
     }
 
     core::rc32f Control::box(control_box box) const
@@ -159,7 +159,7 @@ namespace controls
         _view_border.bright = calc(_border_right.width);
         _view_border.bbottom = calc(_border_bottom.width);
         _view_margin = calc(_margin);
-        _view_padding = calc(_paddding);
+        _view_padding = calc(_padding);
     }
 
     void Control::leavingScene(std::shared_ptr<component::Scene> & scene)
@@ -171,38 +171,12 @@ namespace controls
 
     void Control::leaveScene(std::shared_ptr<component::Scene> & scene) { }
 
-    void Control::layout(LayoutState & state, const core::rc32f & rect)
+    void Control::layout(const core::rc32f & rect, const core::si32f & size)
     {
         auto p = parent();
-        if (rect.empty())
-        {
-            if (_size.aviliable())
-                _view_rect.size = { calc(_size.value.cx), calc(_size.value.cy) };
-            else
-                _view_rect.size = contentSize() + _view_padding.bsize() + _view_border.bsize();
-        }
-        else
-        {
-            switch (_layout_origin)
-            {
-            case position_origin::layout:
-                _view_rect.pos = rect.pos;
-                break;
-            case position_origin::absolute:
-                _view_rect.pos = p ? p->calc(_position.value) : core::vec2f();
-                break;
-            case position_origin::fixed:
-                _view_rect.pos = p ? p->calc(_position.value) : core::vec2f();
-                break;
-            case position_origin::relative:
-                _view_rect.pos = rect.pos + calc(_position.value);
-            case position_origin::sticky:
-                break;
-            default:
-                break;
-            }
-            //view()->setTransform(core::float3x2::translate(_view_rect.x, _view_rect.y));
-        }
+        _rect.pos = rect.pos;
+        _rect.size = size;
+        //view()->setTransform(core::float3x2::translate(_rect.x, _rect.y));
     }
 
     void Control::update()
@@ -219,13 +193,14 @@ namespace controls
     void Control::_updateBackground() const
     {
         auto v = view();
+        // 背景
         if (_background_image)
         {
             auto image = std::make_shared<renderables::Image>(_background_image);
             image->setRect(box(_background_box));
             if (_background_size.aviliable())
                 image->setImageSize(calc(_background_size));
-            image->setRepeat(_background_repeat);
+            image->setImageFitting(_background_fitting);
             v->insert(0, image);
         }
         else if (_background_color.visible())
@@ -236,6 +211,15 @@ namespace controls
             v->insert(0, rectangle);
         }
         else {}
+
+        // 边框
+        if(_border_colors)
+        {
+            auto rectangle = std::make_shared<renderables::Rectangle>();
+            rectangle->setRect(borderBox());
+            rectangle->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x));
+            v->insert(0, rectangle);
+        }
     }
 
     void Control::_adjustSizeMinMax(core::si32f & size) const

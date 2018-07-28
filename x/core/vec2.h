@@ -8,6 +8,8 @@ namespace core
     public:
         vec2() : x(), y() { }
 
+        vec2(ValT _t) : x(_t), y(_t) { }
+
         vec2(ValT _x, ValT _y) : x(_x), y(_y) { }
 
         vec2(const vec2 & vec) : x(vec.x), y(vec.y) { }

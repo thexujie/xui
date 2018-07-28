@@ -23,12 +23,36 @@ namespace graphics
         _native->clear(color);
     }
 
+    void Graphics::save()
+    {
+        if (!_native)
+            return;
+
+        _native->save();
+    }
+
+    void Graphics::restore()
+    {
+        if (!_native)
+            return;
+
+        _native->restore();
+    }
+
+    void Graphics::setClipRect(const core::rc32f & rect)
+    {
+        if (!_native)
+            return;
+
+        _native->clipRect(skia::from(rect), true);
+    }
+
     void Graphics::setMatrix(const core::float3x2 & matrix)
     {
         if (!_native)
             return;
 
-        _native->setMatrix(skia::to(matrix));
+        _native->setMatrix(skia::from(matrix));
     }
 
     void Graphics::drawLine(core::pt32f start, core::pt32f end, const PathStyle & style)
