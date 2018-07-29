@@ -95,17 +95,19 @@ int main()
     text->setBorder({ 2_px });
     text->setBorderColors({colors::DimGray});
 
-    auto image0 = std::make_shared<controls::Image>("applique0.jpg");
+    auto image0 = std::make_shared<controls::Image>("img00.png");
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
     image0->setImageFitting({ controls::image_fitting::repeat, controls::image_fitting::repeat });
     image0->setPadding({ 1_em });
     image0->setBorder({ 10_px, 20_px, 30_px, 40_px });
-    image0->setBorderColors({ colors::Blue, colors::Red, colors::DarkCyan, colors::Bisque });
+    //image0->setBorder({ 40_px });
+    image0->setBorderColors({ colors::Blue, colors::Red, colors::DarkCyan, colors::Green });
+    image0->setBorderStyles({ graphics::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
 
-    auto image = std::make_shared<controls::Image>("applique1.jpg");
+    auto image = std::make_shared<controls::Image>("40612.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
     image->setSize({20_em, 20_em});

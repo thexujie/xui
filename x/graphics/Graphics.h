@@ -26,7 +26,8 @@ namespace graphics
         void clear(core::color32 color);
         void save();
         void restore();
-        void setClipRect(const core::rc32f & rect);
+        void setClipRect(const core::rc32f & rect, bool aa = true);
+        void setClipPath(std::shared_ptr<graphics::Path> path, bool aa = true);
         void setMatrix(const core::float3x2 & matrix);
 
         void drawLine(core::pt32f start, core::pt32f end, const PathStyle & style);

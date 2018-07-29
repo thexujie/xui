@@ -101,7 +101,9 @@
     <ClCompile Include="controls\component\Scene.cpp" />
     <ClCompile Include="controls\Container.cpp" />
     <ClCompile Include="controls\Element.cpp" />
+    <ClCompile Include="controls\renderables\Line.cpp" />
     <ClCompile Include="controls\renderables\Path.cpp" />
+    <ClCompile Include="controls\renderables\Shape.cpp" />
     <ClCompile Include="controls\renderables\Text.cpp" />
     <ClCompile Include="controls\Row.cpp" />
     <ClCompile Include="controls\Text.cpp" />
@@ -169,7 +171,9 @@
     <ClInclude Include="controls\component\Scene.h" />
     <ClInclude Include="controls\Container.h" />
     <ClInclude Include="controls\Element.h" />
+    <ClInclude Include="controls\renderables\Line.h" />
     <ClInclude Include="controls\renderables\Path.h" />
+    <ClInclude Include="controls\renderables\Shape.h" />
     <ClInclude Include="controls\renderables\Text.h" />
     <ClInclude Include="controls\Row.h" />
     <ClInclude Include="controls\Text.h" />

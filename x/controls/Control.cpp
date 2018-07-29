@@ -3,6 +3,7 @@
 #include "renderables/Image.h"
 #include "renderables/Rectangle.h"
 #include "renderables/Path.h"
+#include "renderables/Line.h"
 
 namespace controls
 {
@@ -91,19 +92,24 @@ namespace controls
         return { calc(value.x), calc(value.y), calc(value.cx), calc(value.cy) };
     }
 
-    core::rc32f Control::borderBox() const
-    {
-        return core::rc32f(_rect.pos + _view_border.bleftTop(), _rect.size + _view_border.bsize());
-    }
-
-    core::rc32f Control::paddingBox() const
+    core::rc32f Control::box() const
     {
         return core::rc32f(_rect.pos, _rect.size);
     }
 
+    core::rc32f Control::borderBox() const
+    {
+        return core::rc32f(_rect.pos + calc(_border).bleftTop(), _rect.size - calc(_border).bsize());
+    }
+
+    core::rc32f Control::paddingBox() const
+    {
+        return core::rc32f(_rect.pos + calc(_padding).bleftTop(), _rect.size - calc(_padding).bsize());
+    }
+
     core::rc32f Control::contentBox() const
     {
-        return core::rc32f(_rect.pos + _view_padding.bleftTop(), _rect.size - _view_padding.bsize());
+        return paddingBox();
     }
 
     core::rc32f Control::box(control_box box) const
@@ -121,26 +127,49 @@ namespace controls
 
     std::array<core::pt32f, 4> Control::boderPoints(core::align edge) const
     {
-        auto bbox = borderBox();
+        auto bbox = box();
         auto border = calc(_border);
         switch (edge)
         {
         case core::align::left:
             return { bbox.leftBottom(), bbox.leftTop(),
-            { bbox.left() + border.bleft * 0.5f, bbox.top() + border.bleft * 0.5f },
-            { bbox.left() + border.bleft * 0.5f, bbox.bottom() - border.bleft * 0.5f } };
+            { bbox.left() + border.bleft * 0.5f, bbox.top() + border.btop * 0.5f },
+            { bbox.left() + border.bleft * 0.5f, bbox.bottom() - border.bbottom * 0.5f } };
         case core::align::top:
             return { bbox.leftTop(), bbox.rightTop(),
-            { bbox.right() - border.btop * 0.5f, bbox.top() + border.btop * 0.5f },
-            { bbox.left() + border.btop * 0.5f, bbox.top() + border.btop * 0.5f } };
+            { bbox.right() - border.bright * 0.5f, bbox.top() + border.btop * 0.5f },
+            { bbox.left() + border.bleft * 0.5f, bbox.top() + border.btop * 0.5f } };
         case core::align::right:
             return { bbox.rightTop(), bbox.rightBottom(),
-            { bbox.right() - border.bright * 0.5f, bbox.bottom() - border.bright * 0.5f },
-            { bbox.right() - border.bright * 0.5f, bbox.top() + border.bright * 0.5f } };
+            { bbox.right() - border.bright * 0.5f, bbox.bottom() - border.bbottom * 0.5f },
+            { bbox.right() - border.bright * 0.5f, bbox.top() + border.btop * 0.5f } };
         case core::align::bottom:
             return { bbox.rightBottom(), bbox.leftBottom(),
-            { bbox.left() + border.bbottom * 0.5f, bbox.bottom() - border.bbottom * 0.5f },
-            { bbox.right() - border.bbottom * 0.5f, bbox.bottom() - border.bbottom * 0.5f } };
+            { bbox.left() + border.bleft * 0.5f, bbox.bottom() - border.bbottom * 0.5f },
+            { bbox.right() - border.bright * 0.5f, bbox.bottom() - border.bbottom * 0.5f } };
+        default:
+            return {};
+        }
+    }
+
+    std::array<core::pt32f, 2> Control::boderLine(core::align edge) const
+    {
+        auto bbox = box();
+        auto border = calc(_border);
+        switch (edge)
+        {
+        case core::align::left:
+            return {core::pt32f{ bbox.left() + border.bleft * 0.5f, bbox.bottom() },
+                core::pt32f{ bbox.left() + border.bleft * 0.5f, bbox.top() } };
+        case core::align::top:
+            return { core::pt32f{ bbox.left(), bbox.top() + border.btop * 0.5f },
+                core::pt32f{ bbox.right(), bbox.top() + border.btop * 0.5f } };
+        case core::align::right:
+            return { core::pt32f{ bbox.right() - border.bright * 0.5f, bbox.top() },
+                core::pt32f{ bbox.right() - border.bright * 0.5f, bbox.bottom() } };
+        case core::align::bottom:
+            return { core::pt32f{ bbox.right(), bbox.bottom() - border.bbottom * 0.5f },
+                core::pt32f{ bbox.left(), bbox.bottom() - border.bbottom * 0.5f } };
         default:
             return {};
         }
@@ -182,12 +211,6 @@ namespace controls
 
     void Control::enterScene(std::shared_ptr<component::Scene> & scene)
     {
-        _view_border.bleft = calc(_border_left.width);
-        _view_border.btop = calc(_border_top.width);
-        _view_border.bright = calc(_border_right.width);
-        _view_border.bbottom = calc(_border_bottom.width);
-        _view_margin = calc(_margin);
-        _view_padding = calc(_padding);
     }
 
     void Control::leavingScene(std::shared_ptr<component::Scene> & scene)
@@ -248,11 +271,12 @@ namespace controls
         if (_border && _border_colors)
         {
             if(std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
-                std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()))
+                std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
+                std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
             {
                 auto item = std::make_shared<renderables::Rectangle>();
-                item->setRect(borderBox().expand(calc(_border) * -0.5f));
-                item->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x).width(calc(_border.value.x)));
+                item->setRect(box().expand(calc(_border) * -0.5f));
+                item->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc(_border.value.x)));
                 v->insert(0, item);
             }
             else
@@ -265,10 +289,12 @@ namespace controls
                     {
                         auto path = std::make_shared<graphics::Path>();
                         auto points = boderPoints(edges[cnt]);
+                        auto line = boderLine(edges[cnt]);
                         path->fromPoints(std::begin(points), std::end(points), true);
 
-                        auto item = std::make_shared<renderables::Path>(path);
-                        item->setPathStyle(graphics::PathStyle().stoke(_border_colors.value[cnt]));
+                        auto item = std::make_shared<renderables::Line>(line[0], line[1]);
+                        item->setClipPath(path);
+                        item->setPathStyle(graphics::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]));
                         v->insert(0, item);
                     }
                 }

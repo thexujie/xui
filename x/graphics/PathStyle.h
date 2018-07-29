@@ -11,6 +11,21 @@ namespace graphics
         StrokeFill,
     };
 
+    enum class stroke_style
+    {
+        none = 0,
+        hidden,
+        dotted,
+        dashed,
+        solid,
+        double_,
+        groove,
+        ridge,
+        inset,
+        outset,
+        inherit,
+    };
+
     struct PathStyle
     {
         PathStyle()
@@ -41,9 +56,10 @@ namespace graphics
             return *this;
         }
 
-        PathStyle & stoke(core::color32 color)
+        PathStyle & stoke(core::color32 color, stroke_style stroke_style = stroke_style::solid)
         {
             _mode = PathMode::Stroke;
+            _stroke_style = stroke_style;
             _color = color;
             return *this;
         }
@@ -67,6 +83,7 @@ namespace graphics
         bool operator != (const PathStyle & another) const { return !operator==(another); }
 
         PathMode _mode = PathMode::Stroke;
+        stroke_style _stroke_style = stroke_style::none;
         float32_t _width = 1.0f;
         core::color32 _color = core::colors::Transparent;
         bool _aa = true;

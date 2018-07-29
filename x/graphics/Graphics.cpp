@@ -6,6 +6,8 @@
 #include <SkTextBlob.h>
 #include <SkPathEffect.h>
 #include <SkDashPathEffect.h>
+#include <SkDiscretePathEffect.h>
+#include <Sk2DPathEffect.h>
 
 namespace graphics
 {
@@ -41,12 +43,20 @@ namespace graphics
         _native->restore();
     }
 
-    void Graphics::setClipRect(const core::rc32f & rect)
+    void Graphics::setClipRect(const core::rc32f & rect, bool aa)
     {
         if (!_native)
             return;
 
-        _native->clipRect(skia::from(rect), true);
+        _native->clipRect(skia::from(rect), aa);
+    }
+
+    void Graphics::setClipPath(std::shared_ptr<graphics::Path> path, bool aa)
+    {
+        if (!_native)
+            return;
+
+        _native->clipPath(path->native(), aa);
     }
 
     void Graphics::setMatrix(const core::float3x2 & matrix)
@@ -103,10 +113,22 @@ namespace graphics
             return;
 
         SkPaint paint;
-        paint.setStrokeCap(SkPaint::kRound_Cap);
-        SkScalar intervals[] = { 10, 10 };
-        paint.setPathEffect(SkDashPathEffect::Make(intervals, SK_ARRAY_COUNT(intervals), 1));
-
+        {
+            SkScalar scale = 10.0f;
+            SkPath path;
+            static const int8_t pts[] = { 2, 2, 1, 3, 0, 3, 2, 1, 3, 1,
+                4, 0, 4, 1, 5, 1, 4, 2, 4, 3, 2, 5, 2, 4, 3, 3, 2, 3 };
+            path.moveTo(2 * scale, 3 * scale);
+            for (size_t i = 0; i < sizeof(pts) / sizeof(pts[0]); i += 2)
+            {
+                path.lineTo(pts[i] * scale, pts[i + 1] * scale);
+            }
+            path.close();
+            SkMatrix matrix = SkMatrix::MakeScale(4 * scale);
+            SkPaint paint;
+            paint.setPathEffect(SkPath2DPathEffect::Make(matrix, path));
+            paint.setAntiAlias(true);
+        }
         style.apply(paint);
         _native->drawPath(path->native(), paint);
     }

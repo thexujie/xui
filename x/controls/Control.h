@@ -40,13 +40,14 @@ namespace controls
         core::si32f dimension() const { return _rect.size; }
         float32_t width() const { return _rect.cx; }
         float32_t height() const { return _rect.cy; }
-        core::vec4f border() const { return _view_border; }
-        core::vec4f margin() const { return _view_margin; }
+        core::vec4f border() const { return calc(_border); }
+        core::vec4f margin() const { return calc(_margin); }
 
         float32_t calc(const core::dimensionf & value) const;
         core::vec2f calc(const core::vec2<core::dimensionf> & value) const;
         core::vec4f calc(const core::vec4<core::dimensionf> & value) const;
 
+       core::rc32f box() const;
        core::rc32f borderBox() const;
        core::rc32f paddingBox() const;
        core::rc32f contentBox() const;
@@ -62,8 +63,10 @@ namespace controls
         void setBorder(const core::vec4<core::dimensionf> & border) { _border = border; }
         void setPadding(const core::vec4<core::dimensionf> & padding) { _padding = padding; }
         void setBorderColors(const core::vec4<core::color32> & boderColors) { _border_colors = boderColors; }
+        void setBorderStyles(const core::vec4<graphics::stroke_style> & boderStyles) { _border_styles = boderStyles; }
         const core::vec4<core::color32> & boderColors() const { return _border_colors; }
         std::array<core::pt32f, 4> boderPoints(core::align edge) const;
+        std::array<core::pt32f, 2> boderLine(core::align edge) const;
 
         virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
         virtual void enterScene(std::shared_ptr<component::Scene> & scene);
@@ -100,18 +103,12 @@ namespace controls
         attribute<core::vec4<core::dimensionf>> _padding;
         attribute<core::vec4<core::dimensionf>> _border;
         attribute<core::vec4<core::color32>> _border_colors;
+        attribute<core::vec4<graphics::stroke_style>> _border_styles;
         attribute<core::vec4<core::dimensionf>> _margin;
         attribute<core::vec2<core::dimensionf>> _minSize;
         attribute<core::vec2<core::dimensionf>> _maxSize;
 
         attribute<graphics::font> _font;
-
-        // border
-        // border 不接受 百分比 单位
-        conntrol_border _border_left;
-        conntrol_border _border_top;
-        conntrol_border _border_right;
-        conntrol_border _border_bottom;
 
         // background
         core::color32 _background_color = core::colors::Auto;
@@ -119,13 +116,9 @@ namespace controls
         layout_origin _background_position;
         attribute<core::vec2<core::dimensionf>> _background_size;
         core::vec2<image_fitting> _background_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
-        control_box _background_box = control_box::padding_box;
+        control_box _background_box = control_box::border_box;
 
         // 布局之后
         core::rc32f _rect;
-        core::rc32f _view_rect;
-        core::vec4f _view_border;
-        core::vec4f _view_padding;
-        core::vec4f _view_margin;
     };
 }

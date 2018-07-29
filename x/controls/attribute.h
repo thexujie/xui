@@ -83,26 +83,4 @@ namespace controls
         // ÄÚÈÝ·½¿ò
         content_box,
     };
-
-    enum class border_style
-    {
-        none = 0,
-        hidden,
-        dotted,
-        dashed,
-        solid,
-        double_,
-        groove,
-        ridge,
-        inset,
-        outset,
-        inherit,
-    };
-
-    struct conntrol_border
-    {
-        core::dimensionf width;
-        border_style style;
-        core::color32 color;
-    };
 }
