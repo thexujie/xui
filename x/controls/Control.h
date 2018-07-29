@@ -75,6 +75,7 @@ namespace controls
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
+        virtual void layout() {}
         virtual void layout(const core::rc32f & rect, const core::si32f & size);
 
         virtual void update();

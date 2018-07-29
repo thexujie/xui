@@ -31,7 +31,7 @@ namespace controls
             auto psize = control->prefferSize();
             margin = m.bright;
             size.cx = size.cx + psize.cx;
-            size.cy = std::max(size.cy, psize.cy);
+            size.cy = std::max(size.cy, psize.cy + m.bheight());
         }
         return size;
     }
@@ -71,6 +71,7 @@ namespace controls
 
             margin = std::max(margin, m.bleft);
             rc.x += margin;
+            rc.y = m.btop;
             rc.size = ps;
             control->layout(rc, ps);
             margin = m.bright;

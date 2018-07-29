@@ -106,7 +106,7 @@ int main()
     image0->setBorderColors({ colors::Blue, colors::Red, colors::DarkCyan, colors::Green });
     image0->setBorderStyles({ graphics::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
-
+    image0->setMargin({0.5_em});
     auto image = std::make_shared<controls::Image>("40612.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });

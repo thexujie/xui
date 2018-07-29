@@ -227,6 +227,7 @@ namespace controls
         auto p = parent();
         _rect.pos = rect.pos;
         _rect.size = size;
+        layout();
         //view()->setTransform(core::float3x2::translate(_rect.x, _rect.y));
     }
 
