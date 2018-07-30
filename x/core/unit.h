@@ -61,7 +61,6 @@ namespace core
     inline static const dimensionf auto_value = dimensionf(std::nan("0"), core::unit::px);
     namespace unit_literals
     {
-
         constexpr dimensionf operator "" _px(unsigned long long  val)
         {
             return dimensionf(static_cast<float32_t>(val), core::unit::px);

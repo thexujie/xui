@@ -14,7 +14,7 @@ namespace controls
     {
         // 如果设置了固定大小，直接返回即可
         if (_size.aviliable() && _size.value.cx.avi() && _size.value.cy.avi())
-            return calc(_size.value);
+            return calc(_size.value) + calc(_padding).bsize();
 
         core::si32f size = contentSize() + calc(_padding).bsize();
         if (_size.aviliable())

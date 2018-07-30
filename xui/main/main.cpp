@@ -95,7 +95,7 @@ int main()
     text->setBorder({ 2_px });
     text->setBorderColors({colors::DimGray});
 
-    auto image0 = std::make_shared<controls::Image>("img00.png");
+    auto image0 = std::make_shared<controls::Image>("applique0.jpg");
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
@@ -107,7 +107,7 @@ int main()
     image0->setBorderStyles({ graphics::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
     image0->setMargin({0.5_em});
-    auto image = std::make_shared<controls::Image>("40612.jpg");
+    auto image = std::make_shared<controls::Image>("applique1.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
     image->setSize({20_em, 20_em});
