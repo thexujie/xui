@@ -64,8 +64,9 @@ namespace controls
     float32_t Control::calc(const core::dimensionf & value) const
     {
         auto s = scene();
-        if (!s)
-            return {};
+        auto p = parent();
+        if (!s || !p)
+            throw core::error_state;
 
         switch (value.unit)
         {
@@ -77,6 +78,8 @@ namespace controls
             return value.value * 72.0f * s->ratio();
         case core::unit::dot:
             return value.value;
+        case core::unit::per:
+            return value.value * p->width();
         default:
             return value.value * s->ratio();
         }
@@ -84,12 +87,67 @@ namespace controls
 
     core::vec2f Control::calc(const core::vec2<core::dimensionf> & value) const
     {
-        return { calc(value.x), calc(value.y) };
+        auto s = scene();
+        auto p = parent();
+        if (!s)
+            throw core::error_state;
+
+        float32_t x = 0;
+        float32_t y = 0;
+        switch (value.x.unit)
+        {
+        case core::unit::px:
+            x = value.x.value * s->ratio();
+            break;
+        case core::unit::em:
+            x = value.x.value * font().size * s->ratio();
+            break;
+        case core::unit::pt:
+            x = value.x.value * 72.0f * s->ratio();
+            break;
+        case core::unit::dot:
+            x = value.x.value;
+            break;
+        case core::unit::per:
+            if (!p)
+                throw core::error_state;
+            x = value.x.value * p->width();
+            break;
+        default:
+            x = value.x.value * s->ratio();
+            break;
+        }
+
+        switch (value.y.unit)
+        {
+        case core::unit::px:
+            y = value.y.value * s->ratio();
+            break;
+        case core::unit::em:
+            y = value.y.value * font().size * s->ratio();
+            break;
+        case core::unit::pt:
+            y = value.y.value * 72.0f * s->ratio();
+            break;
+        case core::unit::dot:
+            y = value.y.value;
+            break;
+        case core::unit::per:
+            if (!p)
+                throw core::error_state;
+            y = value.y.value * p->height();
+            break;
+        default:
+            y = value.y.value * s->ratio();
+            break;
+        }
+
+        return { x, y };
     }
 
     core::vec4f Control::calc(const core::vec4<core::dimensionf> & value) const
     {
-        return { calc(value.x), calc(value.y), calc(value.cx), calc(value.cy) };
+        return { calc(value.xy), calc(value.zw) };
     }
 
     void Control::setPos(const core::vec2f & pos)

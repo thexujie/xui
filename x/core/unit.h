@@ -12,6 +12,8 @@ namespace core
         pt,
         //真实像素
         dot,
+        //百分比
+        per,
     };
 
     template<typename T>
@@ -47,7 +49,7 @@ namespace core
         bool avi() const { return !std::isnan(value); }
         bool nan() const { return std::isnan(value); }
 
-        T value;
+        T  value;
         core::unit unit = core::unit::px;
     };
 
@@ -81,6 +83,11 @@ namespace core
             return dimensionf(static_cast<float32_t>(val), core::unit::dot);
         }
 
+        constexpr dimensionf operator "" _per(unsigned long long  val)
+        {
+            return dimensionf(static_cast<float32_t>(val), core::unit::per);
+        }
+
         constexpr dimensionf operator "" _px(long double  val)
         {
             return dimensionf(static_cast<float32_t>(val), core::unit::px);
@@ -99,6 +106,11 @@ namespace core
         constexpr dimensionf operator "" _dot(long double  val)
         {
             return dimensionf(static_cast<float32_t>(val), core::unit::dot);
+        }
+
+        constexpr dimensionf operator "" _per(long double  val)
+        {
+            return dimensionf(static_cast<float32_t>(val), core::unit::per);
         }
     }
 }

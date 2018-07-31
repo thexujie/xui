@@ -122,7 +122,7 @@ int main()
     text->setBorder({ 2_px });
     text->setBorderColors({colors::DimGray});
 
-    auto image0 = std::make_shared<controls::Image>("applique0.jpg");
+    auto image0 = std::make_shared<controls::Image>("img00.png");
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
@@ -134,10 +134,10 @@ int main()
     image0->setBorderStyles({ graphics::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
     image0->setMargin({0.5_em});
-    auto image = std::make_shared<controls::Image>("applique1.jpg");
+    auto image = std::make_shared<controls::Image>("40612.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
-    image->setSize({20_em, 20_em});
+    image->setSize({0.5_per, 20_em});
     image->setImageFitting({ controls::image_fitting::repeat, controls::image_fitting::repeat });
     image->setBorder({ 5_px });
     image->setBorderColors({ colors::Azure });
@@ -154,9 +154,10 @@ int main()
     row->enteringScene(scene);
     row->enterScene(scene);
 
-    auto size = row->prefferSize();
-
-    row->layout();
+    //auto size = row->prefferSize();
+    core::si32f size = row->calc(core::vec2<core::dimensionf>(1280_px, 720_px));
+    row->Control::layout(core::rc32f(core::pt32f(), size), size);
+    //row->layout();
     row->update();
 
     counter_fps<float, 3> cps;

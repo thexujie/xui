@@ -7,6 +7,7 @@ namespace controls
     {
     public:
         attribute() : value() {}
+        attribute(const T & value_) : value(value_) {}
         ~attribute() {}
 
         T & get() { return value; }
