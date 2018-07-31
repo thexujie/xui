@@ -207,4 +207,15 @@ namespace win32
         ReleaseDC(NULL, hdcScreen);
         return logfont;
     }
+
+
+    handle_t instance()
+    {
+        return (handle_t)GetModuleHandleW(NULL);
+    }
+
+    void quit(int32_t ret)
+    {
+        ::PostQuitMessage(ret);
+    }
 }

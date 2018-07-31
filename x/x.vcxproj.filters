@@ -170,6 +170,15 @@
     <ClCompile Include="controls\renderables\Line.cpp">
       <Filter>controls\renderables</Filter>
     </ClCompile>
+    <ClCompile Include="controls\component\Window.cpp">
+      <Filter>controls\component</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\Window.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\Desktop.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -409,6 +418,15 @@
     </ClInclude>
     <ClInclude Include="controls\renderables\Line.h">
       <Filter>controls\renderables</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\Window.h">
+      <Filter>controls\component</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Window.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\Desktop.h">
+      <Filter>controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

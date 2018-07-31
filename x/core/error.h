@@ -43,4 +43,11 @@ namespace core
     };
 
     const char * error_str(error err);
+
+    class exception : public std::exception
+    {
+    public:
+        exception(const char * msg) : std::exception(msg) {}
+        exception(error err) : std::exception(error_str(err)) {}
+    };
 }

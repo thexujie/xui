@@ -39,11 +39,11 @@ namespace controls
     void Row::layout()
     {
         float32_t margin = 0;
-        core::si32f size = prefferSize();
+        core::si32f psize = prefferSize();
 
         core::rc32f rc;
         rc.pos = paddingBox().leftTop();
-        rc.cy = size.cy;
+        rc.cy = psize.cy;
         for (auto & control : _controls)
         {
             auto m = control->margin();
@@ -55,7 +55,7 @@ namespace controls
                 switch (lo)
                 {
                 case layout_origin::parent:
-                    control->layout(_rect, ps);
+                    control->layout(core::rc32f(core::pt32f(), realSize()), ps);
                     break;
                 case layout_origin::scene:
                     control->layout(scene()->rect(), ps);

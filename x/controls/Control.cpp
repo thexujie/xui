@@ -92,6 +92,29 @@ namespace controls
         return { calc(value.x), calc(value.y), calc(value.cx), calc(value.cy) };
     }
 
+    void Control::setPos(const core::vec2<core::dimensionf> & pos)
+    {
+        auto pos_old = calc(_pos);
+        auto pos_new = calc(pos);
+        _pos = pos;
+        if(pos_old != pos_new)
+        {
+            posChanged(pos_old, pos_new);
+            rectChanged(core::rc32f(pos_old, calc(_size)), core::rc32f(pos_new, calc(_size)));
+        }
+    }
+
+    void Control::setPos(const core::vec2f & pos)
+    {
+        auto pos_old = calc(_pos);
+        if (pos_old != pos)
+        {
+            _pos = core::vec2<core::dimensionf>(core::unit_dot(pos.x), core::unit_dot(pos.y));
+            posChanged(pos_old, pos);
+            rectChanged(core::rc32f(pos_old, calc(_size)), core::rc32f(pos, calc(_size)));
+        }
+    }
+
     core::rc32f Control::box() const
     {
         return core::rc32f(_rect.pos, _rect.size);

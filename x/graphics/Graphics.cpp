@@ -11,7 +11,7 @@
 
 namespace graphics
 {
-    //Graphics::Graphics(core::si32i size): _native(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(size))) { }
+    //Graphics::Graphics(core::si32i size): _native(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(dimension))) { }
 
     Graphics::Graphics(std::shared_ptr<Bitmap> pixmap)
     {

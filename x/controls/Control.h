@@ -14,16 +14,16 @@ namespace controls
         void setLayoutOrigin(layout_origin origin) { _layout_origin = origin; }
         layout_origin layoutOrigin() const { return _layout_origin; }
 
-        void setRect(const core::vec4<core::dimensionf> & rect) { _pos = rect.pos; _size = rect.size; }
-        core::vec4<core::dimensionf> rect() const { return {_pos, _size}; }
-        void setPos(const core::vec2<core::dimensionf> & pos) { _pos = pos; }
+        void setPos(const core::vec2<core::dimensionf> & pos);
         const core::vec2<core::dimensionf> & pos() const { return _pos; }
         void setSize(const core::vec2<core::dimensionf> & size) { _size = size; }
         const core::vec2<core::dimensionf> & size() const { return _size; }
-        void setMinSize(const core::unit_value<core::si32f> & minSize);
+        void setMinSize(const core::vec2<core::dimensionf> & minSize) { _minSize = minSize; }
         const core::vec2<core::dimensionf> & minSize() const { return _minSize; }
-        void setMaxSize(const core::unit_value<core::si32f> & minSize);
+        void setMaxSize(const core::vec2<core::dimensionf> & maxSize) { _maxSize = maxSize; }
         const core::vec2<core::dimensionf> & maxSize() const { return _maxSize; }
+
+        void setPos(const core::vec2f & pos);
 
         // prefferSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
         core::si32f prefferSize() const;
@@ -37,11 +37,13 @@ namespace controls
         const core::color32 & color() const;
         const graphics::font & font() const;
 
-        core::si32f dimension() const { return _rect.size; }
+        core::si32f realPos() const { return calc(_pos); }
+        core::si32f realSize() const { return calc(_size); }
         float32_t width() const { return _rect.cx; }
         float32_t height() const { return _rect.cy; }
         core::vec4f border() const { return calc(_border); }
         core::vec4f margin() const { return calc(_margin); }
+
 
         float32_t calc(const core::dimensionf & value) const;
         core::vec2f calc(const core::vec2<core::dimensionf> & value) const;
@@ -83,6 +85,7 @@ namespace controls
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
 
     public:
+        core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
         core::event<void(const core::rc32f & from, const core::rc32f & to)> rectChanged;
 
     protected:

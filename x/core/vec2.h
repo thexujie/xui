@@ -165,16 +165,16 @@ namespace core
             return x >= vec.x && y >= vec.y;
         }
 
-        template<typename = std::enable_if_t<ValT, int32_t>::value>
-        vec2<float32_t> to_rc32f() const
-        {
-            return { (float32_t)x, (float32_t)y };
-        }
-
         template<typename T2>
         vec2<T2> to() const
         {
-            return { (T2)x, (T2)y };
+            return { static_cast<T2>(x), static_cast<T2>(y) };
+        }
+
+        template<class ConvertT>
+        auto convert(ConvertT convert) const
+        {
+            return vec2(convert(x), convert(y));
         }
 
     public:
@@ -224,6 +224,7 @@ namespace core
 
     typedef vec2<int32_t> si32i;
     typedef vec2<float32_t> si32f;
+    typedef vec2<int32_t> vec2i;
     typedef vec2<float32_t> vec2f;
     typedef vec2<float64_t> si64f;
 

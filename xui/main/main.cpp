@@ -18,6 +18,8 @@
 #include "controls/Container.h"
 #include "controls/Row.h"
 #include "controls/Text.h"
+#include "controls/Form.h"
+#include "controls/Desktop.h"
 
 using namespace core;
 
@@ -88,7 +90,19 @@ int main()
     //    }
     //}
 
+    auto dsize = controls::Desktop::instance().size();
+    auto s = controls::Desktop::instance().screen(0);
+    auto src = s->rect();
+    auto ppi = controls::Desktop::instance().ppi();
+
     auto scene = std::make_shared<controls::component::Scene>();
+    auto form = std::make_shared<controls::Form>(core::vec2<core::dimensionf>(35_em, 30_em));
+    form->enteringScene(scene);
+    form->enterScene(scene);
+    form->show();
+    form->centerScreen();
+
+    win32::runLoop();
     auto container = std::make_shared<controls::Container>();
     auto row = std::make_shared<controls::Row>();
     auto text = std::make_shared<controls::Text>(u8"ABCDEF这是一个很好的内容的G");

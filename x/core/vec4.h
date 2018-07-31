@@ -377,10 +377,16 @@ namespace core
         const T & operator[](int32_t index) const { return arr[index % 4]; }
          T & operator[](int32_t index) { return arr[index % 4]; }
 
-        template<typename RT2>
-        explicit operator vec4<RT2>() const
+        template<typename T2>
+        vec4<T2> to() const
         {
-            return vec4<RT2>((RT2)x, (RT2)y, (RT2)cx, (RT2)cy);
+            return { static_cast<T2>(x), static_cast<T2>(y), static_cast<T2>(cx), static_cast<T2>(cy) };
+        }
+
+        template<class ConvertT>
+        auto convert(ConvertT convert) const
+        {
+            return vec4(convert(x), convert(y), convert(cx), convert(cy));
         }
 
     public:

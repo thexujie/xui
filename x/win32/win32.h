@@ -13,6 +13,12 @@ namespace win32
 
     typedef void * handle_t;
 
+    constexpr wchar_t WINDOW_CLASS_NAME[] = L"[Default:29a0f390-f5ab-4617-9ac0-c41fe276fb64]";
+    constexpr wchar_t WINDOW_PROP_THIS_PTR[] = L"C8C8BD2D-46A7-4DFB-BB5D-EE6A25E83368";
+    constexpr wchar_t WINDOW_PROP_DLG_RESULT[] = L"99358F8F-E19F-4337-8192-A088F1CA41D1";
+    constexpr wchar_t WINDOW_PROP_OLD_WNDPROC[] = L"FCAC0730-350D-4D79-B28E-D137C22648EA";
+
+
     std::string winerr_str(int32_t err);
     int runLoop();
 
@@ -68,4 +74,6 @@ namespace win32
         return ost << "Windows " << version_str(ver) << " [" << ver.major << "." << ver.minor << "." << ver.pack << "." << ver.build << "]";
     }
     graphics::font defaultFont();
+    handle_t instance();
+    void quit(int32_t ret);
 }
