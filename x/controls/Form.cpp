@@ -43,10 +43,8 @@ namespace controls
             _window = window;
         }
 
-        update();
-        scene()->invalid(realRect());
-
         _shown = true;
+        scene()->invalid(core::rc32f(core::pt32f(), realSize()));
         shownChanged(true);
     }
 
@@ -65,6 +63,8 @@ namespace controls
 
     void Form::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
+        layout();
+        update();
         scene()->invalid(core::rc32f(core::pt32f(), realSize()));
         Container::onSizeChanged(from, to);
     }

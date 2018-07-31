@@ -227,6 +227,8 @@ namespace win32
         if (!f)
             return;
 
+        auto rc = rect.intersect(core::rc32i(core::pt32i(), _size()));
+
         auto scene = f->scene();
         std::shared_ptr<graphics::Bitmap> bitmap = scene->bitmap();
 
@@ -246,7 +248,7 @@ namespace win32
         bmi.bmiHeader.biSizeImage = 0;
 
         HDC hdc = GetDC(hwnd);
-        SetDIBitsToDevice(hdc, rect.x, rect.y, rect.cx, rect.cy, 0, 0, 0, rect.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+        SetDIBitsToDevice(hdc, rc.x, rc.y, rc.cx, rc.cy, 0, 0, rc.y, rc.cy, buffer.data, &bmi, DIB_RGB_COLORS);
         ReleaseDC(hwnd, hdc);
     }
 

@@ -15,7 +15,6 @@ namespace controls
         void centerScreen(int32_t screenIndex = 0);
 
         virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
-
         virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
 
     public:

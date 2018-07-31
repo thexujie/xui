@@ -251,7 +251,6 @@ namespace controls
         _rect.size = size;
         layout();
         update();
-        scene()->invalid(realRect());
     }
 
     void Control::update()
