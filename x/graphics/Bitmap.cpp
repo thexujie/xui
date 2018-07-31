@@ -5,7 +5,7 @@
 
 namespace graphics
 {
-    Bitmap::Bitmap(core::si32i size)
+    Bitmap::Bitmap(const core::si32i & size)
     {
         auto bitmap = std::make_shared<SkBitmap>();
         bitmap->allocN32Pixels(size.cx, size.cy);

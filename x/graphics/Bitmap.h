@@ -12,7 +12,7 @@ namespace graphics
         Bitmap() = default;
         ~Bitmap() = default;
 
-        Bitmap(core::si32i size);
+        Bitmap(const core::si32i & size);
 
         operator bool() const { return !!_native; }
         bitmap_buffer buffer() const;

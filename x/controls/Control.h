@@ -5,7 +5,7 @@
 
 namespace controls
 {
-    class Control : public std::enable_shared_from_this<Control>
+    class Control : public core::invokable<Control>
     {
     public:
         Control();
@@ -14,7 +14,7 @@ namespace controls
         void setLayoutOrigin(layout_origin origin) { _layout_origin = origin; }
         layout_origin layoutOrigin() const { return _layout_origin; }
 
-        void setPos(const core::vec2<core::dimensionf> & pos);
+        void setPos(const core::vec2<core::dimensionf> & pos) { _pos = pos; }
         const core::vec2<core::dimensionf> & pos() const { return _pos; }
         void setSize(const core::vec2<core::dimensionf> & size) { _size = size; }
         const core::vec2<core::dimensionf> & size() const { return _size; }
@@ -24,6 +24,7 @@ namespace controls
         const core::vec2<core::dimensionf> & maxSize() const { return _maxSize; }
 
         void setPos(const core::vec2f & pos);
+        void setSize(const core::vec2f & size);
 
         // prefferSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
         core::si32f prefferSize() const;
@@ -37,8 +38,9 @@ namespace controls
         const core::color32 & color() const;
         const graphics::font & font() const;
 
-        core::si32f realPos() const { return calc(_pos); }
-        core::si32f realSize() const { return calc(_size); }
+        core::si32f realPos() const { return _rect.pos; }
+        core::si32f realSize() const { return _rect.size; }
+        core::rc32f realRect() const { return _rect; }
         float32_t width() const { return _rect.cx; }
         float32_t height() const { return _rect.cy; }
         core::vec4f border() const { return calc(_border); }
@@ -82,10 +84,12 @@ namespace controls
 
         virtual void update();
         virtual void updateContent() {}
-        virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
-
+        virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to) { posChanged(from, to); }
+        virtual void onSizeChanged(const core::si32f & from, const core::si32f & to) { sizeChanged(from, to); }
+        virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }
     public:
         core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
+        core::event<void(const core::si32f & from, const core::si32f & to)> sizeChanged;
         core::event<void(const core::rc32f & from, const core::rc32f & to)> rectChanged;
 
     protected:

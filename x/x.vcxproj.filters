@@ -152,9 +152,6 @@
     <ClCompile Include="controls\Element.cpp">
       <Filter>controls</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Row.cpp">
-      <Filter>controls</Filter>
-    </ClCompile>
     <ClCompile Include="core\float3x2.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -396,9 +393,6 @@
       <Filter>controls</Filter>
     </ClInclude>
     <ClInclude Include="controls\Element.h">
-      <Filter>controls</Filter>
-    </ClInclude>
-    <ClInclude Include="controls\Row.h">
       <Filter>controls</Filter>
     </ClInclude>
     <ClInclude Include="core\float3x2.h">

@@ -92,26 +92,25 @@ namespace controls
         return { calc(value.x), calc(value.y), calc(value.cx), calc(value.cy) };
     }
 
-    void Control::setPos(const core::vec2<core::dimensionf> & pos)
+    void Control::setPos(const core::vec2f & pos)
     {
-        auto pos_old = calc(_pos);
-        auto pos_new = calc(pos);
-        _pos = pos;
-        if(pos_old != pos_new)
+        auto pos_old = _rect.pos;
+        if (pos_old != pos)
         {
-            posChanged(pos_old, pos_new);
-            rectChanged(core::rc32f(pos_old, calc(_size)), core::rc32f(pos_new, calc(_size)));
+            _rect.pos = pos;
+            onPosChanged(pos_old, pos);
+            onRectChanged(core::rc32f(pos_old, _rect.size), core::rc32f(pos, _rect.size));
         }
     }
 
-    void Control::setPos(const core::vec2f & pos)
+    void Control::setSize(const core::vec2f & size)
     {
-        auto pos_old = calc(_pos);
-        if (pos_old != pos)
+        auto size_old = _rect.size;
+        if (size_old != size)
         {
-            _pos = core::vec2<core::dimensionf>(core::unit_dot(pos.x), core::unit_dot(pos.y));
-            posChanged(pos_old, pos);
-            rectChanged(core::rc32f(pos_old, calc(_size)), core::rc32f(pos, calc(_size)));
+            _rect.size = size;
+            onSizeChanged(size_old, size);
+            onRectChanged(core::rc32f(_rect.pos, size_old), core::rc32f(_rect.pos, _rect.size));
         }
     }
 
@@ -251,7 +250,8 @@ namespace controls
         _rect.pos = rect.pos;
         _rect.size = size;
         layout();
-        //view()->setTransform(core::float3x2::translate(_rect.x, _rect.y));
+        update();
+        scene()->invalid(realRect());
     }
 
     void Control::update()
@@ -260,11 +260,6 @@ namespace controls
         _updateBackground();
         updateContent();
         _updateBorder();
-    }
-
-    void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to)
-    {
-        rectChanged(from, to);
     }
 
     void Control::_updateBackground() const

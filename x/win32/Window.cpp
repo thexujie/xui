@@ -4,6 +4,8 @@
 
 namespace win32
 {
+    const uint32_t WM_REFRESH = WM_USER + 1;
+
     static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM uiParam, LPARAM iParam);
     //static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM uiParam, LPARAM iParam)
     //{
@@ -32,8 +34,11 @@ namespace win32
     core::error Window::attatch(std::shared_ptr<controls::Form> form)
     {
         _form = form;
+        auto scene = form->scene();
         form->posChanged += std::weak_bind(&Window::onPosChagned, shared_from_this(), std::placeholders::_1, std::placeholders::_2);
         form->shownChanged += std::weak_bind(&Window::onShownChanged, shared_from_this(), std::placeholders::_1);
+        scene->invalidated += std::weak_bind(&Window::onSceneInvalidated, shared_from_this(), std::placeholders::_1);
+        scene->rendered += std::weak_bind(&Window::onSceneRendered, shared_from_this(), std::placeholders::_1);
         return core::error_ok;
     }
 
@@ -82,14 +87,29 @@ namespace win32
         if (!hwnd)
             return;
 
-        auto pos = _form->realPos().to<int32_t>();
-        auto size = _form->realSize().convert(ceilf).to<int32_t>();
-        ::MoveWindow(hwnd, pos.x, pos.y, size.cx, size.cy, FALSE);
+        auto pos = to.to<int32_t>();
+        if (pos != _pos())
+            _adjustWindow(pos, _size());
+    }
+
+    void Window::onSceneInvalidated(const core::rc32f & rect)
+    {
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return;
+
+        ::PostMessageW(hwnd, WM_REFRESH, core::uxfromih(rect.x, rect.y), core::ixfromih(rect.cx, rect.cy));
+    }
+
+    void Window::onSceneRendered(const core::rc32f & rect)
+    {
+        _render(rect.to<int32_t>());
     }
 
     core::error Window::_createWindow()
     {
-        if (!_form)
+        auto f = form();
+        if (!f)
         {
             core::logger::err() << __FUNCTIONW__ L" createWindow without form.";
             throw core::exception("createWindow without form");
@@ -109,7 +129,7 @@ namespace win32
             wcex.cbWndExtra = 0;
             wcex.hInstance = hInstance;
             wcex.hIcon = NULL;
-            wcex.hCursor = /*::LoadCursor(NULL, IDC_ARROW)*/NULL;
+            wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
             wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND + 1);
             wcex.lpszMenuName = NULL;
             wcex.lpszClassName = WINDOW_CLASS_NAME;
@@ -122,27 +142,127 @@ namespace win32
         }
 
         Window * pthis = const_cast<Window *>(this);
-        auto pos = _form->realPos().to<int32_t>();
-        auto size = _form->realSize().convert(ceilf).to<int32_t>();
+        auto pos = f->realPos().to<int32_t>();
+        auto size = f->realSize().convert(ceilf).to<int32_t>();
+
+        RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
+        ::AdjustWindowRect(&rect, _style, FALSE);
 
         pthis->_handle = CreateWindowExW(
             _styleEx, WINDOW_CLASS_NAME, NULL, _style,
-            pos.x, pos.y, size.cx, size.cy,
+            rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             NULL, NULL, hInstance, NULL);
-
         pthis->attatch(_handle);
         return core::error_ok;
     }
 
-#define CASE_MSG(M, F) case M: return F(uiMessage, uiParam, iParam)
+    core::error Window::_adjustWindow(const core::pt32i & pos, const core::si32i & size)
+    {
+        if (!_handle)
+            return core::error_nullptr;
+
+        HWND hwnd = (HWND)_handle;
+        RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
+        ::AdjustWindowRect(&rect, _style, FALSE);
+        ::MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
+        return core::error_ok;
+    }
+
+    core::pt32i Window::_pos() const
+    {
+        if (!_handle)
+            return {};
+
+        HWND hwnd = (HWND)_handle;
+        WINDOWINFO winfo;
+        ::GetWindowInfo(hwnd, &winfo);
+        return core::vec2i(winfo.rcClient.left, winfo.rcClient.top);
+    }
+
+    core::si32i Window::_size() const
+    {
+        if (!_handle)
+            return {};
+
+        HWND hwnd = (HWND)_handle;
+        WINDOWINFO winfo;
+        ::GetWindowInfo(hwnd, &winfo);
+        return core::vec2i(winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
+    }
+
+    core::vec4i Window::_border() const
+    {
+        if (!_handle)
+            return {};
+
+        HWND hwnd = (HWND)_handle;
+        WINDOWINFO winfo;
+        ::GetWindowInfo(hwnd, &winfo);
+
+        return core::vec4i(winfo.rcClient.left - winfo.rcWindow.left,
+            winfo.rcClient.top - winfo.rcWindow.top,
+            winfo.rcWindow.right - winfo.rcClient.right,
+            winfo.rcWindow.bottom - winfo.rcClient.bottom);
+        
+    }
+
+    core::vec4i Window::_padding() const
+    {
+        if (!_handle)
+            return {};
+
+        HWND hwnd = (HWND)_handle;
+        WINDOWINFO winfo;
+        ::GetWindowInfo(hwnd, &winfo);
+
+        return core::vec4i(winfo.rcClient.left - winfo.rcWindow.left,
+            winfo.rcClient.top - winfo.rcWindow.top,
+            winfo.rcWindow.right - winfo.rcClient.right,
+            winfo.rcWindow.bottom - winfo.rcClient.bottom);
+    }
+
+    void Window::_render(const core::rc32i & rect)
+    {
+        auto f = form();
+        if (!f)
+            return;
+
+        auto scene = f->scene();
+        std::shared_ptr<graphics::Bitmap> bitmap = scene->bitmap();
+
+        HWND hwnd = (HWND)handle();
+        if (!hwnd)
+            return;
+
+        graphics::bitmap_buffer buffer = bitmap->buffer();
+        BITMAPINFO bmi;
+        memset(&bmi, 0, sizeof(bmi));
+        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        bmi.bmiHeader.biWidth = buffer.size.cx;
+        bmi.bmiHeader.biHeight = -buffer.size.cy;
+        bmi.bmiHeader.biPlanes = 1;
+        bmi.bmiHeader.biBitCount = 32;
+        bmi.bmiHeader.biCompression = BI_RGB;
+        bmi.bmiHeader.biSizeImage = 0;
+
+        HDC hdc = GetDC(hwnd);
+        SetDIBitsToDevice(hdc, rect.x, rect.y, rect.cx, rect.cy, 0, 0, 0, rect.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+        ReleaseDC(hwnd, hdc);
+    }
+
+#define CASE_MSG(M, F) case M: return F(uiParam, iParam)
     intx_t Window::handleMSG(uint32_t uiMessage, uintx_t uiParam, intx_t iParam)
     {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+
         switch (uiMessage)
         {
             //CASE_MSG(WM_NCHITTEST, OnWmHitTest);
             //CASE_MSG(WM_NCCALCSIZE, OnWmNcCalcSize);
             //CASE_MSG(WM_SHOWWINDOW, OnWmShow);
-            //CASE_MSG(WM_ERASEBKGND, OnWmEraseBack);
+            CASE_MSG(WM_ERASEBKGND, OnWmEraseBack);
             //CASE_MSG(WM_PAINT, OnWmPaint);
             //CASE_MSG(WM_NCPAINT, OnWmNcPaint);
             //CASE_MSG(WM_NCACTIVATE, OnWmNcActivate);
@@ -164,8 +284,8 @@ namespace win32
             //CASE_MSG(WM_LBUTTONDBLCLK, OnWmMouseDBClick);
             //CASE_MSG(WM_MOUSEWHEEL, OnWmMouseWheelV);
 
-            //CASE_MSG(WM_MOVE, OnWmMove);
-            //CASE_MSG(WM_SIZE, OnWmSize);
+            CASE_MSG(WM_MOVE, OnWmMove);
+            CASE_MSG(WM_SIZE, OnWmSize);
             //CASE_MSG(WM_SETTEXT, OnWmSetText);
             //CASE_MSG(WM_ACTIVATE, OnWmActive);
             //CASE_MSG(WM_SETFOCUS, OnWmSetFocus);
@@ -192,6 +312,11 @@ namespace win32
             //CASE_MSG(WM_GETMINMAXINFO, OnWmGetMinMaxInfo);
             //CASE_MSG(WM_SYSCOMMAND, OnWmSysCommand);
 
+            CASE_MSG(WM_REFRESH, OnWmRefresh);
+
+        case WM_CLOSE:
+            f->onClose();
+            return 0;
         default:
             return OnDefault(uiMessage, uiParam, iParam);
         }
@@ -205,6 +330,41 @@ namespace win32
         if (!pfnOldWndProc)
             pfnOldWndProc = DefWindowProcW;
         return (intx_t)CallWindowProc(pfnOldWndProc, hwnd, (UINT)uiMessage, (WPARAM)uiParam, (LPARAM)iParam);
+    }
+
+    intx_t Window::OnWmMove(uintx_t uiParam, intx_t iParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+
+        f->setPos(_pos().to<float32_t>());
+        return 0;
+    }
+
+    intx_t Window::OnWmSize(uintx_t uiParam, intx_t iParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+
+        f->setSize(_size().to<float32_t>());
+        return 0;
+    }
+
+     intx_t Window::OnWmRefresh(uintx_t uiParam, intx_t iParam)
+    {
+         auto f = form();
+         if (!f)
+             throw core::exception(core::error_nullptr);
+
+         auto scene = f->scene();
+         auto rect = scene->invalidRect();
+         if (rect.empty())
+             return 0;
+
+         scene->flush();
+        return 0;
     }
 
     Window * Window::fromHandle(handle_t handle)

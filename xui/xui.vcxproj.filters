@@ -50,9 +50,6 @@
     <ClInclude Include="win32\Win32App.h">
       <Filter>win32</Filter>
     </ClInclude>
-    <ClInclude Include="win32\win32.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="win32\com_ptr.h">
       <Filter>win32</Filter>
     </ClInclude>

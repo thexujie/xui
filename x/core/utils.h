@@ -424,7 +424,7 @@ namespace core
     }
 
     /*! @brief 获取 int32_t 类型值的低16/32位。*/
-    inline intx_h ixlih(int32_t iVal)
+    inline intx_h ixlih(intx_t iVal)
     {
 #ifdef BIT64
         return i64li32(iVal);
@@ -434,7 +434,7 @@ namespace core
     }
 
     /*! @brief 获取 int32_t 类型值的高16/32位。*/
-    inline intx_h ixhih(int32_t val)
+    inline intx_h ixhih(intx_t val)
     {
 #ifdef BIT64
         return i64hi32(val);
@@ -443,8 +443,8 @@ namespace core
 #endif
     }
 
-    /*! @brief 获取 int32_t 类型值的低16/32位。*/
-    inline uintx_h ixluh(int32_t iVal)
+    /*! @brief 获取 intx_t 类型值的低16/32位。*/
+    inline uintx_h ixluh(intx_t iVal)
     {
 #ifdef BIT64
         return i64lu32(iVal);
@@ -454,7 +454,7 @@ namespace core
     }
 
     /*! @brief 获取 int32_t 类型值的高16/32位。*/
-    inline intx_h ixhuh(int32_t val)
+    inline intx_h ixhuh(intx_t val)
     {
 #ifdef BIT64
         return i64hu32(val);
@@ -464,25 +464,25 @@ namespace core
     }
 
     /*! @brief 使用指定的低位和高位生成一个 int32_t 类型的值*/
-    inline int32_t ixfromih(intx_h lval, intx_h hval)
+    inline intx_t ixfromih(intx_h lval, intx_h hval)
     {
-        int32_t val;
+        intx_t val;
         ((intx_h *)&val)[0] = lval;
         ((intx_h *)&val)[1] = hval;
         return val;
     }
 
     /*! @brief 使用指定的低位和高位生成一个 int32_t 类型的值*/
-    inline int32_t ixfromuh(uintx_h lval, uintx_h hval)
+    inline intx_t ixfromuh(uintx_h lval, uintx_h hval)
     {
-        int32_t val;
+        intx_t val;
         ((uintx_h *)&val)[0] = lval;
         ((uintx_h *)&val)[1] = hval;
         return val;
     }
 
     /*! @brief 获取 uint32_t 类型值的低16/32位。*/
-    inline uintx_h uxluh(uint32_t val)
+    inline uintx_h uxluh(uintx_t val)
     {
 #ifdef BIT64
         return u64lu32(val);
@@ -492,7 +492,7 @@ namespace core
     }
 
     /*! @brief 获取 uint32_t 类型值的高16/32位。*/
-    inline uintx_h uxhuh(uint32_t val)
+    inline uintx_h uxhuh(uintx_t val)
     {
 #ifdef BIT64
         return u64hu32(val);
@@ -502,7 +502,7 @@ namespace core
     }
 
     /*! @brief 获取 uint32_t 类型值的高16/32位。*/
-    inline intx_h uxlih(uint32_t val)
+    inline intx_h uxlih(uintx_t val)
     {
 #ifdef BIT64
         return u64li32(val);
@@ -512,7 +512,7 @@ namespace core
     }
 
     /*! @brief 获取 uint32_t 类型值的低16/32位。*/
-    inline intx_h uxhih(uint32_t val)
+    inline intx_h uxhih(uintx_t val)
     {
 #ifdef BIT64
         return u64hi32(val);
@@ -522,18 +522,18 @@ namespace core
     }
 
     /*! @brief 使用指定的低位和高位生成一个 uint32_t 类型的值*/
-    inline uint32_t uxfromuh(uintx_h lval, uintx_h hval)
+    inline uintx_t uxfromuh(uintx_h lval, uintx_h hval)
     {
-        uint32_t val;
+        uintx_t val;
         ((uintx_h *)&val)[0] = lval;
         ((uintx_h *)&val)[1] = hval;
         return val;
     }
 
     /*! @brief 使用指定的低位和高位生成一个 uint32_t 类型的值*/
-    inline uint32_t uxfromih(intx_h lval, intx_h hval)
+    inline uintx_t uxfromih(intx_h lval, intx_h hval)
     {
-        uint32_t val;
+        uintx_t val;
         ((intx_h *)&val)[0] = lval;
         ((intx_h *)&val)[1] = hval;
         return val;

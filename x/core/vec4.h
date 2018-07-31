@@ -149,7 +149,7 @@ namespace core
         }
 
         // ²¢¼¯
-        vec4 join(const vec4<T> another) const
+        vec4 unite(const vec4<T> another) const
         {
             return operator |(another);
         }
@@ -469,5 +469,6 @@ namespace core
 
     typedef vec4<int32_t> rc32i;
     typedef vec4<float32_t> rc32f;
+    typedef vec4<int32_t> vec4i;
     typedef vec4<float32_t> vec4f;
 }

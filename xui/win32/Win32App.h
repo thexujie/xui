@@ -2,6 +2,7 @@
 #include "core/app.h"
 #include "GraphicsService.h"
 #include "uniscribe/ScriptService.h"
+#include "win32/win32.h"
 
 namespace win32
 {
@@ -36,6 +37,7 @@ namespace win32
             return nullptr;
         }
 
+        void quit(int32_t ret) { win32::quit(0); }
     private:
         std::shared_ptr<win32::GraphicsService> _graphicsService;
         std::shared_ptr<win32::uniscribe::ScriptService> _scriptService;

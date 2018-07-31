@@ -18,8 +18,12 @@ namespace controls
         virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
         virtual void leaveScene(std::shared_ptr<component::Scene> & scene);
 
+        virtual core::si32f contentSize() const;
+        virtual void layout();
         virtual void update();
+
     protected:
         std::list<std::shared_ptr<Control>> _controls;
+        core::align _layout_direction = core::align::left;
     };
 }

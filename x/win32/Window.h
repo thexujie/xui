@@ -237,80 +237,94 @@ namespace win32
 
         core::error attatch(std::shared_ptr<controls::Form> form);
         core::error attatch(handle_t handle);
+        std::shared_ptr<controls::Form> form() { return _form.lock(); }
         handle_t handle() const;
         intx_t handleMSG(uint32_t uiMessage, uintx_t uiParam, intx_t iParam);
 
     private:
         void onShownChanged(bool shown);
         void onPosChagned(const core::pt32f & from, const core::pt32f & to);
+        void onSceneInvalidated(const core::rc32f & rect);
+        void onSceneRendered(const core::rc32f & rect);
 
     private:
         core::error _createWindow();
+        core::error _adjustWindow(const core::pt32i & pos, const core::si32i & size);
+
+        core::pt32i _pos() const;
+        core::si32i _size() const;
+        core::vec4i _border() const;
+        core::vec4i _padding() const;
+
+        void _render(const core::rc32i & rect);
 
     private:
 
         intx_t OnDefault(uint32_t uiMessage, uintx_t uiParam, intx_t iParam);
 
-        virtual intx_t OnWmMove(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmSize(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmEraseBack(uintx_t uiParam, intx_t iParam) { return 0; }
+        virtual intx_t OnWmMove(uintx_t uiParam, intx_t iParam);
+        virtual intx_t OnWmSize(uintx_t uiParam, intx_t iParam);
+        virtual intx_t OnWmRefresh(uintx_t uiParam, intx_t iParam);
 
-        virtual intx_t OnWmShow(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmPaint(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmNcPaint(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmNcActivate(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmEraseBack(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseMove(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmShow(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmPaint(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmNcPaint(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmNcActivate(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseMove(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmMouseEnter(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseLeave(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseEnter(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseLeave(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmMouseDown(uint32_t uiMessage, uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
-        virtual intx_t OnWmMouseUp(uint32_t uiMessage, uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
-        virtual intx_t OnWmMouseClick(uint32_t uiMessage, uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
+        virtual intx_t OnWmMouseDown(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
+        virtual intx_t OnWmMouseUp(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
+        virtual intx_t OnWmMouseClick(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
 
-        virtual intx_t OnWmMouseDownL(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmNcMouseDownL(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseUpL(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseDownR(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseUpR(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseDownM(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseUpM(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseWheelV(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseDownL(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmNcMouseDownL(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseUpL(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseDownR(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseUpR(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseDownM(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseUpM(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseWheelV(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmSetText(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmActive(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmSetFocus(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmKillFocus(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmSetText(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmActive(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmSetFocus(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmKillFocus(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmChar(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmUnicodeChar(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmKeyDown(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmKeyUp(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseDBClick(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmChar(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmUnicodeChar(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmKeyDown(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmKeyUp(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseDBClick(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmSetCursor(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmDropFiles(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmQueryDrag(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmSetCursor(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmDropFiles(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmQueryDrag(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmHitTest(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmNotify(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmHitTest(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmNotify(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmClose(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmDestroy(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmCaptureChanged(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseActive(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmClose(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmDestroy(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmCaptureChanged(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseActive(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmNcCalcSize(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmNcMouseMove(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmGetMinMaxInfo(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmRefresh(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmSysCommand(uint32_t uiMessage, uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmNcCalcSize(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmNcMouseMove(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmGetMinMaxInfo(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmSysCommand(uintx_t uiParam, intx_t iParam){ return 0;}
 
     private:
-        std::shared_ptr<controls::Form> _form;
+        std::weak_ptr<controls::Form> _form;
         uint32_t _style = 0;
         uint32_t _styleEx = 0;
         handle_t _handle = nullptr;
+
+    public:
+        core::event<void()> closed;
 
     public:
         static Window * fromHandle(handle_t handle);
