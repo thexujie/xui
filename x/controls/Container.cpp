@@ -85,7 +85,8 @@ namespace controls
         core::si32f psize = prefferSize();
 
         core::rc32f rc;
-        rc.pos = paddingBox().leftTop();
+        if(!_top_level)
+            rc.pos = paddingBox().leftTop();
         rc.cy = psize.cy;
         for (auto & control : _controls)
         {
