@@ -22,6 +22,28 @@ namespace controls
 
     }
 
+    void Form::setWindowPos(const core::pt32f & pos)
+    {
+        auto pos_old = _rect_window.pos;
+        if (pos_old != pos)
+        {
+            _rect_window.pos = pos;
+            windowPosChanged(pos_old, pos);
+            //windowRectChanged(core::rc32f(pos_old, _rect_window.size), core::rc32f(pos, _rect_window.size));
+        }
+    }
+
+    //void Form::setWindowSize(const core::si32f & size)
+    //{
+    //    auto size_old = _rect_window.size;
+    //    if (size_old != size)
+    //    {
+    //        _rect_window.size = size;
+    //        windowSizeChanged(size_old, size);
+    //        windowRectChanged(core::rc32f(_rect_window.pos, size_old), core::rc32f(_rect_window.pos, _rect_window.size));
+    //    }
+    //}
+
     void Form::show()
     {
         if (_shown)
@@ -54,7 +76,7 @@ namespace controls
         auto rc = Desktop::instance().screen(screenIndex)->rect().to<float32_t>();
         auto s = calc(size());
         auto p = rc.leftTop() + (rc.size - s) * 0.5;
-        setPos(p);
+        setWindowPos(p);
     }
 
     void Form::enteringScene(std::shared_ptr<component::Scene> & scene)

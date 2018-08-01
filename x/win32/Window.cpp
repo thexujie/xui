@@ -35,7 +35,7 @@ namespace win32
     {
         _form = form;
         auto scene = form->scene();
-        form->posChanged += std::weak_bind(&Window::onPosChagned, shared_from_this(), std::placeholders::_1, std::placeholders::_2);
+        form->windowPosChanged += std::weak_bind(&Window::onPosChagned, shared_from_this(), std::placeholders::_1, std::placeholders::_2);
         form->shownChanged += std::weak_bind(&Window::onShownChanged, shared_from_this(), std::placeholders::_1);
         scene->invalidated += std::weak_bind(&Window::onSceneInvalidated, shared_from_this(), std::placeholders::_1);
         scene->rendered += std::weak_bind(&Window::onSceneRendered, shared_from_this(), std::placeholders::_1);
@@ -142,7 +142,7 @@ namespace win32
         }
 
         Window * pthis = const_cast<Window *>(this);
-        auto pos = f->realPos().to<int32_t>();
+        auto pos = f->windowPos().to<int32_t>();
         auto size = f->realSize().convert(ceilf).to<int32_t>();
 
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
@@ -340,7 +340,7 @@ namespace win32
         if (!f)
             throw core::exception(core::error_nullptr);
 
-        f->setPos(_pos().to<float32_t>());
+        f->setWindowPos(_pos().to<float32_t>());
         return 0;
     }
 
