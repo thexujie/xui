@@ -22,6 +22,7 @@ namespace controls
 
     public:
         core::event<void(bool shown)> shownChanged;
+        core::event<void()> closed;
 
     private:
         std::shared_ptr<controls::component::Scene> _scene;

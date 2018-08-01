@@ -25,5 +25,6 @@ namespace controls
     protected:
         std::list<std::shared_ptr<Control>> _controls;
         core::align _layout_direction = core::align::left;
+        bool _top_level = false;
     };
 }

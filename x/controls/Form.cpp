@@ -8,12 +8,13 @@ namespace controls
 {
     Form::Form()
     {
-        
+        _top_level = true;
     }
 
     Form::Form(core::vec2<core::dimensionf> & size)
     {
         _size = size;
+        _top_level = true;
     }
 
     Form::~Form()
@@ -71,6 +72,6 @@ namespace controls
 
     void Form::onClose()
     {
-        core::app().quit(0);
+        invoke([this]() {closed(); });
     }
 }

@@ -16,7 +16,7 @@ namespace core
         __helper.clear();
     }
 
-    void CALLBACK APCCallBack(ULONG_PTR dwParam)
+    static void CALLBACK InvokerAPCCallBack(ULONG_PTR dwParam)
     {
         __helper.trigger();
     }
@@ -68,7 +68,7 @@ namespace core
             return error_state;
         std::lock_guard<std::mutex> lock(*_invoker_mutex);
         _invokers->push_back(invoker);
-        ::QueueUserAPC(APCCallBack, (HANDLE)_thread, 0);
+        ::QueueUserAPC(InvokerAPCCallBack, (HANDLE)_thread, 0);
         return error_ok;
     }
 

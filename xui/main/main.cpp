@@ -112,6 +112,7 @@ int main()
     form->addControl(text2);
     form->show();
     form->centerScreen();
+    form->closed += []() {win32::quit(0); };
     win32::runLoop();
 
 #if 0
