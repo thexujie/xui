@@ -64,7 +64,7 @@ namespace controls::component
         graphics.clear(_color_default);
         render(graphics);
         const_cast<Scene *>(this)->rendered(_invalid_rect);
-        const_cast<Scene *>(this)->_invalid_rect.set_empty();
+        const_cast<Scene *>(this)->_invalid_rect.clear();
     }
 
     void Scene::render(graphics::Graphics & graphics) const

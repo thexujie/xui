@@ -106,6 +106,9 @@ int main()
     text2->setPadding({ 1_em, 0.5_em });
 
     auto form = std::make_shared<controls::Form>(core::vec2<core::dimensionf>(35_em, 30_em));
+    form->setBorder({ 4_px });
+    form->setBorderColors({colors::Black});
+    form->setBorderStyles({ graphics::stroke_style::dashed});
     form->addControl(text);
     form->addControl(image0);
     form->addControl(image);

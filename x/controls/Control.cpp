@@ -65,7 +65,7 @@ namespace controls
     {
         auto s = scene();
         auto p = parent();
-        if (!s || !p)
+        if (!s)
             throw core::error_state;
 
         switch (value.unit)
@@ -79,6 +79,8 @@ namespace controls
         case core::unit::dot:
             return value.value;
         case core::unit::per:
+            if (!p)
+                throw core::error_state;
             return value.value * p->width();
         default:
             return value.value * s->ratio();
@@ -313,15 +315,24 @@ namespace controls
 
     void Control::update()
     {
-        _view->clear();
-        _updateBackground();
-        updateContent();
-        _updateBorder();
+        auto v = view();
+        std::lock_guard<View> lock(*v);
+        v->clear();
+        _updateBackground(v);
+        updateContent(v);
+        _updateBorder(v);
     }
 
-    void Control::_updateBackground() const
+    void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to) { posChanged(from, to); }
+    void Control::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        auto v = view();
+        update();
+        sizeChanged(from, to);
+    }
+    void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }
+
+    void Control::_updateBackground(std::shared_ptr<View> & view) const
+    {
         if (_background_image)
         {
             auto image = std::make_shared<renderables::Image>(_background_image);
@@ -329,21 +340,20 @@ namespace controls
             if (_background_size.aviliable())
                 image->setImageSize(calc(_background_size));
             image->setImageFitting(_background_fitting);
-            v->insert(0, image);
+            view->insert(0, image);
         }
         else if (_background_color.visible())
         {
             auto rectangle = std::make_shared<renderables::Rectangle>();
             rectangle->setRect(box(_background_box));
             rectangle->setPathStyle(graphics::PathStyle().fill(_background_color));
-            v->insert(0, rectangle);
+            view->insert(0, rectangle);
         }
         else {}
     }
 
-    void Control::_updateBorder() const
+    void Control::_updateBorder(std::shared_ptr<View> & view) const
     {
-        auto v = view();
         if (_border && _border_colors)
         {
             if(std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
@@ -353,7 +363,7 @@ namespace controls
                 auto item = std::make_shared<renderables::Rectangle>();
                 item->setRect(box().expand(calc(_border) * -0.5f));
                 item->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc(_border.value.x)));
-                v->insert(0, item);
+                view->insert(0, item);
             }
             else
             {
@@ -371,7 +381,7 @@ namespace controls
                         auto item = std::make_shared<renderables::Line>(line[0], line[1]);
                         item->setClipPath(path);
                         item->setPathStyle(graphics::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]));
-                        v->insert(0, item);
+                        view->insert(0, item);
                     }
                 }
             }

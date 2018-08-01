@@ -116,8 +116,10 @@ namespace core
                 return cx <= 0 || cy <= 0;
         }
 
-        void set_empty()
+        void clear()
         {
+            x = 0;
+            y = 0;
             cx = 0;
             cy = 0;
         }
@@ -340,7 +342,7 @@ namespace core
         vec4 & operator &=(const vec4 & another)
         {
             if (another.empty() || empty())
-                set_empty();
+                clear();
             else
             {
                 T x_min = x > another.x ? x : another.x;
@@ -349,7 +351,7 @@ namespace core
                 T y_max = bottom() < another.bottom() ? bottom() : another.bottom();
 
                 if (x_max <= x_min || y_max <= y_min)
-                    set_empty();
+                    clear();
                 else
                     set(x_min, y_min, x_max - x_min, y_max - y_min);
             }

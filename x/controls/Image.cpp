@@ -62,16 +62,15 @@ namespace controls
         }
     }
 
-    void Image::updateContent()
+    void Image::updateContent(std::shared_ptr<View> & view)
     {
         if (_image)
         {
-            auto v = view();
             auto item = std::make_shared<renderables::Image>(_image);
             item->setRect(contentBox());
             item->setImageSize(_imageSize());
             item->setImageFitting(_image_fitting);
-            v->insert(0, item);
+            view->insert(0, item);
         }
     }
 

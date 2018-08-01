@@ -36,15 +36,14 @@ namespace controls
         Control::enterScene(scene);
     }
 
-    void Text::updateContent()
+    void Text::updateContent(std::shared_ptr<View> & view)
     {
         _confirmBlob();
         if(_textBlob)
         {
-            auto v = view();
             auto item = std::make_shared<renderables::Text>(_textBlob);
             item->setPos(contentBox().pos);
-            v->insert(0, item);
+            view->insert(0, item);
         }
     }
 

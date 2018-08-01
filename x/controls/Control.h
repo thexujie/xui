@@ -83,18 +83,18 @@ namespace controls
         virtual void layout(const core::rc32f & rect, const core::si32f & size);
 
         virtual void update();
-        virtual void updateContent() {}
-        virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to) { posChanged(from, to); }
-        virtual void onSizeChanged(const core::si32f & from, const core::si32f & to) { sizeChanged(from, to); }
-        virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }
+        virtual void updateContent(std::shared_ptr<View> & view) {}
+        virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
+        virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
+        virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
     public:
         core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
         core::event<void(const core::si32f & from, const core::si32f & to)> sizeChanged;
         core::event<void(const core::rc32f & from, const core::rc32f & to)> rectChanged;
 
     protected:
-        void _updateBackground() const;
-        void _updateBorder() const;
+        void _updateBackground(std::shared_ptr<View> & view) const;
+        void _updateBorder(std::shared_ptr<View> & view) const;
         void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:

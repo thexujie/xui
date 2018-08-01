@@ -13,7 +13,7 @@ namespace controls
         core::si32f contentSize() const;
         void enteringScene(std::shared_ptr<component::Scene> & scene) override;
         void enterScene(std::shared_ptr<component::Scene> & scene) override;
-        void updateContent() override;
+        void updateContent(std::shared_ptr<View> & view) override;
 
     private:
         // 确保 textBlob 已经被创建
