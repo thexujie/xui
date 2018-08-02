@@ -58,9 +58,96 @@ void testImages()
 
 //#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
 #pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
+#include "css/parser_pp.h"
+
+
+struct property_base
+{
+    
+};
+
+template<typename T>
+struct css_property_t : public property_base
+{
+    std::string name;
+    T value;
+};
+
+struct prop_type
+{
+    
+};
+
+template<typename T, typename _Ty>
+struct prop_desc : public prop_type
+{
+    prop_desc(std::string name_,
+    void (_Ty::*setter_)(const T &),
+    const T & (_Ty::*getter_)() const,
+    std::function<T(const std::string &)> parser_) : name(name_), setter(setter_), getter(getter_), parser(parser_) {}
+
+    std::string name;
+    void (_Ty::*setter)(const T &);
+    const T & (_Ty::*getter)() const;
+
+    std::function<T(const std::string &)> parser;
+};
+
+template<typename _Ty>
+struct property_prebuild
+{
+    virtual void apply(std::shared_ptr<_Ty> ptr)
+    {
+        
+    }
+};
+
+template<typename _Ty, typename _ValT>
+struct property_prebuild2 : public property_prebuild<_Ty>
+{
+    _ValT val;
+    prop_desc<_Ty, _ValT> * pi;
+
+    void apply(std::shared_ptr<_Ty> ptr)
+    {
+        (ptr->*(pi->setter))(val);
+    }
+};
+
+
+template<typename _Ty>
+struct ptable
+{
+    std::vector<property_prebuild<_Ty>> pps;
+};
+
+int parseInt(const std::string & str)
+{
+    return 0;
+}
+
+class Test
+{
+public:
+    int val = 0;
+    void set_val(const int & _val) { val = _val; }
+   const int & get_val() const { return val; }
+
+    void propertyTable(std::vector<std::shared_ptr<prop_type>> & items)
+    {
+        items.push_back(std::make_shared<prop_desc<int, Test>>("val", &Test::set_val, &Test::get_val, parseInt));
+    }
+
+    ptable<Test> pt;
+};
 
 int main()
 {
+    std::string css = ".button { border: 1px;padding : 1em, 0.5em;} .button:hoving{border: 2px;}";
+    htmlcxx::CSS::Parser parser;
+    parser.parse(css);
+
+
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
     win32::Win32App app;
     //testImages();

@@ -32,6 +32,18 @@
     <ClCompile Include="win32\uniscribe\ScriptService.cpp">
       <Filter>win32\uniscribe</Filter>
     </ClCompile>
+    <ClCompile Include="css\css_lex.c">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="css\css_syntax.c">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="css\parser.c">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="css\parser_pp.cc">
+      <Filter>css</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -62,6 +74,18 @@
     <ClInclude Include="win32\uniscribe\ScriptService.h">
       <Filter>win32\uniscribe</Filter>
     </ClInclude>
+    <ClInclude Include="css\css_lex.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="css\css_syntax.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="css\parser.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="css\parser_pp.h">
+      <Filter>css</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="win32">
@@ -73,5 +97,13 @@
     <Filter Include="win32\uniscribe">
       <UniqueIdentifier>{1563d03b-b08a-447f-ac87-6a14c3db607e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="css">
+      <UniqueIdentifier>{ec6a981f-c32e-4d3c-9729-b0ddce445693}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="css\default.css">
+      <Filter>css</Filter>
+    </None>
   </ItemGroup>
 </Project>
