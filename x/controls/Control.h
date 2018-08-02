@@ -1,10 +1,37 @@
 #pragma once
 #include "component/Scene.h"
-#include "attribute.h"
-#include "View.h"
+#include "component/View.h"
+#include "renderables/Text.h"
+#include "renderables/Image.h"
+#include "renderables/Line.h"
+#include "renderables/Rectangle.h"
 
 namespace controls
 {
+    enum class control_box
+    {
+        // 边框方框
+        border_box = 0,
+        // 内框方框
+        padding_box,
+        // 内容方框
+        content_box,
+    };
+
+    enum class layout_origin
+    {
+        // 默认位置
+        layout = 0,
+        // 相对于 parent 的位置
+        parent,
+        // 相对于 scene 的位置
+        scene,
+        // 相对于 view 的位置
+        view,
+        // 同 layout，如果超出 scene 则相对于 view
+        sticky,
+    };
+
     class Control : public core::invokable<Control>
     {
     public:
@@ -30,7 +57,7 @@ namespace controls
         core::si32f prefferSize() const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
-        std::shared_ptr<View> view() const;
+        std::shared_ptr<component::View> view() const;
         std::shared_ptr<component::Scene> scene() const { return _scene.lock(); }
         void setParent(std::shared_ptr<Control> parent) { _parent = parent; }
         std::shared_ptr<Control> parent() const { return _parent.lock(); }
@@ -83,7 +110,7 @@ namespace controls
         virtual void layout(const core::rc32f & rect, const core::si32f & size);
 
         virtual void update();
-        virtual void updateContent(std::shared_ptr<View> & view) {}
+        virtual void updateContent(std::shared_ptr<component::View> & view) {}
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
@@ -93,40 +120,45 @@ namespace controls
         core::event<void(const core::rc32f & from, const core::rc32f & to)> rectChanged;
 
     protected:
-        void _updateBackground(std::shared_ptr<View> & view) const;
-        void _updateBorder(std::shared_ptr<View> & view) const;
+        void _updateBackground(std::shared_ptr<component::View> & view);
+        void _updateBorder(std::shared_ptr<component::View> & view);
         void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:
         std::weak_ptr<component::Scene> _scene;
         std::weak_ptr<Control> _parent;
-        std::shared_ptr<View> _view;
+        std::shared_ptr<component::View> _view;
 
         layout_origin _layout_origin = layout_origin::layout;
 
-        attribute<core::color32> _color;
+        core::attribute<core::color32> _color;
         // 控件大小，包括 padding，不包括 margin。
-        attribute<core::vec2<core::dimensionf>> _pos;
-        attribute<core::vec2<core::dimensionf>> _size;
-        attribute<core::vec4<core::dimensionf>> _padding;
-        attribute<core::vec4<core::dimensionf>> _border;
-        attribute<core::vec4<core::color32>> _border_colors;
-        attribute<core::vec4<graphics::stroke_style>> _border_styles;
-        attribute<core::vec4<core::dimensionf>> _margin;
-        attribute<core::vec2<core::dimensionf>> _minSize;
-        attribute<core::vec2<core::dimensionf>> _maxSize;
+        core::attribute<core::vec2<core::dimensionf>> _pos;
+        core::attribute<core::vec2<core::dimensionf>> _size;
+        core::attribute<core::vec4<core::dimensionf>> _padding;
+        core::attribute<core::vec4<core::dimensionf>> _border;
+        core::attribute<core::vec4<core::color32>> _border_colors;
+        core::attribute<core::vec4<graphics::stroke_style>> _border_styles;
+        core::attribute<core::vec4<core::dimensionf>> _margin;
+        core::attribute<core::vec2<core::dimensionf>> _minSize;
+        core::attribute<core::vec2<core::dimensionf>> _maxSize;
 
-        attribute<graphics::font> _font;
+        core::attribute<graphics::font> _font;
 
         // background
         core::color32 _background_color = core::colors::Auto;
         std::shared_ptr<graphics::Image> _background_image;
         layout_origin _background_position;
-        attribute<core::vec2<core::dimensionf>> _background_size;
-        core::vec2<image_fitting> _background_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
+        core::attribute<core::vec2<core::dimensionf>> _background_size;
+        core::vec2<renderables::image_fitting> _background_fitting = core::vec2<renderables::image_fitting>(renderables::image_fitting::none, renderables::image_fitting::none);
         control_box _background_box = control_box::border_box;
 
         // 布局之后
         core::rc32f _rect;
+
+        std::shared_ptr<renderables::Image> _background_imgage_obj;
+        std::shared_ptr<renderables::Rectangle> _background_rect_obj;
+        std::shared_ptr<renderables::Rectangle> _border_obj;
+        std::array<std::shared_ptr<renderables::Line>, 4> _border_objs;
     };
 }

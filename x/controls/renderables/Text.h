@@ -1,14 +1,13 @@
 #pragma once
 #include "controls/component/Renderable.h"
-#include "controls/attribute.h"
 
 namespace controls::renderables
 {
     class Text : public component::Renderable
     {
     public:
-        Text();
-        Text(std::shared_ptr<graphics::TextBlob> text);
+        Text(std::shared_ptr<component::View> view);
+        Text(std::shared_ptr<component::View> view, std::shared_ptr<graphics::TextBlob> text);
         ~Text();
 
         void setText(std::shared_ptr<graphics::TextBlob> text);

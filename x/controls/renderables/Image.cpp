@@ -3,12 +3,12 @@
 
 namespace controls::renderables
 {
-    Image::Image()
+    Image::Image(std::shared_ptr<component::View> view) : Renderable(view)
     {
 
     }
 
-    Image::Image(std::shared_ptr<graphics::Image> image) :_image(image)
+    Image::Image(std::shared_ptr<component::View> view, std::shared_ptr<graphics::Image> image) : Renderable(view), _image(image)
     {
         
     }

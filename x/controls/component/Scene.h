@@ -24,11 +24,10 @@ namespace controls::component
         const core::rc32f & invalidRect() const { return _invalid_rect; }
 
     public:
-        core::error addRenderable(std::shared_ptr<Renderable> component);
-        core::error removeRenderable(std::shared_ptr<Renderable> component);
+        core::error insert(std::shared_ptr<View> component);
+        core::error remove(std::shared_ptr<View> component);
 
-        const std::list<std::shared_ptr<Renderable>> & renderables() const { return _renderables; }
-        const std::list<std::shared_ptr<Interactable>> & interactables() const { return _interactables; }
+        const std::list<std::shared_ptr<View>> & views() const { return _views; }
 
         void render() const;
         void render(graphics::Graphics & graphics) const;
@@ -43,8 +42,7 @@ namespace controls::component
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
-        std::list<std::shared_ptr<Renderable>> _renderables;
-        std::list<std::shared_ptr<Interactable>> _interactables;
+        std::list<std::shared_ptr<View>> _views;
 
         std::shared_ptr<graphics::Bitmap> _renderBuffer;
     };

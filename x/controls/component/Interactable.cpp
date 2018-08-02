@@ -3,13 +3,4 @@
 
 namespace controls::component
 {
-    Interactable::Interactable()
-    {
-
-    }
-
-    Interactable::~Interactable()
-    {
-
-    }
 }

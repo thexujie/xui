@@ -1,14 +1,20 @@
 #pragma once
 #include "controls/component/Renderable.h"
-#include "controls/attribute.h"
 
 namespace controls::renderables
 {
+    enum class image_fitting
+    {
+        none = 0,
+        scale,
+        repeat,
+    };
+
     class Image : public component::Renderable
     {
     public:
-        Image();
-        Image(std::shared_ptr<graphics::Image> image);
+        Image(std::shared_ptr<component::View> view);
+        Image(std::shared_ptr<component::View> view, std::shared_ptr<graphics::Image> image);
         ~Image();
 
         void setImage(std::shared_ptr<graphics::Image> image);

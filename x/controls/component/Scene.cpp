@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "Scene.h"
 #include "Component.h"
+#include "Scene.h"
+#include "View.h"
 
 namespace controls::component
 {
@@ -29,25 +30,25 @@ namespace controls::component
         render();
     }
 
-    core::error Scene::addRenderable(std::shared_ptr<Renderable> component)
+    core::error Scene::insert(std::shared_ptr<View> view)
     {
-        if (!component)
+        if (!view)
             return core::error_args;
 
-        component->enteringScene(*this);
-        _renderables.push_back(std::dynamic_pointer_cast<Renderable>(component));
-        component->enterScene(*this);
+        view->enteringScene(shared_from_this());
+        _views.push_back(view);
+        view->enterScene(shared_from_this());
         return core::error_ok;
     }
 
-    core::error Scene::removeRenderable(std::shared_ptr<Renderable> component)
+    core::error Scene::remove(std::shared_ptr<View> view)
     {
-        if (!component)
+        if (!view)
             return core::error_args;
 
-        component->leavingScene(*this);
-        _renderables.remove(component);
-        component->leaveScene(*this);
+        view->leavingScene(shared_from_this());
+        _views.remove(view);
+        view->leaveScene(shared_from_this());
         return core::error_ok;
     }
 
@@ -69,8 +70,8 @@ namespace controls::component
 
     void Scene::render(graphics::Graphics & graphics) const
     {
-        for (auto & renderable : _renderables)
-            renderable->render(graphics);
+        for (auto & view : _views)
+            view->render(graphics);
         const_cast<Scene *>(this)->_invalid = false;
     }
 }

@@ -3,20 +3,11 @@
 
 namespace controls::renderables
 {
-    Text::Text()
-    {
+    Text::Text(std::shared_ptr<component::View> view) : Renderable(view) { }
 
-    }
+    Text::Text(std::shared_ptr<component::View> view, std::shared_ptr<graphics::TextBlob> text) : Renderable(view), _text(text) { }
 
-    Text::Text(std::shared_ptr<graphics::TextBlob> text) :_text(text)
-    {
-        
-    }
-
-    Text::~Text()
-    {
-
-    }
+    Text::~Text() { }
 
     void Text::setText(std::shared_ptr<graphics::TextBlob> text)
     {

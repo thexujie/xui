@@ -99,16 +99,17 @@
     <ClCompile Include="controls\component\Layout.cpp" />
     <ClCompile Include="controls\component\Renderable.cpp" />
     <ClCompile Include="controls\component\Scene.cpp" />
+    <ClCompile Include="controls\component\View.cpp" />
     <ClCompile Include="controls\component\Window.cpp" />
     <ClCompile Include="controls\Container.cpp" />
     <ClCompile Include="controls\Element.cpp" />
     <ClCompile Include="controls\Desktop.cpp" />
+    <ClCompile Include="controls\interactables\MouseRectangle.cpp" />
     <ClCompile Include="controls\renderables\Line.cpp" />
     <ClCompile Include="controls\renderables\Path.cpp" />
     <ClCompile Include="controls\renderables\Shape.cpp" />
     <ClCompile Include="controls\renderables\Text.cpp" />
     <ClCompile Include="controls\Text.cpp" />
-    <ClCompile Include="controls\View.cpp" />
     <ClCompile Include="controls\Control.cpp" />
     <ClCompile Include="controls\Form.cpp" />
     <ClCompile Include="controls\Image.cpp" />
@@ -164,23 +165,23 @@
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="controls\attribute.h" />
     <ClInclude Include="controls\Button.h" />
     <ClInclude Include="controls\component\Component.h" />
     <ClInclude Include="controls\component\Interactable.h" />
     <ClInclude Include="controls\component\Layout.h" />
     <ClInclude Include="controls\component\Renderable.h" />
     <ClInclude Include="controls\component\Scene.h" />
+    <ClInclude Include="controls\component\View.h" />
     <ClInclude Include="controls\component\Window.h" />
     <ClInclude Include="controls\Container.h" />
     <ClInclude Include="controls\Element.h" />
     <ClInclude Include="controls\Desktop.h" />
+    <ClInclude Include="controls\interactables\MouseRectangle.h" />
     <ClInclude Include="controls\renderables\Line.h" />
     <ClInclude Include="controls\renderables\Path.h" />
     <ClInclude Include="controls\renderables\Shape.h" />
     <ClInclude Include="controls\renderables\Text.h" />
     <ClInclude Include="controls\Text.h" />
-    <ClInclude Include="controls\View.h" />
     <ClInclude Include="controls\Control.h" />
     <ClInclude Include="controls\Form.h" />
     <ClInclude Include="controls\Image.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="controls\renderables\Rectangle.h" />
     <ClInclude Include="core\align.h" />
     <ClInclude Include="core\app.h" />
+    <ClInclude Include="core\attribute.h" />
     <ClInclude Include="core\base64.h" />
     <ClInclude Include="core\color32.h" />
     <ClInclude Include="core\core.h" />

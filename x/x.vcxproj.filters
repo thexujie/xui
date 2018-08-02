@@ -134,9 +134,6 @@
     <ClCompile Include="controls\Control.cpp">
       <Filter>controls</Filter>
     </ClCompile>
-    <ClCompile Include="controls\View.cpp">
-      <Filter>controls</Filter>
-    </ClCompile>
     <ClCompile Include="controls\Container.cpp">
       <Filter>controls</Filter>
     </ClCompile>
@@ -175,6 +172,12 @@
     </ClCompile>
     <ClCompile Include="controls\Desktop.cpp">
       <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\interactables\MouseRectangle.cpp">
+      <Filter>controls\interactables</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\component\View.cpp">
+      <Filter>controls\component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -368,13 +371,7 @@
     <ClInclude Include="core\math\xmm.h">
       <Filter>core\math</Filter>
     </ClInclude>
-    <ClInclude Include="controls\attribute.h">
-      <Filter>controls</Filter>
-    </ClInclude>
     <ClInclude Include="controls\Control.h">
-      <Filter>controls</Filter>
-    </ClInclude>
-    <ClInclude Include="controls\View.h">
       <Filter>controls</Filter>
     </ClInclude>
     <ClInclude Include="core\unit.h">
@@ -422,6 +419,15 @@
     <ClInclude Include="controls\Desktop.h">
       <Filter>controls</Filter>
     </ClInclude>
+    <ClInclude Include="controls\interactables\MouseRectangle.h">
+      <Filter>controls\interactables</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\View.h">
+      <Filter>controls\component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\attribute.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -462,6 +468,9 @@
     </Filter>
     <Filter Include="samples">
       <UniqueIdentifier>{01a7303d-087f-42bc-9c03-b9a2c9ec3601}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="controls\interactables">
+      <UniqueIdentifier>{0c1f5a9d-e123-4da8-ad22-5dfaf14ee935}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

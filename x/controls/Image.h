@@ -14,12 +14,12 @@ namespace controls
         void setImage(std::string path);
         void setImage(std::shared_ptr<graphics::Image> image);
         void setImageSize(const core::vec2<core::dimensionf> & size);
-        void setImageFitting(const core::vec2<image_fitting> & fitting) { _image_fitting = fitting; }
-        const core::vec2<image_fitting> & imageFitting() const { return _image_fitting; }
+        void setImageFitting(const core::vec2<renderables::image_fitting> & fitting) { _image_fitting = fitting; }
+        const core::vec2<renderables::image_fitting> & imageFitting() const { return _image_fitting; }
         core::si32f contentSize() const;
 
         core::si32f _imageSize() const;
-        virtual void updateContent(std::shared_ptr<View> & view);
+        virtual void updateContent(std::shared_ptr<component::View> & view);
 
     public:
         void enteringScene(std::shared_ptr<component::Scene> & scene) override;
@@ -29,7 +29,9 @@ namespace controls
 
     private:
         std::shared_ptr<graphics::Image> _image;
-        attribute<core::vec2<core::dimensionf>> _image_size;
-        core::vec2<image_fitting> _image_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
+        core::attribute<core::vec2<core::dimensionf>> _image_size;
+        core::vec2<renderables::image_fitting> _image_fitting = core::vec2<renderables::image_fitting>(renderables::image_fitting::none, renderables::image_fitting::none);
+
+        std::shared_ptr<renderables::Image> _image_obj;
     };
 }

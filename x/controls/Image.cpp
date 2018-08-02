@@ -47,7 +47,7 @@ namespace controls
         else
         {
             // ×ÔÊÊÓ¦¿í¶È
-            attribute<core::vec2<core::dimensionf>> _size = _image_size;
+            core::attribute<core::vec2<core::dimensionf>> _size = _image_size;
             if (_image_size.value.cx.nan() && !_image_size.value.cy.nan())
                 _size.value.cx = _image_size.value.cy * _image->aspect();
             else if (!_image_size.value.cx.nan() && _image_size.value.cy.nan())
@@ -62,15 +62,24 @@ namespace controls
         }
     }
 
-    void Image::updateContent(std::shared_ptr<View> & view)
+    void Image::updateContent(std::shared_ptr<component::View> & view)
     {
         if (_image)
         {
-            auto item = std::make_shared<renderables::Image>(_image);
-            item->setRect(contentBox());
-            item->setImageSize(_imageSize());
-            item->setImageFitting(_image_fitting);
-            view->insert(0, item);
+            if(!_image_obj)
+                _image_obj = std::make_shared<renderables::Image>(view, _image);
+
+            _image_obj->setRect(contentBox());
+            _image_obj->setImageSize(_imageSize());
+            _image_obj->setImageFitting(_image_fitting);
+        }
+        else
+        {
+            if(_image_obj)
+            {
+                view->remove(_image_obj);
+                _image_obj = nullptr;
+            }
         }
     }
 

@@ -13,12 +13,12 @@
 #include "core/io/filestream.h"
 #include "win32/uniscribe/script.h"
 #include "graphics/TextBlob.h"
-#include "controls/View.h"
 #include "controls/Image.h"
 #include "controls/Container.h"
 #include "controls/Text.h"
 #include "controls/Form.h"
 #include "controls/Desktop.h"
+#include "controls/Button.h"
 
 using namespace core;
 
@@ -76,6 +76,10 @@ int main()
     auto src = s->rect();
     auto ppi = controls::Desktop::instance().ppi();
 
+    auto button = std::make_shared<controls::Button>(u8"点击查看更多精彩内容");
+    button->setBorder({ 2_px });
+    button->setBorderColors({ colors::DimGray });
+
 
     auto text = std::make_shared<controls::Text>(u8"ABCDEF这是一个很好的内容的G");
     text->setBorder({ 2_px });
@@ -85,7 +89,7 @@ int main()
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
-    image0->setImageFitting({ controls::image_fitting::repeat, controls::image_fitting::repeat });
+    image0->setImageFitting({ controls::renderables::image_fitting::repeat, controls::renderables::image_fitting::repeat });
     image0->setPadding({ 1_em });
     image0->setBorder({ 10_px, 20_px, 30_px, 40_px });
     //image0->setBorder({ 40_px });
@@ -97,7 +101,7 @@ int main()
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
     image->setSize({ 20_em, 20_em });
-    image->setImageFitting({ controls::image_fitting::repeat, controls::image_fitting::repeat });
+    image->setImageFitting({ controls::renderables::image_fitting::repeat, controls::renderables::image_fitting::repeat });
     image->setBorder({ 5_px });
     image->setBorderColors({ colors::Azure });
 
@@ -109,6 +113,7 @@ int main()
     form->setBorder({ 4_px });
     form->setBorderColors({colors::Black});
     form->setBorderStyles({ graphics::stroke_style::dashed});
+    form->addControl(button);
     form->addControl(text);
     form->addControl(image0);
     form->addControl(image);

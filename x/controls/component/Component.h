@@ -1,8 +1,13 @@
 #pragma once
 
+namespace graphics {
+    class Graphics;
+}
+
 namespace controls::component
 {
     class Scene;
+    class View;
 
     enum class ComponentType
     {
@@ -12,12 +17,12 @@ namespace controls::component
 
     class Component : public std::enable_shared_from_this<Component>
     {
-        friend class Scene;
+    protected:
+        Component(ComponentType type) : _type(type) {}
 
-        public:
-        Component() = default;
-        Component(ComponentType type):_type(type) {}
-        Component(ComponentType type, const core::rc32f & rect) : _type(type), _rect(rect) {}
+    public:
+        Component(ComponentType type, std::shared_ptr<View> view);
+        Component(ComponentType type, std::shared_ptr<View> view, const core::rc32f & rect);
 
         virtual ~Component() = default;
 
@@ -30,7 +35,9 @@ namespace controls::component
         void setRect(const core::rc32f & rect) { _rect = rect; }
         core::rc32f rect() const { return _rect; }
 
-    protected:
+        std::shared_ptr<View> view() const { return _view.lock(); }
+
+    public:
         virtual void enteringScene(Scene & scene);
         virtual void enterScene(Scene & scene);
         virtual void leavingScene(Scene & scene);
@@ -39,5 +46,6 @@ namespace controls::component
     protected:
         ComponentType _type;
         core::rc32f _rect;
+        std::weak_ptr<View> _view;
     };
 }

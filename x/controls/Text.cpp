@@ -26,24 +26,14 @@ namespace controls
         return _textBlob ? _textBlob->size() : core::si32f();
     }
 
-    void Text::enteringScene(std::shared_ptr<component::Scene> & scene)
-    {
-        Control::enteringScene(scene);
-    }
-
-    void Text::enterScene(std::shared_ptr<component::Scene> & scene)
-    {
-        Control::enterScene(scene);
-    }
-
-    void Text::updateContent(std::shared_ptr<View> & view)
+    void Text::updateContent(std::shared_ptr<component::View> & view)
     {
         _confirmBlob();
         if(_textBlob)
         {
-            auto item = std::make_shared<renderables::Text>(_textBlob);
-            item->setPos(contentBox().pos);
-            view->insert(0, item);
+            if(!_text_obj)
+                _text_obj = std::make_shared<renderables::Text>(view, _textBlob);
+            _text_obj->setPos(contentBox().pos);
         }
     }
 

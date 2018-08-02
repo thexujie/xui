@@ -11,9 +11,7 @@ namespace controls
         ~Text();
 
         core::si32f contentSize() const;
-        void enteringScene(std::shared_ptr<component::Scene> & scene) override;
-        void enterScene(std::shared_ptr<component::Scene> & scene) override;
-        void updateContent(std::shared_ptr<View> & view) override;
+        void updateContent(std::shared_ptr<component::View> & view) override;
 
     private:
         // 确保 textBlob 已经被创建
@@ -22,5 +20,7 @@ namespace controls
     private:
         std::string _text;
         std::shared_ptr<graphics::TextBlob> _textBlob;
+
+        std::shared_ptr<renderables::Text> _text_obj;
     };
 }
