@@ -42,4 +42,9 @@ namespace graphics
         if (!_native)
             _native = std::make_shared<SkPath>();
     }
+
+    core::rc32f Path::computeTightBounds() const
+    {
+        return skia::to(_native->computeTightBounds());
+    }
 }

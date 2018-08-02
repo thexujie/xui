@@ -113,9 +113,9 @@ int main()
     form->setBorder({ 4_px });
     form->setBorderColors({colors::Black});
     form->setBorderStyles({ graphics::stroke_style::dashed});
-    form->addControl(button);
     form->addControl(text);
     form->addControl(image0);
+    form->addControl(button);
     form->addControl(image);
     form->addControl(text2);
     form->show();

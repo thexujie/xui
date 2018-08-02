@@ -6,9 +6,12 @@ namespace controls::renderables
     void Rectangle::render(graphics::Graphics & graphics) const
     {
         Renderable::render(graphics);
-        if (_rect.empty())
+        if (_rectangle.empty())
             return;
 
-        graphics.drawRectangle(_rect, _style);
+        graphics.save();
+        graphics.setClipPath(_clipPath);
+        graphics.drawRectangle(_rectangle, _style);
+        graphics.restore();
     }
 }

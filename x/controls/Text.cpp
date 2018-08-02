@@ -32,7 +32,10 @@ namespace controls
         if(_textBlob)
         {
             if(!_text_obj)
-                _text_obj = std::make_shared<renderables::Text>(view, _textBlob);
+            {
+                _text_obj = std::make_shared<renderables::Text>(_textBlob);
+                view->insert(_text_obj);
+            }
             _text_obj->setPos(contentBox().pos);
         }
     }

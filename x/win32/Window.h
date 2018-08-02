@@ -271,18 +271,17 @@ namespace win32
         virtual intx_t OnWmPaint(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmNcPaint(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmNcActivate(uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseMove(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmMouseEnter(uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseLeave(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmMouseMove(uintx_t uiParam, intx_t iParam);
+        virtual intx_t OnWmMouseLeave(uintx_t uiParam, intx_t iParam);
+        virtual intx_t OnWmMouseDownL(uintx_t uiParam, intx_t iParam);
+        virtual intx_t OnWmMouseUpL(uintx_t uiParam, intx_t iParam);
 
         virtual intx_t OnWmMouseDown(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
         virtual intx_t OnWmMouseUp(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
         virtual intx_t OnWmMouseClick(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
 
-        virtual intx_t OnWmMouseDownL(uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmNcMouseDownL(uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseUpL(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmNcMouseDownL(uintx_t uiParam, intx_t iParam) { return 0; }
         virtual intx_t OnWmMouseDownR(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmMouseUpR(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmMouseDownM(uintx_t uiParam, intx_t iParam){ return 0;}
@@ -323,6 +322,8 @@ namespace win32
         uint32_t _styleEx = 0;
         handle_t _handle = nullptr;
 
+        bool _mouseIn = false;
+        bool _trackingMouse = false;
     public:
         core::event<void()> closed;
 

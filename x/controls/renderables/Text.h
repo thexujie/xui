@@ -6,8 +6,8 @@ namespace controls::renderables
     class Text : public component::Renderable
     {
     public:
-        Text(std::shared_ptr<component::View> view);
-        Text(std::shared_ptr<component::View> view, std::shared_ptr<graphics::TextBlob> text);
+        Text();
+        Text(std::shared_ptr<graphics::TextBlob> text);
         ~Text();
 
         void setText(std::shared_ptr<graphics::TextBlob> text);

@@ -13,9 +13,9 @@ namespace controls::renderables
     class Image : public component::Renderable
     {
     public:
-        Image(std::shared_ptr<component::View> view);
-        Image(std::shared_ptr<component::View> view, std::shared_ptr<graphics::Image> image);
-        ~Image();
+        Image() {}
+        Image(std::shared_ptr<graphics::Image> image) : _image(image) {}
+        ~Image() {}
 
         void setImage(std::shared_ptr<graphics::Image> image);
         void setImageSize(const core::si32f & size) { _image_size = size; }

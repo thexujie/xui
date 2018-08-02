@@ -7,8 +7,8 @@ namespace controls::renderables
     class Path : public component::Renderable
     {
     public:
-        Path(std::shared_ptr<component::View> view) : Renderable(view) {}
-        Path(std::shared_ptr<component::View> view, std::shared_ptr<graphics::Path> path) : Renderable(view), _path(path) {}
+        Path() {}
+        Path(std::shared_ptr<graphics::Path> path) : _path(path) {}
         ~Path() = default;
 
         void setPath(std::shared_ptr<graphics::Path> path) { _path = path; }

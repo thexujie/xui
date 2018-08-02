@@ -248,7 +248,7 @@ namespace win32
         bmi.bmiHeader.biSizeImage = 0;
 
         HDC hdc = GetDC(hwnd);
-        SetDIBitsToDevice(hdc, rc.x, rc.y, rc.cx, rc.cy, 0, 0, rc.y, rc.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+        SetDIBitsToDevice(hdc, rc.x, rc.y, rc.cx, rc.cy, rc.x, rc.y, 0, rc.cy, buffer.data, &bmi, DIB_RGB_COLORS);
         ReleaseDC(hwnd, hdc);
     }
 
@@ -269,11 +269,11 @@ namespace win32
             //CASE_MSG(WM_NCPAINT, OnWmNcPaint);
             //CASE_MSG(WM_NCACTIVATE, OnWmNcActivate);
 
-            //CASE_MSG(WM_MOUSEMOVE, OnWmMouseMove);
-            //CASE_MSG(WM_MOUSELEAVE, OnWmMouseLeave);
+            CASE_MSG(WM_MOUSEMOVE, OnWmMouseMove);
+            CASE_MSG(WM_MOUSELEAVE, OnWmMouseLeave);
 
-            //CASE_MSG(WM_LBUTTONDOWN, OnWmMouseDownL);
-            //CASE_MSG(WM_LBUTTONUP, OnWmMouseUpL);
+            CASE_MSG(WM_LBUTTONDOWN, OnWmMouseDownL);
+            CASE_MSG(WM_LBUTTONUP, OnWmMouseUpL);
 
             //CASE_MSG(WM_RBUTTONDOWN, OnWmMouseDownR);
             //CASE_MSG(WM_RBUTTONUP, OnWmMouseUpR);
@@ -366,6 +366,71 @@ namespace win32
              return 0;
 
          scene->flush();
+        return 0;
+    }
+
+    intx_t Window::OnWmMouseMove(uintx_t uiParam, intx_t iParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto s = f->scene();
+
+        core::pt32i pos(core::i32li16(iParam), core::i32hi16(iParam));
+        if (!_trackingMouse)
+        {
+            //OnWmMouseEnter(uiMessage, uiParam, iParam);
+            TRACKMOUSEEVENT tme;
+            tme.cbSize = sizeof(TRACKMOUSEEVENT);
+            tme.dwFlags = TME_LEAVE;
+            tme.dwHoverTime = 1;
+            tme.hwndTrack = (HWND)_handle;
+            TrackMouseEvent(&tme);
+            _trackingMouse = true;
+            s->onMouseEnter(controls::component::mosue_state(pos.to<float32_t>()));
+        }
+
+        s->onMouseMove(controls::component::mosue_state(pos.to<float32_t>()));
+        return 0;
+    }
+
+    intx_t Window::OnWmMouseLeave(uintx_t uiParam, intx_t iParam)
+    {
+        if (!_trackingMouse)
+            return 0;
+        _trackingMouse = false;
+
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto s = f->scene();
+
+        core::pt32i pos(core::ixlih(iParam), core::ixhih(iParam));
+        s->onMouseLeave(controls::component::mosue_state(pos.to<float32_t>()));
+        return 0;
+    }
+
+    intx_t Window::OnWmMouseDownL(uintx_t uiParam, intx_t iParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto s = f->scene();
+
+        core::pt32i pos(core::i32li16(iParam), core::i32hi16(iParam));
+        s->onMouseDown(controls::component::mosue_state(pos.to<float32_t>()));
+        return 0;
+    }
+
+    intx_t Window::OnWmMouseUpL(uintx_t uiParam, intx_t iParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto s = f->scene();
+
+        core::pt32i pos(core::i32li16(iParam), core::i32hi16(iParam));
+        s->onMouseUp(controls::component::mosue_state(pos.to<float32_t>()));
         return 0;
     }
 

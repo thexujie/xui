@@ -35,6 +35,8 @@ namespace graphics
             if (bclose && num > 2)
                 close();
         }
+
+        core::rc32f  computeTightBounds() const;
     private:
         void _confirmNative();
 

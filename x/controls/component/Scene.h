@@ -29,8 +29,19 @@ namespace controls::component
 
         const std::list<std::shared_ptr<View>> & views() const { return _views; }
 
-        void render() const;
         void render(graphics::Graphics & graphics) const;
+
+    public:
+        std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos) const;
+
+        virtual void onMouseEnter(const mosue_state & state);
+        virtual void onMouseMove(const mosue_state & state);
+        virtual void onMouseLeave(const mosue_state & state);
+
+        virtual void onMouseDown(const mosue_state & state);
+        virtual void onMouseUp(const mosue_state & state);
+        virtual void onMouseClick(const mosue_state & state);
+        virtual void onMouseDBClick(const mosue_state & state);
 
     public:
         core::event<void(const core::rc32f & rect)> invalidated;
@@ -45,5 +56,7 @@ namespace controls::component
         std::list<std::shared_ptr<View>> _views;
 
         std::shared_ptr<graphics::Bitmap> _renderBuffer;
+
+        std::shared_ptr<MouseArea> _mousearea_hoving;
     };
 }

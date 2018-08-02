@@ -27,13 +27,21 @@ namespace graphics::skia
         }
     }
 
+    inline SkIRect from(const core::rc32i & rect)
+    {
+        return SkIRect::MakeXYWH(rect.x, rect.y, rect.width, rect.height);
+    }
     inline SkRect from(const core::rc32f & rect)
     {
         return SkRect::MakeXYWH(rect.x, rect.y, rect.width, rect.height);
     }
-    inline SkIRect from(const core::rc32i & rect)
+    inline core::rc32i to(const SkIRect & rect)
     {
-        return SkIRect::MakeXYWH(rect.x, rect.y, rect.width, rect.height);
+        return core::rc32i(rect.x(), rect.y(), rect.width(), rect.height());
+    }
+    inline core::rc32f to(const SkRect & rect)
+    {
+        return core::rc32f(rect.x(), rect.y(), rect.width(), rect.height());
     }
 
     inline SkEncodedImageFormat from(image::image_type fmt)

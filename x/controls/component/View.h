@@ -21,22 +21,24 @@ namespace controls::component
         virtual void leavingScene(std::shared_ptr<Scene> scene);
         virtual void leaveScene(std::shared_ptr<Scene> scene);
 
-
+        void clear();
         void insert(std::shared_ptr<Component> object);
         void remove(std::shared_ptr<Component> object);
 
-        void clear();
+        virtual void render(graphics::Graphics & graphics) const;
+
+        std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos) const;
 
         void setTransform(const core::float3x2 & transform) { _transform = transform; }
 
-        virtual void render(graphics::Graphics & graphics) const;
     protected:
         std::mutex _mtx;
+        std::mutex _mtx_interactable;
         std::weak_ptr<Scene> _scene;
         core::rc32f _rect;
         core::float3x2 _transform;
         std::list<std::shared_ptr<Renderable>> _renderables;
-        std::multimap<int32_t, std::shared_ptr<MouseArea>> _mouseareas;
+        std::list<std::shared_ptr<MouseArea>> _mouseareas;
 
         core::rc32f _rect_invalid;
     };

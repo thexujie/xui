@@ -14,6 +14,13 @@ namespace controls
         core::si32f contentSize() const;
         void updateContent(std::shared_ptr<component::View> & view) override;
 
+    public:
+        void onMouseEnter(const component::mosue_state & state);
+        void onMouseMove(const component::mosue_state & state);
+        void onMouseLeave(const component::mosue_state & state);
+        void onMouseDown(const component::mosue_state & state);
+        void onMouseUp(const component::mosue_state & state);
+
     private:
         // 确保 textBlob 已经被创建
         void _confirmBlob() const;

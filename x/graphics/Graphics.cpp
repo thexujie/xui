@@ -56,6 +56,9 @@ namespace graphics
         if (!_native)
             return;
 
+        if (!path)
+            return;
+
         _native->clipPath(path->native(), aa);
     }
 

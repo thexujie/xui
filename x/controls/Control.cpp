@@ -194,10 +194,11 @@ namespace controls
         return paddingBox();
     }
 
-    core::rc32f Control::box(control_box box) const
+    core::rc32f Control::box(control_box cbox) const
     {
-        switch (box)
+        switch (cbox)
         {
+        case control_box::layout_box: return box();
         case control_box::border_box: return borderBox();
         case control_box::padding_box: return paddingBox();
         case control_box::content_box: return contentBox();
@@ -263,8 +264,6 @@ namespace controls
             return;
 
         _background_color = color;
-        if (!_background_image)
-            invalid();
     }
 
     core::color32 Control::backgroundColor() const
@@ -341,7 +340,10 @@ namespace controls
             }
 
             if(!_background_imgage_obj)
-                _background_imgage_obj = std::make_shared<renderables::Image>(view, _background_image);
+            {
+                _background_imgage_obj = std::make_shared<renderables::Image>(_background_image);
+                view->insert(_background_imgage_obj);
+            }
 
             _background_imgage_obj->setRect(box(_background_box));
             if (_background_size.aviliable())
@@ -356,12 +358,28 @@ namespace controls
                 _background_imgage_obj = nullptr;
             }
             if(!_background_rect_obj)
-                _background_rect_obj = std::make_shared<renderables::Rectangle>(view);
+            {
+                _background_rect_obj = std::make_shared<renderables::Rectangle>();
+                view->insert(_background_rect_obj);
+            }
 
             _background_rect_obj->setRect(box(_background_box));
+            _background_rect_obj->setRectangle(box(_background_box));
             _background_rect_obj->setPathStyle(graphics::PathStyle().fill(_background_color));
         }
-        else {}
+        else
+        {
+            if (_background_imgage_obj)
+            {
+                view->remove(_background_imgage_obj);
+                _background_imgage_obj = nullptr;
+            }
+            if (_background_rect_obj)
+            {
+                view->remove(_background_rect_obj);
+                _background_rect_obj = nullptr;
+            }
+        }
     }
 
     void Control::_updateBorder(std::shared_ptr<component::View> & view)
@@ -373,7 +391,10 @@ namespace controls
                 std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
             {
                 if (!_border_obj)
-                    _border_obj = std::make_shared<renderables::Rectangle>(view);
+                {
+                    _border_obj = std::make_shared<renderables::Rectangle>();
+                    view->insert(_border_obj);
+                }
 
                 for (int32_t cnt = 0; cnt < 4; ++cnt)
                 {
@@ -384,7 +405,8 @@ namespace controls
                         border_obj = nullptr;
                     }
                 }
-                _border_obj->setRect(box().expand(calc(_border) * -0.5f));
+                _border_obj->setRect(box());
+                _border_obj->setRectangle(box().expand(calc(_border) * -0.5f));
                 _border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc(_border.value.x)));
             }
             else
@@ -408,7 +430,11 @@ namespace controls
                         path->fromPoints(std::begin(points), std::end(points), true);
 
                         if (!border_obj)
-                            border_obj = std::make_shared<renderables::Line>(view, line[0], line[1]);
+                        {
+                            border_obj = std::make_shared<renderables::Line>(line[0], line[1]);
+                            view->insert(border_obj);
+                        }
+                        border_obj->setRect(path->computeTightBounds());
                         border_obj->setClipPath(path);
                         border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]));
                     }

@@ -1,4 +1,17 @@
 <layout>
+	<![CDATA[
+	.button
+	{
+		border: 1px
+		padding: 1em, 0.5em
+	}
+	
+	.button:hoving
+	{
+		border: 2px
+	}
+	
+	]]>
 	<titlebar>
 		<title>直播设置</title>
 		<button style="min" position="right 0px" />

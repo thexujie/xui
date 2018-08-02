@@ -5,29 +5,32 @@
 
 namespace controls::component
 {
-    Scene::Scene()
-    {
+    Scene::Scene() { }
 
-    }
-
-    Scene::~Scene()
-    {
-
-    }
+    Scene::~Scene() { }
 
     void Scene::invalid(const core::rc32f & rect)
     {
         _invalid = true;
         _invalid_rect = _invalid_rect.unite(rect);
         invalidated(_invalid_rect);
-        invoke([this]() {flush(); });
+        invoke([this]() { flush(); });
     }
 
     void Scene::flush()
     {
         if (_invalid_rect.empty())
             return;
-        render();
+
+        core::si32i size = _invalid_rect.size.to<int32_t>();
+        if (!_renderBuffer || _renderBuffer->size().cx < size.cx || _renderBuffer->size().cy < size.cy)
+            _renderBuffer = std::make_shared<graphics::Bitmap>(size);
+
+        graphics::Graphics graphics(_renderBuffer);
+        graphics.clear(_color_default);
+        render(graphics);
+        rendered(_invalid_rect);
+        _invalid_rect.clear();
     }
 
     core::error Scene::insert(std::shared_ptr<View> view)
@@ -52,26 +55,86 @@ namespace controls::component
         return core::error_ok;
     }
 
-    void Scene::render() const
-    {
-        if (_invalid_rect.empty())
-            return;
-
-        core::si32i size = _invalid_rect.size.to<int32_t>();
-        if (!_renderBuffer || _renderBuffer->size().cx < size.cx || _renderBuffer->size().cy < size.cy)
-            const_cast<Scene *>(this)->_renderBuffer = std::make_shared<graphics::Bitmap>(size);
-
-        graphics::Graphics graphics(_renderBuffer);
-        graphics.clear(_color_default);
-        render(graphics);
-        const_cast<Scene *>(this)->rendered(_invalid_rect);
-        const_cast<Scene *>(this)->_invalid_rect.clear();
-    }
-
     void Scene::render(graphics::Graphics & graphics) const
     {
         for (auto & view : _views)
             view->render(graphics);
         const_cast<Scene *>(this)->_invalid = false;
     }
+
+    std::shared_ptr<MouseArea> Scene::findMouseArea(const core::pt32f & pos) const
+    {
+        for (auto & view : _views)
+        {
+            auto ma = view->findMouseArea(pos);
+            if (ma)
+                return ma;
+        }
+        return nullptr;
+    }
+
+    void Scene::onMouseEnter(const mosue_state & state)
+    {
+        auto ma = findMouseArea(state.pos());
+        if (_mousearea_hoving == ma)
+            return;
+
+        if (_mousearea_hoving)
+            _mousearea_hoving->onMouseLeave(state);
+
+        _mousearea_hoving = ma;
+
+        if (_mousearea_hoving)
+            _mousearea_hoving->onMouseEnter(state);
+    }
+
+    void Scene::onMouseMove(const mosue_state & state)
+    {
+        auto ma = findMouseArea(state.pos());
+        if (_mousearea_hoving != ma)
+        {
+            if (_mousearea_hoving)
+                _mousearea_hoving->onMouseLeave(state);
+
+            _mousearea_hoving = ma;
+
+            if (_mousearea_hoving)
+                _mousearea_hoving->onMouseEnter(state);
+        }
+
+        if (_mousearea_hoving)
+            _mousearea_hoving->onMouseMove(state);
+    }
+
+    void Scene::onMouseLeave(const mosue_state & state)
+    {
+        if (_mousearea_hoving)
+            _mousearea_hoving->onMouseLeave(state);
+
+        _mousearea_hoving = nullptr;
+    }
+
+    void Scene::onMouseDown(const mosue_state & state)
+    {
+        if (_mousearea_hoving)
+            _mousearea_hoving->onMouseDown(state);
+    }
+
+   void Scene::onMouseUp(const mosue_state & state)
+   {
+       if (_mousearea_hoving)
+           _mousearea_hoving->onMouseUp(state);
+   }
+
+   void Scene::onMouseClick(const mosue_state & state)
+   {
+       if (_mousearea_hoving)
+           _mousearea_hoving->onMouseClick(state);
+   }
+
+   void Scene::onMouseDBClick(const mosue_state & state)
+   {
+       if (_mousearea_hoving)
+           _mousearea_hoving->onMouseDBClick(state);
+   }
 }

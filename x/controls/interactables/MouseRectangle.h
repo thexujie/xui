@@ -6,8 +6,10 @@ namespace controls::interactables
     class MouseRectangle: public component::MouseArea
     {
     public:
-        MouseRectangle(std::shared_ptr<component::View> view) : MouseArea(view) {}
+        MouseRectangle()  {}
         ~MouseRectangle() = default;
+
+        core::error onHitTest(const core::pt32f & pos) const;
 
         virtual void onMouseEnter(component::mosue_state & state) {}
         virtual void onMouseMove(component::mosue_state & state) {}

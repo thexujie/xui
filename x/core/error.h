@@ -7,6 +7,7 @@ namespace core
         error_generic = std::numeric_limits<int32_t>::min(),
         error_inner,
         error_eof,
+        error_failed,
         error_nullptr,
         error_unreachable,
         error_outofmemory,

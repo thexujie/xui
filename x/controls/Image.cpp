@@ -67,7 +67,10 @@ namespace controls
         if (_image)
         {
             if(!_image_obj)
-                _image_obj = std::make_shared<renderables::Image>(view, _image);
+            {
+                _image_obj = std::make_shared<renderables::Image>(_image);
+                view->insert(_image_obj);
+            }
 
             _image_obj->setRect(contentBox());
             _image_obj->setImageSize(_imageSize());

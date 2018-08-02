@@ -2,6 +2,7 @@
 #include "View.h"
 #include "Scene.h"
 #include "Renderable.h"
+#include "Interactable.h"
 
 namespace controls::component
 {
@@ -50,17 +51,23 @@ namespace controls::component
 
     void View::insert(std::shared_ptr<controls::component::Component> object)
     {
+        assert(object);
+        if (!object)
+            throw core::exception(core::error_nullptr);
+
         switch(object->type())
         {
         case ComponentType::Renderable:
             _renderables.push_back(std::dynamic_pointer_cast<Renderable>(object));
             invalid(object->rect());
             break;
-        case ComponentType::Interactable: 
+        case ComponentType::Interactable:
+            _mouseareas.push_back(std::dynamic_pointer_cast<MouseArea>(object));
             break;
         default: 
             break;
         }
+        object->enterView(std::dynamic_pointer_cast<View>(shared_from_this()));
     }
 
     void View::remove(std::shared_ptr<Component> object)
@@ -76,6 +83,7 @@ namespace controls::component
         default:
             break;
         }
+        object->leaveView(std::dynamic_pointer_cast<View>(shared_from_this()));
     }
 
     void View::clear()
@@ -85,10 +93,21 @@ namespace controls::component
 
     void View::render(graphics::Graphics & graphics) const
     {
-        std::lock_guard<View> lock(const_cast<View &>(*this));
+        std::lock_guard<std::mutex> lock(const_cast<View *>(this)->_mtx);
         graphics.setMatrix(_transform);
         for(auto & rendereable : _renderables)
             rendereable->render(graphics);
         graphics.setMatrix(core::float3x2::identity);
+    }
+
+    std::shared_ptr<MouseArea> View::findMouseArea(const core::pt32f & pos) const
+    {
+        std::lock_guard<std::mutex> lock(const_cast<View *>(this)->_mtx_interactable);
+        for (auto & mousearea : _mouseareas)
+        {
+            if (mousearea->onHitTest(pos) == core::error_ok)
+                return mousearea;
+        }
+        return nullptr;
     }
 }

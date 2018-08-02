@@ -10,8 +10,10 @@ namespace controls
 {
     enum class control_box
     {
+        // 控件边框
+        layout_box = 0,
         // 边框方框
-        border_box = 0,
+        border_box,
         // 内框方框
         padding_box,
         // 内容方框
@@ -151,7 +153,7 @@ namespace controls
         layout_origin _background_position;
         core::attribute<core::vec2<core::dimensionf>> _background_size;
         core::vec2<renderables::image_fitting> _background_fitting = core::vec2<renderables::image_fitting>(renderables::image_fitting::none, renderables::image_fitting::none);
-        control_box _background_box = control_box::border_box;
+        control_box _background_box = control_box::layout_box;
 
         // 布局之后
         core::rc32f _rect;

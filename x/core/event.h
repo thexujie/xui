@@ -64,6 +64,42 @@ namespace std
 	{
 		return (_WeakBinder<std::_Unforced, _Fx, _Tx, _Types...>(std::forward<_Fx>(_Func), _Shp, std::forward<_Types>(_Args)...));
 	}
+
+    template<class _Rx, class _Ty>
+    class weak_binder
+    {
+    public:
+        typedef std::_Mem_fn<_Rx _Ty::*> FunT;
+        typedef _Rx RetT;
+
+        weak_binder(const weak_binder & another) : _wptr(another._wptr), _fun(another._fun) {}
+        weak_binder(FunT fun, std::shared_ptr<_Ty> wptr) : _wptr(wptr), _fun(fun) {}
+        template<typename FarT>
+        weak_binder(FunT fun, std::shared_ptr<FarT> wptr) : _wptr(std::dynamic_pointer_cast<_Ty>(wptr)), _fun(fun) {}
+
+        template<class... _Types>
+        auto operator()(_Types&&... _Args) const-> decltype(_fun(_Ty(), std::forward<_Types>(_Args)...))
+        {
+            auto ptr = std::dynamic_pointer_cast<_Ty>(_wptr.lock());
+            if constexpr (std::is_void<decltype(_fun(_Ty(), std::forward<_Types>(_Args)...))>::value)
+            {
+                if (ptr)
+                    _fun(*ptr, std::forward<_Types>(_Args)...);
+            }
+            else
+            {
+                if (!ptr)
+                    return {};
+
+                return _fun(*ptr, std::forward<_Types>(_Args)...);
+            }
+        }
+
+    private:
+        std::weak_ptr<_Ty> _wptr;
+        FunT _fun;
+    };
+
 }
 
 namespace core

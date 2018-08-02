@@ -97,15 +97,15 @@ namespace core
             cy = _size.y;
         }
 
-        bool is_point_in(const T & _x, const T & _y) const
+        bool contains(const T & _x, const T & _y) const
         {
             return _x >= x && _y >= y &&
                 _x < right() && _y < bottom();
         }
 
-        bool is_point_in(const vec2<T> & point) const
+        bool contains(const vec2<T> & point) const
         {
-            return is_point_in(point.x, point.y);
+            return contains(point.x, point.y);
         }
 
         bool empty() const

@@ -4,14 +4,12 @@
 
 namespace controls::component
 {
-    Component::Component(ComponentType type, std::shared_ptr<View> view) :_type(type), _view(view)
+    Component::Component(ComponentType type) :_type(type)
     {
-        view->insert(shared_from_this());
     }
 
-    Component::Component(ComponentType type, std::shared_ptr<View> view, const core::rc32f & rect) : _type(type), _view(view), _rect(rect)
+    Component::Component(ComponentType type, const core::rc32f & rect) : _type(type), _rect(rect)
     {
-        view->insert(shared_from_this());
     }
 
     void Component::enteringScene(Scene & scene)
@@ -32,5 +30,11 @@ namespace controls::component
     void Component::leaveScene(Scene & scene)
     {
 
+    }
+
+    void Component::invalid()
+    {
+        if (auto v = view()) 
+            v->invalid(_rect);
     }
 }
