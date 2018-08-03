@@ -73,76 +73,103 @@ struct css_property_t : public property_base
     T value;
 };
 
-struct prop_type
-{
-    
-};
 
-template<typename T, typename _Ty>
-struct prop_desc : public prop_type
-{
-    prop_desc(std::string name_,
-    void (_Ty::*setter_)(const T &),
-    const T & (_Ty::*getter_)() const,
-    std::function<T(const std::string &)> parser_) : name(name_), setter(setter_), getter(getter_), parser(parser_) {}
-
-    std::string name;
-    void (_Ty::*setter)(const T &);
-    const T & (_Ty::*getter)() const;
-
-    std::function<T(const std::string &)> parser;
-};
-
-template<typename _Ty>
 struct property_prebuild
 {
-    virtual void apply(std::shared_ptr<_Ty> ptr)
+    virtual ~property_prebuild() = default;
+
+    virtual void apply(object & self)
     {
-        
+
+    }
+
+    void apply(std::shared_ptr<object> ptr)
+    {
+        apply(*ptr);
+    }
+};
+template<typename ClassT, typename ValT>
+struct property_prebuild_instance : public property_prebuild
+{
+    void (ClassT::*setter)(const ValT &);
+    const ValT & (ClassT::*getter)() const;
+    ValT val;
+
+    void apply(object & self_)
+    {
+        ClassT & self = dynamic_cast<ClassT &>(self_);
+        (self.*setter)(val);
     }
 };
 
-template<typename _Ty, typename _ValT>
-struct property_prebuild2 : public property_prebuild<_Ty>
-{
-    _ValT val;
-    prop_desc<_Ty, _ValT> * pi;
 
-    void apply(std::shared_ptr<_Ty> ptr)
+template<typename ClassT>
+struct prop_type
+{
+    std::string name;
+
+    prop_type(std::string name_) : name(name_) {}
+    virtual ~prop_type() = default;
+    virtual std::shared_ptr<property_prebuild> build(const std::string & str) = 0;
+};
+
+template<typename ClassT, typename ValT>
+struct prop_desc : public prop_type<ClassT>
+{
+    prop_desc(std::string name_,
+    void (ClassT::*setter_)(const ValT &),
+    const ValT & (ClassT::*getter_)() const,
+    std::function<ValT(const std::string &)> parser_) : prop_type<ClassT>(name_), setter(setter_), getter(getter_), parser(parser_) {}
+
+    void (ClassT::*setter)(const ValT &);
+    const ValT & (ClassT::*getter)() const;
+
+    std::function<ValT(const std::string &)> parser;
+
+    std::shared_ptr<property_prebuild> build(const std::string & str)
     {
-        (ptr->*(pi->setter))(val);
+        auto instance = std::make_shared<property_prebuild_instance<ClassT, ValT>>();
+        instance->setter = setter;
+        instance->getter = getter;
+        instance->val = parser(str);
+        return instance;
     }
 };
 
-
-template<typename _Ty>
-struct ptable
-{
-    std::vector<property_prebuild<_Ty>> pps;
-};
 
 int parseInt(const std::string & str)
 {
-    return 0;
+    return std::stoi(str);
 }
 
-class Test
+class Test : public core::object
 {
 public:
     int val = 0;
     void set_val(const int & _val) { val = _val; }
    const int & get_val() const { return val; }
 
-    void propertyTable(std::vector<std::shared_ptr<prop_type>> & items)
+    void propertyTable(std::vector<std::shared_ptr<prop_type<Test>>> & items)
     {
-        items.push_back(std::make_shared<prop_desc<int, Test>>("val", &Test::set_val, &Test::get_val, parseInt));
+        items.push_back(std::make_shared<prop_desc<Test, int>>("val", &Test::set_val, &Test::get_val, parseInt));
     }
-
-    ptable<Test> pt;
 };
 
 int main()
 {
+    Test test;
+    auto ptr0 = test.weak_from_this();
+    std::vector<std::shared_ptr<prop_type<Test>>> items;
+    test.propertyTable(items);
+
+    for(auto & prop : items)
+    {
+        if(prop->name == "val")
+        {
+            auto pb = prop->build("456");
+            pb->apply(test);
+        }
+    }
     std::string css = ".button { border: 1px;padding : 1em, 0.5em;} .button:hoving{border: 2px;}";
     htmlcxx::CSS::Parser parser;
     parser.parse(css);

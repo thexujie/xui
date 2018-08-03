@@ -19,20 +19,20 @@ namespace win32
             core::app(nullptr);
         }
 
-        std::shared_ptr<core::Object> GetService(std::string name)
+        std::shared_ptr<core::object> GetService(std::string name)
         {
             if (name == "GraphicsService")
             {
                 if (!_graphicsService)
                     _graphicsService = std::make_shared<win32::GraphicsService>();
-                return std::dynamic_pointer_cast<core::Object>(_graphicsService);
+                return std::dynamic_pointer_cast<core::object>(_graphicsService);
             }
 
             if (name == "ScriptService")
             {
                 if (!_scriptService)
                     _scriptService = std::make_shared<win32::uniscribe::ScriptService>();
-                return std::dynamic_pointer_cast<core::Object>(_scriptService);
+                return std::dynamic_pointer_cast<core::object>(_scriptService);
             }
             return nullptr;
         }

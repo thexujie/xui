@@ -25,6 +25,7 @@ namespace controls
         // 确保 textBlob 已经被创建
         void _confirmBlob() const;
 
+        void _applyStyle();
     private:
         std::string _text;
         std::shared_ptr<graphics::TextBlob> _textBlob;

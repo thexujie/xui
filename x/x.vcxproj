@@ -96,7 +96,7 @@
     <ClCompile Include="controls\Button.cpp" />
     <ClCompile Include="controls\component\Component.cpp" />
     <ClCompile Include="controls\component\Interactable.cpp" />
-    <ClCompile Include="controls\component\Layout.cpp" />
+    <ClCompile Include="controls\component\Style.cpp" />
     <ClCompile Include="controls\component\Renderable.cpp" />
     <ClCompile Include="controls\component\Scene.cpp" />
     <ClCompile Include="controls\component\View.cpp" />
@@ -168,7 +168,7 @@
     <ClInclude Include="controls\Button.h" />
     <ClInclude Include="controls\component\Component.h" />
     <ClInclude Include="controls\component\Interactable.h" />
-    <ClInclude Include="controls\component\Layout.h" />
+    <ClInclude Include="controls\component\Style.h" />
     <ClInclude Include="controls\component\Renderable.h" />
     <ClInclude Include="controls\component\Scene.h" />
     <ClInclude Include="controls\component\View.h" />

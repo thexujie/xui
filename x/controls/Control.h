@@ -5,6 +5,7 @@
 #include "renderables/Image.h"
 #include "renderables/Line.h"
 #include "renderables/Rectangle.h"
+#include "component/Style.h"
 
 namespace controls
 {
@@ -155,6 +156,7 @@ namespace controls
         core::vec2<renderables::image_fitting> _background_fitting = core::vec2<renderables::image_fitting>(renderables::image_fitting::none, renderables::image_fitting::none);
         control_box _background_box = control_box::layout_box;
 
+        std::shared_ptr<component::Style> _style;
         // 布局之后
         core::rc32f _rect;
 

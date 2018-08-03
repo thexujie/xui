@@ -13,7 +13,7 @@ namespace win32::uniscribe
         graphics::fontmetrics metrics;
     };
 
-    class ScriptService : public core::Object
+    class ScriptService : public core::object
     {
     public:
         ScriptService();

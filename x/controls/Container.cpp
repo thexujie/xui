@@ -16,7 +16,7 @@ namespace controls
 
     void Container::addControl(std::shared_ptr<Control> control)
     {
-        control->setParent(shared_from_this());
+        control->setParent(share_ref<Container>());
         _controls.push_back(control);
     }
 

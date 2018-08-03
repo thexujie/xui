@@ -17,7 +17,7 @@ namespace graphics
         bool flip_y = false;
     };
 
-    class IGraphicsItem : public core::Object
+    class IGraphicsItem : public core::object
     {
     public:
         virtual ~IGraphicsItem() = default;
@@ -48,7 +48,7 @@ namespace graphics
         virtual ~IGraphicsString() = default;
     };
 
-    class IGraphics : public core::Object
+    class IGraphics : public core::object
     {
     public:
         virtual ~IGraphics() = default;
@@ -81,7 +81,7 @@ namespace graphics
         virtual core::si32i MeasureString(std::string str, graphics::font font) = 0;
     };
 
-    class IGraphicsService : public core::Object
+    class IGraphicsService : public core::object
     {
     public:
         virtual ~IGraphicsService() = default;

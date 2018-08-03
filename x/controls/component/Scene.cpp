@@ -38,9 +38,9 @@ namespace controls::component
         if (!view)
             return core::error_args;
 
-        view->enteringScene(shared_from_this());
+        view->enteringScene(share_ref<Scene>());
         _views.push_back(view);
-        view->enterScene(shared_from_this());
+        view->enterScene(share_ref<Scene>());
         return core::error_ok;
     }
 
@@ -49,9 +49,9 @@ namespace controls::component
         if (!view)
             return core::error_args;
 
-        view->leavingScene(shared_from_this());
+        view->leavingScene(share_ref<Scene>());
         _views.remove(view);
-        view->leaveScene(shared_from_this());
+        view->leaveScene(share_ref<Scene>());
         return core::error_ok;
     }
 

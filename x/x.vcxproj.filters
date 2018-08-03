@@ -113,9 +113,6 @@
     <ClCompile Include="controls\renderables\Image.cpp">
       <Filter>controls\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\Layout.cpp">
-      <Filter>controls\component</Filter>
-    </ClCompile>
     <ClCompile Include="core\float2.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -177,6 +174,9 @@
       <Filter>controls\interactables</Filter>
     </ClCompile>
     <ClCompile Include="controls\component\View.cpp">
+      <Filter>controls\component</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\component\Style.cpp">
       <Filter>controls\component</Filter>
     </ClCompile>
   </ItemGroup>
@@ -338,9 +338,6 @@
     <ClInclude Include="controls\Image.h">
       <Filter>controls</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\Layout.h">
-      <Filter>controls\component</Filter>
-    </ClInclude>
     <ClInclude Include="core\float2.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -427,6 +424,9 @@
     </ClInclude>
     <ClInclude Include="core\attribute.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\Style.h">
+      <Filter>controls\component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

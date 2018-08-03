@@ -2,10 +2,10 @@
 
 namespace core
 {
-    class Object
+    class object : public std::enable_shared_from_this<object>
     {
     public:
-        Object() = default;
-        virtual ~Object() = default;
+        object() = default;
+        virtual ~object() = default;
     };
 }

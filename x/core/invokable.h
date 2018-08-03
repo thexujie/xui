@@ -1,12 +1,25 @@
 #pragma once
+#include "object.h"
 
 namespace core
 {
-    class iinvokable
+    class iinvokable : public object
     {
     public:
         virtual ~iinvokable() {}
         virtual error trigger() = 0;
+
+        template<typename T>
+        std::shared_ptr<T> share_ref()
+        {
+            return std::dynamic_pointer_cast<T>(shared_from_this());
+        }
+
+        template<typename T>
+        std::weak_ptr<T> weak_ref()
+        {
+            return std::dynamic_pointer_cast<T>(shared_from_this());
+        }
     };
 
     class invokable_helper
@@ -33,7 +46,7 @@ namespace core
 
 
     template<typename T>
-    class invokable : public std::enable_shared_from_this<T>, public iinvokable
+    class invokable : public iinvokable
     {
     public:
         invokable() = default;
@@ -43,7 +56,7 @@ namespace core
         {
             std::lock_guard<std::mutex> lock(_mtxInvokable);
             _invoker_functions.push_back(func);
-            _invoker_helper.add(this_weak_ref());
+            _invoker_helper.add(weak_ref<iinvokable>());
             return error_ok;
         }
 
@@ -59,13 +72,7 @@ namespace core
                 function();
             return error_ok;
         }
-
-    protected:
-        std::weak_ptr<iinvokable> this_weak_ref()
-        {
-            return std::enable_shared_from_this<T>::weak_from_this();
-        }
-
+    
     protected:
         invokable_helper & _invoker_helper = invokable_get_helper();
         std::mutex _mtxInvokable;

@@ -86,6 +86,7 @@ namespace controls
         update();
     }
 
+    
     void Button::onMouseDown(const component::mosue_state & state)
     {
         setBackgroundColor(0x80808080);
@@ -106,5 +107,10 @@ namespace controls
             format.color(color());
             const_cast<std::shared_ptr<graphics::TextBlob> &>(_textBlob) = std::make_shared<graphics::TextBlob>(_text, format);
         }
+    }
+
+    void Button::_applyStyle()
+    {
+        _style->name;
     }
 }
