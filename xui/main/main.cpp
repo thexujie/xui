@@ -89,7 +89,7 @@ public:
 
 int main()
 {
-    std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:green} .button hoving{border: 2px; background-color:red}";
+    std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#8888} .button hoving{border: 2px; background-color:#a888}";
     auto ss = std::make_shared<controls::component::StyleSheet>();
     ss->loadFromData(str);
 
@@ -144,9 +144,9 @@ int main()
     text2->setPadding({ 1_em, 0.5_em });
 
     auto form = std::make_shared<controls::Form>(core::vec2<core::dimensionf>(35_em, 30_em));
-    form->setBorder({ 4_px });
+    form->setBorder({ 10_px });
     form->setBorderColors({ colors::Black });
-    form->setBorderStyles({ graphics::stroke_style::dashed });
+    //form->setBorderStyles({ graphics::stroke_style::dashed });
     form->addControl(text);
     form->addControl(image0);
     form->addControl(button);

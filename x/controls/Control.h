@@ -9,6 +9,9 @@
 
 namespace controls
 {
+    const int32_t DEPTH_BACKGROUND = -1;
+    const int32_t DEPTH_CONTENT = 0;
+    const int32_t DEPTH_FOREGROUND = 1;
     enum class control_box
     {
         // ¿Ø¼þ±ß¿ò

@@ -58,7 +58,7 @@ namespace controls::component
         switch(object->type())
         {
         case ComponentType::Renderable:
-            _renderables.push_back(std::dynamic_pointer_cast<Renderable>(object));
+            _renderables.insert(std::make_pair(0, std::dynamic_pointer_cast<Renderable>(object)));
             invalid(object->rect());
             break;
         case ComponentType::Interactable:
@@ -70,12 +70,40 @@ namespace controls::component
         object->enterView(std::dynamic_pointer_cast<View>(shared_from_this()));
     }
 
+    void View::insert(int32_t depth, std::shared_ptr<Component> object)
+    {
+        assert(object);
+        if (!object)
+            throw core::exception(core::error_nullptr);
+
+        switch (object->type())
+        {
+        case ComponentType::Renderable:
+            _renderables.insert(std::make_pair(depth, std::dynamic_pointer_cast<Renderable>(object)));
+            invalid(object->rect());
+            break;
+        case ComponentType::Interactable:
+            _mouseareas.push_back(std::dynamic_pointer_cast<MouseArea>(object));
+            break;
+        default:
+            break;
+        }
+        object->enterView(std::dynamic_pointer_cast<View>(shared_from_this()));
+    }
+
     void View::remove(std::shared_ptr<Component> object)
     {
         switch (object->type())
         {
         case ComponentType::Renderable:
-            _renderables.remove(std::dynamic_pointer_cast<Renderable>(object));
+            for(auto iter = _renderables.begin(); iter != _renderables.end(); ++iter)
+            {
+                if(iter->second == std::dynamic_pointer_cast<Renderable>(object))
+                {
+                    _renderables.erase(iter);
+                    break;
+                }
+            }
             invalid(object->rect());
             break;
         case ComponentType::Interactable:
@@ -96,7 +124,7 @@ namespace controls::component
         std::lock_guard<std::mutex> lock(const_cast<View *>(this)->_mtx);
         graphics.setMatrix(_transform);
         for(auto & rendereable : _renderables)
-            rendereable->render(graphics);
+            rendereable.second->render(graphics);
         graphics.setMatrix(core::float3x2::identity);
     }
 

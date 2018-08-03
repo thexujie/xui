@@ -352,7 +352,7 @@ namespace controls
             if(!_background_imgage_obj)
             {
                 _background_imgage_obj = std::make_shared<renderables::Image>(_background_image);
-                view->insert(_background_imgage_obj);
+                view->insert(DEPTH_BACKGROUND, _background_imgage_obj);
             }
 
             _background_imgage_obj->setRect(box(_background_box));
@@ -370,7 +370,7 @@ namespace controls
             if(!_background_rect_obj)
             {
                 _background_rect_obj = std::make_shared<renderables::Rectangle>();
-                view->insert(_background_rect_obj);
+                view->insert(DEPTH_BACKGROUND, _background_rect_obj);
             }
 
             _background_rect_obj->setRect(box(_background_box));
@@ -403,7 +403,7 @@ namespace controls
                 if (!_border_obj)
                 {
                     _border_obj = std::make_shared<renderables::Rectangle>();
-                    view->insert(_border_obj);
+                    view->insert(DEPTH_FOREGROUND, _border_obj);
                 }
 
                 for (int32_t cnt = 0; cnt < 4; ++cnt)
@@ -442,7 +442,7 @@ namespace controls
                         if (!border_obj)
                         {
                             border_obj = std::make_shared<renderables::Line>(line[0], line[1]);
-                            view->insert(border_obj);
+                            view->insert(DEPTH_FOREGROUND, border_obj);
                         }
                         border_obj->setRect(path->computeTightBounds());
                         border_obj->setClipPath(path);

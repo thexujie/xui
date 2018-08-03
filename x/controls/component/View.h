@@ -23,6 +23,7 @@ namespace controls::component
 
         void clear();
         void insert(std::shared_ptr<Component> object);
+        void insert(int32_t depth, std::shared_ptr<Component> object);
         void remove(std::shared_ptr<Component> object);
 
         virtual void render(graphics::Graphics & graphics) const;
@@ -37,7 +38,7 @@ namespace controls::component
         std::weak_ptr<Scene> _scene;
         core::rc32f _rect;
         core::float3x2 _transform;
-        std::list<std::shared_ptr<Renderable>> _renderables;
+        std::multimap<int32_t, std::shared_ptr<Renderable>> _renderables;
         std::list<std::shared_ptr<MouseArea>> _mouseareas;
 
         core::rc32f _rect_invalid;

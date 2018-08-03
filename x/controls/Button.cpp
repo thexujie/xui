@@ -48,7 +48,7 @@ namespace controls
             if(!_text_obj)
             {
                 _text_obj = std::make_shared<renderables::Text>();
-                view->insert(_text_obj);
+                view->insert(DEPTH_CONTENT, _text_obj);
             }
             _text_obj->setTextBlob(_textBlob);
             _text_obj->setPos(contentBox().pos);
