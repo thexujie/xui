@@ -19,6 +19,7 @@
 #include "controls/Form.h"
 #include "controls/Desktop.h"
 #include "controls/Button.h"
+#include "utils/css.h"
 
 using namespace core;
 
@@ -26,9 +27,9 @@ using namespace core;
 void testImages()
 {
     std::make_shared<graphics::Image>(u8"jpg/对比.jpg")->Save(string::format("out/jpg_", u8"对比", ".tga"));
-    for(auto & path : io::allPaths("bmp"))
+    for (auto & path : io::allPaths("bmp"))
     {
-        if(path.u8string().find(".bmp") != std::string::npos)
+        if (path.u8string().find(".bmp") != std::string::npos)
             std::make_shared<graphics::Image>(path.u8string())->Save(string::format("out/bmp_", path.filename()));
     }
     for (auto & path : io::allPaths("tga"))
@@ -61,118 +62,37 @@ void testImages()
 #include "css/parser_pp.h"
 
 
-struct property_base
+int parseInt(const std::string_view & str)
 {
-    
-};
-
-template<typename T>
-struct css_property_t : public property_base
-{
-    std::string name;
-    T value;
-};
-
-
-struct property_prebuild
-{
-    virtual ~property_prebuild() = default;
-
-    virtual void apply(object & self)
-    {
-
-    }
-
-    void apply(std::shared_ptr<object> ptr)
-    {
-        apply(*ptr);
-    }
-};
-template<typename ClassT, typename ValT>
-struct property_prebuild_instance : public property_prebuild
-{
-    void (ClassT::*setter)(const ValT &);
-    const ValT & (ClassT::*getter)() const;
-    ValT val;
-
-    void apply(object & self_)
-    {
-        ClassT & self = dynamic_cast<ClassT &>(self_);
-        (self.*setter)(val);
-    }
-};
-
-
-template<typename ClassT>
-struct prop_type
-{
-    std::string name;
-
-    prop_type(std::string name_) : name(name_) {}
-    virtual ~prop_type() = default;
-    virtual std::shared_ptr<property_prebuild> build(const std::string & str) = 0;
-};
-
-template<typename ClassT, typename ValT>
-struct prop_desc : public prop_type<ClassT>
-{
-    prop_desc(std::string name_,
-    void (ClassT::*setter_)(const ValT &),
-    const ValT & (ClassT::*getter_)() const,
-    std::function<ValT(const std::string &)> parser_) : prop_type<ClassT>(name_), setter(setter_), getter(getter_), parser(parser_) {}
-
-    void (ClassT::*setter)(const ValT &);
-    const ValT & (ClassT::*getter)() const;
-
-    std::function<ValT(const std::string &)> parser;
-
-    std::shared_ptr<property_prebuild> build(const std::string & str)
-    {
-        auto instance = std::make_shared<property_prebuild_instance<ClassT, ValT>>();
-        instance->setter = setter;
-        instance->getter = getter;
-        instance->val = parser(str);
-        return instance;
-    }
-};
-
-
-int parseInt(const std::string & str)
-{
-    return std::stoi(str);
+    return std::stoi(str.data());
 }
+
 
 class Test : public core::object
 {
 public:
     int val = 0;
     void set_val(const int & _val) { val = _val; }
-   const int & get_val() const { return val; }
+    const int & get_val() const { return val; }
 
-    void propertyTable(std::vector<std::shared_ptr<prop_type<Test>>> & items)
+    void set_val2(int _val) { val = _val; }
+    int get_val2() const { return val; }
+
+    void propertyTable(std::vector<std::shared_ptr<property_builder>> & items)
     {
-        items.push_back(std::make_shared<prop_desc<Test, int>>("val", &Test::set_val, &Test::get_val, parseInt));
+        items.push_back(make_builder("val", &Test::set_val, &Test::get_val, parseInt));
+        items.push_back(make_builder("val", &Test::set_val2, &Test::get_val, parseInt));
+        items.push_back(make_builder("val", &Test::set_val, &Test::get_val2, parseInt));
+        items.push_back(make_builder("val", &Test::set_val2, &Test::get_val2, parseInt));
     }
 };
 
 int main()
 {
-    Test test;
-    auto ptr0 = test.weak_from_this();
-    std::vector<std::shared_ptr<prop_type<Test>>> items;
-    test.propertyTable(items);
+    std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:green} .button hoving{border: 2px; background-color:red}";
+    auto ss = std::make_shared<controls::component::StyleSheet>();
+    ss->loadFromData(str);
 
-    for(auto & prop : items)
-    {
-        if(prop->name == "val")
-        {
-            auto pb = prop->build("456");
-            pb->apply(test);
-        }
-    }
-    std::string css = ".button { border: 1px;padding : 1em, 0.5em;} .button:hoving{border: 2px;}";
-    htmlcxx::CSS::Parser parser;
-    parser.parse(css);
 
 
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
@@ -193,7 +113,7 @@ int main()
     auto button = std::make_shared<controls::Button>(u8"点击查看更多精彩内容");
     button->setBorder({ 2_px });
     button->setBorderColors({ colors::DimGray });
-
+    button->appendStyleSheet(ss);
 
     auto text = std::make_shared<controls::Text>(u8"ABCDEF这是一个很好的内容的G");
     text->setBorder({ 2_px });
@@ -225,8 +145,8 @@ int main()
 
     auto form = std::make_shared<controls::Form>(core::vec2<core::dimensionf>(35_em, 30_em));
     form->setBorder({ 4_px });
-    form->setBorderColors({colors::Black});
-    form->setBorderStyles({ graphics::stroke_style::dashed});
+    form->setBorderColors({ colors::Black });
+    form->setBorderStyles({ graphics::stroke_style::dashed });
     form->addControl(text);
     form->addControl(image0);
     form->addControl(button);
@@ -243,7 +163,7 @@ int main()
     auto row = std::make_shared<controls::Container>();
     auto text = std::make_shared<controls::Text>(u8"ABCDEF这是一个很好的内容的G");
     text->setBorder({ 2_px });
-    text->setBorderColors({colors::DimGray});
+    text->setBorderColors({ colors::DimGray });
 
     auto image0 = std::make_shared<controls::Image>("img00.png");
     //image0->setBackgroundColor(colors::Green);
@@ -256,18 +176,18 @@ int main()
     image0->setBorderColors({ colors::Blue, colors::Red, colors::DarkCyan, colors::Green });
     image0->setBorderStyles({ graphics::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
-    image0->setMargin({0.5_em});
+    image0->setMargin({ 0.5_em });
     auto image = std::make_shared<controls::Image>("40612.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
-    image->setSize({0.5_per, 20_em});
+    image->setSize({ 0.5_per, 20_em });
     image->setImageFitting({ controls::image_fitting::repeat, controls::image_fitting::repeat });
     image->setBorder({ 5_px });
     image->setBorderColors({ colors::Azure });
 
     auto text2 = std::make_shared<controls::Text>("XYZOPQRST");
     text2->setBackgroundColor(colors::Green);
-    text2->setPadding({1_em, 0.5_em});
+    text2->setPadding({ 1_em, 0.5_em });
 
     row->setSize({ 1280_px, 720_px });
     row->addControl(text);
@@ -294,5 +214,5 @@ int main()
     //graphics.drawImage(graphics::Image("480.png"), rc32f(100, 100, 480, 270));
     bitmap->Save("scene.png");
 #endif
-    return 0; 
+    return 0;
 }

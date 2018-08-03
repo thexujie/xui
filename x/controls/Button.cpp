@@ -22,23 +22,23 @@ namespace controls
         
     }
 
+    void Button::propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders)
+    {
+        Control::propertyTable(builders);
+        builders.push_back(core::make_builder("text", &Button::setText, &Button::text, core::parseString));
+    }
+
+    void Button::setText(const std::string & text)
+    {
+        _textBlob = nullptr;
+        _text = text;
+    }
+
     core::si32f Button::contentSize() const
     {
         _confirmBlob();
         return _textBlob ? _textBlob->size() : core::si32f();
     }
-
-    template<typename T, typename SrcT>
-    std::shared_ptr<T> dynamic_to(std::shared_ptr<SrcT> src)
-    {
-        return std::dynamic_pointer_cast<T>(src);
-    }
-    //template<class _Rx,
-    //    class _Ty>
-    //    _NODISCARD inline _Mem_fn<_Rx _Ty::*> mem_fn(_Rx _Ty::* _Pm) _NOEXCEPT
-    //{	// wrap a pointer to member function/data
-    //    return (_Mem_fn<_Rx _Ty::*>(_Pm));
-    //}
 
     void Button::updateContent(std::shared_ptr<component::View> & view)
     {
@@ -47,9 +47,10 @@ namespace controls
         {
             if(!_text_obj)
             {
-                _text_obj = std::make_shared<renderables::Text>(_textBlob);
+                _text_obj = std::make_shared<renderables::Text>();
                 view->insert(_text_obj);
             }
+            _text_obj->setTextBlob(_textBlob);
             _text_obj->setPos(contentBox().pos);
         }
 
@@ -59,9 +60,8 @@ namespace controls
             view->insert(_mosuerectangle);
 
             _mosuerectangle->mouseEnter += std::weak_binder(std::mem_fn(&Button::onMouseEnter), shared_from_this());
-            //_mosuerectangle->mouseEnter += std::weak_bind(&Button::onMouseEnter, dynamic_to<Button>(shared_from_this()), std::placeholders::_1);
-            _mosuerectangle->mouseMove += std::weak_bind(&Button::onMouseMove, dynamic_to<Button>(shared_from_this()), std::placeholders::_1);
-            _mosuerectangle->mouseLeave += std::weak_bind(&Button::onMouseLeave, dynamic_to<Button>(shared_from_this()), std::placeholders::_1);
+            _mosuerectangle->mouseMove += std::weak_bind(&Button::onMouseMove, share_ref<Button>(), std::placeholders::_1);
+            _mosuerectangle->mouseLeave += std::weak_bind(&Button::onMouseLeave, share_ref<Button>(), std::placeholders::_1);
             _mosuerectangle->mouseDown += std::weak_binder(std::mem_fn(&Button::onMouseDown), shared_from_this());
             _mosuerectangle->mouseUp += std::weak_binder(std::mem_fn(&Button::onMouseUp), shared_from_this());
         }
@@ -71,7 +71,7 @@ namespace controls
 
     void Button::onMouseEnter(const component::mosue_state & state)
     {
-        setBorder({ 2_px });
+        _applyStyle();
         update();
     }
 
@@ -82,20 +82,20 @@ namespace controls
 
     void Button::onMouseLeave(const component::mosue_state & state)
     {
-        setBorder({ 1_px });
+        _applyStyle();
         update();
     }
 
     
     void Button::onMouseDown(const component::mosue_state & state)
     {
-        setBackgroundColor(0x80808080);
+        _applyStyle();
         update();
     }
 
     void Button::onMouseUp(const component::mosue_state & state)
     {
-        setBackgroundColor(core::colors::Auto);
+        _applyStyle();
         update();
     }
 
@@ -111,6 +111,41 @@ namespace controls
 
     void Button::_applyStyle()
     {
-        _style->name;
+        if (!_mosuerectangle || !_styleSheet)
+            return;
+
+        bool mousein = _mosuerectangle->mousein();
+        bool pressed = _mosuerectangle->pressed();
+        std::string name;
+        if (mousein && pressed)
+            name = "button hoving pressed";
+        else if (pressed)
+            name = "button pressed";
+        else if (mousein)
+            name = "button hoving";
+        else
+            name = "button";
+
+        std::vector<std::shared_ptr<core::property_builder>> builders;
+        Button::propertyTable(builders);
+
+        std::shared_ptr<component::Style> style = _styleSheet->select(name);
+        if(style)
+        {
+            for (auto & item : style->items)
+            {
+                for (auto & builder : builders)
+                {
+                    if (core::string::equal_ic(item.first, builder->name))
+                    {
+                        auto pb = builder->build(item.second);
+                        if (pb)
+                            pb->apply(*this);
+                        break;
+                    }
+                }
+            }
+            update();
+        }
     }
 }

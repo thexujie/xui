@@ -1,4 +1,5 @@
 #pragma once
+#include "utils.h"
 
 namespace core { namespace string
 {
@@ -27,30 +28,41 @@ namespace core { namespace string
 
     struct less_ic
     {
-        bool operator()(const std::string & lhs, const std::string & rhs) const
-        {
-            std::string str1(lhs.length(), ' ');
-            std::string str2(rhs.length(), ' ');
-            std::transform(lhs.begin(), lhs.end(), str1.begin(), tolower);
-            std::transform(rhs.begin(), rhs.end(), str2.begin(), tolower);
-            return str1 < str2;
-        }
-    };
-
-    struct equal_ic
-    {
         bool operator()(const std::string & s1, const std::string & s2) const
         {
-            if (s1.length() != s2.length())
-                return false;
-
-            std::string str1(s1.length(), ' ');
-            std::string str2(s2.length(), ' ');
-            std::transform(s1.begin(), s1.end(), str1.begin(), tolower);
-            std::transform(s2.begin(), s2.end(), str2.begin(), tolower);
-            return str1 == str2;
+            return core::textcmp(s1.c_str(), s1.length(), s2.c_str(), s2.length(), false) < 0;
         }
     };
+
+    inline bool equal_ic(const std::string & s1, const std::string & s2)
+    {
+        if (s1.length() != s2.length())
+            return false;
+
+        return core::textequalex(s1.c_str(), s1.length(), s2.c_str(), s2.length(), false);
+    }
+
+    inline bool equal_ic(const std::string_view & s1, const char * s2, int32_t s2_length)
+    {
+        if (s2_length < 0)
+            s2_length = textlen(s2);
+
+        if (s1.length() != s2_length)
+            return false;
+
+        return core::textequalex(s1.data(), s1.length(), s2, s2_length, false);
+    }
+
+    inline bool equal_ic(const std::string & s1, const char * s2, int32_t s2_length)
+    {
+        if (s2_length < 0)
+            s2_length = textlen(s2);
+
+        if (s1.length() != s2_length)
+            return false;
+
+        return core::textequalex(s1.c_str(), s1.length(), s2, s2_length, false);
+    }
 
     inline void format_helper(std::ostringstream & stream) {}
 
@@ -70,4 +82,71 @@ namespace core { namespace string
     }
 
     std::string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes);
+
+    struct string_walker
+    {
+        string_walker(std::string & str_) : str(str_) {}
+        std::string & str;
+        int32_t index = 0;
+
+        bool eof() const { return index >= str.length(); }
+
+        char read()
+        {
+            if (eof())
+                return 0;
+
+            return str[index++];
+        }
+
+        char peek()
+        {
+            if (eof())
+                return 0;
+
+            return str[index];
+        }
+
+        std::string readTo(char ch)
+        {
+            std::string ret;
+            while (!eof())
+            {
+                char c = read();
+                if (c == ch)
+                    break;
+
+                ret.append(1, c);
+            }
+            return ret;
+        }
+
+        std::string readTo(char chs[], int num, char & end)
+        {
+            std::string ret;
+            while (!eof())
+            {
+                char ch = read();
+                char * pos = std::find(chs, chs + num, ch);
+                if (pos != (chs + num))
+                {
+                    end = *pos;
+                    break;
+                }
+                ret.append(1, ch);
+            }
+            return ret;
+        }
+
+        void skip()
+        {
+            while (!eof())
+            {
+                if (!isspace(peek()))
+                    break;
+
+                read();
+            }
+        }
+    };
 }}

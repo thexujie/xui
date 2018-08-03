@@ -113,5 +113,20 @@ namespace core
             return dimensionf(static_cast<float32_t>(val), core::unit::per);
         }
     }
+
+    struct unit_name
+    {
+        core::unit unit;
+        const char * name;
+    };
+
+    const unit_name unit_names[] =
+    {
+        { core::unit::px, "px" },
+        { core::unit::em, "em" },
+        { core::unit::pt, "pt" },
+        { core::unit::dot, "dot" },
+        { core::unit::per, "per" },
+    };
 }
 

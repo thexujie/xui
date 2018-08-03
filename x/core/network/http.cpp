@@ -326,7 +326,7 @@ namespace core::network
         auto iter_keep_alive = response.headers.find("keep-alive");
         if (iter_keep_alive != response.headers.end())
         {
-            if (!core::string::equal_ic()(iter_keep_alive->second, "close"))
+            if (!core::string::equal_ic(iter_keep_alive->second, "close"))
                 response.flags |= http_flag_keep_alive;
         }
         else
@@ -334,7 +334,7 @@ namespace core::network
             auto iter_connection = response.headers.find("connection");
             if (iter_connection != response.headers.end())
             {
-                if (!core::string::equal_ic()(iter_connection->second, "close"))
+                if (!core::string::equal_ic(iter_connection->second, "close"))
                     response.flags |= http_flag_keep_alive;
             }
         }

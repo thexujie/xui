@@ -66,60 +66,60 @@ namespace core
         //! Éîºì¡¢ÐÉºì
         inline static constexpr color32 DarkRed = 0xFFDC143C;
         //! °®ÀöË¿À¶
-        inline static constexpr color32       AliceBlue = 0xFFF0F8FF;
+        inline static constexpr color32 AliceBlue = 0xFFF0F8FF;
         //! ¹Å¶­°×
-        inline static constexpr color32        AntiqueWhite = 0xFFFAEBD7;
+        inline static constexpr color32 AntiqueWhite = 0xFFFAEBD7;
         //! Ë®À¶
         inline static constexpr color32 Aqua = 0xFF00FFFF;
         //! º£À¶¡¢±ÌÂÌ
-        inline static constexpr color32      Aquamarine = 0xFF7FFFD4;
+        inline static constexpr color32 Aquamarine = 0xFF7FFFD4;
         //! ÌìÀ¶
-        inline static constexpr color32     Azure = 0xFFF0FFFF;
+        inline static constexpr color32 Azure = 0xFFF0FFFF;
         //! Ã×»Æ
-        inline static constexpr color32      Beige = 0xFFF5F5DC;
+        inline static constexpr color32 Beige = 0xFFF5F5DC;
         //! éÙ»Æ
-        inline static constexpr color32    Bisque = 0xFFFFE4C4;
+        inline static constexpr color32 Bisque = 0xFFFFE4C4;
         //! ÉîºÚ
-        inline static constexpr color32   Black = 0xFF000000;
+        inline static constexpr color32 Black = 0xFF000000;
         //! ÐÓÈÊ°×
-        inline static constexpr color32    BlanchedAlmond = 0xFFFFEBCD;
+        inline static constexpr color32 BlanchedAlmond = 0xFFFFEBCD;
         //! ÉîÀ¶
-        inline static constexpr color32  Blue = 0xFF0000FF;
+        inline static constexpr color32 Blue = 0xFF0000FF;
         //! ×ÏÂÞÀ¼
-        inline static constexpr color32  BlueViolet = 0xFF8A2BE2;
+        inline static constexpr color32 BlueViolet = 0xFF8A2BE2;
         //! ×ØÉ«
-        inline static constexpr color32   Brown = 0xFFA52A2A;
+        inline static constexpr color32 Brown = 0xFFA52A2A;
         //! ÊµÄ¾¡¢Ô­Ä¾¡¢Ó²Ä¾
         inline static constexpr color32 BurlyWood = 0xFFDEB887;
         //! »ÒÀ¶É«
         inline static constexpr color32 CadetBlue = 0xFF5F9EA0;
         //! »ÆÂÌ
-        inline static constexpr color32  Chartreuse = 0xFF7FFF00;
+        inline static constexpr color32 Chartreuse = 0xFF7FFF00;
         //! ÇÉ¿ËÁ¦
-        inline static constexpr color32  Chocolate = 0xFFD2691E;
+        inline static constexpr color32 Chocolate = 0xFFD2691E;
         //! Éºº÷
-        inline static constexpr color32  Coral = 0xFFFF7F50;
+        inline static constexpr color32 Coral = 0xFFFF7F50;
         //! Ç³À¶¡¢Ê¸³µ¾Õ
-        inline static constexpr color32  CornflowerBlue = 0xFF6495ED;
+        inline static constexpr color32 CornflowerBlue = 0xFF6495ED;
         //! Ã×³ñÉ«
         inline static constexpr color32 Cornsilk = 0xFFFFF8DC;
         //! ÐÉºìÉ«
-        inline static constexpr color32  Crimson = 0xFFDC143C;
+        inline static constexpr color32 Crimson = 0xFFDC143C;
         //! ÇàÉ«
-        inline static constexpr color32  Cyan = 0xFF00FFFF;
+        inline static constexpr color32 Cyan = 0xFF00FFFF;
         //! ÉîÀ¶É«
         inline static constexpr color32 DarkBlue = 0xFF00008B;
         //! ÉîÇàÉ«£¬°µÇàÉ«£¬ÉîÇàÂÌ
-        inline static constexpr color32  DarkCyan = 0xFF008B8B;
-        inline static constexpr color32  DarkGoldenrod = 0xFFB8860B;
+        inline static constexpr color32 DarkCyan = 0xFF008B8B;
+        inline static constexpr color32 DarkGoldenrod = 0xFFB8860B;
         //! °µ½ð»ÆÉ«£¬°µ½ð¾Õ»Æ
         inline static constexpr color32 DarkGray = 0xFFA9A9A9;
         //! ÉîÂÌÉ«
-        inline static constexpr color32   DarkGreen = 0xFF006400;
+        inline static constexpr color32 DarkGreen = 0xFF006400;
         //! Éî¿¨Æä²¼£¬°µ¿¨ÆäÉ«£¬°µ»ÆºÖÉ«
-        inline static constexpr color32  DarkKhaki = 0xFFBDB76B;
+        inline static constexpr color32 DarkKhaki = 0xFFBDB76B;
         //! ÉîÑóºì
-        inline static constexpr color32  DarkMagenta = 0xFF8B008B;
+        inline static constexpr color32 DarkMagenta = 0xFF8B008B;
         inline static constexpr color32 DarkOliveGreen = 0xFF556B2F;
         inline static constexpr color32 DarkOrange = 0xFFFF8C00;
         inline static constexpr color32 DarkOrchid = 0xFF9932CC;
@@ -171,68 +171,215 @@ namespace core
         inline static constexpr color32 LimeGreen = 0xFF32CD32;
         inline static constexpr color32 Linen = 0xFFFAF0E6;
         //! Ñóºì¡¢×Ïºì¡¢Æ·ºì
-        inline static constexpr color32  Magenta = 0xFFFF00FF;
-        inline static constexpr color32  Maroon = 0xFF800000;
-        inline static constexpr color32  MediumAquamarine = 0xFF66CDAA;
-        inline static constexpr color32  MediumBlue = 0xFF0000CD;
-        inline static constexpr color32  MediumOrchid = 0xFFBA55D3;
-        inline static constexpr color32  MediumPurple = 0xFF9370DB;
-        inline static constexpr color32  MediumSeaGreen = 0xFF3CB371;
-        inline static constexpr color32  MediumSlateBlue = 0xFF7B68EE;
-        inline static constexpr color32  MediumSpringGreen = 0xFF00FA9A;
-        inline static constexpr color32  MediumTurquoise = 0xFF48D1CC;
-        inline static constexpr color32  MediumVioletRed = 0xFFC71585;
-        inline static constexpr color32  MidnightBlue = 0xFF191970;
-        inline static constexpr color32  MintCream = 0xFFF5FFFA;
-        inline static constexpr color32  MistyRose = 0xFFFFE4E1;
-        inline static constexpr color32  Moccasin = 0xFFFFE4B5;
-        inline static constexpr color32  NavajoWhite = 0xFFFFDEAD;
-        inline static constexpr color32  Navy = 0xFF000080;
-        inline static constexpr color32  OldLace = 0xFFFDF5E6;
-        inline static constexpr color32  Olive = 0xFF808000;
-        inline static constexpr color32  OliveDrab = 0xFF6B8E23;
-        inline static constexpr color32  Orange = 0xFFFFA500;
-        inline static constexpr color32  OrangeRed = 0xFFFF4500;
-        inline static constexpr color32  Orchid = 0xFFDA70D6;
-        inline static constexpr color32  PaleGoldenrod = 0xFFEEE8AA;
-        inline static constexpr color32  PaleGreen = 0xFF98FB98;
-        inline static constexpr color32  PaleTurquoise = 0xFFAFEEEE;
-        inline static constexpr color32  PaleVioletRed = 0xFFDB7093;
-        inline static constexpr color32  PapayaWhip = 0xFFFFEFD5;
-        inline static constexpr color32  PeachPuff = 0xFFFFDAB9;
-        inline static constexpr color32  Peru = 0xFFCD853F;
-        inline static constexpr color32  Pink = 0xFFFFC0CB;
-        inline static constexpr color32  Plum = 0xFFDDA0DD;
-        inline static constexpr color32  PowderBlue = 0xFFB0E0E6;
-        inline static constexpr color32  Purple = 0xFF800080;
-        inline static constexpr color32  RosyBrown = 0xFFBC8F8F;
-        inline static constexpr color32  RoyalBlue = 0xFF4169E1;
-        inline static constexpr color32  SaddleBrown = 0xFF8B4513;
-        inline static constexpr color32  Salmon = 0xFFFA8072;
-        inline static constexpr color32  SandyBrown = 0xFFF4A460;
-        inline static constexpr color32  SeaGreen = 0xFF2E8B57;
-        inline static constexpr color32  SeaShell = 0xFFFFF5EE;
-        inline static constexpr color32  Sienna = 0xFFA0522D;
-        inline static constexpr color32  Silver = 0xFFC0C0C0;
-        inline static constexpr color32  SkyBlue = 0xFF87CEEB;
-        inline static constexpr color32  SlateBlue = 0xFF6A5ACD;
-        inline static constexpr color32  SlateGray = 0xFF708090;
+        inline static constexpr color32 Magenta = 0xFFFF00FF;
+        inline static constexpr color32 Maroon = 0xFF800000;
+        inline static constexpr color32 MediumAquamarine = 0xFF66CDAA;
+        inline static constexpr color32 MediumBlue = 0xFF0000CD;
+        inline static constexpr color32 MediumOrchid = 0xFFBA55D3;
+        inline static constexpr color32 MediumPurple = 0xFF9370DB;
+        inline static constexpr color32 MediumSeaGreen = 0xFF3CB371;
+        inline static constexpr color32 MediumSlateBlue = 0xFF7B68EE;
+        inline static constexpr color32 MediumSpringGreen = 0xFF00FA9A;
+        inline static constexpr color32 MediumTurquoise = 0xFF48D1CC;
+        inline static constexpr color32 MediumVioletRed = 0xFFC71585;
+        inline static constexpr color32 MidnightBlue = 0xFF191970;
+        inline static constexpr color32 MintCream = 0xFFF5FFFA;
+        inline static constexpr color32 MistyRose = 0xFFFFE4E1;
+        inline static constexpr color32 Moccasin = 0xFFFFE4B5;
+        inline static constexpr color32 NavajoWhite = 0xFFFFDEAD;
+        inline static constexpr color32 Navy = 0xFF000080;
+        inline static constexpr color32 OldLace = 0xFFFDF5E6;
+        inline static constexpr color32 Olive = 0xFF808000;
+        inline static constexpr color32 OliveDrab = 0xFF6B8E23;
+        inline static constexpr color32 Orange = 0xFFFFA500;
+        inline static constexpr color32 OrangeRed = 0xFFFF4500;
+        inline static constexpr color32 Orchid = 0xFFDA70D6;
+        inline static constexpr color32 PaleGoldenrod = 0xFFEEE8AA;
+        inline static constexpr color32 PaleGreen = 0xFF98FB98;
+        inline static constexpr color32 PaleTurquoise = 0xFFAFEEEE;
+        inline static constexpr color32 PaleVioletRed = 0xFFDB7093;
+        inline static constexpr color32 PapayaWhip = 0xFFFFEFD5;
+        inline static constexpr color32 PeachPuff = 0xFFFFDAB9;
+        inline static constexpr color32 Peru = 0xFFCD853F;
+        inline static constexpr color32 Pink = 0xFFFFC0CB;
+        inline static constexpr color32 Plum = 0xFFDDA0DD;
+        inline static constexpr color32 PowderBlue = 0xFFB0E0E6;
+        inline static constexpr color32 Purple = 0xFF800080;
+        inline static constexpr color32 RosyBrown = 0xFFBC8F8F;
+        inline static constexpr color32 RoyalBlue = 0xFF4169E1;
+        inline static constexpr color32 SaddleBrown = 0xFF8B4513;
+        inline static constexpr color32 Salmon = 0xFFFA8072;
+        inline static constexpr color32 SandyBrown = 0xFFF4A460;
+        inline static constexpr color32 SeaGreen = 0xFF2E8B57;
+        inline static constexpr color32 SeaShell = 0xFFFFF5EE;
+        inline static constexpr color32 Sienna = 0xFFA0522D;
+        inline static constexpr color32 Silver = 0xFFC0C0C0;
+        inline static constexpr color32 SkyBlue = 0xFF87CEEB;
+        inline static constexpr color32 SlateBlue = 0xFF6A5ACD;
+        inline static constexpr color32 SlateGray = 0xFF708090;
         //! Ñ©°×
-        inline static constexpr color32     Snow = 0xFFFFFAFA;
+        inline static constexpr color32 Snow = 0xFFFFFAFA;
         //! ´ºÂÌÉ«
-        inline static constexpr color32     SpringGreen = 0xFF00FF7F;
-        inline static constexpr color32     SteelBlue = 0xFF4682B4;
-        inline static constexpr color32     Tan = 0xFFD2B48C;
-        inline static constexpr color32     Teal = 0xFF008080;
+        inline static constexpr color32 SpringGreen = 0xFF00FF7F;
+        inline static constexpr color32 SteelBlue = 0xFF4682B4;
+        inline static constexpr color32 Tan = 0xFFD2B48C;
+        inline static constexpr color32 Teal = 0xFF008080;
         //! ¼»É«
-        inline static constexpr color32     Thistle = 0xFFD8BFD8;
-        inline static constexpr color32     Tomato = 0xFFFF6347;
-        inline static constexpr color32     Turquoise = 0xFF40E0D0;
-        inline static constexpr color32     Violet = 0xFFEE82EE;
-        inline static constexpr color32     Wheat = 0xFFF5DEB3;
-        inline static constexpr color32     White = 0xFFFFFFFF;
-        inline static constexpr color32     WhiteSmoke = 0xFFF5F5F5;
-        inline static constexpr color32     Yellow = 0xFFFFFF00;
-        inline static constexpr color32     YellowGreen = 0xFF9ACD32;
+        inline static constexpr color32 Thistle = 0xFFD8BFD8;
+        inline static constexpr color32 Tomato = 0xFFFF6347;
+        inline static constexpr color32 Turquoise = 0xFF40E0D0;
+        inline static constexpr color32 Violet = 0xFFEE82EE;
+        inline static constexpr color32 Wheat = 0xFFF5DEB3;
+        inline static constexpr color32 White = 0xFFFFFFFF;
+        inline static constexpr color32 WhiteSmoke = 0xFFF5F5F5;
+        inline static constexpr color32 Yellow = 0xFFFFFF00;
+        inline static constexpr color32 YellowGreen = 0xFF9ACD32;
+    };
+
+    struct color_name
+    {
+        color32 color;
+        const char * name = nullptr;
+    };
+
+    const color_name color_names[] =
+    {
+        { colors::Auto, "Auto" },
+        { colors::Transparent, "Transparent" },
+        { colors::Red, "Red" },
+        { colors::DarkRed, "DarkRed" },
+        { colors::Aqua, "Aqua" },
+        { colors::Bisque, "Bisque" },
+        { colors::Black, "Black" },
+        { colors::BlanchedAlmond, "BlanchedAlmond" },
+        { colors::Blue, "Blue" },
+        { colors::BlueViolet, "BlueViolet" },
+        { colors::Brown, "Brown" },
+        { colors::BurlyWood, "BurlyWood" },
+        { colors::CadetBlue, "CadetBlue" },
+        { colors::Chartreuse, "Chartreuse" },
+        { colors::Chocolate, "Chocolate" },
+        { colors::Coral, "Coral" },
+        { colors::CornflowerBlue, "CornflowerBlue" },
+        { colors::Cornsilk, "Cornsilk" },
+        { colors::Crimson, "Crimson" },
+        { colors::Cyan, "Cyan" },
+        { colors::DarkBlue, "DarkBlue" },
+        { colors::DarkCyan, "DarkCyan" },
+        { colors::DarkGoldenrod, "DarkGoldenrod" },
+        { colors::DarkGray, "DarkGray" },
+        { colors::DarkGreen, "DarkGreen" },
+        { colors::DarkKhaki, "DarkKhaki" },
+        { colors::DarkMagenta, "DarkMagenta" },
+        { colors::DarkOliveGreen, "DarkOliveGreen" },
+        { colors::DarkOrange, "DarkOrange" },
+        { colors::DarkOrchid, "DarkOrchid" },
+        { colors::DarkSalmon, "DarkSalmon" },
+        { colors::DarkSeaGreen, "DarkSeaGreen" },
+        { colors::DarkSlateBlue, "DarkSlateBlue" },
+        { colors::DarkSlateGray, "DarkSlateGray" },
+        { colors::DarkTurquoise, "DarkTurquoise" },
+        { colors::DarkViolet, "DarkViolet" },
+        { colors::DeepPink, "DeepPink" },
+        { colors::DeepSkyBlue, "DeepSkyBlue" },
+        { colors::DimGray, "DimGray" },
+        { colors::DodgerBlue, "DodgerBlue" },
+        { colors::Firebrick, "Firebrick" },
+        { colors::FloralWhite, "FloralWhite" },
+        { colors::ForestGreen, "ForestGreen" },
+        { colors::Fuchsia, "Fuchsia" },
+        { colors::Gainsboro, "Gainsboro" },
+        { colors::GhostWhite, "GhostWhite" },
+        { colors::Gold, "Gold" },
+        { colors::Goldenrod, "Goldenrod" },
+        { colors::Gray, "Gray" },
+        { colors::Green, "Green" },
+        { colors::GreenYellow, "GreenYellow" },
+        { colors::Honeydew, "Honeydew" },
+        { colors::HotPink, "HotPink" },
+        { colors::IndianRed, "IndianRed" },
+        { colors::Indigo, "Indigo" },
+        { colors::Ivory, "Ivory" },
+        { colors::Khaki, "Khaki" },
+        { colors::Lavender, "Lavender" },
+        { colors::LavenderBlush, "LavenderBlush" },
+        { colors::LawnGreen, "LawnGreen" },
+        { colors::LemonChiffon, "LemonChiffon" },
+        { colors::LightBlue, "LightBlue" },
+        { colors::LightCoral, "LightCoral" },
+        { colors::LightCyan, "LightCyan" },
+        { colors::LightGoldenrodYellow, "LightGoldenrodYell" },
+        { colors::LightGray, "LightGray" },
+        { colors::LightGreen, "LightGreen" },
+        { colors::LightPink, "LightPink" },
+        { colors::LightSalmon, "LightSalmon" },
+        { colors::LightSeaGreen, "LightSeaGreen" },
+        { colors::LightSkyBlue, "LightSkyBlue" },
+        { colors::LightSlateGray, "LightSlateGray" },
+        { colors::LightSteelBlue, "LightSteelBlue" },
+        { colors::LightYellow, "LightYellow" },
+        { colors::Lime, "Lime" },
+        { colors::LimeGreen, "LimeGreen" },
+        { colors::Linen, "Linen" },
+        { colors::Magenta, "Magenta" },
+        { colors::Maroon, "Maroon" },
+        { colors::MediumAquamarine, "MediumAquamarine" },
+        { colors::MediumBlue, "MediumBlue" },
+        { colors::MediumOrchid, "MediumOrchid" },
+        { colors::MediumPurple, "MediumPurple" },
+        { colors::MediumSeaGreen, "MediumSeaGreen" },
+        { colors::MediumSlateBlue, "MediumSlateBlue" },
+        { colors::MediumSpringGreen, "MediumSpringGreen" },
+        { colors::MediumTurquoise, "MediumTurquoise" },
+        { colors::MediumVioletRed, "MediumVioletRed" },
+        { colors::MidnightBlue, "MidnightBlue" },
+        { colors::MintCream, "MintCream" },
+        { colors::MistyRose, "MistyRose" },
+        { colors::Moccasin, "Moccasin" },
+        { colors::NavajoWhite, "NavajoWhite" },
+        { colors::Navy, "Navy" },
+        { colors::OldLace, "OldLace" },
+        { colors::Olive, "Olive" },
+        { colors::OliveDrab, "OliveDrab" },
+        { colors::Orange, "Orange" },
+        { colors::OrangeRed, "OrangeRed" },
+        { colors::Orchid, "Orchid" },
+        { colors::PaleGoldenrod, "PaleGoldenrod" },
+        { colors::PaleGreen, "PaleGreen" },
+        { colors::PaleTurquoise, "PaleTurquoise" },
+        { colors::PaleVioletRed, "PaleVioletRed" },
+        { colors::PapayaWhip, "PapayaWhip" },
+        { colors::PeachPuff, "PeachPuff" },
+        { colors::Peru, "Peru" },
+        { colors::Pink, "Pink" },
+        { colors::Plum, "Plum" },
+        { colors::PowderBlue, "PowderBlue" },
+        { colors::Purple, "Purple" },
+        { colors::RosyBrown, "RosyBrown" },
+        { colors::RoyalBlue, "RoyalBlue" },
+        { colors::SaddleBrown, "SaddleBrown" },
+        { colors::Salmon, "Salmon" },
+        { colors::SandyBrown, "SandyBrown" },
+        { colors::SeaGreen, "SeaGreen" },
+        { colors::SeaShell, "SeaShell" },
+        { colors::Sienna, "Sienna" },
+        { colors::Silver, "Silver" },
+        { colors::SkyBlue, "SkyBlue" },
+        { colors::SlateBlue, "SlateBlue" },
+        { colors::SlateGray, "SlateGray" },
+        { colors::Snow, "Snow" },
+        { colors::SpringGreen, "SpringGreen" },
+        { colors::SteelBlue, "SteelBlue" },
+        { colors::Tan, "Tan" },
+        { colors::Teal, "Teal" },
+        { colors::Thistle, "Thistle" },
+        { colors::Tomato, "Tomato" },
+        { colors::Turquoise, "Turquoise" },
+        { colors::Violet, "Violet" },
+        { colors::Wheat, "Wheat" },
+        { colors::White, "White" },
+        { colors::WhiteSmoke, "WhiteSmoke" },
+        { colors::Yellow, "Yellow" },
+        { colors::YellowGreen, "YellowGreen" },
     };
 }

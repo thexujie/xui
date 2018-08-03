@@ -65,6 +65,7 @@ typedef char char8_t;
 typedef float float32_t;
 typedef double float64_t;
 
+#include "core/member_function_traits.h"
 #include "core/error.h"
 #include "core/system.h"
 #include "core/logger.h"
@@ -74,10 +75,9 @@ typedef double float64_t;
 #include "core/invokable.h"
 #include "core/counter_fps.h"
 #include "core/event.h"
-#include "core/attribute.h"
-
 #include "core/unit.h"
 #include "core/utils.h"
+
 #include "core/align.h"
 #include "core/vec2.h"
 #include "core/vec3.h"
@@ -90,5 +90,8 @@ typedef double float64_t;
 #include "core/quat4.h"
 #include "core/float3x2.h"
 #include "core/float4x4.h"
+
+#include "core/attribute.h"
+#include "core/property.h"
 
 using namespace core::unit_literals;

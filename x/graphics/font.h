@@ -68,7 +68,7 @@ namespace graphics
 
         bool operator ==(const font & another) const
         {
-            return core::string::equal_ic()(family, another.family) &&
+            return core::string::equal_ic(family, another.family) &&
                 std::fabs(size - another.size) <  std::numeric_limits<float32_t>::epsilon() &&
                 weight == another.weight &&
                 width == another.width &&

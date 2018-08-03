@@ -10,6 +10,16 @@ namespace controls
     Control::Control() { }
     Control::~Control() { }
 
+    void Control::propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders)
+    {
+        builders.push_back(core::make_builder("border", &Control::setBorder, &Control::border, core::parseDimension4D));
+        builders.push_back(core::make_builder("padding", &Control::setPadding, &Control::padding, core::parseDimension4D));
+        builders.push_back(core::make_builder("margin", &Control::setMargin, &Control::margin, core::parseDimension4D));
+
+        builders.push_back(core::make_builder("border-color", &Control::setBorderColors, &Control::borderColors, core::parseColor4D));
+        builders.push_back(core::make_builder("background-color", &Control::setBackgroundColor, &Control::backgroundColor, core::parseColor));
+    }
+
     core::si32f Control::prefferSize() const
     {
         // 如果设置了固定大小，直接返回即可

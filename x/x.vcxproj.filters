@@ -179,6 +179,12 @@
     <ClCompile Include="controls\component\Style.cpp">
       <Filter>controls\component</Filter>
     </ClCompile>
+    <ClCompile Include="core\property.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\css.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -428,6 +434,18 @@
     <ClInclude Include="controls\component\Style.h">
       <Filter>controls\component</Filter>
     </ClInclude>
+    <ClInclude Include="core\property.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\member_function_traits.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\property_parser.h">
+      <Filter>controls</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\css.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -471,6 +489,9 @@
     </Filter>
     <Filter Include="controls\interactables">
       <UniqueIdentifier>{0c1f5a9d-e123-4da8-ad22-5dfaf14ee935}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{caf49446-0379-4ef1-b44e-e734eb5ec6e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

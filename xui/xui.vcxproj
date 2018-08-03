@@ -94,18 +94,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="css\css_lex.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="css\css_syntax.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="css\parser.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="css\parser_pp.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -124,10 +112,6 @@
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="css\css_lex.h" />
-    <ClInclude Include="css\css_syntax.h" />
-    <ClInclude Include="css\parser.h" />
-    <ClInclude Include="css\parser_pp.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="win32\Bitmap.h" />
     <ClInclude Include="win32\com_ptr.h" />
@@ -143,9 +127,6 @@
     <ProjectReference Include="..\x\x.vcxproj">
       <Project>{0cd56909-021a-4656-baf7-c1183fd6dff8}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="css\default.css" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

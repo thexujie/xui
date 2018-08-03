@@ -10,7 +10,7 @@ namespace controls::renderables
         Text(std::shared_ptr<graphics::TextBlob> text);
         ~Text();
 
-        void setText(std::shared_ptr<graphics::TextBlob> text);
+        void setTextBlob(std::shared_ptr<graphics::TextBlob> text);
         void render(graphics::Graphics & graphics) const;
 
     private:

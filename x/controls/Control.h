@@ -41,6 +41,9 @@ namespace controls
         Control();
         virtual ~Control();
 
+        static void propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders);
+
+        void appendStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _styleSheet = styleSheet; }
         void setLayoutOrigin(layout_origin origin) { _layout_origin = origin; }
         layout_origin layoutOrigin() const { return _layout_origin; }
 
@@ -73,8 +76,7 @@ namespace controls
         core::rc32f realRect() const { return _rect; }
         float32_t width() const { return _rect.cx; }
         float32_t height() const { return _rect.cy; }
-        core::vec4f border() const { return calc(_border); }
-        core::vec4f margin() const { return calc(_margin); }
+        core::vec4f realMargin() const { return calc(_margin); }
 
 
         float32_t calc(const core::dimensionf & value) const;
@@ -91,12 +93,21 @@ namespace controls
 
         void setBackgroundColor(core::color32 color);
         core::color32 backgroundColor() const;
+
         void setBackgroundImage(std::shared_ptr<graphics::Image> image);
         std::shared_ptr<graphics::Image> backgroundImage() const;
+
         void setMargin(const core::vec4<core::dimensionf> & margin) { _margin = margin; }
+        const core::vec4<core::dimensionf> & margin() const { return _margin; }
+
         void setBorder(const core::vec4<core::dimensionf> & border) { _border = border; }
+        const core::vec4<core::dimensionf> & border() const { return _border; }
+
         void setPadding(const core::vec4<core::dimensionf> & padding) { _padding = padding; }
+        const core::vec4<core::dimensionf> & padding() const { return _padding; }
+
         void setBorderColors(const core::vec4<core::color32> & boderColors) { _border_colors = boderColors; }
+        const core::vec4<core::color32> & borderColors() const { return _border_colors; }
         void setBorderStyles(const core::vec4<graphics::stroke_style> & boderStyles) { _border_styles = boderStyles; }
         const core::vec4<core::color32> & boderColors() const { return _border_colors; }
         std::array<core::pt32f, 4> boderPoints(core::align edge) const;
@@ -117,6 +128,7 @@ namespace controls
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
+
     public:
         core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
         core::event<void(const core::si32f & from, const core::si32f & to)> sizeChanged;
@@ -156,7 +168,7 @@ namespace controls
         core::vec2<renderables::image_fitting> _background_fitting = core::vec2<renderables::image_fitting>(renderables::image_fitting::none, renderables::image_fitting::none);
         control_box _background_box = control_box::layout_box;
 
-        std::shared_ptr<component::Style> _style;
+        std::shared_ptr<component::StyleSheet> _styleSheet;
         // 布局之后
         core::rc32f _rect;
 

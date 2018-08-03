@@ -2,24 +2,31 @@
 
 namespace controls::component
 {
-    struct StyleClass
-    {
-    public:
-        std::map<std::string, std::shared_ptr<StyleClass>> attrs;
-    };
-
     class Style
     {
     public:
-        std::string name;
-        std::map<std::string, std::shared_ptr<StyleClass>> subclasses;
+        std::shared_ptr<Style> get(std::vector<std::string>::iterator iter, std::vector<std::string>::iterator end);
+        std::shared_ptr<Style> get(const std::string & name);
+        std::shared_ptr<Style> select(std::vector<std::string>::iterator iter, std::vector<std::string>::iterator end);
+        std::shared_ptr<Style> select(const std::string & name);
+
+        void join(Style & another);
+        void join(const std::map<std::string, std::shared_ptr<Style>> & styles);
+
+        void set(const std::string & key, const std::string & value) { items[key] = value; }
+        std::string & operator[](const std::string & key) { return items[key]; }
+
+        std::map<std::string, std::string> items;
+        std::map<std::string, std::shared_ptr<Style>> _styles;
     };
 
-    class StyleSheet
+    class StyleSheet : public Style
     {
     public:
-        std::shared_ptr<Style> select(std::string name);
+        core::error loadFromFile(std::string path);
+        core::error loadFromData(std::string data);
 
+    private:
         std::shared_ptr<StyleSheet> _next;
     };
 }

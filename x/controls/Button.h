@@ -11,6 +11,11 @@ namespace controls
         Button(std::string text);
         ~Button();
 
+        static void propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders);
+
+        void setText(const std::string & text);
+        const std::string & text() const { return _text; }
+
         core::si32f contentSize() const;
         void updateContent(std::shared_ptr<component::View> & view) override;
 

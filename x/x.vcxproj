@@ -130,6 +130,7 @@
     <ClCompile Include="core\network\addr.cpp" />
     <ClCompile Include="core\network\http.cpp" />
     <ClCompile Include="core\network\socket.cpp" />
+    <ClCompile Include="core\property.cpp" />
     <ClCompile Include="core\quat4.cpp" />
     <ClCompile Include="core\string.cpp" />
     <ClCompile Include="core\system.cpp" />
@@ -161,6 +162,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="utils\css.cpp" />
     <ClCompile Include="win32\Window.cpp" />
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
@@ -177,6 +179,7 @@
     <ClInclude Include="controls\Element.h" />
     <ClInclude Include="controls\Desktop.h" />
     <ClInclude Include="controls\interactables\MouseRectangle.h" />
+    <ClInclude Include="controls\property_parser.h" />
     <ClInclude Include="controls\renderables\Line.h" />
     <ClInclude Include="controls\renderables\Path.h" />
     <ClInclude Include="controls\renderables\Shape.h" />
@@ -213,11 +216,13 @@
     <ClInclude Include="core\math\xmi.h" />
     <ClInclude Include="core\math\xmi_argb.h" />
     <ClInclude Include="core\math\xmm.h" />
+    <ClInclude Include="core\member_function_traits.h" />
     <ClInclude Include="core\network\addr.h" />
     <ClInclude Include="core\network\http.h" />
     <ClInclude Include="core\network\socket.h" />
     <ClInclude Include="core\object.h" />
     <ClInclude Include="core\path.h" />
+    <ClInclude Include="core\property.h" />
     <ClInclude Include="core\quat4.h" />
     <ClInclude Include="core\string.h" />
     <ClInclude Include="core\system.h" />
@@ -245,6 +250,7 @@
     <ClInclude Include="graphics\StringFormat.h" />
     <ClInclude Include="graphics\TextBlob.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="utils\css.h" />
     <ClInclude Include="win32\win32.h" />
     <ClInclude Include="win32\Window.h" />
     <ClInclude Include="win32\windows.h" />

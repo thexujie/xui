@@ -3,13 +3,13 @@
 		<![CDATA[
 	.button
 	{
-		border: 1px
-		padding: 1em, 0.5em
+		border: 1px;
+		padding: 1em 0.5em;
 	}
 	
 	.button:press
 	{
-		border: 2px
+		border: 2px;
 		border-color: red
 	}
 	

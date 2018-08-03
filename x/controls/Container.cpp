@@ -64,7 +64,7 @@ namespace controls
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
                 continue;
 
-            auto m = control->margin();
+            auto m = control->realMargin();
             margin = std::max(margin, m.bleft);
 
             if(_layout_direction == core::align::left || _layout_direction == core::align::right)
@@ -89,7 +89,7 @@ namespace controls
         rc.cy = psize.cy;
         for (auto & control : _controls)
         {
-            auto m = control->margin();
+            auto m = control->realMargin();
             auto ps = control->prefferSize();
             auto lo = control->layoutOrigin();
 

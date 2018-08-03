@@ -2356,7 +2356,7 @@ namespace core
 
     /// 判断两个文本是否相等
     template<typename CharT>
-    bool textequalex(const CharT * text, int32_t length, const CharT * pattern, int32_t pattern_length, bool caps = true)
+    bool textequalex(const CharT * text, int32_t length, const CharT * pattern, int32_t pattern_length, bool ignorecaps = true)
     {
         if (!text || !pattern)
             return false;
@@ -2370,7 +2370,7 @@ namespace core
             return false;
         else
         {
-            if (caps)
+            if (ignorecaps)
             {
                 while (length--)
                 {

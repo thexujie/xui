@@ -9,9 +9,10 @@ namespace controls::renderables
 
     Text::~Text() { }
 
-    void Text::setText(std::shared_ptr<graphics::TextBlob> text)
+    void Text::setTextBlob(std::shared_ptr<graphics::TextBlob> text)
     {
         _text = text;
+        invalid();
     }
 
     void Text::render(graphics::Graphics & graphics) const
