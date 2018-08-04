@@ -11,9 +11,9 @@ namespace controls::renderables
         Path(std::shared_ptr<graphics::Path> path) : _path(path) {}
         ~Path() = default;
 
-        void setPath(std::shared_ptr<graphics::Path> path) { _path = path; }
-        void setClipPath(std::shared_ptr<graphics::Path> path) { _pathClip = path; }
-        void setPathStyle(const graphics::PathStyle & style) { _style = style; }
+        void setPath(std::shared_ptr<graphics::Path> path) { _path = path; invalid(); }
+        void setClipPath(std::shared_ptr<graphics::Path> path) { _pathClip = path; invalid(); }
+        void setPathStyle(const graphics::PathStyle & style) { if (_style != style) { _style = style; invalid(); }}
         graphics::PathStyle pathStyle() const { return _style; }
 
         void render(graphics::Graphics & graphics) const;

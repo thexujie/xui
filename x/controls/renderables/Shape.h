@@ -10,8 +10,8 @@ namespace controls::renderables
         Shape()  {}
         ~Shape() = default;
 
-        void setClipPath(std::shared_ptr<graphics::Path> path) { _clipPath = path; }
-        void setPathStyle(const graphics::PathStyle & style) { _style = style; }
+        void setClipPath(std::shared_ptr<graphics::Path> path) { _clipPath = path; invalid(); }
+        void setPathStyle(const graphics::PathStyle & style) { if (_style != style) { _style = style; invalid(); }}
         graphics::PathStyle ShapeStyle() const { return _style; }
 
     protected:

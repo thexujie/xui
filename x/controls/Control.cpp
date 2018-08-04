@@ -362,7 +362,7 @@ namespace controls
 
     void Control::_updateBackground(std::shared_ptr<component::View> & view)
     {
-        if (_background_image && _background_image.expired())
+        if (_background_image)
         {
             if (_background_rect_obj)
             {
@@ -381,7 +381,7 @@ namespace controls
                 _background_imgage_obj->setImageSize(calc(_background_size));
             _background_imgage_obj->setImageFitting(_background_fitting);
         }
-        else if (_background_color && _background_color.expired())
+        else if (_background_color)
         {
             if (_background_imgage_obj)
             {
@@ -415,7 +415,7 @@ namespace controls
 
     void Control::_updateBorder(std::shared_ptr<component::View> & view)
     {
-        if (_border && _border_colors && (_border.expired() || _border_colors.expired()))
+        if (_border && _border_colors)
         {
             if(std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
                 std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&

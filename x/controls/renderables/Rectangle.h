@@ -10,7 +10,7 @@ namespace controls::renderables
         Rectangle(const core::rc32f & rect) :_rectangle(rect){}
         ~Rectangle() = default;
 
-        void setRectangle(const core::rc32f & rect) { _rectangle = rect; }
+        void setRectangle(const core::rc32f & rect) { if (_rectangle != rect) { _rectangle = rect; invalid(); }}
 
         void render(graphics::Graphics & graphics) const;
 

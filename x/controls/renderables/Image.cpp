@@ -5,7 +5,11 @@ namespace controls::renderables
 {
     void Image::setImage(std::shared_ptr<graphics::Image> image)
     {
-        _image = image;
+        if(_image != image)
+        {
+            _image = image;
+            invalid();
+        }
     }
 
     void Image::render(graphics::Graphics & graphics) const

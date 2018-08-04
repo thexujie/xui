@@ -75,7 +75,8 @@ namespace graphics
         bool operator == (const PathStyle & another) const
         {
             return _mode == another._mode &&
-                _width == another._width &&
+                _stroke_style == another._stroke_style &&
+                std::abs(_width - another._width) < std::numeric_limits<float32_t>::epsilon() &&
                 _color == another._color &&
                 _aa == another._aa;
         }

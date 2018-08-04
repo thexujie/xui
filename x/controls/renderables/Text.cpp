@@ -11,8 +11,11 @@ namespace controls::renderables
 
     void Text::setTextBlob(std::shared_ptr<graphics::TextBlob> text)
     {
-        _text = text;
-        invalid();
+        if(_text != text)
+        {
+            _text = text;
+            invalid();
+        }
     }
 
     void Text::render(graphics::Graphics & graphics) const

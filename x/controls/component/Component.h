@@ -25,11 +25,11 @@ namespace controls::component
 
         ComponentType type() const { return _type; }
 
-        void setPos(const core::pt32f & pos) { _rect.pos = pos; }
+        void setPos(const core::pt32f & pos) { if (_rect.pos != pos) { _rect.pos = pos; invalid(); }}
         core::pt32f pos() const { return _rect.pos; }
-        void setSize(const core::si32f & size) { _rect.size = size; }
+        void setSize(const core::si32f & size) { if (_rect.size != size) { _rect.size = size; invalid(); } }
         core::si32f size() const { return _rect.size; }
-        void setRect(const core::rc32f & rect) { _rect = rect; invalid(); }
+        void setRect(const core::rc32f & rect) { if (_rect != rect) { _rect = rect; invalid(); } }
         core::rc32f rect() const { return _rect; }
 
         std::shared_ptr<View> view() const { return _view.lock(); }
