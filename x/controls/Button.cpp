@@ -51,7 +51,7 @@ namespace controls
                 view->insert(DEPTH_CONTENT, _text_obj);
             }
             _text_obj->setTextBlob(_textBlob);
-            _text_obj->setPos(contentBox().pos);
+            _text_obj->setRect(contentBox());
         }
 
         if(!_mosuerectangle)

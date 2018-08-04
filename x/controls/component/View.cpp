@@ -25,7 +25,7 @@ namespace controls::component
 
     void View::invalid(const core::rc32f & rect)
     {
-        _rect_invalid = _rect_invalid.intersected(rect);
+        _rect_invalid.unite(rect);
     }
 
     void View::enteringScene(std::shared_ptr<component::Scene> scene)
@@ -119,12 +119,15 @@ namespace controls::component
         _renderables.clear();
     }
 
-    void View::render(graphics::Graphics & graphics) const
+    void View::render(graphics::Graphics & graphics, const graphics::Region & region) const
     {
         std::lock_guard<std::mutex> lock(const_cast<View *>(this)->_mtx);
         graphics.setMatrix(_transform);
         for(auto & rendereable : _renderables)
-            rendereable.second->render(graphics);
+        {
+            if(region.intersects(rendereable.second->rect().ceil<int32_t>()))
+                rendereable.second->render(graphics);
+        }
         graphics.setMatrix(core::float3x2::identity);
     }
 

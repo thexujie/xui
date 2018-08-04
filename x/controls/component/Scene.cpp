@@ -11,11 +11,10 @@ namespace controls::component
 
     void Scene::invalid(const core::rc32f & rect)
     {
-        core::pt32i lt = { core::floor<int32_t>(rect.x), core::floor<int32_t>(rect.y) };
-        core::pt32i rb = { core::ceil<int32_t>(rect.right()), core::ceil<int32_t>(rect.bottom()) };
-        core::si32i size = rb - lt;
-        _invalid_rect.unite({lt, size});
-        invalidated(_invalid_rect);
+        auto rc = rect.ceil<int32_t>();
+        _invalid_rect.unite(rc);
+        _invalid_region.addRect(rc);
+        invalidated(rc);
         invoke([this]() { flush(); });
     }
 
@@ -27,14 +26,15 @@ namespace controls::component
         if (!_renderBuffer || _renderBuffer->size().cx < _invalid_rect.right() || _renderBuffer->size().cy < _invalid_rect.bottom())
             _renderBuffer = std::make_shared<graphics::Bitmap>(core::si32i{ _invalid_rect.right(), _invalid_rect.bottom() });
 
+        auto rect = _invalid_region.bounds();
         graphics::Graphics graphics(_renderBuffer);
-        //graphics.setClipRect(_invalid_rect.to<float32_t>(), false);
+        graphics.setClipRect(rect.to<float32_t>(), false);
         graphics.clear(_color_default);
-        render(graphics);
-        rendered(_invalid_rect);
+        render(graphics, _invalid_region);
+        rendered(rect);
         //rendered(core::rc32i{{}, _renderBuffer ->size()});
         _invalid_rect.clear();
-
+        _invalid_region.clear();
         static bool save = false;
         if (save)
             _renderBuffer->Save("scene.png");
@@ -62,10 +62,10 @@ namespace controls::component
         return core::error_ok;
     }
 
-    void Scene::render(graphics::Graphics & graphics) const
+    void Scene::render(graphics::Graphics & graphics, const graphics::Region & region) const
     {
         for (auto & view : _views)
-            view->render(graphics);
+            view->render(graphics, region);
     }
 
     std::shared_ptr<MouseArea> Scene::findMouseArea(const core::pt32f & pos) const

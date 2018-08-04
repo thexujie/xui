@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "Renderable.h"
 #include "Interactable.h"
+#include "graphics/Region.h"
 
 namespace controls::component
 {
@@ -26,7 +27,7 @@ namespace controls::component
         void insert(int32_t depth, std::shared_ptr<Component> object);
         void remove(std::shared_ptr<Component> object);
 
-        virtual void render(graphics::Graphics & graphics) const;
+        virtual void render(graphics::Graphics & graphics, const graphics::Region & region) const;
 
         std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos) const;
 

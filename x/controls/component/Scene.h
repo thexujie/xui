@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderable.h"
 #include "Interactable.h"
+#include "graphics/Region.h"
 
 namespace controls::component
 {
@@ -29,7 +30,7 @@ namespace controls::component
 
         const std::list<std::shared_ptr<View>> & views() const { return _views; }
 
-        void render(graphics::Graphics & graphics) const;
+        void render(graphics::Graphics & graphics, const graphics::Region & region) const;
 
     public:
         std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos) const;
@@ -50,6 +51,8 @@ namespace controls::component
     protected:
         bool _invalid = false;
         core::rc32i _invalid_rect;
+        graphics::Region _invalid_region;
+
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;

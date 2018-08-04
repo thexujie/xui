@@ -11,6 +11,20 @@ namespace graphics
         Region() = default;
         ~Region();
 
+        void clear();
+        bool empty() const;
+
+        void setRect(const core::rc32i & rect);
+        void addRect(const core::rc32i & rect);
+
+        bool intersects(const core::rc32i & rect)const;
+        bool intersects(const Region & region)const;
+
+        bool contains(const core::pt32i & point) const;
+        bool contains(const core::rc32i & rect) const;
+        bool contains(const Region & region) const;
+
+        core::rc32i bounds() const;
     private:
         void _confirmNative();
 

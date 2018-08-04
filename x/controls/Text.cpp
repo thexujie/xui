@@ -36,7 +36,7 @@ namespace controls
                 _text_obj = std::make_shared<renderables::Text>(_textBlob);
                 view->insert(_text_obj);
             }
-            _text_obj->setPos(contentBox().pos);
+            _text_obj->setRect(contentBox());
         }
     }
 

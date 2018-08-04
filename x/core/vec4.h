@@ -409,6 +409,14 @@ namespace core
             return vec4(convert(x), convert(y), convert(cx), convert(cy));
         }
 
+        template<typename T2, typename = std::enable_if_t<std::is_floating_point<T>::value>>
+        vec4<T2> ceil() const
+        {
+            core::vec2<T2> lt = { core::floor<T2>(x), core::floor<T2>(y) };
+            core::vec2<T2> rb = { core::ceil<T2>(right()), core::ceil<T2>(bottom()) };
+            return vec4<T2>(lt, rb - lt);
+        }
+
     public:
         union
         {
