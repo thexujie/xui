@@ -31,7 +31,8 @@ namespace controls::component
         graphics.setClipRect(rect.to<float32_t>(), false);
         graphics.clear(_color_default);
         render(graphics, _invalid_region);
-        rendered(rect);
+        //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
+        rendered(_invalid_region);
         //rendered(core::rc32i{{}, _renderBuffer ->size()});
         _invalid_rect.clear();
         _invalid_region.clear();
@@ -96,16 +97,19 @@ namespace controls::component
 
     void Scene::onMouseMove(const mosue_state & state)
     {
-        auto ma = findMouseArea(state.pos());
-        if (_mousearea_hoving != ma)
+        if (!state.active(mouse_button::mask))
         {
-            if (_mousearea_hoving)
-                _mousearea_hoving->onMouseLeave(state);
+            auto ma = findMouseArea(state.pos());
+            if (_mousearea_hoving != ma)
+            {
+                if (_mousearea_hoving)
+                    _mousearea_hoving->onMouseLeave(state);
 
-            _mousearea_hoving = ma;
+                _mousearea_hoving = ma;
 
-            if (_mousearea_hoving)
-                _mousearea_hoving->onMouseEnter(state);
+                if (_mousearea_hoving)
+                    _mousearea_hoving->onMouseEnter(state);
+            }
         }
 
         if (_mousearea_hoving)
@@ -126,21 +130,41 @@ namespace controls::component
             _mousearea_hoving->onMouseDown(state);
     }
 
-   void Scene::onMouseUp(const mosue_state & state)
-   {
-       if (_mousearea_hoving)
-           _mousearea_hoving->onMouseUp(state);
-   }
+    void Scene::onMouseUp(const mosue_state & state)
+    {
+        if (_mousearea_hoving)
+            _mousearea_hoving->onMouseUp(state);
 
-   void Scene::onMouseClick(const mosue_state & state)
-   {
-       if (_mousearea_hoving)
-           _mousearea_hoving->onMouseClick(state);
-   }
+        if (!state.active(mouse_button::mask))
+        {
+            auto ma = findMouseArea(state.pos());
+            if (_mousearea_hoving != ma)
+            {
+                if (_mousearea_hoving)
+                    _mousearea_hoving->onMouseLeave(state);
 
-   void Scene::onMouseDBClick(const mosue_state & state)
-   {
-       if (_mousearea_hoving)
-           _mousearea_hoving->onMouseDBClick(state);
-   }
+                _mousearea_hoving = ma;
+
+                if (_mousearea_hoving)
+                    _mousearea_hoving->onMouseEnter(state);
+            }
+        }
+    }
+
+    void Scene::onMouseClick(const mosue_state & state)
+    {
+        if (_mousearea_hoving)
+            _mousearea_hoving->onMouseClick(state);
+    }
+
+    void Scene::onMouseDBClick(const mosue_state & state)
+    {
+        if (_mousearea_hoving)
+            _mousearea_hoving->onMouseDBClick(state);
+    }
+
+    void Scene::renderThread()
+    {
+        
+    }
 }

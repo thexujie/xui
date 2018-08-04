@@ -245,7 +245,7 @@ namespace win32
         void onShownChanged(bool shown);
         void onPosChagned(const core::pt32f & from, const core::pt32f & to);
         void onSceneInvalidated(const core::rc32i & rect);
-        void onSceneRendered(const core::rc32i & rect);
+        void onSceneRendered(const graphics::Region & region);
 
     private:
         core::error _createWindow();
@@ -257,6 +257,7 @@ namespace win32
         core::vec4i _padding() const;
 
         void _render(const core::rc32i & rect);
+        void _render(const graphics::Region & region);
 
     private:
 
@@ -322,6 +323,7 @@ namespace win32
         uint32_t _styleEx = 0;
         handle_t _handle = nullptr;
 
+        controls::component::mosue_state _mouse_state;
         bool _mouseIn = false;
         bool _trackingMouse = false;
     public:

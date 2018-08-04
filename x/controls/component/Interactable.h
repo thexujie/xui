@@ -3,15 +3,30 @@
 
 namespace controls::component
 {
+    enum mouse_button
+    {
+        left = 0x0001,
+        middle = 0x0002,
+        right = 0x0004,
+
+        mask= 0x00ff,
+    };
+
     class mosue_state
     {
     public:
+        mosue_state() = default;
         mosue_state(const core::pt32f pos) : _pos(pos) {}
 
+        void setPos(const core::pt32f & pos) { _pos = pos; }
         const core::pt32f & pos() const { return _pos; }
+
+        void active(mouse_button button, bool a) { a ? _buttons |= button : _buttons &= ~button; }
+        bool active(mouse_button button) const { return !!(_buttons & button); }
 
     private:
         core::pt32f _pos;
+        int32_t _buttons = 0;
     };
 
     class Interactable : public component::Component

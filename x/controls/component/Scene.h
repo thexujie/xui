@@ -50,8 +50,12 @@ namespace controls::component
 
     public:
         core::event<void(const core::rc32i & rect)> invalidated;
-        core::event<void(const core::rc32i & rect)> rendered;
-        
+        //core::event<void(const core::rc32i & rect)> rendered;
+        core::event<void(const graphics::Region & region)> rendered;
+
+    private:
+        void renderThread();
+
     protected:
         bool _invalid = false;
         core::rc32i _invalid_rect;

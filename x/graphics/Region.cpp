@@ -89,4 +89,33 @@ namespace graphics
         if (!_native)
             _native = std::make_shared<SkRegion>();
     }
+
+
+    RegionIterator::RegionIterator(const Region & region)
+    {
+        _native = std::make_shared<SkRegion::Iterator>(region.native());
+    }
+
+    bool RegionIterator::done()
+    {
+        if (!_native)
+            return true;
+        auto sri = std::reinterpret_pointer_cast<SkRegion::Iterator>(_native);
+        return sri->done();
+    }
+    void  RegionIterator::next()
+    {
+        if (!_native)
+            return;
+        auto sri = std::reinterpret_pointer_cast<SkRegion::Iterator>(_native);
+        sri->next();
+    }
+
+    core::rc32i RegionIterator::rect() const
+    {
+        if (!_native)
+            return {};
+        auto sri = std::reinterpret_pointer_cast<SkRegion::Iterator>(_native);
+        return skia::to(sri->rect());
+    }
 }

@@ -38,4 +38,16 @@ namespace graphics
     private:
         std::shared_ptr<SkRegion> _native;
     };
+
+    class RegionIterator
+    {
+    public:
+        RegionIterator(const Region & region);
+        bool done();
+        void  next();
+        core::rc32i rect() const;
+
+        std::shared_ptr<void> _native;
+    };
+
 }

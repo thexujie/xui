@@ -101,9 +101,9 @@ namespace win32
         ::PostMessageW(hwnd, WM_REFRESH, core::uxfromih(rect.x, rect.y), core::ixfromih(rect.cx, rect.cy));
     }
 
-    void Window::onSceneRendered(const core::rc32i & rect)
+    void Window::onSceneRendered(const graphics::Region & region)
     {
-        _render(rect);
+        _render(region);
     }
 
     core::error Window::_createWindow()
@@ -254,6 +254,46 @@ namespace win32
         ReleaseDC(hwnd, hdc);
     }
 
+    void Window::_render(const graphics::Region & region)
+    {
+        auto f = form();
+        if (!f)
+            return;
+
+
+        auto scene = f->scene();
+        std::shared_ptr<graphics::Bitmap> bitmap = scene->bitmap();
+
+        HWND hwnd = (HWND)handle();
+        if (!hwnd)
+            return;
+
+        graphics::bitmap_buffer buffer = bitmap->buffer();
+        BITMAPINFO bmi;
+        memset(&bmi, 0, sizeof(bmi));
+        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        bmi.bmiHeader.biWidth = buffer.size.cx;
+        bmi.bmiHeader.biHeight = -buffer.size.cy;
+        bmi.bmiHeader.biPlanes = 1;
+        bmi.bmiHeader.biBitCount = 32;
+        bmi.bmiHeader.biCompression = BI_RGB;
+        bmi.bmiHeader.biSizeImage = 0;
+
+        HDC hdc = GetDC(hwnd);
+        graphics::RegionIterator ri(region);
+        while (!ri.done())
+        {
+            auto rect = ri.rect();
+            ri.next();
+
+            auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+            SetDIBitsToDevice(hdc,
+                rc.x, rc.y, rc.cx, rc.cy,
+                rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+        }
+        ReleaseDC(hwnd, hdc);
+    }
+
 #define CASE_MSG(M, F) case M: return F(uiParam, iParam)
     intx_t Window::handleMSG(uint32_t uiMessage, uintx_t uiParam, intx_t iParam)
     {
@@ -378,7 +418,7 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        core::pt32i pos(core::i32li16(iParam), core::i32hi16(iParam));
+        _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         if (!_trackingMouse)
         {
             //OnWmMouseEnter(uiMessage, uiParam, iParam);
@@ -389,10 +429,10 @@ namespace win32
             tme.hwndTrack = (HWND)_handle;
             TrackMouseEvent(&tme);
             _trackingMouse = true;
-            s->onMouseEnter(controls::component::mosue_state(pos.to<float32_t>()));
+            s->onMouseEnter(_mouse_state);
         }
 
-        s->onMouseMove(controls::component::mosue_state(pos.to<float32_t>()));
+        s->onMouseMove(_mouse_state);
         return 0;
     }
 
@@ -407,8 +447,9 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        core::pt32i pos(core::ixlih(iParam), core::ixhih(iParam));
-        s->onMouseLeave(controls::component::mosue_state(pos.to<float32_t>()));
+        _mouse_state.active(controls::component::mouse_button::mask, false);
+        _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
+        s->onMouseLeave(_mouse_state);
         return 0;
     }
 
@@ -419,8 +460,9 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        core::pt32i pos(core::i32li16(iParam), core::i32hi16(iParam));
-        s->onMouseDown(controls::component::mosue_state(pos.to<float32_t>()));
+        _mouse_state.active(controls::component::mouse_button::left, true);
+        _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
+        s->onMouseDown(_mouse_state);
         return 0;
     }
 
@@ -431,8 +473,9 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        core::pt32i pos(core::i32li16(iParam), core::i32hi16(iParam));
-        s->onMouseUp(controls::component::mosue_state(pos.to<float32_t>()));
+        _mouse_state.active(controls::component::mouse_button::left, false);
+        _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
+        s->onMouseUp(_mouse_state);
         return 0;
     }
 
