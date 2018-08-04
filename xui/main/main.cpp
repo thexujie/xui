@@ -85,13 +85,29 @@ public:
     }
 };
 
+struct animation
+{
+    void start();
+
+    std::string property_name;
+    int start_val;
+    int end_val;
+    std::function<int(const int &, const int &, float32_t)> intersect;
+};
+
+struct AnimPlayer
+{
+};
+
+
 int main()
 {
     std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
     auto ss = std::make_shared<controls::component::StyleSheet>();
     ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
 
-
+    auto an = std::make_shared<animation>();
+    //an.start();
 
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
     win32::Win32App app;

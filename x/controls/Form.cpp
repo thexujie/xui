@@ -51,7 +51,7 @@ namespace controls
             return s;
 
         if (!_form_scene)
-            const_cast<Form*>(this)->_form_scene = std::make_shared<controls::component::Scene>();
+            const_cast<Form*>(this)->_form_scene = std::make_shared<controls::component::Scene>(const_cast<Form*>(this)->share_ref<Control>());
         return _form_scene;
     }
 

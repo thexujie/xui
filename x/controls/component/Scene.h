@@ -3,6 +3,11 @@
 #include "Interactable.h"
 #include "graphics/Region.h"
 
+namespace controls
+{
+    class Control;
+}
+
 namespace controls::component
 {
     class Component;
@@ -11,7 +16,7 @@ namespace controls::component
     class Scene : public core::invokable<Scene>
     {
     public:
-        Scene();
+        Scene(std::shared_ptr<Control> control);
         ~Scene();
 
     public:
@@ -23,8 +28,12 @@ namespace controls::component
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _styleSheet = styleSheet;  }
         std::shared_ptr<component::StyleSheet> styleSheet() const { return _styleSheet; }
 
+        void beginAnim(std::shared_ptr<Control> control);
+        void endAnim(std::shared_ptr<Control> control);
+
         std::shared_ptr<graphics::Bitmap> bitmap() const { return _renderBuffer; }
         void invalid(const core::rc32f & rect);
+        void update();
         void flush();
         const core::rc32i & invalidRect() const { return _invalid_rect; }
 
@@ -57,10 +66,12 @@ namespace controls::component
         void renderThread();
 
     protected:
-        bool _invalid = false;
+        std::mutex _mtx;
+        std::thread _thread;
+
         core::rc32i _invalid_rect;
         graphics::Region _invalid_region;
-
+        std::weak_ptr<Control> _control;
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
@@ -71,5 +82,8 @@ namespace controls::component
         std::shared_ptr<MouseArea> _mousearea_hoving;
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
+
+        // ¶¯»­¿ØÖÆ
+        std::vector<std::weak_ptr<Control>> _anim_controls;
     };
 }

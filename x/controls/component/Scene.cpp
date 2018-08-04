@@ -5,9 +5,29 @@
 
 namespace controls::component
 {
-    Scene::Scene() { }
+    Scene::Scene(std::shared_ptr<Control> control) : _control(control)
+    {
+        
+    }
 
     Scene::~Scene() { }
+
+    void Scene::beginAnim(std::shared_ptr<Control> control)
+    {
+        std::lock_guard<std::mutex> lock(_mtx);
+        _anim_controls.push_back(control);
+        if(!_thread.joinable())
+            _thread = std::thread(std::bind(&Scene::renderThread, this));
+    }
+
+    void Scene::endAnim(std::shared_ptr<Control> control)
+    {
+        std::lock_guard<std::mutex> lock(_mtx);
+        //std::remove_if(_anim_controls.begin(), _anim_controls.end(), [](std::weak_ptr<Control> ptr) { return ptr->expired(); });
+        //_anim_controls.erase(std::remove(_anim_controls.begin(), _anim_controls.end(), control));
+        _anim_controls.erase(std::remove_if(_anim_controls.begin(), _anim_controls.end(),
+            [&control](std::weak_ptr<Control> ptr) { return ptr.expired() || ptr.lock() == control; }));
+    }
 
     void Scene::invalid(const core::rc32f & rect)
     {
@@ -16,6 +36,12 @@ namespace controls::component
         _invalid_region.addRect(rc);
         invalidated(rc);
         invoke([this]() { flush(); });
+    }
+
+    void Scene::update()
+    {
+        std::lock_guard<std::mutex> lock(_mtx);
+        flush();
     }
 
     void Scene::flush()
@@ -165,6 +191,13 @@ namespace controls::component
 
     void Scene::renderThread()
     {
+        while(true)
+        {
+            update();
+            std::this_thread::sleep_for(30ms);
+        }
+
+
         
     }
 }
