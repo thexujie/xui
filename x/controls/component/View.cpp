@@ -25,7 +25,7 @@ namespace controls::component
 
     void View::invalid(const core::rc32f & rect)
     {
-        _rect_invalid = _rect_invalid.intersect(rect);
+        _rect_invalid = _rect_invalid.intersected(rect);
     }
 
     void View::enteringScene(std::shared_ptr<component::Scene> scene)

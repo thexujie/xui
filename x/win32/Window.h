@@ -244,8 +244,8 @@ namespace win32
     private:
         void onShownChanged(bool shown);
         void onPosChagned(const core::pt32f & from, const core::pt32f & to);
-        void onSceneInvalidated(const core::rc32f & rect);
-        void onSceneRendered(const core::rc32f & rect);
+        void onSceneInvalidated(const core::rc32i & rect);
+        void onSceneRendered(const core::rc32i & rect);
 
     private:
         core::error _createWindow();

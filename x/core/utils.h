@@ -229,6 +229,30 @@ namespace core
         return value < min ? value : (value > max ? max : value);
     }
 
+    template<typename T>
+    constexpr T floor(float32_t val)
+    {
+        return static_cast<T>(std::floorf(val));
+    }
+
+    template<typename T>
+    constexpr T ceil(float32_t val)
+    {
+        return static_cast<T>(std::ceilf(val));
+    }
+
+    template<typename T>
+    constexpr T floor(float64_t val)
+    {
+        return static_cast<T>(std::floor(val));
+    }
+
+    template<typename T>
+    constexpr T ceil(float64_t val)
+    {
+        return static_cast<T>(std::ceil(val));
+    }
+
     /**
     * @brief 交换两个指针所指向的数据的值。
     * @param a,b 要交换的两个数的 const 引用。

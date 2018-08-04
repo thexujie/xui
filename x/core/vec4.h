@@ -81,6 +81,14 @@ namespace core
             return *this;
         }
 
+        void set(const vec4 & another)
+        {
+            x = another.x;
+            y = another.y;
+            cx = another.cx;
+            cy = another.cy;
+        }
+
         void set(T _x, T _y, T _w, T _h)
         {
             x = _x;
@@ -124,40 +132,105 @@ namespace core
             cy = 0;
         }
 
-        vec4 expand(T expand) const
+        vec4 expanded(T expand) const
         {
             return vec4(x - expand, y - expand, cx + expand * 2, cy + expand * 2);
         }
 
-        vec4 expand(const vec4 & bound) const
+        vec4 expanded(const vec4 & bound) const
         {
             return vec4(x - bound.bleft, y - bound.btop, cx + bound.bleft + bound.bright, cy + bound.btop + bound.bbottom);
         }
 
-        vec4 expand(const T & expandX, const T & expandY) const
+        vec4 expanded(const T & expandX, const T & expandY) const
         {
             return vec4(x - expandX, y - expandY, cx + expandX * 2, cy + expandY * 2);
         }
 
-        vec4 intersect(const vec4 & another) const
+        // 交集
+        vec4 & intersect(const vec4 & another)
         {
-            return operator &(another);
+            if (another.empty() || empty())
+                clear();
+            else
+            {
+                T x_min = std::max(x, another.x);
+                T x_max = std::min(right(), another.right());
+                T y_min = std::max(y, another.y);
+                T y_max = std::min(bottom(), another.bottom());
+                if (x_max <= x_min || y_max <= y_min)
+                    clear();
+                else
+                    set(x_min, y_min, x_max - x_min, y_max - y_min);
+            }
+            return *this;
         }
 
-        bool intersect(const vec4 & another, vec4 & result) const
+        vec4 intersected(const vec4 & another) const
         {
-            result = operator &(another);
-            return !result.empty();
+            if (another.empty())
+                return *this;
+            else if (empty())
+                return another;
+            else
+            {
+                T x_min = std::max(x, another.x);
+                T x_max = std::min(right(), another.right());
+                T y_min = std::max(y, another.y);
+                T y_max = std::min(bottom(), another.bottom());
+                if (x_max <= x_min || y_max <= y_min)
+                    return vec4();
+                return vec4(x_min, y_min, x_max - x_min, y_max - y_min);
+            }
         }
 
         // 并集
-        vec4 unite(const vec4<T> another) const
+        vec4 & unite(const vec4<T> another)
         {
-            return operator |(another);
+            if (another.empty())
+                return *this;
+            if (empty())
+                set(another);
+            else
+            {
+                T x_min = std::min(x, another.x);
+                T x_max = std::max(right(), another.right());
+                T y_min = std::min(y, another.y);
+                T y_max = std::max(bottom(), another.bottom());
+
+                if (x_max <= x_min || y_max <= y_min)
+                    clear();
+                else
+                    set(x_min, y_min, x_max - x_min, y_max - y_min);
+            }
+            return *this;
+        }
+
+        vec4 united(const vec4<T> another) const
+        {
+            if (another.empty())
+                return *this;
+            else if (empty())
+                return another;
+            else
+            {
+                T x_min = std::min(x, another.x);
+                T x_max = std::max(right(), another.right());
+                T y_min = std::min(y, another.y);
+                T y_max = std::max(bottom(), another.bottom());
+                return vec4(x_min, y_min, x_max - x_min, y_max - y_min);
+            }
         }
 
         // 偏移
-        vec4 offset(T off_x, T off_y) const
+        vec4 & offset(T off_x, T off_y)
+        {
+            x += off_x;
+            y += off_y;
+            return *this;
+        }
+
+        vec4 offseted(T off_x, T off_y) const
         {
             return vec4(x + off_x, y + off_y, cx, cy);
         }
@@ -261,100 +334,45 @@ namespace core
         //--------------------------------------------------比较运算
         vec4 operator +(const vec2<T> & offset) const
         {
-            return vec4(x + offset.x, y + offset.y, cx, cy);
+            return offseted(offset.x, offset.y);
         }
 
         vec4 & operator +=(const vec2<T> & offset)
         {
-            x += offset.x;
-            y += offset.y;
+            offset(offset.x, offset.y);
             return *this;
         }
 
         vec4 operator -(const vec2<T> & offset) const
         {
-            return vec4(x - offset.x, y - offset.y, cx, cy);
+            return offseted(-offset.x, -offset.y);
         }
 
         vec4 & operator -=(const vec2<T> & offset)
         {
-            x -= offset.x;
-            y -= offset.y;
+            offset(-offset.x, -offset.y);
+            return *this;
+        }
+
+        vec4 operator &(const vec4 & another) const
+        {
+            return intersected(another);
+        }
+
+        vec4 & operator &=(const vec4 & another)
+        {
+            intersect(another);
             return *this;
         }
 
         vec4 operator |(const vec4 & another) const
         {
-            if (another.empty())
-                return *this;
-            else if (empty())
-                return another;
-            else
-            {
-                T x_min = minof(x, another.x);
-                T x_max = maxof(right(), another.right());
-                T y_min = minof(y, another.y);
-                T y_max = maxof(bottom(), another.bottom());
-                return vec4(x_min, y_min, x_max - x_min, y_max - y_min);
-            }
+            return united(another);
         }
 
         vec4 & operator |=(const vec4 & another)
         {
-            if (!another.empty())
-            {
-                if (empty())
-                    * this = another;
-                else
-                {
-                    T x_min = minof(x, another.x);
-                    T x_max = maxof(right(), another.right());
-                    T y_min = minof(y, another.y);
-                    T y_max = maxof(bottom(), another.bottom());
-                    set(x_min, y_min, x_max - x_min, y_max - y_min);
-                }
-            }
-            else {}
-            return *this;
-        }
-
-
-        vec4 operator &(const vec4 & another) const
-        {
-            if (another.empty())
-                return *this;
-            else if (empty())
-                return another;
-            else
-            {
-                T x_min = x > another.x ? x : another.x;
-                T x_max = right() < another.right() ? right() : another.right();
-                T y_min = y > another.y ? y : another.y;
-                T y_max = bottom() < another.bottom() ? bottom() : another.bottom();
-
-                if (x_max <= x_min || y_max <= y_min)
-                    return vec4();
-                else
-                    return vec4(x_min, y_min, x_max - x_min, y_max - y_min);
-            }
-        }
-
-        vec4 & operator &=(const vec4 & another)
-        {
-            if (another.empty() || empty())
-                clear();
-            else
-            {
-                T x_min = x > another.x ? x : another.x;
-                T x_max = right() < another.right() ? right() : another.right();
-                T y_min = y > another.y ? y : another.y;
-                T y_max = bottom() < another.bottom() ? bottom() : another.bottom();
-
-                if (x_max <= x_min || y_max <= y_min)
-                    clear();
-                else
-                    set(x_min, y_min, x_max - x_min, y_max - y_min);
-            }
+            unite(another);
             return *this;
         }
 

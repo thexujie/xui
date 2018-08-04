@@ -416,7 +416,7 @@ namespace controls
                     }
                 }
                 _border_obj->setRect(box());
-                _border_obj->setRectangle(box().expand(calc(_border) * -0.5f));
+                _border_obj->setRectangle(box().expanded(calc(_border) * -0.5f));
                 _border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc(_border.value.x)));
             }
             else

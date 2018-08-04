@@ -89,7 +89,7 @@ public:
 
 int main()
 {
-    std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#8888} .button hoving{border: 2px; background-color:#a888}";
+    std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
     auto ss = std::make_shared<controls::component::StyleSheet>();
     ss->loadFromData(str);
 
@@ -110,10 +110,18 @@ int main()
     auto src = s->rect();
     auto ppi = controls::Desktop::instance().ppi();
 
-    auto button = std::make_shared<controls::Button>(u8"点击查看更多精彩内容");
-    button->setBorder({ 2_px });
-    button->setBorderColors({ colors::DimGray });
-    button->appendStyleSheet(ss);
+    auto buttons = std::make_shared<controls::Container>();
+    {
+        buttons->setLayoutDirection(core::align::top);
+        for(int cnt = 0; cnt < 10; ++cnt)
+        {
+            auto button = std::make_shared<controls::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
+            button->setBorder({ 2_px });
+            button->setBorderColors({ colors::DimGray });
+            button->appendStyleSheet(ss);
+            buttons->addControl(button);
+        }
+    }
 
     auto text = std::make_shared<controls::Text>(u8"ABCDEF这是一个很好的内容的G");
     text->setBorder({ 2_px });
@@ -143,13 +151,13 @@ int main()
     text2->setBackgroundColor(colors::Green);
     text2->setPadding({ 1_em, 0.5_em });
 
-    auto form = std::make_shared<controls::Form>(core::vec2<core::dimensionf>(35_em, 30_em));
+    auto form = std::make_shared<controls::Form>(core::vec2<core::dimensionf>(50_em, 30_em));
     form->setBorder({ 10_px });
     form->setBorderColors({ colors::Black });
     //form->setBorderStyles({ graphics::stroke_style::dashed });
     form->addControl(text);
     form->addControl(image0);
-    form->addControl(button);
+    form->addControl(buttons);
     form->addControl(image);
     form->addControl(text2);
     form->show();

@@ -14,6 +14,11 @@ namespace controls
         
     }
 
+    void Container::setLayoutDirection(core::align layout)
+    {
+        _layout_direction = layout;
+    }
+
     void Container::addControl(std::shared_ptr<Control> control)
     {
         control->setParent(share_ref<Container>());
@@ -65,16 +70,26 @@ namespace controls
                 continue;
 
             auto m = control->realMargin();
-            margin = std::max(margin, m.bleft);
 
             if(_layout_direction == core::align::left || _layout_direction == core::align::right)
             {
+                margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
                 size.cx += margin;
                 auto psize = control->prefferSize();
-                margin = m.bright;
+                margin = _layout_direction == core::align::left ? m.bright : m.bleft;
                 size.cx = size.cx + psize.cx;
                 size.cy = std::max(size.cy, psize.cy + m.bheight());
             }
+            else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
+            {
+                margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
+                size.cy += margin;
+                auto psize = control->prefferSize();
+                margin = _layout_direction == core::align::top ? m.bbottom : m.btop;
+                size.cy += psize.cy;
+                size.cx = std::max(size.cx, psize.cx + m.bwidth());
+            }
+            else {}
         }
         return size;
     }
@@ -84,8 +99,8 @@ namespace controls
         float32_t margin = 0;
         core::si32f psize = prefferSize();
 
+        core::rc32f box = paddingBox();
         core::rc32f rc;
-        rc.pos = paddingBox().leftTop();
         rc.cy = psize.cy;
         for (auto & control : _controls)
         {
@@ -122,6 +137,17 @@ namespace controls
                 margin = m.bright;
                 rc.x += rc.cx;
             }
+            else if (_layout_direction == core::align::top)
+            {
+                margin = std::max(margin, m.btop);
+                rc.y += margin;
+                rc.x = box.x + m.bleft;
+                rc.size = ps;
+                control->layout(rc, ps);
+                margin = m.bbottom;
+                rc.y += rc.cy;
+            }
+            else{}
         }
     }
 

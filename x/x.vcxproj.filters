@@ -185,6 +185,9 @@
     <ClCompile Include="utils\css.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="graphics\Region.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -445,6 +448,9 @@
     </ClInclude>
     <ClInclude Include="utils\css.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Region.h">
+      <Filter>graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

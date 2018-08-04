@@ -10,6 +10,8 @@ namespace controls
         Container();
         virtual ~Container();
 
+        void setLayoutDirection(core::align layout);
+
         void addControl(std::shared_ptr<Control> control);
         void removeControl(std::shared_ptr<Control> control);
 

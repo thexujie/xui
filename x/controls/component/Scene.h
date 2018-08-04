@@ -21,7 +21,7 @@ namespace controls::component
         std::shared_ptr<graphics::Bitmap> bitmap() const { return _renderBuffer; }
         void invalid(const core::rc32f & rect);
         void flush();
-        const core::rc32f & invalidRect() const { return _invalid_rect; }
+        const core::rc32i & invalidRect() const { return _invalid_rect; }
 
     public:
         core::error insert(std::shared_ptr<View> component);
@@ -44,12 +44,12 @@ namespace controls::component
         virtual void onMouseDBClick(const mosue_state & state);
 
     public:
-        core::event<void(const core::rc32f & rect)> invalidated;
-        core::event<void(const core::rc32f & rect)> rendered;
+        core::event<void(const core::rc32i & rect)> invalidated;
+        core::event<void(const core::rc32i & rect)> rendered;
         
     protected:
         bool _invalid = false;
-        core::rc32f _invalid_rect;
+        core::rc32i _invalid_rect;
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;

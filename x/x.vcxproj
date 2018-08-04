@@ -150,6 +150,7 @@
     </ClCompile>
     <ClCompile Include="graphics\Path.cpp" />
     <ClCompile Include="graphics\PathStyle.cpp" />
+    <ClCompile Include="graphics\Region.cpp" />
     <ClCompile Include="graphics\skia\SkShaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -245,6 +246,7 @@
     <ClInclude Include="graphics\Bitmap.h" />
     <ClInclude Include="graphics\Path.h" />
     <ClInclude Include="graphics\PathStyle.h" />
+    <ClInclude Include="graphics\Region.h" />
     <ClInclude Include="graphics\skia\skia.h" />
     <ClInclude Include="graphics\skia\SkShaper.h" />
     <ClInclude Include="graphics\StringFormat.h" />
