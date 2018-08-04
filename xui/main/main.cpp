@@ -19,7 +19,6 @@
 #include "controls/Form.h"
 #include "controls/Desktop.h"
 #include "controls/Button.h"
-#include "utils/css.h"
 
 using namespace core;
 
@@ -59,7 +58,6 @@ void testImages()
 
 //#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
 #pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
-#include "css/parser_pp.h"
 
 
 int parseInt(const std::string_view & str)
@@ -91,7 +89,7 @@ int main()
 {
     std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
     auto ss = std::make_shared<controls::component::StyleSheet>();
-    ss->loadFromData(str);
+    ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
 
 
 
@@ -118,7 +116,6 @@ int main()
             auto button = std::make_shared<controls::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
             button->setBorder({ 2_px });
             button->setBorderColors({ colors::DimGray });
-            button->appendStyleSheet(ss);
             buttons->addControl(button);
         }
     }
@@ -152,6 +149,7 @@ int main()
     text2->setPadding({ 1_em, 0.5_em });
 
     auto form = std::make_shared<controls::Form>(core::vec2<core::dimensionf>(50_em, 30_em));
+    form->formScene()->setStyleSheet(ss);
     form->setBorder({ 10_px });
     form->setBorderColors({ colors::Black });
     //form->setBorderStyles({ graphics::stroke_style::dashed });

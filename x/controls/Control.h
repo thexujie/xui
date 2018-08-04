@@ -46,7 +46,9 @@ namespace controls
 
         static void propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders);
 
-        void appendStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _styleSheet = styleSheet; }
+        void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet);
+        std::shared_ptr<component::StyleSheet> styleSheet() const;
+
         void setLayoutOrigin(layout_origin origin) { _layout_origin = origin; }
         layout_origin layoutOrigin() const { return _layout_origin; }
 
@@ -120,6 +122,7 @@ namespace controls
         virtual void enterScene(std::shared_ptr<component::Scene> & scene);
         virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
         virtual void leaveScene(std::shared_ptr<component::Scene> & scene);
+        virtual void applyStyle() {}
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
@@ -164,14 +167,15 @@ namespace controls
         core::attribute<graphics::font> _font;
 
         // background
-        core::color32 _background_color = core::colors::Auto;
-        std::shared_ptr<graphics::Image> _background_image;
+        core::attribute<std::shared_ptr<graphics::Image>> _background_image;
+        core::attribute<core::color32> _background_color = core::colors::Auto;
         layout_origin _background_position;
         core::attribute<core::vec2<core::dimensionf>> _background_size;
         core::vec2<renderables::image_fitting> _background_fitting = core::vec2<renderables::image_fitting>(renderables::image_fitting::none, renderables::image_fitting::none);
         control_box _background_box = control_box::layout_box;
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
+        std::string _style;
         // 布局之后
         core::rc32f _rect;
 

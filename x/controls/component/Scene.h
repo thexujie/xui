@@ -6,6 +6,7 @@
 namespace controls::component
 {
     class Component;
+    class StyleSheet;
 
     class Scene : public core::invokable<Scene>
     {
@@ -18,6 +19,9 @@ namespace controls::component
         const core::rc32f & rect() const { return _rect; }
         const core::si32f & size() const { return _rect.size; }
         const core::rc32f & viewRect() const { return _rect; }
+
+        void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _styleSheet = styleSheet;  }
+        std::shared_ptr<component::StyleSheet> styleSheet() const { return _styleSheet; }
 
         std::shared_ptr<graphics::Bitmap> bitmap() const { return _renderBuffer; }
         void invalid(const core::rc32f & rect);
@@ -61,5 +65,7 @@ namespace controls::component
         std::shared_ptr<graphics::Bitmap> _renderBuffer;
 
         std::shared_ptr<MouseArea> _mousearea_hoving;
+
+        std::shared_ptr<component::StyleSheet> _styleSheet;
     };
 }

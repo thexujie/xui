@@ -44,16 +44,27 @@ namespace controls
     //    }
     //}
 
+    std::shared_ptr<controls::component::Scene> Form::formScene() const
+    {
+        auto s = scene();
+        if (s)
+            return s;
+
+        if (!_form_scene)
+            const_cast<Form*>(this)->_form_scene = std::make_shared<controls::component::Scene>();
+        return _form_scene;
+    }
+
     void Form::show()
     {
         if (_shown)
             return;
 
-        if(!_scene)
+        if (!scene())
         {
-            _scene = std::make_shared<controls::component::Scene>();
-            enteringScene(_scene);
-            enterScene(_scene);
+            auto s = formScene();
+            enteringScene(s);
+            enterScene(s);
         }
 
         auto rect = core::rc32f(calc(_pos), calc(_size));

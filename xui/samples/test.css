@@ -1,0 +1,17 @@
+.button {
+    border: 1px;
+    padding: 1em 0.5em;
+    background-color: #2888;
+    margin: 0.2em;
+
+}
+
+.button:hover {
+    border: 2px;
+    background-color: #a888
+}
+
+.button:active {
+    border: 2px;
+    background-color: #a8a8
+}

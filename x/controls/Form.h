@@ -19,6 +19,9 @@ namespace controls
         //void setWindowSize(const core::si32f & size);
         //void setWindowSize(const core::vec2<core::dimensionf> & size) { setWindowSize(calc(size)); }
 
+        std::shared_ptr<controls::component::Scene> formScene() const;
+
+
         void show();
         void centerScreen(int32_t screenIndex = 0);
 
@@ -36,7 +39,7 @@ namespace controls
         core::event<void()> closed;
 
     private:
-        std::shared_ptr<controls::component::Scene> _scene;
+        std::shared_ptr<controls::component::Scene> _form_scene;
         std::shared_ptr<component::Window> _window;
         core::rc32f _rect_window;
         bool _shown = false;

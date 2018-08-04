@@ -146,7 +146,7 @@ namespace core
         std::vector<std::string_view> strs = core::string::split(std::string_view(str), ' ');
         if (strs.size() == 1)
             return { parseDimension(strs[0]) };
-        if (strs.size() == 4)
+        if (strs.size() == 2)
             return { parseDimension(strs[0]), parseDimension(strs[1]) };
         if (strs.size() == 4)
             return { parseDimension(strs[0]), parseDimension(strs[1]), parseDimension(strs[2]), parseDimension(strs[3]) };

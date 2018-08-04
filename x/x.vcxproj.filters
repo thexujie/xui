@@ -182,9 +182,6 @@
     <ClCompile Include="core\property.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="utils\css.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\Region.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -445,9 +442,6 @@
     </ClInclude>
     <ClInclude Include="controls\property_parser.h">
       <Filter>controls</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\css.h">
-      <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="graphics\Region.h">
       <Filter>graphics</Filter>

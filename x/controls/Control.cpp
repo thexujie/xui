@@ -20,14 +20,34 @@ namespace controls
         builders.push_back(core::make_builder("background-color", &Control::setBackgroundColor, &Control::backgroundColor, core::parseColor));
     }
 
+    void Control::setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet)
+    {
+        if (_styleSheet == styleSheet)
+            return;
+
+        _styleSheet = styleSheet;
+        applyStyle();
+    }
+
+    std::shared_ptr<component::StyleSheet> Control::styleSheet() const
+    {
+        if (_styleSheet)
+            return _styleSheet;
+
+        auto s = scene();
+        if (s)
+            return s->styleSheet();
+        return nullptr;
+    }
+
     core::si32f Control::prefferSize() const
     {
         // 如果设置了固定大小，直接返回即可
-        if (_size.aviliable() && _size.value.cx.avi() && _size.value.cy.avi())
+        if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
             return calc(_size.value) + calc(_padding).bsize();
 
         core::si32f size = contentSize() + calc(_padding).bsize();
-        if (_size.aviliable())
+        if (_size.available())
         {
             if (_size.value.cx.avi())
                 size.cx = calc(_size.value.cx);
@@ -49,7 +69,7 @@ namespace controls
 
     const core::color32 & Control::color() const
     {
-        if (_color.aviliable())
+        if (_color.available())
             return _color;
 
         auto p = parent();
@@ -61,7 +81,7 @@ namespace controls
 
     const graphics::font & Control::font() const
     {
-        if (_font.aviliable())
+        if (_font.available())
             return _font;
 
         auto p = parent();
@@ -283,7 +303,7 @@ namespace controls
 
     void Control::setBackgroundImage(std::shared_ptr<graphics::Image> image)
     {
-        if (image == _background_image)
+        if (image == _background_image.value)
             return;
         _background_image = image;
         invalid();
@@ -291,13 +311,14 @@ namespace controls
 
     std::shared_ptr<graphics::Image> Control::backgroundImage() const
     {
-        return _background_image;
+        return _background_image.value;
     }
 
     void Control::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
         _scene = scene;
         scene->insert(view());
+        applyStyle();
     }
 
     void Control::enterScene(std::shared_ptr<component::Scene> & scene)
@@ -341,7 +362,7 @@ namespace controls
 
     void Control::_updateBackground(std::shared_ptr<component::View> & view)
     {
-        if (_background_image)
+        if (_background_image && _background_image.expired())
         {
             if (_background_rect_obj)
             {
@@ -351,16 +372,16 @@ namespace controls
 
             if(!_background_imgage_obj)
             {
-                _background_imgage_obj = std::make_shared<renderables::Image>(_background_image);
+                _background_imgage_obj = std::make_shared<renderables::Image>(_background_image.value);
                 view->insert(DEPTH_BACKGROUND, _background_imgage_obj);
             }
 
             _background_imgage_obj->setRect(box(_background_box));
-            if (_background_size.aviliable())
+            if (_background_size.available())
                 _background_imgage_obj->setImageSize(calc(_background_size));
             _background_imgage_obj->setImageFitting(_background_fitting);
         }
-        else if (_background_color.visible())
+        else if (_background_color && _background_color.expired())
         {
             if (_background_imgage_obj)
             {
@@ -394,7 +415,7 @@ namespace controls
 
     void Control::_updateBorder(std::shared_ptr<component::View> & view)
     {
-        if (_border && _border_colors)
+        if (_border && _border_colors && (_border.expired() || _border_colors.expired()))
         {
             if(std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
                 std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
@@ -463,7 +484,7 @@ namespace controls
 
     void Control::_adjustSizeMinMax(core::si32f & size) const
     {
-        if (_minSize.aviliable())
+        if (_minSize.available())
         {
             if (_minSize.value.cx.avi())
             {
@@ -479,7 +500,7 @@ namespace controls
             }
         }
 
-        if (_maxSize.aviliable())
+        if (_maxSize.available())
         {
             if (_maxSize.value.cx.avi())
             {

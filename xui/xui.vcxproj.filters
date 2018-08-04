@@ -73,5 +73,13 @@
     <Filter Include="win32\uniscribe">
       <UniqueIdentifier>{1563d03b-b08a-447f-ac87-6a14c3db607e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="samples">
+      <UniqueIdentifier>{0f904187-4471-42fa-8f27-bb675c5afac1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="samples\test.css">
+      <Filter>samples</Filter>
+    </None>
   </ItemGroup>
 </Project>

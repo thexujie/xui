@@ -133,7 +133,7 @@ namespace core
         //--------------------------------------------------±»Ωœ‘ÀÀ„
         bool operator ==(const vec2 & vec) const
         {
-            if (std::is_floating_point<ValT>::value)
+            if constexpr (std::is_floating_point_v<ValT>)
                 return std::fabs(x - vec.x) < std::numeric_limits<ValT>::epsilon() &&
                 std::fabs(y - vec.y) < std::numeric_limits<ValT>::epsilon();
             else

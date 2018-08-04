@@ -17,14 +17,15 @@ namespace controls::component
         std::string & operator[](const std::string & key) { return items[key]; }
 
         std::map<std::string, std::string> items;
-        std::map<std::string, std::shared_ptr<Style>> _styles;
+        std::map<std::string, std::map<std::string, std::string>> pseudos;
+        std::map<std::string, std::shared_ptr<Style>> styles;
     };
 
     class StyleSheet : public Style
     {
     public:
         core::error loadFromFile(std::string path);
-        core::error loadFromData(std::string data);
+        core::error loadFromData(const std::string & data);
 
     private:
         std::shared_ptr<StyleSheet> _next;

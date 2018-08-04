@@ -26,11 +26,13 @@ namespace controls
         void onMouseDown(const component::mosue_state & state);
         void onMouseUp(const component::mosue_state & state);
 
+    public:
+        void applyStyle();
+
     private:
         // 确保 textBlob 已经被创建
         void _confirmBlob() const;
 
-        void _applyStyle();
     private:
         std::string _text;
         std::shared_ptr<graphics::TextBlob> _textBlob;

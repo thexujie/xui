@@ -71,7 +71,7 @@ namespace controls
 
     void Button::onMouseEnter(const component::mosue_state & state)
     {
-        _applyStyle();
+        applyStyle();
         update();
     }
 
@@ -82,20 +82,20 @@ namespace controls
 
     void Button::onMouseLeave(const component::mosue_state & state)
     {
-        _applyStyle();
+        applyStyle();
         update();
     }
 
     
     void Button::onMouseDown(const component::mosue_state & state)
     {
-        _applyStyle();
+        applyStyle();
         update();
     }
 
     void Button::onMouseUp(const component::mosue_state & state)
     {
-        _applyStyle();
+        applyStyle();
         update();
     }
 
@@ -109,30 +109,38 @@ namespace controls
         }
     }
 
-    void Button::_applyStyle()
+    void Button::applyStyle()
     {
-        if (!_mosuerectangle || !_styleSheet)
+        auto ss = styleSheet();
+        if (!ss)
             return;
 
-        bool mousein = _mosuerectangle->mousein();
-        bool pressed = _mosuerectangle->pressed();
-        std::string name;
-        if (mousein && pressed)
-            name = "button hoving pressed";
-        else if (pressed)
-            name = "button pressed";
-        else if (mousein)
-            name = "button hoving";
-        else
-            name = "button";
-
+        bool mousein = false;
+        bool pressed = false;
+        if (_mosuerectangle)
+        {
+            mousein = _mosuerectangle->mousein();
+            pressed = _mosuerectangle->pressed();
+        }
         std::vector<std::shared_ptr<core::property_builder>> builders;
         Button::propertyTable(builders);
 
-        std::shared_ptr<component::Style> style = _styleSheet->select(name);
+        std::shared_ptr<component::Style> style = ss->select("button");
         if(style)
         {
-            for (auto & item : style->items)
+            std::map<std::string, std::string> items = style->items;
+            if (mousein && style->pseudos.find("hover") != style->pseudos.end())
+            {
+                for (auto & item : style->pseudos["hover"])
+                    items[item.first] = item.second;
+            }
+            if (pressed && style->pseudos.find("active") != style->pseudos.end())
+            {
+                for (auto & item : style->pseudos["active"])
+                    items[item.first] = item.second;
+            }
+
+            for (auto & item : items)
             {
                 for (auto & builder : builders)
                 {

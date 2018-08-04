@@ -3,10 +3,77 @@
 
 namespace controls::component
 {
+    struct style_string_walker
+    {
+        style_string_walker(const std::string & str_) : str(str_) {}
+        const std::string & str;
+        int32_t index = 0;
+
+        bool eof() const { return index >= str.length(); }
+
+        char read()
+        {
+            if (eof())
+                return 0;
+
+            return str[index++];
+        }
+
+        char peek()
+        {
+            if (eof())
+                return 0;
+
+            return str[index];
+        }
+
+        std::string readTo(char ch)
+        {
+            std::string ret;
+            while (!eof())
+            {
+                char c = read();
+                if (c == ch)
+                    break;
+
+                ret.append(1, c);
+            }
+            return ret;
+        }
+
+        std::string readTo(char chs[], int num, char & end)
+        {
+            std::string ret;
+            while (!eof())
+            {
+                char ch = read();
+                char * pos = std::find(chs, chs + num, ch);
+                if (pos != (chs + num))
+                {
+                    end = *pos;
+                    break;
+                }
+                ret.append(1, ch);
+            }
+            return ret;
+        }
+
+        void skip()
+        {
+            while (!eof())
+            {
+                if (!isspace(peek()))
+                    break;
+
+                read();
+            }
+        }
+    };
+
     std::shared_ptr<Style> Style::select(std::vector<std::string>::iterator iter, std::vector<std::string>::iterator end)
     {
-        auto style_iter = _styles.find(*iter);
-        if (style_iter == _styles.end())
+        auto style_iter = styles.find(*iter);
+        if (style_iter == styles.end())
             return nullptr;
 
         ++iter;
@@ -24,14 +91,14 @@ namespace controls::component
     std::shared_ptr<Style> Style::get(std::vector<std::string>::iterator iter, std::vector<std::string>::iterator end)
     {
         auto & key = *iter;
-        auto style_iter = _styles.find(key);
-        if (style_iter == _styles.end())
-            _styles[key] = std::make_shared<Style>();
+        auto style_iter = styles.find(key);
+        if (style_iter == styles.end())
+            styles[key] = std::make_shared<Style>();
         ++iter;
         if (iter == end)
-            return _styles[key];
+            return styles[key];
 
-        return _styles[key]->get(iter, end);
+        return styles[key]->get(iter, end);
     }
 
     std::shared_ptr<Style> Style::get(const std::string & name)
@@ -53,20 +120,37 @@ namespace controls::component
 
     core::error StyleSheet::loadFromFile(std::string path)
     {
-        return core::error_ok;
+        std::fstream fs;
+        fs.open(path, std::ios::in);
+        if (fs)
+            return loadFromData(std::string(std::istreambuf_iterator<char>(fs), std::istreambuf_iterator<char>()));
+        else
+            return core::error_io;
     }
 
-    core::error StyleSheet::loadFromData(std::string data)
+    core::error StyleSheet::loadFromData(const std::string & data)
     {
-        // .button { border: 1px;padding : 1em, 0.5em;} .button:hoving{border: 2px;}
-
-        core::string::string_walker walker(data);
+        style_string_walker walker(data);
+        std::string name;
+        std::string pseudo;
         while (!walker.eof())
         {
+            name.clear();
+            pseudo.clear();
+
             walker.readTo('.');
             walker.skip();
-            std::string name_str = walker.readTo('{');
+            char ch = 0;
+            name = walker.readTo("{:", 2, ch);
+            core::string::trim(name);
             walker.skip();
+
+            // Î±Àà
+            if(ch == ':')
+            {
+                pseudo = walker.readTo('{');
+                core::string::trim(pseudo);
+            }
 
             if (walker.peek() == '}')
             {
@@ -74,17 +158,22 @@ namespace controls::component
                 continue;
             }
 
-            auto style = get(name_str);
+            auto style = get(name);
             while (!walker.eof())
             {
                 walker.skip();
-                std::string key_str = walker.readTo(':');
+                std::string key = walker.readTo(':');
+                core::string::trim(key);
                 walker.skip();
                 char ch = 0;
-                std::string val_str = walker.readTo(";}", 2, ch);
+                std::string value = walker.readTo(";}", 2, ch);
+                core::string::trim(value);
                 walker.skip();
 
-                style->set(key_str, val_str);
+                if (pseudo.empty())
+                    style->items[key] = value;
+                else
+                    style->pseudos[pseudo][key] = value;
                 if (ch == '}')
                     break;
 

@@ -35,7 +35,7 @@ namespace controls
 
     core::si32f Image::contentSize() const
     {
-        if (_image_size.aviliable())
+        if (_image_size.available())
             return calc(_image_size.value);
         return _image ? _image->size().to<float32_t>() : core::si32f();
     }

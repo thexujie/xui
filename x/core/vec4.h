@@ -118,7 +118,9 @@ namespace core
 
         bool empty() const
         {
-            if (std::is_floating_point<T>::value)
+            if constexpr (!std::is_arithmetic_v<T>)
+                return false;
+            else if constexpr (std::is_floating_point_v<T>)
                 return std::abs(cx) < std::numeric_limits<T>::epsilon() || std::abs(cy) < std::numeric_limits<T>::epsilon();
             else
                 return cx <= 0 || cy <= 0;
@@ -384,7 +386,7 @@ namespace core
             if (empty() || another.empty())
                 return false;
 
-            if (std::is_floating_point<T>::value)
+            if constexpr (std::is_floating_point_v<T>)
                 return std::abs(x - another.x) < std::numeric_limits<T>::epsilon() &&
                 std::abs(y - another.y) < std::numeric_limits<T>::epsilon() &&
                 std::abs(cx - another.cx) < std::numeric_limits<T>::epsilon() &&
