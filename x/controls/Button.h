@@ -11,7 +11,7 @@ namespace controls
         Button(std::string text);
         ~Button();
 
-        static void propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders);
+        static void propertyTable(core::property_table & properties);
 
         void setText(const std::string & text);
         const std::string & text() const { return _text; }

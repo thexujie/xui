@@ -22,10 +22,10 @@ namespace controls
         
     }
 
-    void Button::propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders)
+    void Button::propertyTable(core::property_table & properties)
     {
-        Control::propertyTable(builders);
-        builders.push_back(core::make_builder("text", &Button::setText, &Button::text, core::parseString));
+        Control::propertyTable(properties);
+        properties["text"] = core::make_property(&Button::setText, &Button::text, core::parseString);
     }
 
     void Button::setText(const std::string & text)
@@ -122,8 +122,9 @@ namespace controls
             mousein = _mosuerectangle->mousein();
             pressed = _mosuerectangle->pressed();
         }
-        std::vector<std::shared_ptr<core::property_builder>> builders;
-        Button::propertyTable(builders);
+
+        core::property_table properties;
+        Button::propertyTable(properties);
 
         std::shared_ptr<component::Style> style = ss->select("button");
         if(style)
@@ -142,16 +143,14 @@ namespace controls
 
             for (auto & item : items)
             {
-                for (auto & builder : builders)
-                {
-                    if (core::string::equal_ic(item.first, builder->name))
-                    {
-                        auto pb = builder->build(item.second);
-                        if (pb)
-                            pb->apply(*this);
-                        break;
-                    }
-                }
+                auto iter = properties.find(item.first);
+                if (iter == properties.end())
+                    continue;
+
+                auto accessor = iter->second.first;
+                auto serializer = iter->second.second;
+                if (accessor && serializer)
+                    serializer->fetch(item.second, *this, accessor);
             }
             update();
         }

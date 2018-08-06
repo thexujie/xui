@@ -10,14 +10,16 @@ namespace controls
     Control::Control() { }
     Control::~Control() { }
 
-    void Control::propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders)
-    {
-        builders.push_back(core::make_builder("border", &Control::setBorder, &Control::border, core::parseDimension4D));
-        builders.push_back(core::make_builder("padding", &Control::setPadding, &Control::padding, core::parseDimension4D));
-        builders.push_back(core::make_builder("margin", &Control::setMargin, &Control::margin, core::parseDimension4D));
 
-        builders.push_back(core::make_builder("border-color", &Control::setBorderColors, &Control::borderColors, core::parseColor4D));
-        builders.push_back(core::make_builder("background-color", &Control::setBackgroundColor, &Control::backgroundColor, core::parseColor));
+    void Control::propertyTable(core::property_table & properties)
+    {
+        std::map<std::string, std::pair<std::shared_ptr<core::property_accessor>, std::shared_ptr<core::property_serializer>>> mapper;
+        properties["border"] = make_property(&Control::setBorder, &Control::border, core::parseDimension4D);
+        properties["padding"] = make_property(&Control::setPadding, &Control::padding, core::parseDimension4D);
+        properties["margin"] = make_property(&Control::setMargin, &Control::margin, core::parseDimension4D);
+
+        properties["border-color"] = make_property(&Control::setBorderColors, &Control::borderColors, core::parseColor4D);
+        properties["background-color"] = make_property(&Control::setBackgroundColor, &Control::backgroundColor, core::parseColor);
     }
 
     void Control::setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet)
@@ -187,6 +189,7 @@ namespace controls
         auto pos_old = _rect.pos;
         if (pos_old != pos)
         {
+            _pos = { core::unit_dot(pos.x), core::unit_dot(pos.y) };
             _rect.pos = pos;
             onPosChanged(pos_old, pos);
             onRectChanged(core::rc32f(pos_old, _rect.size), core::rc32f(pos, _rect.size));
@@ -198,6 +201,7 @@ namespace controls
         auto size_old = _rect.size;
         if (size_old != size)
         {
+            _size = { core::unit_dot(size.cx), core::unit_dot(size.cy) };
             _rect.size = size;
             onSizeChanged(size_old, size);
             onRectChanged(core::rc32f(_rect.pos, size_old), core::rc32f(_rect.pos, _rect.size));

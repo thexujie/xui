@@ -76,27 +76,65 @@ public:
     void set_val2(int _val) { val = _val; }
     int get_val2() const { return val; }
 
-    void propertyTable(std::vector<std::shared_ptr<property_builder>> & items)
+    void transformTable(std::map<std::string, std::shared_ptr<property_accessor>> & accesors)
     {
-        items.push_back(make_builder("val", &Test::set_val, &Test::get_val, parseInt));
-        items.push_back(make_builder("val", &Test::set_val2, &Test::get_val, parseInt));
-        items.push_back(make_builder("val", &Test::set_val, &Test::get_val2, parseInt));
-        items.push_back(make_builder("val", &Test::set_val2, &Test::get_val2, parseInt));
+        accesors["val"] = core::make_accessor(&Test::set_val, &Test::get_val);
+
+        std::shared_ptr<property_accessor_type<int>> a1 = core::make_accessor(&Test::set_val, &Test::get_val);
+        std::shared_ptr<property_accessor_type<int>> a2 = core::make_accessor(&Test::set_val, &Test::get_val);
+
+        auto self = shared_from_this();
+        a1->store(*self, a2->fetch(*self));
     }
+
 };
+
 
 struct animation
 {
-    void start();
+    virtual void start() = 0;
+    virtual void update() = 0;
+    virtual  bool finished() const = 0;
+    virtual  float32_t progress() = 0;
 
     std::string property_name;
-    int start_val;
-    int end_val;
-    std::function<int(const int &, const int &, float32_t)> intersect;
 };
+
+template<typename T>
+struct animation_t : public animation
+{
+    void start()
+    {
+
+    }
+
+    void update()
+    {
+
+    }
+
+    bool finished() const
+    {
+        return false;
+    }
+
+    float32_t progress()
+    {
+        return 0;
+    }
+
+
+    T start_val;
+    T end_val;
+    std::function<T(const T &, const T &, float32_t)> interpolation;
+    std::shared_ptr<property_instance> accesor;
+};
+
 
 struct AnimPlayer
 {
+
+    std::vector<animation> _anims;
 };
 
 
@@ -106,7 +144,7 @@ int main()
     auto ss = std::make_shared<controls::component::StyleSheet>();
     ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
 
-    auto an = std::make_shared<animation>();
+    //auto an = std::make_shared<animation>();
     //an.start();
 
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);

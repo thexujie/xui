@@ -14,12 +14,12 @@ namespace core
         return 0;
     }
 
-    std::string parseString(const std::string_view & str)
+    std::string parseString(const std::string & str)
     {
         return std::string(str.data(), str.length());
     }
 
-    core::color32 parseColor(const std::string_view & str)
+    core::color32 parseColor(const std::string & str)
     {
         if (str.empty())
             return colors::Auto;
@@ -97,9 +97,9 @@ namespace core
         return colors::Auto;
     }
 
-    core::vec2<core::color32> parseColor2D(const std::string_view & str)
+    core::vec2<core::color32> parseColor2D(const std::string & str)
     {
-        std::vector<std::string_view> strs = core::string::split(std::string_view(str), ' ');
+        std::vector<std::string> strs = core::string::split(str, ' ');
         if (strs.size() == 1)
             return { parseColor(strs[0])};
         if (strs.size() == 2)
@@ -107,9 +107,9 @@ namespace core
         return {};
     }
 
-    core::vec4<core::color32> parseColor4D(const std::string_view & str)
+    core::vec4<core::color32> parseColor4D(const std::string & str)
     {
-        std::vector<std::string_view> strs = core::string::split(std::string_view(str), ' ');
+        std::vector<std::string> strs = core::string::split(str, ' ');
         if (strs.size() == 1)
             return { parseColor(strs[0])};
         if (strs.size() == 2)
@@ -119,7 +119,7 @@ namespace core
         return {};
     }
 
-    core::dimensionf parseDimension(const std::string_view & str)
+    core::dimensionf parseDimension(const std::string & str)
     {
         for (auto & uint_name : unit_names)
         {
@@ -131,9 +131,9 @@ namespace core
         return {};
     }
 
-    core::vec2<core::dimensionf> parseDimension2D(const std::string_view & str)
+    core::vec2<core::dimensionf> parseDimension2D(const std::string & str)
     {
-        std::vector<std::string_view> strs = core::string::split(std::string_view(str), ' ');
+        std::vector<std::string> strs = core::string::split(str, ' ');
         if (strs.size() == 1)
             return { parseDimension(strs[0]) };
         if (strs.size() == 2)
@@ -141,9 +141,9 @@ namespace core
         return {};
     }
 
-    core::vec4<core::dimensionf> parseDimension4D(const std::string_view & str)
+    core::vec4<core::dimensionf> parseDimension4D(const std::string & str)
     {
-        std::vector<std::string_view> strs = core::string::split(std::string_view(str), ' ');
+        std::vector<std::string> strs = core::string::split(str, ' ');
         if (strs.size() == 1)
             return { parseDimension(strs[0]) };
         if (strs.size() == 2)

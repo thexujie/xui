@@ -38,13 +38,14 @@ namespace controls
         sticky,
     };
 
+
     class Control : public core::invokable<Control>
     {
     public:
         Control();
         virtual ~Control();
 
-        static void propertyTable(std::vector<std::shared_ptr<core::property_builder>> & builders);
+        static void propertyTable(core::property_table & properties);
 
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet);
         std::shared_ptr<component::StyleSheet> styleSheet() const;
