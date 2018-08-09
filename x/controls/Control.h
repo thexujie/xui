@@ -84,8 +84,8 @@ namespace controls
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
 
-
-        float32_t calc(const core::dimensionf & value) const;
+        float32_t calc_x(const core::dimensionf & value) const;
+        float32_t calc_y(const core::dimensionf & value) const;
         core::vec2f calc(const core::vec2<core::dimensionf> & value) const;
         core::vec4f calc(const core::vec4<core::dimensionf> & value) const;
 

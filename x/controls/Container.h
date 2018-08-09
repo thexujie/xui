@@ -14,6 +14,7 @@ namespace controls
 
         void addControl(std::shared_ptr<Control> control);
         void removeControl(std::shared_ptr<Control> control);
+        std::list<std::shared_ptr<Control>> & children() { return _controls; }
 
         virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
         virtual void enterScene(std::shared_ptr<component::Scene> & scene);

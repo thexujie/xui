@@ -94,4 +94,6 @@ typedef double float64_t;
 #include "core/attribute.h"
 #include "core/property.h"
 
+#include "core/timer.h"
+
 using namespace core::unit_literals;

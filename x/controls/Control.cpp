@@ -52,9 +52,9 @@ namespace controls
         if (_size.available())
         {
             if (_size.value.cx.avi())
-                size.cx = calc(_size.value.cx);
+                size.cx = calc_x(_size.value.cx);
             else if (_size.value.cy.avi())
-                size.cy = calc(_size.value.cy);
+                size.cy = calc_y(_size.value.cy);
             else {}
         }
 
@@ -93,7 +93,7 @@ namespace controls
             return _font;
     }
 
-    float32_t Control::calc(const core::dimensionf & value) const
+    float32_t Control::calc_x(const core::dimensionf & value) const
     {
         auto s = scene();
         auto p = parent();
@@ -119,64 +119,35 @@ namespace controls
         }
     }
 
-    core::vec2f Control::calc(const core::vec2<core::dimensionf> & value) const
+    float32_t Control::calc_y(const core::dimensionf & value) const
     {
         auto s = scene();
         auto p = parent();
         if (!s)
             throw core::error_state;
 
-        float32_t x = 0;
-        float32_t y = 0;
-        switch (value.x.unit)
+        switch (value.unit)
         {
         case core::unit::px:
-            x = value.x.value * s->ratio();
-            break;
+            return value.value * s->ratio();
         case core::unit::em:
-            x = value.x.value * font().size * s->ratio();
-            break;
+            return value.value * font().size * s->ratio();
         case core::unit::pt:
-            x = value.x.value * 72.0f * s->ratio();
-            break;
+            return value.value * 72.0f * s->ratio();
         case core::unit::dot:
-            x = value.x.value;
-            break;
+            return value.value;
         case core::unit::per:
             if (!p)
                 throw core::error_state;
-            x = value.x.value * p->width();
-            break;
+            return value.value * p->height();
         default:
-            x = value.x.value * s->ratio();
-            break;
+            return value.value * s->ratio();
         }
+    }
 
-        switch (value.y.unit)
-        {
-        case core::unit::px:
-            y = value.y.value * s->ratio();
-            break;
-        case core::unit::em:
-            y = value.y.value * font().size * s->ratio();
-            break;
-        case core::unit::pt:
-            y = value.y.value * 72.0f * s->ratio();
-            break;
-        case core::unit::dot:
-            y = value.y.value;
-            break;
-        case core::unit::per:
-            if (!p)
-                throw core::error_state;
-            y = value.y.value * p->height();
-            break;
-        default:
-            y = value.y.value * s->ratio();
-            break;
-        }
-
-        return { x, y };
+    core::vec2f Control::calc(const core::vec2<core::dimensionf> & value) const
+    {
+        return { calc_x(value.x), calc_y(value.y) };
     }
 
     core::vec4f Control::calc(const core::vec4<core::dimensionf> & value) const
@@ -294,10 +265,11 @@ namespace controls
 
     void Control::setBackgroundColor(core::color32 color)
     {
-        if (color == _background_color)
+        if (color == _background_color.value)
             return;
 
         _background_color = color;
+        update();
     }
 
     core::color32 Control::backgroundColor() const
@@ -349,6 +321,10 @@ namespace controls
 
     void Control::update()
     {
+        auto s = scene();
+        if (!s)
+            return;
+
         auto v = view();
         std::lock_guard<component::View> lock(*v);
         _updateBackground(v);
@@ -442,7 +418,7 @@ namespace controls
                 }
                 _border_obj->setRect(box());
                 _border_obj->setRectangle(box().expanded(calc(_border) * -0.5f));
-                _border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc(_border.value.x)));
+                _border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
             }
             else
             {
@@ -492,13 +468,13 @@ namespace controls
         {
             if (_minSize.value.cx.avi())
             {
-                float32_t val = calc(_minSize.value.cx);
+                float32_t val = calc_x(_minSize.value.cx);
                 if (size.cx < val)
                     size.cx = val;
             }
             if (_minSize.value.cy.avi())
             {
-                float32_t val = calc(_minSize.value.cy);
+                float32_t val = calc_y(_minSize.value.cy);
                 if (size.cy < val)
                     size.cy = val;
             }
@@ -508,13 +484,13 @@ namespace controls
         {
             if (_maxSize.value.cx.avi())
             {
-                float32_t val = calc(_maxSize.value.cx);
+                float32_t val = calc_x(_maxSize.value.cx);
                 if (size.cx > val)
                     size.cx = val;
             }
             if (_maxSize.value.cy.avi())
             {
-                float32_t val = calc(_maxSize.value.cy);
+                float32_t val = calc_y(_maxSize.value.cy);
                 if (size.cy > val)
                     size.cy = val;
             }

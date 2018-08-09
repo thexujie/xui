@@ -185,6 +185,9 @@
     <ClCompile Include="graphics\Region.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="core\timer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -445,6 +448,9 @@
     </ClInclude>
     <ClInclude Include="graphics\Region.h">
       <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="core\timer.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

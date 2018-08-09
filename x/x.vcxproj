@@ -134,6 +134,7 @@
     <ClCompile Include="core\quat4.cpp" />
     <ClCompile Include="core\string.cpp" />
     <ClCompile Include="core\system.cpp" />
+    <ClCompile Include="core\timer.cpp" />
     <ClCompile Include="core\unicode.cpp" />
     <ClCompile Include="graphics\font.cpp" />
     <ClCompile Include="graphics\Graphics.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="core\quat4.h" />
     <ClInclude Include="core\string.h" />
     <ClInclude Include="core\system.h" />
+    <ClInclude Include="core\timer.h" />
     <ClInclude Include="core\unicode.h" />
     <ClInclude Include="core\unit.h" />
     <ClInclude Include="core\utils.h" />

@@ -141,7 +141,7 @@ namespace controls
                     items[item.first] = item.second;
             }
 
-            for (auto & item : items)
+            for (const auto & item : items)
             {
                 auto iter = properties.find(item.first);
                 if (iter == properties.end())
@@ -150,7 +150,7 @@ namespace controls
                 auto accessor = iter->second.first;
                 auto serializer = iter->second.second;
                 if (accessor && serializer)
-                    serializer->fetch(item.second, *this, accessor);
+                    serializer->set(item.second, *this, *accessor);
             }
             update();
         }

@@ -65,6 +65,51 @@ int parseInt(const std::string_view & str)
     return std::stoi(str.data());
 }
 
+class property_interpolator : public core::object
+{
+public:
+    virtual property_value & start() = 0;
+    virtual property_value & end() = 0;
+    virtual void fetch(object & self, core::property_accessor & accesor, float32_t inter) = 0;
+};
+
+template<typename T>
+class property_interpolator_type : public property_interpolator
+{
+public:
+    property_value & start() { return _start; }
+    property_value & end() { return _end; }
+
+    void set_values(const T & start, const T & end)
+    {
+        _start.set(start);
+        _end.set(end);
+    }
+
+    void set_fun(std::function<T(const T & s, const T & e, float32_t i)> fun)
+    {
+        _fun = fun;
+    }
+
+    void fetch(object & self, core::property_accessor & accesor, float32_t inter)
+    {
+        auto & a = dynamic_cast<property_accessor_type<T> &>(accesor);
+        a.set_value(self, _fun(_start.get(), _end.get(), inter));
+    }
+
+private:
+    property_value_type<T> _start;
+    property_value_type<T> _end;
+    std::function<T(const T & s, const T & e, float32_t i)> _fun;
+};
+
+class anim
+{
+public:
+    std::shared_ptr<core::object> _object;
+    std::vector<std::pair<std::shared_ptr<core::property_accessor>, std::shared_ptr<property_interpolator>>> _interpolators;
+};
+
 
 class Test : public core::object
 {
@@ -83,8 +128,6 @@ public:
         std::shared_ptr<property_accessor_type<int>> a1 = core::make_accessor(&Test::set_val, &Test::get_val);
         std::shared_ptr<property_accessor_type<int>> a2 = core::make_accessor(&Test::set_val, &Test::get_val);
 
-        auto self = shared_from_this();
-        a1->store(*self, a2->fetch(*self));
     }
 
 };
@@ -127,7 +170,6 @@ struct animation_t : public animation
     T start_val;
     T end_val;
     std::function<T(const T &, const T &, float32_t)> interpolation;
-    std::shared_ptr<property_instance> accesor;
 };
 
 
@@ -215,8 +257,57 @@ int main()
     form->show();
     form->centerScreen();
     form->closed += []() {core::app().quit(0); };
-    win32::runLoop();
 
+    std::map<std::string, property_pair> props;
+    controls::Button::propertyTable(props);
+
+
+    auto & children = buttons->children();
+    //property_serializer_string_impl<core::color32> sl;
+    std::list<std::shared_ptr<controls::Control>>::value_type obj = *children.begin();
+    std::list<std::shared_ptr<controls::Control>>::value_type obj2 = *(++children.begin());
+    auto acc = props["background-color"].first;
+    std::shared_ptr<property_serializer> sl = props["background-color"].second;
+    std::shared_ptr<property_value> value = sl->serialize("#red");
+    acc->set(*obj2, *value);
+
+    core::timer t(33ms);
+    std::vector<anim> anims;
+    for(auto & control : buttons->children())
+    {
+        auto i = std::make_shared<property_interpolator_type<core::color32>>();
+        i->set_values(colors::Red, colors::Green);
+        i->set_fun([](const core::color32 & s, const core::color32 & e, float32_t inter)->core::color32
+        {
+            auto a = s.a + (e.a - s.a) * inter;
+            auto r = s.r + (e.r - s.r) * inter;
+            auto g = s.g + (e.g - s.g) * inter;
+            auto b = s.b + (e.b - s.b) * inter;
+            return core::color32(a, r, g, b);
+        });
+
+        anim a;
+        a._object = control;
+        a._interpolators.push_back(std::make_pair(props["background-color"].first, i));
+        t.tick += [index= anims.size(), &anims](core::timer &, int64_t)
+        {
+            auto & a = anims[index];
+            static float in = 0;
+            if(index == 0)
+                in += 0.03;
+            if (in > 1)
+                in = 0;
+            for (auto & i : a._interpolators)
+            {
+                i.second->fetch(*(a._object), *(i.first), in);
+            }
+        };
+
+        anims.push_back(a);
+    }
+
+    t.start();
+    win32::runLoop();
 #if 0
     auto scene = std::make_shared<controls::component::Scene>();
     auto container = std::make_shared<controls::Container>();

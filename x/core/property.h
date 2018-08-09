@@ -2,22 +2,39 @@
 
 namespace core
 {
-    struct property_instance
+    class property_value
     {
-        virtual ~property_instance() = default;
-        virtual void apply(object & self) = 0;
+    public:
+        virtual ~property_value() = default;
+    };
+
+    template<typename T>
+    class property_value_type : public property_value
+    {
+    public:
+        property_value_type() = default;
+        property_value_type(const T & val) : _val(val) {}
+
+        void set(const T & val) { _val = val; }
+        T & get() { return _val; }
+        const T & get() const { return _val; }
+
+    private:
+        T _val;
     };
 
     struct property_accessor
     {
         virtual ~property_accessor() = default;
+        virtual void set(object & self, const property_value & val) = 0;
+        virtual void get(object & self, property_value & val) = 0;
     };
 
     template<typename T>
     struct property_accessor_type : public property_accessor
     {
-        virtual void store(object & self_, const T & val) = 0;
-        virtual T fetch(object & self_) = 0;
+        virtual void set_value(object & self, const T & val) = 0;
+        virtual T get_value(object & self) = 0;
     };
 
 
@@ -29,16 +46,30 @@ namespace core
         SetterT setter;
         GetterT getter;
 
-        void store(object & self_, const T & val_)
+        void set(object & self, const property_value & val)
         {
-            auto & self = dynamic_cast<typename member_function_traits<SetterT>::instance_type &>(self_);
-            (self.*setter)(val_);
+            auto & s = dynamic_cast<typename member_function_traits<SetterT>::instance_type &>(self);
+            auto & v = dynamic_cast<const property_value_type<T> &>(val);
+            (s.*setter)(v.get());
         }
 
-        T fetch(object & self_)
+        void get(object & self, property_value & val)
         {
-            auto & self = dynamic_cast<const typename member_function_traits<SetterT>::instance_type &>(self_);
-            return (self.*getter)();
+            auto & s = dynamic_cast<const typename member_function_traits<SetterT>::instance_type &>(self);
+            auto & v = dynamic_cast<property_value_type<T> &>(val);
+            v.set((s.*getter)());
+        }
+
+        void set_value(object & self, const T & val)
+        {
+            auto & s = dynamic_cast<typename member_function_traits<SetterT>::instance_type &>(self);
+            (s.*setter)(val);
+        }
+
+        T get_value(object & self)
+        {
+            auto & s = dynamic_cast<typename member_function_traits<SetterT>::instance_type &>(self);
+            return (s.*getter)();
         }
     };
 
@@ -51,11 +82,16 @@ namespace core
     }
 
 
+    //----------------------------------------------------------------------------------------------------
     struct property_serializer
     {
         virtual ~property_serializer() = default;
-        virtual void store(std::string & str, object & self_, std::shared_ptr<property_accessor> accesor) = 0;
-        virtual void fetch(const std::string & str, object & self_, std::shared_ptr<property_accessor> accesor) = 0;
+        virtual void get(std::string & str, object & self_, property_accessor & accesor) = 0;
+        virtual void set(const std::string & str, object & self_, property_accessor & accesor) = 0;
+        virtual void get(std::string & str, property_value & value) = 0;
+        virtual void set(const std::string & str, property_value & value) = 0;
+
+        virtual std::shared_ptr<property_value> serialize(const std::string & str) = 0;
     };
 
     template<typename T>
@@ -74,20 +110,37 @@ namespace core
             _fun_fetch = fetch;
         }
 
-        void store(std::string & str, object & self_, std::shared_ptr<property_accessor> accesor)
+        void get(std::string & str, object & self_, property_accessor & accesor)
         {
-            auto accessor_ = std::dynamic_pointer_cast<property_accessor_type<T>>(accesor);
-            if(accessor_)
-                str = _fun_fetch(accessor_->fetch(self_));
+            auto & a = dynamic_cast<property_accessor_type<T> &>(accesor);
+            str = _fun_fetch(a.get_value(self_));
         }
 
-        void fetch(const std::string & str, object & self_, std::shared_ptr<property_accessor> accesor)
+        void set(const std::string & str, object & self_, property_accessor & accesor)
         {
-            auto accessor_ = std::dynamic_pointer_cast<property_accessor_type<T>>(accesor);
-            if (accessor_)
-                accessor_->store(self_, _fun_store(str));
+            auto & a = dynamic_cast<property_accessor_type<T> &>(accesor);
+            a.set_value(self_, _fun_store(str));
         }
 
+        void get(std::string & str, property_value & value)
+        {
+            auto & v = dynamic_cast<property_value_type<T> &>(value);
+            str = _fun_fetch(v.get());
+        }
+
+        void set(const std::string & str, property_value & value)
+        {
+            auto & v = dynamic_cast<property_value_type<T> &>(value);
+            v.set(_fun_store(str));
+        }
+
+        std::shared_ptr<property_value> serialize(const std::string & str)
+        {
+            auto value = std::make_shared <property_value_type<T>>(_fun_store(str));
+            return value;
+        }
+
+    private:
         std::function<T(const std::string &)> _fun_store;
         std::function<std::string(const T &)> _fun_fetch;
     };
