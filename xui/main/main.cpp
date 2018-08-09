@@ -70,13 +70,15 @@ class property_interpolator : public core::object
 public:
     virtual property_value & start() = 0;
     virtual property_value & end() = 0;
-    virtual void fetch(object & self, core::property_accessor & accesor, float32_t inter) = 0;
+    virtual void get(object & self, core::property_accessor & accesor, float32_t inter) = 0;
 };
 
 template<typename T>
 class property_interpolator_type : public property_interpolator
 {
 public:
+    property_interpolator_type() = default;
+    property_interpolator_type(std::function<T(const T & s, const T & e, float32_t i)> inter) : _inter(inter) {};
     property_value & start() { return _start; }
     property_value & end() { return _end; }
 
@@ -86,22 +88,29 @@ public:
         _end.set(end);
     }
 
-    void set_fun(std::function<T(const T & s, const T & e, float32_t i)> fun)
+    void set_inter(std::function<T(const T & s, const T & e, float32_t i)> fun)
     {
-        _fun = fun;
+        _inter = fun;
     }
 
-    void fetch(object & self, core::property_accessor & accesor, float32_t inter)
+    void get(object & self, core::property_accessor & accesor, float32_t inter)
     {
         auto & a = dynamic_cast<property_accessor_type<T> &>(accesor);
-        a.set_value(self, _fun(_start.get(), _end.get(), inter));
+        a.set_value(self, _inter(_start.get(), _end.get(), inter));
     }
 
 private:
     property_value_type<T> _start;
     property_value_type<T> _end;
-    std::function<T(const T & s, const T & e, float32_t i)> _fun;
+    std::function<T(const T & s, const T & e, float32_t i)> _inter;
 };
+
+template<typename FunT>
+std::shared_ptr<property_interpolator> make_interpolator(FunT inter)
+{
+    typedef typename std::function<FunT>::result_type T;
+    return std::make_shared<property_interpolator_type<T>>(inter);
+}
 
 class anim
 {
@@ -271,20 +280,26 @@ int main()
     std::shared_ptr<property_value> value = sl->serialize("#red");
     acc->set(*obj2, *value);
 
+    property_interpolator_type<core::color32> it;
+    sl->set("#red", it.start());
+    sl->set("#green", it.end());
+
+    auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)->core::color32
+    {
+        auto a = s.a + (e.a - s.a) * inter;
+        auto r = s.r + (e.r - s.r) * inter;
+        auto g = s.g + (e.g - s.g) * inter;
+        auto b = s.b + (e.b - s.b) * inter;
+        return core::color32(a, r, g, b);
+    };
+
     core::timer t(33ms);
     std::vector<anim> anims;
     for(auto & control : buttons->children())
     {
-        auto i = std::make_shared<property_interpolator_type<core::color32>>();
-        i->set_values(colors::Red, colors::Green);
-        i->set_fun([](const core::color32 & s, const core::color32 & e, float32_t inter)->core::color32
-        {
-            auto a = s.a + (e.a - s.a) * inter;
-            auto r = s.r + (e.r - s.r) * inter;
-            auto g = s.g + (e.g - s.g) * inter;
-            auto b = s.b + (e.b - s.b) * inter;
-            return core::color32(a, r, g, b);
-        });
+        auto i = make_interpolator(inter);
+        sl->set("red", i->start());
+        sl->set("green", i->end());
 
         anim a;
         a._object = control;
@@ -299,7 +314,7 @@ int main()
                 in = 0;
             for (auto & i : a._interpolators)
             {
-                i.second->fetch(*(a._object), *(i.first), in);
+                i.second->get(*(a._object), *(i.first), in);
             }
         };
 
