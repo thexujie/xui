@@ -70,7 +70,8 @@ class property_interpolator : public core::object
 public:
     virtual property_value & start() = 0;
     virtual property_value & end() = 0;
-    virtual void get(object & self, core::property_accessor & accesor, float32_t inter) = 0;
+    virtual void interpolate(object & self, core::property_accessor & accesor, float32_t inter) = 0;
+    virtual void interpolate(core::property_value & value, float32_t inter) = 0;
 };
 
 template<typename T>
@@ -93,10 +94,16 @@ public:
         _inter = fun;
     }
 
-    void get(object & self, core::property_accessor & accesor, float32_t inter)
+    void interpolate(object & self, core::property_accessor & accesor, float32_t inter)
     {
         auto & a = dynamic_cast<property_accessor_type<T> &>(accesor);
         a.set_value(self, _inter(_start.get(), _end.get(), inter));
+    }
+
+    void interpolate(core::property_value & value, float32_t inter)
+    {
+        auto & v = dynamic_cast<property_value_type<T> &>(value);
+        v.set(_inter(_start.get(), _end.get(), inter));
     }
 
 private:
@@ -105,18 +112,30 @@ private:
     std::function<T(const T & s, const T & e, float32_t i)> _inter;
 };
 
-template<typename FunT>
-std::shared_ptr<property_interpolator> make_interpolator(FunT inter)
+template<typename T>
+std::shared_ptr<property_interpolator> make_interpolator(std::function<T(const T & s, const T & e, float32_t i)> inter)
 {
-    typedef typename std::function<FunT>::result_type T;
     return std::make_shared<property_interpolator_type<T>>(inter);
 }
 
 class anim
 {
 public:
+    anim() = default;
+    anim(std::shared_ptr<core::object> object) : _object(object) {}
+
+    float inter = 0;
     std::shared_ptr<core::object> _object;
     std::vector<std::pair<std::shared_ptr<core::property_accessor>, std::shared_ptr<property_interpolator>>> _interpolators;
+
+    void update()
+    {
+        inter += 0.03;
+        for (auto & i : _interpolators)
+        {
+            i.second->interpolate(*(_object), *(i.first), inter);
+        }
+    }
 };
 
 
@@ -136,9 +155,7 @@ public:
 
         std::shared_ptr<property_accessor_type<int>> a1 = core::make_accessor(&Test::set_val, &Test::get_val);
         std::shared_ptr<property_accessor_type<int>> a2 = core::make_accessor(&Test::set_val, &Test::get_val);
-
     }
-
 };
 
 
@@ -146,8 +163,8 @@ struct animation
 {
     virtual void start() = 0;
     virtual void update() = 0;
-    virtual  bool finished() const = 0;
-    virtual  float32_t progress() = 0;
+    virtual bool finished() const = 0;
+    virtual float32_t progress() = 0;
 
     std::string property_name;
 };
@@ -155,15 +172,9 @@ struct animation
 template<typename T>
 struct animation_t : public animation
 {
-    void start()
-    {
+    void start() { }
 
-    }
-
-    void update()
-    {
-
-    }
+    void update() { }
 
     bool finished() const
     {
@@ -184,7 +195,6 @@ struct animation_t : public animation
 
 struct AnimPlayer
 {
-
     std::vector<animation> _anims;
 };
 
@@ -216,7 +226,7 @@ int main()
     auto buttons = std::make_shared<controls::Container>();
     {
         buttons->setLayoutDirection(core::align::top);
-        for(int cnt = 0; cnt < 10; ++cnt)
+        for (int cnt = 0; cnt < 10; ++cnt)
         {
             auto button = std::make_shared<controls::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
             button->setBorder({ 2_px });
@@ -265,7 +275,7 @@ int main()
     form->addControl(text2);
     form->show();
     form->centerScreen();
-    form->closed += []() {core::app().quit(0); };
+    form->closed += []() { core::app().quit(0); };
 
     std::map<std::string, property_pair> props;
     controls::Button::propertyTable(props);
@@ -275,16 +285,16 @@ int main()
     //property_serializer_string_impl<core::color32> sl;
     std::list<std::shared_ptr<controls::Control>>::value_type obj = *children.begin();
     std::list<std::shared_ptr<controls::Control>>::value_type obj2 = *(++children.begin());
-    auto acc = props["background-color"].first;
-    std::shared_ptr<property_serializer> sl = props["background-color"].second;
-    std::shared_ptr<property_value> value = sl->serialize("#red");
-    acc->set(*obj2, *value);
+    std::shared_ptr<property_accessor> accessor = props["background-color"].first;
+    std::shared_ptr<property_serializer> serializer = props["background-color"].second;
+    std::shared_ptr<property_value> value = serializer->serialize("red");
+    accessor->set(*obj2, *value);
 
     property_interpolator_type<core::color32> it;
-    sl->set("#red", it.start());
-    sl->set("#green", it.end());
+    serializer->set("#red", it.start());
+    serializer->set("#green", it.end());
 
-    auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)->core::color32
+    auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
     {
         auto a = s.a + (e.a - s.a) * inter;
         auto r = s.r + (e.r - s.r) * inter;
@@ -295,34 +305,29 @@ int main()
 
     core::timer t(33ms);
     std::vector<anim> anims;
-    for(auto & control : buttons->children())
+    for (auto & control : buttons->children())
     {
-        auto i = make_interpolator(inter);
-        sl->set("red", i->start());
-        sl->set("green", i->end());
+        std::shared_ptr<property_interpolator> interpolator = make_interpolator<core::color32>(inter);
+        serializer->set("red", interpolator->start());
+        serializer->set("green", interpolator->end());
 
         anim a;
         a._object = control;
-        a._interpolators.push_back(std::make_pair(props["background-color"].first, i));
-        t.tick += [index= anims.size(), &anims](core::timer &, int64_t)
-        {
-            auto & a = anims[index];
-            static float in = 0;
-            if(index == 0)
-                in += 0.03;
-            if (in > 1)
-                in = 0;
-            for (auto & i : a._interpolators)
-            {
-                i.second->get(*(a._object), *(i.first), in);
-            }
-        };
-
+        a._interpolators.push_back(std::make_pair(props["background-color"].first, interpolator));
         anims.push_back(a);
     }
 
+    t.tick += [&anims](core::timer &, int64_t)
+    {
+        for (auto & a : anims)
+        {
+            a.update();
+        }
+    };
+
     t.start();
     win32::runLoop();
+    t.stop();
 #if 0
     auto scene = std::make_shared<controls::component::Scene>();
     auto container = std::make_shared<controls::Container>();
