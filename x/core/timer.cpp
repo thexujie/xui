@@ -11,10 +11,10 @@ namespace core
     }
 
     const wchar_t _timerHWND_ClassName[] = L"{2A84CC0A-7D4F-42AB-9311-DEA336A1F289}";
-    static thread_local std::weak_ptr<struct TimerContext> __timerContext;
+    static thread_local std::shared_ptr<struct TimerContext> __timerContext;
     struct TimerContext
     {
-        std::weak_ptr<struct TimerContext> & _timerContext = __timerContext;
+        std::shared_ptr<struct TimerContext> & _timerContext = __timerContext;
         std::mutex _mtx;
        HWND _timerHWND = NULL;
        bool _timerHWND_Registed = false;
@@ -56,13 +56,9 @@ namespace core
 
        static std::shared_ptr<TimerContext> GetTimerContext()
        {
-           std::shared_ptr<TimerContext> timerContext = __timerContext.lock();
-           if(!timerContext)
-           {
-               timerContext = std::make_shared<TimerContext>();
-               __timerContext = timerContext;
-           }
-           return timerContext;
+           if(!__timerContext)
+               __timerContext = std::make_shared<TimerContext>();
+           return __timerContext;
        }
 
        void KillTimer(timer * ptimer)
@@ -104,6 +100,11 @@ namespace core
 		}
 	}
 
+    bool timer::running() const
+    {
+        return _started;
+    }
+
 	void timer::start()
 	{
         if(!_context)
@@ -126,9 +127,9 @@ namespace core
         if(!_started.compare_exchange_strong(_false, true))
             return;
 
+		_period = period;
         std::shared_ptr<TimerContext> timerContext = std::reinterpret_pointer_cast<TimerContext, void>(_context);
         timerContext->SetTimer(this, _period);
-		_period = period;
 	}
 
 	void timer::stop()

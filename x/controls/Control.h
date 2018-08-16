@@ -6,6 +6,7 @@
 #include "renderables/Line.h"
 #include "renderables/Rectangle.h"
 #include "component/Style.h"
+#include "component/Animation.h"
 
 namespace controls
 {
@@ -34,7 +35,7 @@ namespace controls
         scene,
         // 相对于 view 的位置
         view,
-        // 同 layout，如果超出 scene 则相对于 view
+        // 同 arrange，如果超出 scene 则相对于 view
         sticky,
     };
 
@@ -45,7 +46,9 @@ namespace controls
         Control();
         virtual ~Control();
 
-        static void propertyTable(core::property_table & properties);
+        static void propertyTableCallback(core::property_table & properties);
+        virtual void propertyTable(core::property_table & properties);
+        virtual const core::property_table & properties();
 
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet);
         std::shared_ptr<component::StyleSheet> styleSheet() const;
@@ -62,14 +65,19 @@ namespace controls
         void setMaxSize(const core::vec2<core::dimensionf> & maxSize) { _maxSize = maxSize; }
         const core::vec2<core::dimensionf> & maxSize() const { return _maxSize; }
 
-        void setPos(const core::vec2f & pos);
-        void setSize(const core::vec2f & size);
+        void move(const core::vec2<core::dimensionf> & pos);
+        void resize(const core::vec2<core::dimensionf> & size);
+
+        void setShowPos(const core::vec2f & pos);
+        void setShowSize(const core::vec2f & size);
+        void setShowRect(const core::rc32f & size);
 
         // prefferSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
         core::si32f prefferSize() const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
         std::shared_ptr<component::View> view() const;
+        std::shared_ptr<component::Animation> animation() const;
         std::shared_ptr<component::Scene> scene() const { return _scene.lock(); }
         void setParent(std::shared_ptr<Control> parent) { _parent = parent; }
         std::shared_ptr<Control> parent() const { return _parent.lock(); }
@@ -123,13 +131,14 @@ namespace controls
         virtual void enterScene(std::shared_ptr<component::Scene> & scene);
         virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
         virtual void leaveScene(std::shared_ptr<component::Scene> & scene);
-        virtual void applyStyle() {}
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
         virtual void layout() {}
-        virtual void layout(const core::rc32f & rect, const core::si32f & size);
+        virtual void arrange(const core::rc32f & rect, const core::si32f & size);
+        virtual std::string styleName() const { return {}; }
 
+        virtual void updateStyle();
         virtual void update();
         virtual void updateContent(std::shared_ptr<component::View> & view) {}
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
@@ -149,7 +158,9 @@ namespace controls
     protected:
         std::weak_ptr<component::Scene> _scene;
         std::weak_ptr<Control> _parent;
+
         std::shared_ptr<component::View> _view;
+        std::shared_ptr<component::Animation> _animation;
 
         layout_origin _layout_origin = layout_origin::layout;
 
@@ -177,6 +188,7 @@ namespace controls
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
         std::string _style;
+        bool _styleTransition = true;
         // 布局之后
         core::rc32f _rect;
 
@@ -184,5 +196,8 @@ namespace controls
         std::shared_ptr<renderables::Rectangle> _background_rect_obj;
         std::shared_ptr<renderables::Rectangle> _border_obj;
         std::array<std::shared_ptr<renderables::Line>, 4> _border_objs;
+
+        // true if need update
+        bool _invalid = false;
     };
 }

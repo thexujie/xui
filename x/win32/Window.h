@@ -237,13 +237,16 @@ namespace win32
 
         core::error attatch(std::shared_ptr<controls::Form> form);
         core::error attatch(handle_t handle);
+        void detach();
+
         std::shared_ptr<controls::Form> form() { return _form.lock(); }
         handle_t handle() const;
         intx_t handleMSG(uint32_t uiMessage, uintx_t uiParam, intx_t iParam);
 
     private:
         void onShownChanged(bool shown);
-        void onPosChagned(const core::pt32f & from, const core::pt32f & to);
+        void onPosChanged(const core::pt32f & from, const core::pt32f & to);
+        void onSizeChanged(const core::si32f & from, const core::si32f & to);
         void onSceneInvalidated(const core::rc32i & rect);
         void onSceneRendered(const graphics::Region & region);
 

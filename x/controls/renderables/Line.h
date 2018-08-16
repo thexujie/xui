@@ -11,7 +11,7 @@ namespace controls::renderables
         Line(const core::pt32f & point0, const core::pt32f & point1) : _point0(point0), _point1(point1) {}
         ~Line() = default;
 
-        void render(graphics::Graphics & graphics) const;
+        void render(graphics::Graphics & graphics) const override;
 
     private:
         core::pt32f _point0;

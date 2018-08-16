@@ -188,6 +188,12 @@
     <ClCompile Include="core\timer.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\datetime.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="controls\component\Animation.cpp">
+      <Filter>controls\component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -451,6 +457,12 @@
     </ClInclude>
     <ClInclude Include="core\timer.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\datetime.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\component\Animation.h">
+      <Filter>controls\component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -11,23 +11,21 @@ namespace controls
         Button(std::string text);
         ~Button();
 
-        static void propertyTable(core::property_table & properties);
+        static void propertyTableCallback(core::property_table & properties);
+        void propertyTable(core::property_table & properties) override;
 
         void setText(const std::string & text);
         const std::string & text() const { return _text; }
 
-        core::si32f contentSize() const;
+        core::si32f contentSize() const override;
         void updateContent(std::shared_ptr<component::View> & view) override;
-
+        std::string styleName() const override;
     public:
         void onMouseEnter(const component::mosue_state & state);
         void onMouseMove(const component::mosue_state & state);
         void onMouseLeave(const component::mosue_state & state);
         void onMouseDown(const component::mosue_state & state);
         void onMouseUp(const component::mosue_state & state);
-
-    public:
-        void applyStyle();
 
     private:
         // 确保 textBlob 已经被创建

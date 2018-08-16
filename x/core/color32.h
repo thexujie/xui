@@ -26,6 +26,17 @@ namespace core
         constexpr color32(uint32_t _argb) : argb(_argb) {}
         constexpr color32(uint8_t a, uint8_t r, uint8_t g, uint8_t b) : a(a), r(r), g(g), b(b) { }
 
+        color32 operator * (float32_t rate) const
+        {
+            if (a == 0)
+                return color32(0, static_cast<uint8_t>(r * rate), static_cast<uint8_t>(g * rate), static_cast<uint8_t>(b * rate));
+
+            if (a == 0xff)
+                return color32(0xff, static_cast<uint8_t>(r * rate), static_cast<uint8_t>(g * rate), static_cast<uint8_t>(b * rate));
+
+            return color32(static_cast<uint8_t>(a * rate), r, g, b);
+        }
+
         operator color32f() const
         {
             color32f colorf = { (float32_t)a / 0xFF, (float32_t)r / 0xFF, (float32_t)g / 0xFF, (float32_t)b / 0xFF };

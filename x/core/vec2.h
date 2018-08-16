@@ -96,14 +96,26 @@ namespace core
             return *this;
         }
 
-        vec2 operator *(const ValT & rate) const
+        vec2 operator * (const ValT & rate) const
         {
             return vec2(x * rate, y * rate);
         }
 
-        vec2 operator /(const ValT & rate)
+        template<typename = std::enable_if_t<!std::is_same_v<ValT, float32_t>>>
+        vec2 operator * (float32_t rate) const
+        {
+            return vec2(static_cast<ValT>(x * rate), static_cast<ValT>(y * rate));
+        }
+
+        vec2 operator / (const ValT & rate)
         {
             return vec2(x / rate, y / rate);
+        }
+
+        template<typename = std::enable_if_t<!std::is_same_v<ValT, float32_t>>>
+        vec2 operator / (float32_t rate) const
+        {
+            return vec2(static_cast<ValT>(x / rate), static_cast<ValT>(y / rate));
         }
 
         vec2 & operator *=(const ValT & rate)
@@ -113,10 +125,26 @@ namespace core
             return *this;
         }
 
+        template<typename = std::enable_if_t<!std::is_same_v<ValT, float32_t>>>
+        vec2 & operator *= (float32_t rate)
+        {
+            x = static_cast<ValT>(x * rate);
+            y = static_cast<ValT>(y * rate);
+            return *this;
+        }
+
         vec2 & operator /=(const ValT & rate)
         {
             x /= rate;
             y /= rate;
+            return *this;
+        }
+
+        template<typename = std::enable_if_t<!std::is_same_v<ValT, float32_t>>>
+        vec2 & operator /=(float32_t rate)
+        {
+            x = static_cast<ValT>(x / rate);
+            y = static_cast<ValT>(y / rate);
             return *this;
         }
 

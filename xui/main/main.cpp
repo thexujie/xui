@@ -60,144 +60,18 @@ void testImages()
 #pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
 
 
-int parseInt(const std::string_view & str)
+
+inline double_t get_time_hr()
 {
-    return std::stoi(str.data());
+    auto now = std::chrono::system_clock::now();
+    auto nowmcs = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
+    return nowmcs / 1000000.0;
 }
 
-class property_interpolator : public core::object
+inline double_t get_time_now_ms()
 {
-public:
-    virtual property_value & start() = 0;
-    virtual property_value & end() = 0;
-    virtual void interpolate(object & self, core::property_accessor & accesor, float32_t inter) = 0;
-    virtual void interpolate(core::property_value & value, float32_t inter) = 0;
-};
-
-template<typename T>
-class property_interpolator_type : public property_interpolator
-{
-public:
-    property_interpolator_type() = default;
-    property_interpolator_type(std::function<T(const T & s, const T & e, float32_t i)> inter) : _inter(inter) {};
-    property_value & start() { return _start; }
-    property_value & end() { return _end; }
-
-    void set_values(const T & start, const T & end)
-    {
-        _start.set(start);
-        _end.set(end);
-    }
-
-    void set_inter(std::function<T(const T & s, const T & e, float32_t i)> fun)
-    {
-        _inter = fun;
-    }
-
-    void interpolate(object & self, core::property_accessor & accesor, float32_t inter)
-    {
-        auto & a = dynamic_cast<property_accessor_type<T> &>(accesor);
-        a.set_value(self, _inter(_start.get(), _end.get(), inter));
-    }
-
-    void interpolate(core::property_value & value, float32_t inter)
-    {
-        auto & v = dynamic_cast<property_value_type<T> &>(value);
-        v.set(_inter(_start.get(), _end.get(), inter));
-    }
-
-private:
-    property_value_type<T> _start;
-    property_value_type<T> _end;
-    std::function<T(const T & s, const T & e, float32_t i)> _inter;
-};
-
-template<typename T>
-std::shared_ptr<property_interpolator> make_interpolator(std::function<T(const T & s, const T & e, float32_t i)> inter)
-{
-    return std::make_shared<property_interpolator_type<T>>(inter);
+    return get_time_hr() * 1000;
 }
-
-class anim
-{
-public:
-    anim() = default;
-    anim(std::shared_ptr<core::object> object) : _object(object) {}
-
-    float inter = 0;
-    std::shared_ptr<core::object> _object;
-    std::vector<std::pair<std::shared_ptr<core::property_accessor>, std::shared_ptr<property_interpolator>>> _interpolators;
-
-    void update()
-    {
-        inter += 0.03;
-        for (auto & i : _interpolators)
-        {
-            i.second->interpolate(*(_object), *(i.first), inter);
-        }
-    }
-};
-
-
-class Test : public core::object
-{
-public:
-    int val = 0;
-    void set_val(const int & _val) { val = _val; }
-    const int & get_val() const { return val; }
-
-    void set_val2(int _val) { val = _val; }
-    int get_val2() const { return val; }
-
-    void transformTable(std::map<std::string, std::shared_ptr<property_accessor>> & accesors)
-    {
-        accesors["val"] = core::make_accessor(&Test::set_val, &Test::get_val);
-
-        std::shared_ptr<property_accessor_type<int>> a1 = core::make_accessor(&Test::set_val, &Test::get_val);
-        std::shared_ptr<property_accessor_type<int>> a2 = core::make_accessor(&Test::set_val, &Test::get_val);
-    }
-};
-
-
-struct animation
-{
-    virtual void start() = 0;
-    virtual void update() = 0;
-    virtual bool finished() const = 0;
-    virtual float32_t progress() = 0;
-
-    std::string property_name;
-};
-
-template<typename T>
-struct animation_t : public animation
-{
-    void start() { }
-
-    void update() { }
-
-    bool finished() const
-    {
-        return false;
-    }
-
-    float32_t progress()
-    {
-        return 0;
-    }
-
-
-    T start_val;
-    T end_val;
-    std::function<T(const T &, const T &, float32_t)> interpolation;
-};
-
-
-struct AnimPlayer
-{
-    std::vector<animation> _anims;
-};
-
 
 int main()
 {
@@ -219,8 +93,8 @@ int main()
     graphics.clear(colors::LightGray);
 
     auto dsize = controls::Desktop::instance().size();
-    auto s = controls::Desktop::instance().screen(0);
-    auto src = s->rect();
+    auto screen = controls::Desktop::instance().screen(0);
+    auto src = screen->rect();
     auto ppi = controls::Desktop::instance().ppi();
 
     auto buttons = std::make_shared<controls::Container>();
@@ -277,22 +151,18 @@ int main()
     form->centerScreen();
     form->closed += []() { core::app().quit(0); };
 
-    std::map<std::string, property_pair> props;
-    controls::Button::propertyTable(props);
-
-
+    const core::property_table & props = core::app().properties<controls::Button>();
     auto & children = buttons->children();
     //property_serializer_string_impl<core::color32> sl;
     std::list<std::shared_ptr<controls::Control>>::value_type obj = *children.begin();
     std::list<std::shared_ptr<controls::Control>>::value_type obj2 = *(++children.begin());
-    std::shared_ptr<property_accessor> accessor = props["background-color"].first;
-    std::shared_ptr<property_serializer> serializer = props["background-color"].second;
-    std::shared_ptr<property_value> value = serializer->serialize("red");
+    std::shared_ptr<property_accessor> accessor = props.at("background-color");
+    std::shared_ptr<property_value> value = accessor->serialize("red");
     accessor->set(*obj2, *value);
 
     property_interpolator_type<core::color32> it;
-    serializer->set("#red", it.start());
-    serializer->set("#green", it.end());
+    accessor->serialize("red", it.start());
+    accessor->serialize("green", it.end());
 
     auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
     {
@@ -303,31 +173,51 @@ int main()
         return core::color32(a, r, g, b);
     };
 
-    core::timer t(33ms);
-    std::vector<anim> anims;
+    auto prop = props.at("background-color");
+    core::timer t(10ms);
+    std::vector<std::shared_ptr<animation>> anims;
     for (auto & control : buttons->children())
     {
-        std::shared_ptr<property_interpolator> interpolator = make_interpolator<core::color32>(inter);
-        serializer->set("red", interpolator->start());
-        serializer->set("green", interpolator->end());
+        auto interpolator = make_interpolator<core::color32>(inter);
+        prop->serialize("red", interpolator->start());
+        prop->serialize("green", interpolator->end());
 
-        anim a;
-        a._object = control;
-        a._interpolators.push_back(std::make_pair(props["background-color"].first, interpolator));
-        anims.push_back(a);
+        auto anim = std::make_shared<property_animation>(control, prop, interpolator);
+        anim->setDuration(3s);
+        anim->stoped += []() {printf("ended \n"); };
+        anims.push_back(anim);
     }
 
+    {
+        auto & props2 = core::app().properties<controls::Form>();
+
+        auto prop = props2.at("size");
+        auto interpolator = std::make_shared<property_interpolator_default<core::vec2<core::dimensionf>>>();
+        prop->serialize("50em 30em", interpolator->start());
+        prop->serialize("50em 50em", interpolator->end());
+
+        auto anim = std::make_shared<property_animation>(form, prop, interpolator);
+        anim->setDuration(1s);
+        //anim->setLoop(100);
+        anim->stoped += []() {printf("form resize done! \n"); };
+        anims.push_back(anim);
+    }
+
+    for (auto & a : anims)
+    {
+        a->start();
+    }
     t.tick += [&anims](core::timer &, int64_t)
     {
         for (auto & a : anims)
         {
-            a.update();
+            a->update();
         }
     };
 
     t.start();
     win32::runLoop();
-    t.stop();
+    //t.stop();
 #if 0
     auto scene = std::make_shared<controls::component::Scene>();
     auto container = std::make_shared<controls::Container>();
@@ -370,8 +260,8 @@ int main()
 
     //auto size = row->prefferSize();
     core::si32f size = row->calc(core::vec2<core::dimensionf>(1280_px, 720_px));
-    row->Control::layout(core::rc32f(core::pt32f(), size), size);
-    //row->layout();
+    row->Control::arrange(core::rc32f(core::pt32f(), size), size);
+    //row->arrange();
     row->update();
 
     counter_fps<float, 3> cps;

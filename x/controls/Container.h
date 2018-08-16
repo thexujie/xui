@@ -16,15 +16,16 @@ namespace controls
         void removeControl(std::shared_ptr<Control> control);
         std::list<std::shared_ptr<Control>> & children() { return _controls; }
 
-        virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
-        virtual void enterScene(std::shared_ptr<component::Scene> & scene);
-        virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
-        virtual void leaveScene(std::shared_ptr<component::Scene> & scene);
+        void enteringScene(std::shared_ptr<component::Scene> & scene) override;
+        void enterScene(std::shared_ptr<component::Scene> & scene) override;
+        void leavingScene(std::shared_ptr<component::Scene> & scene) override;
+        void leaveScene(std::shared_ptr<component::Scene> & scene) override;
 
-        virtual core::si32f contentSize() const;
-        virtual void layout();
-        virtual void update();
+        core::si32f contentSize() const override;
+        void layout() override;
+        void update() override;
 
+        void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
     protected:
         std::list<std::shared_ptr<Control>> _controls;
         core::align _layout_direction = core::align::left;

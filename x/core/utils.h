@@ -253,28 +253,20 @@ namespace core
         return static_cast<T>(std::ceil(val));
     }
 
-    /**
-    * @brief 交换两个指针所指向的数据的值。
-    * @param a,b 要交换的两个数的 const 引用。
-    */
-    template<typename ValT>
-    void swap_ptr(ValT * pA, ValT * pB)
-    {
-        ValT temp = *pA;
-        *pA = *pB;
-        *pB = temp;
-    }
-
-    /**
-    * @brief 求数字的绝对值。
-    * @param val 要求绝对值得数。
-    * @return 返回输入数字的绝对值。
-    * @warning 对无符号数调用 Abs 没有意义，并且会触发编译器警告。
-    */
-    template<typename ValT>
-    ValT abs(const ValT & val)
+    template<typename T>
+    constexpr T abs(const T & val)
     {
         return val > 0 ? val : -val;
+    }
+
+    constexpr bool equal(float32_t a, float32_t b)
+    {
+        return abs<float32_t>(a - b) < std::numeric_limits<float32_t>::epsilon();
+    }
+
+    constexpr bool equal(float64_t a, float64_t b)
+    {
+        return abs<float64_t>(a - b) < std::numeric_limits<float64_t>::epsilon();
     }
 
 #pragma region lowhigh

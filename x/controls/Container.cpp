@@ -113,13 +113,13 @@ namespace controls
                 switch (lo)
                 {
                 case layout_origin::parent:
-                    control->layout(core::rc32f(core::pt32f(), realSize()), ps);
+                    control->arrange(core::rc32f(core::pt32f(), realSize()), ps);
                     break;
                 case layout_origin::scene:
-                    control->layout(scene()->rect(), ps);
+                    control->arrange(scene()->rect(), ps);
                     break;
                 case layout_origin::view:
-                    control->layout(scene()->viewRect(), ps);
+                    control->arrange(scene()->viewRect(), ps);
                     break;
                 default:
                     break;
@@ -133,7 +133,7 @@ namespace controls
                 rc.x += margin;
                 rc.y = m.btop;
                 rc.size = ps;
-                control->layout(rc, ps);
+                control->arrange(rc, ps);
                 margin = m.bright;
                 rc.x += rc.cx;
             }
@@ -143,7 +143,7 @@ namespace controls
                 rc.y += margin;
                 rc.x = box.x + m.bleft;
                 rc.size = ps;
-                control->layout(rc, ps);
+                control->arrange(rc, ps);
                 margin = m.bbottom;
                 rc.y += rc.cy;
             }
@@ -156,5 +156,23 @@ namespace controls
         Control::update();
         for (auto & control : _controls)
             control->update();
+    }
+
+    void Container::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    {
+        switch(_layout_direction)
+        {
+        case core::align::left:
+            if (!core::equal(from.cy, to.cy))
+                layout();
+            break;
+        case core::align::top:
+            if (!core::equal(from.cx, to.cx))
+                layout();
+            break;
+        default:
+            break;
+        }
+        Control::onSizeChanged(from, to);
     }
 }

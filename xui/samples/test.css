@@ -3,15 +3,15 @@
     padding: 1em 0.5em;
     background-color: #2888;
     margin: 0.2em;
-
+    transition-duration: 2000ms
 }
 
 .button:hover {
     border: 2px;
-    background-color: #a888
+    background-color: #a888;
 }
 
 .button:active {
     border: 2px;
-    background-color: #a8a8
+    background-color: #a2f2
 }

@@ -94,6 +94,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="controls\Button.cpp" />
+    <ClCompile Include="controls\component\Animation.cpp" />
     <ClCompile Include="controls\component\Component.cpp" />
     <ClCompile Include="controls\component\Interactable.cpp" />
     <ClCompile Include="controls\component\Style.cpp" />
@@ -117,6 +118,7 @@
     <ClCompile Include="controls\renderables\Rectangle.cpp" />
     <ClCompile Include="core\app.cpp" />
     <ClCompile Include="core\core.cpp" />
+    <ClCompile Include="core\datetime.cpp" />
     <ClCompile Include="core\error.cpp" />
     <ClCompile Include="core\float2.cpp" />
     <ClCompile Include="core\float3.cpp" />
@@ -169,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controls\Button.h" />
+    <ClInclude Include="controls\component\Animation.h" />
     <ClInclude Include="controls\component\Component.h" />
     <ClInclude Include="controls\component\Interactable.h" />
     <ClInclude Include="controls\component\Style.h" />
@@ -198,6 +201,7 @@
     <ClInclude Include="core\color32.h" />
     <ClInclude Include="core\core.h" />
     <ClInclude Include="core\counter_fps.h" />
+    <ClInclude Include="core\datetime.h" />
     <ClInclude Include="core\edge.h" />
     <ClInclude Include="core\error.h" />
     <ClInclude Include="core\event.h" />

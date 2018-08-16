@@ -3,7 +3,24 @@
 
 namespace core
 {
-    thread_local IApp * __app = nullptr;
+    IApp * __app = nullptr;
+
+
+    const core::property_table & IApp::properties(const std::type_info & ti, std::function<void(core::property_table &)> callback)
+    {
+        std::lock_guard < std::mutex > lock(_mtx);
+        auto & t = typeid (*this);
+        auto iter = _properties.find(&t);
+        if (iter == _properties.end())
+        {
+            auto table = std::make_shared<core::property_table>();
+            callback(*table);
+            _properties[&t] = table;
+            return *table;
+        }
+        else
+            return *(iter->second);
+    }
 
     void app(IApp * ptr)
     {

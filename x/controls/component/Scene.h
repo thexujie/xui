@@ -2,6 +2,7 @@
 #include "Renderable.h"
 #include "Interactable.h"
 #include "graphics/Region.h"
+#include "Animation.h"
 
 namespace controls
 {
@@ -28,9 +29,6 @@ namespace controls::component
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _styleSheet = styleSheet;  }
         std::shared_ptr<component::StyleSheet> styleSheet() const { return _styleSheet; }
 
-        void beginAnim(std::shared_ptr<Control> control);
-        void endAnim(std::shared_ptr<Control> control);
-
         std::shared_ptr<graphics::Bitmap> bitmap() const { return _renderBuffer; }
         void invalid(const core::rc32f & rect);
         void update();
@@ -40,6 +38,7 @@ namespace controls::component
     public:
         core::error insert(std::shared_ptr<View> component);
         core::error remove(std::shared_ptr<View> component);
+        core::error start(std::shared_ptr<Animation> animation);
 
         const std::list<std::shared_ptr<View>> & views() const { return _views; }
 
@@ -64,7 +63,7 @@ namespace controls::component
 
     private:
         void renderThread();
-
+        void animationTimerTick(core::timer & t, int64_t tick);
     protected:
         std::mutex _mtx;
         std::thread _thread;
@@ -76,6 +75,7 @@ namespace controls::component
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
         std::list<std::shared_ptr<View>> _views;
+        std::list<std::shared_ptr<Animation>> _animations;
 
         std::shared_ptr<graphics::Bitmap> _renderBuffer;
 
@@ -83,7 +83,6 @@ namespace controls::component
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
 
-        // ¶¯»­¿ØÖÆ
-        std::vector<std::weak_ptr<Control>> _anim_controls;
+        core::timer _animation_timer;
     };
 }

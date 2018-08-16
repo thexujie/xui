@@ -10,7 +10,7 @@ namespace controls
         Element();
         virtual ~Element();
 
-        void layout();
+        void layout() override;
         void layout(const core::si32f & size);
     };
 }

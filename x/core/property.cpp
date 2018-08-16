@@ -152,4 +152,32 @@ namespace core
             return { parseDimension(strs[0]), parseDimension(strs[1]), parseDimension(strs[2]), parseDimension(strs[3]) };
         return {};
     }
+
+    void property_animation::update()
+    {
+        if (_state != animation_state::running)
+            return;
+
+        auto object = _object.lock();
+        if (!object || !_accessor || !_interpolator)
+            return;
+
+        auto now = core::datetime::steady();
+        auto cost = now - _time;
+        if (cost > _duration * _loop_index + _duration)
+        {
+            ++_loop_index;
+            if (_loop <= 0 || _loop_index >= _loop)
+            {
+                _state = animation_state::waiting;
+                stoped();
+                return;
+            }
+            looped(_loop_index);
+        }
+
+        float32_t proportion = (cost - _duration * _loop_index).count() / (float32_t)_duration.count();
+        proportion = _curve(proportion);
+        _interpolator->interpolate(*object, *_accessor, proportion);
+    }
 }

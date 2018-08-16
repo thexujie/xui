@@ -9,6 +9,6 @@ namespace controls::interactables
         MouseRectangle()  {}
         ~MouseRectangle() = default;
 
-        core::error onHitTest(const core::pt32f & pos) const;
+        core::error onHitTest(const core::pt32f & pos) const override;
     };
 }

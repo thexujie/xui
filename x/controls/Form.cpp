@@ -68,7 +68,7 @@ namespace controls
         }
 
         auto rect = core::rc32f(calc(_pos), calc(_size));
-        Control::layout(rect, rect.size);
+        Control::arrange(rect, rect.size);
 
         if(!_window)
         {
@@ -97,9 +97,6 @@ namespace controls
 
     void Form::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        layout();
-        update();
-        scene()->invalid(core::rc32f(core::pt32f(), realSize()));
         Container::onSizeChanged(from, to);
     }
 

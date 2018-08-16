@@ -10,7 +10,7 @@ namespace controls
         Text(std::string text);
         ~Text();
 
-        core::si32f contentSize() const;
+        core::si32f contentSize() const override;
         void updateContent(std::shared_ptr<component::View> & view) override;
 
     private:

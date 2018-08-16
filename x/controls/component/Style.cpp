@@ -88,6 +88,29 @@ namespace controls::component
         return select(ids.begin(), ids.end());
     }
 
+    std::map<std::string, std::string> Style::generate(const std::string & selector)
+    {
+        if (selector.empty())
+            return {};
+
+        std::vector<std::string> ids = core::string::split(selector, ':');
+        auto style = select(ids[0]);
+        if (!style)
+            return {};
+
+        std::map<std::string, std::string> items = style->items;
+        if (ids.size() < 2)
+            return items;
+
+        auto iter = style->pseudos.find(ids[1]);
+        if(iter != style->pseudos.end())
+        {
+            for (auto & item : iter->second)
+                items[item.first] = item.second;
+        }
+        return items;
+    }
+
     std::shared_ptr<Style> Style::get(std::vector<std::string>::iterator iter, std::vector<std::string>::iterator end)
     {
         auto & key = *iter;

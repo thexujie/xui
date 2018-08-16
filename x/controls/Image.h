@@ -16,10 +16,10 @@ namespace controls
         void setImageSize(const core::vec2<core::dimensionf> & size);
         void setImageFitting(const core::vec2<renderables::image_fitting> & fitting) { _image_fitting = fitting; }
         const core::vec2<renderables::image_fitting> & imageFitting() const { return _image_fitting; }
-        core::si32f contentSize() const;
+        core::si32f contentSize() const override;
 
         core::si32f _imageSize() const;
-        virtual void updateContent(std::shared_ptr<component::View> & view);
+        void updateContent(std::shared_ptr<component::View> & view) override;
 
     public:
         void enteringScene(std::shared_ptr<component::Scene> & scene) override;

@@ -16,7 +16,7 @@ namespace controls::renderables
         void setPathStyle(const graphics::PathStyle & style) { if (_style != style) { _style = style; invalid(); }}
         graphics::PathStyle pathStyle() const { return _style; }
 
-        void render(graphics::Graphics & graphics) const;
+        void render(graphics::Graphics & graphics) const override;
 
     private:
         std::shared_ptr<graphics::Path> _path;

@@ -11,7 +11,7 @@ namespace controls::renderables
         ~Text();
 
         void setTextBlob(std::shared_ptr<graphics::TextBlob> text);
-        void render(graphics::Graphics & graphics) const;
+        void render(graphics::Graphics & graphics) const override;
 
     private:
         std::shared_ptr<graphics::TextBlob> _text;

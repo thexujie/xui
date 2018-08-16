@@ -12,7 +12,10 @@ namespace core
 
 		timer(const timer & another) = delete;
 
-		void start();
+        void setPeriod(std::chrono::milliseconds period) { _period = period; }
+        bool running() const;
+
+        void start();
 		void start(std::chrono::milliseconds period);
 		void stop();
 

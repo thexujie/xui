@@ -28,14 +28,17 @@ namespace win32
 
     Window::~Window()
     {
-        
+        if (_handle)
+            detach();
     }
+
 
     core::error Window::attatch(std::shared_ptr<controls::Form> form)
     {
         _form = form;
         auto scene = form->scene();
-        form->windowPosChanged += std::weak_bind(&Window::onPosChagned, shared_from_this(), std::placeholders::_1, std::placeholders::_2);
+        form->windowPosChanged += std::weak_bind(&Window::onPosChanged, shared_from_this(), std::placeholders::_1, std::placeholders::_2);
+        form->sizeChanged += std::weak_bind(&Window::onSizeChanged, shared_from_this(), std::placeholders::_1, std::placeholders::_2);
         form->shownChanged += std::weak_bind(&Window::onShownChanged, shared_from_this(), std::placeholders::_1);
         scene->invalidated += std::weak_bind(&Window::onSceneInvalidated, shared_from_this(), std::placeholders::_1);
         scene->rendered += std::weak_bind(&Window::onSceneRendered, shared_from_this(), std::placeholders::_1);
@@ -63,6 +66,23 @@ namespace win32
         return core::error_ok;
     }
 
+    void Window::detach()
+    {
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return;
+
+        WNDPROC pfnWndProcOld = (WNDPROC)GetPropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
+        if (!pfnWndProcOld)
+            return;
+
+        SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR)pfnWndProcOld);
+
+        RemovePropW(hwnd, WINDOW_PROP_THIS_PTR);
+        RemovePropW(hwnd, WINDOW_PROP_DLG_RESULT);
+        RemovePropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
+    }
+
     handle_t Window::handle() const
     {
         if (!_handle)
@@ -81,7 +101,7 @@ namespace win32
         }
     }
 
-    void Window::onPosChagned(const core::pt32f & from, const core::pt32f & to)
+    void Window::onPosChanged(const core::pt32f & from, const core::pt32f & to)
     {
         HWND hwnd = (HWND)handle();
         if (!hwnd)
@@ -90,6 +110,17 @@ namespace win32
         auto pos = to.to<int32_t>();
         if (pos != _pos())
             _adjustWindow(pos, _size());
+    }
+
+    void Window::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    {
+        HWND hwnd = (HWND)handle();
+        if (!hwnd)
+            return;
+
+        auto size = to.to<int32_t>();
+        if (size != _size())
+            _adjustWindow(_pos(), size);
     }
 
     void Window::onSceneInvalidated(const core::rc32i & rect)
@@ -392,7 +423,7 @@ namespace win32
         if (!f)
             throw core::exception(core::error_nullptr);
 
-        f->setSize(_size().to<float32_t>());
+        f->setShowSize(_size().to<float32_t>());
         return 0;
     }
 

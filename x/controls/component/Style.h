@@ -10,6 +10,9 @@ namespace controls::component
         std::shared_ptr<Style> select(std::vector<std::string>::iterator iter, std::vector<std::string>::iterator end);
         std::shared_ptr<Style> select(const std::string & name);
 
+        // button button:hover button:active
+        std::map<std::string, std::string> generate(const std::string & selector);
+
         void join(Style & another);
         void join(const std::map<std::string, std::shared_ptr<Style>> & styles);
 

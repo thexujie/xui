@@ -77,6 +77,7 @@ typedef double float64_t;
 #include "core/event.h"
 #include "core/unit.h"
 #include "core/utils.h"
+#include "core/datetime.h"
 
 #include "core/align.h"
 #include "core/vec2.h"
@@ -95,5 +96,7 @@ typedef double float64_t;
 #include "core/property.h"
 
 #include "core/timer.h"
+
+#include "core/app.h"
 
 using namespace core::unit_literals;

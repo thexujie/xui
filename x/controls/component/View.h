@@ -43,5 +43,7 @@ namespace controls::component
         std::list<std::shared_ptr<MouseArea>> _mouseareas;
 
         core::rc32f _rect_invalid;
+
+
     };
 }

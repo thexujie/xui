@@ -22,10 +22,16 @@ namespace controls
         
     }
 
+    void Button::propertyTableCallback(core::property_table & properties)
+    {
+        Control::propertyTableCallback(properties);
+        properties["text"] = core::make_accessor(&Button::setText, &Button::text, core::parseString, nullptr);
+    }
+
     void Button::propertyTable(core::property_table & properties)
     {
         Control::propertyTable(properties);
-        properties["text"] = core::make_property(&Button::setText, &Button::text, core::parseString);
+        properties["text"] = core::make_accessor(&Button::setText, &Button::text, core::parseString, nullptr);
     }
 
     void Button::setText(const std::string & text)
@@ -69,10 +75,28 @@ namespace controls
         _mosuerectangle->setRect(box());
     }
 
+
+    std::string Button::styleName() const
+    {
+        bool mousein = false;
+        bool pressed = false;
+        if (_mosuerectangle)
+        {
+            mousein = _mosuerectangle->mousein();
+            pressed = _mosuerectangle->pressed();
+        }
+
+        if (pressed)
+            return "button:active";
+        else if (mousein)
+            return "button:hover";
+        else
+            return "button";
+    }
+
     void Button::onMouseEnter(const component::mosue_state & state)
     {
-        applyStyle();
-        update();
+        updateStyle();
     }
 
     void Button::onMouseMove(const component::mosue_state & state)
@@ -82,21 +106,18 @@ namespace controls
 
     void Button::onMouseLeave(const component::mosue_state & state)
     {
-        applyStyle();
-        update();
+        updateStyle();
     }
 
     
     void Button::onMouseDown(const component::mosue_state & state)
     {
-        applyStyle();
-        update();
+        updateStyle();
     }
 
     void Button::onMouseUp(const component::mosue_state & state)
     {
-        applyStyle();
-        update();
+        updateStyle();
     }
 
     void Button::_confirmBlob() const
@@ -106,53 +127,6 @@ namespace controls
             graphics::StringFormat format(font());
             format.color(color());
             const_cast<std::shared_ptr<graphics::TextBlob> &>(_textBlob) = std::make_shared<graphics::TextBlob>(_text, format);
-        }
-    }
-
-    void Button::applyStyle()
-    {
-        auto ss = styleSheet();
-        if (!ss)
-            return;
-
-        bool mousein = false;
-        bool pressed = false;
-        if (_mosuerectangle)
-        {
-            mousein = _mosuerectangle->mousein();
-            pressed = _mosuerectangle->pressed();
-        }
-
-        core::property_table properties;
-        Button::propertyTable(properties);
-
-        std::shared_ptr<component::Style> style = ss->select("button");
-        if(style)
-        {
-            std::map<std::string, std::string> items = style->items;
-            if (mousein && style->pseudos.find("hover") != style->pseudos.end())
-            {
-                for (auto & item : style->pseudos["hover"])
-                    items[item.first] = item.second;
-            }
-            if (pressed && style->pseudos.find("active") != style->pseudos.end())
-            {
-                for (auto & item : style->pseudos["active"])
-                    items[item.first] = item.second;
-            }
-
-            for (const auto & item : items)
-            {
-                auto iter = properties.find(item.first);
-                if (iter == properties.end())
-                    continue;
-
-                auto accessor = iter->second.first;
-                auto serializer = iter->second.second;
-                if (accessor && serializer)
-                    serializer->set(item.second, *this, *accessor);
-            }
-            update();
         }
     }
 }

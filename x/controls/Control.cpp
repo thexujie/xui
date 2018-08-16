@@ -4,22 +4,34 @@
 #include "renderables/Rectangle.h"
 #include "renderables/Path.h"
 #include "renderables/Line.h"
+#include <combaseapi.h>
 
 namespace controls
 {
     Control::Control() { }
     Control::~Control() { }
 
+    void Control::propertyTableCallback(core::property_table & properties)
+    {
+        properties["pos"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimensionf> &) >(&Control::move), &Control::pos, core::parseDimension2D, nullptr);
+        properties["size"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimensionf> &) >(&Control::resize), &Control::size, core::parseDimension2D, nullptr);
+
+        properties["border"] = make_accessor(&Control::setBorder, &Control::border, core::parseDimension4D, nullptr);
+        properties["padding"] = make_accessor(&Control::setPadding, &Control::padding, core::parseDimension4D, nullptr);
+        properties["margin"] = make_accessor(&Control::setMargin, &Control::margin, core::parseDimension4D, nullptr);
+
+        properties["border-color"] = make_accessor(&Control::setBorderColors, &Control::borderColors, core::parseColor4D, nullptr);
+        properties["background-color"] = make_accessor(&Control::setBackgroundColor, &Control::backgroundColor, core::parseColor, nullptr);
+    }
 
     void Control::propertyTable(core::property_table & properties)
     {
-        std::map<std::string, std::pair<std::shared_ptr<core::property_accessor>, std::shared_ptr<core::property_serializer>>> mapper;
-        properties["border"] = make_property(&Control::setBorder, &Control::border, core::parseDimension4D);
-        properties["padding"] = make_property(&Control::setPadding, &Control::padding, core::parseDimension4D);
-        properties["margin"] = make_property(&Control::setMargin, &Control::margin, core::parseDimension4D);
+        propertyTableCallback(properties);
+    }
 
-        properties["border-color"] = make_property(&Control::setBorderColors, &Control::borderColors, core::parseColor4D);
-        properties["background-color"] = make_property(&Control::setBackgroundColor, &Control::backgroundColor, core::parseColor);
+    const core::property_table & Control::properties()
+    {
+        return core::app().properties(typeid (*this), std::bind(&Control::propertyTable, this, std::placeholders::_1));
     }
 
     void Control::setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet)
@@ -28,7 +40,7 @@ namespace controls
             return;
 
         _styleSheet = styleSheet;
-        applyStyle();
+        updateStyle();
     }
 
     std::shared_ptr<component::StyleSheet> Control::styleSheet() const
@@ -67,6 +79,13 @@ namespace controls
         if (!_view)
             const_cast<std::shared_ptr<component::View> &>(_view) = std::make_shared<component::View>();
         return _view;
+    }
+
+    std::shared_ptr<component::Animation> Control::animation() const
+    {
+        if (!_animation)
+            const_cast<std::shared_ptr<component::Animation> &>(_animation) = std::make_shared<component::Animation>();
+        return _animation;
     }
 
     const core::color32 & Control::color() const
@@ -155,28 +174,64 @@ namespace controls
         return { calc(value.xy), calc(value.zw) };
     }
 
-    void Control::setPos(const core::vec2f & pos)
+    void Control::move(const core::vec2<core::dimensionf> & pos)
+    {
+        if (_pos != _pos)
+        {
+            _pos = _pos;
+            setShowPos(calc(_pos));
+        }
+    }
+
+    void Control::resize(const core::vec2<core::dimensionf> & size)
+    {
+        if(_size != size)
+        {
+            _size = size;
+            setShowSize(calc(size));
+        }
+    }
+
+    void Control::setShowPos(const core::vec2f & pos)
     {
         auto pos_old = _rect.pos;
         if (pos_old != pos)
         {
-            _pos = { core::unit_dot(pos.x), core::unit_dot(pos.y) };
             _rect.pos = pos;
             onPosChanged(pos_old, pos);
             onRectChanged(core::rc32f(pos_old, _rect.size), core::rc32f(pos, _rect.size));
         }
     }
 
-    void Control::setSize(const core::vec2f & size)
+    void Control::setShowSize(const core::vec2f & size)
     {
         auto size_old = _rect.size;
         if (size_old != size)
         {
-            _size = { core::unit_dot(size.cx), core::unit_dot(size.cy) };
             _rect.size = size;
             onSizeChanged(size_old, size);
             onRectChanged(core::rc32f(_rect.pos, size_old), core::rc32f(_rect.pos, _rect.size));
         }
+    }
+
+    void Control::setShowRect(const core::rc32f & rect)
+    {
+        auto rect_old = _rect;
+        bool rectchanged = false;
+        if (rect_old.pos != rect.pos)
+        {
+            _rect.pos = rect.pos;
+            onPosChanged(rect_old.pos, rect.pos);
+            rectchanged = true;
+        }
+        if (rect_old.size != rect.size)
+        {
+            _rect.size = rect.size;
+            onSizeChanged(rect_old.size, rect.size);
+            rectchanged = true;
+        }
+        if(rectchanged)
+            onRectChanged(rect_old, rect);
     }
 
     core::rc32f Control::box() const
@@ -211,7 +266,14 @@ namespace controls
         }
     }
 
-    void Control::invalid() { }
+    void Control::invalid()
+    {
+        if(!_invalid)
+        {
+            _invalid = true;
+            invoke([this]() {update(); });
+        }
+    }
 
     std::array<core::pt32f, 4> Control::boderPoints(core::align edge) const
     {
@@ -294,7 +356,7 @@ namespace controls
     {
         _scene = scene;
         scene->insert(view());
-        applyStyle();
+        updateStyle();
     }
 
     void Control::enterScene(std::shared_ptr<component::Scene> & scene)
@@ -310,17 +372,74 @@ namespace controls
 
     void Control::leaveScene(std::shared_ptr<component::Scene> & scene) { }
 
-    void Control::layout(const core::rc32f & rect, const core::si32f & size)
+    void Control::arrange(const core::rc32f & rect, const core::si32f & size)
     {
         auto p = parent();
-        _rect.pos = rect.pos;
-        _rect.size = size;
-        layout();
-        update();
+        setShowRect({ rect.pos, size });
+    }
+
+    void Control::updateStyle()
+    {
+        std::string style = styleName();
+        if (style != _style)
+        {
+            auto ss = styleSheet();
+            auto s = scene();
+            std::map<std::string, std::string> items = ss->generate(style);
+            auto iter_transition_duration = items.find("transition-duration");
+            if (_style.empty() || !_styleTransition || !s || iter_transition_duration == items.end())
+            {
+                if (_animation)
+                    _animation->clear();
+                auto & props = properties();
+                for (const auto & item : items)
+                {
+                    auto iter = props.find(item.first);
+                    if (iter != props.end())
+                        iter->second->set(item.second, *this);
+                }
+            }
+            else
+            {
+                auto s = scene();
+                auto a = animation();
+                a->clear();
+                auto & props = properties();
+                for(auto & item : items)
+                {
+                    auto iter = props.find(item.first);
+                    if (iter == props.end())
+                        continue;
+
+                    auto accessor = iter->second;
+                    auto interpolator = accessor->create_interpolator();
+                    if(interpolator)
+                    {
+                        accessor->get(*this, interpolator->start());
+                        accessor->serialize(item.second, interpolator->end());
+
+                        auto pa = std::make_shared<core::property_animation>(shared_from_this(), accessor, interpolator);
+                        pa->setDuration(1s);
+                        a->add(pa);
+                    }
+                    else
+                    {
+                        iter->second->set(item.second, *this);
+                    }
+                }
+
+                a->start();
+                s->start(a);
+                
+            }
+            _style = style;
+            invalid();
+        }
     }
 
     void Control::update()
     {
+        _invalid = false;
         auto s = scene();
         if (!s)
             return;
@@ -336,6 +455,7 @@ namespace controls
     void Control::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
         update();
+        scene()->invalid(realRect());
         sizeChanged(from, to);
     }
     void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }

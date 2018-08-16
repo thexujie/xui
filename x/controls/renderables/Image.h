@@ -21,7 +21,7 @@ namespace controls::renderables
         void setImageSize(const core::si32f & size) { _image_size = size; }
         void setImageFitting(const core::vec2<image_fitting> & fitting) { _fitting = fitting; }
 
-        void render(graphics::Graphics & graphics) const;
+        void render(graphics::Graphics & graphics) const override;
 
     private:
         std::shared_ptr<graphics::Image> _image;

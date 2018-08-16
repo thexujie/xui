@@ -12,23 +12,6 @@ namespace controls::component
 
     Scene::~Scene() { }
 
-    void Scene::beginAnim(std::shared_ptr<Control> control)
-    {
-        std::lock_guard<std::mutex> lock(_mtx);
-        _anim_controls.push_back(control);
-        if(!_thread.joinable())
-            _thread = std::thread(std::bind(&Scene::renderThread, this));
-    }
-
-    void Scene::endAnim(std::shared_ptr<Control> control)
-    {
-        std::lock_guard<std::mutex> lock(_mtx);
-        //std::remove_if(_anim_controls.begin(), _anim_controls.end(), [](std::weak_ptr<Control> ptr) { return ptr->expired(); });
-        //_anim_controls.erase(std::remove(_anim_controls.begin(), _anim_controls.end(), control));
-        _anim_controls.erase(std::remove_if(_anim_controls.begin(), _anim_controls.end(),
-            [&control](std::weak_ptr<Control> ptr) { return ptr.expired() || ptr.lock() == control; }));
-    }
-
     void Scene::invalid(const core::rc32f & rect)
     {
         auto rc = rect.ceil<int32_t>();
@@ -86,6 +69,20 @@ namespace controls::component
         view->leavingScene(share_ref<Scene>());
         _views.remove(view);
         view->leaveScene(share_ref<Scene>());
+        return core::error_ok;
+    }
+
+    core::error Scene::start(std::shared_ptr<Animation> animation)
+    {
+        if (std::find(_animations.begin(), _animations.end(), animation) != _animations.end())
+            return core::error_ok;
+
+        _animations.push_back(animation);
+        if(!_animation_timer.running())
+        {
+            _animation_timer.tick += std::bind(&Scene::animationTimerTick, this, std::placeholders::_1, std::placeholders::_2);
+            _animation_timer.start(10ms);
+        }
         return core::error_ok;
     }
 
@@ -196,8 +193,11 @@ namespace controls::component
             update();
             std::this_thread::sleep_for(30ms);
         }
+    }
 
-
-        
+    void Scene::animationTimerTick(core::timer & t, int64_t tick)
+    {
+        for (auto & a : _animations)
+            a->update();
     }
 }
