@@ -81,7 +81,7 @@ namespace controls::component
         if(!_animation_timer.running())
         {
             _animation_timer.tick += std::bind(&Scene::animationTimerTick, this, std::placeholders::_1, std::placeholders::_2);
-            _animation_timer.start(10ms);
+            _animation_timer.start(1000ms / 30);
         }
         return core::error_ok;
     }

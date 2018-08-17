@@ -149,6 +149,7 @@ namespace controls
             }
             else{}
         }
+        Control::layout();
     }
 
     void Container::update()

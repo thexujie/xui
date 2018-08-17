@@ -104,6 +104,8 @@ namespace controls
        core::rc32f box(control_box box) const;
 
         void invalid();
+        void relayout();
+        void rearrange();
 
         void setBackgroundColor(core::color32 color);
         core::color32 backgroundColor() const;
@@ -111,7 +113,7 @@ namespace controls
         void setBackgroundImage(std::shared_ptr<graphics::Image> image);
         std::shared_ptr<graphics::Image> backgroundImage() const;
 
-        void setMargin(const core::vec4<core::dimensionf> & margin) { _margin = margin; }
+        void setMargin(const core::vec4<core::dimensionf> & margin) { if (_margin != margin) { _margin = margin; rearrange(); } }
         const core::vec4<core::dimensionf> & margin() const { return _margin; }
 
         void setBorder(const core::vec4<core::dimensionf> & border) { _border = border; }
@@ -134,7 +136,7 @@ namespace controls
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
-        virtual void layout() {}
+        virtual void layout();
         virtual void arrange(const core::rc32f & rect, const core::si32f & size);
         virtual std::string styleName() const { return {}; }
 
@@ -199,5 +201,6 @@ namespace controls
 
         // true if need update
         bool _invalid = false;
+        bool _invalid_layout = false;
     };
 }

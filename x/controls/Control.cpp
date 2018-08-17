@@ -275,6 +275,22 @@ namespace controls
         }
     }
 
+    void Control::relayout()
+    {
+        if (!_invalid_layout)
+        {
+            _invalid_layout = true;
+            invoke([this]() {layout(); });
+        }
+    }
+
+    void Control::rearrange()
+    {
+        auto p = parent();
+        if (p)
+            p->relayout();
+    }
+
     std::array<core::pt32f, 4> Control::boderPoints(core::align edge) const
     {
         auto bbox = box();
@@ -331,7 +347,7 @@ namespace controls
             return;
 
         _background_color = color;
-        update();
+        invalid();
     }
 
     core::color32 Control::backgroundColor() const
@@ -371,6 +387,11 @@ namespace controls
     }
 
     void Control::leaveScene(std::shared_ptr<component::Scene> & scene) { }
+
+    void Control::layout()
+    {
+        _invalid_layout = false;
+    }
 
     void Control::arrange(const core::rc32f & rect, const core::si32f & size)
     {
@@ -455,11 +476,14 @@ namespace controls
         _updateBorder(v);
     }
 
-    void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to) { posChanged(from, to); }
+    void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to)
+    {
+        invalid();
+        posChanged(from, to);
+    }
     void Control::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        update();
-        scene()->invalid(realRect());
+        invalid();
         sizeChanged(from, to);
     }
     void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }
