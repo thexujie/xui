@@ -235,6 +235,7 @@ namespace core
     core::dimensionf parseDimension(const std::string & str);
     core::vec2<core::dimensionf> parseDimension2D(const std::string & str);
     core::vec4<core::dimensionf> parseDimension4D(const std::string & str);
+    std::chrono::nanoseconds parseDuration(const std::string & str);
 
 
     // specifize some 

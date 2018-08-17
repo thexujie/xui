@@ -153,6 +153,19 @@ namespace core
         return {};
     }
 
+    std::chrono::nanoseconds parseDuration(const std::string & str)
+    {
+        auto end = str.end();
+        char * curr = nullptr;
+        int64_t val = std::strtoll(str.c_str(), &curr, 10);
+        if (errno == ERANGE)
+            return {};
+
+        if (curr && curr[0] == 's')
+            return std::chrono::seconds(val);
+        return std::chrono::milliseconds(val);
+    }
+
     void property_animation::update()
     {
         if (_state != animation_state::running)

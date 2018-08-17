@@ -401,6 +401,7 @@ namespace controls
             }
             else
             {
+                auto duration = core::parseDuration(iter_transition_duration->second);
                 auto s = scene();
                 auto a = animation();
                 a->clear();
@@ -419,7 +420,7 @@ namespace controls
                         accessor->serialize(item.second, interpolator->end());
 
                         auto pa = std::make_shared<core::property_animation>(shared_from_this(), accessor, interpolator);
-                        pa->setDuration(1s);
+                        pa->setDuration(duration);
                         a->add(pa);
                     }
                     else
