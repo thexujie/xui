@@ -6,6 +6,7 @@ namespace core
     {
     public:
         virtual ~property_value() = default;
+        virtual bool equal(const property_value & another) const = 0;
     };
 
     struct property_accessor
@@ -44,7 +45,14 @@ namespace core
         void set(const T & val) { _val = val; }
         T & get() { return _val; }
         const T & get() const { return _val; }
+        bool equal(const property_value & another) const
+        {
+            if (typeid(*this) != typeid(another))
+                return false;
 
+            const auto & a = dynamic_cast<const property_value_type<T> &>(another);
+            return _val == a._val;
+        }
     private:
         T _val;
     };
