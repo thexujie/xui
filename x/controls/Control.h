@@ -48,7 +48,7 @@ namespace controls
     };
     template<> struct enable_bitmasks<calc_flag> { static const bool enable = true; };
 
-    class Control : public core::invokable<Control>
+    class Control : public core::object
     {
     public:
         Control();
@@ -80,8 +80,10 @@ namespace controls
         void setShowSize(const core::vec2f & size);
         void setShowRect(const core::rc32f & size);
 
-        // prefferSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
-        core::si32f prefferSize() const;
+        // expectSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
+        core::si32f expectSize() const;
+        // prefferSize 是一个依赖父控件的期望大小
+        core::si32f prefferSize(const core::rc32f & rect, core::bitflag<calc_flag> flags) const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
         std::shared_ptr<component::View> view() const;

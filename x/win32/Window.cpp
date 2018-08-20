@@ -99,11 +99,17 @@ namespace win32
             HWND hwnd = (HWND)handle();
             ::ShowWindow(hwnd, SW_SHOW);
         }
+        else
+        {
+            HWND hwnd = (HWND)_handle;
+            if (hwnd)
+                ::ShowWindow(hwnd, SW_HIDE);
+        }
     }
 
     void Window::onPosChanged(const core::pt32f & from, const core::pt32f & to)
     {
-        HWND hwnd = (HWND)handle();
+        HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
@@ -114,7 +120,7 @@ namespace win32
 
     void Window::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        HWND hwnd = (HWND)handle();
+        HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
@@ -263,7 +269,7 @@ namespace win32
         auto scene = f->scene();
         std::shared_ptr<graphics::Bitmap> bitmap = scene->bitmap();
 
-        HWND hwnd = (HWND)handle();
+        HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
@@ -295,7 +301,7 @@ namespace win32
         auto scene = f->scene();
         std::shared_ptr<graphics::Bitmap> bitmap = scene->bitmap();
 
-        HWND hwnd = (HWND)handle();
+        HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
@@ -404,7 +410,7 @@ namespace win32
         WNDPROC pfnOldWndProc = (WNDPROC)GetPropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
         if (!pfnOldWndProc)
             pfnOldWndProc = DefWindowProcW;
-        return (intx_t)CallWindowProc(pfnOldWndProc, hwnd, (UINT)uiMessage, (WPARAM)uiParam, (LPARAM)iParam);
+        return (intx_t)CallWindowProcW(pfnOldWndProc, hwnd, (UINT)uiMessage, (WPARAM)uiParam, (LPARAM)iParam);
     }
 
     intx_t Window::OnWmMove(uintx_t uiParam, intx_t iParam)

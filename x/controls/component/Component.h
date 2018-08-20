@@ -15,7 +15,7 @@ namespace controls::component
         Interactable,
     };
 
-    class Component : public std::enable_shared_from_this<Component>
+    class Component : public core::object
     {
     public:
         Component(ComponentType type);

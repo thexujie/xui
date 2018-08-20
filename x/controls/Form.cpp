@@ -79,7 +79,7 @@ namespace controls
 
         _shown = true;
         scene()->invalid(core::rc32f(core::pt32f(), realSize()));
-        shownChanged(true);
+        invoke([this]() {shownChanged(true); });
     }
 
     void Form::centerScreen(int32_t screenIndex)

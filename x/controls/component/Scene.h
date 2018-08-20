@@ -14,7 +14,7 @@ namespace controls::component
     class Component;
     class StyleSheet;
 
-    class Scene : public core::invokable<Scene>
+    class Scene : public core::object
     {
     public:
         Scene(std::shared_ptr<Control> control);

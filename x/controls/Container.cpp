@@ -75,7 +75,7 @@ namespace controls
             {
                 margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
                 size.cx += margin;
-                auto psize = control->prefferSize();
+                auto psize = control->expectSize();
                 margin = _layout_direction == core::align::left ? m.bright : m.bleft;
                 size.cx = size.cx + psize.cx;
                 size.cy = std::max(size.cy, psize.cy + m.bheight());
@@ -84,7 +84,7 @@ namespace controls
             {
                 margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
                 size.cy += margin;
-                auto psize = control->prefferSize();
+                auto psize = control->expectSize();
                 margin = _layout_direction == core::align::top ? m.bbottom : m.btop;
                 size.cy += psize.cy;
                 size.cx = std::max(size.cx, psize.cx + m.bwidth());
@@ -97,15 +97,14 @@ namespace controls
     void Container::layout()
     {
         float32_t margin = 0;
-        core::si32f psize = prefferSize();
-
+        core::si32f layout_size = expectSize();
         core::rc32f box = paddingBox();
-        core::rc32f rc;
-        rc.cy = psize.cy;
+        core::rc32f layout_rect;
+        layout_rect.cy = layout_size.cy;
         for (auto & control : _controls)
         {
             auto m = control->realMargin();
-            auto ps = control->prefferSize();
+            auto es = control->expectSize();
             auto lo = control->layoutOrigin();
             auto & s = control->size();
 
@@ -114,13 +113,13 @@ namespace controls
                 switch (lo)
                 {
                 case layout_origin::parent:
-                    control->arrange(core::rc32f(core::pt32f(), realSize()), ps);
+                    control->arrange(core::rc32f(core::pt32f(), realSize()), es);
                     break;
                 case layout_origin::scene:
-                    control->arrange(scene()->rect(), ps);
+                    control->arrange(scene()->rect(), es);
                     break;
                 case layout_origin::view:
-                    control->arrange(scene()->viewRect(), ps);
+                    control->arrange(scene()->viewRect(), es);
                     break;
                 default:
                     break;
@@ -131,24 +130,26 @@ namespace controls
             if(_layout_direction == core::align::left)
             {
                 margin = std::max(margin, m.bleft);
-                rc.x += margin;
-                rc.y = m.btop;
-                rc.size = ps;
-                if (s.cy.unit == core::unit::per)
-                    ps.cy = control->calc_y(s.cy);
-                control->arrange(rc, ps);
+                layout_rect.x += margin;
+                layout_rect.y = m.btop;
+                auto ps = control->prefferSize({layout_rect.pos, es}, calc_flag::none);
+                layout_rect.cx = ps.cx;
+                layout_rect.cy = layout_size.cy;
+                control->arrange(layout_rect, ps);
                 margin = m.bright;
-                rc.x += rc.cx;
+                layout_rect.x += layout_rect.cx;
             }
             else if (_layout_direction == core::align::top)
             {
                 margin = std::max(margin, m.btop);
-                rc.y += margin;
-                rc.x = box.x + m.bleft;
-                rc.size = ps;
-                control->arrange(rc, ps);
+                layout_rect.y += margin;
+                layout_rect.x = box.x + m.bleft;
+                auto ps = control->prefferSize({ layout_rect.pos, es }, calc_flag::none);
+                layout_rect.cx = layout_size.cx;
+                layout_rect.cy = ps.cy;
+                control->arrange(layout_rect, ps);
                 margin = m.bbottom;
-                rc.y += rc.cy;
+                layout_rect.y += layout_rect.cy;
             }
             else{}
         }

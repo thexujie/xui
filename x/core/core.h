@@ -73,7 +73,6 @@ typedef double float64_t;
 #include "core/path.h"
 #include "core/color32.h"
 #include "core/object.h"
-#include "core/invokable.h"
 #include "core/counter_fps.h"
 #include "core/event.h"
 #include "core/unit.h"

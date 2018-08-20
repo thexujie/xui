@@ -62,9 +62,6 @@
     <ClCompile Include="core\math.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="core\invokable.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="core\core.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -194,6 +191,9 @@
     <ClCompile Include="controls\component\Animation.cpp">
       <Filter>controls\component</Filter>
     </ClCompile>
+    <ClCompile Include="core\object.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -295,9 +295,6 @@
     </ClInclude>
     <ClInclude Include="win32\win32.h">
       <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="core\invokable.h">
-      <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\core.h">
       <Filter>core</Filter>

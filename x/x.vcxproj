@@ -125,13 +125,13 @@
     <ClCompile Include="core\float3x2.cpp" />
     <ClCompile Include="core\float4.cpp" />
     <ClCompile Include="core\float4x4.cpp" />
-    <ClCompile Include="core\invokable.cpp" />
     <ClCompile Include="core\io\filestream.cpp" />
     <ClCompile Include="core\logger.cpp" />
     <ClCompile Include="core\math.cpp" />
     <ClCompile Include="core\network\addr.cpp" />
     <ClCompile Include="core\network\http.cpp" />
     <ClCompile Include="core\network\socket.cpp" />
+    <ClCompile Include="core\object.cpp" />
     <ClCompile Include="core\property.cpp" />
     <ClCompile Include="core\quat4.cpp" />
     <ClCompile Include="core\string.cpp" />
@@ -211,7 +211,6 @@
     <ClInclude Include="core\float3x2.h" />
     <ClInclude Include="core\float4.h" />
     <ClInclude Include="core\float4x4.h" />
-    <ClInclude Include="core\invokable.h" />
     <ClInclude Include="core\io\buffer.h" />
     <ClInclude Include="core\io\filestream.h" />
     <ClInclude Include="core\io\stream.h" />
