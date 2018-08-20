@@ -1,8 +1,7 @@
 #pragma once
-#include "renderables/Image.h"
-#include "Control.h"
+#include "ui/Control.h"
 
-namespace ui
+namespace ui::controls
 {
     class Image : public Control
     {

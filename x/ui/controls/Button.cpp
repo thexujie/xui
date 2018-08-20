@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Button.h"
-#include "renderables/Text.h"
-#include "interactables/MouseRectangle.h"
+#include "ui/renderables/Text.h"
+#include "ui/interactables/MouseRectangle.h"
 
-namespace ui
+namespace ui::controls
 {
     Button::Button()
     {

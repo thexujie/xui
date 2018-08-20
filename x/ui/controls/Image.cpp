@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Image.h"
 
-namespace ui
+namespace ui::controls
 {
     Image::Image()
     {

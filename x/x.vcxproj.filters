@@ -101,9 +101,6 @@
     <ClCompile Include="ui\component\Scene.cpp">
       <Filter>ui\component</Filter>
     </ClCompile>
-    <ClCompile Include="ui\Image.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
     <ClCompile Include="ui\renderables\Rectangle.cpp">
       <Filter>ui\renderables</Filter>
     </ClCompile>
@@ -131,14 +128,8 @@
     <ClCompile Include="ui\Container.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\Text.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
     <ClCompile Include="ui\renderables\Text.cpp">
       <Filter>ui\renderables</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\Button.cpp">
-      <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="ui\Element.cpp">
       <Filter>ui</Filter>
@@ -193,6 +184,15 @@
     </ClCompile>
     <ClCompile Include="core\object.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Button.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Image.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Text.cpp">
+      <Filter>ui\controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,9 +347,6 @@
     <ClInclude Include="ui\renderables\Image.h">
       <Filter>ui\renderables</Filter>
     </ClInclude>
-    <ClInclude Include="ui\Image.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="core\float2.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -389,14 +386,8 @@
     <ClInclude Include="ui\Container.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\Text.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="ui\renderables\Text.h">
       <Filter>ui\renderables</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\Button.h">
-      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="ui\Element.h">
       <Filter>ui</Filter>
@@ -446,9 +437,6 @@
     <ClInclude Include="core\member_function_traits.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="ui\property_parser.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\Region.h">
       <Filter>graphics</Filter>
     </ClInclude>
@@ -463,6 +451,15 @@
     </ClInclude>
     <ClInclude Include="core\bitflag.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Button.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Image.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Text.h">
+      <Filter>ui\controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -510,6 +507,9 @@
     </Filter>
     <Filter Include="utils">
       <UniqueIdentifier>{caf49446-0379-4ef1-b44e-e734eb5ec6e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\controls">
+      <UniqueIdentifier>{c28c3689-fa5c-445e-bb2b-d129ff1168b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

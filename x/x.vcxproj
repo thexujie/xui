@@ -93,7 +93,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ui\Button.cpp" />
     <ClCompile Include="ui\component\Animation.cpp" />
     <ClCompile Include="ui\component\Component.cpp" />
     <ClCompile Include="ui\component\Interactable.cpp" />
@@ -103,6 +102,9 @@
     <ClCompile Include="ui\component\View.cpp" />
     <ClCompile Include="ui\component\Window.cpp" />
     <ClCompile Include="ui\Container.cpp" />
+    <ClCompile Include="ui\controls\Button.cpp" />
+    <ClCompile Include="ui\controls\Image.cpp" />
+    <ClCompile Include="ui\controls\Text.cpp" />
     <ClCompile Include="ui\Element.cpp" />
     <ClCompile Include="ui\Desktop.cpp" />
     <ClCompile Include="ui\interactables\MouseRectangle.cpp" />
@@ -110,10 +112,8 @@
     <ClCompile Include="ui\renderables\Path.cpp" />
     <ClCompile Include="ui\renderables\Shape.cpp" />
     <ClCompile Include="ui\renderables\Text.cpp" />
-    <ClCompile Include="ui\Text.cpp" />
     <ClCompile Include="ui\Control.cpp" />
     <ClCompile Include="ui\Form.cpp" />
-    <ClCompile Include="ui\Image.cpp" />
     <ClCompile Include="ui\renderables\Image.cpp" />
     <ClCompile Include="ui\renderables\Rectangle.cpp" />
     <ClCompile Include="core\app.cpp" />
@@ -170,7 +170,6 @@
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ui\Button.h" />
     <ClInclude Include="ui\component\Animation.h" />
     <ClInclude Include="ui\component\Component.h" />
     <ClInclude Include="ui\component\Interactable.h" />
@@ -180,18 +179,18 @@
     <ClInclude Include="ui\component\View.h" />
     <ClInclude Include="ui\component\Window.h" />
     <ClInclude Include="ui\Container.h" />
+    <ClInclude Include="ui\controls\Button.h" />
+    <ClInclude Include="ui\controls\Image.h" />
+    <ClInclude Include="ui\controls\Text.h" />
     <ClInclude Include="ui\Element.h" />
     <ClInclude Include="ui\Desktop.h" />
     <ClInclude Include="ui\interactables\MouseRectangle.h" />
-    <ClInclude Include="ui\property_parser.h" />
     <ClInclude Include="ui\renderables\Line.h" />
     <ClInclude Include="ui\renderables\Path.h" />
     <ClInclude Include="ui\renderables\Shape.h" />
     <ClInclude Include="ui\renderables\Text.h" />
-    <ClInclude Include="ui\Text.h" />
     <ClInclude Include="ui\Control.h" />
     <ClInclude Include="ui\Form.h" />
-    <ClInclude Include="ui\Image.h" />
     <ClInclude Include="ui\renderables\Image.h" />
     <ClInclude Include="ui\renderables\Rectangle.h" />
     <ClInclude Include="core\align.h" />

@@ -13,12 +13,12 @@
 #include "core/io/filestream.h"
 #include "win32/uniscribe/script.h"
 #include "graphics/TextBlob.h"
-#include "ui/Image.h"
 #include "ui/Container.h"
-#include "ui/Text.h"
 #include "ui/Form.h"
 #include "ui/Desktop.h"
-#include "ui/Button.h"
+#include "ui/controls/Text.h"
+#include "ui/controls/Image.h"
+#include "ui/controls/Button.h"
 
 using namespace core;
 
@@ -83,18 +83,18 @@ int main()
         buttons->setLayoutDirection(core::align::top);
         for (int cnt = 0; cnt < 10; ++cnt)
         {
-            auto button = std::make_shared<ui::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
+            auto button = std::make_shared<ui::controls::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
             button->setBorder({ 2_px });
             button->setBorderColors({ colors::DimGray });
             buttons->addControl(button);
         }
     }
 
-    auto text = std::make_shared<ui::Text>(u8"ABCDEF这是一个很好的内容的G");
+    auto text = std::make_shared<ui::controls::Text>(u8"ABCDEF这是一个很好的内容的G");
     text->setBorder({ 2_px });
     text->setBorderColors({ colors::DimGray });
 
-    auto image0 = std::make_shared<ui::Image>("applique0.jpg");
+    auto image0 = std::make_shared<ui::controls::Image>("applique0.jpg");
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
@@ -106,7 +106,7 @@ int main()
     image0->setBorderStyles({ graphics::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
     image0->setMargin({ 0.5_em });
-    auto image = std::make_shared<ui::Image>("applique1.jpg");
+    auto image = std::make_shared<ui::controls::Image>("applique1.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
     image->setSize({ 20_em, 100_per });
@@ -114,7 +114,7 @@ int main()
     image->setBorder({ 5_px });
     image->setBorderColors({ colors::Azure });
 
-    auto text2 = std::make_shared<ui::Text>("XYZOPQRST");
+    auto text2 = std::make_shared<ui::controls::Text>("XYZOPQRST");
     text2->setBackgroundColor(colors::Green);
     text2->setPadding({ 1_em, 0.5_em });
 
@@ -132,7 +132,7 @@ int main()
     form->centerScreen();
     form->closed += []() { core::app().quit(0); };
 
-    const core::property_table & props = core::app().properties<ui::Button>();
+    const core::property_table & props = core::app().properties<ui::controls::Button>();
     auto & children = buttons->children();
     //property_serializer_string_impl<core::color32> sl;
     std::list<std::shared_ptr<ui::Control>>::value_type obj = *children.begin();

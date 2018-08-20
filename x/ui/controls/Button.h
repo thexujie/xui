@@ -1,8 +1,8 @@
 #pragma once
-#include "Control.h"
-#include "interactables/MouseRectangle.h"
+#include "ui/Control.h"
+#include "ui/interactables/MouseRectangle.h"
 
-namespace ui
+namespace ui::controls
 {
     class Button : public Control
     {

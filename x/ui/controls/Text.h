@@ -1,7 +1,7 @@
 #pragma once
-#include "Control.h"
+#include "ui/Control.h"
 
-namespace ui
+namespace ui::controls
 {
     class Text : public Control
     {

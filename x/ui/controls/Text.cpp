@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Text.h"
-#include "renderables/Text.h"
+#include "ui/renderables/Text.h"
 
 
-namespace ui
+namespace ui::controls
 {
     Text::Text()
     {
