@@ -1,6 +1,6 @@
 #pragma once
-#include "controls/component/Window.h"
-#include "controls/Form.h"
+#include "ui/component/Window.h"
+#include "ui/Form.h"
 #include "win32/win32.h"
 
 namespace win32
@@ -229,17 +229,17 @@ namespace win32
                          KeyCodeCount,
     };
 
-    class Window : public controls::component::Window, public std::enable_shared_from_this<Window>
+    class Window : public ui::component::Window, public std::enable_shared_from_this<Window>
     {
     public:
         Window();
         ~Window();
 
-        core::error attatch(std::shared_ptr<controls::Form> form);
+        core::error attatch(std::shared_ptr<ui::Form> form);
         core::error attatch(handle_t handle);
         void detach();
 
-        std::shared_ptr<controls::Form> form() { return _form.lock(); }
+        std::shared_ptr<ui::Form> form() { return _form.lock(); }
         handle_t handle() const;
         intx_t handleMSG(uint32_t uiMessage, uintx_t uiParam, intx_t iParam);
 
@@ -321,12 +321,12 @@ namespace win32
         virtual intx_t OnWmSysCommand(uintx_t uiParam, intx_t iParam){ return 0;}
 
     private:
-        std::weak_ptr<controls::Form> _form;
+        std::weak_ptr<ui::Form> _form;
         uint32_t _style = 0;
         uint32_t _styleEx = 0;
         handle_t _handle = nullptr;
 
-        controls::component::mosue_state _mouse_state;
+        ui::component::mosue_state _mouse_state;
         bool _mouseIn = false;
         bool _trackingMouse = false;
     public:

@@ -86,29 +86,29 @@
     <ClCompile Include="graphics\PathStyle.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Form.cpp">
-      <Filter>controls</Filter>
+    <ClCompile Include="ui\Form.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\Component.cpp">
-      <Filter>controls\component</Filter>
+    <ClCompile Include="ui\component\Component.cpp">
+      <Filter>ui\component</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\Interactable.cpp">
-      <Filter>controls\component</Filter>
+    <ClCompile Include="ui\component\Interactable.cpp">
+      <Filter>ui\component</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\Renderable.cpp">
-      <Filter>controls\component</Filter>
+    <ClCompile Include="ui\component\Renderable.cpp">
+      <Filter>ui\component</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\Scene.cpp">
-      <Filter>controls\component</Filter>
+    <ClCompile Include="ui\component\Scene.cpp">
+      <Filter>ui\component</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Image.cpp">
-      <Filter>controls</Filter>
+    <ClCompile Include="ui\Image.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="controls\renderables\Rectangle.cpp">
-      <Filter>controls\renderables</Filter>
+    <ClCompile Include="ui\renderables\Rectangle.cpp">
+      <Filter>ui\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\renderables\Image.cpp">
-      <Filter>controls\renderables</Filter>
+    <ClCompile Include="ui\renderables\Image.cpp">
+      <Filter>ui\renderables</Filter>
     </ClCompile>
     <ClCompile Include="core\float2.cpp">
       <Filter>core</Filter>
@@ -125,23 +125,23 @@
     <ClCompile Include="core\quat4.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Control.cpp">
-      <Filter>controls</Filter>
+    <ClCompile Include="ui\Control.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Container.cpp">
-      <Filter>controls</Filter>
+    <ClCompile Include="ui\Container.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Text.cpp">
-      <Filter>controls</Filter>
+    <ClCompile Include="ui\Text.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="controls\renderables\Text.cpp">
-      <Filter>controls\renderables</Filter>
+    <ClCompile Include="ui\renderables\Text.cpp">
+      <Filter>ui\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Button.cpp">
-      <Filter>controls</Filter>
+    <ClCompile Include="ui\Button.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Element.cpp">
-      <Filter>controls</Filter>
+    <ClCompile Include="ui\Element.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="core\float3x2.cpp">
       <Filter>core</Filter>
@@ -149,32 +149,32 @@
     <ClCompile Include="graphics\Path.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="controls\renderables\Path.cpp">
-      <Filter>controls\renderables</Filter>
+    <ClCompile Include="ui\renderables\Path.cpp">
+      <Filter>ui\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\renderables\Shape.cpp">
-      <Filter>controls\renderables</Filter>
+    <ClCompile Include="ui\renderables\Shape.cpp">
+      <Filter>ui\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\renderables\Line.cpp">
-      <Filter>controls\renderables</Filter>
+    <ClCompile Include="ui\renderables\Line.cpp">
+      <Filter>ui\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\Window.cpp">
-      <Filter>controls\component</Filter>
+    <ClCompile Include="ui\component\Window.cpp">
+      <Filter>ui\component</Filter>
     </ClCompile>
     <ClCompile Include="win32\Window.cpp">
       <Filter>win32</Filter>
     </ClCompile>
-    <ClCompile Include="controls\Desktop.cpp">
-      <Filter>controls</Filter>
+    <ClCompile Include="ui\Desktop.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="controls\interactables\MouseRectangle.cpp">
-      <Filter>controls\interactables</Filter>
+    <ClCompile Include="ui\interactables\MouseRectangle.cpp">
+      <Filter>ui\interactables</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\View.cpp">
-      <Filter>controls\component</Filter>
+    <ClCompile Include="ui\component\View.cpp">
+      <Filter>ui\component</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\Style.cpp">
-      <Filter>controls\component</Filter>
+    <ClCompile Include="ui\component\Style.cpp">
+      <Filter>ui\component</Filter>
     </ClCompile>
     <ClCompile Include="core\property.cpp">
       <Filter>core</Filter>
@@ -188,8 +188,8 @@
     <ClCompile Include="core\datetime.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="controls\component\Animation.cpp">
-      <Filter>controls\component</Filter>
+    <ClCompile Include="ui\component\Animation.cpp">
+      <Filter>ui\component</Filter>
     </ClCompile>
     <ClCompile Include="core\object.cpp">
       <Filter>core</Filter>
@@ -323,32 +323,32 @@
     <ClInclude Include="graphics\PathStyle.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Form.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\Form.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="core\event.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\Component.h">
-      <Filter>controls\component</Filter>
+    <ClInclude Include="ui\component\Component.h">
+      <Filter>ui\component</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\Interactable.h">
-      <Filter>controls\component</Filter>
+    <ClInclude Include="ui\component\Interactable.h">
+      <Filter>ui\component</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\Renderable.h">
-      <Filter>controls\component</Filter>
+    <ClInclude Include="ui\component\Renderable.h">
+      <Filter>ui\component</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\Scene.h">
-      <Filter>controls\component</Filter>
+    <ClInclude Include="ui\component\Scene.h">
+      <Filter>ui\component</Filter>
     </ClInclude>
-    <ClInclude Include="controls\renderables\Rectangle.h">
-      <Filter>controls\renderables</Filter>
+    <ClInclude Include="ui\renderables\Rectangle.h">
+      <Filter>ui\renderables</Filter>
     </ClInclude>
-    <ClInclude Include="controls\renderables\Image.h">
-      <Filter>controls\renderables</Filter>
+    <ClInclude Include="ui\renderables\Image.h">
+      <Filter>ui\renderables</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Image.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\Image.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="core\float2.h">
       <Filter>core</Filter>
@@ -380,26 +380,26 @@
     <ClInclude Include="core\math\xmm.h">
       <Filter>core\math</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Control.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\Control.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="core\unit.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Container.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\Container.h">
+      <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Text.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\Text.h">
+      <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="controls\renderables\Text.h">
-      <Filter>controls\renderables</Filter>
+    <ClInclude Include="ui\renderables\Text.h">
+      <Filter>ui\renderables</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Button.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\Button.h">
+      <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Element.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\Element.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="core\float3x2.h">
       <Filter>core</Filter>
@@ -407,38 +407,38 @@
     <ClInclude Include="graphics\Path.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="controls\renderables\Path.h">
-      <Filter>controls\renderables</Filter>
+    <ClInclude Include="ui\renderables\Path.h">
+      <Filter>ui\renderables</Filter>
     </ClInclude>
     <ClInclude Include="core\utils.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="controls\renderables\Shape.h">
-      <Filter>controls\renderables</Filter>
+    <ClInclude Include="ui\renderables\Shape.h">
+      <Filter>ui\renderables</Filter>
     </ClInclude>
-    <ClInclude Include="controls\renderables\Line.h">
-      <Filter>controls\renderables</Filter>
+    <ClInclude Include="ui\renderables\Line.h">
+      <Filter>ui\renderables</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\Window.h">
-      <Filter>controls\component</Filter>
+    <ClInclude Include="ui\component\Window.h">
+      <Filter>ui\component</Filter>
     </ClInclude>
     <ClInclude Include="win32\Window.h">
       <Filter>win32</Filter>
     </ClInclude>
-    <ClInclude Include="controls\Desktop.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\Desktop.h">
+      <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="controls\interactables\MouseRectangle.h">
-      <Filter>controls\interactables</Filter>
+    <ClInclude Include="ui\interactables\MouseRectangle.h">
+      <Filter>ui\interactables</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\View.h">
-      <Filter>controls\component</Filter>
+    <ClInclude Include="ui\component\View.h">
+      <Filter>ui\component</Filter>
     </ClInclude>
     <ClInclude Include="core\attribute.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\Style.h">
-      <Filter>controls\component</Filter>
+    <ClInclude Include="ui\component\Style.h">
+      <Filter>ui\component</Filter>
     </ClInclude>
     <ClInclude Include="core\property.h">
       <Filter>core</Filter>
@@ -446,8 +446,8 @@
     <ClInclude Include="core\member_function_traits.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="controls\property_parser.h">
-      <Filter>controls</Filter>
+    <ClInclude Include="ui\property_parser.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="graphics\Region.h">
       <Filter>graphics</Filter>
@@ -458,8 +458,8 @@
     <ClInclude Include="core\datetime.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="controls\component\Animation.h">
-      <Filter>controls\component</Filter>
+    <ClInclude Include="ui\component\Animation.h">
+      <Filter>ui\component</Filter>
     </ClInclude>
     <ClInclude Include="core\bitflag.h">
       <Filter>core</Filter>
@@ -493,19 +493,19 @@
     <Filter Include="win32">
       <UniqueIdentifier>{a922c3df-cef3-4095-8e1e-894a73330830}</UniqueIdentifier>
     </Filter>
-    <Filter Include="controls">
+    <Filter Include="ui">
       <UniqueIdentifier>{5c640a45-f3a4-4380-aef9-51ddbb21efc7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="controls\component">
+    <Filter Include="ui\component">
       <UniqueIdentifier>{ffef13bd-9f74-4212-a93e-6e015552c663}</UniqueIdentifier>
     </Filter>
-    <Filter Include="controls\renderables">
+    <Filter Include="ui\renderables">
       <UniqueIdentifier>{0858b256-5a76-46f9-b474-872ead193a26}</UniqueIdentifier>
     </Filter>
     <Filter Include="samples">
       <UniqueIdentifier>{01a7303d-087f-42bc-9c03-b9a2c9ec3601}</UniqueIdentifier>
     </Filter>
-    <Filter Include="controls\interactables">
+    <Filter Include="ui\interactables">
       <UniqueIdentifier>{0c1f5a9d-e123-4da8-ad22-5dfaf14ee935}</UniqueIdentifier>
     </Filter>
     <Filter Include="utils">

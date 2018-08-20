@@ -13,12 +13,12 @@
 #include "core/io/filestream.h"
 #include "win32/uniscribe/script.h"
 #include "graphics/TextBlob.h"
-#include "controls/Image.h"
-#include "controls/Container.h"
-#include "controls/Text.h"
-#include "controls/Form.h"
-#include "controls/Desktop.h"
-#include "controls/Button.h"
+#include "ui/Image.h"
+#include "ui/Container.h"
+#include "ui/Text.h"
+#include "ui/Form.h"
+#include "ui/Desktop.h"
+#include "ui/Button.h"
 
 using namespace core;
 
@@ -63,7 +63,7 @@ void testImages()
 int main()
 {
     std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
-    auto ss = std::make_shared<controls::component::StyleSheet>();
+    auto ss = std::make_shared<ui::component::StyleSheet>();
     ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
 
     //auto an = std::make_shared<animation>();
@@ -73,32 +73,32 @@ int main()
     win32::Win32App app;
     //testImages();
 
-    auto dsize = controls::Desktop::instance().size();
-    auto screen = controls::Desktop::instance().screen(0);
+    auto dsize = ui::Desktop::instance().size();
+    auto screen = ui::Desktop::instance().screen(0);
     auto src = screen->rect();
-    auto ppi = controls::Desktop::instance().ppi();
+    auto ppi = ui::Desktop::instance().ppi();
 
-    auto buttons = std::make_shared<controls::Container>();
+    auto buttons = std::make_shared<ui::Container>();
     {
         buttons->setLayoutDirection(core::align::top);
         for (int cnt = 0; cnt < 10; ++cnt)
         {
-            auto button = std::make_shared<controls::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
+            auto button = std::make_shared<ui::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
             button->setBorder({ 2_px });
             button->setBorderColors({ colors::DimGray });
             buttons->addControl(button);
         }
     }
 
-    auto text = std::make_shared<controls::Text>(u8"ABCDEF这是一个很好的内容的G");
+    auto text = std::make_shared<ui::Text>(u8"ABCDEF这是一个很好的内容的G");
     text->setBorder({ 2_px });
     text->setBorderColors({ colors::DimGray });
 
-    auto image0 = std::make_shared<controls::Image>("applique0.jpg");
+    auto image0 = std::make_shared<ui::Image>("applique0.jpg");
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
-    image0->setImageFitting({ controls::renderables::image_fitting::repeat, controls::renderables::image_fitting::repeat });
+    image0->setImageFitting({ ui::renderables::image_fitting::repeat, ui::renderables::image_fitting::repeat });
     image0->setPadding({ 1_em });
     image0->setBorder({ 10_px, 20_px, 30_px, 40_px });
     //image0->setBorder({ 40_px });
@@ -106,19 +106,19 @@ int main()
     image0->setBorderStyles({ graphics::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
     image0->setMargin({ 0.5_em });
-    auto image = std::make_shared<controls::Image>("applique1.jpg");
+    auto image = std::make_shared<ui::Image>("applique1.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
     image->setSize({ 20_em, 100_per });
-    image->setImageFitting({ controls::renderables::image_fitting::repeat, controls::renderables::image_fitting::repeat });
+    image->setImageFitting({ ui::renderables::image_fitting::repeat, ui::renderables::image_fitting::repeat });
     image->setBorder({ 5_px });
     image->setBorderColors({ colors::Azure });
 
-    auto text2 = std::make_shared<controls::Text>("XYZOPQRST");
+    auto text2 = std::make_shared<ui::Text>("XYZOPQRST");
     text2->setBackgroundColor(colors::Green);
     text2->setPadding({ 1_em, 0.5_em });
 
-    auto form = std::make_shared<controls::Form>(core::vec2<core::dimensionf>(50_em, 30_em));
+    auto form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em));
     form->formScene()->setStyleSheet(ss);
     form->setBorder({ 10_px });
     form->setBorderColors({ colors::Black });
@@ -132,11 +132,11 @@ int main()
     form->centerScreen();
     form->closed += []() { core::app().quit(0); };
 
-    const core::property_table & props = core::app().properties<controls::Button>();
+    const core::property_table & props = core::app().properties<ui::Button>();
     auto & children = buttons->children();
     //property_serializer_string_impl<core::color32> sl;
-    std::list<std::shared_ptr<controls::Control>>::value_type obj = *children.begin();
-    std::list<std::shared_ptr<controls::Control>>::value_type obj2 = *(++children.begin());
+    std::list<std::shared_ptr<ui::Control>>::value_type obj = *children.begin();
+    std::list<std::shared_ptr<ui::Control>>::value_type obj2 = *(++children.begin());
     std::shared_ptr<property_accessor> accessor = props.at("background-color");
     std::shared_ptr<property_value> value = accessor->serialize("red");
     accessor->set(*obj2, *value);
@@ -170,7 +170,7 @@ int main()
     }
 
     {
-        auto & props2 = core::app().properties<controls::Form>();
+        auto & props2 = core::app().properties<ui::Form>();
 
         auto prop = props2.at("size");
         auto interpolator = std::make_shared<property_interpolator_default<core::vec2<core::dimensionf>>>();
