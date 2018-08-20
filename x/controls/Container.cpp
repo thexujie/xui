@@ -132,7 +132,7 @@ namespace controls
                 margin = std::max(margin, m.bleft);
                 layout_rect.x += margin;
                 layout_rect.y = m.btop;
-                auto ps = control->prefferSize({layout_rect.pos, es}, calc_flag::none);
+                auto ps = control->prefferSize(calc_flag::none);
                 layout_rect.cx = ps.cx;
                 layout_rect.cy = layout_size.cy;
                 control->arrange(layout_rect, ps);
@@ -144,7 +144,7 @@ namespace controls
                 margin = std::max(margin, m.btop);
                 layout_rect.y += margin;
                 layout_rect.x = box.x + m.bleft;
-                auto ps = control->prefferSize({ layout_rect.pos, es }, calc_flag::none);
+                auto ps = control->prefferSize(calc_flag::none);
                 layout_rect.cx = layout_size.cx;
                 layout_rect.cy = ps.cy;
                 control->arrange(layout_rect, ps);

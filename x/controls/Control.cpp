@@ -54,27 +54,7 @@ namespace controls
         return nullptr;
     }
 
-    core::si32f Control::expectSize() const
-    {
-        // 如果设置了固定大小，直接返回即可
-        if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
-            return calc(_size.value, calc_flag::donot_calc_percent_xy) + calc(_padding, calc_flag::donot_calc_percent_xy).bsize();
-
-        core::si32f size = contentSize() + calc(_padding).bsize();
-        if (_size.available())
-        {
-            if (_size.value.cx.avi())
-                size.cx = calc_x(_size.value.cx, calc_flag::donot_calc_percent_xy);
-            else if (_size.value.cy.avi())
-                size.cy = calc_y(_size.value.cy, calc_flag::donot_calc_percent_xy);
-            else {}
-        }
-
-        _adjustSizeMinMax(size);
-        return size;
-    }
-
-    core::si32f Control::prefferSize(const core::rc32f & rect, core::bitflag<calc_flag> flags) const
+    core::si32f Control::prefferSize(core::bitflag<calc_flag> flags) const
     {
         // 如果设置了固定大小，直接返回即可
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())

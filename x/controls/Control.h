@@ -81,9 +81,9 @@ namespace controls
         void setShowRect(const core::rc32f & size);
 
         // expectSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
-        core::si32f expectSize() const;
-        // prefferSize 是一个依赖父控件的期望大小
-        core::si32f prefferSize(const core::rc32f & rect, core::bitflag<calc_flag> flags) const;
+        core::si32f expectSize() const { return prefferSize(calc_flag::donot_calc_percent_xy); }
+        // prefferSize 计算出的期望大小
+        core::si32f prefferSize(core::bitflag<calc_flag> flags = calc_flag::none) const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
         std::shared_ptr<component::View> view() const;
