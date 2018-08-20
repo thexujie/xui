@@ -1,0 +1,25 @@
+#include "stdafx.h"
+#include "Element.h"
+#include "renderables/Image.h"
+#include "renderables/Rectangle.h"
+
+namespace ui
+{
+    Element::Element()
+    {
+        
+    }
+    Element::~Element()
+    {
+        
+    }
+
+    void Element::layout()
+    {
+    }
+
+    void Element::layout(const core::si32f & size)
+    {
+        
+    }
+}
