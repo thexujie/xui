@@ -464,6 +464,9 @@
     <ClInclude Include="controls\component\Animation.h">
       <Filter>controls\component</Filter>
     </ClInclude>
+    <ClInclude Include="core\bitflag.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">

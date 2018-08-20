@@ -109,7 +109,7 @@ int main()
     auto image = std::make_shared<controls::Image>("applique1.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
-    image->setSize({ 20_em, 20_em });
+    image->setSize({ 20_em, 100_per });
     image->setImageFitting({ controls::renderables::image_fitting::repeat, controls::renderables::image_fitting::repeat });
     image->setBorder({ 5_px });
     image->setBorderColors({ colors::Azure });

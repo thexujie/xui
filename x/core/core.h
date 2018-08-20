@@ -67,6 +67,7 @@ typedef double float64_t;
 
 #include "core/member_function_traits.h"
 #include "core/error.h"
+#include "core/bitflag.h"
 #include "core/system.h"
 #include "core/logger.h"
 #include "core/path.h"
@@ -96,7 +97,6 @@ typedef double float64_t;
 #include "core/property.h"
 
 #include "core/timer.h"
-
 #include "core/app.h"
 
 using namespace core::unit_literals;

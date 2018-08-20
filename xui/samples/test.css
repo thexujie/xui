@@ -6,11 +6,10 @@
     transition-duration: 500ms
 }
 
-    .button:hover {
-        border: 2px;
-        background-color: #a888;
-        margin: 0.2em 0.5em;
-    }
+.button:hover {
+    border: 3px;
+    background-color: #a888;
+}
 
 .button:active {
     border: 2px;

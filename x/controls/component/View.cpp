@@ -14,13 +14,12 @@ namespace controls::component
     void View::unlock()
     {
         auto s = scene();
-        if(!_rect_invalid.empty() && s)
-        {
-            s->invalid(_rect_invalid);
-            _rect_invalid.clear();
-        }
-
+        core::rc32f rect_invalid = _rect_invalid;
+        _rect_invalid.clear();
         _mtx.unlock();
+
+        if (!rect_invalid.empty() && s)
+            s->invalid(rect_invalid);
     }
 
     void View::invalid(const core::rc32f & rect)

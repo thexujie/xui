@@ -66,7 +66,9 @@ namespace controls::component
         void animationTimerTick(core::timer & t, int64_t tick);
     protected:
         std::mutex _mtx;
-        std::thread _thread;
+        std::condition_variable _cv_render;
+        std::thread _th_render;
+        std::atomic_bool _exit = false;
 
         core::rc32i _invalid_rect;
         graphics::Region _invalid_region;

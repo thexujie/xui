@@ -9,6 +9,11 @@ namespace graphics
 {
     using namespace core;
 
+    Region::Region(const Region & another)
+    {
+        _native = another._native;
+    }
+
     Region::~Region() { }
 
     void Region::clear()
@@ -19,7 +24,7 @@ namespace graphics
 
     bool Region::empty() const
     {
-        if (_native)
+        if (!_native)
             return true;
 
         return _native->isEmpty();

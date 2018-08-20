@@ -107,6 +107,7 @@ namespace controls
             auto m = control->realMargin();
             auto ps = control->prefferSize();
             auto lo = control->layoutOrigin();
+            auto & s = control->size();
 
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
             {
@@ -133,6 +134,8 @@ namespace controls
                 rc.x += margin;
                 rc.y = m.btop;
                 rc.size = ps;
+                if (s.cy.unit == core::unit::per)
+                    ps.cy = control->calc_y(s.cy);
                 control->arrange(rc, ps);
                 margin = m.bright;
                 rc.x += rc.cx;

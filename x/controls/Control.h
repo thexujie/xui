@@ -39,6 +39,14 @@ namespace controls
         sticky,
     };
 
+    enum class calc_flag
+    {
+        none = 0,
+        donot_calc_percent_x = 0x0001,
+        donot_calc_percent_y = 0x0002,
+        donot_calc_percent_xy = donot_calc_percent_x | donot_calc_percent_y,
+    };
+    template<> struct enable_bitmasks<calc_flag> { static const bool enable = true; };
 
     class Control : public core::invokable<Control>
     {
@@ -92,10 +100,10 @@ namespace controls
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
 
-        float32_t calc_x(const core::dimensionf & value) const;
-        float32_t calc_y(const core::dimensionf & value) const;
-        core::vec2f calc(const core::vec2<core::dimensionf> & value) const;
-        core::vec4f calc(const core::vec4<core::dimensionf> & value) const;
+        float32_t calc_x(const core::dimensionf & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
+        float32_t calc_y(const core::dimensionf & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
+        core::vec2f calc(const core::vec2<core::dimensionf> & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
+        core::vec4f calc(const core::vec4<core::dimensionf> & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
 
        core::rc32f box() const;
        core::rc32f borderBox() const;
@@ -119,7 +127,7 @@ namespace controls
         void setBorder(const core::vec4<core::dimensionf> & border) { _border = border; }
         const core::vec4<core::dimensionf> & border() const { return _border; }
 
-        void setPadding(const core::vec4<core::dimensionf> & padding) { _padding = padding; }
+        void setPadding(const core::vec4<core::dimensionf> & padding) { if (_padding != padding) { _padding = padding; rearrange(); } }
         const core::vec4<core::dimensionf> & padding() const { return _padding; }
 
         void setBorderColors(const core::vec4<core::color32> & boderColors) { _border_colors = boderColors; }

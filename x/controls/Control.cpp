@@ -58,15 +58,15 @@ namespace controls
     {
         // 如果设置了固定大小，直接返回即可
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
-            return calc(_size.value) + calc(_padding).bsize();
+            return calc(_size.value, calc_flag::donot_calc_percent_xy) + calc(_padding, calc_flag::donot_calc_percent_xy).bsize();
 
         core::si32f size = contentSize() + calc(_padding).bsize();
         if (_size.available())
         {
             if (_size.value.cx.avi())
-                size.cx = calc_x(_size.value.cx);
+                size.cx = calc_x(_size.value.cx, calc_flag::donot_calc_percent_xy);
             else if (_size.value.cy.avi())
-                size.cy = calc_y(_size.value.cy);
+                size.cy = calc_y(_size.value.cy, calc_flag::donot_calc_percent_xy);
             else {}
         }
 
@@ -112,7 +112,7 @@ namespace controls
             return _font;
     }
 
-    float32_t Control::calc_x(const core::dimensionf & value) const
+    float32_t Control::calc_x(const core::dimensionf & value, core::bitflag<calc_flag> flags) const
     {
         auto s = scene();
         auto p = parent();
@@ -130,15 +130,17 @@ namespace controls
         case core::unit::dot:
             return value.value;
         case core::unit::per:
+            if (flags & calc_flag::donot_calc_percent_x)
+                return 0;
             if (!p)
                 throw core::error_state;
-            return value.value * p->width();
+            return value.value / 100.0f * p->width();
         default:
             return value.value * s->ratio();
         }
     }
 
-    float32_t Control::calc_y(const core::dimensionf & value) const
+    float32_t Control::calc_y(const core::dimensionf & value, core::bitflag<calc_flag> flags) const
     {
         auto s = scene();
         auto p = parent();
@@ -156,22 +158,24 @@ namespace controls
         case core::unit::dot:
             return value.value;
         case core::unit::per:
+            if (flags & calc_flag::donot_calc_percent_y)
+                return 0;
             if (!p)
                 throw core::error_state;
-            return value.value * p->height();
+            return value.value / 100.0f * p->height();
         default:
             return value.value * s->ratio();
         }
     }
 
-    core::vec2f Control::calc(const core::vec2<core::dimensionf> & value) const
+    core::vec2f Control::calc(const core::vec2<core::dimensionf> & value, core::bitflag<calc_flag> flags) const
     {
-        return { calc_x(value.x), calc_y(value.y) };
+        return { calc_x(value.x, flags), calc_y(value.y, flags) };
     }
 
-    core::vec4f Control::calc(const core::vec4<core::dimensionf> & value) const
+    core::vec4f Control::calc(const core::vec4<core::dimensionf> & value, core::bitflag<calc_flag> flags) const
     {
-        return { calc(value.xy), calc(value.zw) };
+        return { calc(value.xy, flags), calc(value.zw, flags) };
     }
 
     void Control::move(const core::vec2<core::dimensionf> & pos)

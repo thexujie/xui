@@ -9,6 +9,8 @@ namespace graphics
     {
     public:
         Region() = default;
+        Region(const Region & another);
+        Region(Region && another) noexcept : _native(std::move(another._native)) {}
         ~Region();
 
         void clear();
@@ -25,6 +27,9 @@ namespace graphics
         bool contains(const Region & region) const;
 
         core::rc32i bounds() const;
+
+        Region & operator =(Region && another) noexcept { _native = std::move(another._native); return *this; }
+        Region & operator =(const Region & another) { _native = another._native; return *this; }
     private:
         void _confirmNative();
 
