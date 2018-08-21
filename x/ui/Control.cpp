@@ -399,7 +399,6 @@ namespace ui
 
     void Control::arrange(const core::rc32f & rect, const core::si32f & size)
     {
-        auto p = parent();
         setShowRect({ rect.pos, size });
     }
 
