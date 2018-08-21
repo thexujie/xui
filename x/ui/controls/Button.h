@@ -36,6 +36,6 @@ namespace ui::controls
         std::shared_ptr<graphics::TextBlob> _textBlob;
 
         std::shared_ptr<renderables::Text> _text_obj;
-        std::shared_ptr<interactables::MouseRectangle> _mosuerectangle;
+        std::shared_ptr<interactables::MouseRectangle> _mrc_obj;
     };
 }

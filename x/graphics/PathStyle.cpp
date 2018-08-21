@@ -6,6 +6,38 @@
 
 namespace graphics
 {
+    stroke_style parseStrokeStyle(const std::string & str)
+    {
+        for(const auto & name : stroke_style_names)
+        {
+            if (core::string::equal_ic(str, name.name, -1))
+                return name.style;
+        }
+        return stroke_style::none;
+    }
+
+    core::vec2<stroke_style> parseStrokeStyle2D(const std::string & str)
+    {
+        std::vector<std::string> strs = core::string::split(str, ' ');
+        if (strs.size() == 1)
+            return { parseStrokeStyle(strs[0]) };
+        if (strs.size() == 2)
+            return { parseStrokeStyle(strs[0]), parseStrokeStyle(strs[1]) };
+        return {};
+    }
+
+    core::vec4<stroke_style> parseStrokeStyle4D(const std::string & str)
+    {
+        std::vector<std::string> strs = core::string::split(str, ' ');
+        if (strs.size() == 1)
+            return { parseStrokeStyle(strs[0]) };
+        if (strs.size() == 2)
+            return { parseStrokeStyle(strs[0]), parseStrokeStyle(strs[1]) };
+        if (strs.size() == 4)
+            return { parseStrokeStyle(strs[0]), parseStrokeStyle(strs[1]), parseStrokeStyle(strs[2]), parseStrokeStyle(strs[3]) };
+        return {};
+    }
+
     void PathStyle::apply(SkPaint & paint) const
     {
         paint.setColor(_color);

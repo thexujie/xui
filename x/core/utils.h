@@ -261,12 +261,12 @@ namespace core
 
     constexpr bool equal(float32_t a, float32_t b)
     {
-        return abs<float32_t>(a - b) < std::numeric_limits<float32_t>::epsilon();
+        return abs(a - b) <= std::numeric_limits<float32_t>::epsilon() * std::min(abs(a), abs(b));
     }
 
     constexpr bool equal(float64_t a, float64_t b)
     {
-        return abs<float64_t>(a - b) < std::numeric_limits<float64_t>::epsilon();
+        return abs(a - b) <= std::numeric_limits<float64_t>::epsilon() * std::min(abs(a), abs(b));
     }
 
 #pragma region lowhigh

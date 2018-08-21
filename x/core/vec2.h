@@ -2,25 +2,25 @@
 
 namespace core
 {
-    template<typename ValT>
+    template<typename T>
     class vec2
     {
     public:
         vec2() : x(), y() { }
 
-        vec2(ValT _t) : x(_t), y(_t) { }
+        vec2(T _t) : x(_t), y(_t) { }
 
-        vec2(ValT _x, ValT _y) : x(_x), y(_y) { }
+        vec2(T _x, T _y) : x(_x), y(_y) { }
 
         vec2(const vec2 & vec) : x(vec.x), y(vec.y) { }
 
-        void set(ValT _x, ValT _y)
+        void set(T _x, T _y)
         {
             x = _x;
             y = _y;
         }
 
-        void expand(ValT _cx, ValT _cy)
+        void expand(T _cx, T _cy)
         {
             w += _cx * 2;
             h += _cy * 2;
@@ -34,8 +34,8 @@ namespace core
 
         bool empty() const
         {
-            if (std::is_floating_point<ValT>::value)
-                return std::abs(w) < std::numeric_limits<ValT>::epsilon() || std::abs(h) < std::numeric_limits<ValT>::epsilon();
+            if (std::is_floating_point<T>::value)
+                return std::abs(w) < std::numeric_limits<T>::epsilon() || std::abs(h) < std::numeric_limits<T>::epsilon();
             else
                 return w == 0 || h == 0;
         }
@@ -48,26 +48,31 @@ namespace core
         }
 
         //------------------------------------------------------- 四则运算
+        template<typename = decltype(std::declval<T>() + std::declval<T>())>
         vec2 operator +(const vec2 & vec) const
         {
             return vec2(x + vec.x, y + vec.y);
         }
 
+        template<typename = decltype(std::declval<T>() - std::declval<T>())>
         vec2 operator -(const vec2 & vec) const
         {
             return vec2(x - vec.x, y - vec.y);
         }
 
+        template<typename = decltype(std::declval<T>() * std::declval<T>())>
         vec2 operator *(const vec2 & vec) const
         {
             return vec2(x * vec.x, y * vec.y);
         }
 
+        template<typename = decltype(std::declval<T>() / std::declval<T>())>
         vec2 operator /(const vec2 & vec) const
         {
             return vec2(x / vec.x, y / vec.y);
         }
 
+        template<typename = decltype(std::declval<T>() += std::declval<T>())>
         vec2 & operator +=(const vec2 & vec)
         {
             x += vec.x;
@@ -75,6 +80,7 @@ namespace core
             return *this;
         }
 
+        template<typename = decltype(std::declval<T>() -= std::declval<T>())>
         vec2 & operator -=(const vec2 & vec)
         {
             x -= vec.x;
@@ -82,6 +88,7 @@ namespace core
             return *this;
         }
 
+        template<typename = decltype(std::declval<T>() *= std::declval<T>())>
         vec2 & operator *=(const vec2 & vec)
         {
             x *= vec.x;
@@ -89,6 +96,7 @@ namespace core
             return *this;
         }
 
+        template<typename = decltype(std::declval<T>() /= std::declval<T>())>
         vec2 & operator /=(const vec2 & vec)
         {
             x /= vec.x;
@@ -96,55 +104,56 @@ namespace core
             return *this;
         }
 
-        vec2 operator * (const ValT & rate) const
+        template<typename = decltype(std::declval<T>() * std::declval<T>())>
+        vec2 operator * (const T & rate) const
         {
             return vec2(x * rate, y * rate);
         }
 
-        template<typename = std::enable_if_t<!std::is_same_v<ValT, float32_t>>>
+        template<typename = std::enable_if_t<!std::is_same_v<T, float32_t>>>
         vec2 operator * (float32_t rate) const
         {
-            return vec2(static_cast<ValT>(x * rate), static_cast<ValT>(y * rate));
+            return vec2(static_cast<T>(x * rate), static_cast<T>(y * rate));
         }
 
-        vec2 operator / (const ValT & rate)
+        vec2 operator / (const T & rate)
         {
             return vec2(x / rate, y / rate);
         }
 
-        template<typename = std::enable_if_t<!std::is_same_v<ValT, float32_t>>>
+        template<typename = std::enable_if_t<!std::is_same_v<T, float32_t>>>
         vec2 operator / (float32_t rate) const
         {
-            return vec2(static_cast<ValT>(x / rate), static_cast<ValT>(y / rate));
+            return vec2(static_cast<T>(x / rate), static_cast<T>(y / rate));
         }
 
-        vec2 & operator *=(const ValT & rate)
+        vec2 & operator *=(const T & rate)
         {
             x *= rate;
             y *= rate;
             return *this;
         }
 
-        template<typename = std::enable_if_t<!std::is_same_v<ValT, float32_t>>>
+        template<typename = std::enable_if_t<!std::is_same_v<T, float32_t>>>
         vec2 & operator *= (float32_t rate)
         {
-            x = static_cast<ValT>(x * rate);
-            y = static_cast<ValT>(y * rate);
+            x = static_cast<T>(x * rate);
+            y = static_cast<T>(y * rate);
             return *this;
         }
 
-        vec2 & operator /=(const ValT & rate)
+        vec2 & operator /=(const T & rate)
         {
             x /= rate;
             y /= rate;
             return *this;
         }
 
-        template<typename = std::enable_if_t<!std::is_same_v<ValT, float32_t>>>
+        template<typename = std::enable_if_t<!std::is_same_v<T, float32_t>>>
         vec2 & operator /=(float32_t rate)
         {
-            x = static_cast<ValT>(x / rate);
-            y = static_cast<ValT>(y / rate);
+            x = static_cast<T>(x / rate);
+            y = static_cast<T>(y / rate);
             return *this;
         }
 
@@ -161,9 +170,9 @@ namespace core
         //--------------------------------------------------比较运算
         bool operator ==(const vec2 & vec) const
         {
-            if constexpr (std::is_floating_point_v<ValT>)
-                return std::fabs(x - vec.x) < std::numeric_limits<ValT>::epsilon() &&
-                std::fabs(y - vec.y) < std::numeric_limits<ValT>::epsilon();
+            if constexpr (std::is_floating_point_v<T>)
+                return std::fabs(x - vec.x) < std::numeric_limits<T>::epsilon() &&
+                std::fabs(y - vec.y) < std::numeric_limits<T>::epsilon();
             else
                 return x == vec.x && y == vec.y;
         }
@@ -211,41 +220,41 @@ namespace core
             struct
             {
                 //! 横坐标。
-                ValT x;
+                T x;
                 //! 纵坐标。
-                ValT y;
+                T y;
             };
 
             struct
             {
                 //! 横坐标。
-                ValT left;
+                T left;
                 //! 纵坐标。
-                ValT top;
+                T top;
             };
 
             struct
             {
                 //! 宽。
-                ValT cx;
+                T cx;
                 //! 高。
-                ValT cy;
+                T cy;
             };
 
             struct
             {
                 //! 宽。
-                ValT w;
+                T w;
                 //! 高。
-                ValT h;
+                T h;
             };
 
             struct
             {
                 //! 列。
-                ValT col;
+                T col;
                 //! 行。
-                ValT row;
+                T row;
             };
         };
     };

@@ -65,6 +65,26 @@ typedef char char8_t;
 typedef float float32_t;
 typedef double float64_t;
 
+namespace core
+{
+    using char8_t = ::char8_t;
+
+    using byte_t = ::byte_t;
+
+    using int8_t = ::int8_t;
+    using int16_t = ::int16_t;
+    using int32_t = ::int32_t;
+    using int64_t = ::int64_t;
+
+    using uint8_t = ::uint8_t;
+    using uint16_t = ::uint16_t;
+    using uint32_t = ::uint32_t;
+    using uint64_t = ::uint64_t;
+
+    using float32_t = ::float32_t;
+    using float64_t = ::float64_t;
+}
+
 #include "core/member_function_traits.h"
 #include "core/error.h"
 #include "core/bitflag.h"

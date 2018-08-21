@@ -194,6 +194,9 @@
     <ClCompile Include="ui\controls\Text.cpp">
       <Filter>ui\controls</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controls\ScrollBar.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -459,6 +462,9 @@
       <Filter>ui\controls</Filter>
     </ClInclude>
     <ClInclude Include="ui\controls\Text.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\ScrollBar.h">
       <Filter>ui\controls</Filter>
     </ClInclude>
   </ItemGroup>

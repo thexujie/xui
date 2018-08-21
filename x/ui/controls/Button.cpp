@@ -30,8 +30,7 @@ namespace ui::controls
 
     void Button::propertyTable(core::property_table & properties)
     {
-        Control::propertyTable(properties);
-        properties["text"] = core::make_accessor(&Button::setText, &Button::text, core::parseString, nullptr);
+        Button::propertyTableCallback(properties);
     }
 
     void Button::setText(const std::string & text)
@@ -60,19 +59,19 @@ namespace ui::controls
             _text_obj->setRect(contentBox());
         }
 
-        if(!_mosuerectangle)
+        if(!_mrc_obj)
         {
-            _mosuerectangle = std::make_shared<interactables::MouseRectangle>();
-            view->insert(_mosuerectangle);
+            _mrc_obj = std::make_shared<interactables::MouseRectangle>();
+            view->insert(_mrc_obj);
 
-            _mosuerectangle->mouseEnter += std::weak_binder(std::mem_fn(&Button::onMouseEnter), shared_from_this());
-            _mosuerectangle->mouseMove += std::weak_bind(&Button::onMouseMove, share_ref<Button>(), std::placeholders::_1);
-            _mosuerectangle->mouseLeave += std::weak_bind(&Button::onMouseLeave, share_ref<Button>(), std::placeholders::_1);
-            _mosuerectangle->mouseDown += std::weak_binder(std::mem_fn(&Button::onMouseDown), shared_from_this());
-            _mosuerectangle->mouseUp += std::weak_binder(std::mem_fn(&Button::onMouseUp), shared_from_this());
+            _mrc_obj->mouseEnter += std::weak_binder(std::mem_fn(&Button::onMouseEnter), shared_from_this());
+            _mrc_obj->mouseMove += std::weak_bind(&Button::onMouseMove, share_ref<Button>(), std::placeholders::_1);
+            _mrc_obj->mouseLeave += std::weak_bind(&Button::onMouseLeave, share_ref<Button>(), std::placeholders::_1);
+            _mrc_obj->mouseDown += std::weak_binder(std::mem_fn(&Button::onMouseDown), shared_from_this());
+            _mrc_obj->mouseUp += std::weak_binder(std::mem_fn(&Button::onMouseUp), shared_from_this());
         }
 
-        _mosuerectangle->setRect(box());
+        _mrc_obj->setRect(box());
     }
 
 
@@ -80,10 +79,10 @@ namespace ui::controls
     {
         bool mousein = false;
         bool pressed = false;
-        if (_mosuerectangle)
+        if (_mrc_obj)
         {
-            mousein = _mosuerectangle->mousein();
-            pressed = _mosuerectangle->pressed();
+            mousein = _mrc_obj->mousein();
+            pressed = _mrc_obj->pressed();
         }
 
         if (pressed)

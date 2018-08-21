@@ -26,6 +26,31 @@ namespace graphics
         inherit,
     };
 
+    struct stroke_style_name
+    {
+        stroke_style style;
+        const char * name = nullptr;
+    };
+
+    const stroke_style_name stroke_style_names[] =
+    {
+        { stroke_style::none, "none" },
+        { stroke_style::hidden, "hidden" },
+        { stroke_style::dotted, "dotted" },
+        { stroke_style::dashed, "dashed" },
+        { stroke_style::solid, "solid" },
+        { stroke_style::double_, "double" },
+        { stroke_style::groove, "groove" },
+        { stroke_style::ridge, "ridge" },
+        { stroke_style::inset, "inset" },
+        { stroke_style::outset, "outset" },
+        { stroke_style::inherit, "inherit" },
+    };
+
+    stroke_style parseStrokeStyle(const std::string & str);
+    core::vec2<stroke_style> parseStrokeStyle2D(const std::string & str);
+    core::vec4<stroke_style> parseStrokeStyle4D(const std::string & str);
+
     struct PathStyle
     {
         PathStyle()

@@ -7,47 +7,10 @@
 #include "renderables/Rectangle.h"
 #include "component/Style.h"
 #include "component/Animation.h"
+#include "Element.h"
 
 namespace ui
 {
-    const int32_t DEPTH_BACKGROUND = -1;
-    const int32_t DEPTH_CONTENT = 0;
-    const int32_t DEPTH_FOREGROUND = 1;
-    enum class control_box
-    {
-        // 控件边框
-        layout_box = 0,
-        // 边框方框
-        border_box,
-        // 内框方框
-        padding_box,
-        // 内容方框
-        content_box,
-    };
-
-    enum class layout_origin
-    {
-        // 默认位置
-        layout = 0,
-        // 相对于 parent 的位置
-        parent,
-        // 相对于 scene 的位置
-        scene,
-        // 相对于 view 的位置
-        view,
-        // 同 arrange，如果超出 scene 则相对于 view
-        sticky,
-    };
-
-    enum class calc_flag
-    {
-        none = 0,
-        donot_calc_percent_x = 0x0001,
-        donot_calc_percent_y = 0x0002,
-        donot_calc_percent_xy = donot_calc_percent_x | donot_calc_percent_y,
-    };
-    template<> struct enable_bitmasks<calc_flag> { static const bool enable = true; };
-
     class Control : public core::object
     {
     public:

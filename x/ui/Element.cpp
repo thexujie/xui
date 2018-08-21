@@ -11,69 +11,6 @@ namespace ui
     Element::Element() { }
     Element::~Element() { }
 
-    void Element::propertyTableCallback(core::property_table & properties)
-    {
-        properties["pos"] = make_accessor(static_cast<void (Element::*)(const core::vec2<core::dimensionf> &) >(&Element::move), &Element::pos, core::parseDimension2D, nullptr);
-        properties["size"] = make_accessor(static_cast<void (Element::*)(const core::vec2<core::dimensionf> &) >(&Element::resize), &Element::size, core::parseDimension2D, nullptr);
-
-        properties["border"] = make_accessor(&Element::setBorder, &Element::border, core::parseDimension4D, nullptr);
-        properties["padding"] = make_accessor(&Element::setPadding, &Element::padding, core::parseDimension4D, nullptr);
-        properties["margin"] = make_accessor(&Element::setMargin, &Element::margin, core::parseDimension4D, nullptr);
-
-        properties["border-color"] = make_accessor(&Element::setBorderColors, &Element::borderColors, core::parseColor4D, nullptr);
-        properties["background-color"] = make_accessor(&Element::setBackgroundColor, &Element::backgroundColor, core::parseColor, nullptr);
-    }
-
-    void Element::propertyTable(core::property_table & properties)
-    {
-        propertyTableCallback(properties);
-    }
-
-    const core::property_table & Element::properties()
-    {
-        return core::app().properties(typeid (*this), std::bind(&Element::propertyTable, this, std::placeholders::_1));
-    }
-
-    void Element::setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet)
-    {
-        if (_styleSheet == styleSheet)
-            return;
-
-        _styleSheet = styleSheet;
-        updateStyle();
-    }
-
-    std::shared_ptr<component::StyleSheet> Element::styleSheet() const
-    {
-        if (_styleSheet)
-            return _styleSheet;
-
-        auto s = scene();
-        if (s)
-            return s->styleSheet();
-        return nullptr;
-    }
-
-    core::si32f Element::prefferSize(core::bitflag<calc_flag> flags) const
-    {
-        // 如果设置了固定大小，直接返回即可
-        if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
-            return calc(_size.value, flags) + calc(_padding, flags).bsize();
-
-        core::si32f size = contentSize() + calc(_padding).bsize();
-        if (_size.available())
-        {
-            if (_size.value.cx.avi())
-                size.cx = calc_x(_size.value.cx, flags);
-            else if (_size.value.cy.avi())
-                size.cy = calc_y(_size.value.cy, flags);
-            else {}
-        }
-
-        _adjustSizeMinMax(size);
-        return size;
-    }
-
     std::shared_ptr<component::View> Element::view() const
     {
         if (!_view)
@@ -88,150 +25,42 @@ namespace ui
         return _animation;
     }
 
-    const core::color32 & Element::color() const
-    {
-        if (_color.available())
-            return _color;
-
-        auto p = parent();
-        if (p)
-            return p->color();
-        else
-            return _color;
-    }
-
-    const graphics::font & Element::font() const
-    {
-        if (_font.available())
-            return _font;
-
-        auto p = parent();
-        if (p)
-            return p->font();
-        else
-            return _font;
-    }
-
-    float32_t Element::calc_x(const core::dimensionf & value, core::bitflag<calc_flag> flags) const
-    {
-        auto s = scene();
-        auto p = parent();
-        if (!s)
-            throw core::error_state;
-
-        switch (value.unit)
-        {
-        case core::unit::px:
-            return value.value * s->ratio();
-        case core::unit::em:
-            return value.value * font().size * s->ratio();
-        case core::unit::pt:
-            return value.value * 72.0f * s->ratio();
-        case core::unit::dot:
-            return value.value;
-        case core::unit::per:
-            if (flags & calc_flag::donot_calc_percent_x)
-                return 0;
-            if (!p)
-                throw core::error_state;
-            return value.value / 100.0f * p->width();
-        default:
-            return value.value * s->ratio();
-        }
-    }
-
-    float32_t Element::calc_y(const core::dimensionf & value, core::bitflag<calc_flag> flags) const
-    {
-        auto s = scene();
-        auto p = parent();
-        if (!s)
-            throw core::error_state;
-
-        switch (value.unit)
-        {
-        case core::unit::px:
-            return value.value * s->ratio();
-        case core::unit::em:
-            return value.value * font().size * s->ratio();
-        case core::unit::pt:
-            return value.value * 72.0f * s->ratio();
-        case core::unit::dot:
-            return value.value;
-        case core::unit::per:
-            if (flags & calc_flag::donot_calc_percent_y)
-                return 0;
-            if (!p)
-                throw core::error_state;
-            return value.value / 100.0f * p->height();
-        default:
-            return value.value * s->ratio();
-        }
-    }
-
-    core::vec2f Element::calc(const core::vec2<core::dimensionf> & value, core::bitflag<calc_flag> flags) const
-    {
-        return { calc_x(value.x, flags), calc_y(value.y, flags) };
-    }
-
-    core::vec4f Element::calc(const core::vec4<core::dimensionf> & value, core::bitflag<calc_flag> flags) const
-    {
-        return { calc(value.xy, flags), calc(value.zw, flags) };
-    }
-
-    void Element::move(const core::vec2<core::dimensionf> & pos)
-    {
-        if (_pos != _pos)
-        {
-            _pos = _pos;
-            setShowPos(calc(_pos));
-        }
-    }
-
-    void Element::resize(const core::vec2<core::dimensionf> & size)
-    {
-        if (_size != size)
-        {
-            _size = size;
-            setShowSize(calc(size));
-        }
-    }
-
-    void Element::setShowPos(const core::vec2f & pos)
+    void Element::setLocation(const core::vec2f & pos)
     {
         auto pos_old = _rect.pos;
         if (pos_old != pos)
         {
             _rect.pos = pos;
-            onPosChanged(pos_old, pos);
+            onLocationChanged(pos_old, pos);
             onRectChanged(core::rc32f(pos_old, _rect.size), core::rc32f(pos, _rect.size));
         }
     }
 
-    void Element::setShowSize(const core::vec2f & size)
+    void Element::setMeasure(const core::vec2f & size)
     {
         auto size_old = _rect.size;
         if (size_old != size)
         {
             _rect.size = size;
-            onSizeChanged(size_old, size);
+            onMeasureChanged(size_old, size);
             onRectChanged(core::rc32f(_rect.pos, size_old), core::rc32f(_rect.pos, _rect.size));
         }
     }
 
-    void Element::setShowRect(const core::rc32f & rect)
+    void Element::setRect(const core::rc32f & rect)
     {
         auto rect_old = _rect;
         bool rectchanged = false;
         if (rect_old.pos != rect.pos)
         {
             _rect.pos = rect.pos;
-            onPosChanged(rect_old.pos, rect.pos);
+            onLocationChanged(rect_old.pos, rect.pos);
             rectchanged = true;
         }
         if (rect_old.size != rect.size)
         {
             _rect.size = rect.size;
-            onSizeChanged(rect_old.size, rect.size);
+            onMeasureChanged(rect_old.size, rect.size);
             rectchanged = true;
         }
         if (rectchanged)
@@ -245,12 +74,12 @@ namespace ui
 
     core::rc32f Element::borderBox() const
     {
-        return core::rc32f(_rect.pos + calc(_border).bleftTop(), _rect.size - calc(_border).bsize());
+        return core::rc32f(_rect.pos + _border.bleftTop(), _rect.size - _border.bsize());
     }
 
     core::rc32f Element::paddingBox() const
     {
-        return core::rc32f(_rect.pos + calc(_padding).bleftTop(), _rect.size - calc(_padding).bsize());
+        return core::rc32f(_rect.pos + _padding.bleftTop(), _rect.size - _padding.bsize());
     }
 
     core::rc32f Element::contentBox() const
@@ -270,35 +99,10 @@ namespace ui
         }
     }
 
-    void Element::invalid()
-    {
-        if (!_invalid)
-        {
-            _invalid = true;
-            invoke([this]() {update(); });
-        }
-    }
-
-    void Element::relayout()
-    {
-        if (!_invalid_layout)
-        {
-            _invalid_layout = true;
-            invoke([this]() {layout(); });
-        }
-    }
-
-    void Element::rearrange()
-    {
-        auto p = parent();
-        if (p)
-            p->relayout();
-    }
-
     std::array<core::pt32f, 4> Element::boderPoints(core::align edge) const
     {
         auto bbox = box();
-        auto border = calc(_border);
+        auto border = _border;
         switch (edge)
         {
         case core::align::left:
@@ -325,7 +129,7 @@ namespace ui
     std::array<core::pt32f, 2> Element::boderLine(core::align edge) const
     {
         auto bbox = box();
-        auto border = calc(_border);
+        auto border = _border;
         switch (edge)
         {
         case core::align::left:
@@ -347,11 +151,10 @@ namespace ui
 
     void Element::setBackgroundColor(core::color32 color)
     {
-        if (color == _background_color.value)
+        if (color == _background_color)
             return;
 
         _background_color = color;
-        invalid();
     }
 
     core::color32 Element::backgroundColor() const
@@ -361,22 +164,20 @@ namespace ui
 
     void Element::setBackgroundImage(std::shared_ptr<graphics::Image> image)
     {
-        if (image == _background_image.value)
+        if (image == _background_image)
             return;
         _background_image = image;
-        invalid();
     }
 
     std::shared_ptr<graphics::Image> Element::backgroundImage() const
     {
-        return _background_image.value;
+        return _background_image;
     }
 
     void Element::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
         _scene = scene;
         scene->insert(view());
-        updateStyle();
     }
 
     void Element::enterScene(std::shared_ptr<component::Scene> & scene)
@@ -392,104 +193,17 @@ namespace ui
 
     void Element::leaveScene(std::shared_ptr<component::Scene> & scene) { }
 
-    void Element::layout()
+
+    void Element::onLocationChanged(const core::pt32f & from, const core::pt32f & to)
     {
-        _invalid_layout = false;
+        locationChanged(from, to);
     }
 
-    void Element::arrange(const core::rc32f & rect, const core::si32f & size)
+    void Element::onMeasureChanged(const core::si32f & from, const core::si32f & to)
     {
-        auto p = parent();
-        setShowRect({ rect.pos, size });
+        measureChanged(from, to);
     }
 
-    void Element::updateStyle()
-    {
-        std::string style = styleName();
-        if (style != _style)
-        {
-            auto ss = styleSheet();
-            auto s = scene();
-            std::map<std::string, std::string> items = ss->generate(style);
-            auto iter_transition_duration = items.find("transition-duration");
-            if (_style.empty() || !_styleTransition || !s || iter_transition_duration == items.end())
-            {
-                if (_animation)
-                    _animation->clear();
-                auto & props = properties();
-                for (const auto & item : items)
-                {
-                    auto iter = props.find(item.first);
-                    if (iter != props.end())
-                        iter->second->set(item.second, *this);
-                }
-            }
-            else
-            {
-                auto duration = core::parseDuration(iter_transition_duration->second);
-                items.erase(iter_transition_duration);
-                auto s = scene();
-                auto a = animation();
-                a->clear();
-                auto & props = properties();
-                for (auto & item : items)
-                {
-                    auto iter = props.find(item.first);
-                    if (iter == props.end())
-                        continue;
-
-                    auto accessor = iter->second;
-                    auto interpolator = accessor->create_interpolator();
-                    if (interpolator)
-                    {
-                        accessor->get(*this, interpolator->start());
-                        accessor->serialize(item.second, interpolator->end());
-                        if (interpolator->start().equal(interpolator->end()))
-                            continue;
-
-                        auto pa = std::make_shared<core::property_animation>(shared_from_this(), accessor, interpolator);
-                        pa->setDuration(duration);
-                        a->add(pa);
-                    }
-                    else
-                    {
-                        iter->second->set(item.second, *this);
-                    }
-                }
-
-                a->start();
-                s->start(a);
-
-            }
-            _style = style;
-            invalid();
-        }
-    }
-
-    void Element::update()
-    {
-        _invalid = false;
-        auto s = scene();
-        if (!s)
-            return;
-
-        auto v = view();
-        std::lock_guard<component::View> lock(*v);
-        _updateBackground(v);
-        updateContent(v);
-        _updateBorder(v);
-    }
-
-    void Element::onPosChanged(const core::pt32f & from, const core::pt32f & to)
-    {
-        invalid();
-        posChanged(from, to);
-    }
-    void Element::onSizeChanged(const core::si32f & from, const core::si32f & to)
-    {
-        update();
-        sizeChanged(from, to);
-    }
     void Element::onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }
 
     void Element::_updateBackground(std::shared_ptr<component::View> & view)
@@ -504,16 +218,16 @@ namespace ui
 
             if (!_background_imgage_obj)
             {
-                _background_imgage_obj = std::make_shared<renderables::Image>(_background_image.value);
+                _background_imgage_obj = std::make_shared<renderables::Image>(_background_image);
                 view->insert(DEPTH_BACKGROUND, _background_imgage_obj);
             }
 
             _background_imgage_obj->setRect(box(_background_box));
-            if (_background_size.available())
-                _background_imgage_obj->setImageSize(calc(_background_size));
+            if (!_background_size.empty())
+                _background_imgage_obj->setImageSize(_background_size);
             _background_imgage_obj->setImageFitting(_background_fitting);
         }
-        else if (_background_color)
+        else if (_background_color && _background_color.visible())
         {
             if (_background_imgage_obj)
             {
@@ -547,11 +261,11 @@ namespace ui
 
     void Element::_updateBorder(std::shared_ptr<component::View> & view)
     {
-        if (_border && _border_colors)
+        if (!_border.empty())
         {
-            if (std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
-                std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
-                std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
+            if (std::equal(_border.arr.begin() + 1, _border.arr.end(), _border.arr.begin()) &&
+                std::equal(_border_colors.arr.begin() + 1, _border_colors.arr.end(), _border_colors.arr.begin()) &&
+                std::equal(_border_styles.arr.begin() + 1, _border_styles.arr.end(), _border_styles.arr.begin()))
             {
                 if (!_border_obj)
                 {
@@ -569,8 +283,8 @@ namespace ui
                     }
                 }
                 _border_obj->setRect(box());
-                _border_obj->setRectangle(box().expanded(calc(_border) * -0.5f));
-                _border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
+                _border_obj->setRectangle(box().expanded(_border * -0.5f));
+                _border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.x, _border_styles[0]).width(_border.x));
             }
             else
             {
@@ -580,12 +294,12 @@ namespace ui
                     _border_obj = nullptr;
                 }
 
-                auto border = calc(_border);
+                auto border = _border;
                 const core::align edges[4] = { core::align::left, core::align::top, core::align::right, core::align::bottom };
                 for (int32_t cnt = 0; cnt < 4; ++cnt)
                 {
                     auto & border_obj = _border_objs[cnt];
-                    if (border[cnt] > 0 && _border_colors.value[cnt].visible())
+                    if (border[cnt] > 0 && _border_colors[cnt].visible())
                     {
                         auto path = std::make_shared<graphics::Path>();
                         auto points = boderPoints(edges[cnt]);
@@ -599,7 +313,7 @@ namespace ui
                         }
                         border_obj->setRect(path->computeTightBounds());
                         border_obj->setClipPath(path);
-                        border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]));
+                        border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors[cnt], _border_styles[cnt]).width(border.arr[cnt]));
                     }
                     else
                     {
@@ -616,33 +330,33 @@ namespace ui
 
     void Element::_adjustSizeMinMax(core::si32f & size) const
     {
-        if (_minSize.available())
+        if (!_minSize.empty())
         {
-            if (_minSize.value.cx.avi())
+            if (_minSize.cx > 0)
             {
-                float32_t val = calc_x(_minSize.value.cx);
+                float32_t val = _minSize.cx;
                 if (size.cx < val)
                     size.cx = val;
             }
-            if (_minSize.value.cy.avi())
+            if (_minSize.cy > 0)
             {
-                float32_t val = calc_y(_minSize.value.cy);
+                float32_t val = _minSize.cy;
                 if (size.cy < val)
                     size.cy = val;
             }
         }
 
-        if (_maxSize.available())
+        if (!_maxSize.empty())
         {
-            if (_maxSize.value.cx.avi())
+            if (_maxSize.cx > 0)
             {
-                float32_t val = calc_x(_maxSize.value.cx);
+                float32_t val = _maxSize.cx;
                 if (size.cx > val)
                     size.cx = val;
             }
-            if (_maxSize.value.cy.avi())
+            if (_maxSize.cy > 0)
             {
-                float32_t val = calc_y(_maxSize.value.cy);
+                float32_t val = _maxSize.cy;
                 if (size.cy > val)
                     size.cy = val;
             }

@@ -23,14 +23,14 @@ namespace ui::renderables
         core::rc32f rect(_rect.pos, _image_size);
 
         if (_fitting.x == image_fitting::scale)
-            rect.cx = _image->width();
+            rect.cx = float32_t(_image->width());
         else
-            rect.cx = _image_size.empty() ? _image->width() : _image_size.cx;
+            rect.cx = _image_size.empty() ? float32_t(_image->width()) : _image_size.cx;
 
         if (_fitting.y == image_fitting::scale)
-            rect.cy = _image->height();
+            rect.cy = float32_t(_image->height());
         else
-            rect.cy = _image_size.empty() ? _image->height() : _image_size.cy;
+            rect.cy = _image_size.empty() ? float32_t(_image->height()) : _image_size.cy;
 
         while(true)
         {

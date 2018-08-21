@@ -168,7 +168,7 @@ namespace core { namespace string
     std::wstring ansi_u16(const char * text, int32_t length)
     {
         if (length < 0)
-            length = std::strlen(text);
+            length = int32_t(std::strlen(text));
         int32_t nchars = MultiByteToWideChar(CP_ACP, 0, text, length, NULL, 0);
         wchar_t * u16 = new wchar_t[nchars];
         int32_t nchars2 = MultiByteToWideChar(CP_ACP, 0, text, length, u16, nchars);

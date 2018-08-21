@@ -5,6 +5,15 @@
 namespace core
 {
     static thread_local invokable_helper __helper;
+    static std::atomic_uint64_t __object_id = 1;
+
+    uint64_t object::create_objectid()
+    {
+        static const uint64_t _one = 1;
+        uint64_t val = __object_id.fetch_add(_one);
+        //return std::hash_value<uint64_t>(val);
+        return val;
+    }
 
     invokable_helper & object::invokable_get_helper()
     {

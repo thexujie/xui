@@ -235,7 +235,7 @@ namespace graphics
         if (!_native)
             return;
 
-        core::pt32i point;
+        core::pt32f point;
         auto size = image.size();
         if (align & core::align::right)
             point.x = rect.right() - size.cx;
@@ -271,7 +271,7 @@ namespace graphics
             point.y = point.y - region.cy / 2;
         else {}
 
-        _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), nullptr);
+        _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, float32_t(region.x), float32_t(region.y)), nullptr);
     }
 
     void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, core::align align)
@@ -299,7 +299,7 @@ namespace graphics
         if (!_native)
             return;
 
-        core::pt32i point;
+        core::pt32f point;
         if (align & core::align::right)
             point.x = rect.right() - region.cx;
         else if (align & core::align::centerX)
@@ -322,7 +322,7 @@ namespace graphics
         if (!_native)
             return;
 
-        core::pt32i point;
+        core::pt32f point;
         if (align & core::align::right)
             point.x = rect.right() - region.cx;
         else if (align & core::align::centerX)

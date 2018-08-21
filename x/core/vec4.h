@@ -239,30 +239,34 @@ namespace core
 
 
         //------------------------------------------------------- Àƒ‘Ú‘ÀÀ„
+        template<typename = decltype(std::declval<T>() - std::declval<T>())>
         vec4 operator +(const vec4 & vec) const
         {
             return vec4(x + vec.x, y + vec.y, z + vec.z, w + vec.w);
         }
 
+        template<typename = decltype(std::declval<T>() - std::declval<T>())>
         vec4 operator -(const vec4 & vec) const
         {
             return vec4(x - vec.x, y - vec.y, z - vec.z, w - vec.w);
         }
 
+        template<typename = decltype(std::declval<T>() * std::declval<T>())>
         vec4 operator *(const vec4 & vec) const
         {
             return vec4(x * vec.x, y * vec.y, z * vec.z, w * vec.w);
+        }
+
+        template<typename = decltype(std::declval<T>() / std::declval<T>())>
+        vec4 operator /(const vec4 & vec) const
+        {
+            return vec4(x / vec.x, y / vec.y, z / vec.z, w / vec.w);
         }
 
         template<typename = std::enable_if_t<!std::is_same_v<T, float32_t>>>
         vec4 operator * (float32_t rate) const
         {
             return vec4(static_cast<T>(x * rate), static_cast<T>(y * rate), static_cast<T>(cx * rate), static_cast<T>(cy * rate));
-        }
-
-        vec4 operator /(const vec4 & vec) const
-        {
-            return vec4(x / vec.x, y / vec.y, z / vec.z, w / vec.w);
         }
 
         template<typename = std::enable_if_t<!std::is_same_v<T, float32_t>>>

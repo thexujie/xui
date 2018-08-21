@@ -1,3 +1,5 @@
+/* ReSharper disable CssNotResolved */
+
 .button {
     border: 1px;
     padding: 1em 0.5em;
@@ -15,4 +17,12 @@
     border: 2px;
     background-color: #a2f2;
     transition-duration: 200ms
+}
+
+.scrollbar {
+    bar-border: 1px;
+    bar-padding: 1em 0.5em;
+    bar-background-color: #2888;
+    bar-margin: 0.2em;
+    bar-transition-duration: 500ms
 }

@@ -36,7 +36,7 @@ namespace ui
 
     int32_t Desktop::numScreens() const
     {
-        return _screens.size();
+        return int32_t(_screens.size());
     }
 
     std::shared_ptr<Screen> Desktop::screen(int32_t index)

@@ -39,12 +39,15 @@ namespace core
             return std::dynamic_pointer_cast<T>(shared_from_this());
         }
 
+        uint64_t id() const { return _id; }
         error invoke(std::function<void()>);
 
     public:
+        static uint64_t create_objectid();
         static invokable_helper & invokable_get_helper();
 
-    private:
+    protected:
+        uint64_t _id = create_objectid();
         invokable_helper & _invoker_helper = invokable_get_helper();
     };
 }

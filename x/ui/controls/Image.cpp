@@ -54,8 +54,8 @@ namespace ui::controls
                 _size.value.cy = _image_size.value.cx / _image->aspect();
             else if (_image_size.value.cx.nan() && _image_size.value.cy.nan())
             {
-                _size.value.cx = core::unit_dot(_image->width());
-                _size.value.cy = core::unit_dot(_image->height());
+                _size.value.cx = core::unit_dot(float32_t(_image->width()));
+                _size.value.cy = core::unit_dot(float32_t(_image->height()));
             }
             else {}
             return calc(_size);
