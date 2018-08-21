@@ -64,60 +64,11 @@ namespace core
         virtual T get_value(object & self) = 0;
     };
 
-    //template <typename T>
-    //struct HasBack
-    //{
-    //    template<typename U>
-    //    static decltype(std::declval<U>().Back(), std::true_type{}) func(std::remove_reference_t<U>*);
+    template <typename T, typename = void>
+    struct is_interpolatorable : std::false_type {};
 
-    //    template<typename U>
-    //    static std::false_type func(...);
-
-    //    using  type = decltype(func<T>(nullptr));
-
-    //    static constexpr bool value{ type::value };
-    //};
-
-
-    template<class _Ty1,
-        class _Ty2>
-        struct is_same2
-        : std::false_type
-    {	// determine whether _Ty1 and _Ty2 are the same type
-    };
-
-    template<class _Ty1>
-    struct is_same2<_Ty1, _Ty1>
-        : std::true_type
-    {
-    };
-
-    template<class _Ty,
-        class _Uty>
-        _INLINE_VAR constexpr bool is_same_v2 = is_same2<_Ty, _Uty>::value;
-
-    template<typename T, typename MT, typename PT>
-    struct _is_interpolatorable : public std::false_type {};
-
-    //template<typename T>
-    //struct is_interpolatorable : public _is_interpolatorable<T, decltype(std::declval<T>() -std::declval<T>(), std::true_type{}), decltype(std::declval<T>() * std::declval<float32_t>(), std::true_type{})>
-    //{
-
-    //};
-
-    template<typename T>
-    struct is_interpolatorable
-    {
-        template<typename U>
-        static decltype((std::declval<U>() - std::declval<U>()) * float32_t(0), std::true_type{}) func(std::remove_reference_t<U>*);
-
-        template<typename U>
-        static std::false_type func(...);
-
-        using type = decltype(func<T>(nullptr));
-
-        static constexpr bool value{ type::value };
-    };
+    template <typename T>
+    struct is_interpolatorable<T, std::void_t<decltype((std::declval<T>() - std::declval<T>()) * float32_t(0))>> : std::true_type {};
 
     template<typename T>
     inline constexpr bool is_interpolatorable_v = is_interpolatorable<T>::value;
