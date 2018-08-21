@@ -54,17 +54,20 @@ namespace ui::component
         if (!object)
             throw core::exception(core::error_nullptr);
 
-        switch(object->type())
         {
-        case ComponentType::Renderable:
-            _renderables.insert(std::make_pair(0, std::dynamic_pointer_cast<Renderable>(object)));
-            invalid(object->rect());
-            break;
-        case ComponentType::Interactable:
-            _mouseareas.push_back(std::dynamic_pointer_cast<MouseArea>(object));
-            break;
-        default: 
-            break;
+            std::unique_lock<std::mutex> lock(_mtx, std::try_to_lock);
+            switch (object->type())
+            {
+            case ComponentType::Renderable:
+                _renderables.insert(std::make_pair(0, std::dynamic_pointer_cast<Renderable>(object)));
+                invalid(object->rect());
+                break;
+            case ComponentType::Interactable:
+                _mouseareas.push_back(std::dynamic_pointer_cast<MouseArea>(object));
+                break;
+            default:
+                break;
+            }
         }
         object->enterView(std::dynamic_pointer_cast<View>(shared_from_this()));
     }

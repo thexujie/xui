@@ -42,6 +42,7 @@ namespace win32
         form->shownChanged += std::weak_bind(&Window::onShownChanged, shared_from_this(), std::placeholders::_1);
         scene->invalidated += std::weak_bind(&Window::onSceneInvalidated, shared_from_this(), std::placeholders::_1);
         scene->rendered += std::weak_bind(&Window::onSceneRendered, shared_from_this(), std::placeholders::_1);
+        scene->captured += std::weak_bind(&Window::onSceneCaptured, shared_from_this(), std::placeholders::_1);
         return core::error_ok;
     }
 
@@ -141,6 +142,25 @@ namespace win32
     void Window::onSceneRendered(const graphics::Region & region)
     {
         _render(region);
+    }
+
+    void Window::onSceneCaptured(bool capture)
+    {
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return;
+
+        if (capture)
+        {
+            std::cout << " captured window" << std::endl;
+            ::SetCapture(hwnd);
+        }
+        else if(hwnd == GetCapture())
+        {
+            ::ReleaseCapture();
+            std::cout << " release captured window" << std::endl;
+        }
+        
     }
 
     core::error Window::_createWindow()
@@ -455,6 +475,7 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
+        _mouse_state.setAction(ui::component::mouse_action::moving);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         if (!_trackingMouse)
         {
@@ -484,7 +505,8 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        _mouse_state.active(ui::component::mouse_button::mask, false);
+        _mouse_state.setAction(ui::component::mouse_action::leaving);
+        _mouse_state.setButton(ui::component::mouse_button::mask, false);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         s->onMouseLeave(_mouse_state);
         return 0;
@@ -497,7 +519,8 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        _mouse_state.active(ui::component::mouse_button::left, true);
+        _mouse_state.setAction(ui::component::mouse_action::pressing);
+        _mouse_state.setButton(ui::component::mouse_button::left, true);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         s->onMouseDown(_mouse_state);
         return 0;
@@ -510,7 +533,8 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        _mouse_state.active(ui::component::mouse_button::left, false);
+        _mouse_state.setAction(ui::component::mouse_action::releasing);
+        _mouse_state.setButton(ui::component::mouse_button::left, false);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         s->onMouseUp(_mouse_state);
         return 0;

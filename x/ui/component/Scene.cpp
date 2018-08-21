@@ -127,85 +127,70 @@ namespace ui::component
 
     void Scene::onMouseEnter(const mosue_state & state)
     {
-        auto ma = findMouseArea(state.pos());
-        if (_mousearea_hoving == ma)
-            return;
-
-        if (_mousearea_hoving)
-            _mousearea_hoving->onMouseLeave(state);
-
-        _mousearea_hoving = ma;
-
-        if (_mousearea_hoving)
-            _mousearea_hoving->onMouseEnter(state);
+        _updateMouseArea(state);
     }
 
     void Scene::onMouseMove(const mosue_state & state)
     {
-        if (!state.active(mouse_button::mask))
-        {
-            auto ma = findMouseArea(state.pos());
-            if (_mousearea_hoving != ma)
-            {
-                if (_mousearea_hoving)
-                    _mousearea_hoving->onMouseLeave(state);
-
-                _mousearea_hoving = ma;
-
-                if (_mousearea_hoving)
-                    _mousearea_hoving->onMouseEnter(state);
-            }
-        }
-
-        if (_mousearea_hoving)
-            _mousearea_hoving->onMouseMove(state);
+        _updateMouseArea(state);
+        if (_mousearea_current)
+            _mousearea_current->onMouseMove(state);
     }
 
     void Scene::onMouseLeave(const mosue_state & state)
     {
-        if (_mousearea_hoving)
-            _mousearea_hoving->onMouseLeave(state);
-
-        _mousearea_hoving = nullptr;
+        _updateMouseArea(state);
     }
 
     void Scene::onMouseDown(const mosue_state & state)
     {
-        if (_mousearea_hoving)
-            _mousearea_hoving->onMouseDown(state);
+        if (_mousearea_current)
+        {
+            if (_mousearea_current->captureButtons())
+                captured(true);
+            _mousearea_current->onMouseDown(state);
+        }
     }
 
     void Scene::onMouseUp(const mosue_state & state)
     {
-        if (_mousearea_hoving)
-            _mousearea_hoving->onMouseUp(state);
-
-        if (!state.active(mouse_button::mask))
+        if (_mousearea_current)
         {
-            auto ma = findMouseArea(state.pos());
-            if (_mousearea_hoving != ma)
-            {
-                if (_mousearea_hoving)
-                    _mousearea_hoving->onMouseLeave(state);
-
-                _mousearea_hoving = ma;
-
-                if (_mousearea_hoving)
-                    _mousearea_hoving->onMouseEnter(state);
-            }
+            _mousearea_current->onMouseUp(state);
+            if (_mousearea_current->captureButtons())
+                captured(false);
         }
+
+        _updateMouseArea(state);
     }
 
     void Scene::onMouseClick(const mosue_state & state)
     {
-        if (_mousearea_hoving)
-            _mousearea_hoving->onMouseClick(state);
+        if (_mousearea_current)
+            _mousearea_current->onMouseClick(state);
     }
 
     void Scene::onMouseDBClick(const mosue_state & state)
     {
-        if (_mousearea_hoving)
-            _mousearea_hoving->onMouseDBClick(state);
+        if (_mousearea_current)
+            _mousearea_current->onMouseDBClick(state);
+    }
+
+    void Scene::_updateMouseArea(const mosue_state & state)
+    {
+        auto ma = state.action() == mouse_action::leaving ?  nullptr : findMouseArea(state.pos());
+        // do not update while capturing one or more button(s)
+        if (_mousearea_current != ma &&
+            (!_mousearea_current || !(_mousearea_current->captureButtons() & state.buttons())))
+        {
+            if (_mousearea_current)
+                _mousearea_current->onMouseLeave(state);
+
+            _mousearea_current = ma;
+
+            if (_mousearea_current)
+                _mousearea_current->onMouseEnter(state);
+        }
     }
 
     void Scene::renderThread()

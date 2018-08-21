@@ -11,12 +11,6 @@ namespace ui::controls
         _padding = {1_em, 0.5_em};
     }
 
-    ScrollBar::ScrollBar(std::string text) : _text(text)
-    {
-        _border = core::vec4<core::dimensionf>{ 1_px };
-        _padding = { 1_em, 0.5_em };
-    }
-
     ScrollBar::~ScrollBar()
     {
         
@@ -26,9 +20,9 @@ namespace ui::controls
     {
         Control::propertyTableCallback(properties);
         properties["bar-color"] = make_accessor(&ScrollBar::setBarColor, &ScrollBar::barColor, core::parseColor, nullptr);
-        properties["bar-border"] = make_accessor(&ScrollBar::setBarBorder, &ScrollBar::barBorder, core::parseDimension4D, nullptr);
-        properties["bar-border-color"] = make_accessor(&ScrollBar::setBarBorderColors, &ScrollBar::barBorderColors, core::parseColor4D, nullptr);
-        properties["bar-border-styles"] = make_accessor(&ScrollBar::setBarBorderStyles, &ScrollBar::barBorderStyles, graphics::parseStrokeStyle4D, nullptr);
+        properties["bar-border"] = make_accessor(&ScrollBar::setBarBorder, &ScrollBar::barBorder, core::parseDimension, nullptr);
+        properties["bar-border-color"] = make_accessor(&ScrollBar::setBarBorderColor, &ScrollBar::barBorderColor, core::parseColor, nullptr);
+        properties["bar-border-style"] = make_accessor(&ScrollBar::setBarBorderStyle, &ScrollBar::barBorderStyle, graphics::parseStrokeStyle, nullptr);
     }
 
     void ScrollBar::propertyTable(core::property_table & properties)
@@ -36,35 +30,32 @@ namespace ui::controls
         ScrollBar::propertyTableCallback(properties);
     }
 
-    void ScrollBar::setText(const std::string & text)
-    {
-        _textBlob = nullptr;
-        _text = text;
-    }
-
-    core::si32f ScrollBar::contentSize() const
-    {
-        _confirmBlob();
-        return _textBlob ? _textBlob->size() : core::si32f();
-    }
-
     void ScrollBar::updateContent(std::shared_ptr<component::View> & view)
     {
-        _confirmBlob();
+        core::rc32f bar_rect = barRect();
 
-        if(!_mc_bar)
+        if (!_mc_bar)
         {
             _mc_bar = std::make_shared<interactables::MouseRectangle>();
+            _mc_bar->mouseEnter += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseEnter), shared_from_this());
+            _mc_bar->mouseMove += std::weak_bind(&ScrollBar::onBarMouseMove, share_ref<ScrollBar>(), std::placeholders::_1);
+            _mc_bar->mouseLeave += std::weak_bind(&ScrollBar::onBarMouseLeave, share_ref<ScrollBar>(), std::placeholders::_1);
+            _mc_bar->mouseDown += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseDown), shared_from_this());
+            _mc_bar->mouseUp += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseUp), shared_from_this());
+            _mc_bar->setCaptureButtons(component::mouse_button::left);
             view->insert(_mc_bar);
+        }
+        _mc_bar->setRect(bar_rect);
 
-            _mc_bar->mouseEnter += std::weak_binder(std::mem_fn(&ScrollBar::onMouseEnter), shared_from_this());
-            _mc_bar->mouseMove += std::weak_bind(&ScrollBar::onMouseMove, share_ref<ScrollBar>(), std::placeholders::_1);
-            _mc_bar->mouseLeave += std::weak_bind(&ScrollBar::onMouseLeave, share_ref<ScrollBar>(), std::placeholders::_1);
-            _mc_bar->mouseDown += std::weak_binder(std::mem_fn(&ScrollBar::onMouseDown), shared_from_this());
-            _mc_bar->mouseUp += std::weak_binder(std::mem_fn(&ScrollBar::onMouseUp), shared_from_this());
+        if(!_bar)
+        {
+            _bar = std::make_shared<renderables::Rectangle>();
+            view->insert(_bar);
         }
 
-        _mc_bar->setRect(box());
+        _bar->setRect(bar_rect);
+        _bar->setRectangle(bar_rect);
+        _bar->setPathStyle(graphics::PathStyle().fill(_bar_color));
     }
 
 
@@ -79,46 +70,83 @@ namespace ui::controls
         }
 
         if (pressed)
-            return "ScrollBar:active";
+            return "scrollbar:bar-active";
         else if (mousein)
-            return "ScrollBar:hover";
+            return "scrollbar:bar-hover";
         else
-            return "ScrollBar";
+            return "scrollbar";
     }
 
-    void ScrollBar::onMouseEnter(const component::mosue_state & state)
+    void ScrollBar::setValue(float32_t val)
+    {
+        if(!core::equal(_val, val))
+        {
+            _val = val;
+            invalid();
+        }
+    }
+
+    float32_t ScrollBar::barHeight() const
+    {
+        auto box = contentBox();
+        return box.cy * pageValue() / rangeValue();
+    }
+
+    float32_t ScrollBar::barSpace() const
+    {
+        auto box = contentBox();
+        return box.cy - box.cy * pageValue() / rangeValue();
+    }
+
+    core::rc32f ScrollBar::barRect() const
+    {
+        auto box = contentBox();
+        float32_t bar_cy = box.cy * pageValue() / rangeValue();
+        float32_t bar_y = (box.cy - bar_cy) * (_val / rangeValue());
+        core::rc32f bar_rect = { box.x, bar_y, box.cx, bar_cy };
+        return bar_rect;
+    }
+
+    void ScrollBar::onBarMouseEnter(const component::mosue_state & state)
     {
         updateStyle();
     }
 
-    void ScrollBar::onMouseMove(const component::mosue_state & state)
+    void ScrollBar::onBarMouseMove(const component::mosue_state & state)
     {
-        
+        if (_bar_drag_mouse_pos.empty())
+            return;
+
+        float32_t diff = state.pos().y - _bar_drag_mouse_pos.y;
+        float32_t val = std::clamp(_bar_drag_start_vallue + rangeValue() * (diff / barSpace()), _min, _max);
+        setValue(val);
     }
 
-    void ScrollBar::onMouseLeave(const component::mosue_state & state)
+    void ScrollBar::onBarMouseLeave(const component::mosue_state & state)
     {
+        _bar_drag_start_vallue = 0.0f;
+        _bar_drag_mouse_pos = {};
         updateStyle();
     }
 
     
-    void ScrollBar::onMouseDown(const component::mosue_state & state)
+    void ScrollBar::onBarMouseDown(const component::mosue_state & state)
     {
+        _bar_drag_start_vallue = _val;
+        _bar_drag_mouse_pos = state.pos();
         updateStyle();
     }
 
-    void ScrollBar::onMouseUp(const component::mosue_state & state)
+    void ScrollBar::onBarMouseUp(const component::mosue_state & state)
     {
+        _bar_drag_start_vallue = 0.0f;
+        _bar_drag_mouse_pos = {};
         updateStyle();
     }
 
-    void ScrollBar::_confirmBlob() const
+    void ScrollBar::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        if (!_textBlob)
-        {
-            graphics::StringFormat format(font());
-            format.color(color());
-            const_cast<std::shared_ptr<graphics::TextBlob> &>(_textBlob) = std::make_shared<graphics::TextBlob>(_text, format);
-        }
+        Control::onSizeChanged(from, to);
+        updateStyle();
     }
 }

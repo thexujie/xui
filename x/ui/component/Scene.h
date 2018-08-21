@@ -56,10 +56,14 @@ namespace ui::component
         virtual void onMouseClick(const mosue_state & state);
         virtual void onMouseDBClick(const mosue_state & state);
 
+    private:
+        void _updateMouseArea(const mosue_state & state);
+
     public:
         core::event<void(const core::rc32i & rect)> invalidated;
         //core::event<void(const core::rc32i & rect)> rendered;
         core::event<void(const graphics::Region & region)> rendered;
+        core::event<void(bool capture)> captured;
 
     private:
         void renderThread();
@@ -81,7 +85,7 @@ namespace ui::component
 
         std::shared_ptr<graphics::Bitmap> _renderBuffer;
 
-        std::shared_ptr<MouseArea> _mousearea_hoving;
+        std::shared_ptr<MouseArea> _mousearea_current;
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
 

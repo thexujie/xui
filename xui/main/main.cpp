@@ -19,6 +19,7 @@
 #include "ui/controls/Text.h"
 #include "ui/controls/Image.h"
 #include "ui/controls/Button.h"
+#include "ui/controls/ScrollBar.h"
 
 using namespace core;
 
@@ -106,6 +107,11 @@ int main()
     image0->setBorderStyles({ graphics::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
     image0->setMargin({ 0.5_em });
+
+    auto scrollbar = std::make_shared<ui::controls::ScrollBar>();
+    //image0->setBackgroundColor(colors::Green);
+    scrollbar->setSize({ 1_em, 100_per });
+
     auto image = std::make_shared<ui::controls::Image>("applique1.jpg");
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
@@ -125,6 +131,7 @@ int main()
     //form->setBorderStyles({ graphics::stroke_style::dashed });
     form->addControl(text);
     form->addControl(image0);
+    form->addControl(scrollbar);
     form->addControl(buttons);
     form->addControl(image);
     form->addControl(text2);

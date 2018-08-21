@@ -5,6 +5,7 @@ namespace ui::component
 {
     enum mouse_button
     {
+        none = 0,
         left = 0x0001,
         middle = 0x0002,
         right = 0x0004,
@@ -12,21 +13,39 @@ namespace ui::component
         mask= 0x00ff,
     };
 
+    template<> struct enable_bitmasks<mouse_button> { static const bool enable = true; };
+
+    enum class mouse_action
+    {
+        none = 0,
+        entering,
+        moving,
+        pressing,
+        clicking,
+        releasing,
+        dbclicking,
+        leaving,
+    };
+
     class mosue_state
     {
     public:
         mosue_state() = default;
-        mosue_state(const core::pt32f pos) : _pos(pos) {}
+        mosue_state(const core::pt32f pos, mouse_action action) : _pos(pos), _action(action){}
 
         void setPos(const core::pt32f & pos) { _pos = pos; }
         const core::pt32f & pos() const { return _pos; }
 
-        void active(mouse_button button, bool a) { a ? _buttons |= button : _buttons &= ~button; }
-        bool active(mouse_button button) const { return !!(_buttons & button); }
+        void setButton(mouse_button button, bool active) { active ? (_buttons |= button)  : (_buttons &= ~button); }
+        mouse_button buttons() const { return _buttons; }
+
+        void setAction(mouse_action action) { _action = action; }
+        mouse_action action() const { return _action; }
 
     private:
         core::pt32f _pos;
-        int32_t _buttons = 0;
+        mouse_action _action = mouse_action::none;
+        mouse_button _buttons = mouse_button::none;
     };
 
     class Interactable : public component::Component
@@ -45,7 +64,7 @@ namespace ui::component
         virtual core::error onHitTest(const core::pt32f & pos) const { return core::error_failed; }
         virtual void onMouseEnter(const mosue_state & state) { _mousein = true;  mouseEnter(state); }
         virtual void onMouseMove(const mosue_state & state) { mouseMove(state); }
-        virtual void onMouseLeave(const mosue_state & state) { _mousein = false; mouseLeave(state);  }
+        virtual void onMouseLeave(const mosue_state & state) { _pressed = false;  _mousein = false; mouseLeave(state); }
 
         virtual void onMouseDown(const mosue_state & state) { _pressed = true;  mouseDown(state); }
         virtual void onMouseUp(const mosue_state & state) { _pressed = false;  mouseUp(state); }
@@ -54,6 +73,9 @@ namespace ui::component
 
         bool mousein() const { return _mousein; }
         bool pressed() const { return _pressed; }
+
+        void setCaptureButtons(mouse_button buttons) { _capture_buttons = buttons; }
+        mouse_button captureButtons() const { return _capture_buttons; }
 
     public:
         core::event<void(const mosue_state & state)> mouseEnter;
@@ -67,5 +89,6 @@ namespace ui::component
     private:
         bool _mousein= false;
         bool _pressed = false;
+        mouse_button _capture_buttons = mouse_button::none;
     };
 }
