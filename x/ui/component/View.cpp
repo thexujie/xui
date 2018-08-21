@@ -22,7 +22,7 @@ namespace ui::component
             s->invalid(rect_invalid);
     }
 
-    void View::invalid(const core::rc32f & rect)
+    void View::invalid_rect(const core::rc32f & rect)
     {
         _rect_invalid.unite(rect);
     }
@@ -60,7 +60,7 @@ namespace ui::component
             {
             case ComponentType::Renderable:
                 _renderables.insert(std::make_pair(0, std::dynamic_pointer_cast<Renderable>(object)));
-                invalid(object->rect());
+                invalid_rect(object->rect());
                 break;
             case ComponentType::Interactable:
                 _mouseareas.push_back(std::dynamic_pointer_cast<MouseArea>(object));
@@ -82,7 +82,7 @@ namespace ui::component
         {
         case ComponentType::Renderable:
             _renderables.insert(std::make_pair(depth, std::dynamic_pointer_cast<Renderable>(object)));
-            invalid(object->rect());
+            invalid_rect(object->rect());
             break;
         case ComponentType::Interactable:
             _mouseareas.push_back(std::dynamic_pointer_cast<MouseArea>(object));
@@ -106,7 +106,7 @@ namespace ui::component
                     break;
                 }
             }
-            invalid(object->rect());
+            invalid_rect(object->rect());
             break;
         case ComponentType::Interactable:
             break;

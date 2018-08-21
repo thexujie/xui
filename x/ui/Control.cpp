@@ -491,6 +491,14 @@ namespace ui
     }
     void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }
 
+    void Control::onVisibleChanged(bool vis)
+    {
+        auto v = view();
+        auto s = scene();
+        if (s && v)
+            vis ? s->insert(v) : s->remove(v);
+    }
+
     void Control::_updateBackground(std::shared_ptr<component::View> & view)
     {
         if (_background_image)

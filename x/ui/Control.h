@@ -58,6 +58,9 @@ namespace ui
         const core::color32 & color() const;
         const graphics::font & font() const;
 
+        void setVisible(bool vis) { if (_visible != vis) { _visible = vis; onVisibleChanged(vis); } }
+        bool visible() const { return _visible.value; }
+
         core::si32f realPos() const { return _rect.pos; }
         core::si32f realSize() const { return _rect.size; }
         core::rc32f realRect() const { return _rect; }
@@ -120,11 +123,13 @@ namespace ui
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
+        virtual void onVisibleChanged(bool vis);
 
     public:
         core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
         core::event<void(const core::si32f & from, const core::si32f & to)> sizeChanged;
         core::event<void(const core::rc32f & from, const core::rc32f & to)> rectChanged;
+        core::event<void(bool vis)> visibleChanged;
 
     protected:
         void _updateBackground(std::shared_ptr<component::View> & view);
@@ -154,6 +159,7 @@ namespace ui
 
         core::attribute<graphics::font> _font;
 
+        core::attribute<bool> _visible = true;
         // background
         core::attribute<std::shared_ptr<graphics::Image>> _background_image;
         core::attribute<core::color32> _background_color = core::colors::Auto;
@@ -166,6 +172,7 @@ namespace ui
         std::string _style;
         bool _styleTransition = true;
         // 布局之后
+        core::pt32f _location;
         core::rc32f _rect;
 
         std::shared_ptr<renderables::Image> _background_imgage_obj;

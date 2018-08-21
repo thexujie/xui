@@ -14,7 +14,7 @@ namespace ui::component
 
         void lock();
         void unlock();
-        void invalid(const core::rc32f & rect);
+        void invalid_rect(const core::rc32f & rect);
 
         std::shared_ptr<Scene> scene() const { return _scene.lock(); }
         virtual void enteringScene(std::shared_ptr<Scene> scene);
@@ -31,19 +31,14 @@ namespace ui::component
 
         std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last = nullptr) const;
 
-        void setTransform(const core::float3x2 & transform) { _transform = transform; }
-
     protected:
         std::mutex _mtx;
         std::mutex _mtx_interactable;
         std::weak_ptr<Scene> _scene;
-        core::rc32f _rect;
         core::float3x2 _transform;
         std::multimap<int32_t, std::shared_ptr<Renderable>> _renderables;
         std::list<std::shared_ptr<MouseArea>> _mouseareas;
 
         core::rc32f _rect_invalid;
-
-
     };
 }

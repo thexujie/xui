@@ -77,6 +77,7 @@ namespace ui::component
         if (!view)
             return core::error_args;
 
+        std::lock_guard<std::mutex> lock(_mtx);
         view->enteringScene(share_ref<Scene>());
         _views.push_back(view);
         view->enterScene(share_ref<Scene>());
@@ -88,6 +89,7 @@ namespace ui::component
         if (!view)
             return core::error_args;
 
+        std::lock_guard<std::mutex> lock(_mtx);
         view->leavingScene(share_ref<Scene>());
         _views.remove(view);
         view->leaveScene(share_ref<Scene>());

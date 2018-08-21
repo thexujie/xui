@@ -35,6 +35,6 @@ namespace ui::component
     void Component::invalid()
     {
         if (auto v = view()) 
-            v->invalid(_rect);
+            v->invalid_rect(_rect);
     }
 }

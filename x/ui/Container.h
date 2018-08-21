@@ -4,6 +4,11 @@
 
 namespace ui
 {
+    namespace controls
+    {
+        class ScrollBar;
+    }
+
     class Container : public Control
     {
     public:
@@ -30,5 +35,8 @@ namespace ui
         std::list<std::shared_ptr<Control>> _controls;
         core::align _layout_direction = core::align::left;
         bool _top_level = false;
+
+        std::shared_ptr<controls::ScrollBar> _scrollbar_v;
+        std::shared_ptr<controls::ScrollBar> _scrollbar_h;
     };
 }

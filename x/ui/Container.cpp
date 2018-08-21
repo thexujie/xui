@@ -23,6 +23,7 @@ namespace ui
     {
         control->setParent(share_ref<Container>());
         _controls.push_back(control);
+        relayout();
     }
 
     void Container::removeControl(std::shared_ptr<Control> control)
