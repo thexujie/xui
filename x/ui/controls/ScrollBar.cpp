@@ -34,6 +34,15 @@ namespace ui::controls
     {
         core::rc32f bar_rect = barRect();
 
+        if (!_mc)
+        {
+            _mc = std::make_shared<interactables::MouseRectangle>();
+            _mc->mouseWheel += std::weak_binder(std::mem_fn(&ScrollBar::onMouseWheel), shared_from_this());
+            _mc->setAcceptWheelV(true);
+            view->insert(_mc);
+        }
+        _mc->setRect(box());
+
         if (!_mc_bar)
         {
             _mc_bar = std::make_shared<interactables::MouseRectangle>();
@@ -86,25 +95,40 @@ namespace ui::controls
         }
     }
 
-    float32_t ScrollBar::barHeight() const
+    float32_t ScrollBar::barSize() const
     {
-        auto box = contentBox();
-        return box.cy * pageValue() / rangeValue();
+        auto box = controlBox();
+        if(_direction == core::align::top)
+            return box.cy * pageValue() / rangeValue();
+        else
+            return box.cx * pageValue() / rangeValue();
     }
 
     float32_t ScrollBar::barSpace() const
     {
-        auto box = contentBox();
-        return box.cy - box.cy * pageValue() / rangeValue();
+        auto box = controlBox();
+        if (_direction == core::align::top)
+            return box.cy - box.cy * pageValue() / rangeValue();
+        else
+            return box.cx - box.cx * pageValue() / rangeValue();
+    }
+
+    float32_t ScrollBar::barPos() const
+    {
+        auto box = controlBox();
+        if (_direction == core::align::top)
+            return (box.cy - barSize()) * (_val / rangeValue());
+        else
+            return (box.cx - barSize()) * (_val / rangeValue());
     }
 
     core::rc32f ScrollBar::barRect() const
     {
-        auto box = contentBox();
-        float32_t bar_cy = box.cy * pageValue() / rangeValue();
-        float32_t bar_y = (box.cy - bar_cy) * (_val / rangeValue());
-        core::rc32f bar_rect = { box.x, bar_y, box.cx, bar_cy };
-        return bar_rect;
+        auto box = controlBox();
+        if (_direction == core::align::top)
+            return { box.x, box.y + barPos(), box.cx, barSize() };
+        else
+            return { box.x + barPos(), box.y, barSize(), box.cy };
     }
 
     void ScrollBar::onBarMouseEnter(const component::mosue_state & state)
@@ -117,9 +141,9 @@ namespace ui::controls
         if (_bar_drag_mouse_pos.empty())
             return;
 
-        float32_t diff = state.pos().y - _bar_drag_mouse_pos.y;
-        float32_t val = std::clamp(_bar_drag_start_vallue + rangeValue() * (diff / barSpace()), _min, _max);
-        setValue(val);
+        float32_t diff = _direction == core::align::top ? state.pos().y - _bar_drag_mouse_pos.y : state.pos().x - _bar_drag_mouse_pos.x;
+        float32_t val = _bar_drag_start_vallue + rangeValue() * (diff / barSpace());
+        setValue(std::clamp(val, _min, _max));
     }
 
     void ScrollBar::onBarMouseLeave(const component::mosue_state & state)
@@ -142,6 +166,12 @@ namespace ui::controls
         _bar_drag_start_vallue = 0.0f;
         _bar_drag_mouse_pos = {};
         updateStyle();
+    }
+
+    void ScrollBar::onMouseWheel(const component::mosue_state & state)
+    {
+        float32_t val = _val - lineValue() * state.wheelLines();
+        setValue(std::clamp(val, _min, _max));
     }
 
     void ScrollBar::onSizeChanged(const core::si32f & from, const core::si32f & to)

@@ -58,7 +58,7 @@ namespace ui
     {
         // 如果设置了固定大小，直接返回即可
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
-            return calc(_size.value, flags) + calc(_padding, flags).bsize();
+            return calc(_size.value, flags);
 
         core::si32f size = contentSize() + calc(_padding).bsize();
         if (_size.available())

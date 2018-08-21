@@ -100,4 +100,14 @@
     <DisplayString>{{{m128i_i32[0]}, {m128i_i32[1]}, {m128i_i32[2]}, {m128i_i32[3]}}}</DisplayString>
   </Type>
 
+	<Type Name="ui::controls::Button">
+		<DisplayString>Button control</DisplayString>
+	</Type>
+
+	<Type Name="ui::controls::ScrollBar">
+		<DisplayString>ScrollBar control</DisplayString>
+	</Type>
+	<Type Name="ui::component::MouseArea">
+		<DisplayString>MouseArea {_rect}</DisplayString>
+	</Type>
 </AutoVisualizer>

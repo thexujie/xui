@@ -29,7 +29,7 @@ namespace ui::component
 
         virtual void render(graphics::Graphics & graphics, const graphics::Region & region) const;
 
-        std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos) const;
+        std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last = nullptr) const;
 
         void setTransform(const core::float3x2 & transform) { _transform = transform; }
 

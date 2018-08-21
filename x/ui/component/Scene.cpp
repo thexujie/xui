@@ -114,11 +114,11 @@ namespace ui::component
             view->render(graphics, region);
     }
 
-    std::shared_ptr<MouseArea> Scene::findMouseArea(const core::pt32f & pos) const
+    std::shared_ptr<MouseArea> Scene::findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last) const
     {
         for (auto & view : _views)
         {
-            auto ma = view->findMouseArea(pos);
+            auto ma = view->findMouseArea(pos, last);
             if (ma)
                 return ma;
         }
@@ -174,6 +174,33 @@ namespace ui::component
     {
         if (_mousearea_current)
             _mousearea_current->onMouseDBClick(state);
+    }
+
+    void Scene::onMouseState(const mosue_state & state)
+    {
+        if(state.action() == mouse_action::v_wheeling)
+        {
+            //findMouseArea(state.pos());
+            if (_mousearea_current && _mousearea_current->acceptWheelV())
+                _mousearea_current->onMouseWheel(state);
+            else
+            {
+                auto obj = _mousearea_current;
+                while(true)
+                {
+                    obj = findMouseArea(state.pos(), obj);
+                    if (!obj)
+                        break;
+
+                    if (!obj->acceptWheelV())
+                        continue;
+
+                    obj->onMouseWheel(state);
+                    break;
+                }
+            }
+            _updateMouseArea(state);
+        }
     }
 
     void Scene::_updateMouseArea(const mosue_state & state)

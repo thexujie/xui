@@ -25,6 +25,8 @@ namespace ui::component
         releasing,
         dbclicking,
         leaving,
+
+        v_wheeling,
     };
 
     class mosue_state
@@ -42,10 +44,14 @@ namespace ui::component
         void setAction(mouse_action action) { _action = action; }
         mouse_action action() const { return _action; }
 
+        void setWheelLines(int32_t lines) { _wheel_lines = lines; }
+        int32_t wheelLines() const { return _wheel_lines; }
+
     private:
         core::pt32f _pos;
         mouse_action _action = mouse_action::none;
         mouse_button _buttons = mouse_button::none;
+        int32_t _wheel_lines = 0;
     };
 
     class Interactable : public component::Component
@@ -70,12 +76,16 @@ namespace ui::component
         virtual void onMouseUp(const mosue_state & state) { _pressed = false;  mouseUp(state); }
         virtual void onMouseClick(const mosue_state & state) { mouseClick(state); }
         virtual void onMouseDBClick(const mosue_state & state) { mouseDBClick(state); }
+        virtual void onMouseWheel(const mosue_state & state) { mouseWheel(state); }
 
         bool mousein() const { return _mousein; }
         bool pressed() const { return _pressed; }
 
         void setCaptureButtons(mouse_button buttons) { _capture_buttons = buttons; }
         mouse_button captureButtons() const { return _capture_buttons; }
+
+        void setAcceptWheelV(bool b) { _accept_wheel_v = b; }
+        bool acceptWheelV() const { return _accept_wheel_v; }
 
     public:
         core::event<void(const mosue_state & state)> mouseEnter;
@@ -85,10 +95,12 @@ namespace ui::component
         core::event<void(const mosue_state & state)> mouseUp;
         core::event<void(const mosue_state & state)> mouseClick;
         core::event<void(const mosue_state & state)> mouseDBClick;
+        core::event<void(const mosue_state & state)> mouseWheel;
 
     private:
         bool _mousein= false;
         bool _pressed = false;
         mouse_button _capture_buttons = mouse_button::none;
+        bool _accept_wheel_v = false;
     };
 }

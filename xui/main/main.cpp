@@ -89,6 +89,13 @@ int main()
             button->setBorderColors({ colors::DimGray });
             buttons->addControl(button);
         }
+
+        auto scrollbar2 = std::make_shared<ui::controls::ScrollBar>();
+        //image0->setBackgroundColor(colors::Green);
+        scrollbar2->setDirection(core::align::left);
+        scrollbar2->setSize({ 100_per, 1_em });
+        buttons->addControl(scrollbar2);
+        buttons->setBackgroundColor(0xffffffff);
     }
 
     auto text = std::make_shared<ui::controls::Text>(u8"ABCDEF这是一个很好的内容的G");
@@ -111,6 +118,8 @@ int main()
     auto scrollbar = std::make_shared<ui::controls::ScrollBar>();
     //image0->setBackgroundColor(colors::Green);
     scrollbar->setSize({ 1_em, 100_per });
+
+
 
     auto image = std::make_shared<ui::controls::Image>("applique1.jpg");
     //image->setBackgroundColor(colors::Green);
@@ -166,6 +175,9 @@ int main()
     std::vector<std::shared_ptr<animation>> anims;
     for (auto & control : buttons->children())
     {
+        if (!control->is_type_of<ui::controls::Button>())
+            continue;
+
         auto interpolator = make_interpolator<core::color32>(inter);
         prop->serialize("red", interpolator->start());
         prop->serialize("green", interpolator->end());

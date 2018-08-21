@@ -98,7 +98,8 @@ namespace graphics
 
     RegionIterator::RegionIterator(const Region & region)
     {
-        _native = std::make_shared<SkRegion::Iterator>(region.native());
+        if(region)
+            _native = std::make_shared<SkRegion::Iterator>(region.native());
     }
 
     bool RegionIterator::done()

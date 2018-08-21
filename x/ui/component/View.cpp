@@ -133,13 +133,21 @@ namespace ui::component
         graphics.setMatrix(core::float3x2::identity);
     }
 
-    std::shared_ptr<MouseArea> View::findMouseArea(const core::pt32f & pos) const
+    std::shared_ptr<MouseArea> View::findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last) const
     {
         std::lock_guard<std::mutex> lock(const_cast<View *>(this)->_mtx_interactable);
-        for (auto & mousearea : _mouseareas)
+        bool found = false;
+        for (auto iter = _mouseareas.rbegin(); iter != _mouseareas.rend(); ++iter)
         {
-            if (mousearea->onHitTest(pos) == core::error_ok)
-                return mousearea;
+            if (last && !found)
+            {
+                if(*iter == last)
+                    found = true;
+                continue;
+            }
+
+            if ((*iter)->onHitTest(pos) == core::error_ok)
+                return *iter;
         }
         return nullptr;
     }

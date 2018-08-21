@@ -42,6 +42,12 @@ namespace core
         uint64_t id() const { return _id; }
         error invoke(std::function<void()>);
 
+        template<typename T>
+        bool is_type_of()
+        {
+            return dynamic_cast<T *>(this) != nullptr;
+        }
+
     public:
         static uint64_t create_objectid();
         static invokable_helper & invokable_get_helper();

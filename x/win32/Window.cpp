@@ -383,7 +383,7 @@ namespace win32
             //CASE_MSG(WM_NCLBUTTONDOWN, OnWmNcMouseDownL);
 
             //CASE_MSG(WM_LBUTTONDBLCLK, OnWmMouseDBClick);
-            //CASE_MSG(WM_MOUSEWHEEL, OnWmMouseWheelV);
+            CASE_MSG(WM_MOUSEWHEEL, OnWmMouseWheelV);
 
             CASE_MSG(WM_MOVE, OnWmMove);
             CASE_MSG(WM_SIZE, OnWmSize);
@@ -475,6 +475,7 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
+        _mouse_state.setWheelLines(0);
         _mouse_state.setAction(ui::component::mouse_action::moving);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         if (!_trackingMouse)
@@ -505,6 +506,7 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
+        _mouse_state.setWheelLines(0);
         _mouse_state.setAction(ui::component::mouse_action::leaving);
         _mouse_state.setButton(ui::component::mouse_button::mask, false);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
@@ -519,6 +521,7 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
+        _mouse_state.setWheelLines(0);
         _mouse_state.setAction(ui::component::mouse_action::pressing);
         _mouse_state.setButton(ui::component::mouse_button::left, true);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
@@ -533,10 +536,33 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
+        _mouse_state.setWheelLines(0);
         _mouse_state.setAction(ui::component::mouse_action::releasing);
         _mouse_state.setButton(ui::component::mouse_button::left, false);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         s->onMouseUp(_mouse_state);
+        return 0;
+    }
+
+    intx_t Window::OnWmMouseWheelV(uintx_t uiParam, intx_t iParam)
+    {
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return 0;
+
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto s = f->scene();
+
+        POINT point = { core::i32li16(iParam), core::i32hi16(iParam) };
+        ::ScreenToClient(hwnd, &point);
+        //core::pt32i point = core::pt32i(core::i32li16(iParam), core::i32hi16(iParam));
+        //core::pt32i wheel = core::pt32i(core::u32li16(uiParam), core::u32hi16(uiParam));
+        _mouse_state.setWheelLines(core::u32hi16(uiParam) / WHEEL_DELTA);
+        _mouse_state.setAction(ui::component::mouse_action::v_wheeling);
+        _mouse_state.setPos(core::pt32i(point.x, point.y).to<float32_t>());
+        s->onMouseState(_mouse_state);
         return 0;
     }
 

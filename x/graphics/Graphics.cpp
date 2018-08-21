@@ -87,7 +87,7 @@ namespace graphics
 
         SkPaint paint;
         style.apply(paint);
-        _native->drawOval({ ellipse.x, ellipse.y, ellipse.right(), ellipse.bottom() }, paint);
+        _native->drawOval(skia::from(ellipse), paint);
     }
 
     void Graphics::drawRectangle(core::rc32f rect, const PathStyle & style)
@@ -97,7 +97,7 @@ namespace graphics
 
         SkPaint paint;
         style.apply(paint);
-        _native->drawRect({ rect.x, rect.y, rect.right(), rect.bottom()}, paint);
+        _native->drawRect(skia::from(rect), paint);
     }
 
     void Graphics::drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const PathStyle & style)
@@ -107,7 +107,7 @@ namespace graphics
 
         SkPaint paint;
         style.apply(paint);
-        _native->drawRoundRect({ rect.x, rect.y, rect.right(), rect.bottom()}, rx, ry, paint);
+        _native->drawRoundRect(skia::from(rect), rx, ry, paint);
     }
 
     void Graphics::drawPath(const std::shared_ptr<graphics::Path> & path, const PathStyle & style)

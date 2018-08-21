@@ -71,6 +71,7 @@ namespace ui
         core::vec4f calc(const core::vec4<core::dimensionf> & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
 
        core::rc32f box() const;
+       core::rc32f controlBox() const { return box(); }
        core::rc32f borderBox() const;
        core::rc32f paddingBox() const;
        core::rc32f contentBox() const;

@@ -281,6 +281,7 @@ namespace win32
         virtual intx_t OnWmMouseLeave(uintx_t uiParam, intx_t iParam);
         virtual intx_t OnWmMouseDownL(uintx_t uiParam, intx_t iParam);
         virtual intx_t OnWmMouseUpL(uintx_t uiParam, intx_t iParam);
+        virtual intx_t OnWmMouseWheelV(uintx_t uiParam, intx_t iParam);
 
         virtual intx_t OnWmMouseDown(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
         virtual intx_t OnWmMouseUp(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
@@ -291,7 +292,6 @@ namespace win32
         virtual intx_t OnWmMouseUpR(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmMouseDownM(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmMouseUpM(uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmMouseWheelV(uintx_t uiParam, intx_t iParam){ return 0;}
 
         virtual intx_t OnWmSetText(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmActive(uintx_t uiParam, intx_t iParam){ return 0;}

@@ -45,7 +45,7 @@ namespace ui::component
         void render(graphics::Graphics & graphics, const graphics::Region & region) const;
 
     public:
-        std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos) const;
+        std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last = nullptr) const;
 
         virtual void onMouseEnter(const mosue_state & state);
         virtual void onMouseMove(const mosue_state & state);
@@ -55,6 +55,7 @@ namespace ui::component
         virtual void onMouseUp(const mosue_state & state);
         virtual void onMouseClick(const mosue_state & state);
         virtual void onMouseDBClick(const mosue_state & state);
+        virtual void onMouseState(const mosue_state & state);
 
     private:
         void _updateMouseArea(const mosue_state & state);
