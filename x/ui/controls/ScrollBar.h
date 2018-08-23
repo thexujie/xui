@@ -16,7 +16,7 @@ namespace ui::controls
         void setDirection(core::align direction) { if (_direction != direction) { _direction = direction; invalid(); } }
         core::align direction() const { return _direction; }
 
-        void updateContent(std::shared_ptr<component::View> & view) override;
+        void updateContent() override;
         std::string styleName() const override;
 
         void setBarColor(const core::color32 & color) { if (_bar_color != color) { _bar_color = color; invalid(); } }

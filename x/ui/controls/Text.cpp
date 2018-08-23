@@ -26,15 +26,15 @@ namespace ui::controls
         return _textBlob ? _textBlob->size() : core::si32f();
     }
 
-    void Text::updateContent(std::shared_ptr<component::View> & view)
+    void Text::updateContent()
     {
         _confirmBlob();
         if(_textBlob)
         {
             if(!_text_obj)
             {
-                _text_obj = std::make_shared<renderables::Text>(_textBlob);
-                view->insert(_text_obj);
+                _text_obj = std::make_shared<renderables::Text>(ref(), _textBlob);
+                insert(_text_obj);
             }
             _text_obj->setRect(contentBox());
         }

@@ -3,10 +3,6 @@
 
 namespace ui::renderables
 {
-    Text::Text() { }
-
-    Text::Text(std::shared_ptr<graphics::TextBlob> text) : _text(text) { }
-
     Text::~Text() { }
 
     void Text::setTextBlob(std::shared_ptr<graphics::TextBlob> text)
@@ -24,6 +20,6 @@ namespace ui::renderables
         if (!_text)
             return;
 
-        graphics.drawTextBlob(*_text, pos());
+        graphics.drawTextBlob(*_text, rect().pos);
     }
 }

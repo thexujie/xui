@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Component.h"
 #include "Scene.h"
-#include "View.h"
+#include "ui/Control.h"
 
 namespace ui::component
 {
@@ -12,12 +12,15 @@ namespace ui::component
 
     Scene::~Scene()
     {
+        _exit = true;
         if(_th_render.joinable())
         {
-            _exit = true;
             _cv_render.notify_all();
             _th_render.join();
         }
+
+        if (_future.valid())
+            _future.wait();
     }
 
     void Scene::invalid(const core::rc32f & rect)
@@ -30,9 +33,11 @@ namespace ui::component
         }
         //invalidated(rc);
         //invoke([this]() { flush(); });
-        if (!_th_render.joinable())
-            _th_render = std::thread(std::bind(&Scene::renderThread, this));
-        _cv_render.notify_one();
+        //if (!_th_render.joinable())
+            //_th_render = std::thread(std::bind(&Scene::renderThread, this));
+        //_cv_render.notify_one();
+        if(!_future.valid() || _future.wait_for(0s) != std::future_status::timeout)
+            _future = std::async(std::bind(&Scene::renderThread, this));
     }
 
     void Scene::update()
@@ -43,56 +48,26 @@ namespace ui::component
 
     void Scene::flush()
     {
-        core::rc32i invalid_rect;
-        graphics::Region invalid_region;
-        {
-            //std::lock_guard<std::mutex> lock(_mtx);
-            invalid_rect = std::move(_invalid_rect);
-            invalid_region = std::move(_invalid_region);
-            _invalid_rect.clear();
-            _invalid_region.clear();
-        }
-
-        if (invalid_rect.empty())
-            return;
-
-        if (!_renderBuffer || _renderBuffer->size().cx < invalid_rect.right() || _renderBuffer->size().cy < invalid_rect.bottom())
-            _renderBuffer = std::make_shared<graphics::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
-
-        auto rect = invalid_region.bounds();
-        graphics::Graphics graphics(_renderBuffer);
-        graphics.setClipRect(rect.to<float32_t>(), false);
-        graphics.clear(_color_default);
-        render(graphics, invalid_region);
-        //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
-        rendered(invalid_region);
-        //rendered(core::rc32i{{}, _renderBuffer ->size()});
-        static bool save = false;
-        if (save)
-            _renderBuffer->Save("scene.png");
     }
 
-    core::error Scene::insert(std::shared_ptr<View> view)
+    core::error Scene::insert(std::shared_ptr<Control> control)
     {
-        if (!view)
+        if (!control)
             return core::error_args;
 
         std::lock_guard<std::mutex> lock(_mtx);
-        view->enteringScene(share_ref<Scene>());
-        _views.push_back(view);
-        view->enterScene(share_ref<Scene>());
+        _controls.push_back(control);
         return core::error_ok;
     }
 
-    core::error Scene::remove(std::shared_ptr<View> view)
+    core::error Scene::remove(std::shared_ptr<Control> control)
     {
-        if (!view)
+        if (!control)
             return core::error_args;
 
+        auto s = share_ref<Scene>();
         std::lock_guard<std::mutex> lock(_mtx);
-        view->leavingScene(share_ref<Scene>());
-        _views.remove(view);
-        view->leaveScene(share_ref<Scene>());
+        _controls.remove(control);
         return core::error_ok;
     }
 
@@ -110,15 +85,9 @@ namespace ui::component
         return core::error_ok;
     }
 
-    void Scene::render(graphics::Graphics & graphics, const graphics::Region & region) const
-    {
-        for (auto & view : _views)
-            view->render(graphics, region);
-    }
-
     std::shared_ptr<MouseArea> Scene::findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last) const
     {
-        for (auto & view : _views)
+        for (auto & view : _controls)
         {
             auto ma = view->findMouseArea(pos, last);
             if (ma)
@@ -224,15 +193,43 @@ namespace ui::component
 
     void Scene::renderThread()
     {
-        std::unique_lock<std::mutex> lock(_mtx);
-        while(true)
-        {
-            _cv_render.wait(lock, [this]() { return _exit || !_invalid_region.empty(); });
-            if (_exit)
-                break;
+        //std::unique_lock<std::mutex> lock(_mtx);
 
-            flush();
+        core::rc32i invalid_rect;
+        graphics::Region invalid_region;
+        {
+            std::lock_guard<std::mutex> lock(_mtx);
+            invalid_rect = std::move(_invalid_rect);
+            invalid_region = std::move(_invalid_region);
+            _invalid_rect.clear();
+            _invalid_region.clear();
         }
+
+        if (invalid_rect.empty())
+            return;
+
+        if (!_renderBuffer || _renderBuffer->size().cx < invalid_rect.right() || _renderBuffer->size().cy < invalid_rect.bottom())
+            _renderBuffer = std::make_shared<graphics::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
+
+        auto rect = invalid_region.bounds();
+        graphics::Graphics graphics(_renderBuffer);
+        graphics.setClipRect(rect.to<float32_t>(), false);
+        graphics.clear(_color_default);
+        for (auto & control : _controls)
+        {
+            control->render(graphics, invalid_region);
+            if (_exit)
+                return;
+        }
+
+        if (_exit)
+            return;
+        //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
+        rendered(invalid_region);
+        //rendered(core::rc32i{{}, _renderBuffer ->size()});
+        static bool save = false;
+        if (save)
+            _renderBuffer->Save("scene.png");
     }
 
     void Scene::animationTimerTick(core::timer & t, int64_t tick)

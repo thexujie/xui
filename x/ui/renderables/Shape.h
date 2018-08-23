@@ -7,7 +7,7 @@ namespace ui::renderables
     class Shape : public component::Renderable
     {
     public:
-        Shape()  {}
+        Shape(std::shared_ptr<ui::Control> control) : component::Renderable(control) {}
         ~Shape() = default;
 
         void setClipPath(std::shared_ptr<graphics::Path> path) { _clipPath = path; invalid(); }

@@ -62,14 +62,14 @@ namespace ui::controls
         }
     }
 
-    void Image::updateContent(std::shared_ptr<component::View> & view)
+    void Image::updateContent()
     {
         if (_image)
         {
             if(!_image_obj)
             {
-                _image_obj = std::make_shared<renderables::Image>(_image);
-                view->insert(_image_obj);
+                _image_obj = std::make_shared<renderables::Image>(ref(), _image);
+                insert(_image_obj);
             }
 
             _image_obj->setRect(contentBox());
@@ -80,7 +80,7 @@ namespace ui::controls
         {
             if(_image_obj)
             {
-                view->remove(_image_obj);
+                remove(_image_obj);
                 _image_obj = nullptr;
             }
         }

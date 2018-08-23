@@ -11,10 +11,9 @@ namespace ui::controls
         ~Text();
 
         core::si32f contentSize() const override;
-        void updateContent(std::shared_ptr<component::View> & view) override;
+        void updateContent() override;
 
     private:
-        // ȷ�� textBlob �Ѿ�������
         void _confirmBlob() const;
 
     private:

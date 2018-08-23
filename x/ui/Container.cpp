@@ -2,6 +2,7 @@
 #include "Container.h"
 #include "renderables/Image.h"
 #include "renderables/Rectangle.h"
+#include <set>
 
 namespace ui
 {
@@ -102,6 +103,7 @@ namespace ui
         core::rc32f box = paddingBox();
         core::rc32f layout_rect;
         layout_rect.cy = layout_size.cy;
+        std::set<std::string> setes;
         for (auto & control : _controls)
         {
             auto m = control->realMargin();

@@ -4,7 +4,6 @@
 #include "renderables/Rectangle.h"
 #include "renderables/Path.h"
 #include "renderables/Line.h"
-#include <combaseapi.h>
 
 namespace ui
 {
@@ -54,7 +53,7 @@ namespace ui
         return nullptr;
     }
 
-    core::si32f Control::prefferSize(core::bitflag<calc_flag> flags) const
+    core::si32f Control::prefferSize(calc_flag flags) const
     {
         // 如果设置了固定大小，直接返回即可
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
@@ -72,13 +71,6 @@ namespace ui
 
         _adjustSizeMinMax(size);
         return size;
-    }
-
-    std::shared_ptr<component::View> Control::view() const
-    {
-        if (!_view)
-            const_cast<std::shared_ptr<component::View> &>(_view) = std::make_shared<component::View>();
-        return _view;
     }
 
     std::shared_ptr<component::Animation> Control::animation() const
@@ -112,7 +104,7 @@ namespace ui
             return _font;
     }
 
-    float32_t Control::calc_x(const core::dimensionf & value, core::bitflag<calc_flag> flags) const
+    float32_t Control::calc_x(const core::dimensionf & value, calc_flag flags) const
     {
         auto s = scene();
         auto p = parent();
@@ -130,7 +122,7 @@ namespace ui
         case core::unit::dot:
             return value.value;
         case core::unit::per:
-            if (flags & calc_flag::donot_calc_percent_x)
+            if (core::testbit(flags, calc_flag::donot_calc_percent_x))
                 return 0;
             if (!p)
                 throw core::error_state;
@@ -140,7 +132,7 @@ namespace ui
         }
     }
 
-    float32_t Control::calc_y(const core::dimensionf & value, core::bitflag<calc_flag> flags) const
+    float32_t Control::calc_y(const core::dimensionf & value, calc_flag flags) const
     {
         auto s = scene();
         auto p = parent();
@@ -158,7 +150,7 @@ namespace ui
         case core::unit::dot:
             return value.value;
         case core::unit::per:
-            if (flags & calc_flag::donot_calc_percent_y)
+            if (core::testbit(flags, calc_flag::donot_calc_percent_y))
                 return 0;
             if (!p)
                 throw core::error_state;
@@ -168,12 +160,12 @@ namespace ui
         }
     }
 
-    core::vec2f Control::calc(const core::vec2<core::dimensionf> & value, core::bitflag<calc_flag> flags) const
+    core::vec2f Control::calc(const core::vec2<core::dimensionf> & value, calc_flag flags) const
     {
         return { calc_x(value.x, flags), calc_y(value.y, flags) };
     }
 
-    core::vec4f Control::calc(const core::vec4<core::dimensionf> & value, core::bitflag<calc_flag> flags) const
+    core::vec4f Control::calc(const core::vec4<core::dimensionf> & value, calc_flag flags) const
     {
         return { calc(value.xy, flags), calc(value.zw, flags) };
     }
@@ -375,7 +367,8 @@ namespace ui
     void Control::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
         _scene = scene;
-        scene->insert(view());
+        auto c = share_ref<Control>();
+        scene->insert(c);
         updateStyle();
     }
 
@@ -385,9 +378,9 @@ namespace ui
 
     void Control::leavingScene(std::shared_ptr<component::Scene> & scene)
     {
-        if (_view)
-            scene->remove(_view);
         _scene.reset();
+        auto c = share_ref<Control>();
+        scene->remove(c);
     }
 
     void Control::leaveScene(std::shared_ptr<component::Scene> & scene) { }
@@ -472,11 +465,14 @@ namespace ui
         if (!s)
             return;
 
-        auto v = view();
-        std::lock_guard<component::View> lock(*v);
-        _updateBackground(v);
-        updateContent(v);
-        _updateBorder(v);
+        std::lock_guard<std::mutex> lock(_mtx);
+        _updateBackground();
+        updateContent();
+        _updateBorder();
+
+        if (!_rect_invalid.empty() && s)
+            s->invalid(_rect_invalid);
+        _rect_invalid.clear();
     }
 
     void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to)
@@ -493,26 +489,26 @@ namespace ui
 
     void Control::onVisibleChanged(bool vis)
     {
-        auto v = view();
+        auto c = share_ref<Control>();
         auto s = scene();
-        if (s && v)
-            vis ? s->insert(v) : s->remove(v);
+        if (c && s)
+            vis ? s->insert(c) : s->remove(c);
     }
 
-    void Control::_updateBackground(std::shared_ptr<component::View> & view)
+    void Control::_updateBackground()
     {
         if (_background_image)
         {
             if (_background_rect_obj)
             {
-                view->remove(_background_rect_obj);
+                remove(_background_rect_obj);
                 _background_rect_obj = nullptr;
             }
 
             if(!_background_imgage_obj)
             {
-                _background_imgage_obj = std::make_shared<renderables::Image>(_background_image.value);
-                view->insert(DEPTH_BACKGROUND, _background_imgage_obj);
+                _background_imgage_obj = std::make_shared<renderables::Image>(ref(), _background_image.value);
+                insert(DEPTH_BACKGROUND, _background_imgage_obj);
             }
 
             _background_imgage_obj->setRect(box(_background_box));
@@ -524,13 +520,13 @@ namespace ui
         {
             if (_background_imgage_obj)
             {
-                view->remove(_background_imgage_obj);
+                remove(_background_imgage_obj);
                 _background_imgage_obj = nullptr;
             }
             if(!_background_rect_obj)
             {
-                _background_rect_obj = std::make_shared<renderables::Rectangle>();
-                view->insert(DEPTH_BACKGROUND, _background_rect_obj);
+                _background_rect_obj = std::make_shared<renderables::Rectangle>(ref());
+                insert(DEPTH_BACKGROUND, _background_rect_obj);
             }
 
             _background_rect_obj->setRect(box(_background_box));
@@ -541,18 +537,18 @@ namespace ui
         {
             if (_background_imgage_obj)
             {
-                view->remove(_background_imgage_obj);
+                remove(_background_imgage_obj);
                 _background_imgage_obj = nullptr;
             }
             if (_background_rect_obj)
             {
-                view->remove(_background_rect_obj);
+                remove(_background_rect_obj);
                 _background_rect_obj = nullptr;
             }
         }
     }
 
-    void Control::_updateBorder(std::shared_ptr<component::View> & view)
+    void Control::_updateBorder()
     {
         if (_border && _border_colors)
         {
@@ -562,8 +558,8 @@ namespace ui
             {
                 if (!_border_obj)
                 {
-                    _border_obj = std::make_shared<renderables::Rectangle>();
-                    view->insert(DEPTH_FOREGROUND, _border_obj);
+                    _border_obj = std::make_shared<renderables::Rectangle>(ref());
+                    insert(DEPTH_FOREGROUND, _border_obj);
                 }
 
                 for (int32_t cnt = 0; cnt < 4; ++cnt)
@@ -571,7 +567,7 @@ namespace ui
                     auto & border_obj = _border_objs[cnt];
                     if (border_obj)
                     {
-                        view->remove(border_obj);
+                        remove(border_obj);
                         border_obj = nullptr;
                     }
                 }
@@ -583,7 +579,7 @@ namespace ui
             {
                 if (_border_obj)
                 {
-                    view->remove(_border_obj);
+                    remove(_border_obj);
                     _border_obj = nullptr;
                 }
 
@@ -601,8 +597,8 @@ namespace ui
 
                         if (!border_obj)
                         {
-                            border_obj = std::make_shared<renderables::Line>(line[0], line[1]);
-                            view->insert(DEPTH_FOREGROUND, border_obj);
+                            border_obj = std::make_shared<renderables::Line>(ref(), line[0], line[1]);
+                            insert(DEPTH_FOREGROUND, border_obj);
                         }
                         border_obj->setRect(path->computeTightBounds());
                         border_obj->setClipPath(path);
@@ -612,7 +608,7 @@ namespace ui
                     {
                         if (border_obj)
                         {
-                            view->remove(border_obj);
+                            remove(border_obj);
                             border_obj = nullptr;
                         }
                     }
@@ -654,5 +650,85 @@ namespace ui
                     size.cy = val;
             }
         }
+    }
+
+    void Control::invalid_rect(const core::rc32f & rect)
+    {
+        _rect_invalid.unite(rect);
+    }
+
+    void Control::insert(int32_t depth, std::shared_ptr<component::Component> object)
+    {
+        assert(object);
+        if (!object)
+            throw core::exception(core::error_nullptr);
+
+        switch (object->type())
+        {
+        case ui::component::ComponentType::Renderable:
+            _renderables.insert(std::make_pair(depth, std::dynamic_pointer_cast<component::Renderable>(object)));
+            invalid_rect(object->rect());
+            break;
+        case ui::component::ComponentType::Interactable:
+            _mouseareas.push_back(std::dynamic_pointer_cast<component::MouseArea>(object));
+            break;
+        default:
+            break;
+        }
+    }
+
+    void Control::remove(std::shared_ptr<component::Component> object)
+    {
+        switch (object->type())
+        {
+        case ui::component::ComponentType::Renderable:
+            for (auto iter = _renderables.begin(); iter != _renderables.end(); ++iter)
+            {
+                if (iter->second == std::dynamic_pointer_cast<component::Renderable>(object))
+                {
+                    _renderables.erase(iter);
+                    break;
+                }
+            }
+            invalid_rect(object->rect());
+            break;
+        case ui::component::ComponentType::Interactable:
+            break;
+        default:
+            break;
+        }
+    }
+
+    void Control::clear()
+    {
+        _renderables.clear();
+    }
+
+    void Control::render(graphics::Graphics & graphics, const graphics::Region & region) const
+    {
+        std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
+        for (auto & rendereable : _renderables)
+        {
+            if (region.intersects(rendereable.second->rect().ceil<int32_t>()))
+                rendereable.second->render(graphics);
+        }
+    }
+
+    std::shared_ptr<component::MouseArea> Control::findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last) const
+    {
+        bool found = false;
+        for (auto iter = _mouseareas.rbegin(); iter != _mouseareas.rend(); ++iter)
+        {
+            if (last && !found)
+            {
+                if (*iter == last)
+                    found = true;
+                continue;
+            }
+
+            if ((*iter)->onHitTest(pos) == core::error_ok)
+                return *iter;
+        }
+        return nullptr;
     }
 }

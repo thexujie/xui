@@ -45,15 +45,15 @@ namespace ui::controls
         return _textBlob ? _textBlob->size() : core::si32f();
     }
 
-    void Button::updateContent(std::shared_ptr<component::View> & view)
+    void Button::updateContent()
     {
         _confirmBlob();
         if (_textBlob)
         {
             if(!_text_obj)
             {
-                _text_obj = std::make_shared<renderables::Text>();
-                view->insert(DEPTH_CONTENT, _text_obj);
+                _text_obj = std::make_shared<renderables::Text>(ref());
+                insert(DEPTH_CONTENT, _text_obj);
             }
             _text_obj->setTextBlob(_textBlob);
             _text_obj->setRect(contentBox());
@@ -61,8 +61,8 @@ namespace ui::controls
 
         if(!_mrc_obj)
         {
-            _mrc_obj = std::make_shared<interactables::MouseRectangle>();
-            view->insert(_mrc_obj);
+            _mrc_obj = std::make_shared<interactables::MouseRectangle>(ref());
+            insert(_mrc_obj);
 
             _mrc_obj->mouseEnter += std::weak_binder(std::mem_fn(&Button::onMouseEnter), shared_from_this());
             _mrc_obj->mouseMove += std::weak_bind(&Button::onMouseMove, share_ref<Button>(), std::placeholders::_1);

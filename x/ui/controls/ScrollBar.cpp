@@ -30,36 +30,36 @@ namespace ui::controls
         ScrollBar::propertyTableCallback(properties);
     }
 
-    void ScrollBar::updateContent(std::shared_ptr<component::View> & view)
+    void ScrollBar::updateContent()
     {
         core::rc32f bar_rect = barRect();
 
         if (!_mc)
         {
-            _mc = std::make_shared<interactables::MouseRectangle>();
+            _mc = std::make_shared<interactables::MouseRectangle>(ref());
             _mc->mouseWheel += std::weak_binder(std::mem_fn(&ScrollBar::onMouseWheel), shared_from_this());
             _mc->setAcceptWheelV(true);
-            view->insert(_mc);
+            insert(_mc);
         }
         _mc->setRect(box());
 
         if (!_mc_bar)
         {
-            _mc_bar = std::make_shared<interactables::MouseRectangle>();
+            _mc_bar = std::make_shared<interactables::MouseRectangle>(ref());
             _mc_bar->mouseEnter += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseEnter), shared_from_this());
             _mc_bar->mouseMove += std::weak_bind(&ScrollBar::onBarMouseMove, share_ref<ScrollBar>(), std::placeholders::_1);
             _mc_bar->mouseLeave += std::weak_bind(&ScrollBar::onBarMouseLeave, share_ref<ScrollBar>(), std::placeholders::_1);
             _mc_bar->mouseDown += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseDown), shared_from_this());
             _mc_bar->mouseUp += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseUp), shared_from_this());
             _mc_bar->setCaptureButtons(component::mouse_button::left);
-            view->insert(_mc_bar);
+            insert(_mc_bar);
         }
         _mc_bar->setRect(bar_rect);
 
         if(!_bar)
         {
-            _bar = std::make_shared<renderables::Rectangle>();
-            view->insert(_bar);
+            _bar = std::make_shared<renderables::Rectangle>(ref());
+            insert(_bar);
         }
 
         _bar->setRect(bar_rect);

@@ -18,7 +18,7 @@ namespace ui::controls
         core::si32f contentSize() const override;
 
         core::si32f _imageSize() const;
-        void updateContent(std::shared_ptr<component::View> & view) override;
+        void updateContent() override;
 
     public:
         void enteringScene(std::shared_ptr<component::Scene> & scene) override;

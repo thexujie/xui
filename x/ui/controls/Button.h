@@ -18,7 +18,7 @@ namespace ui::controls
         const std::string & text() const { return _text; }
 
         core::si32f contentSize() const override;
-        void updateContent(std::shared_ptr<component::View> & view) override;
+        void updateContent() override;
         std::string styleName() const override;
     public:
         void onMouseEnter(const component::mosue_state & state);

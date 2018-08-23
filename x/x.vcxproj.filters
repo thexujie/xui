@@ -131,9 +131,6 @@
     <ClCompile Include="ui\renderables\Text.cpp">
       <Filter>ui\renderables</Filter>
     </ClCompile>
-    <ClCompile Include="ui\Element.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
     <ClCompile Include="core\float3x2.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -160,9 +157,6 @@
     </ClCompile>
     <ClCompile Include="ui\interactables\MouseRectangle.cpp">
       <Filter>ui\interactables</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\component\View.cpp">
-      <Filter>ui\component</Filter>
     </ClCompile>
     <ClCompile Include="ui\component\Style.cpp">
       <Filter>ui\component</Filter>
@@ -392,9 +386,6 @@
     <ClInclude Include="ui\renderables\Text.h">
       <Filter>ui\renderables</Filter>
     </ClInclude>
-    <ClInclude Include="ui\Element.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="core\float3x2.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -424,9 +415,6 @@
     </ClInclude>
     <ClInclude Include="ui\interactables\MouseRectangle.h">
       <Filter>ui\interactables</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\component\View.h">
-      <Filter>ui\component</Filter>
     </ClInclude>
     <ClInclude Include="core\attribute.h">
       <Filter>core</Filter>

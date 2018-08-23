@@ -57,14 +57,14 @@ namespace ui::component
     class Interactable : public component::Component
     {
     public:
-        Interactable() : Component(ComponentType::Interactable) {}
+        Interactable(std::shared_ptr<ui::Control> control) : Component(ComponentType::Interactable, control) {}
         virtual ~Interactable() {}
     };
 
     class MouseArea : public component::Interactable
     {
     public:
-        MouseArea()  {}
+        MouseArea(std::shared_ptr<ui::Control> control) :Interactable(control) {}
         ~MouseArea() = default;
 
         virtual core::error onHitTest(const core::pt32f & pos) const { return core::error_failed; }

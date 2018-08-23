@@ -1,22 +1,60 @@
 #pragma once
 #include "component/Scene.h"
-#include "component/View.h"
 #include "renderables/Text.h"
 #include "renderables/Image.h"
 #include "renderables/Line.h"
 #include "renderables/Rectangle.h"
 #include "component/Style.h"
 #include "component/Animation.h"
-#include "Element.h"
 
 namespace ui
 {
+    const int32_t DEPTH_BACKGROUND = -1;
+    const int32_t DEPTH_CONTENT = 0;
+    const int32_t DEPTH_FOREGROUND = 1;
+
+    enum class control_box
+    {
+        // 控件边框
+        layout_box = 0,
+        // 边框方框
+        border_box,
+        // 内框方框
+        padding_box,
+        // 内容方框
+        content_box,
+    };
+
+    enum class layout_origin
+    {
+        // 默认位置
+        layout = 0,
+        // 相对于 parent 的位置
+        parent,
+        // 相对于 scene 的位置
+        scene,
+        // 相对于 view 的位置
+        view,
+        // 同 arrange，如果超出 scene 则相对于 view
+        sticky,
+    };
+
+    enum class calc_flag
+    {
+        none = 0,
+        donot_calc_percent_x = 0x0001,
+        donot_calc_percent_y = 0x0002,
+        donot_calc_percent_xy = donot_calc_percent_x | donot_calc_percent_y,
+    };
+    template<> struct enable_bitmasks<calc_flag> { static const bool enable = true; };
+
     class Control : public core::object
     {
     public:
         Control();
         virtual ~Control();
 
+        std::shared_ptr<Control> ref() const { return const_cast<Control *>(this)->share_ref<Control>(); }
         static void propertyTableCallback(core::property_table & properties);
         virtual void propertyTable(core::property_table & properties);
         virtual const core::property_table & properties();
@@ -46,10 +84,9 @@ namespace ui
         // expectSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
         core::si32f expectSize() const { return prefferSize(calc_flag::donot_calc_percent_xy); }
         // prefferSize 计算出的期望大小
-        core::si32f prefferSize(core::bitflag<calc_flag> flags = calc_flag::none) const;
+        core::si32f prefferSize(calc_flag flags = calc_flag::none) const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
-        std::shared_ptr<component::View> view() const;
         std::shared_ptr<component::Animation> animation() const;
         std::shared_ptr<component::Scene> scene() const { return _scene.lock(); }
         void setParent(std::shared_ptr<Control> parent) { _parent = parent; }
@@ -68,10 +105,10 @@ namespace ui
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
 
-        float32_t calc_x(const core::dimensionf & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
-        float32_t calc_y(const core::dimensionf & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
-        core::vec2f calc(const core::vec2<core::dimensionf> & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
-        core::vec4f calc(const core::vec4<core::dimensionf> & value, core::bitflag<calc_flag> flags = calc_flag::none) const;
+        float32_t calc_x(const core::dimensionf & value, calc_flag flags = calc_flag::none) const;
+        float32_t calc_y(const core::dimensionf & value, calc_flag flags = calc_flag::none) const;
+        core::vec2f calc(const core::vec2<core::dimensionf> & value, calc_flag flags = calc_flag::none) const;
+        core::vec4f calc(const core::vec4<core::dimensionf> & value, calc_flag flags = calc_flag::none) const;
 
        core::rc32f box() const;
        core::rc32f controlBox() const { return box(); }
@@ -119,7 +156,7 @@ namespace ui
 
         virtual void updateStyle();
         virtual void update();
-        virtual void updateContent(std::shared_ptr<component::View> & view) {}
+        virtual void updateContent() {}
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
@@ -132,15 +169,14 @@ namespace ui
         core::event<void(bool vis)> visibleChanged;
 
     protected:
-        void _updateBackground(std::shared_ptr<component::View> & view);
-        void _updateBorder(std::shared_ptr<component::View> & view);
+        void _updateBackground();
+        void _updateBorder();
         void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:
         std::weak_ptr<component::Scene> _scene;
         std::weak_ptr<Control> _parent;
 
-        std::shared_ptr<component::View> _view;
         std::shared_ptr<component::Animation> _animation;
 
         layout_origin _layout_origin = layout_origin::layout;
@@ -183,5 +219,24 @@ namespace ui
         // true if need update
         bool _invalid = false;
         bool _invalid_layout = false;
+
+        core::float3x2 _transform;
+        std::multimap<int32_t, std::shared_ptr<component::Renderable>> _renderables;
+        std::list<std::shared_ptr<component::MouseArea>> _mouseareas;
+
+        core::rc32f _rect_invalid;
+
+        std::mutex _mtx;
+   public:
+       void invalid_rect(const core::rc32f & rect);
+
+       void clear();
+       void insert(std::shared_ptr<component::Component> object) { insert(DEPTH_CONTENT, object); }
+       void insert(int32_t depth, std::shared_ptr<component::Component> object);
+       void remove(std::shared_ptr<component::Component> object);
+
+       virtual void render(graphics::Graphics & graphics, const graphics::Region & region) const;
+
+       std::shared_ptr<component::MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last = nullptr) const;
     };
 }

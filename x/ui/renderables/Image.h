@@ -13,8 +13,8 @@ namespace ui::renderables
     class Image : public component::Renderable
     {
     public:
-        Image() {}
-        Image(std::shared_ptr<graphics::Image> image) : _image(image) {}
+        Image(std::shared_ptr<ui::Control> control) : component::Renderable(control) {}
+        Image(std::shared_ptr<ui::Control> control, std::shared_ptr<graphics::Image> image) : component::Renderable(control), _image(image) {}
         ~Image() {}
 
         void setImage(std::shared_ptr<graphics::Image> image);

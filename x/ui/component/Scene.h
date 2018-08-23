@@ -36,14 +36,11 @@ namespace ui::component
         const core::rc32i & invalidRect() const { return _invalid_rect; }
 
     public:
-        core::error insert(std::shared_ptr<View> component);
-        core::error remove(std::shared_ptr<View> component);
+        core::error insert(std::shared_ptr<Control> control);
+        core::error remove(std::shared_ptr<Control> control);
         core::error start(std::shared_ptr<Animation> animation);
 
-        const std::list<std::shared_ptr<View>> & views() const { return _views; }
-
-        void render(graphics::Graphics & graphics, const graphics::Region & region) const;
-
+        const std::list<std::shared_ptr<Control>> & views() const { return _controls; }
     public:
         std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last = nullptr) const;
 
@@ -81,8 +78,10 @@ namespace ui::component
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
-        std::list<std::shared_ptr<View>> _views;
+        std::list<std::shared_ptr<Control>> _controls;
         std::list<std::shared_ptr<Animation>> _animations;
+
+        std::list<std::shared_ptr<Renderable>> _renderables;
 
         std::shared_ptr<graphics::Bitmap> _renderBuffer;
 
@@ -91,5 +90,7 @@ namespace ui::component
         std::shared_ptr<component::StyleSheet> _styleSheet;
 
         core::timer _animation_timer;
+
+        std::future<void> _future;
     };
 }

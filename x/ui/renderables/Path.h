@@ -7,8 +7,8 @@ namespace ui::renderables
     class Path : public component::Renderable
     {
     public:
-        Path() {}
-        Path(std::shared_ptr<graphics::Path> path) : _path(path) {}
+        Path(std::shared_ptr<ui::Control> control) : component::Renderable(control) {}
+        Path(std::shared_ptr<ui::Control> control, std::shared_ptr<graphics::Path> path) : component::Renderable(control), _path(path) {}
         ~Path() = default;
 
         void setPath(std::shared_ptr<graphics::Path> path) { _path = path; invalid(); }

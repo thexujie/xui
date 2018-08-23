@@ -6,7 +6,7 @@ namespace ui::interactables
     class MouseRectangle: public component::MouseArea
     {
     public:
-        MouseRectangle()  {}
+        MouseRectangle(std::shared_ptr<ui::Control> control) : component::MouseArea(control) {}
         ~MouseRectangle() = default;
 
         core::error onHitTest(const core::pt32f & pos) const override;

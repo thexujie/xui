@@ -269,6 +269,12 @@ namespace core
         return abs(a - b) <= std::numeric_limits<float64_t>::epsilon() * std::min(abs(a), abs(b));
     }
 
+    template<typename T>
+    constexpr bool testbit(const T & val, const T & test)
+    {
+        return (val & test) != static_cast<T>(0);
+    }
+
 #pragma region lowhigh
 
     /*! @brief 获取 int32_t 类型值的高16位。*/
