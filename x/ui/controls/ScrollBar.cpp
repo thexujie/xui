@@ -91,7 +91,7 @@ namespace ui::controls
         if(!core::equal(_val, val))
         {
             _val = val;
-            invalid();
+            refresh();
         }
     }
 

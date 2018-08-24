@@ -262,7 +262,7 @@ namespace ui
         }
     }
 
-    void Control::invalid()
+    void Control::refresh()
     {
         if(!_invalid)
         {
@@ -343,7 +343,7 @@ namespace ui
             return;
 
         _background_color = color;
-        invalid();
+        refresh();
     }
 
     core::color32 Control::backgroundColor() const
@@ -356,7 +356,7 @@ namespace ui
         if (image == _background_image.value)
             return;
         _background_image = image;
-        invalid();
+        refresh();
     }
 
     std::shared_ptr<graphics::Image> Control::backgroundImage() const
@@ -454,7 +454,7 @@ namespace ui
                 
             }
             _style = style;
-            invalid();
+            refresh();
         }
     }
 
@@ -477,7 +477,7 @@ namespace ui
 
     void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to)
     {
-        invalid();
+        refresh();
         posChanged(from, to);
     }
     void Control::onSizeChanged(const core::si32f & from, const core::si32f & to)
@@ -652,7 +652,7 @@ namespace ui
         }
     }
 
-    void Control::invalid_rect(const core::rc32f & rect)
+    void Control::invalidate(const core::rc32f & rect)
     {
         _rect_invalid.unite(rect);
     }
@@ -663,11 +663,12 @@ namespace ui
         if (!object)
             throw core::exception(core::error_nullptr);
 
+        std::lock_guard<std::mutex> lock(_mtx);
         switch (object->type())
         {
         case ui::component::ComponentType::Renderable:
             _renderables.insert(std::make_pair(depth, std::dynamic_pointer_cast<component::Renderable>(object)));
-            invalid_rect(object->rect());
+            invalidate(object->rect());
             break;
         case ui::component::ComponentType::Interactable:
             _mouseareas.push_back(std::dynamic_pointer_cast<component::MouseArea>(object));
@@ -679,6 +680,7 @@ namespace ui
 
     void Control::remove(std::shared_ptr<component::Component> object)
     {
+        std::lock_guard<std::mutex> lock(_mtx);
         switch (object->type())
         {
         case ui::component::ComponentType::Renderable:
@@ -690,7 +692,7 @@ namespace ui
                     break;
                 }
             }
-            invalid_rect(object->rect());
+            invalidate(object->rect());
             break;
         case ui::component::ComponentType::Interactable:
             break;
@@ -701,6 +703,7 @@ namespace ui
 
     void Control::clear()
     {
+        std::lock_guard<std::mutex> lock(_mtx);
         _renderables.clear();
     }
 
@@ -716,6 +719,7 @@ namespace ui
 
     std::shared_ptr<component::MouseArea> Control::findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last) const
     {
+        std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
         bool found = false;
         for (auto iter = _mouseareas.rbegin(); iter != _mouseareas.rend(); ++iter)
         {

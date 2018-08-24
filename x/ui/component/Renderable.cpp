@@ -12,15 +12,15 @@ namespace ui::component
     void Renderable::invalid()
     {
         if (auto v = _control.lock())
-            v->invalid_rect(_rect);
+            v->invalidate(_rect);
     }
 
     void Renderable::onRectChanged(const core::rc32f & from, const core::rc32f & to)
     {
         if (auto v = _control.lock())
         {
-            v->invalid_rect(from);
-            v->invalid_rect(to);
+            v->invalidate(from);
+            v->invalidate(to);
         }
     }
 }

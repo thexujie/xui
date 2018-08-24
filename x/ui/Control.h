@@ -117,7 +117,7 @@ namespace ui
        core::rc32f contentBox() const;
        core::rc32f box(control_box box) const;
 
-        void invalid();
+        void refresh();
         void relayout();
         void rearrange();
 
@@ -174,6 +174,8 @@ namespace ui
         void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:
+        std::mutex _mtx;
+
         std::weak_ptr<component::Scene> _scene;
         std::weak_ptr<Control> _parent;
 
@@ -226,9 +228,8 @@ namespace ui
 
         core::rc32f _rect_invalid;
 
-        std::mutex _mtx;
    public:
-       void invalid_rect(const core::rc32f & rect);
+       void invalidate(const core::rc32f & rect);
 
        void clear();
        void insert(std::shared_ptr<component::Component> object) { insert(DEPTH_CONTENT, object); }

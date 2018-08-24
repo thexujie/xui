@@ -38,6 +38,7 @@ namespace ui::component
     public:
         core::error insert(std::shared_ptr<Control> control);
         core::error remove(std::shared_ptr<Control> control);
+
         core::error start(std::shared_ptr<Animation> animation);
 
         const std::list<std::shared_ptr<Control>> & views() const { return _controls; }

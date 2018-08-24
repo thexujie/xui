@@ -13,22 +13,22 @@ namespace ui::controls
         static void propertyTableCallback(core::property_table & properties);
         void propertyTable(core::property_table & properties) override;
 
-        void setDirection(core::align direction) { if (_direction != direction) { _direction = direction; invalid(); } }
+        void setDirection(core::align direction) { if (_direction != direction) { _direction = direction; refresh(); } }
         core::align direction() const { return _direction; }
 
         void updateContent() override;
         std::string styleName() const override;
 
-        void setBarColor(const core::color32 & color) { if (_bar_color != color) { _bar_color = color; invalid(); } }
+        void setBarColor(const core::color32 & color) { if (_bar_color != color) { _bar_color = color; refresh(); } }
         const core::color32 & barColor() const { return _bar_color; }
 
-        void setBarBorder(const core::dimensionf & border) { if (_bar_border != border) { _bar_border = border; invalid(); } }
+        void setBarBorder(const core::dimensionf & border) { if (_bar_border != border) { _bar_border = border; refresh(); } }
         const core::dimensionf & barBorder() const { return _bar_border; }
 
-        void setBarBorderColor(const core::color32 & color) { if (_bar_border_color != color) { _bar_border_color = color; invalid(); } }
+        void setBarBorderColor(const core::color32 & color) { if (_bar_border_color != color) { _bar_border_color = color; refresh(); } }
         const core::color32 & barBorderColor() const { return _bar_border_color; }
 
-        void setBarBorderStyle(const graphics::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; invalid(); } }
+        void setBarBorderStyle(const graphics::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; refresh(); } }
         const graphics::stroke_style & barBorderStyle() const { return _bar_border_style; }
 
     public:
