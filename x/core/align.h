@@ -42,7 +42,7 @@ namespace core
     *  @brief 用作击中测试、方向指示等。
     /********************************************************************************************************************/
     // 只占用低 16 位
-    enum align
+    enum class align
     {
         none = 0x0000,
 
@@ -86,4 +86,7 @@ namespace core
 
         mask = 0xfff
     };
+
+    template<> struct enable_bitmasks<align> { static const bool enable = true; };
+    typedef bitflag<align> aligns;
 }

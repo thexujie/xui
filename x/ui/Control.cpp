@@ -7,6 +7,8 @@
 
 namespace ui
 {
+    const std::string CONTROL_ANIMATION_GROUP_STYLE = "_style";
+
     Control::Control() { }
     Control::~Control() { }
 
@@ -69,15 +71,13 @@ namespace ui
             else {}
         }
 
+        auto p = parent();
+        if (_anchor_borders.all(core::align::leftRight))
+            size.cx = p->width() - (calc_x(_anchor.value.bleft) + calc_x(_anchor.value.bright));
+        if (_anchor_borders.all(core::align::topBottom))
+            size.cy = p->width() - (calc_y(_anchor.value.btop) + calc_y(_anchor.value.bbottom));
         _adjustSizeMinMax(size);
         return size;
-    }
-
-    std::shared_ptr<component::Animation> Control::animation() const
-    {
-        if (!_animation)
-            const_cast<std::shared_ptr<component::Animation> &>(_animation) = std::make_shared<component::Animation>();
-        return _animation;
     }
 
     const core::color32 & Control::color() const
@@ -276,7 +276,7 @@ namespace ui
         if (!_invalid_layout)
         {
             _invalid_layout = true;
-            invoke([this]() {layout(); });
+            invoke([this]() {layout(nullptr); });
         }
     }
 
@@ -376,23 +376,34 @@ namespace ui
     {
     }
 
-    void Control::leavingScene(std::shared_ptr<component::Scene> & scene)
+    void Control::leavingScene()
     {
+        scene()->remove(control_ref());
         _scene.reset();
-        auto c = share_ref<Control>();
-        scene->remove(c);
     }
 
-    void Control::leaveScene(std::shared_ptr<component::Scene> & scene) { }
+    void Control::leaveScene() { }
 
-    void Control::layout()
+    void Control::layout(layout_flags flags)
     {
         _invalid_layout = false;
     }
 
-    void Control::arrange(const core::rc32f & rect, const core::si32f & size)
+    void Control::place(const core::rc32f & rect, const core::si32f & size)
     {
-        setShowRect({ rect.pos, size });
+        core::pt32f pos;
+        if (_anchor_borders.all(core::align::leftTop))
+            pos = rect.leftTop();
+        else if (_anchor_borders.all(core::align::rightTop))
+            pos = rect.rightTop() - core::pt32f(size.cx, 0);
+        else if (_anchor_borders.all(core::align::rightBottom))
+            pos = rect.rightTop() - core::pt32f(size.cx, size.cy);
+        else if (_anchor_borders.all(core::align::leftBottom))
+            pos = rect.rightTop() - core::pt32f(0, size.cy);
+        else
+            pos = rect.leftTop();
+
+        setShowRect({ pos, size });
     }
 
     void Control::updateStyle()
@@ -406,8 +417,7 @@ namespace ui
             auto iter_transition_duration = items.find("transition-duration");
             if (_style.empty() || !_styleTransition || !s || iter_transition_duration == items.end())
             {
-                if (_animation)
-                    _animation->clear();
+                clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);
                 auto & props = properties();
                 for (const auto & item : items)
                 {
@@ -420,9 +430,8 @@ namespace ui
             {
                 auto duration = core::parseDuration(iter_transition_duration->second);
                 items.erase(iter_transition_duration);
-                auto s = scene();
-                auto a = animation();
-                a->clear();
+
+                clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);
                 auto & props = properties();
                 for(auto & item : items)
                 {
@@ -439,9 +448,10 @@ namespace ui
                         if (interpolator->start().equal(interpolator->end()))
                             continue;
 
-                        auto pa = std::make_shared<core::property_animation>(shared_from_this(), accessor, interpolator);
-                        pa->setDuration(duration);
-                        a->add(pa);
+                        auto anim = std::make_shared<core::property_animation>(shared_from_this(), accessor, interpolator);
+                        anim->setDuration(duration);
+                        anim->start();
+                        appendAnimation(CONTROL_ANIMATION_GROUP_STYLE, anim);
                     }
                     else
                     {
@@ -449,8 +459,7 @@ namespace ui
                     }
                 }
 
-                a->start();
-                s->start(a);
+                startAnimations();
                 
             }
             _style = style;
@@ -460,6 +469,8 @@ namespace ui
 
     void Control::update()
     {
+        check_invoke();
+
         _invalid = false;
         auto s = scene();
         if (!s)
@@ -507,8 +518,8 @@ namespace ui
 
             if(!_background_imgage_obj)
             {
-                _background_imgage_obj = std::make_shared<renderables::Image>(ref(), _background_image.value);
-                insert(DEPTH_BACKGROUND, _background_imgage_obj);
+                _background_imgage_obj = std::make_shared<renderables::Image>(control_ref(), _background_image.value);
+                insert(LOCAL_DEPTH_BACKGROUND, _background_imgage_obj);
             }
 
             _background_imgage_obj->setRect(box(_background_box));
@@ -525,8 +536,8 @@ namespace ui
             }
             if(!_background_rect_obj)
             {
-                _background_rect_obj = std::make_shared<renderables::Rectangle>(ref());
-                insert(DEPTH_BACKGROUND, _background_rect_obj);
+                _background_rect_obj = std::make_shared<renderables::Rectangle>(control_ref());
+                insert(LOCAL_DEPTH_BACKGROUND, _background_rect_obj);
             }
 
             _background_rect_obj->setRect(box(_background_box));
@@ -558,8 +569,8 @@ namespace ui
             {
                 if (!_border_obj)
                 {
-                    _border_obj = std::make_shared<renderables::Rectangle>(ref());
-                    insert(DEPTH_FOREGROUND, _border_obj);
+                    _border_obj = std::make_shared<renderables::Rectangle>(control_ref());
+                    insert(LOCAL_DEPTH_FOREGROUND, _border_obj);
                 }
 
                 for (int32_t cnt = 0; cnt < 4; ++cnt)
@@ -597,8 +608,8 @@ namespace ui
 
                         if (!border_obj)
                         {
-                            border_obj = std::make_shared<renderables::Line>(ref(), line[0], line[1]);
-                            insert(DEPTH_FOREGROUND, border_obj);
+                            border_obj = std::make_shared<renderables::Line>(control_ref(), line[0], line[1]);
+                            insert(LOCAL_DEPTH_FOREGROUND, border_obj);
                         }
                         border_obj->setRect(path->computeTightBounds());
                         border_obj->setClipPath(path);
@@ -663,7 +674,6 @@ namespace ui
         if (!object)
             throw core::exception(core::error_nullptr);
 
-        std::lock_guard<std::mutex> lock(_mtx);
         switch (object->type())
         {
         case ui::component::ComponentType::Renderable:
@@ -680,7 +690,6 @@ namespace ui
 
     void Control::remove(std::shared_ptr<component::Component> object)
     {
-        std::lock_guard<std::mutex> lock(_mtx);
         switch (object->type())
         {
         case ui::component::ComponentType::Renderable:
@@ -734,5 +743,36 @@ namespace ui
                 return *iter;
         }
         return nullptr;
+    }
+
+    void Control::clearAnimations(std::string group)
+    {
+        auto iter = _animations.find(group);
+        if (iter != _animations.end())
+            _animations.erase(iter);
+    }
+
+    void Control::appendAnimation(std::string group, std::shared_ptr<core::animation> animation)
+    {
+        _animations[group].push_back(animation);
+    }
+
+    void Control::startAnimations()
+    {
+        auto s = scene();
+        s->start(control_ref());
+    }
+
+    bool Control::updateAnimations()
+    {
+        bool running = false;
+        for (auto & animations : _animations)
+        {
+            for(auto & anim : animations.second)
+            {
+                running |= anim->update();
+            }
+        }
+        return running;
     }
 }

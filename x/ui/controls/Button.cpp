@@ -52,8 +52,8 @@ namespace ui::controls
         {
             if(!_text_obj)
             {
-                _text_obj = std::make_shared<renderables::Text>(ref());
-                insert(DEPTH_CONTENT, _text_obj);
+                _text_obj = std::make_shared<renderables::Text>(control_ref());
+                insert(LOCAL_DEPTH_CONTENT, _text_obj);
             }
             _text_obj->setTextBlob(_textBlob);
             _text_obj->setRect(contentBox());
@@ -61,7 +61,7 @@ namespace ui::controls
 
         if(!_mrc_obj)
         {
-            _mrc_obj = std::make_shared<interactables::MouseRectangle>(ref());
+            _mrc_obj = std::make_shared<interactables::MouseRectangle>(control_ref());
             insert(_mrc_obj);
 
             _mrc_obj->mouseEnter += std::weak_binder(std::mem_fn(&Button::onMouseEnter), shared_from_this());

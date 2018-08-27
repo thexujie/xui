@@ -3,15 +3,21 @@
 namespace core
 {
     class object;
-    class invokable_helper
+    class invoke_helper
     {
     public:
-        invokable_helper();
-        ~invokable_helper();
+        invoke_helper();
+        ~invoke_helper();
 
-        invokable_helper & ref();
+        invoke_helper & ref();
+
+        uint32_t thread_id() const { return _id; }
+        void * thread_handle() const;
+
+        bool can_safe_invoke() const;
+        void check_invoke();
+
         error add(std::shared_ptr<object> invoker, std::function<void()>);
-
         error trigger();
     private:
         uint32_t _id = 0;
@@ -40,6 +46,10 @@ namespace core
         }
 
         uint64_t id() const { return _id; }
+
+        bool can_safe_invoke() const;
+
+        void check_invoke();
         error invoke(std::function<void()>);
 
         template<typename T>
@@ -50,10 +60,10 @@ namespace core
 
     public:
         static uint64_t create_objectid();
-        static invokable_helper & invokable_get_helper();
+        static invoke_helper & get_invoke_helper();
 
     protected:
         uint64_t _id = create_objectid();
-        invokable_helper & _invoker_helper = invokable_get_helper();
+        invoke_helper & _invoke_helper = get_invoke_helper();
     };
 }

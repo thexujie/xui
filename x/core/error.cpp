@@ -33,6 +33,7 @@ namespace core
         { ERROR_TAG(error_not_now), "not now" },
         { ERROR_TAG(error_not_supported), "not supported" },
         { ERROR_TAG(error_not_supported), "not found" },
+        { ERROR_TAG(error_invalid_operation), "invalid operation" },
         { ERROR_TAG(error_ok), "ok" },
         { ERROR_TAG(error_true), "true" },
         { ERROR_TAG(error_false), "false" },

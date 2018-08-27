@@ -28,6 +28,7 @@ namespace core
         error_not_supported,
         error_not_found,
 
+        error_invalid_operation,
 
         error_ok = 0,
         error_true,
@@ -35,13 +36,16 @@ namespace core
         error_pendding,
     };
 
-    enum flag_e
+    enum class flag
     {
-        flag_none = 0,
-        flag_pause = 0x0001,
-        flag_stop = 0x0002,
-        flag_clear = 0x0004,
+        none = 0,
+        expired = 0x0001,
+        paused = 0x0002,
+        stoped = 0x0004,
+        canceled = 0x0004,
     };
+    template<> struct enable_bitmasks<flag> { static const bool enable = true; };
+    typedef bitflag<flag> flags;
 
     const char * error_str(error err);
 

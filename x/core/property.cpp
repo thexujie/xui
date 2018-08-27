@@ -166,14 +166,14 @@ namespace core
         return std::chrono::milliseconds(val);
     }
 
-    void property_animation::update()
+    bool property_animation::update()
     {
         if (_state != animation_state::running)
-            return;
+            return false;
 
         auto object = _object.lock();
         if (!object || !_accessor || !_interpolator)
-            return;
+            return false;
 
         auto now = core::datetime::steady();
         auto cost = now - _time;
@@ -184,7 +184,7 @@ namespace core
             {
                 _state = animation_state::waiting;
                 stoped();
-                return;
+                return false;
             }
             looped(_loop_index);
         }
@@ -192,5 +192,6 @@ namespace core
         float32_t proportion = (cost - _duration * _loop_index).count() / (float32_t)_duration.count();
         proportion = _curve(proportion);
         _interpolator->interpolate(*object, *_accessor, proportion);
+        return true;
     }
 }

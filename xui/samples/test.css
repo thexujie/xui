@@ -22,15 +22,15 @@
 .scrollbar {
     bar-border: 1px;
     bar-padding: 1em 0.5em;
-    bar-color: #8888;
+    bar-color: #a888;
     transition-duration: 200ms
 }
 
 .scrollbar:bar-hover {
-    bar-color: #a888;
+    bar-color: #f888;
 }
 
 .scrollbar:bar-active{
     bar-border: 3px;
-    bar-color: #a2f2;
+    bar-color: #e2f2;
 }

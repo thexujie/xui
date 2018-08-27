@@ -173,9 +173,6 @@
     <ClCompile Include="core\datetime.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="ui\component\Animation.cpp">
-      <Filter>ui\component</Filter>
-    </ClCompile>
     <ClCompile Include="core\object.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -436,9 +433,6 @@
     </ClInclude>
     <ClInclude Include="core\datetime.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\component\Animation.h">
-      <Filter>ui\component</Filter>
     </ClInclude>
     <ClInclude Include="core\bitflag.h">
       <Filter>core</Filter>

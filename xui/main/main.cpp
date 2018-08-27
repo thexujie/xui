@@ -147,19 +147,8 @@ int main()
     form->show();
     form->centerScreen();
     form->closed += []() { core::app().quit(0); };
-
+    form->setScrollbarVisionV(ui::scrollbar_vision::always);
     const core::property_table & props = core::app().properties<ui::controls::Button>();
-    auto & children = buttons->children();
-    //property_serializer_string_impl<core::color32> sl;
-    std::list<std::shared_ptr<ui::Control>>::value_type obj = *children.begin();
-    std::list<std::shared_ptr<ui::Control>>::value_type obj2 = *(++children.begin());
-    std::shared_ptr<property_accessor> accessor = props.at("background-color");
-    std::shared_ptr<property_value> value = accessor->serialize("red");
-    accessor->set(*obj2, *value);
-
-    property_interpolator_type<core::color32> it;
-    accessor->serialize("red", it.start());
-    accessor->serialize("green", it.end());
 
     auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
     {
@@ -173,8 +162,9 @@ int main()
     auto prop = props.at("background-color");
     core::timer t(10ms);
     std::vector<std::shared_ptr<animation>> anims;
-    for (auto & control : buttons->children())
+    for (auto & iter : buttons->children())
     {
+        auto& control = iter.second;
         if (!control->is_type_of<ui::controls::Button>())
             continue;
 

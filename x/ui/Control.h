@@ -1,17 +1,24 @@
 #pragma once
 #include "component/Scene.h"
+#include "component/Style.h"
 #include "renderables/Text.h"
 #include "renderables/Image.h"
 #include "renderables/Line.h"
 #include "renderables/Rectangle.h"
-#include "component/Style.h"
-#include "component/Animation.h"
 
 namespace ui
 {
-    const int32_t DEPTH_BACKGROUND = -1;
-    const int32_t DEPTH_CONTENT = 0;
-    const int32_t DEPTH_FOREGROUND = 1;
+    const int32_t ZVALUE_BACKGROUND = -100;
+    const int32_t ZVALUE_CONTENT = 0;
+    const int32_t ZVALUE_FOREGROUND = 100;
+    const int32_t ZVALUE_TOPMOST = 0xFFFFFFF;
+    const int32_t ZVALUE_MAX = 0xFFFFFFF;
+
+    const int32_t ZVALUE_SCROLLBAR = 0x10000001;
+
+    const int32_t LOCAL_DEPTH_BACKGROUND = -1;
+    const int32_t LOCAL_DEPTH_CONTENT = 0;
+    const int32_t LOCAL_DEPTH_FOREGROUND = 1;
 
     enum class control_box
     {
@@ -33,11 +40,16 @@ namespace ui
         parent,
         // 相对于 scene 的位置
         scene,
-        // 相对于 view 的位置
-        view,
-        // 同 arrange，如果超出 scene 则相对于 view
+        // 同 layout，如果超出 scene 则按照 parent 处理
         sticky,
     };
+
+    enum class layout_flag
+    {
+        none = 0,
+        no_resize = 0x0001,
+    };
+    typedef core::bitflag<layout_flag> layout_flags;
 
     enum class calc_flag
     {
@@ -54,13 +66,16 @@ namespace ui
         Control();
         virtual ~Control();
 
-        std::shared_ptr<Control> ref() const { return const_cast<Control *>(this)->share_ref<Control>(); }
+        std::shared_ptr<Control> control_ref() const { return const_cast<Control *>(this)->share_ref<Control>(); }
         static void propertyTableCallback(core::property_table & properties);
         virtual void propertyTable(core::property_table & properties);
         virtual const core::property_table & properties();
 
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet);
         std::shared_ptr<component::StyleSheet> styleSheet() const;
+
+        void setZValue(int32_t zvalue) { _zvalue = zvalue; }
+        int32_t ZValue() const { return _zvalue; }
 
         void setLayoutOrigin(layout_origin origin) { _layout_origin = origin; }
         layout_origin layoutOrigin() const { return _layout_origin; }
@@ -73,6 +88,11 @@ namespace ui
         const core::vec2<core::dimensionf> & minSize() const { return _minSize; }
         void setMaxSize(const core::vec2<core::dimensionf> & maxSize) { _maxSize = maxSize; }
         const core::vec2<core::dimensionf> & maxSize() const { return _maxSize; }
+
+        void setAnchorBorders(core::aligns borders) { _anchor_borders = borders; }
+        core::aligns anchorBorders() const { return _anchor_borders; }
+        void setAnchor(const core::vec4<core::dimensionf> & anchor) { _anchor = anchor; }
+        const core::vec4<core::dimensionf> & anchor() const { return _anchor; }
 
         void move(const core::vec2<core::dimensionf> & pos);
         void resize(const core::vec2<core::dimensionf> & size);
@@ -87,7 +107,6 @@ namespace ui
         core::si32f prefferSize(calc_flag flags = calc_flag::none) const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
-        std::shared_ptr<component::Animation> animation() const;
         std::shared_ptr<component::Scene> scene() const { return _scene.lock(); }
         void setParent(std::shared_ptr<Control> parent) { _parent = parent; }
         std::shared_ptr<Control> parent() const { return _parent.lock(); }
@@ -145,13 +164,13 @@ namespace ui
 
         virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
         virtual void enterScene(std::shared_ptr<component::Scene> & scene);
-        virtual void leavingScene(std::shared_ptr<component::Scene> & scene);
-        virtual void leaveScene(std::shared_ptr<component::Scene> & scene);
+        virtual void leavingScene();
+        virtual void leaveScene();
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
-        virtual void layout();
-        virtual void arrange(const core::rc32f & rect, const core::si32f & size);
+        virtual void layout(layout_flags flags);
+        virtual void place(const core::rc32f & rect, const core::si32f & size);
         virtual std::string styleName() const { return {}; }
 
         virtual void updateStyle();
@@ -179,8 +198,7 @@ namespace ui
         std::weak_ptr<component::Scene> _scene;
         std::weak_ptr<Control> _parent;
 
-        std::shared_ptr<component::Animation> _animation;
-
+        int32_t _zvalue = ZVALUE_CONTENT;
         layout_origin _layout_origin = layout_origin::layout;
 
         core::attribute<core::color32> _color;
@@ -194,6 +212,9 @@ namespace ui
         core::attribute<core::vec4<core::dimensionf>> _margin;
         core::attribute<core::vec2<core::dimensionf>> _minSize;
         core::attribute<core::vec2<core::dimensionf>> _maxSize;
+
+        core::aligns _anchor_borders = core::align::leftTop;
+        core::attribute<core::vec4<core::dimensionf>> _anchor;
 
         core::attribute<graphics::font> _font;
 
@@ -226,18 +247,28 @@ namespace ui
         std::multimap<int32_t, std::shared_ptr<component::Renderable>> _renderables;
         std::list<std::shared_ptr<component::MouseArea>> _mouseareas;
 
+        std::map<std::string, std::vector<std::shared_ptr<core::animation>>> _animations;
         core::rc32f _rect_invalid;
 
    public:
        void invalidate(const core::rc32f & rect);
 
        void clear();
-       void insert(std::shared_ptr<component::Component> object) { insert(DEPTH_CONTENT, object); }
+       void insert(std::shared_ptr<component::Component> object) { insert(LOCAL_DEPTH_CONTENT, object); }
        void insert(int32_t depth, std::shared_ptr<component::Component> object);
        void remove(std::shared_ptr<component::Component> object);
 
        virtual void render(graphics::Graphics & graphics, const graphics::Region & region) const;
 
        std::shared_ptr<component::MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last = nullptr) const;
+
+
+    public:
+        void clearAnimations() { _animations.clear(); }
+        void clearAnimations(std::string group);
+        void appendAnimation(std::shared_ptr<core::animation> animation) { appendAnimation(std::string(), animation); }
+        void appendAnimation(std::string group, std::shared_ptr<core::animation> animation);
+        void startAnimations();
+        bool updateAnimations();
     };
 }

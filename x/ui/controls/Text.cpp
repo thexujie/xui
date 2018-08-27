@@ -33,7 +33,7 @@ namespace ui::controls
         {
             if(!_text_obj)
             {
-                _text_obj = std::make_shared<renderables::Text>(ref(), _textBlob);
+                _text_obj = std::make_shared<renderables::Text>(control_ref(), _textBlob);
                 insert(_text_obj);
             }
             _text_obj->setRect(contentBox());

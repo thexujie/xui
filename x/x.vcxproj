@@ -93,7 +93,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ui\component\Animation.cpp" />
     <ClCompile Include="ui\component\Component.cpp" />
     <ClCompile Include="ui\component\Interactable.cpp" />
     <ClCompile Include="ui\component\Style.cpp" />
@@ -169,7 +168,6 @@
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ui\component\Animation.h" />
     <ClInclude Include="ui\component\Component.h" />
     <ClInclude Include="ui\component\Interactable.h" />
     <ClInclude Include="ui\component\Style.h" />

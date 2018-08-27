@@ -21,9 +21,6 @@ namespace ui::controls
         void updateContent() override;
 
     public:
-        void enteringScene(std::shared_ptr<component::Scene> & scene) override;
-        void enterScene(std::shared_ptr<component::Scene> & scene) override;
-        void leaveScene(std::shared_ptr<component::Scene> & scene) override;
         void onRectChanged(const core::rc32f & from, const core::rc32f & to) override;
 
     private:

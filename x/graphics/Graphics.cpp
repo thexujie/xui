@@ -209,7 +209,7 @@ namespace graphics
         _native->drawTextBlob(blob.native_ptr(), point.x, point.y, paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::align align)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::aligns align)
     {
         if (!_native)
             return;
@@ -230,7 +230,7 @@ namespace graphics
         _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::align align)
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::aligns align)
     {
         if (!_native)
             return;
@@ -254,7 +254,7 @@ namespace graphics
         _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32i region, core::align align)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32i region, core::aligns align)
     {
         if (!_native)
             return;
@@ -274,7 +274,7 @@ namespace graphics
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, float32_t(region.x), float32_t(region.y)), nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, core::align align)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, core::aligns align)
     {
         if (!_native)
             return;
@@ -294,7 +294,7 @@ namespace graphics
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region, core::align align)
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region, core::aligns align)
     {
         if (!_native)
             return;
@@ -317,7 +317,7 @@ namespace graphics
         _native->drawImage(&image.native(), point.x, point.y, nullptr);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region, core::align align)
+    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region, core::aligns align)
     {
         if (!_native)
             return;

@@ -31,12 +31,8 @@ namespace ui::component
             _invalid_rect.unite(rc);
             _invalid_region.addRect(rc);
         }
-        //invalidated(rc);
-        //invoke([this]() { flush(); });
-        //if (!_th_render.joinable())
-            //_th_render = std::thread(std::bind(&Scene::renderThread, this));
-        //_cv_render.notify_one();
-        if(!_future.valid() || _future.wait_for(0s) != std::future_status::timeout)
+
+        if(!_future.valid() || _future.wait_for(0s) == std::future_status::ready)
             _future = std::async(std::bind(&Scene::renderThread, this));
     }
 
@@ -56,7 +52,7 @@ namespace ui::component
             return core::error_args;
 
         std::lock_guard<std::mutex> lock(_mtx);
-        _controls.push_back(control);
+        _controls.insert(std::make_pair(control->ZValue(), control));
         return core::error_ok;
     }
 
@@ -67,16 +63,24 @@ namespace ui::component
 
         auto s = share_ref<Scene>();
         std::lock_guard<std::mutex> lock(_mtx);
-        _controls.remove(control);
+        for (auto iter = _controls.begin(); iter != _controls.end(); )
+        {
+            if (iter->second == control)
+            {
+                control->setParent(nullptr);
+                _controls.erase(iter);
+                break;
+            }
+        }
         return core::error_ok;
     }
 
-    core::error Scene::start(std::shared_ptr<Animation> animation)
+    core::error Scene::start(std::shared_ptr<Control> control)
     {
-        if (std::find(_animations.begin(), _animations.end(), animation) != _animations.end())
+        if (std::find_if(_animations.begin(), _animations.end(), [&control](const std::pair<core::flags, std::shared_ptr<Control>> & pair) { return pair.second == control; }) != _animations.end())
             return core::error_ok;
 
-        _animations.push_back(animation);
+        _animations.push_back(std::make_pair(core::flag::none, control));
         if(!_animation_timer.running())
         {
             _animation_timer.tick += std::bind(&Scene::animationTimerTick, this, std::placeholders::_1, std::placeholders::_2);
@@ -87,9 +91,9 @@ namespace ui::component
 
     std::shared_ptr<MouseArea> Scene::findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last) const
     {
-        for (auto & view : _controls)
+        for (auto iter = _controls.rbegin(); iter != _controls.rend(); ++iter)
         {
-            auto ma = view->findMouseArea(pos, last);
+            auto ma = iter->second->findMouseArea(pos, last);
             if (ma)
                 return ma;
         }
@@ -215,9 +219,9 @@ namespace ui::component
         graphics::Graphics graphics(_renderBuffer);
         graphics.setClipRect(rect.to<float32_t>(), false);
         graphics.clear(_color_default);
-        for (auto & control : _controls)
+        for (auto & iter : _controls)
         {
-            control->render(graphics, invalid_region);
+            iter.second->render(graphics, invalid_region);
             if (_exit)
                 return;
         }
@@ -235,6 +239,13 @@ namespace ui::component
     void Scene::animationTimerTick(core::timer & t, int64_t tick)
     {
         for (auto & a : _animations)
-            a->update();
+        {
+            if (!(a.second->updateAnimations()))
+                a.first |= core::flag::expired;
+        }
+        _animations.erase(std::remove_if(std::begin(_animations), std::end(_animations), [](const std::pair<core::flags, std::shared_ptr<Control>> & pair) { return pair.first & core::flag::expired; }), _animations.end());
+
+        if (_animations.empty())
+            _animation_timer.stop();
     }
 }

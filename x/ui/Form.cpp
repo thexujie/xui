@@ -68,7 +68,7 @@ namespace ui
         }
 
         auto rect = core::rc32f(calc(_pos), calc(_size));
-        Control::arrange(rect, rect.size);
+        Control::place(rect, rect.size);
 
         if(!_window)
         {

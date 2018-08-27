@@ -68,7 +68,7 @@ namespace ui::controls
         {
             if(!_image_obj)
             {
-                _image_obj = std::make_shared<renderables::Image>(ref(), _image);
+                _image_obj = std::make_shared<renderables::Image>(control_ref(), _image);
                 insert(_image_obj);
             }
 
@@ -84,21 +84,6 @@ namespace ui::controls
                 _image_obj = nullptr;
             }
         }
-    }
-
-    void Image::enteringScene(std::shared_ptr<component::Scene> & scene)
-    {
-        Control::enteringScene(scene);
-    }
-
-    void Image::enterScene(std::shared_ptr<component::Scene> & scene)
-    {
-        Control::enterScene(scene);
-    }
-
-    void Image::leaveScene(std::shared_ptr<component::Scene> & scene)
-    {
-        Control::leaveScene(scene);
     }
 
     void Image::onRectChanged(const core::rc32f & from, const core::rc32f & to)

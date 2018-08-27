@@ -4,7 +4,7 @@
 
 namespace core
 {
-    static thread_local invokable_helper __helper;
+    static thread_local invoke_helper __helper;
     static std::atomic_uint64_t __object_id = 1;
 
     uint64_t object::create_objectid()
@@ -15,7 +15,7 @@ namespace core
         return val;
     }
 
-    invokable_helper & object::invokable_get_helper()
+    invoke_helper & object::get_invoke_helper()
     {
         return __helper.ref();
     }
@@ -25,21 +25,23 @@ namespace core
         __helper.trigger();
     }
 
-    invokable_helper::invokable_helper()
+    invoke_helper::invoke_helper()
     {
         _id = GetCurrentThreadId();
     }
-    invokable_helper::~invokable_helper()
+    invoke_helper::~invoke_helper()
     {
+        std::unique_lock<std::mutex> lock(_mtx);
         if (_thread)
         {
             CloseHandle(_thread);
             _thread = nullptr;
             _id = 0;
         }
+        lock.unlock();
     }
 
-    invokable_helper & invokable_helper::ref()
+    invoke_helper & invoke_helper::ref()
     {
         if (_id != GetCurrentThreadId())
             throw 0;
@@ -47,7 +49,35 @@ namespace core
         return *this;
     }
 
-    error invokable_helper::add(std::shared_ptr<object> invoker, std::function<void()> fun)
+    bool invoke_helper::can_safe_invoke() const
+    {
+        return ::GetCurrentThreadId() == _id;
+    }
+
+    void invoke_helper::check_invoke()
+    {
+        if (GetCurrentThreadId() != _id)
+            throw core::exception(core::error_invalid_operation);
+    }
+
+    void * invoke_helper::thread_handle() const
+    {
+        if (!_id)
+            return nullptr;
+
+        std::lock_guard<std::mutex> lock(const_cast<invoke_helper *>(this)->_mtx);
+        if (!_thread)
+        {
+            const_cast<invoke_helper *>(this)->_thread = OpenThread(THREAD_SET_CONTEXT, FALSE, _id);
+            if (!_thread)
+            {
+                logger::err() << __FUNCTION__" OpenThread" << win32::winerr_str(GetLastError());
+            }
+        }
+        return _thread;
+    }
+
+    error invoke_helper::add(std::shared_ptr<object> invoker, std::function<void()> fun)
     {
         if (!_id)
             return error_state;
@@ -58,10 +88,9 @@ namespace core
             if (!_thread)
             {
                 logger::err() << __FUNCTION__" OpenThread" << win32::winerr_str(GetLastError());
-                _thread = INVALID_HANDLE_VALUE;
             }
         }
-        if (!_thread || _thread == INVALID_HANDLE_VALUE)
+        if (!_thread)
             return error_state;
 
         _invokers[invoker].push_back(fun);
@@ -69,7 +98,7 @@ namespace core
         return error_ok;
     }
 
-    error invokable_helper::trigger()
+    error invoke_helper::trigger()
     {
         if (_id != GetCurrentThreadId())
             return error_state;
@@ -93,8 +122,18 @@ namespace core
         return error_ok;
     }
 
+    bool object::can_safe_invoke() const
+    {
+        return _invoke_helper.can_safe_invoke();
+    }
+
+    void object::check_invoke()
+    {
+        return _invoke_helper.check_invoke();
+    }
+
     error object::invoke(std::function<void()> fun)
     {
-        return _invoker_helper.add(shared_from_this(), fun);
+        return _invoke_helper.add(shared_from_this(), fun);
     }
 }

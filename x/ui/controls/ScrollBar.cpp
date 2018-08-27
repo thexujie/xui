@@ -36,7 +36,7 @@ namespace ui::controls
 
         if (!_mc)
         {
-            _mc = std::make_shared<interactables::MouseRectangle>(ref());
+            _mc = std::make_shared<interactables::MouseRectangle>(control_ref());
             _mc->mouseWheel += std::weak_binder(std::mem_fn(&ScrollBar::onMouseWheel), shared_from_this());
             _mc->setAcceptWheelV(true);
             insert(_mc);
@@ -45,7 +45,7 @@ namespace ui::controls
 
         if (!_mc_bar)
         {
-            _mc_bar = std::make_shared<interactables::MouseRectangle>(ref());
+            _mc_bar = std::make_shared<interactables::MouseRectangle>(control_ref());
             _mc_bar->mouseEnter += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseEnter), shared_from_this());
             _mc_bar->mouseMove += std::weak_bind(&ScrollBar::onBarMouseMove, share_ref<ScrollBar>(), std::placeholders::_1);
             _mc_bar->mouseLeave += std::weak_bind(&ScrollBar::onBarMouseLeave, share_ref<ScrollBar>(), std::placeholders::_1);
@@ -58,7 +58,7 @@ namespace ui::controls
 
         if(!_bar)
         {
-            _bar = std::make_shared<renderables::Rectangle>(ref());
+            _bar = std::make_shared<renderables::Rectangle>(control_ref());
             insert(_bar);
         }
 

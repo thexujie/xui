@@ -310,10 +310,10 @@ namespace core
         pausing,
     };
 
-    struct animation
+    struct animation : public core::object
     {
         virtual ~animation() = default;
-        virtual void update() = 0;
+        virtual bool update() = 0;
 
         animation_state state() const { return _state; }
         bool waiting() const { return _state == animation_state::waiting; }
@@ -324,7 +324,7 @@ namespace core
         void setDuration(std::chrono::nanoseconds duration) { _duration = duration; }
         void setCurve(std::function<float32_t(float32_t)> curve) { _curve = curve; }
 
-        void start() { _state = animation_state::running; _time = core::datetime::steady(); _loop_index = 0; }
+        void start() { check_invoke(); _state = animation_state::running; _time = core::datetime::steady(); _loop_index = 0; }
         void stop() { _state = animation_state::waiting; _time = 0ns; }
         void pause() { _state = animation_state::pausing; }
         void resume() { _state = animation_state::running;  _time = core::datetime::steady(); }
@@ -349,7 +349,7 @@ namespace core
 
         }
 
-        void update();
+        bool update();
 
         std::weak_ptr<core::object> _object;
         std::shared_ptr<core::property_accessor> _accessor;

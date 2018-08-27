@@ -12,6 +12,7 @@
 #include <string>
 #include <variant>
 #include <any>
+#include <set>
 
 #include <array>
 #include <vector>
@@ -86,8 +87,8 @@ namespace core
 }
 
 #include "core/member_function_traits.h"
-#include "core/error.h"
 #include "core/bitflag.h"
+#include "core/error.h"
 #include "core/system.h"
 #include "core/logger.h"
 #include "core/path.h"

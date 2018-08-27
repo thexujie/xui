@@ -2,7 +2,6 @@
 #include "Renderable.h"
 #include "Interactable.h"
 #include "graphics/Region.h"
-#include "Animation.h"
 
 namespace ui
 {
@@ -39,9 +38,9 @@ namespace ui::component
         core::error insert(std::shared_ptr<Control> control);
         core::error remove(std::shared_ptr<Control> control);
 
-        core::error start(std::shared_ptr<Animation> animation);
+        core::error start(std::shared_ptr<Control> control);
 
-        const std::list<std::shared_ptr<Control>> & views() const { return _controls; }
+        const std::multimap<int32_t, std::shared_ptr<Control>> & views() const { return _controls; }
     public:
         std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last = nullptr) const;
 
@@ -79,8 +78,8 @@ namespace ui::component
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
-        std::list<std::shared_ptr<Control>> _controls;
-        std::list<std::shared_ptr<Animation>> _animations;
+        std::multimap<int32_t, std::shared_ptr<Control>> _controls;
+        std::list<std::pair<core::flags, std::shared_ptr<Control>>> _animations;
 
         std::list<std::shared_ptr<Renderable>> _renderables;
 

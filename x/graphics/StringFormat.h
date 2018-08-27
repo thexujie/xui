@@ -51,7 +51,7 @@ namespace graphics
 
         graphics::font _font;
         core::color32 _color = core::colors::Black;
-        core::align _align = core::align::leftTop;
+        core::aligns _align = core::align::leftTop;
         bool _lcd = true;
         bool _hint = true;
     };
