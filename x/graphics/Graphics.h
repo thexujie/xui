@@ -13,6 +13,63 @@ class SkTextBlobBuilder;
 
 namespace graphics
 {
+    struct drawcall_statistics
+    {
+        int32_t save = 0;
+        int32_t restore = 0;
+        int32_t setClipRect = 0;
+        int32_t setClipPath = 0;
+        int32_t setMatrix = 0;
+        int32_t drawLine = 0;
+        int32_t drawEllipse = 0;
+        int32_t drawRectangle = 0;
+        int32_t drawRoundRect = 0;
+        int32_t drawPath = 0;
+        int32_t drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref = 0;
+        int32_t drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref = 0;
+        int32_t drawTextBlob = 0;
+        int32_t drawImage__const_Image_ref__core_pt32f__core_aligns = 0;
+        int32_t drawImage__const_Image_ref__core_rc32f__core_aligns = 0;
+        int32_t drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns = 0;
+        int32_t drawImage__const_Image_ref__core_pt32f__core_rc32f_core_aligns = 0;
+        int32_t drawImage__const_Image_ref__core_rc32f__core_rc32i_core_aligns = 0;
+        int32_t drawImage__const_Image_ref__core_rc32f__core_rc32f_core_aligns = 0;
+        int32_t drawImage__const_Image_ref__core_pt32f = 0;
+        int32_t drawImage__const_Image_ref__core_rc32f = 0;
+        int32_t drawImage__const_Image_ref__core_rc32f__core_rc32i = 0;
+        int32_t drawImage__const_Image_ref__core_rc32f__core_rc32f = 0;
+        int32_t fillPath = 0;
+
+        int32_t total() const
+        {
+            return 
+                //save +
+                //restore +
+                setClipRect +
+                setClipPath +
+                setMatrix +
+                drawLine +
+                drawEllipse +
+                drawRectangle +
+                drawRoundRect +
+                drawPath +
+                drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref +
+                drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref +
+                drawTextBlob +
+                drawImage__const_Image_ref__core_pt32f__core_aligns +
+                drawImage__const_Image_ref__core_rc32f__core_aligns +
+                drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns +
+                drawImage__const_Image_ref__core_pt32f__core_rc32f_core_aligns +
+                drawImage__const_Image_ref__core_rc32f__core_rc32i_core_aligns +
+                drawImage__const_Image_ref__core_rc32f__core_rc32f_core_aligns +
+                drawImage__const_Image_ref__core_pt32f +
+                drawImage__const_Image_ref__core_rc32f +
+                drawImage__const_Image_ref__core_rc32f__core_rc32i +
+                drawImage__const_Image_ref__core_rc32f__core_rc32f +
+                fillPath;
+        }
+    };
+
     class Graphics
     {
     public:
@@ -55,7 +112,8 @@ namespace graphics
         void drawImage(const Image & image, core::rc32f rect, core::rc32f region);
 
     public:
-        void FillPath(graphics::raster::path & path, core::color32 color);
+        const drawcall_statistics & statistics() const { return _statistics; }
+        void fillPath(graphics::raster::path & path, core::color32 color);
         fontmetrics GetFontMetrics(font font);
         core::si32i MeasureString(std::string str, font font);
 
@@ -70,5 +128,6 @@ namespace graphics
         std::shared_ptr<Bitmap> _pixmap;
         std::shared_ptr<SkCanvas> _native;
         std::shared_ptr<SkTextBlobBuilder> _blobBuilder;
+        drawcall_statistics _statistics;
     };
 }

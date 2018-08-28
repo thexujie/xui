@@ -21,6 +21,7 @@ namespace graphics
 
     void Graphics::clear(core::color32 color)
     {
+        _statistics = {};
         if (!_native)
             return;
 
@@ -29,6 +30,7 @@ namespace graphics
 
     void Graphics::save()
     {
+        ++_statistics.save;
         if (!_native)
             return;
 
@@ -37,6 +39,7 @@ namespace graphics
 
     void Graphics::restore()
     {
+        ++_statistics.restore;
         if (!_native)
             return;
 
@@ -45,6 +48,7 @@ namespace graphics
 
     void Graphics::setClipRect(const core::rc32f & rect, bool aa)
     {
+        ++_statistics.setClipRect;
         if (!_native)
             return;
 
@@ -53,6 +57,7 @@ namespace graphics
 
     void Graphics::setClipPath(std::shared_ptr<graphics::Path> path, bool aa)
     {
+        ++_statistics.setClipPath;
         if (!_native)
             return;
 
@@ -64,6 +69,7 @@ namespace graphics
 
     void Graphics::setMatrix(const core::float3x2 & matrix)
     {
+        ++_statistics.setMatrix;
         if (!_native)
             return;
 
@@ -72,6 +78,7 @@ namespace graphics
 
     void Graphics::drawLine(core::pt32f start, core::pt32f end, const PathStyle & style)
     {
+        ++_statistics.drawLine;
         if (!_native)
             return;
 
@@ -82,6 +89,7 @@ namespace graphics
 
     void Graphics::drawEllipse(core::rc32f ellipse, const PathStyle & style)
     {
+        ++_statistics.drawEllipse;
         if (!_native)
             return;
 
@@ -92,6 +100,7 @@ namespace graphics
 
     void Graphics::drawRectangle(core::rc32f rect, const PathStyle & style)
     {
+        ++_statistics.drawRectangle;
         if (!_native)
             return;
 
@@ -102,6 +111,7 @@ namespace graphics
 
     void Graphics::drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const PathStyle & style)
     {
+        ++_statistics.drawRoundRect;
         if (!_native)
             return;
 
@@ -112,6 +122,7 @@ namespace graphics
 
     void Graphics::drawPath(const std::shared_ptr<graphics::Path> & path, const PathStyle & style)
     {
+        ++_statistics.drawPath;
         if (!_native)
             return;
 
@@ -138,6 +149,7 @@ namespace graphics
 
     void Graphics::drawString(const std::string & str, core::pt32f point, const StringFormat & format)
     {
+        ++_statistics.drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref;
         if (!_native)
             return;
 
@@ -167,6 +179,7 @@ namespace graphics
 
     void Graphics::drawString(const std::string & str, core::rc32f rect, const StringFormat & format)
     {
+        ++_statistics.drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref;
         if (!_native)
             return;
 
@@ -201,6 +214,7 @@ namespace graphics
 
     void Graphics::drawTextBlob(const graphics::TextBlob & blob, core::pt32f point)
     {
+        ++_statistics.drawTextBlob;
         if (!_native)
             return;
 
@@ -211,6 +225,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::pt32f point, core::aligns align)
     {
+        ++_statistics.drawImage__const_Image_ref__core_pt32f__core_aligns;
         if (!_native)
             return;
 
@@ -232,6 +247,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::aligns align)
     {
+        ++_statistics.drawImage__const_Image_ref__core_rc32f__core_aligns;
         if (!_native)
             return;
 
@@ -256,6 +272,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32i region, core::aligns align)
     {
+        ++_statistics.drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns;
         if (!_native)
             return;
 
@@ -276,6 +293,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, core::aligns align)
     {
+        ++_statistics.drawImage__const_Image_ref__core_pt32f__core_rc32f_core_aligns;
         if (!_native)
             return;
 
@@ -296,6 +314,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region, core::aligns align)
     {
+        ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32i_core_aligns;
         if (!_native)
             return;
 
@@ -319,6 +338,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region, core::aligns align)
     {
+        ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32f_core_aligns;
         if (!_native)
             return;
 
@@ -342,6 +362,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::pt32f point)
     {
+        ++_statistics.drawImage__const_Image_ref__core_pt32f;
         if (!_native)
             return;
 
@@ -350,6 +371,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::rc32f rect)
     {
+        ++_statistics.drawImage__const_Image_ref__core_rc32f;
         if (!_native)
             return;
 
@@ -358,6 +380,7 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region)
     {
+        ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32i;
         if (!_native)
             return;
 
@@ -366,18 +389,20 @@ namespace graphics
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region)
     {
+        ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32f;
         if (!_native)
             return;
 
         _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), nullptr);
     }
 
-    void Graphics::FillPath(graphics::raster::path & path, core::color32 color)
+    void Graphics::fillPath(graphics::raster::path & path, core::color32 color)
     {
+        ++_statistics.fillPath;
         if (!_native)
             return;
 
-        //_native->FillPath(path, color);
+        //_native->fillPath(path, color);
     }
 
     fontmetrics Graphics::GetFontMetrics(font font)

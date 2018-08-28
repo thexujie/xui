@@ -128,10 +128,68 @@ namespace ui
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
 
-        float32_t calc_x(const core::dimensionf & value, calc_flag flags = calc_flag::none) const;
-        float32_t calc_y(const core::dimensionf & value, calc_flag flags = calc_flag::none) const;
-        core::vec2f calc(const core::vec2<core::dimensionf> & value, calc_flag flags = calc_flag::none) const;
-        core::vec4f calc(const core::vec4<core::dimensionf> & value, calc_flag flags = calc_flag::none) const;
+        float32_t calc_x(const core::dimensionf & value, calc_flag flags = calc_flag::none) const
+        {
+            auto s = scene();
+            auto p = parent();
+            if (!s)
+                throw core::error_state;
+
+            switch (value.unit)
+            {
+            case core::unit::px:
+                return value.value * s->ratio();
+            case core::unit::em:
+                return value.value * font().size * s->ratio();
+            case core::unit::pt:
+                return value.value * 72.0f * s->ratio();
+            case core::unit::dot:
+                return value.value;
+            case core::unit::per:
+                if (core::testbit(flags, calc_flag::donot_calc_percent_x))
+                    return 0;
+                if (!p)
+                    throw core::error_state;
+                return value.value / 100.0f * p->width();
+            default:
+                return value.value * s->ratio();
+            }
+        }
+        float32_t calc_y(const core::dimensionf & value, calc_flag flags = calc_flag::none) const
+        {
+            auto s = scene();
+            auto p = parent();
+            if (!s)
+                throw core::error_state;
+
+            switch (value.unit)
+            {
+            case core::unit::px:
+                return value.value * s->ratio();
+            case core::unit::em:
+                return value.value * font().size * s->ratio();
+            case core::unit::pt:
+                return value.value * 72.0f * s->ratio();
+            case core::unit::dot:
+                return value.value;
+            case core::unit::per:
+                if (core::testbit(flags, calc_flag::donot_calc_percent_y))
+                    return 0;
+                if (!p)
+                    throw core::error_state;
+                return value.value / 100.0f * p->height();
+            default:
+                return value.value * s->ratio();
+            }
+        }
+        core::vec2f calc(const core::vec2<core::dimensionf> & value, calc_flag flags = calc_flag::none) const
+        {
+            return { calc_x(value.x, flags), calc_y(value.y, flags) };
+        }
+        core::vec4f calc(const core::vec4<core::dimensionf> & value, calc_flag flags = calc_flag::none) const
+        {
+            return { calc(value.xy, flags), calc(value.zw, flags) };
+        }
 
        core::rc32f box() const;
        core::rc32f controlBox() const { return box(); }

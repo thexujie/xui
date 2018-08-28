@@ -193,6 +193,26 @@ namespace ui
         }
         setLayoutedSize(layout_size);
         _invalid_layout = false;
+
+        switch (_layout_direction)
+        {
+        case core::align::left:
+            if (_scrollbar_h)
+            {
+                _scrollbar_h->setPageValue(contentBox().cx);
+                _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
+            }
+            break;
+        case core::align::top:
+            if (_scrollbar_v)
+            {
+                _scrollbar_v->setPageValue(contentBox().cy);
+                _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
+            }
+            break;
+        default:
+            break;
+        }
     }
 
     void Container::arrange()
@@ -249,33 +269,34 @@ namespace ui
 
     void Container::onPosChanged(const core::pt32f & from, const core::pt32f & to)
     {
-        layout(layout_flag::resize_cx | layout_flag::resize_cy);
+        relayout();
         Control::onPosChanged(from, to);
     }
 
     void Container::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        switch(_layout_direction)
-        {
-        case core::align::left:
-            layout(core::equal(from.cy, to.cy) ? layout_flag::none : layout_flag::resize_cy);
-            if (_scrollbar_h)
-            {
-                _scrollbar_h->setPageValue(contentBox().cx);
-                _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
-            }
-            break;
-        case core::align::top:
-            layout(core::equal(from.cx, to.cx) ? layout_flag::none : layout_flag::resize_cx);
-            if (_scrollbar_v)
-            {
-                _scrollbar_v->setPageValue(contentBox().cy);
-                _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
-            }
-            break;
-        default:
-            break;
-        }
+        relayout();
+        //switch(_layout_direction)
+        //{
+        //case core::align::left:
+        //    layout(core::equal(from.cy, to.cy) ? layout_flag::none : layout_flag::resize_cy);
+        //    if (_scrollbar_h)
+        //    {
+        //        _scrollbar_h->setPageValue(contentBox().cx);
+        //        _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
+        //    }
+        //    break;
+        //case core::align::top:
+        //    layout(core::equal(from.cx, to.cx) ? layout_flag::none : layout_flag::resize_cx);
+        //    if (_scrollbar_v)
+        //    {
+        //        _scrollbar_v->setPageValue(contentBox().cy);
+        //        _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
+        //    }
+        //    break;
+        //default:
+        //    break;
+        //}
         Control::onSizeChanged(from, to);
     }
 
@@ -289,7 +310,7 @@ namespace ui
                 if(!_scrollbar_v)
                 {
                     _scrollbar_v = std::make_shared<controls::ScrollBar>();
-                    _scrollbar_v->setSize({ 1_em, 100_per });
+                    _scrollbar_v->setSize({ 0.5_em, 100_per });
                     _scrollbar_v->setAnchorBorders(core::align::right | core::align::topBottom);
                     _scrollbar_v->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_v->setZValue(ZVALUE_SCROLLBAR);
@@ -310,7 +331,7 @@ namespace ui
                 if (!_scrollbar_h)
                 {
                     _scrollbar_h = std::make_shared<controls::ScrollBar>();
-                    _scrollbar_h->setSize({ 100_per, 1_em });
+                    _scrollbar_h->setSize({ 100_per, 0.5_em });
                     _scrollbar_h->setAnchorBorders(core::align::bottom | core::align::leftRight);
                     _scrollbar_h->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_h->setZValue(ZVALUE_SCROLLBAR);
@@ -333,12 +354,12 @@ namespace ui
 
     void Container::onScrollValueChangedV(float32_t from, float32_t to)
     {
-        layout(layout_flag::none);
+        relayout();
     }
 
     void Container::onScrollValueChangedH(float32_t from, float32_t to)
     {
-        layout(layout_flag::none);
+        relayout();
     }
 
     void Container::onLayoutedSizeChaged(const core::si32f & from, const core::si32f & to)

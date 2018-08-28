@@ -83,7 +83,7 @@
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/effects</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;</AdditionalLibraryDirectories>
@@ -93,6 +93,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\utils.cpp" />
     <ClCompile Include="ui\component\Component.cpp" />
     <ClCompile Include="ui\component\Interactable.cpp" />
     <ClCompile Include="ui\component\Style.cpp" />

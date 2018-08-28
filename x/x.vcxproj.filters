@@ -188,6 +188,9 @@
     <ClCompile Include="ui\controls\ScrollBar.cpp">
       <Filter>ui\controls</Filter>
     </ClCompile>
+    <ClCompile Include="core\utils.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

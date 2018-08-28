@@ -32,8 +32,12 @@ namespace ui::component
             _invalid_region.addRect(rc);
         }
 
-        if(!_renderer.valid() || _renderer.wait_for(0s) == std::future_status::ready)
-            _renderer = std::async(std::bind(&Scene::renderThread, this));
+        //if(!_renderer.valid() || _renderer.wait_for(0s) == std::future_status::ready)
+        //    _renderer = std::async(std::bind(&Scene::renderThread, this));
+
+        if (!_th_render.joinable())
+            _th_render = std::thread(std::bind(&Scene::renderThread, this));
+        _cv_render.notify_all();
     }
 
     void Scene::update()
@@ -197,6 +201,7 @@ namespace ui::component
 
     void Scene::renderThread()
     {
+        static core::counter_fps<float64_t, 3> fps(1s);
         while(true)
         {
             core::rc32i invalid_rect;
@@ -212,6 +217,7 @@ namespace ui::component
             if (invalid_rect.empty())
                 break;
 
+            auto tms = core::datetime::high_resolution_s();
             if (!_renderBuffer || _renderBuffer->size().cx < invalid_rect.right() || _renderBuffer->size().cy < invalid_rect.bottom())
                 _renderBuffer = std::make_shared<graphics::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
 
@@ -226,6 +232,9 @@ namespace ui::component
                     break;
             }
 
+            fps.acc(1);
+            auto cost = core::datetime::high_resolution_s() - tms;
+            core::dbg_output(core::string::format(graphics.statistics().total(), " drawcalls, ", cost, " s, fps=", fps.fps()));
             if (_exit)
                 break;
             //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
@@ -234,6 +243,9 @@ namespace ui::component
             static bool save = false;
             if (save)
                 _renderBuffer->Save("scene.png");
+
+            std::unique_lock<std::mutex> lock(_mtx);
+            _cv_render.wait(lock, [this]() {return !_invalid_rect.empty(); });
         }
     }
 

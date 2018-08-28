@@ -194,8 +194,7 @@ namespace core
     float64_t datetime::high_resolution_s()
     {
         auto now = std::chrono::high_resolution_clock::now();
-        auto msecs = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-        return msecs / 1.0;
+        return now.time_since_epoch().count() / static_cast<float64_t>(std::nano::den);
     }
 
     std::chrono::seconds datetime::now_s()

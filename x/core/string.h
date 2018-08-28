@@ -21,8 +21,8 @@ namespace core { namespace string
 
     std::string ansi_u8(std::string str);
     std::string u8_ansi(std::string str);
-    std::string usc2_u8(std::wstring str);
-    std::string usc2_ansi(std::wstring str);
+    std::string u16_u8(std::wstring str);
+    std::string u16_ansi(std::wstring str);
     std::wstring u8_u16(std::string str);
     std::string u16_u8(std::wstring str);
 

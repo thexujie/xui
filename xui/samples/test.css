@@ -27,10 +27,10 @@
 }
 
 .scrollbar:bar-hover {
-    bar-color: #f888;
+    bar-color: #f666;
 }
 
 .scrollbar:bar-active{
     bar-border: 3px;
-    bar-color: #e2f2;
+    bar-color: #f444;
 }

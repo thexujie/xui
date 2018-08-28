@@ -134,20 +134,6 @@ namespace core { namespace string
         return str;
     }
 
-    std::string u16_ansi(const wchar_t * text, int32_t length)
-    {
-        if (length < 0)
-            length = (int32_t)std::wcslen(text);
-
-        int32_t nchars = WideCharToMultiByte(CP_ACP, 0, text, length, NULL, 0, NULL, FALSE);
-        char * u8 = new char[nchars];
-        int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, text, length, u8, nchars, NULL, FALSE);
-        assert(nchars2 == nchars);
-        std::string str(u8, nchars);
-        delete[] u8;
-        return str;
-    }
-
     std::wstring u8_u16(const char * text, int32_t length)
     {
         if (length < 0)
@@ -163,6 +149,20 @@ namespace core { namespace string
         std::wstring ucs2(u16, nchars);
         delete[] u16;
         return ucs2;
+    }
+
+    std::string u16_ansi(const wchar_t * text, int32_t length)
+    {
+        if (length < 0)
+            length = (int32_t)std::wcslen(text);
+
+        int32_t nchars = WideCharToMultiByte(CP_ACP, 0, text, length, NULL, 0, NULL, FALSE);
+        char * u8 = new char[nchars];
+        int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, text, length, u8, nchars, NULL, FALSE);
+        assert(nchars2 == nchars);
+        std::string str(u8, nchars);
+        delete[] u8;
+        return str;
     }
 
     std::wstring ansi_u16(const char * text, int32_t length)
@@ -188,14 +188,9 @@ namespace core { namespace string
         return u8_ansi(str.c_str(), (int32_t)str.length());
     }
 
-    std::string usc2_u8(std::wstring str)
+    std::string u16_u8(std::wstring str)
     {
         return u16_u8(str.c_str(), (int32_t)str.length());
-    }
-
-    std::string usc2_ansi(std::wstring str)
-    {
-        return u16_ansi(str.c_str(), (int32_t)str.length());
     }
 
     std::wstring u8_u16(std::string str)
@@ -203,9 +198,14 @@ namespace core { namespace string
         return u8_u16(str.c_str(), (int32_t)str.length());
     }
 
-    std::string u16_u8(std::wstring str)
+    std::string u16_ansi(std::wstring str)
     {
-        return u16_u8(str.c_str(), (int32_t)str.length());
+        return u16_ansi(str.c_str(), (int32_t)str.length());
+    }
+
+    std::wstring ansi_u16(std::string str)
+    {
+        return ansi_u16(str.c_str(), (int32_t)str.length());
     }
 
     std::string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes)

@@ -9,7 +9,7 @@ namespace win32
         wchar_t buffer[512] = {};
         int nchars = ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, 512, NULL);
         std::wstring str(buffer, nchars - 2);
-        return core::string::usc2_u8(str);
+        return core::string::u16_u8(str);
     }
 
     int runLoop()
