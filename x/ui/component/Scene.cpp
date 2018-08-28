@@ -201,7 +201,7 @@ namespace ui::component
 
     void Scene::renderThread()
     {
-        static core::counter_fps<float64_t, 3> fps(1s);
+        //static core::counter_fps<float64_t, 3> fps(1s);
         while(true)
         {
             core::rc32i invalid_rect;
@@ -232,9 +232,9 @@ namespace ui::component
                     break;
             }
 
-            fps.acc(1);
-            auto cost = core::datetime::high_resolution_s() - tms;
-            core::dbg_output(core::string::format(graphics.statistics().total(), " drawcalls, ", cost, " s, fps=", fps.fps()));
+            //fps.acc(1);
+            //auto cost = core::datetime::high_resolution_s() - tms;
+            //core::dbg_output(core::string::format(graphics.statistics().total(), " drawcalls, ", cost, " s, fps=", fps.fps()));
             if (_exit)
                 break;
             //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));

@@ -332,7 +332,7 @@ namespace ui
             auto s = scene();
             std::map<std::string, std::string> items = ss->generate(style);
             auto iter_transition_duration = items.find("transition-duration");
-            if (_style.empty() || !_styleTransition || !s || iter_transition_duration == items.end())
+            if (_style.empty() || !_style_transition || !s || iter_transition_duration == items.end())
             {
                 clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);
                 auto & props = properties();
@@ -647,6 +647,9 @@ namespace ui
 
     std::shared_ptr<component::MouseArea> Control::findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last) const
     {
+        if (_accept_clip && !_rect.contains(pos))
+            return nullptr;
+
         std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
         bool found = false;
         for (auto iter = _mouseareas.rbegin(); iter != _mouseareas.rend(); ++iter)

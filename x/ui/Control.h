@@ -223,6 +223,8 @@ namespace ui
         std::array<core::pt32f, 4> boderPoints(core::align edge) const;
         std::array<core::pt32f, 2> boderLine(core::align edge) const;
 
+        bool acceptClip() const { return _accept_clip; }
+
         virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
         virtual void enterScene(std::shared_ptr<component::Scene> & scene);
         virtual void leavingScene();
@@ -289,7 +291,7 @@ namespace ui
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
         std::string _style;
-        bool _styleTransition = true;
+        bool _style_transition = true;
         // 布局之后
         core::pt32f _location;
         core::rc32f _rect;
@@ -301,6 +303,9 @@ namespace ui
 
         // true if need update
         bool _invalid = false;
+
+        bool _clip_children = true;
+        bool _accept_clip = true;
 
         core::float3x2 _transform;
         std::multimap<int32_t, std::shared_ptr<component::Renderable>> _renderables;
