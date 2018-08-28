@@ -82,7 +82,7 @@ int main()
     auto buttons = std::make_shared<ui::Container>();
     {
         buttons->setLayoutDirection(core::align::top);
-        for (int cnt = 0; cnt < 10; ++cnt)
+        for (int cnt = 0; cnt < 100; ++cnt)
         {
             auto button = std::make_shared<ui::controls::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
             button->setBorder({ 2_px });
@@ -96,6 +96,8 @@ int main()
         scrollbar2->setSize({ 100_per, 1_em });
         buttons->addControl(scrollbar2);
         buttons->setBackgroundColor(0xffffffff);
+        buttons->setScrollbarVisionV(ui::scrollbar_vision::always);
+        buttons->setSize({ auto_value, 100_per});
     }
 
     auto text = std::make_shared<ui::controls::Text>(u8"ABCDEF这是一个很好的内容的G");
@@ -135,7 +137,7 @@ int main()
 
     auto form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em));
     form->formScene()->setStyleSheet(ss);
-    form->setBorder({ 10_px });
+    form->setBorder({ 1_px });
     form->setBorderColors({ colors::Black });
     //form->setBorderStyles({ graphics::stroke_style::dashed });
     form->addControl(text);
@@ -147,7 +149,8 @@ int main()
     form->show();
     form->centerScreen();
     form->closed += []() { core::app().quit(0); };
-    form->setScrollbarVisionV(ui::scrollbar_vision::always);
+    //form->setScrollbarVisionV(ui::scrollbar_vision::always);
+    form->setScrollbarVisionH(ui::scrollbar_vision::always);
     const core::property_table & props = core::app().properties<ui::controls::Button>();
 
     auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32

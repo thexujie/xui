@@ -271,20 +271,8 @@ namespace ui
         }
     }
 
-    void Control::relayout()
-    {
-        if (!_invalid_layout)
-        {
-            _invalid_layout = true;
-            invoke([this]() {layout(nullptr); });
-        }
-    }
-
     void Control::rearrange()
     {
-        auto p = parent();
-        if (p)
-            p->relayout();
     }
 
     std::array<core::pt32f, 4> Control::boderPoints(core::align edge) const
@@ -384,11 +372,6 @@ namespace ui
 
     void Control::leaveScene() { }
 
-    void Control::layout(layout_flags flags)
-    {
-        _invalid_layout = false;
-    }
-
     void Control::place(const core::rc32f & rect, const core::si32f & size)
     {
         core::pt32f pos;
@@ -397,9 +380,9 @@ namespace ui
         else if (_anchor_borders.all(core::align::rightTop))
             pos = rect.rightTop() - core::pt32f(size.cx, 0);
         else if (_anchor_borders.all(core::align::rightBottom))
-            pos = rect.rightTop() - core::pt32f(size.cx, size.cy);
+            pos = rect.rightBottom() - core::pt32f(size.cx, size.cy);
         else if (_anchor_borders.all(core::align::leftBottom))
-            pos = rect.rightTop() - core::pt32f(0, size.cy);
+            pos = rect.leftBottom() - core::pt32f(0, size.cy);
         else
             pos = rect.leftTop();
 
@@ -567,38 +550,38 @@ namespace ui
                 std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
                 std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
             {
-                if (!_border_obj)
+                if (!_border_rect_obj)
                 {
-                    _border_obj = std::make_shared<renderables::Rectangle>(control_ref());
-                    insert(LOCAL_DEPTH_FOREGROUND, _border_obj);
+                    _border_rect_obj = std::make_shared<renderables::Rectangle>(control_ref());
+                    insert(LOCAL_DEPTH_FOREGROUND, _border_rect_obj);
                 }
 
                 for (int32_t cnt = 0; cnt < 4; ++cnt)
                 {
-                    auto & border_obj = _border_objs[cnt];
+                    auto & border_obj = _border_line_objs[cnt];
                     if (border_obj)
                     {
                         remove(border_obj);
                         border_obj = nullptr;
                     }
                 }
-                _border_obj->setRect(box());
-                _border_obj->setRectangle(box().expanded(calc(_border) * -0.5f));
-                _border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
+                _border_rect_obj->setRect(box());
+                _border_rect_obj->setRectangle(box().expanded(calc(_border) * -0.5f));
+                _border_rect_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
             }
             else
             {
-                if (_border_obj)
+                if (_border_rect_obj)
                 {
-                    remove(_border_obj);
-                    _border_obj = nullptr;
+                    remove(_border_rect_obj);
+                    _border_rect_obj = nullptr;
                 }
 
                 auto border = calc(_border);
                 const core::align edges[4] = { core::align::left, core::align::top, core::align::right, core::align::bottom };
                 for(int32_t cnt = 0; cnt < 4; ++cnt)
                 {
-                    auto & border_obj = _border_objs[cnt];
+                    auto & border_obj = _border_line_objs[cnt];
                     if (border[cnt] > 0 && _border_colors.value[cnt].visible())
                     {
                         auto path = std::make_shared<graphics::Path>();
@@ -608,10 +591,12 @@ namespace ui
 
                         if (!border_obj)
                         {
-                            border_obj = std::make_shared<renderables::Line>(control_ref(), line[0], line[1]);
+                            border_obj = std::make_shared<renderables::Line>(control_ref());
                             insert(LOCAL_DEPTH_FOREGROUND, border_obj);
                         }
+
                         border_obj->setRect(path->computeTightBounds());
+                        border_obj->setPoints(line[0], line[1]);
                         border_obj->setClipPath(path);
                         border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]));
                     }

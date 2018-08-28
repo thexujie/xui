@@ -121,7 +121,7 @@ namespace core
             if constexpr (!std::is_arithmetic_v<T>)
                 return false;
             else if constexpr (std::is_floating_point_v<T>)
-                return std::abs(cx) < std::numeric_limits<T>::epsilon() || std::abs(cy) < std::numeric_limits<T>::epsilon();
+                return std::abs(cx) <= std::numeric_limits<T>::epsilon() || std::abs(cy) <= std::numeric_limits<T>::epsilon();
             else
                 return cx <= 0 || cy <= 0;
         }

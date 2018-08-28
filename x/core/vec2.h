@@ -35,7 +35,7 @@ namespace core
         bool empty() const
         {
             if (std::is_floating_point<T>::value)
-                return std::abs(w) < std::numeric_limits<T>::epsilon() || std::abs(h) < std::numeric_limits<T>::epsilon();
+                return std::isnan(w) || std::isnan(h) || std::abs(w) <= std::numeric_limits<T>::epsilon() || std::abs(h) <= std::numeric_limits<T>::epsilon();
             else
                 return w == 0 || h == 0;
         }
@@ -171,8 +171,7 @@ namespace core
         bool operator ==(const vec2 & vec) const
         {
             if constexpr (std::is_floating_point_v<T>)
-                return std::fabs(x - vec.x) < std::numeric_limits<T>::epsilon() &&
-                std::fabs(y - vec.y) < std::numeric_limits<T>::epsilon();
+                return core::equal(x, vec.x) && core::equal(y, vec.y);
             else
                 return x == vec.x && y == vec.y;
         }

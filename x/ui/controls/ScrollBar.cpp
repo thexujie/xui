@@ -88,9 +88,31 @@ namespace ui::controls
 
     void ScrollBar::setValue(float32_t val)
     {
+        val = std::clamp(val, _min, _max);
         if(!core::equal(_val, val))
         {
+            auto old_val = _val;
             _val = val;
+            refresh();
+            valueChagned(old_val, val);
+        }
+    }
+
+    void ScrollBar::setValues(float32_t val, float32_t min, float32_t max)
+    {
+        if (min > max)
+            max = min;
+        val = std::clamp(val, min, max);
+        if (!core::equal(_val, val) || !core::equal(_min, min) || !core::equal(_max, max))
+        {
+            if (!core::equal(_val, val))
+            {
+                auto old_val = _val;
+                _val = val;
+                valueChagned(old_val, val);
+            }
+            _min = min;
+            _max = max;
             refresh();
         }
     }
@@ -98,33 +120,30 @@ namespace ui::controls
     float32_t ScrollBar::barSize() const
     {
         auto box = controlBox();
-        if(_direction == core::align::top)
-            return box.cy * pageValue() / rangeValue();
+        if (rangeValue() <= 0)
+            return 0;
+        else if(_direction == core::align::top)
+            return box.cy * barRate();
         else
-            return box.cx * pageValue() / rangeValue();
+            return box.cx * barRate();
     }
 
     float32_t ScrollBar::barSpace() const
     {
         auto box = controlBox();
-        if (_direction == core::align::top)
-            return box.cy - box.cy * pageValue() / rangeValue();
+        if (rangeValue() <= 0)
+            return 0;
+        else if (_direction == core::align::top)
+            return box.cy * (1.0f - barRate());
         else
-            return box.cx - box.cx * pageValue() / rangeValue();
-    }
-
-    float32_t ScrollBar::barPos() const
-    {
-        auto box = controlBox();
-        if (_direction == core::align::top)
-            return (box.cy - barSize()) * (_val / rangeValue());
-        else
-            return (box.cx - barSize()) * (_val / rangeValue());
+            return box.cx * (1.0f - barRate());
     }
 
     core::rc32f ScrollBar::barRect() const
     {
         auto box = controlBox();
+        if (rangeValue() <= 0)
+            return { box.x, box.y, 0.0f, 0.0f };
         if (_direction == core::align::top)
             return { box.x, box.y + barPos(), box.cx, barSize() };
         else
@@ -138,7 +157,7 @@ namespace ui::controls
 
     void ScrollBar::onBarMouseMove(const component::mosue_state & state)
     {
-        if (_bar_drag_mouse_pos.empty())
+        if (std::isnan(_bar_drag_mouse_pos.x))
             return;
 
         float32_t diff = _direction == core::align::top ? state.pos().y - _bar_drag_mouse_pos.y : state.pos().x - _bar_drag_mouse_pos.x;
@@ -149,7 +168,7 @@ namespace ui::controls
     void ScrollBar::onBarMouseLeave(const component::mosue_state & state)
     {
         _bar_drag_start_vallue = 0.0f;
-        _bar_drag_mouse_pos = {};
+        _bar_drag_mouse_pos = {std::nanf("0")};
         updateStyle();
     }
 
@@ -164,7 +183,7 @@ namespace ui::controls
     void ScrollBar::onBarMouseUp(const component::mosue_state & state)
     {
         _bar_drag_start_vallue = 0.0f;
-        _bar_drag_mouse_pos = {};
+        _bar_drag_mouse_pos = { std::nanf("0") };
         updateStyle();
     }
 

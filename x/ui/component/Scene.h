@@ -91,6 +91,6 @@ namespace ui::component
 
         core::timer _animation_timer;
 
-        std::future<void> _future;
+        std::future<void> _renderer;
     };
 }

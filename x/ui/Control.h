@@ -47,8 +47,10 @@ namespace ui
     enum class layout_flag
     {
         none = 0,
-        no_resize = 0x0001,
+        resize_cx = 0x0001,
+        resize_cy = 0x0002,
     };
+    template<> struct enable_bitmasks<layout_flag> { static const bool enable = true; };
     typedef core::bitflag<layout_flag> layout_flags;
 
     enum class calc_flag
@@ -119,6 +121,8 @@ namespace ui
 
         core::si32f realPos() const { return _rect.pos; }
         core::si32f realSize() const { return _rect.size; }
+        float32_t realWidth() const { return _rect.cx; }
+        float32_t realHeight() const { return _rect.cy; }
         core::rc32f realRect() const { return _rect; }
         float32_t width() const { return _rect.cx; }
         float32_t height() const { return _rect.cy; }
@@ -137,7 +141,6 @@ namespace ui
        core::rc32f box(control_box box) const;
 
         void refresh();
-        void relayout();
         void rearrange();
 
         void setBackgroundColor(core::color32 color);
@@ -169,7 +172,6 @@ namespace ui
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
-        virtual void layout(layout_flags flags);
         virtual void place(const core::rc32f & rect, const core::si32f & size);
         virtual std::string styleName() const { return {}; }
 
@@ -236,12 +238,11 @@ namespace ui
 
         std::shared_ptr<renderables::Image> _background_imgage_obj;
         std::shared_ptr<renderables::Rectangle> _background_rect_obj;
-        std::shared_ptr<renderables::Rectangle> _border_obj;
-        std::array<std::shared_ptr<renderables::Line>, 4> _border_objs;
+        std::shared_ptr<renderables::Rectangle> _border_rect_obj;
+        std::array<std::shared_ptr<renderables::Line>, 4> _border_line_objs;
 
         // true if need update
         bool _invalid = false;
-        bool _invalid_layout = false;
 
         core::float3x2 _transform;
         std::multimap<int32_t, std::shared_ptr<component::Renderable>> _renderables;

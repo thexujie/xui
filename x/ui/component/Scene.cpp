@@ -19,8 +19,8 @@ namespace ui::component
             _th_render.join();
         }
 
-        if (_future.valid())
-            _future.wait();
+        if (_renderer.valid())
+            _renderer.wait();
     }
 
     void Scene::invalid(const core::rc32f & rect)
@@ -32,8 +32,8 @@ namespace ui::component
             _invalid_region.addRect(rc);
         }
 
-        if(!_future.valid() || _future.wait_for(0s) == std::future_status::ready)
-            _future = std::async(std::bind(&Scene::renderThread, this));
+        if(!_renderer.valid() || _renderer.wait_for(0s) == std::future_status::ready)
+            _renderer = std::async(std::bind(&Scene::renderThread, this));
     }
 
     void Scene::update()
@@ -197,43 +197,44 @@ namespace ui::component
 
     void Scene::renderThread()
     {
-        //std::unique_lock<std::mutex> lock(_mtx);
-
-        core::rc32i invalid_rect;
-        graphics::Region invalid_region;
+        while(true)
         {
-            std::lock_guard<std::mutex> lock(_mtx);
-            invalid_rect = std::move(_invalid_rect);
-            invalid_region = std::move(_invalid_region);
-            _invalid_rect.clear();
-            _invalid_region.clear();
-        }
+            core::rc32i invalid_rect;
+            graphics::Region invalid_region;
+            {
+                std::lock_guard<std::mutex> lock(_mtx);
+                invalid_rect = std::move(_invalid_rect);
+                invalid_region = std::move(_invalid_region);
+                _invalid_rect.clear();
+                _invalid_region.clear();
+            }
 
-        if (invalid_rect.empty())
-            return;
+            if (invalid_rect.empty())
+                break;
 
-        if (!_renderBuffer || _renderBuffer->size().cx < invalid_rect.right() || _renderBuffer->size().cy < invalid_rect.bottom())
-            _renderBuffer = std::make_shared<graphics::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
+            if (!_renderBuffer || _renderBuffer->size().cx < invalid_rect.right() || _renderBuffer->size().cy < invalid_rect.bottom())
+                _renderBuffer = std::make_shared<graphics::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
 
-        auto rect = invalid_region.bounds();
-        graphics::Graphics graphics(_renderBuffer);
-        graphics.setClipRect(rect.to<float32_t>(), false);
-        graphics.clear(_color_default);
-        for (auto & iter : _controls)
-        {
-            iter.second->render(graphics, invalid_region);
+            auto rect = invalid_region.bounds();
+            graphics::Graphics graphics(_renderBuffer);
+            graphics.setClipRect(rect.to<float32_t>(), false);
+            graphics.clear(_color_default);
+            for (auto & iter : _controls)
+            {
+                iter.second->render(graphics, invalid_region);
+                if (_exit)
+                    break;
+            }
+
             if (_exit)
-                return;
+                break;
+            //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
+            rendered(invalid_region);
+            //rendered(core::rc32i{{}, _renderBuffer ->size()});
+            static bool save = false;
+            if (save)
+                _renderBuffer->Save("scene.png");
         }
-
-        if (_exit)
-            return;
-        //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
-        rendered(invalid_region);
-        //rendered(core::rc32i{{}, _renderBuffer ->size()});
-        static bool save = false;
-        if (save)
-            _renderBuffer->Save("scene.png");
     }
 
     void Scene::animationTimerTick(core::timer & t, int64_t tick)

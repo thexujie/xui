@@ -32,14 +32,22 @@ namespace ui::controls
         const graphics::stroke_style & barBorderStyle() const { return _bar_border_style; }
 
     public:
+        float32_t value() const { return _val; }
+        float32_t minValue() const { return _min; }
+        float32_t maxValue() const { return _max; }
         void setValue(float32_t val);
+        void setPageValue(float32_t pageValue) { _page = pageValue; }
+        void setValues(float32_t val, float32_t min, float32_t max);
         float32_t rangeValue() const { return _max - _min; }
-        float32_t lineValue() const { return core::equal(_line, 0.0f) ? rangeValue() * 0.05f : _line; }
-        float32_t pageValue() const { return core::equal(_page, 0.0f) ? rangeValue() * 0.1f : _page; }
+        float32_t lineValue() const { return std::isnan(_line) || core::is_zero(_line) ? rangeValue() * 0.05f : _line; }
+        float32_t pageValue() const { return std::isnan(_page) || core::is_zero(_page) ? rangeValue() * 0.1f : _page; }
+
+        float32_t scrollRate() const { return _max > _min ? _val / (_max - _min) : 0; }
+        float32_t barRate() const { return pageValue() / (rangeValue() + pageValue()); }
 
         float32_t barSize() const;
         float32_t barSpace() const;
-        float32_t barPos() const;
+        float32_t barPos() const { return barSpace() * scrollRate(); }
         core::rc32f barRect() const;
     public:
         void onBarMouseEnter(const component::mosue_state & state);
@@ -52,6 +60,9 @@ namespace ui::controls
     public:
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
 
+    public:
+        core::event<void(float32_t from, float32_t to)> valueChagned;
+
     private:
         core::align _direction = core::align::top;
 
@@ -63,12 +74,12 @@ namespace ui::controls
 
         float32_t _min = 0.0f;
         float32_t _max = 100.0f;
-        float32_t _val = 50.0f;
-        float32_t _line = 1.0f;
-        float32_t _page = 10.0f;
+        float32_t _val = 0.0f;
+        float32_t _line = std::nan("0");
+        float32_t _page = std::nan("0");
 
         core::float32_t _bar_drag_start_vallue = 0.0f;
-        core::pt32f _bar_drag_mouse_pos;
+        core::pt32f _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };
 
         std::shared_ptr<interactables::MouseRectangle> _mc;
         std::shared_ptr<interactables::MouseRectangle> _mc_bar;

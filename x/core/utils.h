@@ -269,6 +269,22 @@ namespace core
         return abs(a - b) <= std::numeric_limits<float64_t>::epsilon() * std::min(abs(a), abs(b));
     }
 
+    constexpr bool less_equal(float32_t a, float32_t b)
+    {
+        return a < b || equal(a, b);
+    }
+
+    constexpr bool less_equal(float64_t a, float64_t b)
+    {
+        return a < b || equal(a, b);
+    }
+
+    template<typename T>
+    constexpr bool is_zero(T a)
+    {
+        return -std::numeric_limits<T>::epsilon() <= a && a <= std::numeric_limits<T>::epsilon();
+    }
+
     template<typename T>
     constexpr bool testbit(const T & val, const T & test)
     {

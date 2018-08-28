@@ -11,6 +11,7 @@ namespace ui::renderables
         Line(std::shared_ptr<ui::Control> control, const core::pt32f & point0, const core::pt32f & point1) :Shape(control), _point0(point0), _point1(point1) {}
         ~Line() = default;
 
+        void setPoints(const core::pt32f &  point0, const core::pt32f &  point1) { _point0 = point0; _point1 = point1; }
         void render(graphics::Graphics & graphics) const override;
 
     private:
