@@ -20,6 +20,7 @@ namespace ui::component
         ~Scene();
 
     public:
+        std::shared_ptr<Control> control() const { return _control.lock(); }
         float32_t ratio() const { return _ratio; }
         const core::rc32f & rect() const { return _rect; }
         const core::si32f & size() const { return _rect.size; }
@@ -30,19 +31,12 @@ namespace ui::component
 
         std::shared_ptr<graphics::Bitmap> bitmap() const { return _renderBuffer; }
         void invalid(const core::rc32f & rect);
-        void update();
-        void flush();
         const core::rc32i & invalidRect() const { return _invalid_rect; }
 
     public:
-        core::error insert(std::shared_ptr<Control> control);
-        core::error remove(std::shared_ptr<Control> control);
-
         core::error start(std::shared_ptr<Control> control);
 
-        const std::multimap<int32_t, std::shared_ptr<Control>> & views() const { return _controls; }
     public:
-        std::shared_ptr<MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last = nullptr) const;
 
         virtual void onMouseEnter(const mosue_state & state);
         virtual void onMouseMove(const mosue_state & state);
@@ -78,7 +72,6 @@ namespace ui::component
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
-        std::multimap<int32_t, std::shared_ptr<Control>> _controls;
         std::list<std::pair<core::flags, std::shared_ptr<Control>>> _animations;
 
         std::list<std::shared_ptr<Renderable>> _renderables;
@@ -90,7 +83,5 @@ namespace ui::component
         std::shared_ptr<component::StyleSheet> _styleSheet;
 
         core::timer _animation_timer;
-
-        std::future<void> _renderer;
     };
 }

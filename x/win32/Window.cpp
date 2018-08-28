@@ -455,16 +455,6 @@ namespace win32
 
      intx_t Window::OnWmRefresh(uintx_t uiParam, intx_t iParam)
     {
-         auto f = form();
-         if (!f)
-             throw core::exception(core::error_nullptr);
-
-         auto scene = f->scene();
-         auto rect = scene->invalidRect();
-         if (rect.empty())
-             return 0;
-
-         scene->flush();
         return 0;
     }
 

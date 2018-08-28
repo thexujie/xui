@@ -18,9 +18,6 @@ namespace ui::component
             _cv_render.notify_all();
             _th_render.join();
         }
-
-        if (_renderer.valid())
-            _renderer.wait();
     }
 
     void Scene::invalid(const core::rc32f & rect)
@@ -40,45 +37,6 @@ namespace ui::component
         _cv_render.notify_all();
     }
 
-    void Scene::update()
-    {
-        std::lock_guard<std::mutex> lock(_mtx);
-        flush();
-    }
-
-    void Scene::flush()
-    {
-    }
-
-    core::error Scene::insert(std::shared_ptr<Control> control)
-    {
-        if (!control)
-            return core::error_args;
-
-        std::lock_guard<std::mutex> lock(_mtx);
-        _controls.insert(std::make_pair(control->ZValue(), control));
-        return core::error_ok;
-    }
-
-    core::error Scene::remove(std::shared_ptr<Control> control)
-    {
-        if (!control)
-            return core::error_args;
-
-        auto s = share_ref<Scene>();
-        std::lock_guard<std::mutex> lock(_mtx);
-        for (auto iter = _controls.begin(); iter != _controls.end(); )
-        {
-            if (iter->second == control)
-            {
-                control->setParent(nullptr);
-                _controls.erase(iter);
-                break;
-            }
-        }
-        return core::error_ok;
-    }
-
     core::error Scene::start(std::shared_ptr<Control> control)
     {
         if (std::find_if(_animations.begin(), _animations.end(), [&control](const std::pair<core::flags, std::shared_ptr<Control>> & pair) { return pair.second == control; }) != _animations.end())
@@ -91,17 +49,6 @@ namespace ui::component
             _animation_timer.start(1000ms / 60);
         }
         return core::error_ok;
-    }
-
-    std::shared_ptr<MouseArea> Scene::findMouseArea(const core::pt32f & pos, std::shared_ptr<MouseArea> last) const
-    {
-        for (auto iter = _controls.rbegin(); iter != _controls.rend(); ++iter)
-        {
-            auto ma = iter->second->findMouseArea(pos, last);
-            if (ma)
-                return ma;
-        }
-        return nullptr;
     }
 
     void Scene::onMouseEnter(const mosue_state & state)
@@ -167,7 +114,7 @@ namespace ui::component
                 auto obj = _mousearea_current;
                 while(true)
                 {
-                    obj = findMouseArea(state.pos(), obj);
+                    obj = control()->findMouseArea(state.pos(), obj);
                     if (!obj)
                         break;
 
@@ -184,7 +131,7 @@ namespace ui::component
 
     void Scene::_updateMouseArea(const mosue_state & state)
     {
-        auto ma = state.action() == mouse_action::leaving ?  nullptr : findMouseArea(state.pos());
+        auto ma = state.action() == mouse_action::leaving ?  nullptr : control()->findMouseArea(state.pos());
         // do not update while capturing one or more button(s)
         if (_mousearea_current != ma &&
             (!_mousearea_current || !(_mousearea_current->captureButtons() & state.buttons())))
@@ -202,7 +149,7 @@ namespace ui::component
     void Scene::renderThread()
     {
         //static core::counter_fps<float64_t, 3> fps(1s);
-        while(true)
+        while(!_exit)
         {
             core::rc32i invalid_rect;
             graphics::Region invalid_region;
@@ -225,12 +172,7 @@ namespace ui::component
             graphics::Graphics graphics(_renderBuffer);
             graphics.setClipRect(rect.to<float32_t>(), false);
             graphics.clear(_color_default);
-            for (auto & iter : _controls)
-            {
-                iter.second->render(graphics, invalid_region);
-                if (_exit)
-                    break;
-            }
+            control()->render(graphics, invalid_region);
 
             //fps.acc(1);
             //auto cost = core::datetime::high_resolution_s() - tms;
@@ -245,7 +187,7 @@ namespace ui::component
                 _renderBuffer->Save("scene.png");
 
             std::unique_lock<std::mutex> lock(_mtx);
-            _cv_render.wait(lock, [this]() {return !_invalid_rect.empty(); });
+            _cv_render.wait(lock, [this]() {return !_invalid_rect.empty() || _exit; });
         }
     }
 

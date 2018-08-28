@@ -22,6 +22,7 @@ namespace ui
 
     void Container::addControl(std::shared_ptr<Control> control)
     {
+        std::lock_guard<std::mutex> lock(_mtx);
         if (std::any_of(_controls.begin(), _controls.end(), [&control](const auto & pair) { return pair.second == control; }))
             return;
 
@@ -40,6 +41,7 @@ namespace ui
 
     void Container::removeControl(std::shared_ptr<Control> control)
     {
+        std::lock_guard<std::mutex> lock(_mtx);
         control->leavingScene();
         for (auto iter = _controls.begin(); iter != _controls.end(); )
         {
@@ -265,6 +267,25 @@ namespace ui
         Control::update();
         for (auto & iter : _controls)
             iter.second->update();
+    }
+
+    void Container::render(graphics::Graphics & graphics, const graphics::Region & region) const
+    {
+        Control::render(graphics, region);
+        std::lock_guard<std::mutex> lock(const_cast<Container *>(this)->_mtx);
+        for (auto & iter : _controls)
+            iter.second->render(graphics, region);
+    }
+
+    std::shared_ptr<component::MouseArea> Container::findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last) const
+    {
+        for (auto & iter : core::reverse(_controls))
+        {
+            auto ma = iter.second->findMouseArea(pos, last);
+            if (ma)
+                return ma;
+        }
+        return Control::findMouseArea(pos, last);
     }
 
     void Container::onPosChanged(const core::pt32f & from, const core::pt32f & to)

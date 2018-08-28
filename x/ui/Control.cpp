@@ -289,8 +289,6 @@ namespace ui
     void Control::enteringScene(std::shared_ptr<component::Scene> & scene)
     {
         _scene = scene;
-        auto c = share_ref<Control>();
-        scene->insert(c);
         updateStyle();
     }
 
@@ -300,7 +298,6 @@ namespace ui
 
     void Control::leavingScene()
     {
-        scene()->remove(control_ref());
         _scene.reset();
     }
 
@@ -417,10 +414,6 @@ namespace ui
 
     void Control::onVisibleChanged(bool vis)
     {
-        auto c = share_ref<Control>();
-        auto s = scene();
-        if (c && s)
-            vis ? s->insert(c) : s->remove(c);
     }
 
     void Control::_updateBackground()

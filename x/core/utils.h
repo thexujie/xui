@@ -293,6 +293,19 @@ namespace core
         return (val & test) != static_cast<T>(0);
     }
 
+
+    template <typename T>
+    struct reversion_wrapper { T& iterable; };
+
+    template <typename T>
+    auto begin(reversion_wrapper<T> w) { return std::rbegin(w.iterable); }
+
+    template <typename T>
+    auto end(reversion_wrapper<T> w) { return std::rend(w.iterable); }
+
+    template <typename T>
+    reversion_wrapper<T> reverse(T&& iterable) { return { iterable }; }
+
 #pragma region lowhigh
 
     /*! @brief 获取 int32_t 类型值的高16位。*/

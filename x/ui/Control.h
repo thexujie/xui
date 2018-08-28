@@ -324,7 +324,7 @@ namespace ui
 
        virtual void render(graphics::Graphics & graphics, const graphics::Region & region) const;
 
-       std::shared_ptr<component::MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last = nullptr) const;
+       virtual std::shared_ptr<component::MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last = nullptr) const;
 
 
     public:
