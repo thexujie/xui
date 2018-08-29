@@ -37,15 +37,6 @@ namespace ui::component
         core::error start(std::shared_ptr<Control> control);
 
     public:
-
-        virtual void onMouseEnter(const mosue_state & state);
-        virtual void onMouseMove(const mosue_state & state);
-        virtual void onMouseLeave(const mosue_state & state);
-
-        virtual void onMouseDown(const mosue_state & state);
-        virtual void onMouseUp(const mosue_state & state);
-        virtual void onMouseClick(const mosue_state & state);
-        virtual void onMouseDBClick(const mosue_state & state);
         virtual void onMouseState(const mosue_state & state);
 
     private:

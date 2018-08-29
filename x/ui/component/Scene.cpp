@@ -51,68 +51,31 @@ namespace ui::component
         return core::error_ok;
     }
 
-    void Scene::onMouseEnter(const mosue_state & state)
-    {
-        _updateMouseArea(state);
-    }
-
-    void Scene::onMouseMove(const mosue_state & state)
-    {
-        _updateMouseArea(state);
-        if (_mousearea_current)
-            _mousearea_current->onMouseMove(state);
-    }
-
-    void Scene::onMouseLeave(const mosue_state & state)
-    {
-        _updateMouseArea(state);
-    }
-
-    void Scene::onMouseDown(const mosue_state & state)
-    {
-        if (_mousearea_current)
-        {
-            if (_mousearea_current->captureButtons())
-                captured(true);
-            _mousearea_current->onMouseDown(state);
-        }
-    }
-
-    void Scene::onMouseUp(const mosue_state & state)
-    {
-        if (_mousearea_current)
-        {
-            _mousearea_current->onMouseUp(state);
-            if (_mousearea_current->captureButtons())
-                captured(false);
-        }
-
-        _updateMouseArea(state);
-    }
-
-    void Scene::onMouseClick(const mosue_state & state)
-    {
-        if (_mousearea_current)
-            _mousearea_current->onMouseClick(state);
-    }
-
-    void Scene::onMouseDBClick(const mosue_state & state)
-    {
-        if (_mousearea_current)
-            _mousearea_current->onMouseDBClick(state);
-    }
-
     void Scene::onMouseState(const mosue_state & state)
     {
-        if(state.action() == mouse_action::v_wheeling)
+        if(!can_safe_invoke())
         {
-            //findMouseArea(state.pos());
+            invoke([this, state]() {onMouseState(state); });
+            return;
+        }
+
+        switch (state.action())
+        {
+        case mouse_action::entering:
+            _updateMouseArea(state);
+            break;
+        case mouse_action::moving:
+            _updateMouseArea(state);
+            if (_mousearea_current)
+                _mousearea_current->onMouseMove(state);
+            break;
+        case mouse_action::v_wheeling:
             if (_mousearea_current && _mousearea_current->acceptWheelV())
                 _mousearea_current->onMouseWheel(state);
             else
             {
                 auto obj = _mousearea_current;
-                while(true)
+                while (true)
                 {
                     obj = control()->findMouseArea(state.pos(), obj);
                     if (!obj)
@@ -126,6 +89,27 @@ namespace ui::component
                 }
             }
             _updateMouseArea(state);
+            break;
+        case mouse_action::pressing:
+            if (_mousearea_current)
+            {
+                if (_mousearea_current->captureButtons())
+                    captured(true);
+                _mousearea_current->onMouseDown(state);
+            }
+            break;
+        case mouse_action::releasing:
+            if (_mousearea_current)
+            {
+                _mousearea_current->onMouseUp(state);
+                if (_mousearea_current->captureButtons())
+                    captured(false);
+            }
+            _updateMouseArea(state);
+            break;
+        default:
+            _updateMouseArea(state);
+            break;
         }
     }
 

@@ -75,5 +75,5 @@ namespace win32
     }
     graphics::font defaultFont();
     handle_t instance();
-    void quit(int32_t ret);
+    void endLoop(int32_t ret);
 }

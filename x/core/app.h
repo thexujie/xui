@@ -2,7 +2,7 @@
 
 namespace core
 {
-    class IApp
+    class IApp : public core::object
     {
     public:
         virtual ~IApp() = default;

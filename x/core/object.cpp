@@ -98,15 +98,38 @@ namespace core
         return error_ok;
     }
 
+    error invoke_helper::add(std::shared_ptr<object> invoker, std::shared_ptr<invoke_task> task)
+    {
+        if (!_id)
+            return error_state;
+        std::lock_guard<std::mutex> lock(_mtx);
+        if (!_thread)
+        {
+            _thread = OpenThread(THREAD_SET_CONTEXT, FALSE, _id);
+            if (!_thread)
+            {
+                logger::err() << __FUNCTION__" OpenThread" << win32::winerr_str(GetLastError());
+            }
+        }
+        if (!_thread)
+            return error_state;
+
+        _tasks[invoker].push_back(task);
+        ::QueueUserAPC(InvokerAPCCallBack, (HANDLE)_thread, 0);
+        return error_ok;
+    }
+
     error invoke_helper::trigger()
     {
         if (_id != GetCurrentThreadId())
             return error_state;
 
         invoker_map invokers;
+        task_map tasks;
         {
             std::lock_guard<std::mutex> lock(_mtx);
             invokers = std::move(_invokers);
+            tasks = std::move(_tasks);
         }
 
         for (invoker_map::iterator iter = invokers.begin(); iter != invokers.end(); ++iter)
@@ -119,21 +142,16 @@ namespace core
                 fun();
         }
 
+        for (task_map::iterator iter = tasks.begin(); iter != tasks.end(); ++iter)
+        {
+            auto invoker = iter->first.lock();
+            if (!invoker)
+                continue;
+
+            for (auto & task : iter->second)
+                task->trigger();
+        }
+
         return error_ok;
-    }
-
-    bool object::can_safe_invoke() const
-    {
-        return _invoke_helper.can_safe_invoke();
-    }
-
-    void object::check_invoke()
-    {
-        return _invoke_helper.check_invoke();
-    }
-
-    error object::invoke(std::function<void()> fun)
-    {
-        return _invoke_helper.add(shared_from_this(), fun);
     }
 }

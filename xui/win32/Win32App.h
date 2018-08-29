@@ -37,7 +37,7 @@ namespace win32
             return nullptr;
         }
 
-        void quit(int32_t ret) { win32::quit(0); }
+        void quit(int32_t ret) { async([ret]() {win32::endLoop(ret); }); }
     private:
         std::shared_ptr<win32::GraphicsService> _graphicsService;
         std::shared_ptr<win32::uniscribe::ScriptService> _scriptService;

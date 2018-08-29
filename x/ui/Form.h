@@ -16,11 +16,10 @@ namespace ui
         //const core::rc32f & windowRect() const { return _rect_window; }
         void setWindowPos(const core::pt32f & pos);
         void setWindowPos(const core::vec2<core::dimensionf> & pos) { setWindowPos(calc(pos)); }
-        //void setWindowSize(const core::si32f & size);
-        //void setWindowSize(const core::vec2<core::dimensionf> & size) { setWindowSize(calc(size)); }
+        void setWindowSize(const core::si32f & size);
+        void setWindowSize(const core::vec2<core::dimensionf> & size) { setWindowSize(calc(size)); }
 
         std::shared_ptr<ui::component::Scene> formScene() const;
-
 
         void show();
         void centerScreen(int32_t screenIndex = 0);

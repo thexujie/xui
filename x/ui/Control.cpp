@@ -407,7 +407,7 @@ namespace ui
     }
     void Control::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        update();
+        refresh();
         sizeChanged(from, to);
     }
     void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }

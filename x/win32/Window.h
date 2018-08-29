@@ -229,7 +229,7 @@ namespace win32
                          KeyCodeCount,
     };
 
-    class Window : public ui::component::Window, public std::enable_shared_from_this<Window>
+    class Window : public ui::component::Window
     {
     public:
         Window();
@@ -238,6 +238,9 @@ namespace win32
         core::error attatch(std::shared_ptr<ui::Form> form);
         core::error attatch(handle_t handle);
         void detach();
+
+        void move(const core::pt32f & pos);
+        void resize(const core::si32f & size);
 
         std::shared_ptr<ui::Form> form() { return _form.lock(); }
         handle_t handle() const;

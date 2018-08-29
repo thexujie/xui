@@ -37,12 +37,9 @@ namespace win32
     {
         _form = form;
         auto scene = form->scene();
-        form->windowPosChanged += std::weak_bind(&Window::onPosChanged, shared_from_this(), std::placeholders::_1, std::placeholders::_2);
-        form->sizeChanged += std::weak_bind(&Window::onSizeChanged, shared_from_this(), std::placeholders::_1, std::placeholders::_2);
-        form->shownChanged += std::weak_bind(&Window::onShownChanged, shared_from_this(), std::placeholders::_1);
-        scene->invalidated += std::weak_bind(&Window::onSceneInvalidated, shared_from_this(), std::placeholders::_1);
-        scene->rendered += std::weak_bind(&Window::onSceneRendered, shared_from_this(), std::placeholders::_1);
-        scene->captured += std::weak_bind(&Window::onSceneCaptured, shared_from_this(), std::placeholders::_1);
+        form->shownChanged += std::weak_bind(&Window::onShownChanged, share_ref<Window>(), std::placeholders::_1);
+        scene->rendered += std::weak_bind(&Window::onSceneRendered, share_ref<Window>(), std::placeholders::_1);
+        scene->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
         return core::error_ok;
     }
 
@@ -64,6 +61,7 @@ namespace win32
         SetPropW(hwnd, WINDOW_PROP_DLG_RESULT, (HANDLE)0);
         SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowWndProc);
         SetPropW(hwnd, WINDOW_PROP_OLD_WNDPROC, (HANDLE)pfnWndProcOld);
+        _handle = handle;
         return core::error_ok;
     }
 
@@ -84,6 +82,34 @@ namespace win32
         RemovePropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
     }
 
+    void Window::move(const core::pt32f & pos)
+    {
+        //if (!can_safe_invoke())
+        //{
+        //    invoke([this, pos]() { move(pos); });
+        //    return;
+        //}
+
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return;
+
+        auto p = pos.to<int32_t>();
+        if (p != _pos())
+            _adjustWindow(p, _size());
+    }
+
+    void Window::resize(const core::si32f & size)
+    {
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return;
+
+        auto s = size.to<int32_t>();
+        if (s != _size())
+            _adjustWindow(_pos(), s);
+    }
+
     handle_t Window::handle() const
     {
         if (!_handle)
@@ -98,7 +124,7 @@ namespace win32
         if(shown)
         {
             HWND hwnd = (HWND)handle();
-            ::ShowWindow(hwnd, SW_SHOW);
+            ShowWindow(hwnd, SW_SHOW);
         }
         else
         {
@@ -121,13 +147,13 @@ namespace win32
 
     void Window::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        HWND hwnd = (HWND)_handle;
-        if (!hwnd)
-            return;
+        //HWND hwnd = (HWND)_handle;
+        //if (!hwnd)
+        //    return;
 
-        auto size = to.to<int32_t>();
-        if (size != _size())
-            _adjustWindow(_pos(), size);
+        //auto size = to.to<int32_t>();
+        //if (size != _size())
+        //    _adjustWindow(_pos(), size);
     }
 
     void Window::onSceneInvalidated(const core::rc32i & rect)
@@ -146,6 +172,12 @@ namespace win32
 
     void Window::onSceneCaptured(bool capture)
     {
+        if (!can_safe_invoke())
+        {
+            invoke([this, capture]() { onSceneCaptured(capture); });
+            return;
+        }
+
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
@@ -198,18 +230,18 @@ namespace win32
         {
         }
 
-        Window * pthis = const_cast<Window *>(this);
         auto pos = f->windowPos().to<int32_t>();
         auto size = f->realSize().convert(ceilf).to<int32_t>();
 
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
         ::AdjustWindowRect(&rect, _style, FALSE);
 
-        pthis->_handle = CreateWindowExW(
+        HWND hwnd = CreateWindowExW(
             _styleEx, WINDOW_CLASS_NAME, NULL, _style,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             NULL, NULL, hInstance, NULL);
-        pthis->attatch(_handle);
+
+        attatch(hwnd);
         return core::error_ok;
     }
 
@@ -356,7 +388,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            return OnDefault(uiMessage, uiParam, iParam);
 
         switch (uiMessage)
         {
@@ -449,7 +481,7 @@ namespace win32
         if (!f)
             throw core::exception(core::error_nullptr);
 
-        f->setShowSize(_size().to<float32_t>());
+        f->setWindowSize(_size().to<float32_t>());
         return 0;
     }
 
@@ -466,7 +498,6 @@ namespace win32
         auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
-        _mouse_state.setAction(ui::component::mouse_action::moving);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         if (!_trackingMouse)
         {
@@ -478,10 +509,12 @@ namespace win32
             tme.hwndTrack = (HWND)_handle;
             TrackMouseEvent(&tme);
             _trackingMouse = true;
-            s->onMouseEnter(_mouse_state);
+            _mouse_state.setAction(ui::component::mouse_action::entering);
+            s->onMouseState(_mouse_state);
         }
 
-        s->onMouseMove(_mouse_state);
+        _mouse_state.setAction(ui::component::mouse_action::moving);
+        s->onMouseState(_mouse_state);
         return 0;
     }
 
@@ -500,7 +533,7 @@ namespace win32
         _mouse_state.setAction(ui::component::mouse_action::leaving);
         _mouse_state.setButton(ui::component::mouse_button::mask, false);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
-        s->onMouseLeave(_mouse_state);
+        s->onMouseState(_mouse_state);
         return 0;
     }
 
@@ -515,7 +548,7 @@ namespace win32
         _mouse_state.setAction(ui::component::mouse_action::pressing);
         _mouse_state.setButton(ui::component::mouse_button::left, true);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
-        s->onMouseDown(_mouse_state);
+        s->onMouseState(_mouse_state);
         return 0;
     }
 
@@ -530,7 +563,7 @@ namespace win32
         _mouse_state.setAction(ui::component::mouse_action::releasing);
         _mouse_state.setButton(ui::component::mouse_button::left, false);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
-        s->onMouseUp(_mouse_state);
+        s->onMouseState(_mouse_state);
         return 0;
     }
 
@@ -608,7 +641,7 @@ namespace win32
                 }
                 break;
             case WM_DESTROY:
-                win32::quit(0);
+                win32::endLoop(0);
                 break;
             default:
                 return DefWindowProcW(hWnd, uiMessage, uiParam, iParam);

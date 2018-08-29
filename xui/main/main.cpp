@@ -60,19 +60,11 @@ void testImages()
 //#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
 #pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
 
-
-int main()
+void xui_main()
 {
     std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
     auto ss = std::make_shared<ui::component::StyleSheet>();
     ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
-
-    //auto an = std::make_shared<animation>();
-    //an.start();
-
-    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
-    win32::Win32App app;
-    //testImages();
 
     auto dsize = ui::Desktop::instance().size();
     auto screen = ui::Desktop::instance().screen(0);
@@ -97,7 +89,7 @@ int main()
         buttons->addControl(scrollbar2);
         buttons->setBackgroundColor(0xffffffff);
         buttons->setScrollbarVisionV(ui::scrollbar_vision::always);
-        buttons->setSize({ auto_value, 100_per});
+        buttons->setSize({ auto_value, 100_per });
     }
 
     auto text = std::make_shared<ui::controls::Text>(u8"ABCDEF这是一个很好的内容的G");
@@ -120,8 +112,6 @@ int main()
     auto scrollbar = std::make_shared<ui::controls::ScrollBar>();
     //image0->setBackgroundColor(colors::Green);
     scrollbar->setSize({ 1_em, 100_per });
-
-
 
     auto image = std::make_shared<ui::controls::Image>("applique1.jpg");
     //image->setBackgroundColor(colors::Green);
@@ -148,38 +138,38 @@ int main()
     form->addControl(text2);
     form->show();
     form->centerScreen();
-    form->closed += []() { core::app().quit(0); };
+    form->closed += []() { win32::endLoop(0); };
     //form->setScrollbarVisionV(ui::scrollbar_vision::always);
     form->setScrollbarVisionH(ui::scrollbar_vision::always);
     const core::property_table & props = core::app().properties<ui::controls::Button>();
 
-    auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
-    {
-        auto a = s.a + (e.a - s.a) * inter;
-        auto r = s.r + (e.r - s.r) * inter;
-        auto g = s.g + (e.g - s.g) * inter;
-        auto b = s.b + (e.b - s.b) * inter;
-        return core::color32(a, r, g, b);
-    };
+    //auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
+    //{
+    //    auto a = s.a + (e.a - s.a) * inter;
+    //    auto r = s.r + (e.r - s.r) * inter;
+    //    auto g = s.g + (e.g - s.g) * inter;
+    //    auto b = s.b + (e.b - s.b) * inter;
+    //    return core::color32(a, r, g, b);
+    //};
 
-    auto prop = props.at("background-color");
+    //auto prop = props.at("background-color");
     core::timer t(10ms);
     std::vector<std::shared_ptr<animation>> anims;
-    for (auto & iter : buttons->children())
-    {
-        auto& control = iter.second;
-        if (!control->is_type_of<ui::controls::Button>())
-            continue;
+    //for (auto & iter : buttons->children())
+    //{
+    //    auto& control = iter.second;
+    //    if (!control->is_type_of<ui::controls::Button>())
+    //        continue;
 
-        auto interpolator = make_interpolator<core::color32>(inter);
-        prop->serialize("red", interpolator->start());
-        prop->serialize("green", interpolator->end());
+    //    auto interpolator = make_interpolator<core::color32>(inter);
+    //    prop->serialize("red", interpolator->start());
+    //    prop->serialize("green", interpolator->end());
 
-        auto anim = std::make_shared<property_animation>(control, prop, interpolator);
-        anim->setDuration(3s);
-        anim->stoped += []() {printf("ended \n"); };
-        anims.push_back(anim);
-    }
+    //    auto anim = std::make_shared<property_animation>(control, prop, interpolator);
+    //    anim->setDuration(3s);
+    //    anim->stoped += []() {printf("ended \n"); };
+    //    anims.push_back(anim);
+    //}
 
     {
         auto & props2 = core::app().properties<ui::Form>();
@@ -209,7 +199,14 @@ int main()
     };
 
     t.start();
+
     win32::runLoop();
-    //t.stop();
+}
+
+int main()
+{
+    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+    auto app = std::make_shared<win32::Win32App>();
+    xui_main();
     return 0;
 }

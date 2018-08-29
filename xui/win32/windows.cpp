@@ -214,7 +214,7 @@ namespace win32
         return (handle_t)GetModuleHandleW(NULL);
     }
 
-    void quit(int32_t ret)
+    void endLoop(int32_t ret)
     {
         ::PostQuitMessage(ret);
     }
