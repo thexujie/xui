@@ -198,9 +198,9 @@ namespace ui
 
     void Control::refresh()
     {
-        if(!_invalid)
+        if(!_delay_update)
         {
-            _invalid = true;
+            _delay_update = true;
             invoke([this]() {update(); });
         }
     }
@@ -358,9 +358,6 @@ namespace ui
                         iter->second->set(item.second, *this);
                     }
                 }
-
-                startAnimations();
-                
             }
             _style = style;
             refresh();
@@ -371,7 +368,7 @@ namespace ui
     {
         check_invoke();
 
-        _invalid = false;
+        _delay_update = false;
         auto s = scene();
         if (!s)
             return;
@@ -384,6 +381,20 @@ namespace ui
         if (!_rect_invalid.empty() && s)
             s->invalid(_rect_invalid);
         _rect_invalid.clear();
+    }
+
+    int32_t Control::animate()
+    {
+        int32_t num = 0;
+        for (auto & animations : _animations)
+        {
+            for (auto & anim : animations.second)
+            {
+                if (anim->update())
+                    ++num;
+            }
+        }
+        return num;
     }
 
     void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to)
@@ -563,7 +574,14 @@ namespace ui
 
     void Control::invalidate(const core::rc32f & rect)
     {
-        _rect_invalid.unite(rect);
+        if(_delay_update)
+            _rect_invalid.unite(rect);
+        else
+        {
+            auto s = scene();
+            if(s)
+                s->invalid(rect);
+        }
     }
 
     void Control::insert(int32_t depth, std::shared_ptr<component::Component> object)
@@ -619,7 +637,7 @@ namespace ui
         std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
         for (auto & rendereable : _renderables)
         {
-            if (region.intersects(rendereable.second->rect().ceil<int32_t>()))
+            if (rendereable.second->visible() && region.intersects(rendereable.second->rect().ceil<int32_t>()))
                 rendereable.second->render(graphics);
         }
     }
@@ -656,24 +674,11 @@ namespace ui
     void Control::appendAnimation(std::string group, std::shared_ptr<core::animation> animation)
     {
         _animations[group].push_back(animation);
-    }
-
-    void Control::startAnimations()
-    {
-        auto s = scene();
-        s->start(control_ref());
-    }
-
-    bool Control::updateAnimations()
-    {
-        bool running = false;
-        for (auto & animations : _animations)
+        if(!_animation_started)
         {
-            for(auto & anim : animations.second)
-            {
-                running |= anim->update();
-            }
+            _animation_started = true;
+            auto s = scene();
+            s->animate();
         }
-        return running;
     }
 }

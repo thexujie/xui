@@ -37,12 +37,8 @@ namespace ui::component
         _cv_render.notify_all();
     }
 
-    core::error Scene::start(std::shared_ptr<Control> control)
+    core::error Scene::animate()
     {
-        if (std::find_if(_animations.begin(), _animations.end(), [&control](const std::pair<core::flags, std::shared_ptr<Control>> & pair) { return pair.second == control; }) != _animations.end())
-            return core::error_ok;
-
-        _animations.push_back(std::make_pair(core::flag::none, control));
         if(!_animation_timer.running())
         {
             _animation_timer.tick += std::bind(&Scene::animationTimerTick, this, std::placeholders::_1, std::placeholders::_2);
@@ -175,16 +171,14 @@ namespace ui::component
         }
     }
 
-    void Scene::animationTimerTick(core::timer & t, int64_t tick)
+    void Scene::animationTimerTick(core::timer &, int64_t )
     {
-        for (auto & a : _animations)
-        {
-            if (!(a.second->updateAnimations()))
-                a.first |= core::flag::expired;
-        }
-        _animations.erase(std::remove_if(std::begin(_animations), std::end(_animations), [](const std::pair<core::flags, std::shared_ptr<Control>> & pair) { return pair.first & core::flag::expired; }), _animations.end());
+        auto c = control();
+        if (!c)
+            return;
 
-        if (_animations.empty())
+        int32_t num = c->animate();
+        if (!num)
             _animation_timer.stop();
     }
 }

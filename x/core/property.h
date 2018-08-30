@@ -248,6 +248,7 @@ namespace core
     }
 
 
+    bool parseBool(const std::string & str);
     std::string parseString(const std::string & str);
     core::color32 parseColor(const std::string & str);
     core::vec2<core::color32> parseColor2D(const std::string & str);

@@ -34,7 +34,7 @@ namespace ui::component
         const core::rc32i & invalidRect() const { return _invalid_rect; }
 
     public:
-        core::error start(std::shared_ptr<Control> control);
+        core::error animate();
 
     public:
         virtual void onMouseState(const mosue_state & state);
@@ -63,7 +63,6 @@ namespace ui::component
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
-        std::list<std::pair<core::flags, std::shared_ptr<Control>>> _animations;
 
         std::list<std::shared_ptr<Renderable>> _renderables;
 

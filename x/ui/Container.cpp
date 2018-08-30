@@ -272,6 +272,14 @@ namespace ui
             iter.second->update();
     }
 
+    int32_t Container::animate()
+    {
+        int32_t num = Control::animate();
+        for (auto & iter : _controls)
+            num += iter.second->animate();
+        return num;
+    }
+
     void Container::render(graphics::Graphics & graphics, const graphics::Region & region) const
     {
         Control::render(graphics, region);

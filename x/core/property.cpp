@@ -14,6 +14,11 @@ namespace core
         return 0;
     }
 
+    bool parseBool(const std::string & str)
+    {
+        return !core::string::equal_ic(str, "false");
+    }
+
     std::string parseString(const std::string & str)
     {
         return std::string(str.data(), str.length());

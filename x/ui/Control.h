@@ -16,9 +16,9 @@ namespace ui
 
     const int32_t ZVALUE_SCROLLBAR = 0x10000001;
 
-    const int32_t LOCAL_DEPTH_BACKGROUND = -1;
+    const int32_t LOCAL_DEPTH_BACKGROUND = -100;
     const int32_t LOCAL_DEPTH_CONTENT = 0;
-    const int32_t LOCAL_DEPTH_FOREGROUND = 1;
+    const int32_t LOCAL_DEPTH_FOREGROUND = 100;
 
     enum class control_box
     {
@@ -243,6 +243,9 @@ namespace ui
         virtual void updateStyle();
         virtual void update();
         virtual void updateContent() {}
+
+        virtual int32_t animate();
+
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
@@ -307,7 +310,7 @@ namespace ui
         std::array<std::shared_ptr<renderables::Line>, 4> _border_line_objs;
 
         // true if need update
-        bool _invalid = false;
+        bool _delay_update = false;
 
         bool _clip_children = true;
         bool _accept_clip = true;
@@ -317,6 +320,7 @@ namespace ui
         std::list<std::shared_ptr<component::MouseArea>> _mouseareas;
 
         std::map<std::string, std::vector<std::shared_ptr<core::animation>>> _animations;
+        bool _animation_started = false;
         core::rc32f _rect_invalid;
 
    public:
@@ -337,7 +341,5 @@ namespace ui
         void clearAnimations(std::string group);
         void appendAnimation(std::shared_ptr<core::animation> animation) { appendAnimation(std::string(), animation); }
         void appendAnimation(std::string group, std::shared_ptr<core::animation> animation);
-        void startAnimations();
-        bool updateAnimations();
     };
 }

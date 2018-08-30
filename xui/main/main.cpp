@@ -160,6 +160,13 @@ void xui_main()
 
         form->addControl(layer);
     }
+    {
+        auto tbx = std::make_shared<ui::controls::TextBox>();
+        tbx->setSize({ 100_per, 2_em });
+        layer->addControl(tbx);
+
+        form->addControl(layer);
+    }
 
     //auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
     //{

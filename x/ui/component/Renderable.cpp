@@ -15,6 +15,11 @@ namespace ui::component
             v->invalidate(_rect);
     }
 
+    void Renderable::onVisibleChanged(bool)
+    {
+        invalid();
+    }
+
     void Renderable::onRectChanged(const core::rc32f & from, const core::rc32f & to)
     {
         if (auto v = _control.lock())
