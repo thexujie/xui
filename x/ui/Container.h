@@ -40,7 +40,7 @@ namespace ui
         void update() override;
         int32_t animate() override;
         void render(graphics::Graphics & graphics, const graphics::Region & region) const override;
-        std::shared_ptr<component::MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last = nullptr) const override;
+        std::shared_ptr<component::Interactable> findInteractable(const core::pt32f & pos, std::shared_ptr<component::Interactable> last = nullptr) const override;
 
         void onPosChanged(const core::pt32f & from, const core::pt32f & to) override;
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "TextBox.h"
 #include "ui/renderables/Text.h"
-#include "ui/interactables/MouseRectangle.h"
 
 namespace ui::controls
 {
@@ -33,14 +32,14 @@ namespace ui::controls
 
     void TextBox::setText(const std::string & text)
     {
-        _textBlob = nullptr;
+        _textblob = nullptr;
         _text = text;
     }
 
     core::si32f TextBox::contentSize() const
     {
         _confirmBlob();
-        return _textBlob ? _textBlob->size() : core::si32f();
+        return _textblob ? _textblob->size() : core::si32f();
     }
 
 
@@ -85,14 +84,14 @@ namespace ui::controls
     void TextBox::updateContent()
     {
         _confirmBlob();
-        if (_textBlob)
+        if (_textblob)
         {
             if(!_text_obj)
             {
                 _text_obj = std::make_shared<renderables::Text>(control_ref());
                 insert(LOCAL_DEPTH_CONTENT, _text_obj);
             }
-            _text_obj->setTextBlob(_textBlob);
+            _text_obj->setTextBlob(_textblob);
             _text_obj->setRect(contentBox());
         }
 
@@ -117,18 +116,18 @@ namespace ui::controls
         _cursor_obj->setPoints({ cbox.x, cbox.y }, { cbox.x, cbox.y + fm.height });
         _cursor_obj->setPathStyle(graphics::PathStyle().stoke(core::colors::Red , graphics::stroke_style::solid).width(1));
 
-        if(!_mrc_obj)
+        if(!_input_obj)
         {
-            _mrc_obj = std::make_shared<interactables::MouseRectangle>(control_ref());
-            insert(_mrc_obj);
+            _input_obj = std::make_shared<component::Interactable>(control_ref());
+            insert(_input_obj);
 
-            _mrc_obj->mouseEnter += std::weak_bind(&TextBox::onMouseEnter, share_ref<TextBox>(), std::placeholders::_1);
-            _mrc_obj->mouseMove += std::weak_bind(&TextBox::onMouseMove, share_ref<TextBox>(), std::placeholders::_1);
-            _mrc_obj->mouseLeave += std::weak_bind(&TextBox::onMouseLeave, share_ref<TextBox>(), std::placeholders::_1);
-            _mrc_obj->mouseDown += std::weak_bind(&TextBox::onMouseDown, share_ref<TextBox>(), std::placeholders::_1);
-            _mrc_obj->mouseUp += std::weak_bind(&TextBox::onMouseUp, share_ref<TextBox>(), std::placeholders::_1);
+            _input_obj->mouseEnter += std::weak_bind(&TextBox::onMouseEnter, share_ref<TextBox>(), std::placeholders::_1);
+            _input_obj->mouseMove += std::weak_bind(&TextBox::onMouseMove, share_ref<TextBox>(), std::placeholders::_1);
+            _input_obj->mouseLeave += std::weak_bind(&TextBox::onMouseLeave, share_ref<TextBox>(), std::placeholders::_1);
+            _input_obj->mouseDown += std::weak_bind(&TextBox::onMouseDown, share_ref<TextBox>(), std::placeholders::_1);
+            _input_obj->mouseUp += std::weak_bind(&TextBox::onMouseUp, share_ref<TextBox>(), std::placeholders::_1);
         }
-        _mrc_obj->setRect(box());
+        _input_obj->setRect(box());
     }
 
 
@@ -136,10 +135,10 @@ namespace ui::controls
     {
         bool mousein = false;
         bool pressed = false;
-        if (_mrc_obj)
+        if (_input_obj)
         {
-            mousein = _mrc_obj->mousein();
-            pressed = _mrc_obj->pressed();
+            mousein = _input_obj->mousein();
+            pressed = _input_obj->pressed();
         }
 
         if (pressed)
@@ -178,11 +177,11 @@ namespace ui::controls
 
     void TextBox::_confirmBlob() const
     {
-        if (!_textBlob)
+        if (!_textblob)
         {
             graphics::StringFormat format(font());
             format.color(color());
-            const_cast<std::shared_ptr<graphics::TextBlob> &>(_textBlob) = std::make_shared<graphics::TextBlob>(_text, format);
+            const_cast<std::shared_ptr<graphics::TextBlob> &>(_textblob) = std::make_shared<graphics::TextBlob>(_text, format);
         }
     }
 }

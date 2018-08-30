@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ScrollBar.h"
 #include "ui/renderables/Text.h"
-#include "ui/interactables/MouseRectangle.h"
 
 namespace ui::controls
 {
@@ -34,27 +33,27 @@ namespace ui::controls
     {
         core::rc32f bar_rect = barRect();
 
-        if (!_mc)
+        if (!_input)
         {
-            _mc = std::make_shared<interactables::MouseRectangle>(control_ref());
-            _mc->mouseWheel += std::weak_binder(std::mem_fn(&ScrollBar::onMouseWheel), shared_from_this());
-            _mc->setAcceptWheelV(true);
-            insert(_mc);
+            _input = std::make_shared<component::Interactable>(control_ref());
+            _input->mouseWheel += std::weak_bind(&ScrollBar::onMouseWheel, share_ref<ScrollBar>(), std::placeholders::_1);
+            _input->setAcceptWheelV(true);
+            insert(_input);
         }
-        _mc->setRect(box());
+        _input->setRect(box());
 
-        if (!_mc_bar)
+        if (!_input_bar)
         {
-            _mc_bar = std::make_shared<interactables::MouseRectangle>(control_ref());
-            _mc_bar->mouseEnter += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseEnter), shared_from_this());
-            _mc_bar->mouseMove += std::weak_bind(&ScrollBar::onBarMouseMove, share_ref<ScrollBar>(), std::placeholders::_1);
-            _mc_bar->mouseLeave += std::weak_bind(&ScrollBar::onBarMouseLeave, share_ref<ScrollBar>(), std::placeholders::_1);
-            _mc_bar->mouseDown += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseDown), shared_from_this());
-            _mc_bar->mouseUp += std::weak_binder(std::mem_fn(&ScrollBar::onBarMouseUp), shared_from_this());
-            _mc_bar->setCaptureButtons(component::mouse_button::left);
-            insert(_mc_bar);
+            _input_bar = std::make_shared<component::Interactable>(control_ref());
+            _input_bar->mouseEnter += std::weak_bind(&ScrollBar::onBarMouseEnter, share_ref<ScrollBar>(), std::placeholders::_1);
+            _input_bar->mouseMove += std::weak_bind(&ScrollBar::onBarMouseMove, share_ref<ScrollBar>(), std::placeholders::_1);
+            _input_bar->mouseLeave += std::weak_bind(&ScrollBar::onBarMouseLeave, share_ref<ScrollBar>(), std::placeholders::_1);
+            _input_bar->mouseDown += std::weak_bind(&ScrollBar::onBarMouseDown, share_ref<ScrollBar>(), std::placeholders::_1);
+            _input_bar->mouseUp += std::weak_bind(&ScrollBar::onBarMouseUp, share_ref<ScrollBar>(), std::placeholders::_1);
+            _input_bar->setCaptureButtons(component::mouse_button::left);
+            insert(_input_bar);
         }
-        _mc_bar->setRect(bar_rect);
+        _input_bar->setRect(bar_rect);
 
         if(!_bar)
         {
@@ -72,10 +71,10 @@ namespace ui::controls
     {
         bool mousein = false;
         bool pressed = false;
-        if (_mc_bar)
+        if (_input_bar)
         {
-            mousein = _mc_bar->mousein();
-            pressed = _mc_bar->pressed();
+            mousein = _input_bar->mousein();
+            pressed = _input_bar->pressed();
         }
 
         if (pressed)

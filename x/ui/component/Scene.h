@@ -68,7 +68,7 @@ namespace ui::component
 
         std::shared_ptr<graphics::Bitmap> _renderBuffer;
 
-        std::shared_ptr<MouseArea> _mousearea_current;
+        std::shared_ptr<Interactable> _interactbale_current;
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
 

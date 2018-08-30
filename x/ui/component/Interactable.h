@@ -57,17 +57,10 @@ namespace ui::component
     class Interactable : public component::Component
     {
     public:
-        Interactable(std::shared_ptr<ui::Control> control) : Component(ComponentType::Interactable, control) {}
-        virtual ~Interactable() {}
-    };
+        Interactable(std::shared_ptr<ui::Control> control) :Component(ComponentType::Interactable, control) {}
+        ~Interactable() = default;
 
-    class MouseArea : public component::Interactable
-    {
-    public:
-        MouseArea(std::shared_ptr<ui::Control> control) :Interactable(control) {}
-        ~MouseArea() = default;
-
-        virtual core::error onHitTest(const core::pt32f & pos) const { return core::error_failed; }
+        virtual core::error onHitTest(const core::pt32f & pos) const { return _rect.contains(pos) ? core::error_ok : core::error_failed; }
         virtual void onMouseEnter(const mosue_state & state) { _mousein = true;  mouseEnter(state); }
         virtual void onMouseMove(const mosue_state & state) { mouseMove(state); }
         virtual void onMouseLeave(const mosue_state & state) { _pressed = false;  _mousein = false; mouseLeave(state); }

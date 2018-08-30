@@ -1,6 +1,5 @@
 #pragma once
 #include "ui/Control.h"
-#include "ui/interactables/MouseRectangle.h"
 
 namespace ui::controls
 {
@@ -33,11 +32,11 @@ namespace ui::controls
 
     private:
         std::string _text;
-        std::shared_ptr<graphics::TextBlob> _textBlob;
+        std::shared_ptr<graphics::TextBlob> _textblob;
 
         std::shared_ptr<renderables::Text> _text_obj;
         std::shared_ptr<renderables::Line> _cursor_obj;
         std::shared_ptr<core::property_animation> _cursor_anim;
-        std::shared_ptr<interactables::MouseRectangle> _mrc_obj;
+        std::shared_ptr<component::Interactable> _input_obj;
     };
 }

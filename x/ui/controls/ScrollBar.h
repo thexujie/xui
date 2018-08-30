@@ -1,6 +1,5 @@
 #pragma once
 #include "ui/Control.h"
-#include "ui/interactables/MouseRectangle.h"
 
 namespace ui::controls
 {
@@ -81,8 +80,8 @@ namespace ui::controls
         core::float32_t _bar_drag_start_vallue = 0.0f;
         core::pt32f _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };
 
-        std::shared_ptr<interactables::MouseRectangle> _mc;
-        std::shared_ptr<interactables::MouseRectangle> _mc_bar;
+        std::shared_ptr<component::Interactable> _input;
+        std::shared_ptr<component::Interactable> _input_bar;
         std::shared_ptr<renderables::Rectangle> _bar;
     };
 }

@@ -597,7 +597,7 @@ namespace ui
             invalidate(object->rect());
             break;
         case ui::component::ComponentType::Interactable:
-            _mouseareas.push_back(std::dynamic_pointer_cast<component::MouseArea>(object));
+            _interactables.push_back(std::dynamic_pointer_cast<component::Interactable>(object));
             break;
         default:
             break;
@@ -642,14 +642,14 @@ namespace ui
         }
     }
 
-    std::shared_ptr<component::MouseArea> Control::findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last) const
+    std::shared_ptr<component::Interactable> Control::findInteractable(const core::pt32f & pos, std::shared_ptr<component::Interactable> last) const
     {
         if (_accept_clip && !_rect.contains(pos))
             return nullptr;
 
         std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
         bool found = false;
-        for (auto iter = _mouseareas.rbegin(); iter != _mouseareas.rend(); ++iter)
+        for (auto iter = _interactables.rbegin(); iter != _interactables.rend(); ++iter)
         {
             if (last && !found)
             {

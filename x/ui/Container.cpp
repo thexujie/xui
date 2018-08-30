@@ -288,15 +288,15 @@ namespace ui
             iter.second->render(graphics, region);
     }
 
-    std::shared_ptr<component::MouseArea> Container::findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last) const
+    std::shared_ptr<component::Interactable> Container::findInteractable(const core::pt32f & pos, std::shared_ptr<component::Interactable> last) const
     {
         for (auto & iter : core::reverse(_controls))
         {
-            auto ma = iter.second->findMouseArea(pos, last);
+            auto ma = iter.second->findInteractable(pos, last);
             if (ma)
                 return ma;
         }
-        return Control::findMouseArea(pos, last);
+        return Control::findInteractable(pos, last);
     }
 
     void Container::onPosChanged(const core::pt32f & from, const core::pt32f & to)

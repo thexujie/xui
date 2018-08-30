@@ -108,7 +108,6 @@
     <ClCompile Include="ui\controls\Text.cpp" />
     <ClCompile Include="ui\controls\TextBox.cpp" />
     <ClCompile Include="ui\Desktop.cpp" />
-    <ClCompile Include="ui\interactables\MouseRectangle.cpp" />
     <ClCompile Include="ui\renderables\Line.cpp" />
     <ClCompile Include="ui\renderables\Path.cpp" />
     <ClCompile Include="ui\renderables\Shape.cpp" />
@@ -184,7 +183,6 @@
     <ClInclude Include="ui\controls\Text.h" />
     <ClInclude Include="ui\controls\TextBox.h" />
     <ClInclude Include="ui\Desktop.h" />
-    <ClInclude Include="ui\interactables\MouseRectangle.h" />
     <ClInclude Include="ui\renderables\Line.h" />
     <ClInclude Include="ui\renderables\Path.h" />
     <ClInclude Include="ui\renderables\Shape.h" />

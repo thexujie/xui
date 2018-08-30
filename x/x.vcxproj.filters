@@ -155,9 +155,6 @@
     <ClCompile Include="ui\Desktop.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\interactables\MouseRectangle.cpp">
-      <Filter>ui\interactables</Filter>
-    </ClCompile>
     <ClCompile Include="ui\component\Style.cpp">
       <Filter>ui\component</Filter>
     </ClCompile>
@@ -419,9 +416,6 @@
     <ClInclude Include="ui\Desktop.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\interactables\MouseRectangle.h">
-      <Filter>ui\interactables</Filter>
-    </ClInclude>
     <ClInclude Include="core\attribute.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -501,9 +495,6 @@
     </Filter>
     <Filter Include="samples">
       <UniqueIdentifier>{01a7303d-087f-42bc-9c03-b9a2c9ec3601}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ui\interactables">
-      <UniqueIdentifier>{0c1f5a9d-e123-4da8-ad22-5dfaf14ee935}</UniqueIdentifier>
     </Filter>
     <Filter Include="utils">
       <UniqueIdentifier>{caf49446-0379-4ef1-b44e-e734eb5ec6e1}</UniqueIdentifier>

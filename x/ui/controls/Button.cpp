@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Button.h"
 #include "ui/renderables/Text.h"
-#include "ui/interactables/MouseRectangle.h"
 
 namespace ui::controls
 {
@@ -61,14 +60,14 @@ namespace ui::controls
 
         if(!_mrc_obj)
         {
-            _mrc_obj = std::make_shared<interactables::MouseRectangle>(control_ref());
+            _mrc_obj = std::make_shared<component::Interactable>(control_ref());
             insert(_mrc_obj);
 
-            _mrc_obj->mouseEnter += std::weak_binder(std::mem_fn(&Button::onMouseEnter), shared_from_this());
+            _mrc_obj->mouseEnter += std::weak_bind(&Button::onMouseEnter, share_ref<Button>(), std::placeholders::_1);
             _mrc_obj->mouseMove += std::weak_bind(&Button::onMouseMove, share_ref<Button>(), std::placeholders::_1);
             _mrc_obj->mouseLeave += std::weak_bind(&Button::onMouseLeave, share_ref<Button>(), std::placeholders::_1);
-            _mrc_obj->mouseDown += std::weak_binder(std::mem_fn(&Button::onMouseDown), shared_from_this());
-            _mrc_obj->mouseUp += std::weak_binder(std::mem_fn(&Button::onMouseUp), shared_from_this());
+            _mrc_obj->mouseDown += std::weak_bind(&Button::onMouseDown, share_ref<Button>(), std::placeholders::_1);
+            _mrc_obj->mouseUp += std::weak_bind(&Button::onMouseUp, share_ref<Button>(), std::placeholders::_1);
         }
 
         _mrc_obj->setRect(box());

@@ -317,7 +317,7 @@ namespace ui
 
         core::float3x2 _transform;
         std::multimap<int32_t, std::shared_ptr<component::Renderable>> _renderables;
-        std::list<std::shared_ptr<component::MouseArea>> _mouseareas;
+        std::list<std::shared_ptr<component::Interactable>> _interactables;
 
         std::map<std::string, std::vector<std::shared_ptr<core::animation>>> _animations;
         bool _animation_started = false;
@@ -333,7 +333,7 @@ namespace ui
 
        virtual void render(graphics::Graphics & graphics, const graphics::Region & region) const;
 
-       virtual std::shared_ptr<component::MouseArea> findMouseArea(const core::pt32f & pos, std::shared_ptr<component::MouseArea> last = nullptr) const;
+       virtual std::shared_ptr<component::Interactable> findInteractable(const core::pt32f & pos, std::shared_ptr<component::Interactable> last = nullptr) const;
 
 
     public:

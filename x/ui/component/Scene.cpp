@@ -62,18 +62,18 @@ namespace ui::component
             break;
         case mouse_action::moving:
             _updateMouseArea(state);
-            if (_mousearea_current)
-                _mousearea_current->onMouseMove(state);
+            if (_interactbale_current)
+                _interactbale_current->onMouseMove(state);
             break;
         case mouse_action::v_wheeling:
-            if (_mousearea_current && _mousearea_current->acceptWheelV())
-                _mousearea_current->onMouseWheel(state);
+            if (_interactbale_current && _interactbale_current->acceptWheelV())
+                _interactbale_current->onMouseWheel(state);
             else
             {
-                auto obj = _mousearea_current;
+                auto obj = _interactbale_current;
                 while (true)
                 {
-                    obj = control()->findMouseArea(state.pos(), obj);
+                    obj = control()->findInteractable(state.pos(), obj);
                     if (!obj)
                         break;
 
@@ -87,18 +87,18 @@ namespace ui::component
             _updateMouseArea(state);
             break;
         case mouse_action::pressing:
-            if (_mousearea_current)
+            if (_interactbale_current)
             {
-                if (_mousearea_current->captureButtons())
+                if (_interactbale_current->captureButtons())
                     captured(true);
-                _mousearea_current->onMouseDown(state);
+                _interactbale_current->onMouseDown(state);
             }
             break;
         case mouse_action::releasing:
-            if (_mousearea_current)
+            if (_interactbale_current)
             {
-                _mousearea_current->onMouseUp(state);
-                if (_mousearea_current->captureButtons())
+                _interactbale_current->onMouseUp(state);
+                if (_interactbale_current->captureButtons())
                     captured(false);
             }
             _updateMouseArea(state);
@@ -111,18 +111,18 @@ namespace ui::component
 
     void Scene::_updateMouseArea(const mosue_state & state)
     {
-        auto ma = state.action() == mouse_action::leaving ?  nullptr : control()->findMouseArea(state.pos());
+        auto ma = state.action() == mouse_action::leaving ?  nullptr : control()->findInteractable(state.pos());
         // do not update while capturing one or more button(s)
-        if (_mousearea_current != ma &&
-            (!_mousearea_current || !(_mousearea_current->captureButtons() & state.buttons())))
+        if (_interactbale_current != ma &&
+            (!_interactbale_current || !(_interactbale_current->captureButtons() & state.buttons())))
         {
-            if (_mousearea_current)
-                _mousearea_current->onMouseLeave(state);
+            if (_interactbale_current)
+                _interactbale_current->onMouseLeave(state);
 
-            _mousearea_current = ma;
+            _interactbale_current = ma;
 
-            if (_mousearea_current)
-                _mousearea_current->onMouseEnter(state);
+            if (_interactbale_current)
+                _interactbale_current->onMouseEnter(state);
         }
     }
 
