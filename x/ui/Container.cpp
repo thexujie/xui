@@ -121,6 +121,9 @@ namespace ui
 
     void Container::layout(layout_flags flags)
     {
+        if (!_invalid_layout || flags.any(layout_flag::force))
+            return;
+
         float32_t margin = 0;
         core::si32f fitting_size = expectSize();
         core::rc32f box = paddingBox();

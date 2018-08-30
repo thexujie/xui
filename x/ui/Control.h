@@ -49,6 +49,7 @@ namespace ui
         none = 0,
         resize_cx = 0x0001,
         resize_cy = 0x0002,
+        force = 0x0004,
     };
     template<> struct enable_bitmasks<layout_flag> { static const bool enable = true; };
     typedef core::bitflag<layout_flag> layout_flags;

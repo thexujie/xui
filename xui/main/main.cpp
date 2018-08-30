@@ -143,6 +143,18 @@ void xui_main()
     form->setScrollbarVisionH(ui::scrollbar_vision::always);
     const core::property_table & props = core::app().properties<ui::controls::Button>();
 
+
+    auto layer = std::make_shared<ui::Container>();
+    {
+        layer->setBackgroundColor(0xa0ffffff);
+        layer->setLayoutDirection(core::align::top);
+        layer->setLayoutOrigin(ui::layout_origin::parent);
+        layer->setSize({ 100_per });
+
+
+        form->addControl(layer);
+    }
+
     //auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
     //{
     //    auto a = s.a + (e.a - s.a) * inter;

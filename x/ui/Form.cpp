@@ -38,7 +38,7 @@ namespace ui
     void Form::setWindowSize(const core::si32f & size)
     {
         setShowSize(size);
-        layout(nullptr);
+        layout(layout_flag::force);
         update();
     }
 
