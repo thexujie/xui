@@ -21,8 +21,8 @@ namespace win32
         else
             logFont.lfHeight = font.size;
 
-        logFont.lfWeight = font.weight;
-        logFont.lfItalic = font.slant;
+        logFont.lfWeight = int(font.weight);
+        logFont.lfItalic = int(font.slant);
         logFont.lfUnderline = 0;
         logFont.lfStrikeOut = FALSE;
         //logFont.lfCharSet = (uint_8)(font.charset);

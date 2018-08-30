@@ -11,6 +11,7 @@
 #include <SkTypeface.h>
 #include "graphics/image/image.h"
 #include "graphics/PathStyle.h"
+#include "graphics/font.h"
 
 namespace graphics::skia
 {
@@ -75,4 +76,7 @@ namespace graphics::skia
     {
         return SkMatrix::MakeAll(matrix.sx, matrix.shx, matrix.tx, matrix.shy, matrix.sy, matrix.ty, 0, 0, 1);
     }
+
+    SkFontStyle fontstyle(font_weight weight_ = font_weight::normal, font_width width_ = font_width::normal, font_slant slant_ = font_slant::upright);
+    void fontmetrics(const graphics::font & font, graphics::fontmetrics & metrics);
 }

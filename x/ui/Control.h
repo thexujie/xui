@@ -141,7 +141,7 @@ namespace ui
             case core::unit::px:
                 return value.value * s->ratio();
             case core::unit::em:
-                return value.value * font().size * s->ratio();
+                return value.value * graphics::fontmetrics(font()).height * s->ratio();
             case core::unit::pt:
                 return value.value * 72.0f * s->ratio();
             case core::unit::dot:
@@ -151,7 +151,9 @@ namespace ui
                     return 0;
                 if (!p)
                     throw core::error_state;
-                return value.value / 100.0f * p->width();
+                if(_margin.value.bleft.unit == core::unit::per || _margin.value.bright.unit == core::unit::per)
+                    throw core::error_bad_data;
+                return value.value / 100.0f * (p->width() - calc_x(_margin.value.bleft) - calc_x(_margin.value.bright));
             default:
                 return value.value * s->ratio();
             }
@@ -168,7 +170,7 @@ namespace ui
             case core::unit::px:
                 return value.value * s->ratio();
             case core::unit::em:
-                return value.value * font().size * s->ratio();
+                return value.value * graphics::fontmetrics(font()).height * s->ratio();
             case core::unit::pt:
                 return value.value * 72.0f * s->ratio();
             case core::unit::dot:
@@ -178,7 +180,9 @@ namespace ui
                     return 0;
                 if (!p)
                     throw core::error_state;
-                return value.value / 100.0f * p->height();
+                if (_margin.value.btop.unit == core::unit::per || _margin.value.bbottom.unit == core::unit::per)
+                    throw core::error_bad_data;
+                return value.value / 100.0f * (p->height() - calc_y(_margin.value.btop) - calc_y(_margin.value.bbottom));
             default:
                 return value.value * s->ratio();
             }
@@ -202,8 +206,8 @@ namespace ui
         void refresh();
         void rearrange();
 
-        void setBackgroundColor(core::color32 color);
-        core::color32 backgroundColor() const;
+        void setBackgroundColor(core::color32 color) { if (!_background_color.available() || _background_color != color) { _background_color = color; refresh(); } }
+        core::color32 backgroundColor() const { return _background_color; }
 
         void setBackgroundImage(std::shared_ptr<graphics::Image> image);
         std::shared_ptr<graphics::Image> backgroundImage() const;
@@ -211,7 +215,7 @@ namespace ui
         void setMargin(const core::vec4<core::dimensionf> & margin) { if (_margin != margin) { _margin = margin; rearrange(); } }
         const core::vec4<core::dimensionf> & margin() const { return _margin; }
 
-        void setBorder(const core::vec4<core::dimensionf> & border) { _border = border; }
+        void setBorder(const core::vec4<core::dimensionf> & border) { if (!_border.available() || _border != border) { _border = border; refresh(); } }
         const core::vec4<core::dimensionf> & border() const { return _border; }
 
         void setPadding(const core::vec4<core::dimensionf> & padding) { if (_padding != padding) { _padding = padding; rearrange(); } }

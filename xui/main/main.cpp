@@ -20,6 +20,7 @@
 #include "ui/controls/Image.h"
 #include "ui/controls/Button.h"
 #include "ui/controls/ScrollBar.h"
+#include "ui/controls/TextBox.h"
 
 using namespace core;
 
@@ -143,14 +144,19 @@ void xui_main()
     form->setScrollbarVisionH(ui::scrollbar_vision::always);
     const core::property_table & props = core::app().properties<ui::controls::Button>();
 
+    graphics::font font;
+    graphics::fontmetrics fm(font);
 
     auto layer = std::make_shared<ui::Container>();
     {
-        layer->setBackgroundColor(0xa0ffffff);
+        layer->setBackgroundColor(0x40ffffff);
         layer->setLayoutDirection(core::align::top);
         layer->setLayoutOrigin(ui::layout_origin::parent);
         layer->setSize({ 100_per });
 
+        auto tbx = std::make_shared<ui::controls::TextBox>();
+        tbx->setSize({ 100_per, 2_em });
+        layer->addControl(tbx);
 
         form->addControl(layer);
     }

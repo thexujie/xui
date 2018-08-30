@@ -4,40 +4,50 @@
 
 namespace graphics
 {
-    font::font() : weight(Weight_Normal), width(Width_Normal), slant(Slant_Upright)
+    font::font() : weight(font_weight::normal), width(font_width::normal), slant(font_slant::upright)
     {
         NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
         family = core::string::u16_u8(metrics.lfMessageFont.lfFaceName);
-        size = std::abs(metrics.lfMessageFont.lfHeight);
+        if(metrics.lfMessageFont.lfHeight < 0)
+            size = -metrics.lfMessageFont.lfHeight;
+        else
+        {
+            HDC hdc = GetDC(HWND_DESKTOP);
+            int dpiy = GetDeviceCaps(hdc, LOGPIXELSY);
+            size = metrics.lfMessageFont.lfHeight * 96.0f / dpiy;
+            ReleaseDC(HWND_DESKTOP, hdc);
+        }
     }
 
-    font::font(const char * _family, float_t _size, int32_t _weight, int32_t _width, int32_t _slant, int32_t flags_)
-        : weight(Weight_Normal), width(Width_Normal), slant(Slant_Upright)
+    font::font(const char * family_, float_t size_, font_weight weight_, font_width width_, font_slant slant_)
+        : weight(weight_), width(width_), slant(slant_)
     {
-        if(!_family || !_family[0] || _size <= 0)
+        if(!family_ || !family_[0] || size_ <= 0)
         {
             NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
             SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
-            if(!_family || !_family[0])
+            if(!family_ || !family_[0])
                 family = core::string::u16_u8(metrics.lfMessageFont.lfFaceName);
             else
-                family = _family;
-            if(_size <= 0)
+                family = family_;
+            if(size_ <= 0)
                 size = metrics.lfMessageFont.lfHeight;
             else
-                size = _size;
+                size = size_;
         }
         else
         {
-            family = _family;
-            size = _size;
+            family = family_;
+            size = size_;
         }
-        weight = font_weight(_weight);
-        width = font_width(_width);
-        slant = font_slant(_slant);
-        flags = flags_;
+    }
+
+    extern  void __fontmetrics(const graphics::font & font, graphics::fontmetrics & metrics);
+    fontmetrics::fontmetrics(const font & font)
+    {
+        __fontmetrics(font, *this);
     }
 }

@@ -19,6 +19,25 @@
     transition-duration: 200ms
 }
 
+.textbox {
+    border: 1px;
+    border-color: #f000;
+    padding: 1em 0.5em;
+    background-color: #8888;
+    margin: 0.2em;
+    transition-duration: 500ms
+}
+
+.textbox:hover {
+    border: 2px;
+}
+
+.textbox:active {
+    border: 2px;
+    background-color: #f888;
+    transition-duration: 200ms
+}
+
 .scrollbar {
     bar-border: 1px;
     bar-padding: 1em 0.5em;

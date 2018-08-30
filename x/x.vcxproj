@@ -94,6 +94,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\utils.cpp" />
+    <ClCompile Include="graphics\skia\skia.cpp" />
     <ClCompile Include="ui\component\Component.cpp" />
     <ClCompile Include="ui\component\Interactable.cpp" />
     <ClCompile Include="ui\component\Style.cpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="ui\controls\Image.cpp" />
     <ClCompile Include="ui\controls\ScrollBar.cpp" />
     <ClCompile Include="ui\controls\Text.cpp" />
+    <ClCompile Include="ui\controls\TextBox.cpp" />
     <ClCompile Include="ui\Desktop.cpp" />
     <ClCompile Include="ui\interactables\MouseRectangle.cpp" />
     <ClCompile Include="ui\renderables\Line.cpp" />
@@ -180,6 +182,7 @@
     <ClInclude Include="ui\controls\Image.h" />
     <ClInclude Include="ui\controls\ScrollBar.h" />
     <ClInclude Include="ui\controls\Text.h" />
+    <ClInclude Include="ui\controls\TextBox.h" />
     <ClInclude Include="ui\Desktop.h" />
     <ClInclude Include="ui\interactables\MouseRectangle.h" />
     <ClInclude Include="ui\renderables\Line.h" />

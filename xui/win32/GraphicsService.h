@@ -10,7 +10,6 @@ namespace win32
         std::shared_ptr<graphics::IGraphicsPixmap> CreatePixmap(core::si32i size);
         std::shared_ptr<graphics::IGraphicsImage> CreateString(std::string str, graphics::font font, core::color32 color);
         std::shared_ptr<graphics::IGraphics> CreateGraphics(std::shared_ptr<core::object> pixmap);
-        graphics::fontmetrics FontMetrics(const graphics::font & font);
 
     private:
         std::shared_ptr<HDC> _hdc;

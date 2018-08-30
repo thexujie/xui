@@ -85,7 +85,6 @@ namespace graphics
     {
     public:
         virtual ~IGraphicsService() = default;
-        virtual fontmetrics FontMetrics(const font & font) = 0;
     };
 
     IGraphicsService & GraphicsService();

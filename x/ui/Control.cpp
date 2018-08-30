@@ -259,20 +259,6 @@ namespace ui
         }
     }
 
-    void Control::setBackgroundColor(core::color32 color)
-    {
-        if (color == _background_color.value)
-            return;
-
-        _background_color = color;
-        refresh();
-    }
-
-    core::color32 Control::backgroundColor() const
-    {
-        return _background_color;
-    }
-
     void Control::setBackgroundImage(std::shared_ptr<graphics::Image> image)
     {
         if (image == _background_image.value)

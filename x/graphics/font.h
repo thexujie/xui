@@ -3,55 +3,45 @@
 
 namespace graphics
 {
-    struct fontmetrics
+    enum class font_weight : uint16_t
     {
-        int32_t size = 0;
-        int32_t height = 0;
-        int32_t ascent = 0;
-        int32_t descent = 0;
-        int32_t linespace = 0;
-        int32_t weight = 0;
+        invisible = 0,
+        thin = 100,
+        extralight = 200,
+        light = 300,
+        normal = 400,
+        medium = 500,
+        semibold = 600,
+        bold = 700,
+        extrabold = 800,
+        blackbold = 900,
+        extrablackbold = 1000,
     };
 
-    enum font_weight : uint16_t
+    enum class font_width : uint8_t
     {
-        Weight_Invisible = 0,
-        Weight_Thin = 100,
-        Weight_ExtraLight = 200,
-        Weight_Light = 300,
-        Weight_Normal = 400,
-        Weight_Medium = 500,
-        Weight_SemiBold = 600,
-        Weight_Bold = 700,
-        Weight_ExtraBold = 800,
-        Weight_BlackBold = 900,
-        Weight_ExtraBlackBold = 1000,
+        ultracondensed = 1,
+        extracondensed = 2,
+        condensed = 3,
+        semicondensed = 4,
+        normal = 5,
+        semiexpanded = 6,
+        expanded = 7,
+        extraexpanded = 8,
+        ultraexpanded = 9,
     };
 
-    enum font_width : uint8_t
+    enum class font_slant : uint8_t
     {
-        Width_UltraCondensed = 1,
-        Width_ExtraCondensed = 2,
-        Width_Condensed = 3,
-        Width_SemiCondensed = 4,
-        Width_Normal = 5,
-        Width_SemiExpanded = 6,
-        Width_Expanded = 7,
-        Width_ExtraExpanded = 8,
-        Width_UltraExpanded = 9,
-    };
-
-    enum font_slant : uint8_t
-    {
-        Slant_Upright = 0,
-        Slant_Italic,
-        Slant_Oblique,
+       upright = 0,
+       italic,
+       oblique,
     };
 
     struct font
     {
         font();
-        font(const char * _family, float_t _size = 0, int32_t _weight = Weight_Normal, int32_t _width = Width_Normal, int32_t _slant = Slant_Upright, int32_t flags_ = 0);
+        font(const char * family_, float_t size_= 0, font_weight weight_ = font_weight::normal, font_width width_ = font_width::normal, font_slant slant_ = font_slant::upright);
 
         font(const font & another) = default;
 
@@ -62,18 +52,16 @@ namespace graphics
             weight = another.weight;
             width = another.width;
             slant = another.slant;
-            flags = another.flags;
             return *this;
         }
 
         bool operator ==(const font & another) const
         {
             return core::string::equal_ic(family, another.family) &&
-                std::fabs(size - another.size) <  std::numeric_limits<float32_t>::epsilon() &&
+                core::equal(size, another.size) &&
                 weight == another.weight &&
                 width == another.width &&
-                slant == another.slant &&
-                flags == another.flags;
+                slant == another.slant;
         }
 
         bool operator !=(const font & another) const
@@ -86,7 +74,20 @@ namespace graphics
         font_weight weight : 16;
         font_width width : 4;
         font_slant slant : 4;
-        int32_t flags = 0;
+    };
+
+    struct fontmetrics
+    {
+        fontmetrics() = default;
+        fontmetrics(const font & font);
+
+        float32_t height = 0;
+        float32_t top = 0;
+        float32_t bottom = 0;
+        float32_t ascent = 0;
+        float32_t descent = 0;
+        float32_t leading = 0;
+        float32_t weight = 0;
     };
 }
 
@@ -100,9 +101,10 @@ namespace std
         {
             size_t h1 = std::hash<std::string>()(font.family);
             size_t h2 = std::hash<float32_t>()(font.size);
-            size_t h3 = std::hash<int32_t>()(font.weight);
-            size_t h4 = std::hash<int32_t>()(font.flags);
-            return h1 ^ (h2 << 1) ^ (h3 << 1) ^ (h4 << 1);
+            size_t h3 = std::hash<graphics::font_weight>()(font.weight);
+            size_t h4 = std::hash<graphics::font_width>()(font.width);
+            size_t h5 = std::hash<graphics::font_slant>()(font.slant);
+            return h1 ^ (h2 << 1) ^ (h3 << 1) ^ (h4 << 1) ^ (h5 << 1);
         }
     };
 
@@ -114,7 +116,8 @@ namespace std
             return lhs.family < rhs.family ||
                 lhs.size < rhs.size ||
                 lhs.weight < rhs.weight ||
-                lhs.flags < rhs.flags;
+                lhs.width < rhs.width ||
+                lhs.slant < rhs.slant;
         }
     };
 }

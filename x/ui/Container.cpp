@@ -121,7 +121,7 @@ namespace ui
 
     void Container::layout(layout_flags flags)
     {
-        if (!_invalid_layout || flags.any(layout_flag::force))
+        if (!_invalid_layout && !flags.any(layout_flag::force))
             return;
 
         float32_t margin = 0;
@@ -158,13 +158,13 @@ namespace ui
                 {
                 case core::align::left:
                     margin = std::max(margin, margins.bleft);
-                    control->place({ layout_pos + layout_size.cx + margin, box.y + margins.btop, control_size.cx, fitting_size.cy }, control_size);
+                    control->place({ layout_pos + layout_size.cx + margin, box.y + margins.btop, control_size.cx, fitting_size.cy - margins.bheight() }, control_size);
                     layout_size.cx += margin + control_size.cx;
                     margin = margins.bright;
                     break;
                 case core::align::top:
                     margin = std::max(margin, margins.btop);
-                    control->place({ box.x + margins.bleft, layout_pos + layout_size.cy + margin, fitting_size.cx, control_size.cy }, control_size);
+                    control->place({ box.x + margins.bleft, layout_pos + layout_size.cy + margin, fitting_size.cx - margins.bwidth(), control_size.cy }, control_size);
                     layout_size.cy += margin + control_size.cy;
                     margin = margins.bbottom;
                     break;

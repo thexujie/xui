@@ -28,7 +28,7 @@ namespace graphics
         SkPaint paint;
         format.apply(paint);
 
-        SkShaper shaper(SkTypeface::MakeFromName(format._font.family.c_str(), SkFontStyle(format._font.weight, format._font.width, (SkFontStyle::Slant)format._font.slant)));
+        SkShaper shaper(SkTypeface::MakeFromName(format._font.family.c_str(), SkFontStyle(int(format._font.weight), int(format._font.width), (SkFontStyle::Slant)format._font.slant)));
 
         SkTextBlobBuilder builder;
         SkRect rcBlob;

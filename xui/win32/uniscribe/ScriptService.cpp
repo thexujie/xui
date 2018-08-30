@@ -61,11 +61,9 @@ namespace win32::uniscribe
             ::GetTextMetricsW(_hdc, &tm);
             ::SelectObject(_hdc, hFontOld);
 
-            vfont.metrics.size = font.size;
             vfont.metrics.height = tm.tmHeight;
             vfont.metrics.ascent = tm.tmAscent;
             vfont.metrics.descent = tm.tmDescent;
-            vfont.metrics.linespace = tm.tmHeight;
             vfont.metrics.weight = tm.tmWeight;
 
             *vfont.cache = nullptr;
