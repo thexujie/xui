@@ -291,6 +291,45 @@ namespace core
         property_value_type<std::string> _end;
     };
 
+
+    template<typename T>
+    class property_interpolator_keyframes : public core::property_interpolator
+    {
+        typedef std::pair<float32_t, core::property_value_type<T>> pair_type;
+    public:
+        property_interpolator_keyframes() = default;
+        core::property_value & start() { return _values.front().second; }
+        core::property_value & end() { return _values.back().second; }
+
+        void set_values(std::initializer_list<std::pair<float32_t, T>> il)
+        {
+            std::copy(il.begin(), il.end(), std::back_inserter(_values));
+        }
+
+        void interpolate(core::object & self, core::property_accessor & accesor, float32_t proportion)
+        {
+            auto & a = dynamic_cast<core::property_accessor_type<T> &>(accesor);
+            auto iter = std::upper_bound(_values.rbegin(), _values.rend(), proportion, [](float32_t value, const pair_type & pair) { return  pair.first <= value; });
+            if (iter != _values.rend())
+                a.set_value(self, iter->second.get());
+            else
+                a.set_value(self, _values.back().second.get());
+        }
+
+        void interpolate(core::property_value & value, float32_t proportion)
+        {
+            auto & v = dynamic_cast<core::property_value_type<T> &>(value);
+            auto iter = std::upper_bound(_values.begin(), _values.end(), proportion, [](float32_t value, const pair_type & pair) { return pair.first < value; });
+            if (iter != _values.end())
+                v.set(iter->second.get());
+            else
+                v.set(_values.back().second.get());
+        }
+
+    private:
+        std::vector<pair_type> _values;
+    };
+
     template<>
     inline core::color32 property_interpolator_calc<core::color32>(const core::color32 & s, const core::color32 & e, float32_t proportion)
     {
@@ -317,18 +356,46 @@ namespace core
         virtual bool update() = 0;
 
         animation_state state() const { return _state; }
-        bool waiting() const { return _state == animation_state::waiting; }
-        bool running() const { return _state == animation_state::running; }
-        bool pausing() const { return _state == animation_state::pausing; }
-
         void setLoop(int32_t loop) { _loop = loop; }
         void setDuration(std::chrono::nanoseconds duration) { _duration = duration; }
         void setCurve(std::function<float32_t(float32_t)> curve) { _curve = curve; }
 
-        void start() { check_invoke(); _state = animation_state::running; _time = core::datetime::steady(); _loop_index = 0; }
-        void stop() { _state = animation_state::waiting; _time = 0ns; }
-        void pause() { _state = animation_state::pausing; }
-        void resume() { _state = animation_state::running;  _time = core::datetime::steady(); }
+        void start() { setState(animation_state::running); }
+        void stop() { setState(animation_state::waiting); }
+        void pause() { setState(animation_state::pausing); }
+        void resume() { setState(animation_state::running); }
+
+        bool waiting() const { return _state == animation_state::waiting; }
+        bool running() const { return _state == animation_state::running; }
+        bool pausing() const { return _state == animation_state::pausing; }
+
+        void setState(animation_state state)
+        {
+            check_invoke();
+            if (_state == state)
+                return;
+
+            auto old_state = _state;
+            _state = state;
+            switch (state)
+            {
+            case animation_state::running:
+                _time = core::datetime::steady();
+                if (old_state == animation_state::waiting)
+                    _loop_index = 0;
+                started();
+                break;
+            case animation_state::waiting:
+                _time = 0ns;
+                _loop_index = 0;
+                stoped();
+                break;
+            case animation_state::pausing:
+                paused();
+                break;
+            }
+            changed(old_state, _state);
+        }
 
     protected:
         std::chrono::nanoseconds _time = 0ns;
@@ -339,7 +406,10 @@ namespace core
         std::function<float32_t(float32_t)> _curve = [](float32_t val) { return std::clamp(val, 0.0f, 1.0f); };
 
     public:
+        core::event<void(animation_state from, animation_state to)> changed;
+        core::event<void()> started;
         core::event<void()> stoped;
+        core::event<void()> paused;
         core::event<void(int32_t)> looped;
     };
 

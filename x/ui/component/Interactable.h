@@ -70,6 +70,8 @@ namespace ui::component
         virtual void onMouseClick(const mosue_state & state) { mouseClick(state); }
         virtual void onMouseDBClick(const mosue_state & state) { mouseDBClick(state); }
         virtual void onMouseWheel(const mosue_state & state) { mouseWheel(state); }
+        virtual void onFocus() { _focused = true;  focus(); }
+        virtual void onBlur() { _focused = false; blur(); }
 
         bool mousein() const { return _mousein; }
         bool pressed() const { return _pressed; }
@@ -80,6 +82,9 @@ namespace ui::component
         void setAcceptWheelV(bool b) { _accept_wheel_v = b; }
         bool acceptWheelV() const { return _accept_wheel_v; }
 
+        void setAcceptInput(bool b) { _accept_input = b; }
+        bool acceptInput() const { return _accept_input; }
+
     public:
         core::event<void(const mosue_state & state)> mouseEnter;
         core::event<void(const mosue_state & state)> mouseMove;
@@ -89,11 +94,15 @@ namespace ui::component
         core::event<void(const mosue_state & state)> mouseClick;
         core::event<void(const mosue_state & state)> mouseDBClick;
         core::event<void(const mosue_state & state)> mouseWheel;
+        core::event<void()> focus;
+        core::event<void()> blur;
 
     private:
         bool _mousein= false;
         bool _pressed = false;
+        bool _focused = false;
         mouse_button _capture_buttons = mouse_button::none;
         bool _accept_wheel_v = false;
+        bool _accept_input = false;
     };
 }

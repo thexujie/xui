@@ -25,6 +25,8 @@ namespace ui::controls
         void onMouseLeave(const component::mosue_state & state);
         void onMouseDown(const component::mosue_state & state);
         void onMouseUp(const component::mosue_state & state);
+        void onFocus();
+        void onBlur();
 
     private:
         // 确保 textBlob 已经被创建

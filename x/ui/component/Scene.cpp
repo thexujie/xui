@@ -93,6 +93,22 @@ namespace ui::component
                     captured(true);
                 _interactbale_current->onMouseDown(state);
             }
+            else{}
+
+            if(_interactbale_current != _interactbale_input)
+            {
+                if (_interactbale_input)
+                    _interactbale_input->onBlur();
+
+                if (_interactbale_current && _interactbale_current->acceptInput())
+                {
+                    _interactbale_input = _interactbale_current;
+                    if (_interactbale_input)
+                        _interactbale_input->onFocus();
+                }
+                else
+                    _interactbale_input = nullptr;
+            }
             break;
         case mouse_action::releasing:
             if (_interactbale_current)

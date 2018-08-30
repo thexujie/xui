@@ -74,6 +74,9 @@ namespace ui
         virtual void propertyTable(core::property_table & properties);
         virtual const core::property_table & properties();
 
+        void lock() { _mtx.lock(); }
+        void unlock() { _mtx.unlock(); }
+
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet);
         std::shared_ptr<component::StyleSheet> styleSheet() const;
 
@@ -320,7 +323,6 @@ namespace ui
         std::list<std::shared_ptr<component::Interactable>> _interactables;
 
         std::map<std::string, std::vector<std::shared_ptr<core::animation>>> _animations;
-        bool _animation_started = false;
         core::rc32f _rect_invalid;
 
    public:
@@ -341,5 +343,7 @@ namespace ui
         void clearAnimations(std::string group);
         void appendAnimation(std::shared_ptr<core::animation> animation) { appendAnimation(std::string(), animation); }
         void appendAnimation(std::string group, std::shared_ptr<core::animation> animation);
+    private:
+        void _onAnimationStarted();
     };
 }

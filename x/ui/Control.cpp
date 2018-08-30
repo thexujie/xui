@@ -385,12 +385,13 @@ namespace ui
 
     int32_t Control::animate()
     {
+        std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
         int32_t num = 0;
         for (auto & animations : _animations)
         {
             for (auto & anim : animations.second)
             {
-                if (anim->update())
+                if (!anim->pausing() && anim->update())
                     ++num;
             }
         }
@@ -673,12 +674,17 @@ namespace ui
 
     void Control::appendAnimation(std::string group, std::shared_ptr<core::animation> animation)
     {
+        animation->started += std::weak_bind(&Control::_onAnimationStarted, control_ref());
         _animations[group].push_back(animation);
-        if(!_animation_started)
-        {
-            _animation_started = true;
-            auto s = scene();
+        auto s = scene();
+        if (s)
             s->animate();
-        }
+    }
+
+    void Control::_onAnimationStarted()
+    {
+        auto s = scene();
+        if (s)
+            s->animate();
     }
 }

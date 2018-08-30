@@ -187,8 +187,7 @@ namespace core
             ++_loop_index;
             if (_loop <= 0 || _loop_index >= _loop)
             {
-                _state = animation_state::waiting;
-                stoped();
+                setState(animation_state::waiting);
                 return false;
             }
             looped(_loop_index);

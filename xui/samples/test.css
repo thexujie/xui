@@ -30,6 +30,7 @@
 
 .textbox:hover {
     border: 2px;
+    background-color: #a888;
 }
 
 .textbox:active {
