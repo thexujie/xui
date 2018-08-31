@@ -147,6 +147,9 @@ namespace ui::controls
 
     void TextBox::onChar(char32_t ch)
     {
+        if (std::iscntrl(ch))
+            return;
+        
         char chars[4] = { 0 };
         size_t len = core::unicode_to_utf8(ch, chars);
         _text.append(chars, len);
