@@ -73,7 +73,7 @@ namespace ui::controls
     void Button::onMouseEnter(const mosue_state & state)
     {
         Control::onMouseEnter(state);
-        updateStyle();
+        restyle();
     }
 
     void Button::onMouseMove(const mosue_state & state)
@@ -84,20 +84,20 @@ namespace ui::controls
     void Button::onMouseLeave(const mosue_state & state)
     {
         Control::onMouseLeave(state);
-        updateStyle();
+        restyle();
     }
 
     
     void Button::onMouseDown(const mosue_state & state)
     {
         Control::onMouseDown(state);
-        updateStyle();
+        restyle();
     }
 
     void Button::onMouseUp(const mosue_state & state)
     {
         Control::onMouseUp(state);
-        updateStyle();
+        restyle();
     }
 
     void Button::_confirmBlob() const

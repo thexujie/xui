@@ -80,7 +80,7 @@ namespace ui::controls
     void TextBox::onMouseEnter(const mosue_state & state)
     {
         Control::onMouseEnter(state);
-        updateStyle();
+        restyle();
     }
 
     void TextBox::onMouseMove(const mosue_state & state)
@@ -92,20 +92,20 @@ namespace ui::controls
     void TextBox::onMouseLeave(const mosue_state & state)
     {
         Control::onMouseLeave(state);
-        updateStyle();
+        restyle();
     }
 
     
     void TextBox::onMouseDown(const mosue_state & state)
     {
         Control::onMouseDown(state);
-        updateStyle();
+        restyle();
     }
 
     void TextBox::onMouseUp(const mosue_state & state)
     {
         Control::onMouseUp(state);
-        updateStyle();
+        restyle();
     }
 
     void TextBox::onFocus()
@@ -130,7 +130,7 @@ namespace ui::controls
             appendAnimation(TEXTBOX_ANIMATION_GROUP_CURSOR, _cursor_anim);
         }
         _cursor_anim->start();
-        updateStyle();
+        restyle();
     }
 
     void TextBox::onBlur()
@@ -140,7 +140,7 @@ namespace ui::controls
             _cursor_obj->setVisible(false);
         if (_cursor_anim)
             _cursor_anim->stop();
-        updateStyle();
+        restyle();
     }
 
     void TextBox::_confirmBlob() const

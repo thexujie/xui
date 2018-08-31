@@ -41,7 +41,7 @@ namespace ui
             return;
 
         _styleSheet = styleSheet;
-        updateStyle();
+        restyle();
     }
 
     std::shared_ptr<component::StyleSheet> Control::styleSheet() const
@@ -209,6 +209,15 @@ namespace ui
     {
     }
 
+    void Control::restyle()
+    {
+        if (!_delay_style)
+        {
+            _delay_style = true;
+            invoke([this]() {updateStyle(); });
+        }
+    }
+
     std::array<core::pt32f, 4> Control::boderPoints(core::align edge) const
     {
         auto bbox = box();
@@ -275,7 +284,7 @@ namespace ui
     void Control::enteringScene(std::shared_ptr<Scene> & scene)
     {
         _scene = scene;
-        updateStyle();
+        restyle();
     }
 
     void Control::enterScene(std::shared_ptr<Scene> & scene)
@@ -308,60 +317,60 @@ namespace ui
 
     void Control::updateStyle()
     {
+        _delay_style = false;
         std::string style = styleName();
-        if (style != _style)
-        {
-            auto ss = styleSheet();
-            auto s = scene();
-            std::map<std::string, std::string> items = ss->generate(style);
-            auto iter_transition_duration = items.find("transition-duration");
-            if (_style.empty() || !_style_transition || !s || iter_transition_duration == items.end())
-            {
-                clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);
-                auto & props = properties();
-                for (const auto & item : items)
-                {
-                    auto iter = props.find(item.first);
-                    if (iter != props.end())
-                        iter->second->set(item.second, *this);
-                }
-            }
-            else
-            {
-                auto duration = core::parseDuration(iter_transition_duration->second);
-                items.erase(iter_transition_duration);
+        if (style == _style)
+            return;
 
-                clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);
-                auto & props = properties();
-                for(auto & item : items)
+        auto ss = styleSheet();
+        auto s = scene();
+        std::map<std::string, std::string> items = ss->generate(style);
+        auto iter_transition_duration = items.find("transition-duration");
+        if (_style.empty() || !_style_transition || !s || iter_transition_duration == items.end())
+        {
+            clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);
+            auto & props = properties();
+            for (const auto & item : items)
+            {
+                auto iter = props.find(item.first);
+                if (iter != props.end())
+                    iter->second->set(item.second, *this);
+            }
+        }
+        else
+        {
+            auto duration = core::parseDuration(iter_transition_duration->second);
+            items.erase(iter_transition_duration);
+
+            clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);
+            auto & props = properties();
+            for(auto & item : items)
+            {
+                auto iter = props.find(item.first);
+                if (iter == props.end())
+                    continue;
+
+                auto accessor = iter->second;
+                auto interpolator = accessor->create_interpolator();
+                if(interpolator)
                 {
-                    auto iter = props.find(item.first);
-                    if (iter == props.end())
+                    accessor->get(*this, interpolator->start());
+                    accessor->serialize(item.second, interpolator->end());
+                    if (interpolator->start().equal(interpolator->end()))
                         continue;
 
-                    auto accessor = iter->second;
-                    auto interpolator = accessor->create_interpolator();
-                    if(interpolator)
-                    {
-                        accessor->get(*this, interpolator->start());
-                        accessor->serialize(item.second, interpolator->end());
-                        if (interpolator->start().equal(interpolator->end()))
-                            continue;
-
-                        auto anim = std::make_shared<core::property_animation>(shared_from_this(), accessor, interpolator);
-                        anim->setDuration(duration);
-                        anim->start();
-                        appendAnimation(CONTROL_ANIMATION_GROUP_STYLE, anim);
-                    }
-                    else
-                    {
-                        iter->second->set(item.second, *this);
-                    }
+                    auto anim = std::make_shared<core::property_animation>(shared_from_this(), accessor, interpolator);
+                    anim->setDuration(duration);
+                    anim->start();
+                    appendAnimation(CONTROL_ANIMATION_GROUP_STYLE, anim);
+                }
+                else
+                {
+                    iter->second->set(item.second, *this);
                 }
             }
-            _style = style;
-            refresh();
         }
+        _style = style;
     }
 
     void Control::update()

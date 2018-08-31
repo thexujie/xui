@@ -167,7 +167,7 @@ namespace ui::controls
     void ScrollBar::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
         Control::onSizeChanged(from, to);
-        updateStyle();
+        restyle();
     }
 
     void ScrollBar::_updateMouse(const mosue_state & state)
@@ -185,12 +185,7 @@ namespace ui::controls
         else
         {
             core::rc32f bar_rect = barRect();
-            bool bar_hover = bar_rect.contains(state.pos());
-            if(bar_hover != _bar_hover)
-            {
-                _bar_hover = bar_hover;
-                refresh();
-            }
+            _updateBarState(bar_rect.contains(state.pos()), false);
         }
     }
 
@@ -200,7 +195,7 @@ namespace ui::controls
         {
             _bar_hover = hover;
             _bar_active = active;
-            refresh();
+            restyle();
         }
     }
 }

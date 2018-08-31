@@ -9,13 +9,12 @@ namespace core
     const core::property_table & IApp::properties(const std::type_info & ti, std::function<void(core::property_table &)> callback)
     {
         std::lock_guard < std::mutex > lock(_mtx);
-        auto & t = typeid (*this);
-        auto iter = _properties.find(&t);
+        auto iter = _properties.find(&ti);
         if (iter == _properties.end())
         {
             auto table = std::make_shared<core::property_table>();
             callback(*table);
-            _properties[&t] = table;
+            _properties[&ti] = table;
             return *table;
         }
         else

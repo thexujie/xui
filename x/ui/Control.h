@@ -273,6 +273,7 @@ namespace ui
 
         void refresh();
         void rearrange();
+        void restyle();
 
         void setBackgroundColor(core::color32 color) { if (!_background_color.available() || _background_color != color) { _background_color = color; refresh(); } }
         core::color32 backgroundColor() const { return _background_color; }
@@ -381,6 +382,7 @@ namespace ui
 
         // true if need update
         bool _delay_update = false;
+        bool _delay_style = false;
 
         bool _clip_children = true;
         bool _accept_clip = true;
