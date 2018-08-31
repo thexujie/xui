@@ -20,11 +20,11 @@ namespace ui::controls
         void updateContent() override;
         std::string styleName() const override;
     public:
-        void onMouseEnter(const component::mosue_state & state);
-        void onMouseMove(const component::mosue_state & state);
-        void onMouseLeave(const component::mosue_state & state);
-        void onMouseDown(const component::mosue_state & state);
-        void onMouseUp(const component::mosue_state & state);
+        void onMouseEnter(const mosue_state & state);
+        void onMouseMove(const mosue_state & state);
+        void onMouseLeave(const mosue_state & state);
+        void onMouseDown(const mosue_state & state);
+        void onMouseUp(const mosue_state & state);
 
     private:
         // 确保 textBlob 已经被创建
@@ -35,6 +35,5 @@ namespace ui::controls
         std::shared_ptr<graphics::TextBlob> _textBlob;
 
         std::shared_ptr<renderables::Text> _text_obj;
-        std::shared_ptr<component::Interactable> _mrc_obj;
     };
 }

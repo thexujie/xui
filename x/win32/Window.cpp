@@ -509,11 +509,11 @@ namespace win32
             tme.hwndTrack = (HWND)_handle;
             TrackMouseEvent(&tme);
             _trackingMouse = true;
-            _mouse_state.setAction(ui::component::mouse_action::entering);
+            _mouse_state.setAction(ui::mouse_action::entering);
             s->onMouseState(_mouse_state);
         }
 
-        _mouse_state.setAction(ui::component::mouse_action::moving);
+        _mouse_state.setAction(ui::mouse_action::moving);
         s->onMouseState(_mouse_state);
         return 0;
     }
@@ -530,8 +530,8 @@ namespace win32
         auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
-        _mouse_state.setAction(ui::component::mouse_action::leaving);
-        _mouse_state.setButton(ui::component::mouse_button::mask, false);
+        _mouse_state.setAction(ui::mouse_action::leaving);
+        _mouse_state.setButton(ui::mouse_button::mask, false);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         s->onMouseState(_mouse_state);
         return 0;
@@ -545,8 +545,8 @@ namespace win32
         auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
-        _mouse_state.setAction(ui::component::mouse_action::pressing);
-        _mouse_state.setButton(ui::component::mouse_button::left, true);
+        _mouse_state.setAction(ui::mouse_action::pressing);
+        _mouse_state.setButton(ui::mouse_button::left, true);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         s->onMouseState(_mouse_state);
         return 0;
@@ -560,8 +560,8 @@ namespace win32
         auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
-        _mouse_state.setAction(ui::component::mouse_action::releasing);
-        _mouse_state.setButton(ui::component::mouse_button::left, false);
+        _mouse_state.setAction(ui::mouse_action::releasing);
+        _mouse_state.setButton(ui::mouse_button::left, false);
         _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
         s->onMouseState(_mouse_state);
         return 0;
@@ -583,7 +583,7 @@ namespace win32
         //core::pt32i point = core::pt32i(core::i32li16(iParam), core::i32hi16(iParam));
         //core::pt32i wheel = core::pt32i(core::u32li16(uiParam), core::u32hi16(uiParam));
         _mouse_state.setWheelLines(core::u32hi16(uiParam) / WHEEL_DELTA);
-        _mouse_state.setAction(ui::component::mouse_action::v_wheeling);
+        _mouse_state.setAction(ui::mouse_action::v_wheeling);
         _mouse_state.setPos(core::pt32i(point.x, point.y).to<float32_t>());
         s->onMouseState(_mouse_state);
         return 0;

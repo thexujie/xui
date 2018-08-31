@@ -57,64 +57,46 @@ namespace ui::controls
             _text_obj->setTextBlob(_textBlob);
             _text_obj->setRect(contentBox());
         }
-
-        if(!_mrc_obj)
-        {
-            _mrc_obj = std::make_shared<component::Interactable>(control_ref());
-            insert(_mrc_obj);
-
-            _mrc_obj->mouseEnter += std::weak_bind(&Button::onMouseEnter, share_ref<Button>(), std::placeholders::_1);
-            _mrc_obj->mouseMove += std::weak_bind(&Button::onMouseMove, share_ref<Button>(), std::placeholders::_1);
-            _mrc_obj->mouseLeave += std::weak_bind(&Button::onMouseLeave, share_ref<Button>(), std::placeholders::_1);
-            _mrc_obj->mouseDown += std::weak_bind(&Button::onMouseDown, share_ref<Button>(), std::placeholders::_1);
-            _mrc_obj->mouseUp += std::weak_bind(&Button::onMouseUp, share_ref<Button>(), std::placeholders::_1);
-        }
-
-        _mrc_obj->setRect(box());
     }
 
 
     std::string Button::styleName() const
     {
-        bool mousein = false;
-        bool pressed = false;
-        if (_mrc_obj)
-        {
-            mousein = _mrc_obj->mousein();
-            pressed = _mrc_obj->pressed();
-        }
-
-        if (pressed)
+        if (_pressed)
             return "button:active";
-        else if (mousein)
+        else if (_mousein)
             return "button:hover";
         else
             return "button";
     }
 
-    void Button::onMouseEnter(const component::mosue_state & state)
+    void Button::onMouseEnter(const mosue_state & state)
     {
+        Control::onMouseEnter(state);
         updateStyle();
     }
 
-    void Button::onMouseMove(const component::mosue_state & state)
+    void Button::onMouseMove(const mosue_state & state)
     {
-        
+        Control::onMouseMove(state);
     }
 
-    void Button::onMouseLeave(const component::mosue_state & state)
+    void Button::onMouseLeave(const mosue_state & state)
     {
+        Control::onMouseLeave(state);
         updateStyle();
     }
 
     
-    void Button::onMouseDown(const component::mosue_state & state)
+    void Button::onMouseDown(const mosue_state & state)
     {
+        Control::onMouseDown(state);
         updateStyle();
     }
 
-    void Button::onMouseUp(const component::mosue_state & state)
+    void Button::onMouseUp(const mosue_state & state)
     {
+        Control::onMouseUp(state);
         updateStyle();
     }
 

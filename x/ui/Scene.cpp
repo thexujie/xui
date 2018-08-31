@@ -1,9 +1,8 @@
 #include "stdafx.h"
-#include "Component.h"
 #include "Scene.h"
 #include "ui/Control.h"
 
-namespace ui::component
+namespace ui
 {
     Scene::Scene(std::shared_ptr<Control> control) : _control(control)
     {
@@ -73,7 +72,7 @@ namespace ui::component
                 auto obj = _interactbale_current;
                 while (true)
                 {
-                    obj = control()->findInteractable(state.pos(), obj);
+                    obj = control()->findChild(state.pos(), obj);
                     if (!obj)
                         break;
 
@@ -127,7 +126,7 @@ namespace ui::component
 
     void Scene::_updateMouseArea(const mosue_state & state)
     {
-        auto ma = state.action() == mouse_action::leaving ?  nullptr : control()->findInteractable(state.pos());
+        auto ma = state.action() == mouse_action::leaving ?  nullptr : control()->findChild(state.pos());
         // do not update while capturing one or more button(s)
         if (_interactbale_current != ma &&
             (!_interactbale_current || !(_interactbale_current->captureButtons() & state.buttons())))

@@ -1,5 +1,4 @@
 #pragma once
-#include "component/Scene.h"
 #include "Control.h"
 
 namespace ui
@@ -29,8 +28,8 @@ namespace ui
         void removeControl(std::shared_ptr<Control> control);
         std::multimap<int32_t, std::shared_ptr<Control>> & children() { return _controls; }
 
-        void enteringScene(std::shared_ptr<component::Scene> & scene) override;
-        void enterScene(std::shared_ptr<component::Scene> & scene) override;
+        void enteringScene(std::shared_ptr<Scene> & scene) override;
+        void enterScene(std::shared_ptr<Scene> & scene) override;
         void leavingScene() override;
         void leaveScene() override;
 
@@ -40,7 +39,7 @@ namespace ui
         void update() override;
         int32_t animate() override;
         void render(graphics::Graphics & graphics, const graphics::Region & region) const override;
-        std::shared_ptr<component::Interactable> findInteractable(const core::pt32f & pos, std::shared_ptr<component::Interactable> last = nullptr) const override;
+        std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const override;
 
         void onPosChanged(const core::pt32f & from, const core::pt32f & to) override;
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
@@ -75,5 +74,6 @@ namespace ui
 
         core::si32f _layouted_size;
         bool _invalid_layout = false;
+        bool _clip_clild = true;
     };
 }

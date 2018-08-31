@@ -7,11 +7,7 @@ namespace ui::controls
     const std::string TEXTBOX_ANIMATION_GROUP_CURSOR = "_textbox.cursor";
     TextBox::TextBox()
     {
-
-    }
-
-    TextBox::TextBox(std::string text) : _text(text)
-    {
+        _accept_input = true;
     }
 
     TextBox::~TextBox()
@@ -68,66 +64,47 @@ namespace ui::controls
         _cursor_obj->setRect({ cbox.x, cbox.y, 1, fm.height});
         _cursor_obj->setPoints({ cbox.x, cbox.y }, { cbox.x, cbox.y + fm.height });
         _cursor_obj->setPathStyle(graphics::PathStyle().stoke(core::colors::Red , graphics::stroke_style::solid).width(1));
-
-        if(!_input_obj)
-        {
-            _input_obj = std::make_shared<component::Interactable>(control_ref());
-            _input_obj->setAcceptInput(true);
-            insert(_input_obj);
-
-            _input_obj->mouseEnter += std::weak_bind(&TextBox::onMouseEnter, share_ref<TextBox>(), std::placeholders::_1);
-            _input_obj->mouseMove += std::weak_bind(&TextBox::onMouseMove, share_ref<TextBox>(), std::placeholders::_1);
-            _input_obj->mouseLeave += std::weak_bind(&TextBox::onMouseLeave, share_ref<TextBox>(), std::placeholders::_1);
-            _input_obj->mouseDown += std::weak_bind(&TextBox::onMouseDown, share_ref<TextBox>(), std::placeholders::_1);
-            _input_obj->mouseUp += std::weak_bind(&TextBox::onMouseUp, share_ref<TextBox>(), std::placeholders::_1);
-            _input_obj->focus += std::weak_bind(&TextBox::onFocus, share_ref<TextBox>());
-            _input_obj->blur += std::weak_bind(&TextBox::onBlur, share_ref<TextBox>());
-        }
-        _input_obj->setRect(box());
     }
 
 
     std::string TextBox::styleName() const
     {
-        bool mousein = false;
-        bool pressed = false;
-        if (_input_obj)
-        {
-            mousein = _input_obj->mousein();
-            pressed = _input_obj->pressed();
-        }
-
-        if (pressed)
+        if (_pressed)
             return "textbox:active";
-        else if (mousein)
+        else if (_mousein)
             return "textbox:hover";
         else
             return "textbox";
     }
 
-    void TextBox::onMouseEnter(const component::mosue_state & state)
+    void TextBox::onMouseEnter(const mosue_state & state)
     {
+        Control::onMouseEnter(state);
         updateStyle();
     }
 
-    void TextBox::onMouseMove(const component::mosue_state & state)
+    void TextBox::onMouseMove(const mosue_state & state)
     {
+        Control::onMouseMove(state);
         
     }
 
-    void TextBox::onMouseLeave(const component::mosue_state & state)
+    void TextBox::onMouseLeave(const mosue_state & state)
     {
+        Control::onMouseLeave(state);
         updateStyle();
     }
 
     
-    void TextBox::onMouseDown(const component::mosue_state & state)
+    void TextBox::onMouseDown(const mosue_state & state)
     {
+        Control::onMouseDown(state);
         updateStyle();
     }
 
-    void TextBox::onMouseUp(const component::mosue_state & state)
+    void TextBox::onMouseUp(const mosue_state & state)
     {
+        Control::onMouseUp(state);
         updateStyle();
     }
 

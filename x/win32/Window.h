@@ -330,7 +330,7 @@ namespace win32
         uint32_t _styleEx = 0;
         handle_t _handle = nullptr;
 
-        ui::component::mosue_state _mouse_state;
+        ui::mosue_state _mouse_state;
         bool _mouseIn = false;
         bool _trackingMouse = false;
     public:

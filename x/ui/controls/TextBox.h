@@ -7,7 +7,6 @@ namespace ui::controls
     {
     public:
         TextBox();
-        TextBox(std::string text);
         ~TextBox();
 
         static void propertyTableCallback(core::property_table & properties);
@@ -20,11 +19,11 @@ namespace ui::controls
         void updateContent() override;
         std::string styleName() const override;
     public:
-        void onMouseEnter(const component::mosue_state & state);
-        void onMouseMove(const component::mosue_state & state);
-        void onMouseLeave(const component::mosue_state & state);
-        void onMouseDown(const component::mosue_state & state);
-        void onMouseUp(const component::mosue_state & state);
+        void onMouseEnter(const mosue_state & state);
+        void onMouseMove(const mosue_state & state);
+        void onMouseLeave(const mosue_state & state);
+        void onMouseDown(const mosue_state & state);
+        void onMouseUp(const mosue_state & state);
         void onFocus();
         void onBlur();
 
@@ -39,6 +38,5 @@ namespace ui::controls
         std::shared_ptr<renderables::Text> _text_obj;
         std::shared_ptr<renderables::Line> _cursor_obj;
         std::shared_ptr<core::property_animation> _cursor_anim;
-        std::shared_ptr<component::Interactable> _input_obj;
     };
 }

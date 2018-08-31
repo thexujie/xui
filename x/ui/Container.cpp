@@ -8,6 +8,7 @@ namespace ui
 {
     Container::Container()
     {
+        _interactable = false;
     }
 
     Container::~Container()
@@ -55,14 +56,14 @@ namespace ui
         control->leaveScene();
     }
 
-    void Container::enteringScene(std::shared_ptr<component::Scene> & scene)
+    void Container::enteringScene(std::shared_ptr<Scene> & scene)
     {
         Control::enteringScene(scene);
         for (auto & iter : _controls)
             iter.second->enteringScene(scene);
     }
 
-    void Container::enterScene(std::shared_ptr<component::Scene> & scene)
+    void Container::enterScene(std::shared_ptr<Scene> & scene)
     {
         Control::enterScene(scene);
         for (auto & iter : _controls)
@@ -288,15 +289,40 @@ namespace ui
             iter.second->render(graphics, region);
     }
 
-    std::shared_ptr<component::Interactable> Container::findInteractable(const core::pt32f & pos, std::shared_ptr<component::Interactable> last) const
+    std::shared_ptr<Control> Container::findChild(const core::pt32f & pos, std::shared_ptr<Control> last) const
     {
+        if (_clip_clild && !_rect.contains(pos))
+            return nullptr;
+
+        bool found = false;
+
+        std::shared_ptr<Control> control = nullptr;
         for (auto & iter : core::reverse(_controls))
         {
-            auto ma = iter.second->findInteractable(pos, last);
-            if (ma)
-                return ma;
+            if (last && !found)
+            {
+                if (iter.second == last)
+                    found = true;
+                continue;
+            }
+
+            auto hittest = iter.second->hitTest(pos);
+            if (hittest == hittest_result::nowhere)
+                continue;
+
+            if (hittest == hittest_result::client)
+                return iter.second;
+
+            auto child = iter.second->findChild(pos, last);
+            if (child)
+                return child;
+
+            if (hittest == hittest_result::stable)
+                return iter.second;
+
+            control = iter.second;
         }
-        return Control::findInteractable(pos, last);
+        return control;
     }
 
     void Container::onPosChanged(const core::pt32f & from, const core::pt32f & to)

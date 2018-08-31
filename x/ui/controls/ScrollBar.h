@@ -49,15 +49,19 @@ namespace ui::controls
         float32_t barPos() const { return barSpace() * scrollRate(); }
         core::rc32f barRect() const;
     public:
-        void onBarMouseEnter(const component::mosue_state & state);
-        void onBarMouseMove(const component::mosue_state & state);
-        void onBarMouseLeave(const component::mosue_state & state);
-        void onBarMouseDown(const component::mosue_state & state);
-        void onBarMouseUp(const component::mosue_state & state);
-        void onMouseWheel(const component::mosue_state & state);
+        void onMouseEnter(const mosue_state & state);
+        void onMouseMove(const mosue_state & state);
+        void onMouseLeave(const mosue_state & state);
+        void onMouseDown(const mosue_state & state);
+        void onMouseUp(const mosue_state & state);
+        void onMouseWheel(const mosue_state & state);
 
     public:
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
+
+    private:
+        void _updateMouse(const mosue_state & state);
+        void _updateBarState(bool hover, bool active);
 
     public:
         core::event<void(float32_t from, float32_t to)> valueChagned;
@@ -80,8 +84,8 @@ namespace ui::controls
         core::float32_t _bar_drag_start_vallue = 0.0f;
         core::pt32f _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };
 
-        std::shared_ptr<component::Interactable> _input;
-        std::shared_ptr<component::Interactable> _input_bar;
+        bool _bar_hover = false;
+        bool _bar_active = false;
         std::shared_ptr<renderables::Rectangle> _bar;
     };
 }

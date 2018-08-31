@@ -152,6 +152,7 @@ void xui_main()
         layer->setBackgroundColor(0x40ffffff);
         layer->setLayoutDirection(core::align::top);
         layer->setLayoutOrigin(ui::layout_origin::parent);
+        layer->setMouseThrough(true);
         layer->setSize({ 100_per });
 
         auto tbx = std::make_shared<ui::controls::TextBox>();

@@ -272,13 +272,13 @@ namespace ui
         return _background_image.value;
     }
 
-    void Control::enteringScene(std::shared_ptr<component::Scene> & scene)
+    void Control::enteringScene(std::shared_ptr<Scene> & scene)
     {
         _scene = scene;
         updateStyle();
     }
 
-    void Control::enterScene(std::shared_ptr<component::Scene> & scene)
+    void Control::enterScene(std::shared_ptr<Scene> & scene)
     {
     }
 
@@ -597,9 +597,6 @@ namespace ui
             _renderables.insert(std::make_pair(depth, std::dynamic_pointer_cast<component::Renderable>(object)));
             invalidate(object->rect());
             break;
-        case ui::component::ComponentType::Interactable:
-            _interactables.push_back(std::dynamic_pointer_cast<component::Interactable>(object));
-            break;
         default:
             break;
         }
@@ -641,28 +638,6 @@ namespace ui
             if (rendereable.second->visible() && region.intersects(rendereable.second->rect().ceil<int32_t>()))
                 rendereable.second->render(graphics);
         }
-    }
-
-    std::shared_ptr<component::Interactable> Control::findInteractable(const core::pt32f & pos, std::shared_ptr<component::Interactable> last) const
-    {
-        if (_accept_clip && !_rect.contains(pos))
-            return nullptr;
-
-        std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
-        bool found = false;
-        for (auto iter = _interactables.rbegin(); iter != _interactables.rend(); ++iter)
-        {
-            if (last && !found)
-            {
-                if (*iter == last)
-                    found = true;
-                continue;
-            }
-
-            if ((*iter)->onHitTest(pos) == core::error_ok)
-                return *iter;
-        }
-        return nullptr;
     }
 
     void Control::clearAnimations(std::string group)

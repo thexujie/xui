@@ -8,6 +8,8 @@ namespace ui::controls
     {
         _border = core::vec4<core::dimensionf>{ 1_px };
         _padding = {1_em, 0.5_em};
+        _accept_wheel_v = true;
+        _capture_buttons = mouse_button::left;
     }
 
     ScrollBar::~ScrollBar()
@@ -32,29 +34,6 @@ namespace ui::controls
     void ScrollBar::updateContent()
     {
         core::rc32f bar_rect = barRect();
-
-        if (!_input)
-        {
-            _input = std::make_shared<component::Interactable>(control_ref());
-            _input->mouseWheel += std::weak_bind(&ScrollBar::onMouseWheel, share_ref<ScrollBar>(), std::placeholders::_1);
-            _input->setAcceptWheelV(true);
-            insert(_input);
-        }
-        _input->setRect(box());
-
-        if (!_input_bar)
-        {
-            _input_bar = std::make_shared<component::Interactable>(control_ref());
-            _input_bar->mouseEnter += std::weak_bind(&ScrollBar::onBarMouseEnter, share_ref<ScrollBar>(), std::placeholders::_1);
-            _input_bar->mouseMove += std::weak_bind(&ScrollBar::onBarMouseMove, share_ref<ScrollBar>(), std::placeholders::_1);
-            _input_bar->mouseLeave += std::weak_bind(&ScrollBar::onBarMouseLeave, share_ref<ScrollBar>(), std::placeholders::_1);
-            _input_bar->mouseDown += std::weak_bind(&ScrollBar::onBarMouseDown, share_ref<ScrollBar>(), std::placeholders::_1);
-            _input_bar->mouseUp += std::weak_bind(&ScrollBar::onBarMouseUp, share_ref<ScrollBar>(), std::placeholders::_1);
-            _input_bar->setCaptureButtons(component::mouse_button::left);
-            insert(_input_bar);
-        }
-        _input_bar->setRect(bar_rect);
-
         if(!_bar)
         {
             _bar = std::make_shared<renderables::Rectangle>(control_ref());
@@ -66,20 +45,11 @@ namespace ui::controls
         _bar->setPathStyle(graphics::PathStyle().fill(_bar_color));
     }
 
-
     std::string ScrollBar::styleName() const
     {
-        bool mousein = false;
-        bool pressed = false;
-        if (_input_bar)
-        {
-            mousein = _input_bar->mousein();
-            pressed = _input_bar->pressed();
-        }
-
-        if (pressed)
+        if (_bar_active)
             return "scrollbar:bar-active";
-        else if (mousein)
+        else if (_bar_hover)
             return "scrollbar:bar-hover";
         else
             return "scrollbar";
@@ -149,44 +119,46 @@ namespace ui::controls
             return { box.x + barPos(), box.y, barSize(), box.cy };
     }
 
-    void ScrollBar::onBarMouseEnter(const component::mosue_state & state)
+    void ScrollBar::onMouseEnter(const mosue_state & state)
     {
-        updateStyle();
+        _updateMouse(state);
     }
 
-    void ScrollBar::onBarMouseMove(const component::mosue_state & state)
+    void ScrollBar::onMouseMove(const mosue_state & state)
     {
-        if (std::isnan(_bar_drag_mouse_pos.x))
-            return;
-
-        float32_t diff = _direction == core::align::top ? state.pos().y - _bar_drag_mouse_pos.y : state.pos().x - _bar_drag_mouse_pos.x;
-        float32_t val = _bar_drag_start_vallue + rangeValue() * (diff / barSpace());
-        setValue(std::clamp(val, _min, _max));
+        _updateMouse(state);
     }
 
-    void ScrollBar::onBarMouseLeave(const component::mosue_state & state)
+    void ScrollBar::onMouseLeave(const mosue_state & state)
     {
         _bar_drag_start_vallue = 0.0f;
         _bar_drag_mouse_pos = {std::nanf("0")};
-        updateStyle();
+        _updateBarState(false, false);
     }
 
     
-    void ScrollBar::onBarMouseDown(const component::mosue_state & state)
+    void ScrollBar::onMouseDown(const mosue_state & state)
     {
-        _bar_drag_start_vallue = _val;
-        _bar_drag_mouse_pos = state.pos();
-        updateStyle();
+        if(_bar_hover)
+        {
+            _bar_drag_start_vallue = _val;
+            _bar_drag_mouse_pos = state.pos();
+            _updateBarState(true, true);
+        }
     }
 
-    void ScrollBar::onBarMouseUp(const component::mosue_state & state)
+    void ScrollBar::onMouseUp(const mosue_state & state)
     {
-        _bar_drag_start_vallue = 0.0f;
-        _bar_drag_mouse_pos = { std::nanf("0") };
-        updateStyle();
+        if (_bar_active)
+        {
+            _bar_drag_start_vallue = 0.0f;
+            _bar_drag_mouse_pos = { std::nanf("0") };
+            _updateBarState(true, false);
+            _updateMouse(state);
+        }
     }
 
-    void ScrollBar::onMouseWheel(const component::mosue_state & state)
+    void ScrollBar::onMouseWheel(const mosue_state & state)
     {
         float32_t val = _val - lineValue() * state.wheelLines();
         setValue(std::clamp(val, _min, _max));
@@ -196,5 +168,39 @@ namespace ui::controls
     {
         Control::onSizeChanged(from, to);
         updateStyle();
+    }
+
+    void ScrollBar::_updateMouse(const mosue_state & state)
+    {
+        // ÕýÔÚÍÏ¶¯
+        if(_bar_active)
+        {
+            if (std::isnan(_bar_drag_mouse_pos.x))
+                return;
+
+            float32_t diff = _direction == core::align::top ? state.pos().y - _bar_drag_mouse_pos.y : state.pos().x - _bar_drag_mouse_pos.x;
+            float32_t val = _bar_drag_start_vallue + rangeValue() * (diff / barSpace());
+            setValue(std::clamp(val, _min, _max));
+        }
+        else
+        {
+            core::rc32f bar_rect = barRect();
+            bool bar_hover = bar_rect.contains(state.pos());
+            if(bar_hover != _bar_hover)
+            {
+                _bar_hover = bar_hover;
+                refresh();
+            }
+        }
+    }
+
+    void ScrollBar::_updateBarState(bool hover, bool active)
+    {
+        if (hover != _bar_hover || active != _bar_active)
+        {
+            _bar_hover = hover;
+            _bar_active = active;
+            refresh();
+        }
     }
 }

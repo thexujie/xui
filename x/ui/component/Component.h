@@ -10,9 +10,6 @@ namespace graphics {
 
 namespace ui::component
 {
-    class Scene;
-    class View;
-
     enum class ComponentType
     {
         Control = 0,

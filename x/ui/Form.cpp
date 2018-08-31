@@ -42,14 +42,14 @@ namespace ui
         update();
     }
 
-    std::shared_ptr<ui::component::Scene> Form::formScene() const
+    std::shared_ptr<Scene> Form::formScene() const
     {
         auto s = scene();
         if (s)
             return s;
 
         if (!_form_scene)
-            const_cast<Form*>(this)->_form_scene = std::make_shared<ui::component::Scene>(const_cast<Form*>(this)->share_ref<Control>());
+            const_cast<Form*>(this)->_form_scene = std::make_shared<Scene>(const_cast<Form*>(this)->share_ref<Control>());
         return _form_scene;
     }
 
@@ -88,7 +88,7 @@ namespace ui
         setWindowPos(p);
     }
 
-    void Form::enteringScene(std::shared_ptr<component::Scene> & scene)
+    void Form::enteringScene(std::shared_ptr<Scene> & scene)
     {
         Container::enteringScene(scene);
     }

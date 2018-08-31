@@ -1,13 +1,16 @@
 #pragma once
-#include "component/Scene.h"
 #include "component/Style.h"
 #include "renderables/Text.h"
 #include "renderables/Image.h"
 #include "renderables/Line.h"
 #include "renderables/Rectangle.h"
+#include "graphics/Region.h"
+#include "Scene.h"
 
 namespace ui
 {
+    class Scene;
+
     const int32_t ZVALUE_BACKGROUND = -100;
     const int32_t ZVALUE_CONTENT = 0;
     const int32_t ZVALUE_FOREGROUND = 100;
@@ -30,6 +33,17 @@ namespace ui
         padding_box,
         // 内容方框
         content_box,
+    };
+
+    enum class hittest_result
+    {
+        nowhere = 0,
+        // 这个位置可交互
+        client,
+        // 这个位置不可交互
+        stable,
+        // 鼠标可以从这个位置穿透过去
+        transparent,
     };
 
     enum class layout_origin
@@ -62,6 +76,57 @@ namespace ui
         donot_calc_percent_xy = donot_calc_percent_x | donot_calc_percent_y,
     };
     template<> struct enable_bitmasks<calc_flag> { static const bool enable = true; };
+
+    enum class mouse_button
+    {
+        none = 0,
+        left = 0x0001,
+        middle = 0x0002,
+        right = 0x0004,
+        mask = 0x00ff,
+    };
+
+    template<> struct enable_bitmasks<mouse_button> { static const bool enable = true; };
+    typedef core::bitflag<mouse_button> mouse_buttons;
+
+    enum class mouse_action
+    {
+        none = 0,
+        entering,
+        moving,
+        pressing,
+        clicking,
+        releasing,
+        dbclicking,
+        leaving,
+
+        v_wheeling,
+    };
+
+    class mosue_state
+    {
+    public:
+        mosue_state() = default;
+        mosue_state(const core::pt32f pos, mouse_action action) : _pos(pos), _action(action) {}
+
+        void setPos(const core::pt32f & pos) { _pos = pos; }
+        const core::pt32f & pos() const { return _pos; }
+
+        void setButton(mouse_button button, bool active) { active ? (_buttons |= button) : (_buttons &= ~button); }
+        mouse_button buttons() const { return _buttons; }
+
+        void setAction(mouse_action action) { _action = action; }
+        mouse_action action() const { return _action; }
+
+        void setWheelLines(int32_t lines) { _wheel_lines = lines; }
+        int32_t wheelLines() const { return _wheel_lines; }
+
+    private:
+        core::pt32f _pos;
+        mouse_action _action = mouse_action::none;
+        mouse_button _buttons = mouse_button::none;
+        int32_t _wheel_lines = 0;
+    };
 
     class Control : public core::object
     {
@@ -113,7 +178,7 @@ namespace ui
         core::si32f prefferSize(calc_flag flags = calc_flag::none) const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
-        std::shared_ptr<component::Scene> scene() const { return _scene.lock(); }
+        std::shared_ptr<Scene> scene() const { return _scene.lock(); }
         void setParent(std::shared_ptr<Control> parent) { _parent = parent; }
         std::shared_ptr<Control> parent() const { return _parent.lock(); }
 
@@ -232,9 +297,11 @@ namespace ui
         std::array<core::pt32f, 2> boderLine(core::align edge) const;
 
         bool acceptClip() const { return _accept_clip; }
+        void setMouseThrough(bool b) { _mouse_through = b; }
+        bool mouseThrough() const { return _mouse_through; }
 
-        virtual void enteringScene(std::shared_ptr<component::Scene> & scene);
-        virtual void enterScene(std::shared_ptr<component::Scene> & scene);
+        virtual void enteringScene(std::shared_ptr<Scene> & scene);
+        virtual void enterScene(std::shared_ptr<Scene> & scene);
         virtual void leavingScene();
         virtual void leaveScene();
 
@@ -268,7 +335,7 @@ namespace ui
     protected:
         std::mutex _mtx;
 
-        std::weak_ptr<component::Scene> _scene;
+        std::weak_ptr<Scene> _scene;
         std::weak_ptr<Control> _parent;
 
         int32_t _zvalue = ZVALUE_CONTENT;
@@ -317,10 +384,11 @@ namespace ui
 
         bool _clip_children = true;
         bool _accept_clip = true;
+        bool _interactable = true;
+        bool _mouse_through = false;
 
         core::float3x2 _transform;
         std::multimap<int32_t, std::shared_ptr<component::Renderable>> _renderables;
-        std::list<std::shared_ptr<component::Interactable>> _interactables;
 
         std::map<std::string, std::vector<std::shared_ptr<core::animation>>> _animations;
         core::rc32f _rect_invalid;
@@ -335,8 +403,7 @@ namespace ui
 
        virtual void render(graphics::Graphics & graphics, const graphics::Region & region) const;
 
-       virtual std::shared_ptr<component::Interactable> findInteractable(const core::pt32f & pos, std::shared_ptr<component::Interactable> last = nullptr) const;
-
+       virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const { return nullptr; }
 
     public:
         void clearAnimations() { _animations.clear(); }
@@ -345,5 +412,62 @@ namespace ui
         void appendAnimation(std::string group, std::shared_ptr<core::animation> animation);
     private:
         void _onAnimationStarted();
+
+
+        //---------------------------------------------------- interact
+    public:
+        virtual hittest_result hitTest(const core::pt32f & pos) const
+        {
+            if (!_rect.contains(pos))
+                return hittest_result::nowhere;
+
+            if (_mouse_through)
+                return hittest_result::transparent;
+
+            return _interactable ? hittest_result::client : hittest_result::stable;
+        }
+        virtual void onMouseEnter(const mosue_state & state) { _mousein = true;  mouseEnter(state); }
+        virtual void onMouseMove(const mosue_state & state) { mouseMove(state); }
+        virtual void onMouseLeave(const mosue_state & state) { _pressed = false;  _mousein = false; mouseLeave(state); }
+
+        virtual void onMouseDown(const mosue_state & state) { _pressed = true;  mouseDown(state); }
+        virtual void onMouseUp(const mosue_state & state) { _pressed = false;  mouseUp(state); }
+        virtual void onMouseClick(const mosue_state & state) { mouseClick(state); }
+        virtual void onMouseDBClick(const mosue_state & state) { mouseDBClick(state); }
+        virtual void onMouseWheel(const mosue_state & state) { mouseWheel(state); }
+        virtual void onFocus() { _focused = true;  focus(); }
+        virtual void onBlur() { _focused = false; blur(); }
+
+        bool mousein() const { return _mousein; }
+        bool pressed() const { return _pressed; }
+
+        void setCaptureButtons(mouse_buttons buttons) { _capture_buttons = buttons; }
+        mouse_buttons captureButtons() const { return _capture_buttons; }
+
+        void setAcceptWheelV(bool b) { _accept_wheel_v = b; }
+        bool acceptWheelV() const { return _accept_wheel_v; }
+
+        void setAcceptInput(bool b) { _accept_input = b; }
+        bool acceptInput() const { return _accept_input; }
+
+    public:
+        core::event<void(const mosue_state & state)> mouseEnter;
+        core::event<void(const mosue_state & state)> mouseMove;
+        core::event<void(const mosue_state & state)> mouseLeave;
+        core::event<void(const mosue_state & state)> mouseDown;
+        core::event<void(const mosue_state & state)> mouseUp;
+        core::event<void(const mosue_state & state)> mouseClick;
+        core::event<void(const mosue_state & state)> mouseDBClick;
+        core::event<void(const mosue_state & state)> mouseWheel;
+        core::event<void()> focus;
+        core::event<void()> blur;
+
+    protected:
+        bool _mousein = false;
+        bool _pressed = false;
+        bool _focused = false;
+        mouse_buttons _capture_buttons = mouse_button::none;
+        bool _accept_wheel_v = false;
+        bool _accept_input = false;
     };
 }

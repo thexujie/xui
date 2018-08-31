@@ -1,17 +1,11 @@
 #pragma once
-#include "Renderable.h"
-#include "Interactable.h"
+#include "component/Renderable.h"
 #include "graphics/Region.h"
+#include "component/Style.h"
 
 namespace ui
 {
-    class Control;
-}
-
-namespace ui::component
-{
-    class Component;
-    class StyleSheet;
+    class mosue_state;
 
     class Scene : public core::object
     {
@@ -44,7 +38,6 @@ namespace ui::component
 
     public:
         core::event<void(const core::rc32i & rect)> invalidated;
-        //core::event<void(const core::rc32i & rect)> rendered;
         core::event<void(const graphics::Region & region)> rendered;
         core::event<void(bool capture)> captured;
 
@@ -64,12 +57,12 @@ namespace ui::component
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
 
-        std::list<std::shared_ptr<Renderable>> _renderables;
+        std::list<std::shared_ptr<component::Renderable>> _renderables;
 
         std::shared_ptr<graphics::Bitmap> _renderBuffer;
 
-        std::shared_ptr<Interactable> _interactbale_current;
-        std::shared_ptr<Interactable> _interactbale_input;
+        std::shared_ptr<Control> _interactbale_current;
+        std::shared_ptr<Control> _interactbale_input;
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
 
