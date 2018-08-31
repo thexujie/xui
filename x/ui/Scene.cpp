@@ -122,6 +122,12 @@ namespace ui
         }
     }
 
+    void Scene::onChar(char32_t ch)
+    {
+        if (_interactbale_input)
+            _interactbale_input->onChar(ch);
+    }
+
     void Scene::_updateMouseArea(const mosue_state & state, mouse_action action)
     {
         auto ma = action == mouse_action::leave ?  nullptr : control()->findChild(state.pos());

@@ -37,7 +37,8 @@ namespace ui
         core::error animate();
 
     public:
-        virtual void onMouseState(const mosue_state & state, mouse_action action);
+        void onMouseState(const mosue_state & state, mouse_action action);
+        void onChar(char32_t ch);
 
     private:
         void _updateMouseArea(const mosue_state & state, mouse_action action);

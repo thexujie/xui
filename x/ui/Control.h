@@ -456,6 +456,7 @@ namespace ui
         virtual void onMouseWheel(const mosue_state & state) { mouseWheel(state); }
         virtual void onFocus(std::shared_ptr<ImeContext> imecontext) { _focused = true;  focus(); }
         virtual void onBlur() { _focused = false; blur(); }
+        virtual void onChar(char32_t ch) {}
 
         bool mousein() const { return _mousein; }
         bool pressed() const { return _pressed; }

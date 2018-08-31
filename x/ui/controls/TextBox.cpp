@@ -145,6 +145,15 @@ namespace ui::controls
         restyle();
     }
 
+    void TextBox::onChar(char32_t ch)
+    {
+        char chars[4] = { 0 };
+        size_t len = core::unicode_to_utf8(ch, chars);
+        _text.append(chars, len);
+        _textblob.reset();
+        refresh();
+    }
+
     void TextBox::_updateIme()
     {
         if (!_imecontext)

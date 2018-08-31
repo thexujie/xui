@@ -435,7 +435,7 @@ namespace win32
             //CASE_MSG(WM_ACTIVATE, OnWmActive);
             //CASE_MSG(WM_SETFOCUS, OnWmSetFocus);
             //CASE_MSG(WM_KILLFOCUS, OnWmKillFocus);
-            //CASE_MSG(WM_CHAR, OnWmChar);
+            CASE_MSG(WM_CHAR, OnWmChar);
             //CASE_MSG(WM_UNICHAR, OnWmChar);
 
             //CASE_MSG(WM_SYSKEYDOWN, OnWmKeyDown);
@@ -592,6 +592,13 @@ namespace win32
         _mouse_state.setWheelLines(core::u32hi16(uiParam) / WHEEL_DELTA);
         _mouse_state.setPos(core::pt32i(point.x, point.y).to<float32_t>());
         s->onMouseState(_mouse_state, ui::mouse_action::wheel_v);
+        return 0;
+    }
+
+    intx_t Window::OnWmChar(uintx_t uiParam, intx_t iParam)
+    {
+        if (auto s = scene())
+            s->onChar(char32_t(uiParam));
         return 0;
     }
 

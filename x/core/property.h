@@ -337,7 +337,7 @@ namespace core
         auto r = s.r + (e.r - s.r) * proportion;
         auto g = s.g + (e.g - s.g) * proportion;
         auto b = s.b + (e.b - s.b) * proportion;
-        return core::color32(a, r, g, b);
+        return core::color32(uint8_t(a), uint8_t(r), uint8_t(g), uint8_t(b));
     }
 
 

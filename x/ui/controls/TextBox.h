@@ -27,6 +27,7 @@ namespace ui::controls
         void onMouseUp(const mosue_state & state) override;
         void onFocus(std::shared_ptr<ImeContext> imecontext) override;
         void onBlur() override;
+        void onChar(char32_t ch) override;
 
     private:
         void _updateIme();

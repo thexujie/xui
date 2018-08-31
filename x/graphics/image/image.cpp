@@ -39,7 +39,7 @@ namespace graphics::image
         return image_create(buffer.get(), (int32_t)length, img);
     }
 
-    image_type image_get_type_from_ext(const char * ext, int32_t length)
+    image_type image_get_type_from_ext(const char * ext, size_t length)
     {
         if (!ext || !ext[0])
             return image_type_none;
@@ -56,21 +56,21 @@ namespace graphics::image
         if(length <= 0)
             return image_type_none;
 
-        if (textequalex(ext, length, "bmp", 3, false))
+        if (core::string::equal_ic(ext, length, "bmp", 3))
             return image_type_bmp;
-        if (textequalex(ext, length, "png", 3, false))
+        if (core::string::equal_ic(ext, length, "png", 3))
             return image_type_png;
-        if (textequalex(ext, length, "jpg", 3, false))
+        if (core::string::equal_ic(ext, length, "jpg", 3))
             return image_type_jpeg;
-        if (textequalex(ext, length, "tga", 3, false))
+        if (core::string::equal_ic(ext, length, "tga", 3))
             return image_type_tga;
-        if (textequalex(ext, length, "dds", 3, false))
+        if (core::string::equal_ic(ext, length, "dds", 3))
             return image_type_dds;
 
         return image_type_none;
     }
 
-    image_type image_get_type(const byte_t * buffer, int32_t length)
+    image_type image_get_type(const byte_t * buffer, size_t length)
     {
         if (is_bmp_data(buffer, length))
             return image_type_bmp;

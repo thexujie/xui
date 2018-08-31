@@ -50,6 +50,7 @@ namespace core
     const unicodeplane_t & unicodeplane_find(char32_t ch);
     const unicodeplane_t & unicodeplane_find(const char16_t * text, int32_t length);
 
-    int32_t unicode_to_utf16(char32_t ch, char16_t * text, int32_t size);
+    size_t unicode_to_utf8(const char32_t & ch, char * text);
+    int32_t unicode_to_utf16(const char32_t & ch, char16_t * text, int32_t size);
     int32_t utf16_to_unicode(const char16_t * text, int32_t size, char32_t & ch);
 }

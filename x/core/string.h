@@ -30,38 +30,80 @@ namespace core { namespace string
     {
         bool operator()(const std::string & s1, const std::string & s2) const
         {
-            return core::textcmp(s1.c_str(), s1.length(), s2.c_str(), s2.length(), false) < 0;
+            if (s1.length() != s2.length())
+                return s1.length() < s2.length();
+            else
+            {
+                for(size_t i = 0; i < s1.length(); ++i)
+                {
+                    auto c1 = std::tolower(s1[i]);
+                    auto c2 = std::tolower(s2[i]);
+                    if (c1 == c2)
+                        continue;
+                    return c1 < c2;
+                }
+                return false;
+            }
         }
     };
 
+    inline bool char_equal(const char & c1, const char & c2) { return c1 == c2; }
+    inline bool char_equal_ic(const char & c1, const char & c2) { return std::tolower(c1) == std::tolower(c2); }
+    inline bool equal(const char * s1, size_t s1_length, const char * s2, size_t s2_length = npos)
+    {
+        if (s1_length == npos)
+            s1_length = core::textlen(s1);
+        if (s2_length == npos)
+            s2_length = core::textlen(s2);
+        return std::equal(s1, s1 + s1_length, s2, s2 + s2_length, char_equal);
+    }
+
+    inline bool equal(const std::string & s1, const std::string & s2)
+    {
+        return std::equal(s1.begin(), s1.end(), s2.begin(), s2.end(), char_equal);
+    }
+
+    inline bool equal(const std::string_view & s1, const char * s2, size_t s2_length = npos)
+    {
+        if (s2_length == npos)
+            s2_length = core::textlen(s2);
+        return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal);
+    }
+
+    inline bool equal(const std::string & s1, const char * s2, size_t s2_length = npos)
+    {
+        if (s2_length == npos)
+            s2_length = core::textlen(s2);
+        return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal);
+    }
+
+
+    inline bool equal_ic(const char * s1, size_t s1_length, const char * s2, size_t s2_length = npos)
+    {
+        if (s1_length == npos)
+            s1_length = core::textlen(s1);
+        if (s2_length == npos)
+            s2_length = core::textlen(s2);
+        return std::equal(s1, s1 + s1_length, s2, s2 + s2_length, char_equal_ic);
+    }
+
     inline bool equal_ic(const std::string & s1, const std::string & s2)
     {
-        if (s1.length() != s2.length())
-            return false;
-
-        return core::textequalex(s1.c_str(), s1.length(), s2.c_str(), s2.length(), false);
+        return std::equal(s1.begin(), s1.end(), s2.begin(), s2.end(), char_equal_ic);
     }
 
-    inline bool equal_ic(const std::string_view & s1, const char * s2, int32_t s2_length)
+    inline bool equal_ic(const std::string_view & s1, const char * s2, size_t s2_length = npos)
     {
-        if (s2_length < 0)
-            s2_length = textlen(s2);
-
-        if (s1.length() != s2_length)
-            return false;
-
-        return core::textequalex(s1.data(), s1.length(), s2, s2_length, false);
+        if (s2_length == npos)
+            s2_length = core::textlen(s2);
+        return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal_ic);
     }
 
-    inline bool equal_ic(const std::string & s1, const char * s2, int32_t s2_length)
+    inline bool equal_ic(const std::string & s1, const char * s2, size_t s2_length = npos)
     {
-        if (s2_length < 0)
-            s2_length = textlen(s2);
-
-        if (s1.length() != s2_length)
-            return false;
-
-        return core::textequalex(s1.c_str(), s1.length(), s2, s2_length, false);
+        if (s2_length == npos)
+            s2_length = core::textlen(s2);
+        return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal_ic);
     }
 
     inline void format_helper(std::ostringstream & stream) {}

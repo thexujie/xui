@@ -244,6 +244,7 @@ namespace win32
         void resize(const core::si32f & size);
 
         std::shared_ptr<ui::Form> form() { return _form.lock(); }
+        std::shared_ptr<ui::Scene> scene() { if (auto f = _form.lock()) { return f->scene(); } return nullptr; }
         handle_t handle() const;
         intx_t handleMSG(uint32_t uiMessage, uintx_t uiParam, intx_t iParam);
 
@@ -287,10 +288,6 @@ namespace win32
         virtual intx_t OnWmMouseUpL(uintx_t uiParam, intx_t iParam);
         virtual intx_t OnWmMouseWheelV(uintx_t uiParam, intx_t iParam);
 
-        virtual intx_t OnWmMouseDown(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
-        virtual intx_t OnWmMouseUp(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
-        virtual intx_t OnWmMouseClick(uintx_t uiParam, intx_t iParam, MouseButtonE eButton){ return 0;}
-
         virtual intx_t OnWmNcMouseDownL(uintx_t uiParam, intx_t iParam) { return 0; }
         virtual intx_t OnWmMouseDownR(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmMouseUpR(uintx_t uiParam, intx_t iParam){ return 0;}
@@ -302,8 +299,17 @@ namespace win32
         virtual intx_t OnWmSetFocus(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmKillFocus(uintx_t uiParam, intx_t iParam){ return 0;}
 
-        virtual intx_t OnWmChar(uintx_t uiParam, intx_t iParam){ return 0;}
-        virtual intx_t OnWmUnicodeChar(uintx_t uiParam, intx_t iParam){ return 0;}
+        virtual intx_t OnWmChar(uintx_t uiParam, intx_t iParam);
+        virtual intx_t OnWmUnicodeChar(uintx_t uiParam, intx_t iParam)
+        {
+            //if(uiParam != UNICODE_NOCHAR)
+            //	m_pControl->PreOnKeyInput((char_32)uiParam);
+
+            // utf16 窗口无法收到这个消息 
+            // https://msdn.microsoft.com/en-us/library/windows/desktop/ms646288(v=vs.85).aspx
+            // WM_UNICHAR 返回 true 可以拒绝 WM_CHAR.
+            return 0;
+        }
         virtual intx_t OnWmKeyDown(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmKeyUp(uintx_t uiParam, intx_t iParam){ return 0;}
         virtual intx_t OnWmMouseDBClick(uintx_t uiParam, intx_t iParam){ return 0;}
