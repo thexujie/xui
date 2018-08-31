@@ -157,6 +157,7 @@ void xui_main()
 
         auto tbx = std::make_shared<ui::controls::TextBox>();
         tbx->setSize({ 100_per, 2_em });
+        tbx->setImeMode(ui::ime_mode::on);
         layer->addControl(tbx);
 
         form->addControl(layer);

@@ -18,16 +18,18 @@ namespace ui::controls
         core::si32f contentSize() const override;
         void updateContent() override;
         std::string styleName() const override;
+
     public:
-        void onMouseEnter(const mosue_state & state);
-        void onMouseMove(const mosue_state & state);
-        void onMouseLeave(const mosue_state & state);
-        void onMouseDown(const mosue_state & state);
-        void onMouseUp(const mosue_state & state);
-        void onFocus();
-        void onBlur();
+        void onMouseEnter(const mosue_state & state) override;
+        void onMouseMove(const mosue_state & state) override;
+        void onMouseLeave(const mosue_state & state) override;
+        void onMouseDown(const mosue_state & state) override;
+        void onMouseUp(const mosue_state & state) override;
+        void onFocus(std::shared_ptr<ImeContext> imecontext) override;
+        void onBlur() override;
 
     private:
+        void _updateIme();
         // 确保 textBlob 已经被创建
         void _confirmBlob() const;
 
@@ -38,5 +40,7 @@ namespace ui::controls
         std::shared_ptr<renderables::Text> _text_obj;
         std::shared_ptr<renderables::Line> _cursor_obj;
         std::shared_ptr<core::property_animation> _cursor_anim;
+
+        std::shared_ptr<ImeContext> _imecontext;
     };
 }

@@ -2,6 +2,7 @@
 #include "ui/component/Window.h"
 #include "ui/Form.h"
 #include "win32/win32.h"
+#include "ImeContext.h"
 
 namespace win32
 {
@@ -333,6 +334,8 @@ namespace win32
         ui::mosue_state _mouse_state;
         bool _mouseIn = false;
         bool _trackingMouse = false;
+
+        std::shared_ptr<win32::ImeContext> _imecontext;
     public:
         core::event<void()> closed;
 

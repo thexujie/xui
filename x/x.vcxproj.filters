@@ -191,6 +191,9 @@
     <ClCompile Include="ui\Scene.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="win32\ImeContext.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -448,6 +451,9 @@
     </ClInclude>
     <ClInclude Include="ui\Scene.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\ImeContext.h">
+      <Filter>win32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -55,7 +55,7 @@ namespace ui
         return nullptr;
     }
 
-    core::si32f Control::prefferSize(calc_flag flags) const
+    core::si32f Control::prefferSize(calc_flags flags) const
     {
         // 如果设置了固定大小，直接返回即可
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())

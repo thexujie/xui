@@ -76,6 +76,7 @@ namespace ui
         donot_calc_percent_xy = donot_calc_percent_x | donot_calc_percent_y,
     };
     template<> struct enable_bitmasks<calc_flag> { static const bool enable = true; };
+    typedef core::bitflag<calc_flag> calc_flags;
 
     enum class mouse_button
     {
@@ -92,22 +93,22 @@ namespace ui
     enum class mouse_action
     {
         none = 0,
-        entering,
-        moving,
-        pressing,
-        clicking,
-        releasing,
-        dbclicking,
-        leaving,
+        enter,
+        move,
+        press,
+        click,
+        releas,
+        dbclick,
+        leave,
 
-        v_wheeling,
+        wheel_v,
     };
 
     class mosue_state
     {
     public:
         mosue_state() = default;
-        mosue_state(const core::pt32f pos, mouse_action action) : _pos(pos), _action(action) {}
+        mosue_state(const core::pt32f pos) : _pos(pos) {}
 
         void setPos(const core::pt32f & pos) { _pos = pos; }
         const core::pt32f & pos() const { return _pos; }
@@ -115,17 +116,29 @@ namespace ui
         void setButton(mouse_button button, bool active) { active ? (_buttons |= button) : (_buttons &= ~button); }
         mouse_button buttons() const { return _buttons; }
 
-        void setAction(mouse_action action) { _action = action; }
-        mouse_action action() const { return _action; }
-
         void setWheelLines(int32_t lines) { _wheel_lines = lines; }
         int32_t wheelLines() const { return _wheel_lines; }
 
     private:
         core::pt32f _pos;
-        mouse_action _action = mouse_action::none;
         mouse_button _buttons = mouse_button::none;
         int32_t _wheel_lines = 0;
+    };
+
+    enum class ime_mode
+    {
+        disabled = 0,
+        on,
+        off,
+    };
+
+    class ImeContext
+    {
+    public:
+        virtual ~ImeContext() {}
+        virtual void setImeMode(ui::ime_mode mode) = 0;
+        virtual void setCompositionPos(core::pt32f pos) = 0;
+        virtual void setCompositionFont(const graphics::font & font) = 0;
     };
 
     class Control : public core::object
@@ -175,7 +188,7 @@ namespace ui
         // expectSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
         core::si32f expectSize() const { return prefferSize(calc_flag::donot_calc_percent_xy); }
         // prefferSize 计算出的期望大小
-        core::si32f prefferSize(calc_flag flags = calc_flag::none) const;
+        core::si32f prefferSize(calc_flags flags = calc_flag::none) const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
         std::shared_ptr<Scene> scene() const { return _scene.lock(); }
@@ -197,7 +210,7 @@ namespace ui
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
 
-        float32_t calc_x(const core::dimensionf & value, calc_flag flags = calc_flag::none) const
+        float32_t calc_x(const core::dimensionf & value, calc_flags flags = calc_flag::none) const
         {
             auto s = scene();
             auto p = parent();
@@ -215,7 +228,7 @@ namespace ui
             case core::unit::dot:
                 return value.value;
             case core::unit::per:
-                if (core::testbit(flags, calc_flag::donot_calc_percent_x))
+                if (flags.any(calc_flag::donot_calc_percent_x))
                     return 0;
                 if (!p)
                     throw core::error_state;
@@ -226,7 +239,7 @@ namespace ui
                 return value.value * s->ratio();
             }
         }
-        float32_t calc_y(const core::dimensionf & value, calc_flag flags = calc_flag::none) const
+        float32_t calc_y(const core::dimensionf & value, calc_flags flags = calc_flag::none) const
         {
             auto s = scene();
             auto p = parent();
@@ -244,7 +257,7 @@ namespace ui
             case core::unit::dot:
                 return value.value;
             case core::unit::per:
-                if (core::testbit(flags, calc_flag::donot_calc_percent_y))
+                if (flags.any(calc_flag::donot_calc_percent_y))
                     return 0;
                 if (!p)
                     throw core::error_state;
@@ -255,11 +268,11 @@ namespace ui
                 return value.value * s->ratio();
             }
         }
-        core::vec2f calc(const core::vec2<core::dimensionf> & value, calc_flag flags = calc_flag::none) const
+        core::vec2f calc(const core::vec2<core::dimensionf> & value, calc_flags flags = calc_flag::none) const
         {
             return { calc_x(value.x, flags), calc_y(value.y, flags) };
         }
-        core::vec4f calc(const core::vec4<core::dimensionf> & value, calc_flag flags = calc_flag::none) const
+        core::vec4f calc(const core::vec4<core::dimensionf> & value, calc_flags flags = calc_flag::none) const
         {
             return { calc(value.xy, flags), calc(value.zw, flags) };
         }
@@ -300,6 +313,8 @@ namespace ui
         bool acceptClip() const { return _accept_clip; }
         void setMouseThrough(bool b) { _mouse_through = b; }
         bool mouseThrough() const { return _mouse_through; }
+        void setImeMode(ime_mode mode) { _ime_mode = mode; }
+        ime_mode imeMode() const { return _ime_mode; }
 
         virtual void enteringScene(std::shared_ptr<Scene> & scene);
         virtual void enterScene(std::shared_ptr<Scene> & scene);
@@ -389,6 +404,8 @@ namespace ui
         bool _interactable = true;
         bool _mouse_through = false;
 
+        ime_mode _ime_mode = ime_mode::disabled;
+
         core::float3x2 _transform;
         std::multimap<int32_t, std::shared_ptr<component::Renderable>> _renderables;
 
@@ -437,7 +454,7 @@ namespace ui
         virtual void onMouseClick(const mosue_state & state) { mouseClick(state); }
         virtual void onMouseDBClick(const mosue_state & state) { mouseDBClick(state); }
         virtual void onMouseWheel(const mosue_state & state) { mouseWheel(state); }
-        virtual void onFocus() { _focused = true;  focus(); }
+        virtual void onFocus(std::shared_ptr<ImeContext> imecontext) { _focused = true;  focus(); }
         virtual void onBlur() { _focused = false; blur(); }
 
         bool mousein() const { return _mousein; }

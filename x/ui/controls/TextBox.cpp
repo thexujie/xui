@@ -107,8 +107,9 @@ namespace ui::controls
         restyle();
     }
 
-    void TextBox::onFocus()
+    void TextBox::onFocus(std::shared_ptr<ImeContext> imecontext)
     {
+        _imecontext = imecontext;
         if(!_cursor_anim)
         {
             auto accessor = make_accessor(&renderables::Line::setVisible, &renderables::Line::visible, core::parseBool, nullptr);
@@ -130,16 +131,31 @@ namespace ui::controls
         }
         _cursor_anim->start();
         restyle();
+        _updateIme();
     }
 
     void TextBox::onBlur()
     {
-        std::lock_guard lock(*this);
+        _imecontext = nullptr;
+        //std::lock_guard lock(*this);
         if (_cursor_obj)
             _cursor_obj->setVisible(false);
         if (_cursor_anim)
             _cursor_anim->stop();
         restyle();
+    }
+
+    void TextBox::_updateIme()
+    {
+        if (!_imecontext)
+            return;
+
+        _imecontext->setImeMode(_ime_mode);
+        if(_ime_mode != ime_mode::disabled)
+        {
+            _imecontext->setCompositionPos(contentBox().leftTop());
+            _imecontext->setCompositionFont(font());
+        }
     }
 
     void TextBox::_confirmBlob() const

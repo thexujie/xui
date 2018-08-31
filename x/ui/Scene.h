@@ -5,6 +5,8 @@
 
 namespace ui
 {
+    class ImeContext;
+    enum class mouse_action;
     class mosue_state;
 
     class Scene : public core::object
@@ -23,6 +25,10 @@ namespace ui
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _styleSheet = styleSheet;  }
         std::shared_ptr<component::StyleSheet> styleSheet() const { return _styleSheet; }
 
+        void setImeContext(std::shared_ptr<ui::ImeContext> imecontext) { _imecontext = imecontext; }
+        std::shared_ptr<ui::ImeContext> imeContext() const { return _imecontext; }
+
+
         std::shared_ptr<graphics::Bitmap> bitmap() const { return _renderBuffer; }
         void invalid(const core::rc32f & rect);
         const core::rc32i & invalidRect() const { return _invalid_rect; }
@@ -31,10 +37,10 @@ namespace ui
         core::error animate();
 
     public:
-        virtual void onMouseState(const mosue_state & state);
+        virtual void onMouseState(const mosue_state & state, mouse_action action);
 
     private:
-        void _updateMouseArea(const mosue_state & state);
+        void _updateMouseArea(const mosue_state & state, mouse_action action);
 
     public:
         core::event<void(const core::rc32i & rect)> invalidated;
@@ -67,5 +73,7 @@ namespace ui
         std::shared_ptr<component::StyleSheet> _styleSheet;
 
         core::timer _animation_timer;
+
+        std::shared_ptr<ui::ImeContext> _imecontext;
     };
 }

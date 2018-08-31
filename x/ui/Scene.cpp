@@ -46,25 +46,19 @@ namespace ui
         return core::error_ok;
     }
 
-    void Scene::onMouseState(const mosue_state & state)
+    void Scene::onMouseState(const mosue_state & state, mouse_action action)
     {
-        if(!can_safe_invoke())
+        switch (action)
         {
-            invoke([this, state]() {onMouseState(state); });
-            return;
-        }
-
-        switch (state.action())
-        {
-        case mouse_action::entering:
-            _updateMouseArea(state);
+        case mouse_action::enter:
+            _updateMouseArea(state, action);
             break;
-        case mouse_action::moving:
-            _updateMouseArea(state);
+        case mouse_action::move:
+            _updateMouseArea(state, action);
             if (_interactbale_current)
                 _interactbale_current->onMouseMove(state);
             break;
-        case mouse_action::v_wheeling:
+        case mouse_action::wheel_v:
             if (_interactbale_current && _interactbale_current->acceptWheelV())
                 _interactbale_current->onMouseWheel(state);
             else
@@ -83,9 +77,9 @@ namespace ui
                     break;
                 }
             }
-            _updateMouseArea(state);
+            _updateMouseArea(state, action);
             break;
-        case mouse_action::pressing:
+        case mouse_action::press:
             if (_interactbale_current)
             {
                 if (_interactbale_current->captureButtons())
@@ -103,30 +97,34 @@ namespace ui
                 {
                     _interactbale_input = _interactbale_current;
                     if (_interactbale_input)
-                        _interactbale_input->onFocus();
+                        _interactbale_input->onFocus(_imecontext);
                 }
                 else
+                {
                     _interactbale_input = nullptr;
+                    if (_imecontext)
+                        _imecontext->setImeMode(ui::ime_mode::disabled);
+                }
             }
             break;
-        case mouse_action::releasing:
+        case mouse_action::releas:
             if (_interactbale_current)
             {
                 _interactbale_current->onMouseUp(state);
                 if (_interactbale_current->captureButtons())
                     captured(false);
             }
-            _updateMouseArea(state);
+            _updateMouseArea(state, action);
             break;
         default:
-            _updateMouseArea(state);
+            _updateMouseArea(state, action);
             break;
         }
     }
 
-    void Scene::_updateMouseArea(const mosue_state & state)
+    void Scene::_updateMouseArea(const mosue_state & state, mouse_action action)
     {
-        auto ma = state.action() == mouse_action::leaving ?  nullptr : control()->findChild(state.pos());
+        auto ma = action == mouse_action::leave ?  nullptr : control()->findChild(state.pos());
         // do not update while capturing one or more button(s)
         if (_interactbale_current != ma &&
             (!_interactbale_current || !(_interactbale_current->captureButtons() & state.buttons())))

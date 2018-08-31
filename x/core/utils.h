@@ -293,6 +293,11 @@ namespace core
         return (val & test) != static_cast<T>(0);
     }
 
+    template<class T, size_t SIZE>
+    constexpr int32_t size(const T(&)[SIZE])
+    {
+        return int32_t(SIZE);
+    }
 
     template <typename T>
     struct reversion_wrapper { T& iterable; };
