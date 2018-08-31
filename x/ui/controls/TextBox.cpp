@@ -86,7 +86,6 @@ namespace ui::controls
     void TextBox::onMouseMove(const mosue_state & state)
     {
         Control::onMouseMove(state);
-        
     }
 
     void TextBox::onMouseLeave(const mosue_state & state)
