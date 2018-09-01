@@ -147,7 +147,7 @@ namespace ui::controls
 
     void TextBox::onChar(char32_t ch)
     {
-        if (std::iscntrl(ch))
+        if (ch <= 0xffff && std::iswcntrl(ch))
             return;
         
         char chars[4] = { 0 };

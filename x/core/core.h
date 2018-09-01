@@ -8,6 +8,7 @@
 #include <assert.h>
 
 #include <cctype>
+#include <cwctype>
 #include <locale>
 #include <string>
 #include <variant>
