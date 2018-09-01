@@ -176,7 +176,7 @@ namespace ui::controls
         {
             graphics::StringFormat format(font());
             format.color(color());
-            const_cast<std::shared_ptr<graphics::TextBlob> &>(_textblob) = std::make_shared<graphics::TextBlob>(_text, format);
+            _textblob = std::make_shared<graphics::TextBlob>(_text, format);
         }
     }
 }

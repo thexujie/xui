@@ -152,8 +152,8 @@ namespace ui
         virtual void propertyTable(core::property_table & properties);
         virtual const core::property_table & properties();
 
-        void lock() { _mtx.lock(); }
-        void unlock() { _mtx.unlock(); }
+        void lock() const { _mtx.lock(); }
+        void unlock() const { _mtx.unlock(); }
 
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet);
         std::shared_ptr<component::StyleSheet> styleSheet() const;
@@ -349,7 +349,7 @@ namespace ui
         void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:
-        std::mutex _mtx;
+        mutable std::mutex _mtx;
 
         std::weak_ptr<Scene> _scene;
         std::weak_ptr<Control> _parent;

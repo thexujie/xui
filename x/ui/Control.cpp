@@ -382,7 +382,7 @@ namespace ui
         if (!s)
             return;
 
-        std::lock_guard<std::mutex> lock(_mtx);
+        std::lock_guard lock(*this);
         _updateBackground();
         updateContent();
         _updateBorder();
@@ -394,7 +394,7 @@ namespace ui
 
     int32_t Control::animate()
     {
-        std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
+        std::lock_guard lock(*this);
         int32_t num = 0;
         for (auto & animations : _animations)
         {
@@ -635,13 +635,13 @@ namespace ui
 
     void Control::clear()
     {
-        std::lock_guard<std::mutex> lock(_mtx);
+        std::lock_guard lock(*this);
         _renderables.clear();
     }
 
     void Control::render(graphics::Graphics & graphics, const graphics::Region & region) const
     {
-        std::lock_guard<std::mutex> lock(const_cast<Control *>(this)->_mtx);
+        std::lock_guard lock(*this);
         for (auto & rendereable : _renderables)
         {
             if (rendereable.second->visible() && region.intersects(rendereable.second->rect().ceil<int32_t>()))

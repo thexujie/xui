@@ -57,12 +57,12 @@ namespace core
         error trigger();
     private:
         uint32_t _id = 0;
-        void * _thread = nullptr;
+        mutable void * _thread = nullptr;
+        mutable std::mutex _mtx;
         typedef std::map<std::weak_ptr<object>, std::vector<std::function<void()>>, std::owner_less<std::weak_ptr<object>>> invoker_map;
         typedef std::map<std::weak_ptr<object>, std::vector<std::shared_ptr<invoke_task>>, std::owner_less<std::weak_ptr<object>>> task_map;
         invoker_map _invokers;
         task_map _tasks;
-        std::mutex _mtx;
     };
 
     class object : public std::enable_shared_from_this<object>

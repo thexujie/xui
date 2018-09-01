@@ -23,7 +23,7 @@ namespace ui
 
     void Container::addControl(std::shared_ptr<Control> control)
     {
-        std::lock_guard<std::mutex> lock(_mtx);
+        std::lock_guard lock(*this);
         if (std::any_of(_controls.begin(), _controls.end(), [&control](const auto & pair) { return pair.second == control; }))
             return;
 
@@ -42,7 +42,7 @@ namespace ui
 
     void Container::removeControl(std::shared_ptr<Control> control)
     {
-        std::lock_guard<std::mutex> lock(_mtx);
+        std::lock_guard lock(*this);
         control->leavingScene();
         for (auto iter = _controls.begin(); iter != _controls.end(); )
         {
@@ -284,7 +284,7 @@ namespace ui
     void Container::render(graphics::Graphics & graphics, const graphics::Region & region) const
     {
         Control::render(graphics, region);
-        std::lock_guard<std::mutex> lock(const_cast<Container *>(this)->_mtx);
+        std::lock_guard lock(*this);
         for (auto & iter : _controls)
             iter.second->render(graphics, region);
     }

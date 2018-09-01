@@ -36,7 +36,7 @@ namespace ui::controls
 
     private:
         std::string _text;
-        std::shared_ptr<graphics::TextBlob> _textblob;
+        mutable std::shared_ptr<graphics::TextBlob> _textblob;
 
         std::shared_ptr<renderables::Text> _text_obj;
         std::shared_ptr<renderables::Line> _cursor_obj;

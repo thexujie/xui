@@ -65,10 +65,10 @@ namespace core
         if (!_id)
             return nullptr;
 
-        std::lock_guard<std::mutex> lock(const_cast<invoke_helper *>(this)->_mtx);
+        std::lock_guard<std::mutex> lock(_mtx);
         if (!_thread)
         {
-            const_cast<invoke_helper *>(this)->_thread = OpenThread(THREAD_SET_CONTEXT, FALSE, _id);
+            _thread = OpenThread(THREAD_SET_CONTEXT, FALSE, _id);
             if (!_thread)
             {
                 logger::err() << __FUNCTION__" OpenThread" << win32::winerr_str(GetLastError());
