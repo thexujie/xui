@@ -84,7 +84,7 @@ namespace ui::component
 
     std::shared_ptr<Style> Style::select(const std::string & name)
     {
-        std::vector<std::string> ids = core::string::split(name, ' ');
+        std::vector<std::string> ids = core::split(name, ' ');
         return select(ids.begin(), ids.end());
     }
 
@@ -93,7 +93,7 @@ namespace ui::component
         if (selector.empty())
             return {};
 
-        std::vector<std::string> ids = core::string::split(selector, ':');
+        std::vector<std::string> ids = core::split(selector, ':');
         auto style = select(ids[0]);
         if (!style)
             return {};
@@ -126,7 +126,7 @@ namespace ui::component
 
     std::shared_ptr<Style> Style::get(const std::string & name)
     {
-        std::vector<std::string> ids = core::string::split(name, ' ');
+        std::vector<std::string> ids = core::split(name, ' ');
         return get(ids.begin(), ids.end());
     }
 
@@ -165,14 +165,14 @@ namespace ui::component
             walker.skip();
             char ch = 0;
             name = walker.readTo("{:", 2, ch);
-            core::string::trim(name);
+            core::trim(name);
             walker.skip();
 
             // Œ±¿‡
             if(ch == ':')
             {
                 pseudo = walker.readTo('{');
-                core::string::trim(pseudo);
+                core::trim(pseudo);
             }
 
             if (walker.peek() == '}')
@@ -186,11 +186,11 @@ namespace ui::component
             {
                 walker.skip();
                 std::string key = walker.readTo(':');
-                core::string::trim(key);
+                core::trim(key);
                 walker.skip();
                 char ch = 0;
                 std::string value = walker.readTo(";}", 2, ch);
-                core::string::trim(value);
+                core::trim(value);
                 walker.skip();
 
                 if (pseudo.empty())

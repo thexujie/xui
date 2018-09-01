@@ -23,17 +23,17 @@ void test_icu()
     {
         std::wcout.imbue(std::locale(std::locale(), "", LC_CTYPE));
         UErrorCode status = U_ZERO_ERROR;
-        ubidi_setPara_62(bidi, (const UChar *)text, stringLen, bidiReq, NULL, &status);
+        ubidi_setPara(bidi, (const UChar *)text, stringLen, bidiReq, NULL, &status);
         if (U_SUCCESS(status))
         {
-            int paraDir = ubidi_getParaLevel_62(bidi);
-            int32_t numRuns = ubidi_countRuns_62(bidi, &status);
+            int paraDir = ubidi_getParaLevel(bidi);
+            int32_t numRuns = ubidi_countRuns(bidi, &status);
 
             for (size_t i = 0; i < size_t(numRuns); ++i)
             {
                 int32_t startRun = -1;
                 int32_t lengthRun = -1;
-                UBiDiDirection runDir = ubidi_getVisualRun_62(bidi, i, &startRun, &lengthRun);
+                UBiDiDirection runDir = ubidi_getVisualRun(bidi, i, &startRun, &lengthRun);
                 bool isRTL = (runDir == UBIDI_RTL);
                 std::wstring_view wsv(text + startRun, lengthRun);
                 wprintf(L"Processing Bidi Run = %d -- run-start = %d, run-len = %d, isRTL = %d\n", i, startRun, lengthRun, isRTL);
@@ -45,7 +45,7 @@ void test_icu()
                     int32_t     end = scriptRun.getScriptEnd();
                     UScriptCode code = scriptRun.getScriptCode();
 
-                    printf("Script '%s' from %d to %d.\n", uscript_getName_62(code), start, end);
+                    printf("Script '%s' from %d to %d.\n", uscript_getName(code), start, end);
                 }
             }
         }

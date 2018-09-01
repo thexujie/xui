@@ -133,7 +133,7 @@ UBool ScriptRun::next()
             UChar low = charArray[scriptEnd + 1];
 
             // if it is followed by a low surrogate,
-            // consume it and form the full character
+            // run it and form the full character
             if (low >= 0xDC00 && low <= 0xDFFF) {
                 ch = (high - 0xD800) * 0x0400 + low - 0xDC00 + 0x10000;
                 scriptEnd += 1;

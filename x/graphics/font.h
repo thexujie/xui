@@ -57,7 +57,7 @@ namespace graphics
 
         bool operator ==(const font & another) const
         {
-            return core::string::equal_ic(family, another.family) &&
+            return core::equal_ic(family, another.family) &&
                 core::equal(size, another.size) &&
                 weight == another.weight &&
                 width == another.width &&

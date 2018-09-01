@@ -102,12 +102,12 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PreprocessorDefinitions>D_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../x/;../externals;../externals/skia/include/config;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/private;../externals/skia/src/core;../externals/icu/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../x/;../externals;../externals/skia/include/config;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/private;../externals/skia/src/core;../externals/icu/include;../externals/harfbuzz/src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/lib64/icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/bin/x64d/icuucd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -179,11 +179,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="script.h" />
     <ClInclude Include="scrptrun.h" />
     <ClInclude Include="SkShaper.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="script.cpp" />
     <ClCompile Include="scrptrun.cpp" />
     <ClCompile Include="SkShaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../externals/icu/include/;../externals/harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

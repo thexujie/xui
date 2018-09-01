@@ -27,7 +27,7 @@ public:
 		size_t textBytes,
 		bool leftToRight,
 		SkPoint point,
-		SkScalar width) const;
+		SkScalar width, SkRect & rect) const;
 
 private:
 	SkShaper(const SkShaper &) = delete;

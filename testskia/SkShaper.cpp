@@ -26,6 +26,8 @@
 #include "SkTo.h"
 #include "SkTypeface.h"
 
+//#include "win32/windows.h"
+
 #define ICU_UTIL_DATA_SYMBOL "icudt" U_ICU_VERSION_SHORT "_dat"
 #define ICU_UTIL_DATA_SHARED_MODULE_NAME _T("icudt62.dll")
 
@@ -178,11 +180,11 @@ namespace skshaper
     {
     public:
         virtual ~RunIterator() {}
-        virtual void consume() = 0;
+        virtual void run() = 0;
         // Pointer one past the last (utf8) element in the current run.
-        virtual const char * endOfCurrentRun() const = 0;
-        virtual bool atEnd() const = 0;
-        bool operator<(const RunIterator & that) const { return this->endOfCurrentRun() < that.endOfCurrentRun(); }
+        virtual const char * right() const = 0;
+        virtual bool eof() const = 0;
+        bool operator<(const RunIterator & that) const { return this->right() < that.right(); }
     };
 
     class BiDiRunIterator : public RunIterator
@@ -229,7 +231,7 @@ namespace skshaper
               , fUTF16LogicalPosition(0)
               , fLevel(UBIDI_DEFAULT_LTR) {}
 
-        void consume() override
+        void run() override
         {
             SkASSERT(fUTF16LogicalPosition < ubidi_getLength(fBidi.get()));
             int32_t endPosition = ubidi_getLength(fBidi.get());
@@ -249,8 +251,8 @@ namespace skshaper
             }
         }
 
-        const char * endOfCurrentRun() const override { return fEndOfCurrentRun; }
-        bool atEnd() const override { return fUTF16LogicalPosition == ubidi_getLength(fBidi.get()); }
+        const char * right() const override { return fEndOfCurrentRun; }
+        bool eof() const override { return fUTF16LogicalPosition == ubidi_getLength(fBidi.get()); }
 
         UBiDiLevel currentLevel() const { return fLevel; }
     private:
@@ -276,7 +278,7 @@ namespace skshaper
               , fHBUnicode(hbUnicode)
               , fCurrentScript(HB_SCRIPT_UNKNOWN) {}
 
-        void consume() override
+        void run() override
         {
             SkASSERT(fCurrent < fEnd);
             SkUnichar u = SkUTF8_NextUnichar(&fCurrent);
@@ -303,8 +305,8 @@ namespace skshaper
             if (fCurrentScript == HB_SCRIPT_INHERITED) { fCurrentScript = HB_SCRIPT_COMMON; }
         }
 
-        const char * endOfCurrentRun() const override { return fCurrent; }
-        bool atEnd() const override { return fCurrent == fEnd; }
+        const char * right() const override { return fCurrent; }
+        bool eof() const override { return fCurrent == fEnd; }
 
         hb_script_t currentScript() const { return fCurrentScript; }
     private:
@@ -335,7 +337,7 @@ namespace skshaper
               , fFallbackHBFont(nullptr), fFallbackTypeface(nullptr)
               , fCurrentHBFont(fHBFont), fCurrentTypeface(fTypeface.get()) {}
 
-        void consume() override
+        void run() override
         {
             SkASSERT(fCurrent < fEnd);
             SkUnichar u = SkUTF8_NextUnichar(&fCurrent);
@@ -385,8 +387,8 @@ namespace skshaper
             }
         }
 
-        const char * endOfCurrentRun() const override { return fCurrent; }
-        bool atEnd() const override { return fCurrent == fEnd; }
+        const char * right() const override { return fCurrent; }
+        bool eof() const override { return fCurrent == fEnd; }
 
         SkTypeface * currentTypeface() const { return fCurrentTypeface; }
         hb_font_t * currentHBFont() const { return fCurrentHBFont; }
@@ -405,41 +407,41 @@ namespace skshaper
     class RunIteratorQueue
     {
     public:
-        void insert(RunIterator * runIterator) { fRunIterators.insert(runIterator); }
+        void insert(RunIterator * runIterator) { fIterators.insert(runIterator); }
 
         bool advanceRuns()
         {
-            const RunIterator * leastRun = fRunIterators.peek();
-            if (leastRun->atEnd())
+            const RunIterator * iterator = fIterators.peek();
+            if (iterator->eof())
             {
                 SkASSERT(this->allRunsAreAtEnd());
                 return false;
             }
-            const char * leastEnd = leastRun->endOfCurrentRun();
+            const char * leastEnd = iterator->right();
             RunIterator * currentRun = nullptr;
             SkDEBUGCODE(const char* previousEndOfCurrentRun);
-            while ((currentRun = fRunIterators.peek())->endOfCurrentRun() <= leastEnd)
+            while ((currentRun = fIterators.peek())->right() <= leastEnd)
             {
-                fRunIterators.pop();
-                SkDEBUGCODE(previousEndOfCurrentRun = currentRun->endOfCurrentRun());
-                currentRun->consume();
-                SkASSERT(previousEndOfCurrentRun < currentRun->endOfCurrentRun());
-                fRunIterators.insert(currentRun);
+                fIterators.pop();
+                SkDEBUGCODE(previousEndOfCurrentRun = currentRun->right());
+                currentRun->run();
+                SkASSERT(previousEndOfCurrentRun < currentRun->right());
+                fIterators.insert(currentRun);
             }
             return true;
         }
 
-        const char * endOfCurrentRun() const { return fRunIterators.peek()->endOfCurrentRun(); }
+        const char * endOfCurrentRun() const { return fIterators.peek()->right(); }
 
     private:
         bool allRunsAreAtEnd() const
         {
-            for (int i = 0; i < fRunIterators.count(); ++i) { if (!fRunIterators.at(i)->atEnd()) { return false; } }
+            for (int i = 0; i < fIterators.count(); ++i) { if (!fIterators.at(i)->eof()) { return false; } }
             return true;
         }
 
         static bool CompareRunIterator(RunIterator * const& a, RunIterator * const& b) { return *a < *b; }
-        SkTDPQueue<RunIterator*, CompareRunIterator> fRunIterators;
+        SkTDPQueue<RunIterator*, CompareRunIterator> fIterators;
     };
 
     struct ShapedGlyph
@@ -470,7 +472,7 @@ namespace skshaper
 
     static constexpr bool is_LTR(UBiDiLevel level) { return (level & 1) == 0; }
 
-    static void append(SkTextBlobBuilder & builder, const ShapedRun & run, int glyphStart, int glyphEnd, SkPoint point)
+    static void append(SkTextBlobBuilder & builder, const ShapedRun & run, int glyphStart, int glyphEnd, SkPoint & point)
     {
         int len = glyphEnd - glyphStart;
         SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(run.fPaint, len, run.fUtf8End - run.fUtf8Start, SkString());
@@ -561,9 +563,9 @@ SkShaper::SkShaper(sk_sp<SkTypeface> tf) : fImpl(new Impl)
     fImpl->fBuffer.reset(hb_buffer_create());
     SkASSERT(fImpl->fBuffer);
 
-    icu::Locale thai("th");
+    //icu::Locale thai("th");
     UErrorCode status = U_ZERO_ERROR;
-    fImpl->fBreakIterator.reset(icu::BreakIterator::createLineInstance(thai, status));
+    fImpl->fBreakIterator.reset(icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status));
     if (U_FAILURE(status))
     {
         SkDebugf("Could not create break iterator: %s", u_errorName(status));
@@ -587,7 +589,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
     size_t utf8Bytes,
     bool leftToRight,
     SkPoint point,
-    SkScalar width) const
+    SkScalar width, SkRect & rect) const
 {
     sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
     UBiDiLevel defaultLevel = leftToRight ? UBIDI_DEFAULT_LTR : UBIDI_DEFAULT_RTL;
@@ -597,21 +599,21 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
     {
         RunIteratorQueue runSegmenter;
 
-        SkTLazy<BiDiRunIterator> maybeBidi(BiDiRunIterator::Make(utf8, utf8Bytes, defaultLevel));
-        BiDiRunIterator * bidi = maybeBidi.getMaybeNull();
-        if (!bidi) { return point; }
+        SkTLazy<BiDiRunIterator> __bidi(BiDiRunIterator::Make(utf8, utf8Bytes, defaultLevel));
+        BiDiRunIterator * bidi = __bidi.getMaybeNull();
+        if (!bidi) return point;
         runSegmenter.insert(bidi);
 
-        hb_unicode_funcs_t * hbUnicode = hb_buffer_get_unicode_funcs(fImpl->fBuffer.get());
-        SkTLazy<ScriptRunIterator> maybeScript(ScriptRunIterator::Make(utf8, utf8Bytes, hbUnicode));
-        ScriptRunIterator * script = maybeScript.getMaybeNull();
-        if (!script) { return point; }
+        hb_unicode_funcs_t * hb_unicode = hb_buffer_get_unicode_funcs(fImpl->fBuffer.get());
+        SkTLazy<ScriptRunIterator> __script(ScriptRunIterator::Make(utf8, utf8Bytes, hb_unicode));
+        ScriptRunIterator * script = __script.getMaybeNull();
+        if (!script) return point;
         runSegmenter.insert(script);
 
-        SkTLazy<FontRunIterator> maybeFont(FontRunIterator::Make(utf8, utf8Bytes, fImpl->fTypeface, fImpl->fHarfBuzzFont.get(), std::move(fontMgr)));
-        FontRunIterator * font = maybeFont.getMaybeNull();
-        if (!font) { return point; }
-        runSegmenter.insert(font);
+        SkTLazy<FontRunIterator> _fontfallback(FontRunIterator::Make(utf8, utf8Bytes, fImpl->fTypeface, fImpl->fHarfBuzzFont.get(), std::move(fontMgr)));
+        FontRunIterator * fontfallback = _fontfallback.getMaybeNull();
+        if (!fontfallback) return point;
+        runSegmenter.insert(fontfallback);
 
         icu::BreakIterator & breakIterator = *fImpl->fBreakIterator;
         {
@@ -640,10 +642,10 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             utf8Start = utf8End;
             utf8End = runSegmenter.endOfCurrentRun();
 
-            hb_buffer_t * buffer = fImpl->fBuffer.get();
-            SkAutoTCallVProc<hb_buffer_t, hb_buffer_clear_contents> autoClearBuffer(buffer);
-            hb_buffer_set_content_type(buffer, HB_BUFFER_CONTENT_TYPE_UNICODE);
-            hb_buffer_set_cluster_level(buffer, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
+            hb_buffer_t * hbbuffer = fImpl->fBuffer.get();
+            SkAutoTCallVProc<hb_buffer_t, hb_buffer_clear_contents> autoClearBuffer(hbbuffer);
+            hb_buffer_set_content_type(hbbuffer, HB_BUFFER_CONTENT_TYPE_UNICODE);
+            hb_buffer_set_cluster_level(hbbuffer, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
 
             // Populate the hb_buffer directly with utf8 cluster indexes.
             const char * utf8Current = utf8Start;
@@ -651,7 +653,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             {
                 unsigned int cluster = utf8Current - utf8Start;
                 hb_codepoint_t u = SkUTF8_NextUnichar(&utf8Current);
-                hb_buffer_add(buffer, u, cluster);
+                hb_buffer_add(hbbuffer, u, cluster);
             }
 
             size_t utf8runLength = utf8End - utf8Start;
@@ -660,38 +662,39 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
                 SkDebugf("Shaping error: utf8 too long");
                 return point;
             }
-            hb_buffer_set_script(buffer, script->currentScript());
+            hb_buffer_set_script(hbbuffer, script->currentScript());
             hb_direction_t direction = is_LTR(bidi->currentLevel()) ? HB_DIRECTION_LTR : HB_DIRECTION_RTL;
-            hb_buffer_set_direction(buffer, direction);
+            hb_buffer_set_direction(hbbuffer, direction);
             // TODO: language
-            hb_buffer_guess_segment_properties(buffer);
+            hb_buffer_guess_segment_properties(hbbuffer);
             // TODO: features
-            hb_shape(font->currentHBFont(), buffer, nullptr, 0);
-            unsigned len = hb_buffer_get_length(buffer);
-            if (len == 0) { continue; }
-
-            if (direction == HB_DIRECTION_RTL)
-            {
-                // Put the clusters back in logical order.
-                // Note that the advances remain ltr.
-                hb_buffer_reverse(buffer);
-            }
-            hb_glyph_info_t * info = hb_buffer_get_glyph_infos(buffer, nullptr);
-            hb_glyph_position_t * pos = hb_buffer_get_glyph_positions(buffer, nullptr);
-
+            hb_shape(fontfallback->currentHBFont(), hbbuffer, nullptr, 0);
+            unsigned len = hb_buffer_get_length(hbbuffer);
+            if (len == 0) 
+                continue;
             if (!SkTFitsIn<int>(len))
             {
                 SkDebugf("Shaping error: too many glyphs");
                 return point;
             }
 
+            if (direction == HB_DIRECTION_RTL)
+            {
+                // Put the clusters back in logical order.
+                // Note that the advances remain ltr.
+                hb_buffer_reverse(hbbuffer);
+            }
+            hb_glyph_info_t * info = hb_buffer_get_glyph_infos(hbbuffer, nullptr);
+            hb_glyph_position_t * pos = hb_buffer_get_glyph_positions(hbbuffer, nullptr);
+
             SkPaint paint(srcPaint);
             paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-            paint.setTypeface(sk_ref_sp(font->currentTypeface()));
+            paint.setTypeface(sk_ref_sp(fontfallback->currentTypeface()));
             ShapedRun & run = runs.emplace_back(utf8Start, utf8End, len, paint, bidi->currentLevel(),
                 std::unique_ptr<ShapedGlyph[]>(new ShapedGlyph[len]));
+
             int scaleX, scaleY;
-            hb_font_get_scale(font->currentHBFont(), &scaleX, &scaleY);
+            hb_font_get_scale(fontfallback->currentHBFont(), &scaleX, &scaleY);
             double textSizeY = run.fPaint.getTextSize() / scaleY;
             double textSizeX = run.fPaint.getTextSize() / scaleX * run.fPaint.getTextScaleX();
             for (unsigned i = 0; i < len; i++)
@@ -715,10 +718,9 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
                 ShapedGlyph & glyph = run.fGlyphs[i];
                 int32_t glyphCluster = glyph.fCluster + clusterOffset;
                 int32_t breakIteratorCurrent = breakIterator.current();
-                while (breakIteratorCurrent != icu::BreakIterator::DONE &&
-                    breakIteratorCurrent < glyphCluster) { breakIteratorCurrent = breakIterator.next(); }
-                glyph.fMayLineBreakBefore = glyph.fCluster != previousCluster &&
-                    breakIteratorCurrent == glyphCluster;
+                while (breakIteratorCurrent != icu::BreakIterator::DONE && breakIteratorCurrent < glyphCluster)
+                    breakIteratorCurrent = breakIterator.next();
+                glyph.fMayLineBreakBefore = glyph.fCluster != previousCluster && breakIteratorCurrent == glyphCluster;
                 previousCluster = glyph.fCluster;
             }
         }
@@ -739,7 +741,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
                 previousBreak = glyphIterator;
             }
             SkScalar glyphWidth = glyph->fAdvance.fX;
-            if (widthSoFar + glyphWidth < width)
+            if (width < 0 || widthSoFar + glyphWidth < width)
             {
                 widthSoFar += glyphWidth;
                 glyphIterator.next();
@@ -769,6 +771,8 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
 
     // Reorder the runs and glyphs per line and write them out.
     SkPoint currentPoint = point;
+    rect.fLeft = point.fX;
+    rect.fTop = point.fY;
     {
         ShapedRunGlyphIterator previousBreak(runs);
         ShapedRunGlyphIterator glyphIterator(runs);
@@ -793,7 +797,8 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             }
 
             // Nothing can be written until the baseline is known.
-            if (!(nextGlyph == nullptr || nextGlyph->fMustLineBreakBefore)) { continue; }
+            if (!(nextGlyph == nullptr || nextGlyph->fMustLineBreakBefore))
+                continue;
 
             currentPoint.fY -= maxAscent;
 
@@ -803,6 +808,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             SkAutoSTMalloc<4, int32_t> logicalFromVisual(numRuns);
             ubidi_reorderVisual(runLevels, numRuns, logicalFromVisual);
 
+            rect.fLeft = SkTMin(rect.fLeft, currentPoint.fX);
             for (int i = 0; i < numRuns; ++i)
             {
                 int logicalIndex = previousBreak.fRunIndex + logicalFromVisual[i];
@@ -815,6 +821,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
                                         : runs[logicalIndex].fNumGlyphs;
                 append(builder, runs[logicalIndex], startGlyphIndex, endGlyphIndex, currentPoint);
             }
+            rect.fRight = SkTMax(rect.fRight, currentPoint.fX);
 
             currentPoint.fY += maxDescent + maxLeading;
             currentPoint.fX = point.fX;
@@ -825,6 +832,6 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             previousBreak = glyphIterator;
         }
     }
-
+    rect.fBottom = currentPoint.fY;
     return currentPoint;
 }

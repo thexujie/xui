@@ -20,7 +20,7 @@ namespace graphics::image
 
     error image_load(std::string path, image_data_t & img)
     {
-        std::wstring pathw = core::string::u8_u16(path);
+        std::wstring pathw = core::u8str_wstr(path);
         std::fstream fs;
         fs.open(pathw.c_str(), std::ios::in | std::ios::binary);
         if (!fs.good())
@@ -56,15 +56,15 @@ namespace graphics::image
         if(length <= 0)
             return image_type_none;
 
-        if (core::string::equal_ic(ext, length, "bmp", 3))
+        if (core::equal_ic(ext, length, "bmp", 3))
             return image_type_bmp;
-        if (core::string::equal_ic(ext, length, "png", 3))
+        if (core::equal_ic(ext, length, "png", 3))
             return image_type_png;
-        if (core::string::equal_ic(ext, length, "jpg", 3))
+        if (core::equal_ic(ext, length, "jpg", 3))
             return image_type_jpeg;
-        if (core::string::equal_ic(ext, length, "tga", 3))
+        if (core::equal_ic(ext, length, "tga", 3))
             return image_type_tga;
-        if (core::string::equal_ic(ext, length, "dds", 3))
+        if (core::equal_ic(ext, length, "dds", 3))
             return image_type_dds;
 
         return image_type_none;

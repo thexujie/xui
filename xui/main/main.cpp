@@ -233,6 +233,10 @@ void xui_main()
 int main()
 {
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+
+    graphics::StringFormat fmt;
+    auto textblob = std::make_shared<graphics::TextBlob>("abcdefg", fmt);
+
     auto app = std::make_shared<win32::Win32App>();
     xui_main();
     return 0;

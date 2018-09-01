@@ -9,7 +9,7 @@ namespace win32
         wchar_t buffer[512] = {};
         int nchars = ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, 512, NULL);
         std::wstring str(buffer, nchars - 2);
-        return core::string::u16_u8(str);
+        return core::string::wstr_u8str(str);
     }
 
     int runLoop()
@@ -165,7 +165,7 @@ namespace win32
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
         graphics::font font;
-        font.family = core::string::u16_u8(metrics.lfMessageFont.lfFaceName);
+        font.family = core::string::wstr_u8str(metrics.lfMessageFont.lfFaceName);
         font.size = metrics.lfMessageFont.lfHeight;
         return font;
     }
@@ -174,9 +174,9 @@ namespace win32
     {
         LOGFONTW logfont = {};
         if (font.family[0])
-            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8_u16(font.family).data(), -1);
+            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8str_wstr(font.family).data(), -1);
         else
-            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8_u16(win32::defaultFont().family).data(), -1);
+            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8str_wstr(win32::defaultFont().family).data(), -1);
 
         logfont.lfWidth = 0;
         if (font.size > 0)

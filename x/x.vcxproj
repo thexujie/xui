@@ -75,7 +75,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/lib64/icuuc.lib</AdditionalDependencies>
+      <AdditionalDependencies>../externals/harfbuzz/bin/x64/harfbuzz.lib;</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

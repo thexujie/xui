@@ -21,6 +21,25 @@
 #include "SkGraphics.h"
 #include "SkShaper.h"
 #include "SkImage.h"
+#include <hb-ot.h>
+#include <unicode/brkiter.h>
+#include <unicode/locid.h>
+#include <unicode/stringpiece.h>
+#include <unicode/ubidi.h>
+#include <unicode/uchriter.h>
+#include <unicode/unistr.h>
+#include <unicode/uscript.h>
+
+#include "SkFontMgr.h"
+#include "SkOnce.h"
+#include "SkShaper.h"
+#include "SkStream.h"
+#include "skia/src/core/SkTDPQueue.h"
+#include "SkTLazy.h"
+#include "SkTemplates.h"
+#include "SkTextBlob.h"
+#include "SkTo.h"
+#include "SkTypeface.h"
 //#include "../x/core/counter_fps.h"
 //#include "../x/core/invokable.h"
 //#include "../x/core/logger.h"
@@ -163,7 +182,8 @@ int app_main(int argc, const wchar_t * argv[])
                         {
                             SkTextBlobBuilder builder;
                             paint.setTextSize(SkIntToScalar(i));
-                            SkPoint end = shaper.shape(builder, paint, str.c_str(), str.length(), true, {}, w);
+                            SkRect sr;
+                            SkPoint end = shaper.shape(builder, paint, str.c_str(), str.length(), true, {}, w, sr);
                             blob = builder.make();
                         }
                         //canvas.drawLine(SkPoint{ 0.0f, 0.0f }, SkPoint{(float) w, 0.0f }, paint);
@@ -289,7 +309,6 @@ int app_main(int argc, const wchar_t * argv[])
     //auto pfn_obs_module_name = HuyaEffectPro.get<decltype(obs_module_name)*>("obs_module_name");
     //auto name = pfn_obs_module_name();
 #endif
-    core::invokable_clear();
     core::logger::act() << __FUNCTION__" end" << std::endl;
     return 0;
 }
@@ -319,6 +338,51 @@ int _tmain(int argc, const TCHAR * argv[])
     _CrtMemState stateOld, stateNew, stateDiff;
     _CrtMemCheckpoint(&stateOld);
 #endif
+
+    std::u16string str = u"abcd我爱我家";
+    UErrorCode status = U_ZERO_ERROR;
+    std::unique_ptr<UBiDi, decltype(&ubidi_close)> bidi(ubidi_openSized(str.length(), 0, &status), &ubidi_close);
+    if (U_FAILURE(status))
+    {
+        SkDebugf("Bidi error: %s", u_errorName(status));
+    }
+    SkASSERT(bidi);
+
+    // The required lifetime of utf16 isn't well documented.
+    // It appears it isn't used after ubidi_setPara except through ubidi_getText.
+    ubidi_setPara(bidi.get(), str.c_str(), str.length(), UBIDI_DEFAULT_LTR, nullptr, &status);
+    if (U_FAILURE(status))
+    {
+        SkDebugf("Bidi error: %s", u_errorName(status));
+    }
+
+    auto bi = icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status);
+    std::string str2 = u8"abcd我爱我家𪚥𪚥𪚥 hello world";
+    std::u16string str3 = u"abcd我爱我家𪚥𪚥𪚥 hello world";
+    UText text = UTEXT_INITIALIZER;
+    utext_openUChars(&text, str3.data(), str3.length(), &status);
+    bi->setText(&text, status);
+
+    char32_t c = U'𪚥';
+    std::vector<int> bi1;
+    std::vector<int> bi2;
+
+    int32_t breakIteratorCurrent = bi->current();
+    while (breakIteratorCurrent != icu::BreakIterator::DONE)
+    {
+        bi1.push_back(breakIteratorCurrent);
+        breakIteratorCurrent = bi->next();
+    }
+
+    utext_openUTF8(&text, str2.data(), str2.length(), &status);
+    bi->setText(&text, status);
+    int32_t breakIteratorCurrent2 = bi->current();
+    while (breakIteratorCurrent2 != icu::BreakIterator::DONE)
+    {
+        bi2.push_back(breakIteratorCurrent2);
+        breakIteratorCurrent2 = bi->next();
+    }
+
 	//_CrtSetBreakAlloc(758);
     app_main(argc, argv);
 #if defined _DEBUG

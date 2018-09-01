@@ -16,7 +16,7 @@ namespace core
 
     bool parseBool(const std::string & str)
     {
-        return !core::string::equal_ic(str, "false");
+        return !core::equal_ic(str, "false");
     }
 
     std::string parseString(const std::string & str)
@@ -96,7 +96,7 @@ namespace core
         }
         for (auto & color_name : core::color_names)
         {
-            if (core::string::equal_ic(str, color_name.name, -1))
+            if (core::equal_ic(str, color_name.name, -1))
                 return color_name.color;
         }
         return colors::Auto;
@@ -104,7 +104,7 @@ namespace core
 
     core::vec2<core::color32> parseColor2D(const std::string & str)
     {
-        std::vector<std::string> strs = core::string::split(str, ' ');
+        std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
             return { parseColor(strs[0])};
         if (strs.size() == 2)
@@ -114,7 +114,7 @@ namespace core
 
     core::vec4<core::color32> parseColor4D(const std::string & str)
     {
-        std::vector<std::string> strs = core::string::split(str, ' ');
+        std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
             return { parseColor(strs[0])};
         if (strs.size() == 2)
@@ -138,7 +138,7 @@ namespace core
 
     core::vec2<core::dimensionf> parseDimension2D(const std::string & str)
     {
-        std::vector<std::string> strs = core::string::split(str, ' ');
+        std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
             return { parseDimension(strs[0]) };
         if (strs.size() == 2)
@@ -148,7 +148,7 @@ namespace core
 
     core::vec4<core::dimensionf> parseDimension4D(const std::string & str)
     {
-        std::vector<std::string> strs = core::string::split(str, ' ');
+        std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
             return { parseDimension(strs[0]) };
         if (strs.size() == 2)

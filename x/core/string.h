@@ -1,7 +1,7 @@
 #pragma once
 #include "utils.h"
 
-namespace core { namespace string
+namespace core
 {
     std::vector<std::string> split(const std::string & src, const char8_t & delimiter);
     std::vector<std::string_view> split(const std::string_view & src, const char8_t & delimiter);
@@ -12,19 +12,30 @@ namespace core { namespace string
     std::string_view & rtrim(std::string_view & str, const std::string & chars = "\t\n\v\f\r ");
     std::string_view & trim(std::string_view & str, const std::string & chars = "\t\n\v\f\r ");
 
-    std::string ansi_u8(const char8_t * text, int32_t length);
-    std::string u8_ansi(const char8_t * text, int32_t length);
-    std::string u16_u8(const char16_t * text, int32_t length);
-    std::string u16_ansi(const char16_t * text, int32_t length);
-    std::wstring u8_u16(const char8_t * text, int32_t length);
-    std::wstring ansi_u16(const char8_t * text, int32_t length);
+    std::string astr_u8str(const char8_t * text, size_t length);
+    std::string u8str_astr(const char8_t * text, size_t length);
+    inline std::string astr_u8str(std::string str) { return astr_u8str(str.c_str(), str.length()); }
+    inline std::string u8str_astr(std::string str) { return u8str_astr(str.c_str(), str.length()); }
 
-    std::string ansi_u8(std::string str);
-    std::string u8_ansi(std::string str);
-    std::string u16_u8(std::wstring str);
-    std::string u16_ansi(std::wstring str);
-    std::wstring u8_u16(std::string str);
-    std::string u16_u8(std::wstring str);
+    std::string wstr_u8str(const wchar_t * text, size_t length);
+    std::wstring u8str_wstr(const char8_t * text, size_t length);
+    inline std::string wstr_u8str(std::wstring str) { return wstr_u8str(str.c_str(), str.length()); }
+    inline std::wstring u8str_wstr(std::string str) { return u8str_wstr(str.c_str(), str.length()); }
+
+    std::string wstr_astr(const wchar_t * text, size_t length);
+    std::wstring astr_wstr(const char8_t * text, size_t length);
+    inline std::string wstr_astr(std::wstring str) { return wstr_astr(str.c_str(), str.length()); }
+    inline std::wstring astr_wstr(std::string str) { return astr_wstr(str.c_str(), str.length()); }
+
+    inline std::string u16str_u8str(const char16_t * text, size_t length) { return wstr_u8str(reinterpret_cast<const wchar_t *>(text), length); }
+    inline std::u16string u8str_u16str(const char8_t * text, size_t length) { auto wstr = u8str_wstr(text, length); return std::u16string(wstr.begin(), wstr.end()); }
+    inline std::string u16str_u8str(std::u16string str) { return u16str_u8str(str.c_str(), str.length()); }
+    inline std::u16string u8str_u16str(std::string str) { return u8str_u16str(str.c_str(), str.length()); }
+
+    inline std::string u16str_astr(const char16_t * text, size_t length) { return wstr_astr(reinterpret_cast<const wchar_t *>(text), length); }
+    inline std::u16string astr_u16str(const char8_t * text, size_t length) { auto wstr = astr_wstr(text, length); return std::u16string(wstr.begin(), wstr.end()); }
+    inline std::string u16str_astr(std::u16string str) { return u16str_astr(str.c_str(), str.length()); }
+    inline std::u16string astr_u16str(std::string str) { return astr_u16str(str.c_str(), str.length()); }
 
     struct less_ic
     {
@@ -124,4 +135,4 @@ namespace core { namespace string
     }
 
     std::string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes);
-}}
+}

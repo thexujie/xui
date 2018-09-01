@@ -299,13 +299,13 @@ namespace core::network
 
     core::error http::parse_header(const std::string line, http_response & response)
     {
-        std::vector<std::string> parts = string::split(line, ' ');
+        std::vector<std::string> parts = core::split(line, ' ');
         if (parts.size() != 3)
             return error_generic;
 
-        response.version = string::trim(parts[0]);
+        response.version = core::trim(parts[0]);
         response.code = std::stoi(std::string(parts[1]));
-        response.message = string::trim(parts[2]);
+        response.message = core::trim(parts[2]);
         return error_ok;
     }
 
@@ -326,7 +326,7 @@ namespace core::network
         auto iter_keep_alive = response.headers.find("keep-alive");
         if (iter_keep_alive != response.headers.end())
         {
-            if (!core::string::equal_ic(iter_keep_alive->second, "close"))
+            if (!core::equal_ic(iter_keep_alive->second, "close"))
                 response.flags |= http_flag_keep_alive;
         }
         else
@@ -334,7 +334,7 @@ namespace core::network
             auto iter_connection = response.headers.find("connection");
             if (iter_connection != response.headers.end())
             {
-                if (!core::string::equal_ic(iter_connection->second, "close"))
+                if (!core::equal_ic(iter_connection->second, "close"))
                     response.flags |= http_flag_keep_alive;
             }
         }

@@ -10,7 +10,7 @@ namespace graphics
     {
         for(const auto & name : stroke_style_names)
         {
-            if (core::string::equal_ic(str, name.name, -1))
+            if (core::equal_ic(str, name.name, -1))
                 return name.style;
         }
         return stroke_style::none;
@@ -18,7 +18,7 @@ namespace graphics
 
     core::vec2<stroke_style> parseStrokeStyle2D(const std::string & str)
     {
-        std::vector<std::string> strs = core::string::split(str, ' ');
+        std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
             return { parseStrokeStyle(strs[0]) };
         if (strs.size() == 2)
@@ -28,7 +28,7 @@ namespace graphics
 
     core::vec4<stroke_style> parseStrokeStyle4D(const std::string & str)
     {
-        std::vector<std::string> strs = core::string::split(str, ' ');
+        std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
             return { parseStrokeStyle(strs[0]) };
         if (strs.size() == 2)

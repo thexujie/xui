@@ -9,7 +9,7 @@ namespace graphics
         NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
-        family = core::string::u16_u8(metrics.lfMessageFont.lfFaceName);
+        family = core::wstr_u8str(metrics.lfMessageFont.lfFaceName);
         if(metrics.lfMessageFont.lfHeight < 0)
             size = -metrics.lfMessageFont.lfHeight;
         else
@@ -30,7 +30,7 @@ namespace graphics
             SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
             if(!family_ || !family_[0])
-                family = core::string::u16_u8(metrics.lfMessageFont.lfFaceName);
+                family = core::wstr_u8str(metrics.lfMessageFont.lfFaceName);
             else
                 family = family_;
             if(size_ <= 0)

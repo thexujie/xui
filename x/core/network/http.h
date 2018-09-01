@@ -29,7 +29,7 @@ namespace core::network
         u8string version;
         int32_t code = 0;
         u8string message;
-        std::map<u8string, u8string, core::string::less_ic> headers;
+        std::map<u8string, u8string, core::less_ic> headers;
 
         uint32_t flags = 0;
         int64_t content_length = -1;

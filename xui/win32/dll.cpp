@@ -28,7 +28,7 @@ namespace win32
         free();
         if (!path.empty())
         {
-            std::wstring pathw = core::string::u8_u16(path);
+            std::wstring pathw = core::string::u8str_wstr(path);
             _handle = ::LoadLibraryW(pathw.c_str());
             if (!_handle)
                 logger::war() << __FUNCTION__" LoadLibraryW failed " << winerr_str(GetLastError());
@@ -49,7 +49,7 @@ namespace win32
     {
         if (_handle)
         {
-            std::string namea = core::string::u8_ansi(name);
+            std::string namea = core::string::u8str_astr(name);
             return (void *)::GetProcAddress((HMODULE)_handle, namea.c_str());
         }
         else

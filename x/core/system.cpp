@@ -12,7 +12,7 @@ namespace core
     {
         wchar_t szPath[MAX_PATH] = {};
         DWORD dwLength = ::GetTempPathW(MAX_PATH, szPath);
-        return core::filesystem::path(core::string::u16_u8(std::wstring(szPath, dwLength)));
+        return core::filesystem::path(core::wstr_u8str(std::wstring(szPath, dwLength)));
     }
 
     core::filesystem::path appdata_path()
@@ -21,7 +21,7 @@ namespace core
         BOOL bSucc = ::SHGetSpecialFolderPathW(NULL, szPath, CSIDL_APPDATA, FALSE);
         if (!bSucc)
             return temp_path();
-        return core::filesystem::path(core::string::u16_u8(std::wstring(szPath, std::wcslen(szPath))));
+        return core::filesystem::path(core::wstr_u8str(std::wstring(szPath, std::wcslen(szPath))));
     }
 
     core::filesystem::path process_path()
@@ -79,7 +79,7 @@ namespace core
         if (!thread_id)
             thread_id = GetCurrentThreadId();
 
-        std::string namea = core::string::u8_ansi(name);
+        std::string namea = core::u8str_astr(name);
         __thread_set_name(thread_id, namea.c_str());
     }
 

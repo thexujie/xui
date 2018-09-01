@@ -5,6 +5,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SkShaper.h" />
     <ClInclude Include="scrptrun.h" />
+    <ClInclude Include="script.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -12,6 +13,7 @@
     <ClCompile Include="SkShaper.cpp" />
     <ClCompile Include="test_icu.cpp" />
     <ClCompile Include="scrptrun.cpp" />
+    <ClCompile Include="script.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
