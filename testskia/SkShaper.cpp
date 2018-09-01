@@ -611,9 +611,9 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
         runSegmenter.insert(script);
 
         SkTLazy<FontRunIterator> _fontfallback(FontRunIterator::Make(utf8, utf8Bytes, fImpl->fTypeface, fImpl->fHarfBuzzFont.get(), std::move(fontMgr)));
-        FontRunIterator * fontfallback = _fontfallback.getMaybeNull();
-        if (!fontfallback) return point;
-        runSegmenter.insert(fontfallback);
+        FontRunIterator * font = _fontfallback.getMaybeNull();
+        if (!font) return point;
+        runSegmenter.insert(font);
 
         icu::BreakIterator & breakIterator = *fImpl->fBreakIterator;
         {
@@ -668,7 +668,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             // TODO: language
             hb_buffer_guess_segment_properties(hbbuffer);
             // TODO: features
-            hb_shape(fontfallback->currentHBFont(), hbbuffer, nullptr, 0);
+            hb_shape(font->currentHBFont(), hbbuffer, nullptr, 0);
             unsigned len = hb_buffer_get_length(hbbuffer);
             if (len == 0) 
                 continue;
@@ -689,12 +689,12 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
 
             SkPaint paint(srcPaint);
             paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-            paint.setTypeface(sk_ref_sp(fontfallback->currentTypeface()));
+            paint.setTypeface(sk_ref_sp(font->currentTypeface()));
             ShapedRun & run = runs.emplace_back(utf8Start, utf8End, len, paint, bidi->currentLevel(),
                 std::unique_ptr<ShapedGlyph[]>(new ShapedGlyph[len]));
 
             int scaleX, scaleY;
-            hb_font_get_scale(fontfallback->currentHBFont(), &scaleX, &scaleY);
+            hb_font_get_scale(font->currentHBFont(), &scaleX, &scaleY);
             double textSizeY = run.fPaint.getTextSize() / scaleY;
             double textSizeX = run.fPaint.getTextSize() / scaleX * run.fPaint.getTextScaleX();
             for (unsigned i = 0; i < len; i++)

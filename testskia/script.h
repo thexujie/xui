@@ -1,6 +1,14 @@
 #pragma once
 #include "core/error.h"
 
+#include <hb-ot.h>
+#include <unicode/brkiter.h>
+#include <unicode/locid.h>
+#include <unicode/stringpiece.h>
+#include <unicode/ubidi.h>
+#include <unicode/uchriter.h>
+#include <unicode/unistr.h>
+#include <unicode/uscript.h>
 
 namespace script
 {
@@ -49,26 +57,17 @@ namespace script
         virtual ~IShaper() {}
 
         virtual core::error reset(std::string text) = 0;
-        virtual core::error itermize(std::string text) = 0;
-    };
-
-    enum hb_script_t;
-    typedef hb_script_t script_e;
-
-    enum hb_direction_t;
-    typedef hb_direction_t direction_e;
-
-    struct bidi
-    {
-        range range;
-        direction_e direction;
+        virtual core::error itermize() = 0;
     };
 
     struct item
     {
         range range;
-        direction_e direction;
-        script_e script;
+        hb_script_t script;
+        bool rtl;
+#ifdef _DEBUG
+        std::u16string _text;
+#endif
     };
 
     class Shaper : public IShaper
@@ -78,8 +77,10 @@ namespace script
 
         core::error reset(std::string text);
         core::error itermize();
+        core::error clusterize();
 
     private:
         std::string _text;
+        std::vector<item> _items;
     };
 }

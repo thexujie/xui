@@ -119,4 +119,11 @@
 	<Type Name="ui::component::MouseArea">
 		<DisplayString>[MouseArea {_rect}]</DisplayString>
 	</Type>
+
+	<Type Name="script::range">
+		<DisplayString>[{index},{length}]</DisplayString>
+	</Type>
+	<Type Name="script::item">
+		<DisplayString>{{{_text}, {range}, script={script}, rtl={rtl}}}</DisplayString>
+	</Type>
 </AutoVisualizer>

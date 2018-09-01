@@ -40,6 +40,7 @@
 #include "SkTextBlob.h"
 #include "SkTo.h"
 #include "SkTypeface.h"
+#include "script.h"
 //#include "../x/core/counter_fps.h"
 //#include "../x/core/invokable.h"
 //#include "../x/core/logger.h"
@@ -339,49 +340,51 @@ int _tmain(int argc, const TCHAR * argv[])
     _CrtMemCheckpoint(&stateOld);
 #endif
 
-    std::u16string str = u"abcd我爱我家";
-    UErrorCode status = U_ZERO_ERROR;
-    std::unique_ptr<UBiDi, decltype(&ubidi_close)> bidi(ubidi_openSized(str.length(), 0, &status), &ubidi_close);
-    if (U_FAILURE(status))
-    {
-        SkDebugf("Bidi error: %s", u_errorName(status));
-    }
-    SkASSERT(bidi);
+    std::string str = u8"abcd我爱我家𪚥𪚥𪚥 hello world تەتقىق قىلدىhello world تەتقىق قىلدى";
+    script::Shaper shaper;
+    shaper.reset(str);
 
-    // The required lifetime of utf16 isn't well documented.
-    // It appears it isn't used after ubidi_setPara except through ubidi_getText.
-    ubidi_setPara(bidi.get(), str.c_str(), str.length(), UBIDI_DEFAULT_LTR, nullptr, &status);
-    if (U_FAILURE(status))
-    {
-        SkDebugf("Bidi error: %s", u_errorName(status));
-    }
+    //UErrorCode status = U_ZERO_ERROR;
+    //std::unique_ptr<UBiDi, decltype(&ubidi_close)> bidi(ubidi_openSized(str.length(), 0, &status), &ubidi_close);
+    //if (U_FAILURE(status))
+    //{
+    //    SkDebugf("Bidi error: %s", u_errorName(status));
+    //}
+    //SkASSERT(bidi);
 
-    auto bi = icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status);
-    std::string str2 = u8"abcd我爱我家𪚥𪚥𪚥 hello world";
-    std::u16string str3 = u"abcd我爱我家𪚥𪚥𪚥 hello world";
-    UText text = UTEXT_INITIALIZER;
-    utext_openUChars(&text, str3.data(), str3.length(), &status);
-    bi->setText(&text, status);
+    //// The required lifetime of utf16 isn't well documented.
+    //// It appears it isn't used after ubidi_setPara except through ubidi_getText.
+    //ubidi_setPara(bidi.get(), str.c_str(), str.length(), UBIDI_DEFAULT_LTR, nullptr, &status);
+    //if (U_FAILURE(status))
+    //{
+    //    SkDebugf("Bidi error: %s", u_errorName(status));
+    //}
 
-    char32_t c = U'𪚥';
-    std::vector<int> bi1;
-    std::vector<int> bi2;
+    //auto bi = icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status);
+    //std::u16string str3 = u"abcd我爱我家𪚥𪚥𪚥 hello world";
+    //UText text = UTEXT_INITIALIZER;
+    //utext_openUChars(&text, str3.data(), str3.length(), &status);
+    //bi->setText(&text, status);
 
-    int32_t breakIteratorCurrent = bi->current();
-    while (breakIteratorCurrent != icu::BreakIterator::DONE)
-    {
-        bi1.push_back(breakIteratorCurrent);
-        breakIteratorCurrent = bi->next();
-    }
+    //char32_t c = U'𪚥';
+    //std::vector<int> bi1;
+    //std::vector<int> bi2;
 
-    utext_openUTF8(&text, str2.data(), str2.length(), &status);
-    bi->setText(&text, status);
-    int32_t breakIteratorCurrent2 = bi->current();
-    while (breakIteratorCurrent2 != icu::BreakIterator::DONE)
-    {
-        bi2.push_back(breakIteratorCurrent2);
-        breakIteratorCurrent2 = bi->next();
-    }
+    //int32_t breakIteratorCurrent = bi->current();
+    //while (breakIteratorCurrent != icu::BreakIterator::DONE)
+    //{
+    //    bi1.push_back(breakIteratorCurrent);
+    //    breakIteratorCurrent = bi->next();
+    //}
+
+    //utext_openUTF8(&text, str2.data(), str2.length(), &status);
+    //bi->setText(&text, status);
+    //int32_t breakIteratorCurrent2 = bi->current();
+    //while (breakIteratorCurrent2 != icu::BreakIterator::DONE)
+    //{
+    //    bi2.push_back(breakIteratorCurrent2);
+    //    breakIteratorCurrent2 = bi->next();
+    //}
 
 	//_CrtSetBreakAlloc(758);
     app_main(argc, argv);
