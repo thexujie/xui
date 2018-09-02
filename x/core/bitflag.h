@@ -20,10 +20,27 @@ namespace core
         bitflag & set(Enum e, bool b)
         {
             if(b)
-                _e = static_cast<Enum> (static_cast<underlying>(_e) | static_cast<underlying>(e));
+                _e = static_cast<Enum>(static_cast<underlying>(_e) | static_cast<underlying>(e));
             else
-                _e = static_cast<Enum> (static_cast<underlying>(_e) & (~static_cast<underlying>(e)));
+                _e = static_cast<Enum>(static_cast<underlying>(_e) & (~static_cast<underlying>(e)));
             return *this;
+        }
+
+        bitflag & clear()
+        {
+            _e = static_cast<Enum>(0);
+            return *this;
+        }
+
+        bitflag & clear(Enum e)
+        {
+            _e = static_cast<Enum>(static_cast<underlying>(_e) & (~static_cast<underlying>(e)));
+            return *this;
+        }
+
+        bool any() const
+        {
+            return static_cast<underlying>(_e) != 0;
         }
 
         bool any(Enum e) const
@@ -43,33 +60,33 @@ namespace core
 
         bitflag operator | (Enum e) const
         {
-            return static_cast<Enum> (static_cast<underlying>(_e) | static_cast<underlying>(e));
+            return static_cast<Enum>(static_cast<underlying>(_e) | static_cast<underlying>(e));
         }
 
         bitflag operator & (Enum e) const
         {
-            return static_cast<Enum> (static_cast<underlying>(_e) & static_cast<underlying>(e));
+            return static_cast<Enum>(static_cast<underlying>(_e) & static_cast<underlying>(e));
         }
 
         bitflag operator !() const
         {
-            return static_cast<Enum> (!static_cast<underlying>(_e));
+            return static_cast<Enum>(!static_cast<underlying>(_e));
         }
 
         bitflag operator ~() const
         {
-            return static_cast<Enum> (~static_cast<underlying>(_e));
+            return static_cast<Enum>(~static_cast<underlying>(_e));
         }
 
         bitflag & operator |= (Enum e)
         {
-            _e = static_cast<Enum> (static_cast<underlying>(_e) | static_cast<underlying>(e));
+            _e = static_cast<Enum>(static_cast<underlying>(_e) | static_cast<underlying>(e));
             return *this;
         }
 
         bitflag & operator &= (Enum e)
         {
-            _e = static_cast<Enum> (static_cast<underlying>(_e) & static_cast<underlying>(e));
+            _e = static_cast<Enum>(static_cast<underlying>(_e) & static_cast<underlying>(e));
             return *this;
         }
 
@@ -79,8 +96,7 @@ namespace core
         }
 
     private:
-
-        Enum _e;
+        Enum _e = static_cast<Enum>(0);
     };
 }
 
@@ -94,28 +110,28 @@ template<typename Enum>
 typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type operator |(const Enum & lhs, const Enum & rhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
-    return static_cast<Enum> (static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
+    return static_cast<Enum>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
 }
 
 template<typename Enum>
 typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type operator &(const Enum & lhs, const Enum & rhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
-    return static_cast<Enum> (static_cast<underlying>(lhs) & static_cast<underlying>(rhs));
+    return static_cast<Enum>(static_cast<underlying>(lhs) & static_cast<underlying>(rhs));
 }
 
 template<typename Enum>
 typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type & operator |=(Enum & lhs, const Enum & rhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
-    return lhs = static_cast<Enum> (static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
+    return lhs = static_cast<Enum>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
 }
 
 template<typename Enum>
 typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type & operator &=(Enum & lhs, const Enum & rhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
-    return lhs = static_cast<Enum> (static_cast<underlying>(lhs) & static_cast<underlying>(rhs));
+    return lhs = static_cast<Enum>(static_cast<underlying>(lhs) & static_cast<underlying>(rhs));
 }
 
 template<typename Enum>
@@ -129,5 +145,5 @@ template<typename Enum>
 typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type operator ~(const Enum & lhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
-    return static_cast<Enum> (~static_cast<underlying>(lhs));
+    return static_cast<Enum>(~static_cast<underlying>(lhs));
 }

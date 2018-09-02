@@ -124,6 +124,6 @@
 		<DisplayString>[{index},{length}]</DisplayString>
 	</Type>
 	<Type Name="script::item">
-		<DisplayString>{{{_text}, {range}, script={script}, rtl={rtl}}}</DisplayString>
+		<DisplayString>{{{_text}, {range}, script={script}, font={font}[{_font}], color={color}, rtl={rtl}}}</DisplayString>
 	</Type>
 </AutoVisualizer>

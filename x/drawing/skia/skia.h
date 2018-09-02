@@ -86,4 +86,17 @@ namespace drawing::skia
     SkFontStyle from(const drawing::font_style & style);
     SkFontStyle from(font_weight weight_ = font_weight::normal, font_width width_ = font_width::normal, font_slant slant_ = font_slant::upright);
     void fontmetrics(const drawing::font & font, drawing::fontmetrics & metrics);
+
+    inline drawing::font_style to(const SkFontStyle & style)
+    {
+        return drawing::font_style((drawing::font_weight)style.weight(), (drawing::font_width)style.width(), (drawing::font_slant)style.slant());
+    }
+
+    inline drawing::font to(const SkTypeface & tf, float32_t size)
+    {
+        SkString family;
+        tf.getFamilyName(&family);
+        return drawing::font(family.c_str(), size, to(tf.fontStyle()));
+    }
+
 }
