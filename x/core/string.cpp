@@ -72,9 +72,9 @@ namespace core
         if (length == npos)
             length = std::strlen(text);
 #ifdef USE_UTF8
-        int32_t nwchars = MultiByteToWideChar(CP_ACP, 0, text, length, NULL, 0);
+        int32_t nwchars = MultiByteToWideChar(CP_ACP, 0, text, (int)length, NULL, 0);
         wchar_t * u16 = new wchar_t[nwchars];
-        int32_t nwchars2 = MultiByteToWideChar(CP_ACP, 0, text, length, u16, nwchars);
+        int32_t nwchars2 = MultiByteToWideChar(CP_ACP, 0, text, (int)length, u16, nwchars);
         assert(nwchars2 == nwchars);
 
         int32_t nchars = WideCharToMultiByte(CP_UTF8, 0, u16, nwchars2, NULL, 0, NULL, FALSE);
@@ -95,9 +95,9 @@ namespace core
         if (length == npos)
             length = std::strlen(text);
 #ifdef USE_UTF8
-        int32_t nwchars = MultiByteToWideChar(CP_UTF8, 0, text, length, NULL, 0);
+        int32_t nwchars = MultiByteToWideChar(CP_UTF8, 0, text, (int)length, NULL, 0);
         wchar_t * u16 = new wchar_t[nwchars];
-        int32_t nwchars2 = MultiByteToWideChar(CP_UTF8, 0, text, length, u16, nwchars);
+        int32_t nwchars2 = MultiByteToWideChar(CP_UTF8, 0, text, (int)length, u16, nwchars);
         assert(nwchars2 == nwchars);
 
         int32_t nchars = WideCharToMultiByte(CP_ACP, 0, u16, nwchars2, NULL, 0, NULL, FALSE);
@@ -118,15 +118,15 @@ namespace core
         if (length == npos)
             length = std::wcslen(text);
 #ifdef USE_UTF8
-        int32_t nchars = WideCharToMultiByte(CP_UTF8, 0, text, length, NULL, 0, NULL, FALSE);
+        int32_t nchars = WideCharToMultiByte(CP_UTF8, 0, text, (int)length, NULL, 0, NULL, FALSE);
 #else
-        int32_t nchars = WideCharToMultiByte(CP_ACP, 0, text, length, NULL, 0, NULL, FALSE);
+        int32_t nchars = WideCharToMultiByte(CP_ACP, 0, text, (int)length, NULL, 0, NULL, FALSE);
 #endif
         char8_t * u8 = new char8_t[nchars];
 #ifdef USE_UTF8
-        int32_t nchars2 = WideCharToMultiByte(CP_UTF8, 0, text, length, u8, nchars, NULL, FALSE);
+        int32_t nchars2 = WideCharToMultiByte(CP_UTF8, 0, text, (int)length, u8, nchars, NULL, FALSE);
 #else
-        int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, text, length, u8, nchars, NULL, FALSE);
+        int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, text, (int)length, u8, nchars, NULL, FALSE);
 #endif
         assert(nchars2 == nchars);
         std::string str(u8, nchars);
@@ -139,12 +139,12 @@ namespace core
         if (length == npos)
             length = std::strlen(text);
 #ifdef USE_UTF8
-        int32_t nchars = MultiByteToWideChar(CP_UTF8, 0, text, length, NULL, 0);
+        int32_t nchars = MultiByteToWideChar(CP_UTF8, 0, text, (int)length, NULL, 0);
 #else
-        int32_t nchars = MultiByteToWideChar(CP_ACP, 0, text, length, NULL, 0);
+        int32_t nchars = MultiByteToWideChar(CP_ACP, 0, text, (int)length, NULL, 0);
 #endif
         wchar_t * u16 = new wchar_t[nchars];
-        int32_t nchars2 = MultiByteToWideChar(CP_UTF8, 0, text, length, u16, nchars);
+        int32_t nchars2 = MultiByteToWideChar(CP_UTF8, 0, text, (int)length, u16, nchars);
         assert(nchars2 == nchars);
         std::wstring ucs2(u16, nchars);
         delete[] u16;
@@ -156,9 +156,9 @@ namespace core
         if (length == npos)
             length = std::wcslen(text);
 
-        int32_t nchars = WideCharToMultiByte(CP_ACP, 0, text, length, NULL, 0, NULL, FALSE);
+        int32_t nchars = WideCharToMultiByte(CP_ACP, 0, text, (int)length, NULL, 0, NULL, FALSE);
         char8_t * u8 = new char8_t[nchars];
-        int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, text, length, u8, nchars, NULL, FALSE);
+        int32_t nchars2 = WideCharToMultiByte(CP_ACP, 0, text, (int)length, u8, nchars, NULL, FALSE);
         assert(nchars2 == nchars);
         std::string str(u8, nchars);
         delete[] u8;
@@ -169,9 +169,9 @@ namespace core
     {
         if (length == npos)
             length = std::strlen(text);
-        int32_t nchars = MultiByteToWideChar(CP_ACP, 0, text, length, NULL, 0);
+        int32_t nchars = MultiByteToWideChar(CP_ACP, 0, text, (int)length, NULL, 0);
         wchar_t * u16 = new wchar_t[nchars];
-        int32_t nchars2 = MultiByteToWideChar(CP_ACP, 0, text, length, u16, nchars);
+        int32_t nchars2 = MultiByteToWideChar(CP_ACP, 0, text, (int)length, u16, nchars);
         assert(nchars2 == nchars);
         std::wstring ucs2(u16, nchars);
         delete[] u16;

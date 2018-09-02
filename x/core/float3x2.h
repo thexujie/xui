@@ -92,8 +92,8 @@ namespace core
     inline float2 & operator *= (float2 & val, const float3x2 & m)
     {
         float32_t x = val.x;
-        val.x = (float64_t)x * m.sx + (float64_t)val.y * m.shx + m.tx;
-        val.y = (float64_t)x * m.shy + (float64_t)val.y * m.sy + m.ty;
+        val.x = (float32_t)((float64_t)x * m.sx + (float64_t)val.y * m.shx + m.tx);
+        val.y = (float32_t)((float64_t)x * m.shy + (float64_t)val.y * m.sy + m.ty);
         return val;
     }
 }

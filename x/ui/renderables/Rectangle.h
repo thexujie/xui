@@ -12,7 +12,7 @@ namespace ui::renderables
 
         void setRectangle(const core::rc32f & rect) { if (_rectangle != rect) { _rectangle = rect; invalid(); }}
 
-        void render(graphics::Graphics & graphics) const override;
+        void render(drawing::Graphics & graphics) const override;
 
     private:
         core::rc32f _rectangle;

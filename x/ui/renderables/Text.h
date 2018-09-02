@@ -7,13 +7,13 @@ namespace ui::renderables
     {
     public:
         Text(std::shared_ptr<ui::Control> control) : component::Renderable(control) {}
-        Text(std::shared_ptr<ui::Control> control, std::shared_ptr<graphics::TextBlob> text) : component::Renderable(control), _text(text) {}
+        Text(std::shared_ptr<ui::Control> control, std::shared_ptr<drawing::TextBlob> text) : component::Renderable(control), _text(text) {}
         ~Text();
 
-        void setTextBlob(std::shared_ptr<graphics::TextBlob> text);
-        void render(graphics::Graphics & graphics) const override;
+        void setTextBlob(std::shared_ptr<drawing::TextBlob> text);
+        void render(drawing::Graphics & graphics) const override;
 
     private:
-        std::shared_ptr<graphics::TextBlob> _text;
+        std::shared_ptr<drawing::TextBlob> _text;
     };
 }

@@ -53,7 +53,7 @@ namespace win32
         ImmSetCompositionWindow(HIMC(_imc), &cpf);
     }
 
-    void ImeContext::setCompositionFont(const graphics::font & font)
+    void ImeContext::setCompositionFont(const drawing::font & font)
     {
         LOGFONTW lfont = {};
         core::textcpy(lfont.lfFaceName, std::size(lfont.lfFaceName), core::u8str_wstr(font.family).c_str());

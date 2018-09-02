@@ -1,6 +1,6 @@
 #pragma once
 #include "component/Renderable.h"
-#include "graphics/Region.h"
+#include "drawing/Region.h"
 #include "component/Style.h"
 
 namespace ui
@@ -29,7 +29,7 @@ namespace ui
         std::shared_ptr<ui::ImeContext> imeContext() const { return _imecontext; }
 
 
-        std::shared_ptr<graphics::Bitmap> bitmap() const { return _renderBuffer; }
+        std::shared_ptr<drawing::Bitmap> bitmap() const { return _renderBuffer; }
         void invalid(const core::rc32f & rect);
         const core::rc32i & invalidRect() const { return _invalid_rect; }
 
@@ -45,7 +45,7 @@ namespace ui
 
     public:
         core::event<void(const core::rc32i & rect)> invalidated;
-        core::event<void(const graphics::Region & region)> rendered;
+        core::event<void(const drawing::Region & region)> rendered;
         core::event<void(bool capture)> captured;
 
     private:
@@ -58,7 +58,7 @@ namespace ui
         std::atomic_bool _exit = false;
 
         core::rc32i _invalid_rect;
-        graphics::Region _invalid_region;
+        drawing::Region _invalid_region;
         std::weak_ptr<Control> _control;
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
@@ -66,7 +66,7 @@ namespace ui
 
         std::list<std::shared_ptr<component::Renderable>> _renderables;
 
-        std::shared_ptr<graphics::Bitmap> _renderBuffer;
+        std::shared_ptr<drawing::Bitmap> _renderBuffer;
 
         std::shared_ptr<Control> _interactbale_current;
         std::shared_ptr<Control> _interactbale_input;

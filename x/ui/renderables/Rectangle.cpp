@@ -3,7 +3,7 @@
 
 namespace ui::renderables
 {
-    void Rectangle::render(graphics::Graphics & graphics) const
+    void Rectangle::render(drawing::Graphics & graphics) const
     {
         Renderable::render(graphics);
         if (_rectangle.empty())

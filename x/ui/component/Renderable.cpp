@@ -4,7 +4,7 @@
 
 namespace ui::component
 {
-    void Renderable::render(graphics::Graphics & graphics) const
+    void Renderable::render(drawing::Graphics & graphics) const
     {
         //graphics.drawRectangle(_rect, graphics::PathStyle().stoke(core::colors::Red));
     }

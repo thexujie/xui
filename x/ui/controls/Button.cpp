@@ -104,9 +104,9 @@ namespace ui::controls
     {
         if (!_textBlob)
         {
-            graphics::StringFormat format(font());
+            drawing::StringFormat format(font());
             format.color(color());
-            _textBlob = std::make_shared<graphics::TextBlob>(_text, format);
+            _textBlob = std::make_shared<drawing::TextBlob>(_text, format);
         }
     }
 }

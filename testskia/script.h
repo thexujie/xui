@@ -1,5 +1,7 @@
 #pragma once
-#include "core/error.h"
+
+#include "core/core.h"
+#include "drawing/drawing.h"
 
 #include <hb-ot.h>
 #include <unicode/brkiter.h>
@@ -10,6 +12,12 @@
 #include <unicode/unistr.h>
 #include <unicode/uscript.h>
 
+
+#include "SkFontMgr.h"
+#include "SkStream.h"
+#include "SkTextBlob.h"
+#include "SkTypeface.h"
+
 namespace script
 {
     // range
@@ -18,6 +26,7 @@ namespace script
         int32_t index = -1;
         int32_t length = 0;
 
+        int32_t end() const { return index + length; }
         range operator + (const range & rhs)
         {
             if (index < 0 || !length)
@@ -65,8 +74,11 @@ namespace script
         range range;
         hb_script_t script;
         bool rtl;
+        uint16_t font;
+        uint32_t color;
 #ifdef _DEBUG
         std::u16string _text;
+        drawing::font _font;
 #endif
     };
 
@@ -77,10 +89,20 @@ namespace script
 
         core::error reset(std::string text);
         core::error itermize();
-        core::error clusterize();
+        core::error shape();
 
+        void setFont(range range, const drawing::font & font);
+        void setColor(range range, uint32_t color);
     private:
+        constexpr static uint16_t font_default = 0;
+        constexpr static uint32_t color_default = core::colors::Black.argb;
+        UBiDiLevel _defaultBidiLevel = UBIDI_DEFAULT_LTR;
+        drawing::font _font;
         std::string _text;
         std::vector<item> _items;
+        std::unordered_map<drawing::font, uint16_t> _font_indices;
+        std::vector<std::shared_ptr<SkTypeface>> _fonts;
+        std::vector<uint16_t> _rtf_font_indices;
+        std::vector<uint32_t> _rtf_colors;
     };
 }

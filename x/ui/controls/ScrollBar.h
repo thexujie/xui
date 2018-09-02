@@ -27,8 +27,8 @@ namespace ui::controls
         void setBarBorderColor(const core::color32 & color) { if (_bar_border_color != color) { _bar_border_color = color; refresh(); } }
         const core::color32 & barBorderColor() const { return _bar_border_color; }
 
-        void setBarBorderStyle(const graphics::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; refresh(); } }
-        const graphics::stroke_style & barBorderStyle() const { return _bar_border_style; }
+        void setBarBorderStyle(const drawing::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; refresh(); } }
+        const drawing::stroke_style & barBorderStyle() const { return _bar_border_style; }
 
     public:
         float32_t value() const { return _val; }
@@ -73,13 +73,13 @@ namespace ui::controls
         core::attribute<core::color32> _bar_color;
         core::attribute<core::dimensionf> _bar_border;
         core::attribute<core::color32> _bar_border_color;
-        core::attribute<graphics::stroke_style> _bar_border_style;
+        core::attribute<drawing::stroke_style> _bar_border_style;
 
         float32_t _min = 0.0f;
         float32_t _max = 100.0f;
         float32_t _val = 0.0f;
-        float32_t _line = std::nan("0");
-        float32_t _page = std::nan("0");
+        float32_t _line = std::nanf("0");
+        float32_t _page = std::nanf("0");
 
         core::float32_t _bar_drag_start_vallue = 0.0f;
         core::pt32f _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };

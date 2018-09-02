@@ -23,7 +23,7 @@ namespace ui::controls
         properties["bar-color"] = make_accessor(&ScrollBar::setBarColor, &ScrollBar::barColor, core::parseColor, nullptr);
         properties["bar-border"] = make_accessor(&ScrollBar::setBarBorder, &ScrollBar::barBorder, core::parseDimension, nullptr);
         properties["bar-border-color"] = make_accessor(&ScrollBar::setBarBorderColor, &ScrollBar::barBorderColor, core::parseColor, nullptr);
-        properties["bar-border-style"] = make_accessor(&ScrollBar::setBarBorderStyle, &ScrollBar::barBorderStyle, graphics::parseStrokeStyle, nullptr);
+        properties["bar-border-style"] = make_accessor(&ScrollBar::setBarBorderStyle, &ScrollBar::barBorderStyle, drawing::parseStrokeStyle, nullptr);
     }
 
     void ScrollBar::propertyTable(core::property_table & properties)
@@ -42,7 +42,7 @@ namespace ui::controls
 
         _bar->setRect(bar_rect);
         _bar->setRectangle(bar_rect);
-        _bar->setPathStyle(graphics::PathStyle().fill(_bar_color));
+        _bar->setPathStyle(drawing::PathStyle().fill(_bar_color));
     }
 
     std::string ScrollBar::styleName() const

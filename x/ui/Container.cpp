@@ -281,7 +281,7 @@ namespace ui
         return num;
     }
 
-    void Container::render(graphics::Graphics & graphics, const graphics::Region & region) const
+    void Container::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
         Control::render(graphics, region);
         std::lock_guard lock(*this);

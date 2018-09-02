@@ -31,12 +31,12 @@ namespace ui::controls
 
     private:
         void _updateIme();
-        // È·±£ textBlob ÒÑ¾­±»´´½¨
+        // È·ï¿½ï¿½ textBlob ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         void _confirmBlob() const;
 
     private:
         std::string _text;
-        mutable std::shared_ptr<graphics::TextBlob> _textblob;
+        mutable std::shared_ptr<drawing::TextBlob> _textblob;
 
         std::shared_ptr<renderables::Text> _text_obj;
         std::shared_ptr<renderables::Line> _cursor_obj;

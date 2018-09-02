@@ -129,7 +129,7 @@ namespace core
 
     int64_t datetime::nsecs() const
     {
-        return nsecs() * 1000 + nanosecond;
+        return mcsecs() * 1000 + nanosecond;
     }
 
     bool datetime::is_leapyear(int32_t year)

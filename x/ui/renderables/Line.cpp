@@ -3,7 +3,7 @@
 
 namespace ui::renderables
 {
-    void Line::render(graphics::Graphics & graphics) const
+    void Line::render(drawing::Graphics & graphics) const
     {
         Renderable::render(graphics);
         graphics.save();

@@ -3,7 +3,7 @@
 
 namespace ui::renderables
 {
-    void Path::render(graphics::Graphics & graphics) const
+    void Path::render(drawing::Graphics & graphics) const
     {
         Renderable::render(graphics);
         graphics.setClipPath(_pathClip);

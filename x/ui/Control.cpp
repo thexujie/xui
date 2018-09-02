@@ -92,7 +92,7 @@ namespace ui
             return _color;
     }
 
-    const graphics::font & Control::font() const
+    const drawing::font & Control::font() const
     {
         if (_font.available())
             return _font;
@@ -268,7 +268,7 @@ namespace ui
         }
     }
 
-    void Control::setBackgroundImage(std::shared_ptr<graphics::Image> image)
+    void Control::setBackgroundImage(std::shared_ptr<drawing::Image> image)
     {
         if (image == _background_image.value)
             return;
@@ -276,7 +276,7 @@ namespace ui
         refresh();
     }
 
-    std::shared_ptr<graphics::Image> Control::backgroundImage() const
+    std::shared_ptr<drawing::Image> Control::backgroundImage() const
     {
         return _background_image.value;
     }
@@ -459,7 +459,7 @@ namespace ui
 
             _background_rect_obj->setRect(box(_background_box));
             _background_rect_obj->setRectangle(box(_background_box));
-            _background_rect_obj->setPathStyle(graphics::PathStyle().fill(_background_color));
+            _background_rect_obj->setPathStyle(drawing::PathStyle().fill(_background_color));
         }
         else
         {
@@ -501,7 +501,7 @@ namespace ui
                 }
                 _border_rect_obj->setRect(box());
                 _border_rect_obj->setRectangle(box().expanded(calc(_border) * -0.5f));
-                _border_rect_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
+                _border_rect_obj->setPathStyle(drawing::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
             }
             else
             {
@@ -518,7 +518,7 @@ namespace ui
                     auto & border_obj = _border_line_objs[cnt];
                     if (border[cnt] > 0 && _border_colors.value[cnt].visible())
                     {
-                        auto path = std::make_shared<graphics::Path>();
+                        auto path = std::make_shared<drawing::Path>();
                         auto points = boderPoints(edges[cnt]);
                         auto line = boderLine(edges[cnt]);
                         path->fromPoints(std::begin(points), std::end(points), true);
@@ -532,7 +532,7 @@ namespace ui
                         border_obj->setRect(path->computeTightBounds());
                         border_obj->setPoints(line[0], line[1]);
                         border_obj->setClipPath(path);
-                        border_obj->setPathStyle(graphics::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]));
+                        border_obj->setPathStyle(drawing::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]));
                     }
                     else
                     {
@@ -639,7 +639,7 @@ namespace ui
         _renderables.clear();
     }
 
-    void Control::render(graphics::Graphics & graphics, const graphics::Region & region) const
+    void Control::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
         std::lock_guard lock(*this);
         for (auto & rendereable : _renderables)

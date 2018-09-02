@@ -4,7 +4,7 @@
 #include "renderables/Image.h"
 #include "renderables/Line.h"
 #include "renderables/Rectangle.h"
-#include "graphics/Region.h"
+#include "drawing/Region.h"
 #include "Scene.h"
 
 namespace ui
@@ -138,7 +138,7 @@ namespace ui
         virtual ~ImeContext() {}
         virtual void setImeMode(ui::ime_mode mode) = 0;
         virtual void setCompositionPos(core::pt32f pos) = 0;
-        virtual void setCompositionFont(const graphics::font & font) = 0;
+        virtual void setCompositionFont(const drawing::font & font) = 0;
     };
 
     class Control : public core::object
@@ -196,7 +196,7 @@ namespace ui
         std::shared_ptr<Control> parent() const { return _parent.lock(); }
 
         const core::color32 & color() const;
-        const graphics::font & font() const;
+        const drawing::font & font() const;
 
         void setVisible(bool vis) { if (_visible != vis) { _visible = vis; onVisibleChanged(vis); } }
         bool visible() const { return _visible.value; }
@@ -222,7 +222,7 @@ namespace ui
             case core::unit::px:
                 return value.value * s->ratio();
             case core::unit::em:
-                return value.value * graphics::fontmetrics(font()).height * s->ratio();
+                return value.value * drawing::fontmetrics(font()).height * s->ratio();
             case core::unit::pt:
                 return value.value * 72.0f * s->ratio();
             case core::unit::dot:
@@ -251,7 +251,7 @@ namespace ui
             case core::unit::px:
                 return value.value * s->ratio();
             case core::unit::em:
-                return value.value * graphics::fontmetrics(font()).height * s->ratio();
+                return value.value * drawing::fontmetrics(font()).height * s->ratio();
             case core::unit::pt:
                 return value.value * 72.0f * s->ratio();
             case core::unit::dot:
@@ -291,8 +291,8 @@ namespace ui
         void setBackgroundColor(core::color32 color) { if (!_background_color.available() || _background_color != color) { _background_color = color; refresh(); } }
         core::color32 backgroundColor() const { return _background_color; }
 
-        void setBackgroundImage(std::shared_ptr<graphics::Image> image);
-        std::shared_ptr<graphics::Image> backgroundImage() const;
+        void setBackgroundImage(std::shared_ptr<drawing::Image> image);
+        std::shared_ptr<drawing::Image> backgroundImage() const;
 
         void setMargin(const core::vec4<core::dimensionf> & margin) { if (_margin != margin) { _margin = margin; rearrange(); } }
         const core::vec4<core::dimensionf> & margin() const { return _margin; }
@@ -305,7 +305,7 @@ namespace ui
 
         void setBorderColors(const core::vec4<core::color32> & boderColors) { _border_colors = boderColors; }
         const core::vec4<core::color32> & borderColors() const { return _border_colors; }
-        void setBorderStyles(const core::vec4<graphics::stroke_style> & boderStyles) { _border_styles = boderStyles; }
+        void setBorderStyles(const core::vec4<drawing::stroke_style> & boderStyles) { _border_styles = boderStyles; }
         const core::vec4<core::color32> & boderColors() const { return _border_colors; }
         std::array<core::pt32f, 4> boderPoints(core::align edge) const;
         std::array<core::pt32f, 2> boderLine(core::align edge) const;
@@ -364,7 +364,7 @@ namespace ui
         core::attribute<core::vec4<core::dimensionf>> _padding;
         core::attribute<core::vec4<core::dimensionf>> _border;
         core::attribute<core::vec4<core::color32>> _border_colors;
-        core::attribute<core::vec4<graphics::stroke_style>> _border_styles;
+        core::attribute<core::vec4<drawing::stroke_style>> _border_styles;
         core::attribute<core::vec4<core::dimensionf>> _margin;
         core::attribute<core::vec2<core::dimensionf>> _minSize;
         core::attribute<core::vec2<core::dimensionf>> _maxSize;
@@ -372,11 +372,11 @@ namespace ui
         core::aligns _anchor_borders = core::align::leftTop;
         core::attribute<core::vec4<core::dimensionf>> _anchor;
 
-        core::attribute<graphics::font> _font;
+        core::attribute<drawing::font> _font;
 
         core::attribute<bool> _visible = true;
         // background
-        core::attribute<std::shared_ptr<graphics::Image>> _background_image;
+        core::attribute<std::shared_ptr<drawing::Image>> _background_image;
         core::attribute<core::color32> _background_color = core::colors::Auto;
         layout_origin _background_position;
         core::attribute<core::vec2<core::dimensionf>> _background_size;
@@ -420,7 +420,7 @@ namespace ui
        void insert(int32_t depth, std::shared_ptr<component::Component> object);
        void remove(std::shared_ptr<component::Component> object);
 
-       virtual void render(graphics::Graphics & graphics, const graphics::Region & region) const;
+       virtual void render(drawing::Graphics & graphics, const drawing::Region & region) const;
 
        virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const { return nullptr; }
 

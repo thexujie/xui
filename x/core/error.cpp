@@ -20,6 +20,7 @@ namespace core
         { ERROR_TAG(error_nullptr), "null pointer" },
         { ERROR_TAG(error_unreachable), "unreachable" },
         { ERROR_TAG(error_outofmemory), "out of memory" },
+        { ERROR_TAG(error_outofbound), "out of bound" },
         { ERROR_TAG(error_args), "invalid args" },
         { ERROR_TAG(error_exists), "not exists" },
         { ERROR_TAG(error_access), "no access" },

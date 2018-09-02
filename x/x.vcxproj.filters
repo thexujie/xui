@@ -26,35 +26,32 @@
     <ClCompile Include="core\io\filestream.cpp">
       <Filter>core\io</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\image\image.cpp">
-      <Filter>graphics\image</Filter>
+    <ClCompile Include="drawing\image\image.cpp">
+      <Filter>drawing\image</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\Graphics.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="graphics\GraphicsService.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\Graphics.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="core\app.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\Image.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\Image.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\image\formats\bmp.cpp">
-      <Filter>graphics\image\formats</Filter>
+    <ClCompile Include="drawing\image\formats\bmp.cpp">
+      <Filter>drawing\image\formats</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\image\formats\dds.cpp">
-      <Filter>graphics\image\formats</Filter>
+    <ClCompile Include="drawing\image\formats\dds.cpp">
+      <Filter>drawing\image\formats</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\image\formats\jpg.cpp">
-      <Filter>graphics\image\formats</Filter>
+    <ClCompile Include="drawing\image\formats\jpg.cpp">
+      <Filter>drawing\image\formats</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\image\formats\png.cpp">
-      <Filter>graphics\image\formats</Filter>
+    <ClCompile Include="drawing\image\formats\png.cpp">
+      <Filter>drawing\image\formats</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\image\formats\tga.cpp">
-      <Filter>graphics\image\formats</Filter>
+    <ClCompile Include="drawing\image\formats\tga.cpp">
+      <Filter>drawing\image\formats</Filter>
     </ClCompile>
     <ClCompile Include="core\unicode.cpp">
       <Filter>core</Filter>
@@ -68,23 +65,23 @@
     <ClCompile Include="win32\windows.cpp">
       <Filter>win32</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\skia\SkShaper.cpp">
-      <Filter>graphics\skia</Filter>
+    <ClCompile Include="drawing\skia\SkShaper.cpp">
+      <Filter>drawing\skia</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\Bitmap.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\Bitmap.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\TextBlob.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\TextBlob.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\font.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\font.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\StringFormat.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\StringFormat.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\PathStyle.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\PathStyle.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="ui\Form.cpp">
       <Filter>ui</Filter>
@@ -128,8 +125,8 @@
     <ClCompile Include="core\float3x2.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\Path.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\Path.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="ui\renderables\Path.cpp">
       <Filter>ui\renderables</Filter>
@@ -155,8 +152,8 @@
     <ClCompile Include="core\property.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\Region.cpp">
-      <Filter>graphics</Filter>
+    <ClCompile Include="drawing\Region.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="core\timer.cpp">
       <Filter>core</Filter>
@@ -185,14 +182,17 @@
     <ClCompile Include="ui\controls\TextBox.cpp">
       <Filter>ui\controls</Filter>
     </ClCompile>
-    <ClCompile Include="graphics\skia\skia.cpp">
-      <Filter>graphics\skia</Filter>
+    <ClCompile Include="drawing\skia\skia.cpp">
+      <Filter>drawing\skia</Filter>
     </ClCompile>
     <ClCompile Include="ui\Scene.cpp">
       <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="win32\ImeContext.cpp">
       <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="drawing\drawing.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,14 +233,11 @@
     <ClInclude Include="core\io\stream.h">
       <Filter>core\io</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\image\image.h">
-      <Filter>graphics\image</Filter>
+    <ClInclude Include="drawing\image\image.h">
+      <Filter>drawing\image</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\Graphics.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics\GraphicsService.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\Graphics.h">
+      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="core\app.h">
       <Filter>core</Filter>
@@ -251,23 +248,23 @@
     <ClInclude Include="core\object.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\Image.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\Image.h">
+      <Filter>drawing</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\image\formats\bmp.h">
-      <Filter>graphics\image\formats</Filter>
+    <ClInclude Include="drawing\image\formats\bmp.h">
+      <Filter>drawing\image\formats</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\image\formats\dds.h">
-      <Filter>graphics\image\formats</Filter>
+    <ClInclude Include="drawing\image\formats\dds.h">
+      <Filter>drawing\image\formats</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\image\formats\jpg.h">
-      <Filter>graphics\image\formats</Filter>
+    <ClInclude Include="drawing\image\formats\jpg.h">
+      <Filter>drawing\image\formats</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\image\formats\png.h">
-      <Filter>graphics\image\formats</Filter>
+    <ClInclude Include="drawing\image\formats\png.h">
+      <Filter>drawing\image\formats</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\image\formats\tga.h">
-      <Filter>graphics\image\formats</Filter>
+    <ClInclude Include="drawing\image\formats\tga.h">
+      <Filter>drawing\image\formats</Filter>
     </ClInclude>
     <ClInclude Include="core\unicode.h">
       <Filter>core</Filter>
@@ -302,26 +299,26 @@
     <ClInclude Include="core\counter_fps.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\skia\SkShaper.h">
-      <Filter>graphics\skia</Filter>
+    <ClInclude Include="drawing\skia\SkShaper.h">
+      <Filter>drawing\skia</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\Bitmap.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\Bitmap.h">
+      <Filter>drawing</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\skia\skia.h">
-      <Filter>graphics\skia</Filter>
+    <ClInclude Include="drawing\skia\skia.h">
+      <Filter>drawing\skia</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\TextBlob.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\TextBlob.h">
+      <Filter>drawing</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\font.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\font.h">
+      <Filter>drawing</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\StringFormat.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\StringFormat.h">
+      <Filter>drawing</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\PathStyle.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\PathStyle.h">
+      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="ui\Form.h">
       <Filter>ui</Filter>
@@ -386,8 +383,8 @@
     <ClInclude Include="core\float3x2.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\Path.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\Path.h">
+      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="ui\renderables\Path.h">
       <Filter>ui\renderables</Filter>
@@ -422,8 +419,8 @@
     <ClInclude Include="core\member_function_traits.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="graphics\Region.h">
-      <Filter>graphics</Filter>
+    <ClInclude Include="drawing\Region.h">
+      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="core\timer.h">
       <Filter>core</Filter>
@@ -455,6 +452,9 @@
     <ClInclude Include="win32\ImeContext.h">
       <Filter>win32</Filter>
     </ClInclude>
+    <ClInclude Include="drawing\drawing.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -466,19 +466,19 @@
     <Filter Include="core\io">
       <UniqueIdentifier>{f04b9ca1-3ee7-48f3-b7da-66c8c1a693e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="graphics">
+    <Filter Include="drawing">
       <UniqueIdentifier>{749c32a9-4ad8-41c4-ac68-4c8f72da806d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="graphics\image">
+    <Filter Include="drawing\image">
       <UniqueIdentifier>{7c7dde39-a045-4635-a52c-0af3676d3882}</UniqueIdentifier>
     </Filter>
     <Filter Include="core\math">
       <UniqueIdentifier>{cb6c943e-d954-4c9b-9492-3fdf01283f00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="graphics\image\formats">
+    <Filter Include="drawing\image\formats">
       <UniqueIdentifier>{1212c281-62d5-4205-a647-d12b274a2777}</UniqueIdentifier>
     </Filter>
-    <Filter Include="graphics\skia">
+    <Filter Include="drawing\skia">
       <UniqueIdentifier>{24e94b74-1226-4644-ae9c-e92ef487af0b}</UniqueIdentifier>
     </Filter>
     <Filter Include="win32">

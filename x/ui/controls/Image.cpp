@@ -8,7 +8,7 @@ namespace ui::controls
         
     }
 
-    Image::Image(std::string path) : _image(std::make_shared<graphics::Image>(path))
+    Image::Image(std::string path) : _image(std::make_shared<drawing::Image>(path))
     {
 
     }
@@ -20,10 +20,10 @@ namespace ui::controls
 
     void Image::setImage(std::string path)
     {
-        _image = std::make_shared<graphics::Image>(path);
+        _image = std::make_shared<drawing::Image>(path);
     }
 
-    void Image::setImage(std::shared_ptr<graphics::Image> image)
+    void Image::setImage(std::shared_ptr<drawing::Image> image)
     {
         _image = image;
     }

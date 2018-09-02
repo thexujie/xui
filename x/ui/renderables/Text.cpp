@@ -5,7 +5,7 @@ namespace ui::renderables
 {
     Text::~Text() { }
 
-    void Text::setTextBlob(std::shared_ptr<graphics::TextBlob> text)
+    void Text::setTextBlob(std::shared_ptr<drawing::TextBlob> text)
     {
         if(_text != text)
         {
@@ -14,7 +14,7 @@ namespace ui::renderables
         }
     }
 
-    void Text::render(graphics::Graphics & graphics) const
+    void Text::render(drawing::Graphics & graphics) const
     {
         Renderable::render(graphics);
         if (!_text)

@@ -94,7 +94,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\utils.cpp" />
-    <ClCompile Include="graphics\skia\skia.cpp" />
+    <ClCompile Include="drawing\drawing.cpp" />
+    <ClCompile Include="drawing\skia\skia.cpp" />
     <ClCompile Include="ui\component\Component.cpp" />
     <ClCompile Include="ui\component\Style.cpp" />
     <ClCompile Include="ui\component\Renderable.cpp" />
@@ -136,28 +137,27 @@
     <ClCompile Include="core\system.cpp" />
     <ClCompile Include="core\timer.cpp" />
     <ClCompile Include="core\unicode.cpp" />
-    <ClCompile Include="graphics\font.cpp" />
-    <ClCompile Include="graphics\Graphics.cpp" />
-    <ClCompile Include="graphics\GraphicsService.cpp" />
-    <ClCompile Include="graphics\Image.cpp" />
-    <ClCompile Include="graphics\image\formats\bmp.cpp" />
-    <ClCompile Include="graphics\image\formats\dds.cpp" />
-    <ClCompile Include="graphics\image\formats\jpg.cpp" />
-    <ClCompile Include="graphics\image\formats\png.cpp" />
-    <ClCompile Include="graphics\image\formats\tga.cpp" />
-    <ClCompile Include="graphics\image\image.cpp" />
-    <ClCompile Include="graphics\Bitmap.cpp">
+    <ClCompile Include="drawing\font.cpp" />
+    <ClCompile Include="drawing\Graphics.cpp" />
+    <ClCompile Include="drawing\Image.cpp" />
+    <ClCompile Include="drawing\image\formats\bmp.cpp" />
+    <ClCompile Include="drawing\image\formats\dds.cpp" />
+    <ClCompile Include="drawing\image\formats\jpg.cpp" />
+    <ClCompile Include="drawing\image\formats\png.cpp" />
+    <ClCompile Include="drawing\image\formats\tga.cpp" />
+    <ClCompile Include="drawing\image\image.cpp" />
+    <ClCompile Include="drawing\Bitmap.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="graphics\Path.cpp" />
-    <ClCompile Include="graphics\PathStyle.cpp" />
-    <ClCompile Include="graphics\Region.cpp" />
-    <ClCompile Include="graphics\skia\SkShaper.cpp">
+    <ClCompile Include="drawing\Path.cpp" />
+    <ClCompile Include="drawing\PathStyle.cpp" />
+    <ClCompile Include="drawing\Region.cpp" />
+    <ClCompile Include="drawing\skia\SkShaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="graphics\StringFormat.cpp" />
-    <ClCompile Include="graphics\TextBlob.cpp" />
+    <ClCompile Include="drawing\StringFormat.cpp" />
+    <ClCompile Include="drawing\TextBlob.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -170,6 +170,7 @@
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="drawing\drawing.h" />
     <ClInclude Include="ui\component\Component.h" />
     <ClInclude Include="ui\component\Style.h" />
     <ClInclude Include="ui\component\Renderable.h" />
@@ -233,24 +234,23 @@
     <ClInclude Include="core\vec2.h" />
     <ClInclude Include="core\vec3.h" />
     <ClInclude Include="core\vec4.h" />
-    <ClInclude Include="graphics\font.h" />
-    <ClInclude Include="graphics\GraphicsService.h" />
-    <ClInclude Include="graphics\Image.h" />
-    <ClInclude Include="graphics\image\formats\bmp.h" />
-    <ClInclude Include="graphics\image\formats\dds.h" />
-    <ClInclude Include="graphics\image\formats\jpg.h" />
-    <ClInclude Include="graphics\image\formats\png.h" />
-    <ClInclude Include="graphics\image\formats\tga.h" />
-    <ClInclude Include="graphics\image\image.h" />
-    <ClInclude Include="graphics\Graphics.h" />
-    <ClInclude Include="graphics\Bitmap.h" />
-    <ClInclude Include="graphics\Path.h" />
-    <ClInclude Include="graphics\PathStyle.h" />
-    <ClInclude Include="graphics\Region.h" />
-    <ClInclude Include="graphics\skia\skia.h" />
-    <ClInclude Include="graphics\skia\SkShaper.h" />
-    <ClInclude Include="graphics\StringFormat.h" />
-    <ClInclude Include="graphics\TextBlob.h" />
+    <ClInclude Include="drawing\font.h" />
+    <ClInclude Include="drawing\Image.h" />
+    <ClInclude Include="drawing\image\formats\bmp.h" />
+    <ClInclude Include="drawing\image\formats\dds.h" />
+    <ClInclude Include="drawing\image\formats\jpg.h" />
+    <ClInclude Include="drawing\image\formats\png.h" />
+    <ClInclude Include="drawing\image\formats\tga.h" />
+    <ClInclude Include="drawing\image\image.h" />
+    <ClInclude Include="drawing\Graphics.h" />
+    <ClInclude Include="drawing\Bitmap.h" />
+    <ClInclude Include="drawing\Path.h" />
+    <ClInclude Include="drawing\PathStyle.h" />
+    <ClInclude Include="drawing\Region.h" />
+    <ClInclude Include="drawing\skia\skia.h" />
+    <ClInclude Include="drawing\skia\SkShaper.h" />
+    <ClInclude Include="drawing\StringFormat.h" />
+    <ClInclude Include="drawing\TextBlob.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui\Scene.h" />
     <ClInclude Include="win32\ImeContext.h" />

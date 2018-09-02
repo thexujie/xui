@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "windows.h"
-#include "core/string.h"
 
 namespace win32
 {
@@ -62,7 +61,7 @@ namespace win32
         static const char RES_TYPES[res_count][16] = { "FILE" };
 
         int index = std::clamp((int)type, 0, res_count - 1);
-        HRSRC hRes = FindResourceA(NULL, (const char *)id, RES_TYPES[index]);
+        HRSRC hRes = FindResourceA(NULL, (const char *)(uintmax_t)id, RES_TYPES[index]);
         if (hRes)
         {
             HGLOBAL hData = LoadResource(NULL, hRes);
@@ -159,18 +158,18 @@ namespace win32
         return "Unknown";
     }
 
-    graphics::font defaultFont()
+    drawing::font defaultFont()
     {
         NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
-        graphics::font font;
+        drawing::font font;
         font.family = core::wstr_u8str(metrics.lfMessageFont.lfFaceName);
-        font.size = metrics.lfMessageFont.lfHeight;
+        font.size = float(metrics.lfMessageFont.lfHeight);
         return font;
     }
 
-    LOGFONTW MappingFont(HDC hdc, const graphics::font & font)
+    LOGFONTW MappingFont(HDC hdc, const drawing::font & font)
     {
         LOGFONTW logfont = {};
         if (font.family[0])
@@ -187,9 +186,9 @@ namespace win32
         else
             logfont.lfHeight = std::lroundf(font.size);
 
-        logfont.lfWeight = static_cast<int32_t>(font.weight);
+        logfont.lfWeight = static_cast<int32_t>(font.style.weight);
 
-        logfont.lfItalic = static_cast<uint8_t>(font.slant);
+        logfont.lfItalic = static_cast<uint8_t>(font.style.slant);
         logfont.lfUnderline = static_cast<uint8_t>(0);
         //logfont.lfStrikeOut = static_cast<uint8_t>(font.flags & font::underline);
         //logFont.lfCharSet = static_cast<uint8_t>(font.charset);
@@ -201,7 +200,7 @@ namespace win32
         return logfont;
     }
 
-    LOGFONTW MappingFont(const graphics::font & font)
+    LOGFONTW MappingFont(const drawing::font & font)
     {
         HDC hdcScreen = GetDC(NULL);
         LOGFONTW logfont = MappingFont(hdcScreen, font);

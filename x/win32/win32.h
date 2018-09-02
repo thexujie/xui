@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/font.h"
+#include "drawing/font.h"
 
 namespace win32
 {
@@ -73,7 +73,7 @@ namespace win32
     {
         return ost << "Windows " << version_str(ver) << " [" << ver.major << "." << ver.minor << "." << ver.pack << "." << ver.build << "]";
     }
-    graphics::font defaultFont();
+    drawing::font defaultFont();
     handle_t instance();
     void endLoop(int32_t ret);
 }

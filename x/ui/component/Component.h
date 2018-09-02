@@ -4,7 +4,7 @@ namespace ui {
     class Control;
 }
 
-namespace graphics {
+namespace drawing {
     class Graphics;
 }
 

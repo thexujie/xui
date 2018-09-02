@@ -253,7 +253,7 @@ namespace win32
         void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         void onSizeChanged(const core::si32f & from, const core::si32f & to);
         void onSceneInvalidated(const core::rc32i & rect);
-        void onSceneRendered(const graphics::Region & region);
+        void onSceneRendered(const drawing::Region & region);
         void onSceneCaptured(bool capture);
 
     private:
@@ -266,7 +266,7 @@ namespace win32
         core::vec4i _padding() const;
 
         void _render(const core::rc32i & rect);
-        void _render(const graphics::Region & region);
+        void _render(const drawing::Region & region);
 
     private:
 

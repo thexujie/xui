@@ -340,7 +340,7 @@ int _tmain(int argc, const TCHAR * argv[])
     _CrtMemCheckpoint(&stateOld);
 #endif
 
-    std::string str = u8"abcd我爱我家𪚥𪚥𪚥 hello world تەتقىق قىلدىhello world تەتقىق قىلدى";
+    std::string str = u8"abcd我爱㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello world تەتقىق قىلدىhello world تەتقىق قىلدى";
     script::Shaper shaper;
     shaper.reset(str);
 

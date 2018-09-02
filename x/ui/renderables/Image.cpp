@@ -3,7 +3,7 @@
 
 namespace ui::renderables
 {
-    void Image::setImage(std::shared_ptr<graphics::Image> image)
+    void Image::setImage(std::shared_ptr<drawing::Image> image)
     {
         if(_image != image)
         {
@@ -12,7 +12,7 @@ namespace ui::renderables
         }
     }
 
-    void Image::render(graphics::Graphics & graphics) const
+    void Image::render(drawing::Graphics & graphics) const
     {
         Renderable::render(graphics);
         if (!_image)

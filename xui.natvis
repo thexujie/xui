@@ -28,7 +28,7 @@
 		<DisplayString Condition="unit==4">{value}%</DisplayString>
 	</Type>
 
-	<Type Name="graphics::font">
+	<Type Name="drawing::font">
 		<DisplayString>{{{family}, {size}}}</DisplayString>
 	</Type>
   

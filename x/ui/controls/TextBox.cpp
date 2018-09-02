@@ -59,11 +59,11 @@ namespace ui::controls
             insert(LOCAL_DEPTH_CONTENT + 1, _cursor_obj);
         }
 
-        graphics::fontmetrics fm(font());
+        drawing::fontmetrics fm(font());
         auto cbox = contentBox();
         _cursor_obj->setRect({ cbox.x, cbox.y, 1, fm.height});
         _cursor_obj->setPoints({ cbox.x, cbox.y }, { cbox.x, cbox.y + fm.height });
-        _cursor_obj->setPathStyle(graphics::PathStyle().stoke(core::colors::Red , graphics::stroke_style::solid).width(1));
+        _cursor_obj->setPathStyle(drawing::PathStyle().stoke(core::colors::Red , drawing::stroke_style::solid).width(1));
     }
 
 
@@ -147,7 +147,7 @@ namespace ui::controls
 
     void TextBox::onChar(char32_t ch)
     {
-        if (ch <= 0xffff && std::iswcntrl(ch))
+        if (ch <= 0xffff && std::iswcntrl((wint_t)ch))
             return;
         
         char chars[4] = { 0 };
@@ -174,9 +174,9 @@ namespace ui::controls
     {
         if (!_textblob)
         {
-            graphics::StringFormat format(font());
+            drawing::StringFormat format(font());
             format.color(color());
-            _textblob = std::make_shared<graphics::TextBlob>(_text, format);
+            _textblob = std::make_shared<drawing::TextBlob>(_text, format);
         }
     }
 }

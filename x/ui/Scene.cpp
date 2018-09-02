@@ -151,7 +151,7 @@ namespace ui
         while(!_exit)
         {
             core::rc32i invalid_rect;
-            graphics::Region invalid_region;
+            drawing::Region invalid_region;
             {
                 std::lock_guard<std::mutex> lock(_mtx);
                 invalid_rect = std::move(_invalid_rect);
@@ -165,10 +165,10 @@ namespace ui
 
             auto tms = core::datetime::high_resolution_s();
             if (!_renderBuffer || _renderBuffer->size().cx < invalid_rect.right() || _renderBuffer->size().cy < invalid_rect.bottom())
-                _renderBuffer = std::make_shared<graphics::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
+                _renderBuffer = std::make_shared<drawing::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
 
             auto rect = invalid_region.bounds();
-            graphics::Graphics graphics(_renderBuffer);
+            drawing::Graphics graphics(_renderBuffer);
             graphics.setClipRect(rect.to<float32_t>(), false);
             graphics.clear(_color_default);
             control()->render(graphics, invalid_region);

@@ -27,12 +27,12 @@ namespace ui::controls
         void onMouseUp(const mosue_state & state);
 
     private:
-        // È·±£ textBlob ÒÑ¾­±»´´½¨
+        // È·ï¿½ï¿½ textBlob ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         void _confirmBlob() const;
 
     private:
         std::string _text;
-        mutable std::shared_ptr<graphics::TextBlob> _textBlob;
+        mutable std::shared_ptr<drawing::TextBlob> _textBlob;
 
         std::shared_ptr<renderables::Text> _text_obj;
     };

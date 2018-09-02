@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "graphics/Graphics.h"
+#include "drawing/drawing.h"
 
 namespace ui::component
 {
@@ -11,7 +11,7 @@ namespace ui::component
         ~Renderable() = default;
 
         void invalid();
-        virtual void render(graphics::Graphics & graphics) const;
+        virtual void render(drawing::Graphics & graphics) const;
 
         virtual void onVisibleChanged(bool vis);
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);

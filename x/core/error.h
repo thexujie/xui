@@ -11,6 +11,7 @@ namespace core
         error_nullptr,
         error_unreachable,
         error_outofmemory,
+        error_outofbound,
         error_args,
         error_exists,
         error_access,

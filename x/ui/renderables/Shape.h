@@ -1,6 +1,6 @@
 #pragma once
 #include "ui/component/Renderable.h"
-#include "graphics/Path.h"
+#include "drawing/Path.h"
 
 namespace ui::renderables
 {
@@ -10,12 +10,12 @@ namespace ui::renderables
         Shape(std::shared_ptr<ui::Control> control) : component::Renderable(control) {}
         ~Shape() = default;
 
-        void setClipPath(std::shared_ptr<graphics::Path> path) { _clipPath = path; invalid(); }
-        void setPathStyle(const graphics::PathStyle & style) { if (_style != style) { _style = style; invalid(); }}
-        graphics::PathStyle ShapeStyle() const { return _style; }
+        void setClipPath(std::shared_ptr<drawing::Path> path) { _clipPath = path; invalid(); }
+        void setPathStyle(const drawing::PathStyle & style) { if (_style != style) { _style = style; invalid(); }}
+        drawing::PathStyle ShapeStyle() const { return _style; }
 
     protected:
-        std::shared_ptr<graphics::Path> _clipPath;
-        graphics::PathStyle _style;
+        std::shared_ptr<drawing::Path> _clipPath;
+        drawing::PathStyle _style;
     };
 }

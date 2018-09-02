@@ -177,7 +177,7 @@ namespace win32
         ::PostMessageW(hwnd, WM_REFRESH, core::uxfromih(rect.x, rect.y), core::ixfromih(rect.cx, rect.cy));
     }
 
-    void Window::onSceneRendered(const graphics::Region & region)
+    void Window::onSceneRendered(const drawing::Region & region)
     {
         _render(region);
     }
@@ -331,13 +331,13 @@ namespace win32
         auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
 
         auto scene = f->scene();
-        std::shared_ptr<graphics::Bitmap> bitmap = scene->bitmap();
+        std::shared_ptr<drawing::Bitmap> bitmap = scene->bitmap();
 
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
-        graphics::bitmap_buffer buffer = bitmap->buffer();
+        drawing::bitmap_buffer buffer = bitmap->buffer();
         BITMAPINFO bmi;
         memset(&bmi, 0, sizeof(bmi));
         bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -355,7 +355,7 @@ namespace win32
         ReleaseDC(hwnd, hdc);
     }
 
-    void Window::_render(const graphics::Region & region)
+    void Window::_render(const drawing::Region & region)
     {
         auto f = form();
         if (!f)
@@ -363,13 +363,13 @@ namespace win32
 
 
         auto scene = f->scene();
-        std::shared_ptr<graphics::Bitmap> bitmap = scene->bitmap();
+        std::shared_ptr<drawing::Bitmap> bitmap = scene->bitmap();
 
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
-        graphics::bitmap_buffer buffer = bitmap->buffer();
+        drawing::bitmap_buffer buffer = bitmap->buffer();
         BITMAPINFO bmi;
         memset(&bmi, 0, sizeof(bmi));
         bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -381,7 +381,7 @@ namespace win32
         bmi.bmiHeader.biSizeImage = 0;
 
         HDC hdc = GetDC(hwnd);
-        graphics::RegionIterator ri(region);
+        drawing::RegionIterator ri(region);
         while (!ri.done())
         {
             auto rect = ri.rect();
@@ -510,7 +510,7 @@ namespace win32
         auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
-        _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
+        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
         if (!_trackingMouse)
         {
             //OnWmMouseEnter(uiMessage, uiParam, iParam);
@@ -541,7 +541,7 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::mask, false);
-        _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
+        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
         s->onMouseState(_mouse_state, ui::mouse_action::leave);
         return 0;
     }
@@ -555,7 +555,7 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, true);
-        _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
+        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
         s->onMouseState(_mouse_state, ui::mouse_action::press);
         return 0;
     }
@@ -569,7 +569,7 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, false);
-        _mouse_state.setPos(core::pt32i(core::i32li16(iParam), core::i32hi16(iParam)).to<float32_t>());
+        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
         s->onMouseState(_mouse_state, ui::mouse_action::releas);
         return 0;
     }
@@ -585,11 +585,11 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        POINT point = { core::i32li16(iParam), core::i32hi16(iParam) };
+        POINT point = { core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam) };
         ::ScreenToClient(hwnd, &point);
         //core::pt32i point = core::pt32i(core::i32li16(iParam), core::i32hi16(iParam));
         //core::pt32i wheel = core::pt32i(core::u32li16(uiParam), core::u32hi16(uiParam));
-        _mouse_state.setWheelLines(core::u32hi16(uiParam) / WHEEL_DELTA);
+        _mouse_state.setWheelLines(core::u32hi16((uint32_t)uiParam) / WHEEL_DELTA);
         _mouse_state.setPos(core::pt32i(point.x, point.y).to<float32_t>());
         s->onMouseState(_mouse_state, ui::mouse_action::wheel_v);
         return 0;
