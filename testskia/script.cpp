@@ -4,6 +4,7 @@
 
 namespace script
 {
+
     core::error Shaper::reset(std::string text)
     {
         _text = text;
@@ -14,9 +15,8 @@ namespace script
         _fonts.clear();
 
         auto font_ptr = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(_font.family.c_str(), drawing::skia::from(_font.style)).release(), drawing::skia::skia_unref);
-        _fonts.push_back(font_ptr);
+        _fonts.push_back({ _font, font_ptr });
         _font_indices[_font] = 0;
-        itermize();
         return core::error_ok;
     }
 
@@ -63,15 +63,28 @@ namespace script
         UBiDiLevel level_last = 0;
         hb_script_t script_last = HB_SCRIPT_UNKNOWN;
         uint16_t font_index_last = 0;
+        uint16_t font_index_last_fb = 0;
         uint32_t color_last = color_default;
+        enum class flushflag
+        {
+            eof = 0x0001,
+            level = 0x0002,
+            script = 0x0004,
+            font = 0x0008,
+            color = 0x0010,
+        };
+        typedef core::bitflag<flushflag> flushflags;
+
         do
         {
             char32_t ch = 0;
-            bool flush = false;
+            flushflags flush = nullptr;
             size_t nchar = core::utf16_to_unicode(u16str.c_str() + pos, core::npos, ch);
 
             UBiDiLevel level = ubidi_getLevelAt(bidi.get(), pos);
             hb_script_t script = hb_unicode_script(hb_unicode, ch);
+            uint16_t font_index = _rtf_font_indices[pos];
+            uint32_t color = _rtf_colors[pos];
 
             if (pos == 0)
             {
@@ -85,7 +98,7 @@ namespace script
 
             if(pos + nchar >= u16str.length())
             {
-                flush = true;
+                flush |= flushflag::eof;
                 // 把最后一个字符包括进去
                 pos += nchar;
                 nchar = 0;
@@ -93,7 +106,7 @@ namespace script
             else
             {
                 if(level != level_last)
-                    flush = true;
+                    flush |= flushflag::level;
 
                 if(script != script_last)
                 {
@@ -104,19 +117,43 @@ namespace script
                     }
                     else
                     {
-                        flush = true;
+                        flush |= flushflag::script;
                     }
                 }
             }
 
-            if(!flush)
+            auto & font = _fonts[font_index];
+            if (font_index_last_fb > 0 && !flush.any(flushflag::script) && _fonts[font_index_last_fb].second->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
-                
+                // 使用上一个 fb 的字体搞定了
+                font_index = font_index_last_fb;
+            }
+            else if (font.second->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
+            {
+                font_index_last_fb = 0;
+            }
+            else
+            {
+                font_index_last_fb = 0;
+                sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault(); 
+                auto tf = fontMgr->matchFamilyStyleCharacter( nullptr, drawing::skia::from(font.first.style), nullptr, 0, ch);
+                if(tf)
+                {
+                    drawing::font font_fb = drawing::skia::to(*tf, font.first.size);
+                    uint16_t font_index_fb = fontIndex(font_fb);
+                    font_index_last_fb = font_index_fb;
+                    font_index = font_index_fb;
+                }
             }
 
-            if(flush)
+            if (font_index != font_index_last)
+                flush |= flushflag::font;
+            if (color != color_last)
+                flush |= flushflag::color;
+
+            if (flush.any())
             {
-                item item = {{ pos_start, pos - pos_start }, script_last, !!(level_last & 1)};
+                item item = {{ pos_start, pos - pos_start }, script_last, !!(level_last & 1), font_index_last, color_last};
 #ifdef _DEBUG
                 item._text = u16str.substr(pos_start, pos - pos_start);
                 auto iter = std::find_if(_font_indices.begin(), _font_indices.end(), [font_index_last](const auto & vt) { return vt.second == font_index_last; });
@@ -126,6 +163,8 @@ namespace script
                 pos_start = pos;
                 level_last = level;
                 script_last = script;
+                font_index_last = font_index;
+                color_last = color;
             }
 
             pos += nchar;
@@ -135,31 +174,32 @@ namespace script
         return core::error_ok;
     }
 
-    core::error Shaper::shape()
-    {
-
-        return core::error_ok;
-    }
-
     void Shaper::setFont(range range, const drawing::font & font)
     {
-        uint16_t index = font_default;
-        auto iter = _font_indices.find(font);
-        if(iter == _font_indices.end())
-        {
-            auto font_ptr = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(_font.family.c_str(), drawing::skia::from(_font.style)).release(), drawing::skia::skia_unref);
-            _fonts.push_back(font_ptr);
-            if (_fonts.size() > 0xfffe)
-                throw core::error_outofbound;
-            index = uint16_t(_fonts.size() - 1);
-            _font_indices[font] = index;
-        }
-
+        uint16_t index = fontIndex(font);
         std::fill(_rtf_font_indices.begin() + range.index, _rtf_font_indices.begin() + range.end(), index);
     }
 
     void Shaper::setColor(range range, uint32_t color)
     {
         std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
+    }
+
+    uint16_t Shaper::fontIndex(const drawing::font & font)
+    {
+        uint16_t index = font_default;
+        auto iter = _font_indices.find(font);
+        if (iter == _font_indices.end())
+        {
+            auto font_ptr = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref);
+            _fonts.push_back({ font, font_ptr });
+            if (_fonts.size() > 0xfffe)
+                throw core::error_outofbound;
+            index = uint16_t(_fonts.size() - 1);
+            _font_indices[font] = index;
+        }
+        else
+            index = iter->second;
+        return index;
     }
 }

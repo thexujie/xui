@@ -60,15 +60,6 @@ namespace script
         }
     };
 
-    class IShaper
-    {
-    public:
-        virtual ~IShaper() {}
-
-        virtual core::error reset(std::string text) = 0;
-        virtual core::error itermize() = 0;
-    };
-
     struct item
     {
         range range;
@@ -82,17 +73,18 @@ namespace script
 #endif
     };
 
-    class Shaper : public IShaper
+    class Shaper
     {
     public:
         Shaper() = default;
 
         core::error reset(std::string text);
         core::error itermize();
-        core::error shape();
 
         void setFont(range range, const drawing::font & font);
         void setColor(range range, uint32_t color);
+
+        uint16_t fontIndex(const drawing::font & font);
     private:
         constexpr static uint16_t font_default = 0;
         constexpr static uint32_t color_default = core::colors::Black.argb;
@@ -101,7 +93,7 @@ namespace script
         std::string _text;
         std::vector<item> _items;
         std::unordered_map<drawing::font, uint16_t> _font_indices;
-        std::vector<std::shared_ptr<SkTypeface>> _fonts;
+        std::vector<std::pair<drawing::font, std::shared_ptr<SkTypeface>>> _fonts;
         std::vector<uint16_t> _rtf_font_indices;
         std::vector<uint32_t> _rtf_colors;
     };
