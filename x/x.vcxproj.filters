@@ -455,6 +455,9 @@
     <ClInclude Include="drawing\drawing.h">
       <Filter>drawing</Filter>
     </ClInclude>
+    <ClInclude Include="core\block_ptr.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">

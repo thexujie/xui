@@ -151,7 +151,7 @@ namespace ui::controls
             return;
         
         char chars[4] = { 0 };
-        size_t len = core::unicode_to_utf8(ch, chars);
+        size_t len = core::utf32_to_utf8(ch, chars);
         _text.append(chars, len);
         _textblob.reset();
         refresh();

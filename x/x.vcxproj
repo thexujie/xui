@@ -170,6 +170,7 @@
     <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\block_ptr.h" />
     <ClInclude Include="drawing\drawing.h" />
     <ClInclude Include="ui\component\Component.h" />
     <ClInclude Include="ui\component\Style.h" />

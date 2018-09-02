@@ -121,5 +121,6 @@ namespace core
 
 #include "core/timer.h"
 #include "core/app.h"
+#include "core/block_ptr.h"
 
 using namespace core::unit_literals;

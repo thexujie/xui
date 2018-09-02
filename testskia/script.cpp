@@ -4,6 +4,51 @@
 
 namespace script
 {
+    std::shared_ptr<hb_font_t> create_hb_font(SkTypeface * tf)
+    {
+        int index = 0;
+        std::unique_ptr<SkStreamAsset> asset(tf->openStream(&index));
+        size_t size = asset->getLength();
+        core::block_ptr<hb_blob_t, hb_blob_destroy> blob;
+        if (const void * base = asset->getMemoryBase())
+        {
+            blob.reset(hb_blob_create((char*)base, SkToUInt(size), HB_MEMORY_MODE_READONLY, asset.release(), [](void * p) { delete (SkStreamAsset*)p; }));
+        }
+        else
+        {
+            // SkDebugf("Extra SkStreamAsset copy\n");
+            void * ptr = size ? sk_malloc_throw(size) : nullptr;
+            asset->read(ptr, size);
+            blob.reset(hb_blob_create((char*)ptr, SkToUInt(size), HB_MEMORY_MODE_READONLY, ptr, sk_free));
+        }
+        assert(blob);
+        hb_blob_make_immutable(blob.get());
+
+        core::block_ptr<hb_face_t, hb_face_destroy> face(hb_face_create(blob.get(), (unsigned)index));
+        assert(face);
+        if (!face)
+            return nullptr;
+        hb_face_set_index(face.get(), (unsigned)index);
+        hb_face_set_upem(face.get(), tf->getUnitsPerEm());
+
+        std::shared_ptr<hb_font_t> font(hb_font_create(face.get()), hb_font_destroy);
+        assert(font);
+        if (!font)
+            return nullptr;
+        hb_ot_font_set_funcs(font.get());
+        int axis_count = tf->getVariationDesignPosition(nullptr, 0);
+        if (axis_count > 0)
+        {
+            SkAutoSTMalloc<4, SkFontArguments::VariationPosition::Coordinate> axis_values(axis_count);
+            if (tf->getVariationDesignPosition(axis_values, axis_count) == axis_count)
+            {
+                hb_font_set_variations(font.get(),
+                    reinterpret_cast<hb_variation_t*>(axis_values.get()),
+                    axis_count);
+            }
+        }
+        return font;
+    }
 
     core::error Shaper::reset(std::string text)
     {
@@ -13,10 +58,9 @@ namespace script
 
         _font_indices.clear();
         _fonts.clear();
+        fontIndex(_font);
 
-        auto font_ptr = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(_font.family.c_str(), drawing::skia::from(_font.style)).release(), drawing::skia::skia_unref);
-        _fonts.push_back({ _font, font_ptr });
-        _font_indices[_font] = 0;
+        _hbbuffer.reset(hb_buffer_create(), hb_buffer_destroy);
         return core::error_ok;
     }
 
@@ -51,14 +95,15 @@ namespace script
         std::vector<bidilevel> levels;
         std::vector<item> items;
 
-        std::unique_ptr<hb_buffer_t, decltype(&hb_buffer_destroy)> hbbuffer(hb_buffer_create(), hb_buffer_destroy);
-        hb_buffer_set_content_type(hbbuffer.get(), HB_BUFFER_CONTENT_TYPE_UNICODE);
-        hb_buffer_set_cluster_level(hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
+        hb_buffer_clear_contents(_hbbuffer.get());
+        hb_buffer_set_content_type(_hbbuffer.get(), HB_BUFFER_CONTENT_TYPE_UNICODE);
+        hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
 
-        hb_unicode_funcs_t * hb_unicode = hb_buffer_get_unicode_funcs(hbbuffer.get());
+        hb_unicode_funcs_t * hb_unicode = hb_buffer_get_unicode_funcs(_hbbuffer.get());
 
         int32_t pos_start = 0;
-        int32_t pos = 0;
+        int32_t utf16_pos = 0;
+        int32_t utf8_pos = 0;
 
         UBiDiLevel level_last = 0;
         hb_script_t script_last = HB_SCRIPT_UNKNOWN;
@@ -77,16 +122,20 @@ namespace script
 
         do
         {
-            char32_t ch = 0;
-            flushflags flush = nullptr;
-            size_t nchar = core::utf16_to_unicode(u16str.c_str() + pos, core::npos, ch);
-
-            UBiDiLevel level = ubidi_getLevelAt(bidi.get(), pos);
+            char32_t ch = 0, ch2 = 0;
+            size_t nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, ch);
+            size_t nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, ch2);
+            assert(ch == ch2);
+            _chars.push_back({ utf8_pos, (int32_t)nutf8 });
+            UBiDiLevel level = ubidi_getLevelAt(bidi.get(), utf16_pos);
             hb_script_t script = hb_unicode_script(hb_unicode, ch);
-            uint16_t font_index = _rtf_font_indices[pos];
-            uint32_t color = _rtf_colors[pos];
 
-            if (pos == 0)
+            flushflags flush = nullptr;
+
+            uint16_t font_index = _rtf_font_indices[utf16_pos];
+            uint32_t color = _rtf_colors[utf16_pos];
+
+            if (utf16_pos == 0)
             {
                 level_last = level;
                 script_last = script;
@@ -96,12 +145,13 @@ namespace script
                 
             }
 
-            if(pos + nchar >= u16str.length())
+            if(utf16_pos + nutf16 >= u16str.length())
             {
                 flush |= flushflag::eof;
+                hb_buffer_add(_hbbuffer.get(), ch, utf8_pos);
                 // 把最后一个字符包括进去
-                pos += nchar;
-                nchar = 0;
+                utf16_pos += nutf16;
+                nutf16 = 0;
             }
             else
             {
@@ -122,13 +172,13 @@ namespace script
                 }
             }
 
-            auto & font = _fonts[font_index];
-            if (font_index_last_fb > 0 && !flush.any(flushflag::script) && _fonts[font_index_last_fb].second->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
+            auto [font, skfont, hbfont] = _fonts[font_index];
+            if (font_index_last_fb > 0 && !flush.any(flushflag::script) && std::get<1>(_fonts[font_index_last_fb])->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
                 // 使用上一个 fb 的字体搞定了
                 font_index = font_index_last_fb;
             }
-            else if (font.second->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
+            else if (skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
                 font_index_last_fb = 0;
             }
@@ -136,10 +186,10 @@ namespace script
             {
                 font_index_last_fb = 0;
                 sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault(); 
-                auto tf = fontMgr->matchFamilyStyleCharacter( nullptr, drawing::skia::from(font.first.style), nullptr, 0, ch);
+                auto tf = fontMgr->matchFamilyStyleCharacter( nullptr, drawing::skia::from(font.style), nullptr, 0, ch);
                 if(tf)
                 {
-                    drawing::font font_fb = drawing::skia::to(*tf, font.first.size);
+                    drawing::font font_fb = drawing::skia::to(*tf, font.size);
                     uint16_t font_index_fb = fontIndex(font_fb);
                     font_index_last_fb = font_index_fb;
                     font_index = font_index_fb;
@@ -151,26 +201,72 @@ namespace script
             if (color != color_last)
                 flush |= flushflag::color;
 
-            if (flush.any())
+            if (flush.any() && utf16_pos > pos_start)
             {
-                item item = {{ pos_start, pos - pos_start }, script_last, !!(level_last & 1), font_index_last, color_last};
+                item item = {{ pos_start, utf16_pos - pos_start }, script_last, !!(level_last & 1), font_index_last, color_last};
 #ifdef _DEBUG
-                item._text = u16str.substr(pos_start, pos - pos_start);
+                item._text = u16str.substr(pos_start, utf16_pos - pos_start);
                 auto iter = std::find_if(_font_indices.begin(), _font_indices.end(), [font_index_last](const auto & vt) { return vt.second == font_index_last; });
                 item._font = iter->first;
 #endif
                 _items.push_back(item);
-                pos_start = pos;
+                pos_start = utf16_pos;
                 level_last = level;
                 script_last = script;
                 font_index_last = font_index;
                 color_last = color;
+
+                //--------------------------------------------------- shape
+                {
+                    // TODO: features
+                    auto hbfont = hbfont_at(item.font);
+
+                    hb_buffer_set_script(_hbbuffer.get(), item.script);
+                    hb_buffer_set_direction(_hbbuffer.get(), item.rtl ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+                    // TODO: language
+                    hb_buffer_guess_segment_properties(_hbbuffer.get());
+
+                    hb_shape(hbfont.get(), _hbbuffer.get(), nullptr, 0);
+                    uint32_t len = hb_buffer_get_length(_hbbuffer.get());
+
+                    if (item.rtl)
+                    {
+                        // Put the clusters back in logical order.
+                        // Note that the advances remain ltr.
+                        hb_buffer_reverse(_hbbuffer.get());
+                    }
+                    hb_glyph_info_t * info = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
+                    hb_glyph_position_t * pos = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
+                    for(uint32_t cnt = 0; cnt < len; ++cnt)
+                    {
+                        
+                    }
+
+                    hb_buffer_clear_contents(_hbbuffer.get());
+                }
+            }
+            else
+            {
             }
 
-            pos += nchar;
+            hb_buffer_add(_hbbuffer.get(), ch, utf8_pos);
+            utf16_pos += nutf16;
+            utf8_pos += nutf8;
         }
-        while (pos < u16str.length());
+        while (utf16_pos < u16str.length());
 
+        return core::error_ok;
+    }
+
+
+    core::error Shaper::shape()
+    {
+        for(size_t index = 0; index < _items.size(); ++index)
+        {
+            auto & item = _items[index];
+
+
+        }
         return core::error_ok;
     }
 
@@ -191,8 +287,12 @@ namespace script
         auto iter = _font_indices.find(font);
         if (iter == _font_indices.end())
         {
-            auto font_ptr = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref);
-            _fonts.push_back({ font, font_ptr });
+            auto skfont = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref);
+            auto hbfont = create_hb_font(skfont.get());
+            if(!skfont || !hbfont)
+                throw core::error_not_supported;
+
+            _fonts.push_back(std::make_tuple(font, skfont, hbfont));
             if (_fonts.size() > 0xfffe)
                 throw core::error_outofbound;
             index = uint16_t(_fonts.size() - 1);
