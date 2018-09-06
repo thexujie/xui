@@ -2,7 +2,7 @@
 #include "script.h"
 #include "drawing/skia/skia.h"
 
-namespace script
+namespace drawing::script
 {
     std::shared_ptr<hb_font_t> create_hb_font(SkTypeface * tf)
     {
@@ -54,7 +54,7 @@ namespace script
     {
         _text = text;
         _rtf_font_indices.assign(_text.length(), font_default);
-        _rtf_colors.assign(_text.length(), color_default);
+        _rtf_colors.assign(_text.length(), _color);
 
         _font_indices.clear();
         _fonts.clear();
@@ -68,6 +68,9 @@ namespace script
 
     core::error Shaper::itermize()
     {
+        if(_text.empty())
+            return core::error_ok;
+
         std::u16string u16str = core::u8str_u16str(_text);
 
         UErrorCode status = U_ZERO_ERROR;
@@ -117,7 +120,7 @@ namespace script
         hb_script_t script_last = HB_SCRIPT_UNKNOWN;
         uint16_t font_index_last = core::nposu16;
         uint16_t font_index_last_fb = core::nposu16;
-        uint32_t color_last = color_default;
+        uint32_t color_last = _color;
         enum class flushflag
         {
             eof = 0x0001,
@@ -311,12 +314,15 @@ namespace script
 
     core::error Shaper::wrap(float32_t end, wrap_mode mode)
     {
+        _rows.push_back({0, 0});
+        if (_text.empty())
+            return core::error_ok;
+
         float32_t last = 0;
         float32_t curr = 0;
         size_t gstart = 0;
         uint32_t line = 0;
 
-        _rows.push_back({0, 0});
         enum class flushflag
         {
             eof = 0x0001,
@@ -330,12 +336,17 @@ namespace script
             glyph & glyph = _glyphs[gindex];
             auto & item = _items[iindex];
 
+            auto & fmetrics = _fonts[item.font].fmetrics;
+
             flushflags flush = nullptr;
             if (glyph.trange.index >= item.trange.end())
                 flush |= flushflag::item;
 
             if (curr + glyph.advance.cx > end && glyph.standalone && gindex > gstart)
                 flush |= flushflag::width;
+            else if(gindex == _glyphs.size() - 1)
+                flush |= flushflag::eof;
+            else {}
 
             if(flush.any())
             {
@@ -344,8 +355,16 @@ namespace script
                 seg.line = line;
                 seg.offset = last;
                 seg.width = curr - last;
-                seg.trange = { _glyphs[gstart].trange.index, glyph.trange.index - _glyphs[gstart].trange.index };
-                seg.grange = { gstart, gindex - gstart };
+                if(flush.any(flushflag::eof))
+                {
+                    seg.trange = { _glyphs[gstart].trange.index, glyph.trange.end() - _glyphs[gstart].trange.index };
+                    seg.grange = { gstart, gindex - gstart + 1};
+                }
+                else
+                {
+                    seg.trange = { _glyphs[gstart].trange.index, glyph.trange.index - _glyphs[gstart].trange.index };
+                    seg.grange = { gstart, gindex - gstart };
+                }
 #ifdef _DEBUG
                 seg._text = _text.substr(seg.trange.index, seg.trange.length);
 #endif
@@ -374,9 +393,12 @@ namespace script
             }
             curr += glyph.advance.cx;
 
-            row & r = _rows.back();
-            r.trange.length += glyph.trange.length;
-            r.grange.length += 1;
+            row & row_this = _rows.back();
+            row_this.trange.length += glyph.trange.length;
+            row_this.grange.length += 1;
+            row_this.width += glyph.advance.cx;
+            row_this.ascent = std::max(row_this.ascent, fmetrics.ascent);
+            row_this.descent = std::max(row_this.descent, fmetrics.descent);
         }
 
 #ifdef _DEBUG
@@ -388,6 +410,9 @@ namespace script
 
     core::error Shaper::shape(SkTextBlobBuilder & builder, uint32_t index)
     {
+        if (_text.empty())
+            return core::error_ok;
+
         row & row = _rows[index];
         float32_t offset_y = 0;
         for(size_t sindex = row.srange.index; sindex < row.srange.end(); ++sindex)
@@ -400,6 +425,12 @@ namespace script
             SkPaint paint;
             paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
             paint.setTextSize(font_cache.font.size);
+            paint.setAntiAlias(true);
+            paint.setLCDRenderText(true);
+            paint.setColor(item.color);
+            paint.setTextSize(_font.size);
+            paint.setAutohinted(true);
+            paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
             SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(paint, seg.grange.length, seg.trange.length, SkString(), nullptr);
             memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
@@ -411,13 +442,30 @@ namespace script
                 runBuffer.glyphs[iglyph] = glyph.gid;
                 runBuffer.clusters[iglyph] = glyph.trange.index;
                 runBuffer.pos[iglyph * 2 + 0] = offset_x + glyph.offset.x;
-                runBuffer.pos[iglyph * 2 + 1] = offset_y - glyph.offset.y;
+                runBuffer.pos[iglyph * 2 + 1] = offset_y - glyph.offset.y + row.ascent;
                 offset_x += glyph.advance.cx;
                 offset_y += glyph.advance.cy;
             }
 
         }
         return core::error_ok;
+    }
+
+    core::si32f Shaper::lineSize(uint32_t index)
+    {
+        if (_text.empty())
+            return { 0, _fonts[0].fmetrics.height };
+
+        row & row = _rows[index];
+        core::si32f size = { 0, row.ascent + row.descent };
+
+        for (size_t sindex = row.srange.index; sindex < row.srange.end(); ++sindex)
+        {
+            segment & seg = _segments[sindex];
+            item & item = _items[seg.item];
+            size.cx += seg.width;
+        }
+        return size;
     }
 
     void Shaper::setFont(range range, const drawing::font & font)

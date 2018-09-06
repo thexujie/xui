@@ -34,17 +34,17 @@ namespace win32
         return (int)msg.wParam;
     }
 
-    u8string GUID2String(const GUID & guid)
+    std::string GUID2String(const GUID & guid)
     {
         std::array<char, 40> output;
         snprintf(output.data(), output.size(), "{%08X-%04hX-%04hX-%02X%02X-%02X%02X%02X%02X%02X%02X}",
             guid.Data1, guid.Data2, guid.Data3,
             guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6],
             guid.Data4[7]);
-        return u8string(output.data());
+        return std::string(output.data());
     }
 
-    u8string GUID2String(std::array<uint8_t, 16> data)
+    std::string GUID2String(std::array<uint8_t, 16> data)
     {
         const GUID & guid = *(const GUID *)data.data();
         std::array<char, 40> output;
@@ -52,7 +52,7 @@ namespace win32
             guid.Data1, guid.Data2, guid.Data3,
             guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6],
             guid.Data4[7]);
-        return u8string(output.data());
+        return std::string(output.data());
     }
 
 

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "drawing/font.h"
+#include "core/core.h"
+#include "drawing/drawing.h"
 
 namespace win32
 {

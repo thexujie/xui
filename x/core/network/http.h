@@ -16,20 +16,20 @@ namespace core::network
     struct http_header
     {
     public:
-        u8string version;
-        u8string method;
-        u8string url;
-        std::map<u8string, u8string> headers;
+        std::string version;
+        std::string method;
+        std::string url;
+        std::map<std::string, std::string> headers;
 
-        u8string string();
+        std::string string();
     };
 
     struct http_response
     {
-        u8string version;
+        std::string version;
         int32_t code = 0;
-        u8string message;
-        std::map<u8string, u8string, core::less_ic> headers;
+        std::string message;
+        std::map<std::string, std::string, core::less_ic> headers;
 
         uint32_t flags = 0;
         int64_t content_length = -1;
@@ -52,7 +52,7 @@ namespace core::network
         core::error connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
         void close();
 
-        std::tuple<core::error, int64_t> send(const u8string & text);
+        std::tuple<core::error, int64_t> send(const std::string & text);
         std::tuple<core::error, int64_t> read(std::shared_ptr<byte_t> buffer, int64_t nbytes);
 
         //数据较少，可以一次性接收
@@ -60,9 +60,9 @@ namespace core::network
         std::tuple<core::error, std::shared_ptr<http_response>, int64_t> recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes);
         std::tuple<core::error, std::shared_ptr<http_response>> recieve(std::function<void(std::shared_ptr<byte_t>, int64_t)> callback);
 
-        std::tuple<core::error, std::shared_ptr<http_response>> request(const u8string & text);
-        std::tuple<core::error, std::shared_ptr<http_response>, int64_t> request(const u8string & text, std::shared_ptr<byte_t> buffer, int64_t nbytes);
-        std::tuple<core::error, std::shared_ptr<http_response>> request(const u8string & text, std::function<void(std::shared_ptr<byte_t>, int64_t)> callback);
+        std::tuple<core::error, std::shared_ptr<http_response>> request(const std::string & text);
+        std::tuple<core::error, std::shared_ptr<http_response>, int64_t> request(const std::string & text, std::shared_ptr<byte_t> buffer, int64_t nbytes);
+        std::tuple<core::error, std::shared_ptr<http_response>> request(const std::string & text, std::function<void(std::shared_ptr<byte_t>, int64_t)> callback);
 
     private:
         core::error parse_header(const std::string line, http_response & response);

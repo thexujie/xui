@@ -6,7 +6,7 @@ namespace core::network
 {
     using namespace core;
 
-    u8string http_header::string()
+    std::string http_header::string()
     {
         std::ostringstream stream;
         stream << method << " " << url << " " << version << "\r\n";
@@ -99,7 +99,7 @@ namespace core::network
         _socket->close();
     }
 
-    std::tuple<error, int64_t> http::send(const u8string & text)
+    std::tuple<error, int64_t> http::send(const std::string & text)
     {
         if (!_socket || _socket->state() != socket_state_connected)
             return { error_state, 0 };
@@ -270,7 +270,7 @@ namespace core::network
         return { std::get<0>(result), std::get<1>(result) };
     }
 
-    std::tuple<core::error, std::shared_ptr<http_response>> http::request(const u8string & text)
+    std::tuple<core::error, std::shared_ptr<http_response>> http::request(const std::string & text)
     {
         auto [error, nb_send] = send(text);
         if (error < 0)
@@ -279,7 +279,7 @@ namespace core::network
         return recieve();
     }
 
-    std::tuple<core::error, std::shared_ptr<http_response>, int64_t> http::request(const u8string & text, std::shared_ptr<byte_t> buffer, int64_t nbytes)
+    std::tuple<core::error, std::shared_ptr<http_response>, int64_t> http::request(const std::string & text, std::shared_ptr<byte_t> buffer, int64_t nbytes)
     {
         auto [error, nb_send] = send(text);
         if (error < 0)
@@ -288,7 +288,7 @@ namespace core::network
         return recieve(buffer, nbytes);
     }
 
-    std::tuple<core::error, std::shared_ptr<http_response>> http::request(const u8string & text, std::function<void(std::shared_ptr<byte_t>, int64_t)> callback)
+    std::tuple<core::error, std::shared_ptr<http_response>> http::request(const std::string & text, std::function<void(std::shared_ptr<byte_t>, int64_t)> callback)
     {
         auto [error, nb_send] = send(text);
         if (error < 0)

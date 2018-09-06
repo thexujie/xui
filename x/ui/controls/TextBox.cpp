@@ -28,6 +28,7 @@ namespace ui::controls
 
     void TextBox::setText(const std::string & text)
     {
+        std::lock_guard l(*this);
         _textblob = nullptr;
         _text = text;
     }

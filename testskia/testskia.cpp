@@ -344,12 +344,12 @@ int _tmain(int argc, const TCHAR * argv[])
     size_t nutf16 = core::utf16_to_utf32(u"ยิ้", 10, ch);
     size_t nutf8 = core::utf8_to_utf32(u8"ยิ้", 30, ch2);
 
-    std::string str = u8"abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello world تەتقىق قىلدىhello world تەتقىق قىلدى";
+    std::string str = u8"𪚥𪚥𪚥ยิ้ยิ้abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello world قىلدىhello world تەتقىق قىلدىقىلدى";
     script::Shaper shaper;
     shaper.reset(str);
-    shaper.setFont({1, 2}, {"", 14});
+    //shaper.setFont({1, 2}, {"", 14});
     shaper.itermize();
-    shaper.shape();
+    shaper.wrap(120, script::wrap_mode::word);
     //UErrorCode status = U_ZERO_ERROR;
     //std::unique_ptr<UBiDi, decltype(&ubidi_close)> bidi(ubidi_openSized(str.length(), 0, &status), &ubidi_close);
     //if (U_FAILURE(status))

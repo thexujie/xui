@@ -3,13 +3,11 @@
 #include "win32/win32.h"
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "graphics/font.h"
-#include "core/vec4.h"
 
 namespace win32
 {
-    u8string GUID2String(const GUID & guid);
-    u8string GUID2String(std::array<uint8_t, 16> data);
+    std::string GUID2String(const GUID & guid);
+    std::string GUID2String(std::array<uint8_t, 16> data);
 
     struct winrect_t : public RECT
     {
@@ -29,6 +27,6 @@ namespace win32
         int32_t height() const { return bottom - top; }
     };
 
-    LOGFONTW MappingFont(const graphics::font & font);
-    LOGFONTW MappingFont(HDC hdc, const graphics::font & font);
+    LOGFONTW MappingFont(const drawing::font & font);
+    LOGFONTW MappingFont(HDC hdc, const drawing::font & font);
 }

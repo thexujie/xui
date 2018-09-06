@@ -46,9 +46,7 @@
 using namespace std::chrono_literals;
 
 #define USE_UTF8
-typedef std::string a8string;
-typedef std::string u8string;
-typedef std::wstring u16string;
+
 typedef char byte_t;
 
 #ifndef _WIN64
@@ -122,5 +120,8 @@ namespace core
 #include "core/timer.h"
 #include "core/app.h"
 #include "core/block_ptr.h"
+
+#include "core/io/stream.h"
+#include "core/io/filestream.h"
 
 using namespace core::unit_literals;

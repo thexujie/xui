@@ -64,7 +64,7 @@
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;../deps/FreeImage/lib/x64/</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/icu/lib64/icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/icu/bin/x64d/icuucd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -105,7 +105,6 @@
     <ClCompile Include="win32\com_ptr.cpp" />
     <ClCompile Include="win32\dll.cpp" />
     <ClCompile Include="win32\GDIObjectCache.cpp" />
-    <ClCompile Include="win32\GraphicsService.cpp" />
     <ClCompile Include="win32\uniscribe\script.cpp" />
     <ClCompile Include="win32\uniscribe\ScriptService.cpp" />
     <ClCompile Include="win32\Win32App.cpp" />
@@ -117,7 +116,6 @@
     <ClInclude Include="win32\com_ptr.h" />
     <ClInclude Include="win32\dll.h" />
     <ClInclude Include="win32\GDIObjectCache.h" />
-    <ClInclude Include="win32\GraphicsService.h" />
     <ClInclude Include="win32\uniscribe\script.h" />
     <ClInclude Include="win32\uniscribe\ScriptService.h" />
     <ClInclude Include="win32\Win32App.h" />

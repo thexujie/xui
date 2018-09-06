@@ -124,6 +124,31 @@
 		<DisplayString>[{index},{length}]</DisplayString>
 	</Type>
 	<Type Name="script::item">
-		<DisplayString>{{{_text}, {range}, script={script}, font={font}[{_font}], color={color}, rtl={rtl}}}</DisplayString>
+		<DisplayString>{{{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={rtl}}}</DisplayString>
+	</Type>
+	<Type Name="script::segment">
+		<DisplayString>{{[{line}], {width}, {_text}, {trange}, {grange}}}</DisplayString>
+	</Type>
+	<Type Name="script::row">
+		<DisplayString>{{[{line}], {_text}, {trange}, {grange}}}</DisplayString>
+	</Type>
+
+	<Type Name="std::basic_string&lt;char,*&gt;">
+		<Intrinsic Name="size" Expression="_Mypair._Myval2._Mysize" />
+		<Intrinsic Name="capacity" Expression="_Mypair._Myval2._Myres" />
+		<DisplayString Condition="capacity() &lt; _Mypair._Myval2._BUF_SIZE">{_Mypair._Myval2._Bx._Buf,s8}</DisplayString>
+		<DisplayString Condition="capacity() &gt;= _Mypair._Myval2._BUF_SIZE">{_Mypair._Myval2._Bx._Ptr,s8}</DisplayString>
+		<StringView Condition="capacity() &lt; _Mypair._Myval2._BUF_SIZE">_Mypair._Myval2._Bx._Buf,s8</StringView>
+		<StringView Condition="capacity() &gt;= _Mypair._Myval2._BUF_SIZE">_Mypair._Myval2._Bx._Ptr,s8</StringView>
+		<Expand>
+			<Item Name="[size]" ExcludeView="simple">size()</Item>
+			<Item Name="[capacity]" ExcludeView="simple">capacity()</Item>
+			<Item Name="[allocator]" ExcludeView="simple">_Mypair</Item>
+			<ArrayItems>
+				<Size>_Mypair._Myval2._Mysize</Size>
+				<ValuePointer Condition="capacity() &lt; _Mypair._Myval2._BUF_SIZE">_Mypair._Myval2._Bx._Buf</ValuePointer>
+				<ValuePointer Condition="capacity() &gt;= _Mypair._Myval2._BUF_SIZE">_Mypair._Myval2._Bx._Ptr</ValuePointer>
+			</ArrayItems>
+		</Expand>
 	</Type>
 </AutoVisualizer>

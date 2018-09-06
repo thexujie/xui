@@ -58,7 +58,7 @@ namespace win32
             ::BitBlt(hdc, x, y, width, height, *_hdc.get(), 0, 0, SRCCOPY);
     }
 
-    graphics::bitmap_buffer Bitmap::buffer() const
+    drawing::bitmap_buffer Bitmap::buffer() const
     {
         return { _data, _size, _strike, _pitch, false };
     }

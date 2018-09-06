@@ -8,8 +8,8 @@
 
 namespace win32
 {
-    u8string GUID2String(const GUID & guid);
-    u8string GUID2String(std::array<uint8_t, 16> data);
+    std::string GUID2String(const GUID & guid);
+    std::string GUID2String(std::array<uint8_t, 16> data);
 
     struct winrect_t : public RECT
     {

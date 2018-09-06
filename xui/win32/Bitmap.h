@@ -1,11 +1,10 @@
 #pragma once
 
-#include "graphics/Bitmap.h"
 #include "win32/windows.h"
 
 namespace win32
 {
-    class Bitmap : public graphics::IGraphicsPixmap
+    class Bitmap
     {
     public:
         ~Bitmap() = default;
@@ -24,7 +23,7 @@ namespace win32
         void BitBltTo(HDC hdc, int32_t x, int32_t y, int32_t width, int32_t height);
 
     public:
-        graphics::bitmap_buffer buffer() const;
+        drawing::bitmap_buffer buffer() const;
         core::error Save(std::string path) const;
 
     private:

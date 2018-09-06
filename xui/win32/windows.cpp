@@ -9,7 +9,7 @@ namespace win32
         wchar_t buffer[512] = {};
         int nchars = ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, 512, NULL);
         std::wstring str(buffer, nchars - 2);
-        return core::string::wstr_u8str(str);
+        return core::wstr_u8str(str);
     }
 
     int runLoop()
@@ -35,17 +35,17 @@ namespace win32
         return (int)msg.wParam;
     }
 
-    u8string GUID2String(const GUID & guid)
+    std::string GUID2String(const GUID & guid)
     {
         std::array<char, 40> output;
         snprintf(output.data(), output.size(), "{%08X-%04hX-%04hX-%02X%02X-%02X%02X%02X%02X%02X%02X}",
             guid.Data1, guid.Data2, guid.Data3,
             guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6],
             guid.Data4[7]);
-        return u8string(output.data());
+        return std::string(output.data());
     }
 
-    u8string GUID2String(std::array<uint8_t, 16> data)
+    std::string GUID2String(std::array<uint8_t, 16> data)
     {
         const GUID & guid = *(const GUID *)data.data();
         std::array<char, 40> output;
@@ -53,7 +53,7 @@ namespace win32
             guid.Data1, guid.Data2, guid.Data3,
             guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6],
             guid.Data4[7]);
-        return u8string(output.data());
+        return std::string(output.data());
     }
 
 
@@ -159,24 +159,24 @@ namespace win32
         return "Unknown";
     }
 
-    graphics::font defaultFont()
+    drawing::font defaultFont()
     {
         NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
         SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
 
-        graphics::font font;
-        font.family = core::string::wstr_u8str(metrics.lfMessageFont.lfFaceName);
+        drawing::font font;
+        font.family = core::wstr_u8str(metrics.lfMessageFont.lfFaceName);
         font.size = metrics.lfMessageFont.lfHeight;
         return font;
     }
 
-    LOGFONTW MappingFont(HDC hdc, const graphics::font & font)
+    LOGFONTW MappingFont(HDC hdc, const drawing::font & font)
     {
         LOGFONTW logfont = {};
         if (font.family[0])
-            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8str_wstr(font.family).data(), -1);
+            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::u8str_wstr(font.family).data(), -1);
         else
-            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::string::u8str_wstr(win32::defaultFont().family).data(), -1);
+            core::textcpy(logfont.lfFaceName, LF_FACESIZE, core::u8str_wstr(win32::defaultFont().family).data(), -1);
 
         logfont.lfWidth = 0;
         if (font.size > 0)
@@ -187,9 +187,9 @@ namespace win32
         else
             logfont.lfHeight = std::lroundf(font.size);
 
-        logfont.lfWeight = static_cast<int32_t>(font.weight);
+        logfont.lfWeight = static_cast<int32_t>(font.style.weight);
 
-        logfont.lfItalic = static_cast<uint8_t>(font.slant);
+        logfont.lfItalic = static_cast<uint8_t>(font.style.slant);
         logfont.lfUnderline = static_cast<uint8_t>(0);
         //logfont.lfStrikeOut = static_cast<uint8_t>(font.flags & font::underline);
         //logFont.lfCharSet = static_cast<uint8_t>(font.charset);
@@ -200,7 +200,7 @@ namespace win32
         return logfont;
     }
 
-    LOGFONTW MappingFont(const graphics::font & font)
+    LOGFONTW MappingFont(const drawing::font & font)
     {
         HDC hdcScreen = GetDC(NULL);
         LOGFONTW logfont = MappingFont(hdcScreen, font);

@@ -1,11 +1,7 @@
 #pragma once
-#include "stream.h"
-#include <fstream>
-#include "buffer.h"
 
 namespace core::io
 {
-    using namespace core;
     using namespace std::experimental;
 
     class filestream : public core::io::istream

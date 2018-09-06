@@ -5,14 +5,14 @@
 namespace win32
 {
     using namespace core;
-    using namespace graphics;
+    using namespace drawing;
 
     void FontToLOGFONT(HDC hdc, const font & font, LOGFONTW & logFont)
     {
         if (font.family.empty())
-            textcpy(logFont.lfFaceName, LF_FACESIZE, core::string::u8str_wstr(win32::defaultFont().family).c_str(), -1);
+            textcpy(logFont.lfFaceName, LF_FACESIZE, core::u8str_wstr(win32::defaultFont().family).c_str(), -1);
         else
-            textcpy(logFont.lfFaceName, LF_FACESIZE, core::string::u8str_wstr(font.family).c_str(), -1);
+            textcpy(logFont.lfFaceName, LF_FACESIZE, core::u8str_wstr(font.family).c_str(), -1);
 
         int iDpiY = GetDeviceCaps(hdc, LOGPIXELSY);
         logFont.lfWidth = 0;
@@ -21,8 +21,8 @@ namespace win32
         else
             logFont.lfHeight = font.size;
 
-        logFont.lfWeight = int(font.weight);
-        logFont.lfItalic = int(font.slant);
+        logFont.lfWeight = int(font.style.weight);
+        logFont.lfItalic = int(font.style.slant);
         logFont.lfUnderline = 0;
         logFont.lfStrikeOut = FALSE;
         //logFont.lfCharSet = (uint_8)(font.charset);
@@ -72,7 +72,7 @@ namespace win32
         return brushptr;
     }
 
-    std::shared_ptr<HFONT> GDIObjectCache::GetFont(const graphics::font & font)
+    std::shared_ptr<HFONT> GDIObjectCache::GetFont(const drawing::font & font)
     {
         auto iter = _fonts.find(font);
         if (iter != _fonts.end())
@@ -81,7 +81,7 @@ namespace win32
         LOGFONTW logFont = win32::MappingFont(*_hdc.get(), font);
 
         HFONT hFont = CreateFontIndirectW(&logFont);
-        std::hash<graphics::font>{}(font);
+        std::hash<drawing::font>{}(font);
 
         std::shared_ptr<HFONT> fontptr = std::make_shared<HFONT>(hFont);
         _fonts[font] = fontptr;

@@ -19,55 +19,8 @@
 #include "SkTypeface.h"
 #include <bitset>
 
-namespace script
+namespace drawing::script
 {
-    enum class wrap_mode
-    {
-        none = 0,
-        word,
-        charactor,
-    };
-
-    // range
-    struct range
-    {
-        size_t index = 0;
-        size_t length = 0;
-
-        size_t end() const { return index + length; }
-        range operator + (const range & rhs)
-        {
-            if (!length)
-                return rhs;
-
-            if (!rhs.length)
-                return *this;
-
-            if (index + length == rhs.index)
-                return { index, rhs.index + rhs.length };
-
-            if (rhs.index + rhs.length == index)
-                return { rhs.index, index + length };
-
-            return { 0, 0 };
-        }
-
-        range & operator += (const range & rhs)
-        {
-            if (!length)
-                *this = rhs;
-            else if (!rhs.length)
-                ;
-            else if (index + length == rhs.index)
-                *this = { index, length + rhs.length };
-            else if (rhs.index + rhs.length == index)
-                *this = { rhs.index, length + rhs.length };
-            else
-                *this = { 0, 0 };
-            return *this;
-        }
-    };
-
     struct item
     {
         range trange;
@@ -115,21 +68,26 @@ namespace script
         range srange;
         uint32_t line = 0;
         float32_t width = 0;
+        float32_t ascent = 0;
+        float32_t descent = 0;
 #ifdef _DEBUG
         std::string _text;
 #endif
     };
 
-    class Shaper
+    class Shaper : public IShaper
     {
     public:
         Shaper() = default;
+        Shaper(const drawing::font & font, core::color32 color) : _font(font), _color(color){}
 
         core::error reset(std::string text);
         core::error itermize();
         core::error wrap(float32_t end, wrap_mode mode);
 
         core::error shape(SkTextBlobBuilder & builder, uint32_t index);
+
+        core::si32f lineSize(uint32_t index);
 
         void setFont(range range, const drawing::font & font);
         void setColor(range range, uint32_t color);
@@ -142,9 +100,10 @@ namespace script
 
     private:
         constexpr static uint16_t font_default = 0;
-        constexpr static uint32_t color_default = core::colors::Black.argb;
+
         UBiDiLevel _defaultBidiLevel = UBIDI_DEFAULT_LTR;
         drawing::font _font;
+        core::color32 _color = core::colors::Black;
         std::string _text;
 
         std::unordered_map<drawing::font, uint16_t> _font_indices;

@@ -741,6 +741,16 @@ namespace core
 
 #pragma region text
     constexpr size_t npos = size_t(-1);
+    constexpr uint16_t nposu16 = uint16_t(-1);
+    constexpr uint32_t nposu32 = uint32_t(-1);
+    constexpr uint64_t nposu64 = uint64_t(-1);
+
+    template<typename T>
+    inline constexpr bool npos_v = T(-1);
+
+    template<typename T>
+    constexpr bool is_npos(const T & val) { return val == T(-1); }
+
     template<typename CharT>
     void textempty(CharT * text, size_t size = npos)
     {

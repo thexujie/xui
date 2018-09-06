@@ -4,12 +4,11 @@
 #include <vector>
 #include <usp10.h>
 #include "ScriptService.h"
-#include "graphics/GraphicsService.h"
 #pragma comment(lib, "usp10.lib")
 
 namespace win32::uniscribe
 {
-    using namespace graphics;
+    using namespace drawing;
 
     struct tlrect_t
     {
@@ -201,7 +200,7 @@ namespace win32::uniscribe
     };
 
 
-    class ScriptItem : public graphics::IGraphicsString
+    class ScriptItem 
     {
     public:
         ScriptItem();

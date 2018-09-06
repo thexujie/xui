@@ -30,7 +30,7 @@ namespace win32::uniscribe
         }
     }
 
-    int32_t ScriptService::MapFont(const graphics::font & font)
+    int32_t ScriptService::MapFont(const drawing::font & font)
     {
         int32_t ifont = -1;
         for (int32_t cnt = 0; cnt < _fonts.size(); ++cnt)
@@ -77,7 +77,7 @@ namespace win32::uniscribe
         return _fonts[ifont];
     }
 
-    graphics::font ScriptService::GetFontFallBack(const graphics::font & font, int32_t iLanguage, const wchar_t * text, int32_t length)
+    drawing::font ScriptService::GetFontFallBack(const drawing::font & font, int32_t iLanguage, const wchar_t * text, int32_t length)
     {
         char32_t ch;
         // skip spaces
@@ -87,11 +87,11 @@ namespace win32::uniscribe
             --length;
         }
 
-        int32_t len = core::utf16_to_unicode(reinterpret_cast<const char16_t *>(text), length, ch);
+        int32_t len = core::utf16_to_utf32(reinterpret_cast<const char16_t *>(text), length, ch);
         if (len <= 0)
             return {};
 
-        graphics::font fontfb = font;
+        drawing::font fontfb = font;
         fontfb.family.clear();
         const core::unicodeplane_t & plane = core::unicodeplane_find(reinterpret_cast<const char16_t *>(text), len);
         switch (plane.plane)

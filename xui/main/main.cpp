@@ -1,18 +1,12 @@
 ﻿#include "stdafx.h"
 
-#include "core/app.h"
-#include "core/counter_fps.h"
-#include "core/vec2.h"
-#include "graphics/GraphicsService.h"
-#include "graphics/Graphics.h"
+#include "core/core.h"
+#include "drawing/drawing.h"
+
 #include "win32/Bitmap.h"
 #include "win32/windows.h"
-#include "win32/GraphicsService.h"
 #include "win32/Win32App.h"
-#include "graphics/Image.h"
-#include "core/io/filestream.h"
 #include "win32/uniscribe/script.h"
-#include "graphics/TextBlob.h"
 #include "ui/Container.h"
 #include "ui/Form.h"
 #include "ui/Desktop.h"
@@ -27,31 +21,31 @@ using namespace core;
 
 void testImages()
 {
-    std::make_shared<graphics::Image>(u8"jpg/对比.jpg")->Save(string::format("out/jpg_", u8"对比", ".tga"));
-    for (auto & path : io::allPaths("bmp"))
+    std::make_shared<drawing::Image>(u8"jpg/对比.jpg")->Save(core::format("out/jpg_", u8"对比", ".tga"));
+    for (auto & path : core::io::allPaths("bmp"))
     {
-        if (path.u8string().find(".bmp") != std::string::npos)
-            std::make_shared<graphics::Image>(path.u8string())->Save(string::format("out/bmp_", path.filename()));
+        if (path.string().find(".bmp") != std::string::npos)
+            std::make_shared<drawing::Image>(path.string())->Save(core::format("out/bmp_", path.filename()));
     }
     for (auto & path : io::allPaths("tga"))
     {
-        if (path.u8string().find(".tga") != std::string::npos)
-            std::make_shared<graphics::Image>(path.u8string())->Save(string::format("out/tga_", path.stem(), ".tga"));
+        if (path.string().find(".tga") != std::string::npos)
+            std::make_shared<drawing::Image>(path.string())->Save(core::format("out/tga_", path.stem(), ".tga"));
     }
     for (auto & path : io::allPaths("png"))
     {
-        if (path.u8string().find(".png") != std::string::npos)
-            std::make_shared<graphics::Image>(path.u8string())->Save(string::format("out/png_", path.stem(), ".tga"));
+        if (path.string().find(".png") != std::string::npos)
+            std::make_shared<drawing::Image>(path.string())->Save(core::format("out/png_", path.stem(), ".tga"));
     }
     for (auto & path : io::allPaths("jpg"))
     {
-        if (path.u8string().find(".jpg") != std::string::npos)
-            std::make_shared<graphics::Image>(path.u8string())->Save(string::format("out/jpg_", path.stem(), ".tga"));
+        if (path.string().find(".jpg") != std::string::npos)
+            std::make_shared<drawing::Image>(path.string())->Save(core::format("out/jpg_", path.stem(), ".tga"));
     }
     for (auto & path : io::allPaths("dds"))
     {
-        if (path.u8string().find(".dds") != std::string::npos)
-            std::make_shared<graphics::Image>(path.u8string())->Save(string::format("out/dds_", path.stem(), ".bmp"));
+        if (path.string().find(".dds") != std::string::npos)
+            std::make_shared<drawing::Image>(path.string())->Save(core::format("out/dds_", path.stem(), ".bmp"));
     }
 }
 
@@ -77,7 +71,7 @@ void xui_main()
         buttons->setLayoutDirection(core::align::top);
         for (int cnt = 0; cnt < 100; ++cnt)
         {
-            auto button = std::make_shared<ui::controls::Button>(core::string::format(u8"点击查看更多精彩内容 ", cnt * 100));
+            auto button = std::make_shared<ui::controls::Button>(core::format(u8"点击查看更多精彩内容 ", cnt * 100));
             button->setBorder({ 2_px });
             button->setBorderColors({ colors::DimGray });
             buttons->addControl(button);
@@ -106,7 +100,7 @@ void xui_main()
     image0->setBorder({ 10_px, 20_px, 30_px, 40_px });
     //image0->setBorder({ 40_px });
     image0->setBorderColors({ colors::Blue, colors::Red, colors::DarkCyan, colors::Green });
-    image0->setBorderStyles({ graphics::stroke_style::dashed });
+    image0->setBorderStyles({ drawing::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
     image0->setMargin({ 0.5_em });
 
@@ -144,8 +138,8 @@ void xui_main()
     form->setScrollbarVisionH(ui::scrollbar_vision::always);
     const core::property_table & props = core::app().properties<ui::controls::Button>();
 
-    graphics::font font;
-    graphics::fontmetrics fm(font);
+    drawing::font font;
+    drawing::fontmetrics fm(font);
 
     auto layer = std::make_shared<ui::Container>();
     {
@@ -156,6 +150,7 @@ void xui_main()
         layer->setSize({ 100_per });
 
         auto tbx = std::make_shared<ui::controls::TextBox>();
+        tbx->setText(u8"𪚥𪚥𪚥ยิ้ยิ้abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello قىلدىhello world تەتقىق قىلدىقىلدى");
         tbx->setSize({ 100_per, 2_em });
         tbx->setImeMode(ui::ime_mode::on);
         layer->addControl(tbx);
@@ -234,8 +229,8 @@ int main()
 {
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 
-    graphics::StringFormat fmt;
-    auto textblob = std::make_shared<graphics::TextBlob>("abcdefg", fmt);
+    drawing::StringFormat fmt;
+    auto textblob = std::make_shared<drawing::TextBlob>("abcdefg", fmt);
 
     auto app = std::make_shared<win32::Win32App>();
     xui_main();
