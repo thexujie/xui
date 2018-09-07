@@ -221,6 +221,14 @@ namespace drawing::script
             utf32_pos += nutf32;
         }
 
+#ifdef _DEBUG
+        for (auto & item : _items)
+        {
+            item._text = _text.substr(item.trange.index, item.trange.length);
+            item._font = _fonts[item.font].font;
+        }
+#endif
+
         for (auto & item : _items)
         {
             hb_buffer_clear_contents(_hbbuffer.get());
@@ -261,10 +269,7 @@ namespace drawing::script
                 if (gindex < gcount - 1)
                     glyph.trange.length = infos[gindex + 1].cluster - info.cluster;
                 else
-                    glyph.trange.length = utf8_pos - info.cluster;
-#ifdef _DEBUG
-                glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
-#endif
+                    glyph.trange.length = item.trange.end() - info.cluster;
                 glyph.gid = uint16_t(info.codepoint);
                 glyph.advance = { float32_t(pos.x_advance * coefX), float32_t(pos.y_advance * coefY) };
                 glyph.offset = { float32_t(pos.x_offset * coefX), float32_t(pos.y_offset * coefY) };
@@ -279,11 +284,6 @@ namespace drawing::script
         }
 
 #ifdef _DEBUG
-        for (auto & item : _items)
-        {
-            item._text = _text.substr(item.trange.index, item.trange.length);
-            item._font = _fonts[item.font].font;
-        }
         for (auto & glyph : _glyphs)
         {
             glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
@@ -311,6 +311,7 @@ namespace drawing::script
         };
         typedef core::bitflag<flushflag> flushflags;
 
+        uint32_t segment_index = 0;
         for(size_t gindex = 0, iindex = 0; gindex < _glyphs.size(); ++gindex)
         {
             flushflags flush = nullptr;
@@ -328,6 +329,7 @@ namespace drawing::script
             if(flush.any())
             {
                 segment seg = {};
+                seg.sindex = ++segment_index;
                 seg.item = iindex;
                 seg.line = line;
                 seg.offset = curr;
@@ -374,6 +376,20 @@ namespace drawing::script
         for(auto & row : _rows)
             row._text = _text.substr(row.trange.index, row.trange.length);
 #endif
+
+        std::vector<UBiDiLevel> _bidis;
+        std::vector<int32_t> visual_indices;
+        for (auto & row : _rows)
+        {
+            _bidis.resize(row.srange.length);
+            visual_indices.resize(row.srange.length, 0);
+
+            for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
+                _bidis[sindex] = _items[_segments[sindex + row.srange.index].item].level;
+
+            ubidi_reorderVisual(_bidis.data(), row.srange.length, visual_indices.data());
+            std::sort(_segments.begin() + row.srange.index, _segments.begin() + row.srange.end(), [&row, &visual_indices](const segment & lhs, const segment & rhs) { return visual_indices[lhs.sindex - row.srange.index] < visual_indices[rhs.sindex - row.srange.index]; });
+        }
         return core::error_ok;
     }
 
@@ -383,14 +399,16 @@ namespace drawing::script
             return core::error_ok;
 
         row & row = _rows[index];
+
+        float32_t offset_x = 0;
         float32_t offset_y = 0;
-        for(size_t sindex = row.srange.index; sindex < row.srange.end(); ++sindex)
+        for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
         {
-            segment & seg = _segments[sindex];
+            segment & seg = _segments[row.srange.index + sindex];
             item & item = _items[seg.item];
 
             auto & font_cache = _fonts[item.font];
-            float32_t offset_x = seg.offset;
+            //float32_t offset_x = seg.offset;
             SkPaint paint;
             paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
             paint.setTextSize(font_cache.font.size);

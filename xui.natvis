@@ -127,7 +127,7 @@
 		<DisplayString>{{{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={level}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::script::segment">
-		<DisplayString>{{[{line}], {width}, {_text}, {trange}, {grange}}}</DisplayString>
+		<DisplayString>{{[{line}-{sindex}], {width}, {_text}, {trange}, {grange}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::script::row">
 		<DisplayString>{{[{line}], {_text}, {trange}, {grange}}}</DisplayString>

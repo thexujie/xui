@@ -50,6 +50,7 @@ namespace drawing::script
 
     struct segment
     {
+        uint32_t sindex = 0;
         section trange;
         section grange;
         uint32_t item = 0;
@@ -121,7 +122,6 @@ namespace drawing::script
 
         std::unique_ptr<hb_buffer_t, decltype(&hb_buffer_destroy)> _hbbuffer = {nullptr, hb_buffer_destroy };
         std::unique_ptr<icu::BreakIterator> _breaker;
-        std::vector<UBiDiLevel> _bidis;
 #ifdef _DEBUG
         std::u32string _u32text;
 #endif
