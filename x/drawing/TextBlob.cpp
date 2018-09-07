@@ -30,7 +30,7 @@ namespace drawing
         if (width < 0)
             width = std::numeric_limits<float32_t>::max();
 
-        static int type = 1;
+        static int type = 2;
         if(type == 1)
         {
             SkPaint paint;

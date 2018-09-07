@@ -2,23 +2,31 @@
 #include "font.h"
 #include "win32/windows.h"
 
+static drawing::font default_font;
+static std::once_flag flag;
+
+void generate_default_font()
+{
+    NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
+    SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
+    default_font.family = core::wstr_u8str(metrics.lfMessageFont.lfFaceName);
+    if (metrics.lfMessageFont.lfHeight < 0)
+        default_font.size = (float32_t)-metrics.lfMessageFont.lfHeight;
+    else
+    {
+        HDC hdc = GetDC(HWND_DESKTOP);
+        int dpiy = GetDeviceCaps(hdc, LOGPIXELSY);
+        default_font.size = metrics.lfMessageFont.lfHeight * 96.0f / dpiy;
+        ReleaseDC(HWND_DESKTOP, hdc);
+    }
+}
+
 namespace drawing
 {
     font::font()
     {
-        NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
-        SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
-
-        family = core::wstr_u8str(metrics.lfMessageFont.lfFaceName);
-        if(metrics.lfMessageFont.lfHeight < 0)
-            size = (float32_t)-metrics.lfMessageFont.lfHeight;
-        else
-        {
-            HDC hdc = GetDC(HWND_DESKTOP);
-            int dpiy = GetDeviceCaps(hdc, LOGPIXELSY);
-            size = metrics.lfMessageFont.lfHeight * 96.0f / dpiy;
-            ReleaseDC(HWND_DESKTOP, hdc);
-        }
+        std::call_once(flag, generate_default_font);
+        *this = default_font;
     }
 
     font::font(const char * family_, float_t size_, font_style style_)
@@ -26,17 +34,8 @@ namespace drawing
     {
         if(!family_ || !family_[0] || size_ <= 0)
         {
-            NONCLIENTMETRICSW metrics = { sizeof(NONCLIENTMETRICSW) };
-            SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
-
-            if(!family_ || !family_[0])
-                family = core::wstr_u8str(metrics.lfMessageFont.lfFaceName);
-            else
-                family = family_;
-            if(size_ <= 0)
-                size = (float32_t)metrics.lfMessageFont.lfHeight;
-            else
-                size = size_;
+            std::call_once(flag, generate_default_font);
+            *this = default_font;
         }
         else
         {

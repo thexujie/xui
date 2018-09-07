@@ -94,11 +94,10 @@ namespace drawing::script
 
         struct bidilevel
         {
-            range range;
+            section range;
             UBiDiLevel level;
         };
         std::vector<bidilevel> levels;
-        std::vector<item> items;
 
         hb_buffer_clear_contents(_hbbuffer.get());
         hb_buffer_set_content_type(_hbbuffer.get(), HB_BUFFER_CONTENT_TYPE_UNICODE);
@@ -115,12 +114,21 @@ namespace drawing::script
         size_t utf8_pos = 0;
         size_t utf16_pos = 0;
         size_t utf32_pos = 0;
+        char32_t ch = 0;
 
         UBiDiLevel level_last = 0;
         hb_script_t script_last = HB_SCRIPT_UNKNOWN;
-        uint16_t font_index_last = core::nposu16;
-        uint16_t font_index_last_fb = core::nposu16;
+
         uint32_t color_last = _color;
+        uint16_t font_index_last = core::nposu16;
+        uint16_t font_index_fb_last = core::nposu16;
+
+        UBiDiLevel level = 0;
+        hb_script_t script = HB_SCRIPT_UNKNOWN;
+
+        uint32_t color = _color;
+        uint16_t font_index = core::nposu16;
+
         enum class flushflag
         {
             eof = 0x0001,
@@ -133,51 +141,50 @@ namespace drawing::script
 
         do
         {
-            char32_t ch = 0, ch2 = 0;
-            size_t nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, ch2);
-            size_t nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, ch);
-            size_t nutf32 = 1;
-#ifdef _DEBUG
-            _u32text.push_back(ch);
-#endif
-            assert(ch == ch2);
-            _chars.push_back({ utf8_pos, nutf8 });
-            UBiDiLevel level = ubidi_getLevelAt(bidi.get(), utf16_pos);
-            hb_script_t script = hb_unicode_script(hb_unicode, ch);
-
             flushflags flush = nullptr;
 
-            uint16_t font_index = _rtf_font_indices[utf16_pos];
-            uint32_t color = _rtf_colors[utf16_pos];
+            size_t nutf8 = 1;
+            size_t nutf16 = 1;
+            size_t nutf32 = 1;
 
-            if (utf16_pos == 0)
-            {
-                level_last = level;
-                script_last = script;
-            }
-            else
-            {
-                
-            }
-
-            if(utf16_pos + nutf16 >= u16str.length())
+            if (utf16_pos >= u16str.length())
             {
                 flush |= flushflag::eof;
-                hb_buffer_add(_hbbuffer.get(), ch, utf8_pos);
-                // 把最后一个字符包括进去
-                utf8_pos += nutf8;
-                utf16_pos += nutf16;
-                utf32_pos += nutf32;
-                nutf8 = 0;
-                nutf16 = 0;
-                nutf32 = 0;
             }
             else
             {
-                if(level != level_last)
+                char32_t ch2 = 0;
+                nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, ch2);
+                nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, ch);
+                nutf32 = 1;
+#ifdef _DEBUG
+                _u32text.push_back(ch);
+#endif
+                // 可能是删除字符时搞错了，比如 utf8 4 char，删掉一个变成了 3char，就非法了，结束排版
+                if (ch != ch2)
+                    continue;
+
+                _chars.push_back({ utf8_pos, nutf8 });
+                level = ubidi_getLevelAt(bidi.get(), utf16_pos);
+                script = hb_unicode_script(hb_unicode, ch);
+
+                font_index = _rtf_font_indices[utf16_pos];
+                color = _rtf_colors[utf16_pos];
+
+                if (utf16_pos == 0)
+                {
+                    level_last = level;
+                    script_last = script;
+                }
+                else
+                {
+
+                }
+
+                if (level != level_last)
                     flush |= flushflag::level;
 
-                if(script != script_last)
+                if (script != script_last)
                 {
                     if (script == HB_SCRIPT_INHERITED || script == HB_SCRIPT_COMMON)
                         script = script_last;
@@ -189,43 +196,43 @@ namespace drawing::script
                         flush |= flushflag::script;
                     }
                 }
-            }
 
-            auto & font_cache = _fonts[font_index];
-            if (font_index_last_fb != core::nposu16 && !flush.any(flushflag::script) && _fonts[font_index_last_fb].skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
-            {
-                // 使用上一个 fb 的字体搞定了
-                font_index = font_index_last_fb;
-            }
-            else if (font_cache.skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
-            {
-                font_index_last_fb = 0;
-            }
-            else
-            {
-                font_index_last_fb = 0;
-                sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault(); 
-                auto tf = fontMgr->matchFamilyStyleCharacter( nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, ch);
-                if(tf)
+                auto & font_cache = _fonts[font_index];
+                if (font_index_fb_last != core::nposu16 && !flush.any(flushflag::script) && _fonts[font_index_fb_last].skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
                 {
-                    drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
-                    uint16_t font_index_fb = fontIndex(font_fb);
-                    font_index_last_fb = font_index_fb;
-                    font_index = font_index_fb;
+                    // 使用上一个 fb 的字体搞定了
+                    font_index = font_index_fb_last;
                 }
+                else if (font_cache.skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
+                {
+                    font_index_fb_last = 0;
+                }
+                else
+                {
+                    font_index_fb_last = 0;
+                    sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
+                    auto tf = fontMgr->matchFamilyStyleCharacter(nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, ch);
+                    if (tf)
+                    {
+                        drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
+                        uint16_t font_index_fb = fontIndex(font_fb);
+                        font_index_fb_last = font_index_fb;
+                        font_index = font_index_fb;
+                    }
+                }
+
+                if (font_index_last == core::nposu16)
+                    font_index_last = font_index;
+
+                if (font_index != font_index_last)
+                    flush |= flushflag::font;
+                if (color != color_last)
+                    flush |= flushflag::color;
             }
-
-            if (font_index_last == core::nposu16)
-                font_index_last = font_index;
-
-            if(font_index != font_index_last)
-                flush |= flushflag::font;
-            if (color != color_last)
-                flush |= flushflag::color;
 
             if (flush.any() && utf8_pos > utf8_start)
             {
-                item item = {{ utf8_start, utf8_pos - utf8_start }, script_last, !!(level_last & 1), font_index_last, color_last};
+                item item = { { utf8_start, utf8_pos - utf8_start }, script_last, !!(level_last & 1), font_index_last, color_last };
 #ifdef _DEBUG
                 item._text = _u32text.substr(utf32_start, utf32_pos - utf32_start);
                 auto iter = std::find_if(_font_indices.begin(), _font_indices.end(), [font_index_last](const auto & vt) { return vt.second == font_index_last; });
@@ -270,7 +277,7 @@ namespace drawing::script
                     hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
                     hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
                     uint32_t ig_last = 0;
-                    for(uint32_t ig = 0; ig < len; ++ig)
+                    for (uint32_t ig = 0; ig < len; ++ig)
                     {
                         const hb_glyph_info_t & info = infos[ig];
                         const hb_glyph_position_t & pos = poses[ig];
@@ -307,14 +314,16 @@ namespace drawing::script
             utf16_pos += nutf16;
             utf32_pos += nutf32;
         }
-        while (utf16_pos < u16str.length());
+        while (utf16_pos <= u16str.length());
 
         return core::error_ok;
     }
 
     core::error Shaper::wrap(float32_t end, wrap_mode mode)
     {
-        _rows.push_back({0, 0});
+        _rows.push_back({});
+        _segments.push_back({});
+        ++_rows.back().srange.length;
         if (_text.empty())
             return core::error_ok;
 
@@ -333,19 +342,16 @@ namespace drawing::script
 
         for(size_t gindex = 0, iindex = 0; gindex < _glyphs.size(); ++gindex)
         {
-            glyph & glyph = _glyphs[gindex];
-            auto & item = _items[iindex];
-
-            auto & fmetrics = _fonts[item.font].fmetrics;
-
             flushflags flush = nullptr;
-            if (glyph.trange.index >= item.trange.end())
+            glyph & glyph = _glyphs[gindex];
+            if (glyph.trange.index >= _items[iindex].trange.end())
+            {
+                ++iindex;
                 flush |= flushflag::item;
+            }
 
-            if (curr + glyph.advance.cx > end && glyph.standalone && gindex > gstart)
+            if (curr + glyph.advance.cx > end && glyph.standalone && _segments.back().grange.length > 0)
                 flush |= flushflag::width;
-            else if(gindex == _glyphs.size() - 1)
-                flush |= flushflag::eof;
             else {}
 
             if(flush.any())
@@ -353,38 +359,22 @@ namespace drawing::script
                 segment seg = {};
                 seg.item = iindex;
                 seg.line = line;
-                seg.offset = last;
-                seg.width = curr - last;
-                if(flush.any(flushflag::eof))
-                {
-                    seg.trange = { _glyphs[gstart].trange.index, glyph.trange.end() - _glyphs[gstart].trange.index };
-                    seg.grange = { gstart, gindex - gstart + 1};
-                }
-                else
-                {
-                    seg.trange = { _glyphs[gstart].trange.index, glyph.trange.index - _glyphs[gstart].trange.index };
-                    seg.grange = { gstart, gindex - gstart };
-                }
-#ifdef _DEBUG
-                seg._text = _text.substr(seg.trange.index, seg.trange.length);
-#endif
+                seg.offset = curr;
+                seg.trange.index = glyph.trange.index;
+                seg.grange.index = gindex;
                 _segments.push_back(seg);
-                gstart = gindex;
 
                 if (flush.any(flushflag::width))
                 {
                     row new_row = {};
-                    new_row.trange = { glyph.trange.index, 0 };
-                    new_row.grange = { gindex, 0 };
+                    new_row.trange.index = glyph.trange.index;
+                    new_row.grange.index = gindex;
                     new_row.srange = { _segments.size() - 1, 0};
-                    new_row.line = line++;
+                    new_row.line = line;
                     _rows.push_back(new_row);
                     curr = 0;
+                    ++line;
                 }
-
-                last = curr;
-                if (flush.any(flushflag::item))
-                    ++iindex;
 
                 ++_rows.back().srange.length;
             }
@@ -393,7 +383,13 @@ namespace drawing::script
             }
             curr += glyph.advance.cx;
 
+            segment & seg_last = _segments.back();
+            seg_last.trange.length += glyph.trange.length;
+            seg_last.grange.length += 1;
+            seg_last.width += glyph.advance.cx;
+
             row & row_this = _rows.back();
+            auto & fmetrics = _fonts[_items[iindex].font].fmetrics;
             row_this.trange.length += glyph.trange.length;
             row_this.grange.length += 1;
             row_this.width += glyph.advance.cx;
@@ -402,6 +398,8 @@ namespace drawing::script
         }
 
 #ifdef _DEBUG
+        for (auto & seg : _segments)
+            seg._text = _text.substr(seg.trange.index, seg.trange.length);
         for(auto & row : _rows)
             row._text = _text.substr(row.trange.index, row.trange.length);
 #endif
@@ -468,13 +466,13 @@ namespace drawing::script
         return size;
     }
 
-    void Shaper::setFont(range range, const drawing::font & font)
+    void Shaper::setFont(section range, const drawing::font & font)
     {
         uint16_t index = fontIndex(font);
         std::fill(_rtf_font_indices.begin() + range.index, _rtf_font_indices.begin() + range.end(), index);
     }
 
-    void Shaper::setColor(range range, uint32_t color)
+    void Shaper::setColor(section range, uint32_t color)
     {
         std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
     }

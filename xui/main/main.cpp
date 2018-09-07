@@ -140,7 +140,7 @@ void xui_main()
 
     drawing::font font;
     drawing::fontmetrics fm(font);
-
+    std::string rtft = u8"𪚥𪚥𪚥ยิ้ยิ้abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello ق قق ققق قققق قققق aa ققققق a قققققق";
     auto layer = std::make_shared<ui::Container>();
     {
         layer->setBackgroundColor(0x40ffffff);
@@ -150,7 +150,7 @@ void xui_main()
         layer->setSize({ 100_per });
 
         auto tbx = std::make_shared<ui::controls::TextBox>();
-        tbx->setText(u8"𪚥𪚥𪚥ยิ้ยิ้abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello قىلدىhello world تەتقىق قىلدىقىلدى");
+        tbx->setText(rtft);
         tbx->setSize({ 100_per, 2_em });
         tbx->setImeMode(ui::ime_mode::on);
         layer->addControl(tbx);
@@ -159,6 +159,7 @@ void xui_main()
     }
     {
         auto tbx = std::make_shared<ui::controls::TextBox>();
+        tbx->setText(rtft);
         tbx->setSize({ 100_per, 2_em });
         layer->addControl(tbx);
 

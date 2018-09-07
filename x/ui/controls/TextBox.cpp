@@ -149,7 +149,18 @@ namespace ui::controls
     void TextBox::onChar(char32_t ch)
     {
         if (ch <= 0xffff && std::iswcntrl((wint_t)ch))
+        {
+            if(ch == 8)
+            {
+                if(!_text.empty())
+                {
+                    _textblob.reset();
+                    refresh();
+                    _text.resize(_text.length() - 1);
+                }
+            }
             return;
+        }
         
         char chars[4] = { 0 };
         size_t len = core::utf32_to_utf8(ch, chars);

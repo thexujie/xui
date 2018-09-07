@@ -23,7 +23,7 @@ namespace drawing::script
 {
     struct item
     {
-        range trange;
+        section trange;
         hb_script_t script;
         bool rtl;
         uint16_t font;
@@ -39,7 +39,7 @@ namespace drawing::script
 #ifdef _DEBUG
         std::string _text;
 #endif
-        range trange;
+        section trange;
         uint16_t gid = 0;
         uint16_t gcount = 0;
         core::vec2<float32_t> advance;
@@ -50,8 +50,8 @@ namespace drawing::script
 
     struct segment
     {
-        range trange;
-        range grange;
+        section trange;
+        section grange;
         uint32_t item = 0;
         uint32_t line = 0;
         float32_t offset = 0;
@@ -63,9 +63,9 @@ namespace drawing::script
 
     struct row
     {
-        range trange;
-        range grange;
-        range srange;
+        section trange;
+        section grange;
+        section srange;
         uint32_t line = 0;
         float32_t width = 0;
         float32_t ascent = 0;
@@ -89,10 +89,11 @@ namespace drawing::script
 
         core::si32f lineSize(uint32_t index);
 
-        void setFont(range range, const drawing::font & font);
-        void setColor(range range, uint32_t color);
+        void setFont(section range, const drawing::font & font);
+        void setColor(section range, uint32_t color);
 
         uint16_t fontIndex(const drawing::font & font);
+
         const drawing::font & font_at(uint16_t index) { return _fonts[index].font; }
         std::shared_ptr<SkTypeface> skfont_at(uint16_t index) { return _fonts[index].skfont; }
         std::shared_ptr<hb_font_t> hbfont_at(uint16_t index) { return _fonts[index].hbfont; }
@@ -124,7 +125,7 @@ namespace drawing::script
 #ifdef _DEBUG
         std::u32string _u32text;
 #endif
-        std::vector<range> _chars;
+        std::vector<section> _chars;
         std::vector<item> _items;
         std::vector<glyph> _glyphs;
         std::vector<segment> _segments;

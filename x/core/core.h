@@ -84,6 +84,45 @@ namespace core
 
     using float32_t = ::float32_t;
     using float64_t = ::float64_t;
+
+    struct section
+    {
+        size_t index = 0;
+        size_t length = 0;
+
+        size_t end() const { return index + length; }
+        section operator + (const section & rhs)
+        {
+            if (!length)
+                return rhs;
+
+            if (!rhs.length)
+                return *this;
+
+            if (index + length == rhs.index)
+                return { index, rhs.index + rhs.length };
+
+            if (rhs.index + rhs.length == index)
+                return { rhs.index, index + length };
+
+            return { 0, 0 };
+        }
+
+        section & operator += (const section & rhs)
+        {
+            if (!length)
+                *this = rhs;
+            else if (!rhs.length)
+                ;
+            else if (index + length == rhs.index)
+                *this = { index, length + rhs.length };
+            else if (rhs.index + rhs.length == index)
+                *this = { rhs.index, length + rhs.length };
+            else
+                *this = { 0, 0 };
+            return *this;
+        }
+    };
 }
 
 #include "core/member_function_traits.h"

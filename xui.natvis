@@ -120,16 +120,16 @@
 		<DisplayString>[MouseArea {_rect}]</DisplayString>
 	</Type>
 
-	<Type Name="script::range">
+	<Type Name="core::section">
 		<DisplayString>[{index},{length}]</DisplayString>
 	</Type>
-	<Type Name="script::item">
+	<Type Name="drawing::script::item">
 		<DisplayString>{{{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={rtl}}}</DisplayString>
 	</Type>
-	<Type Name="script::segment">
+	<Type Name="drawing::script::segment">
 		<DisplayString>{{[{line}], {width}, {_text}, {trange}, {grange}}}</DisplayString>
 	</Type>
-	<Type Name="script::row">
+	<Type Name="drawing::script::row">
 		<DisplayString>{{[{line}], {_text}, {trange}, {grange}}}</DisplayString>
 	</Type>
 
