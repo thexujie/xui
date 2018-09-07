@@ -140,7 +140,7 @@ void xui_main()
 
     drawing::font font;
     drawing::fontmetrics fm(font);
-    std::string rtft = u8"𪚥𪚥𪚥ยิ้ยิ้abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello ق قق ققق قققق قققق aa ققققق a قققققق";
+    std::string rtft = u8"𪚥𪚥𪚥ยิ้ยิ้abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello ق قق ققق قققق aa ققققق a قققققق";
     auto layer = std::make_shared<ui::Container>();
     {
         layer->setBackgroundColor(0x40ffffff);

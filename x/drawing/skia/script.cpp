@@ -108,26 +108,12 @@ namespace drawing::script
         auto str = icu::UnicodeString::fromUTF8({ _text.c_str(), (int32_t)_text.length() });
         _breaker->setText(str);
 
-        size_t utf8_start = 0;
-        size_t utf16_start = 0;
-        size_t utf32_start = 0;
         size_t utf8_pos = 0;
         size_t utf16_pos = 0;
         size_t utf32_pos = 0;
         char32_t ch = 0;
 
-        UBiDiLevel level_last = 0;
-        hb_script_t script_last = HB_SCRIPT_UNKNOWN;
-
-        uint32_t color_last = _color;
-        uint16_t font_index_last = core::nposu16;
         uint16_t font_index_fb_last = core::nposu16;
-
-        UBiDiLevel level = 0;
-        hb_script_t script = HB_SCRIPT_UNKNOWN;
-
-        uint32_t color = _color;
-        uint16_t font_index = core::nposu16;
 
         enum class flushflag
         {
@@ -139,183 +125,170 @@ namespace drawing::script
         };
         typedef core::bitflag<flushflag> flushflags;
 
-        do
+        _items.push_back({});
+        while(utf16_pos < u16str.length())
         {
             flushflags flush = nullptr;
 
-            size_t nutf8 = 1;
-            size_t nutf16 = 1;
+            char32_t ch2 = 0;
+            size_t nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, ch2);
+            size_t nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, ch);
             size_t nutf32 = 1;
 
-            if (utf16_pos >= u16str.length())
+            _chars.push_back({ utf8_pos, nutf8 });
+
+            UBiDiLevel level = ubidi_getLevelAt(bidi.get(), utf16_pos);
+            hb_script_t script = hb_unicode_script(hb_unicode, ch);
+            uint16_t font_index = _rtf_font_indices[utf8_pos];
+            uint32_t color = _rtf_colors[utf8_pos];
+
+            // font 的 flush 需要考虑 fallback 的字体，测试一下
+            auto & font_cache = _fonts[font_index];
+            if (font_index_fb_last != core::nposu16 && script == _items.back().script && _fonts[font_index_fb_last].skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
-                flush |= flushflag::eof;
+                // 使用上一个 fallback 的字体搞定
+                font_index = font_index_fb_last;
+            }
+            else if (font_cache.skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
+            {
+                // 使用预期的字体搞定
+                font_index_fb_last = 0;
             }
             else
             {
-                char32_t ch2 = 0;
-                nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, ch2);
-                nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, ch);
-                nutf32 = 1;
-#ifdef _DEBUG
-                _u32text.push_back(ch);
-#endif
-                // 可能是删除字符时搞错了，比如 utf8 4 char，删掉一个变成了 3char，就非法了，结束排版
-                if (ch != ch2)
-                    continue;
-
-                _chars.push_back({ utf8_pos, nutf8 });
-                level = ubidi_getLevelAt(bidi.get(), utf16_pos);
-                script = hb_unicode_script(hb_unicode, ch);
-
-                font_index = _rtf_font_indices[utf16_pos];
-                color = _rtf_colors[utf16_pos];
-
-                if (utf16_pos == 0)
+                // 慢慢找吧，fallbacking......
+                font_index_fb_last = 0;
+                sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
+                auto tf = fontMgr->matchFamilyStyleCharacter(nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, ch);
+                if (tf)
                 {
-                    level_last = level;
-                    script_last = script;
+                    drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
+                    uint16_t font_index_fb = fontIndex(font_fb);
+                    font_index_fb_last = font_index_fb;
+                    font_index = font_index_fb;
                 }
-                else
-                {
-
-                }
-
-                if (level != level_last)
-                    flush |= flushflag::level;
-
-                if (script != script_last)
-                {
-                    if (script == HB_SCRIPT_INHERITED || script == HB_SCRIPT_COMMON)
-                        script = script_last;
-                    else if (script_last == HB_SCRIPT_INHERITED || script_last == HB_SCRIPT_COMMON)
-                    {
-                    }
-                    else
-                    {
-                        flush |= flushflag::script;
-                    }
-                }
-
-                auto & font_cache = _fonts[font_index];
-                if (font_index_fb_last != core::nposu16 && !flush.any(flushflag::script) && _fonts[font_index_fb_last].skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
-                {
-                    // 使用上一个 fb 的字体搞定了
-                    font_index = font_index_fb_last;
-                }
-                else if (font_cache.skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
-                {
-                    font_index_fb_last = 0;
-                }
-                else
-                {
-                    font_index_fb_last = 0;
-                    sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
-                    auto tf = fontMgr->matchFamilyStyleCharacter(nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, ch);
-                    if (tf)
-                    {
-                        drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
-                        uint16_t font_index_fb = fontIndex(font_fb);
-                        font_index_fb_last = font_index_fb;
-                        font_index = font_index_fb;
-                    }
-                }
-
-                if (font_index_last == core::nposu16)
-                    font_index_last = font_index;
-
-                if (font_index != font_index_last)
-                    flush |= flushflag::font;
-                if (color != color_last)
-                    flush |= flushflag::color;
             }
 
-            if (flush.any() && utf8_pos > utf8_start)
+            if (utf8_pos == 0)
             {
-                item item = { { utf8_start, utf8_pos - utf8_start }, script_last, !!(level_last & 1), font_index_last, color_last };
-#ifdef _DEBUG
-                item._text = _text.substr(utf8_start, utf8_pos - utf8_start);
-                auto iter = std::find_if(_font_indices.begin(), _font_indices.end(), [font_index_last](const auto & vt) { return vt.second == font_index_last; });
-                item._font = iter->first;
-#endif
-                _items.push_back(item);
-                utf8_start = utf8_pos;
-                utf16_start = utf16_pos;
-                utf32_start = utf32_pos;
-                level_last = level;
-                script_last = script;
-                font_index_last = font_index;
-                color_last = color;
+                assert((script != HB_SCRIPT_INHERITED && script != HB_SCRIPT_COMMON));
+                item & first = _items.back();
+                first.script = script;
+                first.level = level;
+                first.font = font_index;
+                first.color = color;
+            }
+            else
+            {
 
-                //--------------------------------------------------- shape
-                {
-                    // TODO: features
-                    const drawing::font & font = font_at(item.font);
-                    auto hbfont = hbfont_at(item.font);
+            }
 
-                    hb_buffer_set_script(_hbbuffer.get(), item.script);
-                    hb_buffer_set_direction(_hbbuffer.get(), item.rtl ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
-                    // TODO: language
-                    hb_buffer_guess_segment_properties(_hbbuffer.get());
+            if (script == HB_SCRIPT_INHERITED || script == HB_SCRIPT_COMMON)
+                script = _items.back().script;
 
-                    hb_shape(hbfont.get(), _hbbuffer.get(), nullptr, 0);
-                    uint32_t len = hb_buffer_get_length(_hbbuffer.get());
-                    size_t index_base = _glyphs.size();
-                    _glyphs.resize(_glyphs.size() + len);
-                    if (item.rtl)
-                    {
-                        // Put the clusters back in logical order.
-                        // Note that the advances remain ltr.
-                        hb_buffer_reverse(_hbbuffer.get());
-                    }
+            if (script != _items.back().script)
+                flush |= flushflag::script;
 
-                    int32_t scaleX = 0, scaleY = 0;
-                    hb_font_get_scale(hbfont.get(), &scaleX, &scaleY);
-                    float32_t coefX = font.size *  1.0f / scaleX;
-                    float32_t coefY = font.size * 1.0f / scaleY;
+            if (level != _items.back().level)
+                flush |= flushflag::level;
 
-                    hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
-                    hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
-                    uint32_t ig_last = 0;
-                    for (uint32_t ig = 0; ig < len; ++ig)
-                    {
-                        const hb_glyph_info_t & info = infos[ig];
-                        const hb_glyph_position_t & pos = poses[ig];
-                        glyph & glyph = _glyphs[index_base + ig];
-                        glyph.trange = { info.cluster, 1 };
-                        if (ig < len - 1)
-                            glyph.trange.length = infos[ig + 1].cluster - info.cluster;
-                        else
-                            glyph.trange.length = utf8_pos - info.cluster;
-#ifdef _DEBUG
-                        glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
-#endif
-                        glyph.gid = uint16_t(info.codepoint);
-                        glyph.advance = { float32_t(pos.x_advance * coefX), float32_t(pos.y_advance * coefY) };
-                        glyph.offset = { float32_t(pos.x_offset * coefX), float32_t(pos.y_offset * coefY) };
+            if (font_index != _items.back().font)
+                flush |= flushflag::font;
 
-                        int32_t index = _breaker->current();
-                        if (index != icu::BreakIterator::DONE && index < glyph.trange.index)
-                            index = _breaker->next();
+            if (color != _items.back().color)
+                flush |= flushflag::color;
 
-                        glyph.softbreak = index == glyph.trange.index;
-                        glyph.standalone = !(info.mask & HB_GLYPH_FLAG_UNSAFE_TO_BREAK);
-                    }
-
-                    hb_buffer_clear_contents(_hbbuffer.get());
-                }
+            if (flush.any())
+            {
+                assert(_items.back().trange.length > 0);
+                _items.push_back({});
+                item & item_new = _items.back();
+                item_new.trange.index = utf8_pos;
+                item_new.script = script;
+                item_new.level = level;
+                item_new.font = font_index;
+                item_new.color = color;
             }
             else
             {
             }
 
-            hb_buffer_add(_hbbuffer.get(), ch, utf8_pos);
+            item & item_last = _items.back();
+            item_last.trange.length += nutf8;
+
             utf8_pos += nutf8;
             utf16_pos += nutf16;
             utf32_pos += nutf32;
         }
-        while (utf16_pos <= u16str.length());
 
+        for (auto & item : _items)
+        {
+            hb_buffer_clear_contents(_hbbuffer.get());
+            hb_buffer_add_utf8(_hbbuffer.get(), _text.c_str(), _text.length(), item.trange.index, item.trange.length);
+            // TODO: features
+            const drawing::font & font = font_at(item.font);
+            auto hbfont = hbfont_at(item.font);
+
+            hb_buffer_set_script(_hbbuffer.get(), item.script);
+            hb_buffer_set_direction(_hbbuffer.get(), (item.level & 1) ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+            // TODO: language
+            hb_buffer_guess_segment_properties(_hbbuffer.get());
+
+            hb_shape(hbfont.get(), _hbbuffer.get(), nullptr, 0);
+            uint32_t gcount = hb_buffer_get_length(_hbbuffer.get());
+            if (item.level & 1)
+            {
+                // Put the clusters back in logical order.
+                // Note that the advances remain ltr.
+                hb_buffer_reverse(_hbbuffer.get());
+            }
+
+            int32_t scaleX = 0, scaleY = 0;
+            hb_font_get_scale(hbfont.get(), &scaleX, &scaleY);
+            float32_t coefX = font.size *  1.0f / scaleX;
+            float32_t coefY = font.size * 1.0f / scaleY;
+
+            size_t index_base = _glyphs.size();
+            _glyphs.resize(_glyphs.size() + gcount);
+            hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
+            hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
+            for (uint32_t gindex = 0; gindex < gcount; ++gindex)
+            {
+                const hb_glyph_info_t & info = infos[gindex];
+                const hb_glyph_position_t & pos = poses[gindex];
+                glyph & glyph = _glyphs[index_base + gindex];
+                glyph.trange = { info.cluster, 1 };
+                if (gindex < gcount - 1)
+                    glyph.trange.length = infos[gindex + 1].cluster - info.cluster;
+                else
+                    glyph.trange.length = utf8_pos - info.cluster;
+#ifdef _DEBUG
+                glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
+#endif
+                glyph.gid = uint16_t(info.codepoint);
+                glyph.advance = { float32_t(pos.x_advance * coefX), float32_t(pos.y_advance * coefY) };
+                glyph.offset = { float32_t(pos.x_offset * coefX), float32_t(pos.y_offset * coefY) };
+
+                int32_t index = _breaker->current();
+                if (index != icu::BreakIterator::DONE && index < glyph.trange.index)
+                    index = _breaker->next();
+
+                glyph.softbreak = index == glyph.trange.index;
+                glyph.standalone = !(info.mask & HB_GLYPH_FLAG_UNSAFE_TO_BREAK);
+            }
+        }
+
+#ifdef _DEBUG
+        for (auto & item : _items)
+        {
+            item._text = _text.substr(item.trange.index, item.trange.length);
+            item._font = _fonts[item.font].font;
+        }
+        for (auto & glyph : _glyphs)
+        {
+            glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
+        }
+#endif
         return core::error_ok;
     }
 
@@ -327,9 +300,7 @@ namespace drawing::script
         if (_text.empty())
             return core::error_ok;
 
-        float32_t last = 0;
         float32_t curr = 0;
-        size_t gstart = 0;
         uint32_t line = 0;
 
         enum class flushflag
@@ -435,7 +406,7 @@ namespace drawing::script
 
             for (size_t gindex = seg.grange.index, iglyph = 0; gindex < seg.grange.end(); ++gindex, ++iglyph)
             {
-                glyph & glyph = _glyphs[item.rtl ? (seg.grange.end() - 1 - iglyph) : gindex];
+                glyph & glyph = _glyphs[(item.level & 1) ? (seg.grange.end() - 1 - iglyph) : gindex];
 
                 runBuffer.glyphs[iglyph] = glyph.gid;
                 runBuffer.clusters[iglyph] = glyph.trange.index;

@@ -24,10 +24,10 @@ namespace drawing::script
     struct item
     {
         section trange;
-        hb_script_t script;
-        bool rtl;
-        uint16_t font;
-        uint32_t color;
+        hb_script_t script = HB_SCRIPT_UNKNOWN;
+        uint8_t level = 0;
+        uint16_t font = 0;
+        uint32_t color = 0;
 #ifdef _DEBUG
         std::string _text;
         drawing::font _font;

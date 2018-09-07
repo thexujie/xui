@@ -124,7 +124,7 @@
 		<DisplayString>[{index},{length}]</DisplayString>
 	</Type>
 	<Type Name="drawing::script::item">
-		<DisplayString>{{{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={rtl}}}</DisplayString>
+		<DisplayString>{{{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={level}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::script::segment">
 		<DisplayString>{{[{line}], {width}, {_text}, {trange}, {grange}}}</DisplayString>
