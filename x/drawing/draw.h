@@ -33,7 +33,7 @@ namespace drawing
         virtual core::error reset(std::string text) = 0;
         virtual core::error itermize() = 0;
         virtual core::error wrap(float32_t end, wrap_mode mode) = 0;
-        virtual core::error shape(SkTextBlobBuilder & builder, uint32_t index) = 0;
+        virtual core::error build(SkTextBlobBuilder & builder, uint32_t index) = 0;
 
         virtual void setFont(section range, const drawing::font & font) = 0;
         virtual void setColor(section range, uint32_t color) = 0;

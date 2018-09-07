@@ -52,7 +52,7 @@ namespace drawing
             shaper.wrap(width, drawing::wrap_mode::word);
 
             SkTextBlobBuilder builder;
-            shaper.shape(builder, 0);
+            shaper.build(builder, 0);
             _size = shaper.lineSize(0);
             _native = std::shared_ptr<SkTextBlob>(builder.make().release(), [](SkTextBlob * ptr) { if (ptr) SkSafeUnref(ptr); });
         }

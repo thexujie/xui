@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "TextBox.h"
+#include <SkTextBlob.h>
 #include "ui/renderables/Text.h"
+#include "drawing/skia/script.h"
 
 namespace ui::controls
 {
@@ -165,7 +167,9 @@ namespace ui::controls
         char chars[4] = { 0 };
         size_t len = core::utf32_to_utf8(ch, chars);
         _text.append(chars, len);
-        _textblob.reset();
+        _doshaper();
+
+        _shaper->build
         refresh();
     }
 
@@ -184,11 +188,24 @@ namespace ui::controls
 
     void TextBox::_confirmBlob() const
     {
+
+    }
+
+    void TextBox::_doshaper()
+    {
         if (!_textblob)
-        {
-            drawing::StringFormat format(font());
-            format.color(color());
-            _textblob = std::make_shared<drawing::TextBlob>(_text, format);
-        }
+            _textblob = std::make_shared<drawing::TextBlob>();
+
+        if (!_shaper)
+            _shaper = std::make_shared<drawing::script::Shaper>();
+
+        _shaper->reset(_text);
+        _shaper->itermize();
+        _shaper->wrap(std::numeric_limits<float32_t>::max(), drawing::wrap_mode::word);
+
+        SkTextBlobBuilder builder;
+        _shaper->build(builder, 0);
+        auto native = std::shared_ptr<SkTextBlob>(builder.make().release(), [](SkTextBlob * ptr) { if (ptr) SkSafeUnref(ptr); });
+        _textblob->setNative(native, _shaper->lineSize(0));
     }
 }

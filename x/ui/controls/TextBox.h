@@ -1,6 +1,11 @@
 #pragma once
 #include "ui/Control.h"
 
+namespace drawing::script
+{
+    class Shaper;
+}
+
 namespace ui::controls
 {
     class TextBox : public Control
@@ -34,6 +39,8 @@ namespace ui::controls
         // ȷ�� textBlob �Ѿ�������
         void _confirmBlob() const;
 
+        void _doshaper();
+
     private:
         std::string _text;
         mutable std::shared_ptr<drawing::TextBlob> _textblob;
@@ -43,5 +50,7 @@ namespace ui::controls
         std::shared_ptr<core::property_animation> _cursor_anim;
 
         std::shared_ptr<ImeContext> _imecontext;
+
+        mutable std::shared_ptr<drawing::script::Shaper> _shaper;
     };
 }

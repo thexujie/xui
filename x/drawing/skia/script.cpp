@@ -2,6 +2,18 @@
 #include "script.h"
 #include "drawing/skia/skia.h"
 
+#include <hb.h>
+#include <hb-ot.h>
+#include <unicode/brkiter.h>
+#include <unicode/locid.h>
+#include <unicode/ubidi.h>
+#include <unicode/uchriter.h>
+
+#include "SkFontMgr.h"
+#include "SkStream.h"
+#include "SkTextBlob.h"
+#include "SkTypeface.h"
+
 namespace drawing::script
 {
     std::shared_ptr<hb_font_t> create_hb_font(SkTypeface * tf)
@@ -52,17 +64,23 @@ namespace drawing::script
 
     core::error Shaper::reset(std::string text)
     {
+        _rows.clear();
+        _segments.clear();
+        _glyphs.clear();
+        _items.clear();
+
         _text = text;
         _rtf_font_indices.assign(_text.length(), font_default);
         _rtf_colors.assign(_text.length(), _color);
 
         _font_indices.clear();
-        _fonts.clear();
+        //_fonts.clear();
         fontIndex(_font);
 
-        _hbbuffer.reset(hb_buffer_create());
+        _hbbuffer = { hb_buffer_create(), hb_buffer_destroy };
         UErrorCode status = U_ZERO_ERROR;
-        _breaker.reset(icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status));
+        _breaker_world = { icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
+        _breaker_character = { icu::BreakIterator::createCharacterInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
         return core::error_ok;
     }
 
@@ -101,17 +119,16 @@ namespace drawing::script
 
         hb_buffer_clear_contents(_hbbuffer.get());
         hb_buffer_set_content_type(_hbbuffer.get(), HB_BUFFER_CONTENT_TYPE_UNICODE);
-        hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
+        hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_CHARACTERS);
 
         hb_unicode_funcs_t * hb_unicode = hb_buffer_get_unicode_funcs(_hbbuffer.get());
 
-        auto str = icu::UnicodeString::fromUTF8({ _text.c_str(), (int32_t)_text.length() });
-        _breaker->setText(str);
+        _breaker_world->setText(u16str.c_str());
+        _breaker_character->setText(u16str.c_str());
 
         size_t utf8_pos = 0;
         size_t utf16_pos = 0;
         size_t utf32_pos = 0;
-        char32_t ch = 0;
 
         uint16_t font_index_fb_last = core::nposu16;
 
@@ -125,31 +142,39 @@ namespace drawing::script
         };
         typedef core::bitflag<flushflag> flushflags;
 
+        std::vector<section> utf16_ranges;
         _items.push_back({});
         while(utf16_pos < u16str.length())
         {
             flushflags flush = nullptr;
 
-            char32_t ch2 = 0;
-            size_t nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, ch2);
-            size_t nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, ch);
+            char32_t ch_utf8 = 0;
+            char32_t ch_utf32 = 0;
+            size_t nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, ch_utf8);
+            size_t nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, ch_utf32);
+            if (ch_utf8 != ch_utf32)
+                break;
+
             size_t nutf32 = 1;
 
-            _chars.push_back({ utf8_pos, nutf8 });
+            for(size_t iutf16 = 0; iutf16 < nutf16; ++iutf16)
+                utf16_ranges.push_back({ utf8_pos, nutf8 });
 
             UBiDiLevel level = ubidi_getLevelAt(bidi.get(), utf16_pos);
-            hb_script_t script = hb_unicode_script(hb_unicode, ch);
+            hb_script_t script = hb_unicode_script(hb_unicode, ch_utf8);
             uint16_t font_index = _rtf_font_indices[utf8_pos];
             uint32_t color = _rtf_colors[utf8_pos];
 
             // font 的 flush 需要考虑 fallback 的字体，测试一下
             auto & font_cache = _fonts[font_index];
-            if (font_index_fb_last != core::nposu16 && script == _items.back().script && _fonts[font_index_fb_last].skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
+            if (font_index_fb_last != core::nposu16 && 
+                (script == _items.back().script || script == HB_SCRIPT_INHERITED || script == HB_SCRIPT_COMMON) &&
+                _fonts[font_index_fb_last].skfont->charsToGlyphs(&ch_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
                 // 使用上一个 fallback 的字体搞定
                 font_index = font_index_fb_last;
             }
-            else if (font_cache.skfont->charsToGlyphs(&ch, SkTypeface::kUTF32_Encoding, nullptr, 1))
+            else if (font_cache.skfont->charsToGlyphs(&ch_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
                 // 使用预期的字体搞定
                 font_index_fb_last = 0;
@@ -159,7 +184,7 @@ namespace drawing::script
                 // 慢慢找吧，fallbacking......
                 font_index_fb_last = 0;
                 sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
-                auto tf = fontMgr->matchFamilyStyleCharacter(nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, ch);
+                auto tf = fontMgr->matchFamilyStyleCharacter(nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, ch_utf8);
                 if (tf)
                 {
                     drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
@@ -184,7 +209,7 @@ namespace drawing::script
             }
 
             if (script == HB_SCRIPT_INHERITED || script == HB_SCRIPT_COMMON)
-                script = _items.back().script;
+                script = hb_script_t(_items.back().script);
 
             if (script != _items.back().script)
                 flush |= flushflag::script;
@@ -237,7 +262,7 @@ namespace drawing::script
             const drawing::font & font = font_at(item.font);
             auto hbfont = hbfont_at(item.font);
 
-            hb_buffer_set_script(_hbbuffer.get(), item.script);
+            hb_buffer_set_script(_hbbuffer.get(), hb_script_t(item.script));
             hb_buffer_set_direction(_hbbuffer.get(), (item.level & 1) ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
             // TODO: language
             hb_buffer_guess_segment_properties(_hbbuffer.get());
@@ -274,11 +299,32 @@ namespace drawing::script
                 glyph.advance = { float32_t(pos.x_advance * coefX), float32_t(pos.y_advance * coefY) };
                 glyph.offset = { float32_t(pos.x_offset * coefX), float32_t(pos.y_offset * coefY) };
 
-                int32_t index = _breaker->current();
-                if (index != icu::BreakIterator::DONE && index < glyph.trange.index)
-                    index = _breaker->next();
+                int32_t word_stop_utf16 = _breaker_world->current();
+                if (word_stop_utf16 != icu::BreakIterator::DONE && word_stop_utf16 < utf16_ranges.size())
+                {
+                    if (utf16_ranges[word_stop_utf16].index < glyph.trange.index)
+                        word_stop_utf16 = _breaker_world->next();
 
-                glyph.softbreak = index == glyph.trange.index;
+                    if (word_stop_utf16 < utf16_ranges.size())
+                    {
+                        int32_t word_stop_utf8 = utf16_ranges[word_stop_utf16].index;
+                        glyph.wordbreak = word_stop_utf8 == glyph.trange.index;
+                    }
+                }
+
+                int32_t char_stop_utf16 = _breaker_character->current();
+                if (char_stop_utf16 != icu::BreakIterator::DONE && char_stop_utf16 < utf16_ranges.size())
+                {
+                    if (utf16_ranges[char_stop_utf16].index < glyph.trange.index)
+                        char_stop_utf16 = _breaker_character->next();
+
+                    if (char_stop_utf16 < utf16_ranges.size())
+                    {
+                        int32_t char_stop_utf8 = utf16_ranges[char_stop_utf16].index;
+                        glyph.charbreak = char_stop_utf8 == glyph.trange.index;
+                    }
+                }
+
                 glyph.standalone = !(info.mask & HB_GLYPH_FLAG_UNSAFE_TO_BREAK);
             }
         }
@@ -393,7 +439,7 @@ namespace drawing::script
         return core::error_ok;
     }
 
-    core::error Shaper::shape(SkTextBlobBuilder & builder, uint32_t index)
+    core::error Shaper::build(SkTextBlobBuilder & builder, uint32_t index)
     {
         if (_text.empty())
             return core::error_ok;
@@ -486,5 +532,14 @@ namespace drawing::script
         else
             index = iter->second;
         return index;
+    }
+
+    core::rc32f Shaper::charRect(size_t index) const
+    {
+        auto iter = std::upper_bound(_glyphs.begin(), _glyphs.end(), index, [](size_t value, const glyph & g) { return  g.trange.index <= value && value < g.trange.end(); });
+        if (iter == _glyphs.end())
+            return {};
+
+        return {};
     }
 }

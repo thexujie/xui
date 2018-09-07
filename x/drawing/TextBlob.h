@@ -16,6 +16,7 @@ namespace drawing
         void reset(std::string str, float32_t width, const StringFormat & format);
 
     public:
+        void setNative(std::shared_ptr<SkTextBlob> blob, core::si32f size) { _native = blob; _size = size; }
         std::shared_ptr<SkTextBlob> native_shared() const { return _native; }
         SkTextBlob & native() { return *_native; }
         const SkTextBlob & native() const { return *_native; }

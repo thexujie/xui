@@ -645,7 +645,7 @@ SkPoint SkShaper::shape(SkTextBlobBuilder & builder,
             hb_buffer_t * buffer = fImpl->fBuffer.get();
             SkAutoTCallVProc<hb_buffer_t, hb_buffer_clear_contents> autoClearBuffer(buffer);
             hb_buffer_set_content_type(buffer, HB_BUFFER_CONTENT_TYPE_UNICODE);
-            hb_buffer_set_cluster_level(buffer, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
+            hb_buffer_set_cluster_level(buffer, HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES);
 
             // Populate the hb_buffer directly with utf8 cluster indexes.
             const char * utf8Current = utf8Start;

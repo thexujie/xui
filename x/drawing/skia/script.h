@@ -3,28 +3,23 @@
 #include "core/core.h"
 #include "drawing/drawing.h"
 
-#include <hb-ot.h>
-#include <unicode/brkiter.h>
-#include <unicode/locid.h>
-#include <unicode/stringpiece.h>
-#include <unicode/ubidi.h>
-#include <unicode/uchriter.h>
-#include <unicode/unistr.h>
-#include <unicode/uscript.h>
+class SkTypeface;
 
+struct hb_font_t;
+struct hb_buffer_t;
 
-#include "SkFontMgr.h"
-#include "SkStream.h"
-#include "SkTextBlob.h"
-#include "SkTypeface.h"
-#include <bitset>
+namespace icu
+{
+    class BreakIterator;
+}
 
 namespace drawing::script
 {
     struct item
     {
         section trange;
-        hb_script_t script = HB_SCRIPT_UNKNOWN;
+        // hb_script_t
+        uint32_t script = 0;
         uint8_t level = 0;
         uint16_t font = 0;
         uint32_t color = 0;
@@ -44,7 +39,8 @@ namespace drawing::script
         uint16_t gcount = 0;
         core::vec2<float32_t> advance;
         core::vec2<float32_t> offset;
-        bool softbreak = false;
+        bool wordbreak = false;
+        bool charbreak = false;
         bool standalone = false;
     };
 
@@ -86,7 +82,7 @@ namespace drawing::script
         core::error itermize();
         core::error wrap(float32_t end, wrap_mode mode);
 
-        core::error shape(SkTextBlobBuilder & builder, uint32_t index);
+        core::error build(SkTextBlobBuilder & builder, uint32_t index);
 
         core::si32f lineSize(uint32_t index);
 
@@ -100,10 +96,13 @@ namespace drawing::script
         std::shared_ptr<hb_font_t> hbfont_at(uint16_t index) { return _fonts[index].hbfont; }
         const drawing::fontmetrics & fontmetrics_at(uint16_t index) { return _fonts[index].fmetrics; }
 
+    public:
+        core::rc32f charRect(size_t index) const;
+
     private:
         constexpr static uint16_t font_default = 0;
 
-        UBiDiLevel _defaultBidiLevel = UBIDI_DEFAULT_LTR;
+        uint8_t _defaultBidiLevel = 0xfe;
         drawing::font _font;
         core::color32 _color = core::colors::Black;
         std::string _text;
@@ -120,12 +119,10 @@ namespace drawing::script
         std::vector<uint16_t> _rtf_font_indices;
         std::vector<uint32_t> _rtf_colors;
 
-        std::unique_ptr<hb_buffer_t, decltype(&hb_buffer_destroy)> _hbbuffer = {nullptr, hb_buffer_destroy };
-        std::unique_ptr<icu::BreakIterator> _breaker;
-#ifdef _DEBUG
-        std::u32string _u32text;
-#endif
-        std::vector<section> _chars;
+        std::unique_ptr<hb_buffer_t, void(*)(hb_buffer_t *)> _hbbuffer = {nullptr, nullptr };
+        std::unique_ptr<icu::BreakIterator, void(*)(icu::BreakIterator *)> _breaker_world = { nullptr, nullptr};
+        std::unique_ptr<icu::BreakIterator, void(*)(icu::BreakIterator *)> _breaker_character = { nullptr, nullptr };
+
         std::vector<item> _items;
         std::vector<glyph> _glyphs;
         std::vector<segment> _segments;
