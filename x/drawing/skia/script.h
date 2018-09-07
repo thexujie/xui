@@ -29,7 +29,7 @@ namespace drawing::script
         uint16_t font;
         uint32_t color;
 #ifdef _DEBUG
-        std::u32string _text;
+        std::string _text;
         drawing::font _font;
 #endif
     };

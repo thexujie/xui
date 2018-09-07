@@ -234,7 +234,7 @@ namespace drawing::script
             {
                 item item = { { utf8_start, utf8_pos - utf8_start }, script_last, !!(level_last & 1), font_index_last, color_last };
 #ifdef _DEBUG
-                item._text = _u32text.substr(utf32_start, utf32_pos - utf32_start);
+                item._text = _text.substr(utf8_start, utf8_pos - utf8_start);
                 auto iter = std::find_if(_font_indices.begin(), _font_indices.end(), [font_index_last](const auto & vt) { return vt.second == font_index_last; });
                 item._font = iter->first;
 #endif
