@@ -34,11 +34,12 @@ namespace ui::controls
         void onBlur() override;
         void onChar(char32_t ch) override;
 
+    public:
+        void reshaper();
+
     private:
         void _updateIme();
-        // ȷ�� textBlob �Ѿ�������
         void _confirmBlob() const;
-
         void _doshaper();
 
     private:
@@ -51,6 +52,7 @@ namespace ui::controls
 
         std::shared_ptr<ImeContext> _imecontext;
 
+        bool _delay_shaper = false;
         mutable std::shared_ptr<drawing::script::Shaper> _shaper;
     };
 }

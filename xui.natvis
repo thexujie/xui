@@ -126,6 +126,9 @@
 	<Type Name="drawing::script::item">
 		<DisplayString>{{&#x200E;{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={level}}}</DisplayString>
 	</Type>
+	<Type Name="drawing::script::glyph">
+		<DisplayString>{{&#x200E;{_text}, {trange}, pos={pos}}}</DisplayString>
+	</Type>
 	<Type Name="drawing::script::segment">
 		<DisplayString>{{[{line}-{sindex}], {width}, &#x200E;{_text}&#x200E;, {trange}, {grange}}}</DisplayString>
 	</Type>

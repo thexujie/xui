@@ -6,6 +6,43 @@
 
 namespace ui::controls
 {
+    static size_t textbox_u8_rfind_next(const std::string & str, size_t offset = core::npos)
+    {
+        if (offset == core::npos)
+            offset = str.length();
+
+        if (offset == 0)
+            return core::npos;
+
+        size_t nfound = 1;
+        for (size_t index = offset; index > 0; --index)
+        {
+            uint8_t ch = str[index - 1];
+
+            size_t nbytes = 0;
+            if ((ch & 0b11111100) == 0b11111100)
+                nbytes = 6;
+            else if ((ch & 0b11111000) == 0b11111000)
+                nbytes = 5;
+            else if ((ch & 0b11110000) == 0b11110000)
+                nbytes = 4;
+            else if ((ch & 0b11100000) == 0b11100000)
+                nbytes = 3;
+            else if ((ch & 0b11000000) == 0b11000000)
+                nbytes = 2;
+            else if ((ch & 0b10000000) == 0b10000000)
+                nbytes = 1;
+            else
+                nbytes = 0;
+            if (nbytes < nfound)
+                break;
+
+            nfound = nbytes;
+        }
+
+        return nfound <= str.length() ? str.length() - nfound : core::npos;
+    }
+
     const std::string TEXTBOX_ANIMATION_GROUP_CURSOR = "_textbox.cursor";
     TextBox::TextBox()
     {
@@ -30,20 +67,17 @@ namespace ui::controls
 
     void TextBox::setText(const std::string & text)
     {
-        std::lock_guard l(*this);
-        _textblob = nullptr;
         _text = text;
+        reshaper();
     }
 
     core::si32f TextBox::contentSize() const
     {
-        _confirmBlob();
         return _textblob ? _textblob->size() : core::si32f();
     }
 
     void TextBox::updateContent()
     {
-        _confirmBlob();
         if (_textblob)
         {
             if(!_text_obj)
@@ -61,12 +95,6 @@ namespace ui::controls
             _cursor_obj->setVisible(false);
             insert(LOCAL_DEPTH_CONTENT + 1, _cursor_obj);
         }
-
-        drawing::fontmetrics fm(font());
-        auto cbox = contentBox();
-        _cursor_obj->setRect({ cbox.x, cbox.y, 1, fm.height});
-        _cursor_obj->setPoints({ cbox.x, cbox.y }, { cbox.x, cbox.y + fm.height });
-        _cursor_obj->setPathStyle(drawing::PathStyle().stoke(core::colors::Red , drawing::stroke_style::solid).width(1));
     }
 
 
@@ -134,6 +162,9 @@ namespace ui::controls
         }
         _cursor_anim->start();
         restyle();
+
+        if(_imecontext)
+            _imecontext->setImeMode(_ime_mode);
         _updateIme();
     }
 
@@ -156,21 +187,30 @@ namespace ui::controls
             {
                 if(!_text.empty())
                 {
-                    _textblob.reset();
-                    refresh();
-                    _text.resize(_text.length() - 1);
+                    auto pos = textbox_u8_rfind_next(_text);
+                    if (pos != core::npos)
+                    {
+                        _text.resize(pos);
+                        reshaper();
+                    }
                 }
             }
             return;
         }
         
-        char chars[4] = { 0 };
-        size_t len = core::utf32_to_utf8(ch, chars);
+        char chars[6] = { 0 };
+        size_t len = core::utf32_to_utf8(ch, chars, 6);
         _text.append(chars, len);
-        _doshaper();
+        reshaper();
+    }
 
-        _shaper->build
-        refresh();
+    void TextBox::reshaper()
+    {
+        if(!_delay_shaper)
+        {
+            _delay_shaper = true;
+            invoke([this]() { _doshaper(); });
+        }
     }
 
     void TextBox::_updateIme()
@@ -178,10 +218,21 @@ namespace ui::controls
         if (!_imecontext)
             return;
 
-        _imecontext->setImeMode(_ime_mode);
         if(_ime_mode != ime_mode::disabled)
         {
-            _imecontext->setCompositionPos(contentBox().leftTop());
+            if(_shaper)
+            {
+                auto rcCurr = _shaper->charRect(_text.length() - 1);
+                _imecontext->setCompositionPos(contentBox().leftTop() + core::vec2f(rcCurr.right(), 0));
+
+                if (_cursor_obj)
+                {
+                    auto cbox = contentBox();
+                    _cursor_obj->setRect({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y, 1, rcCurr.height });
+                    _cursor_obj->setPoints({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y }, { cbox.x + rcCurr.right(), cbox.y + rcCurr.y + rcCurr.height });
+                    _cursor_obj->setPathStyle(drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(1));
+                }
+            }
             _imecontext->setCompositionFont(font());
         }
     }
@@ -193,6 +244,8 @@ namespace ui::controls
 
     void TextBox::_doshaper()
     {
+        _delay_shaper = false;
+
         if (!_textblob)
             _textblob = std::make_shared<drawing::TextBlob>();
 
@@ -206,6 +259,13 @@ namespace ui::controls
         SkTextBlobBuilder builder;
         _shaper->build(builder, 0);
         auto native = std::shared_ptr<SkTextBlob>(builder.make().release(), [](SkTextBlob * ptr) { if (ptr) SkSafeUnref(ptr); });
-        _textblob->setNative(native, _shaper->lineSize(0));
+        {
+            std::lock_guard l(*this);
+            _textblob->setNative(native, _shaper->lineSize(0));
+            if (_text_obj)
+                _text_obj->invalid();
+        }
+
+        _updateIme();
     }
 }

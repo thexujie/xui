@@ -26,15 +26,15 @@ namespace drawing::skia
     void fontmetrics(const drawing::font & font, drawing::fontmetrics & metrics)
     {
         sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
-        auto tf =fontMgr->legacyMakeTypeface(font.family.c_str(), from(font.style));
+        auto tf =fontMgr->matchFamilyStyle(font.family.c_str(), from(font.style));
 
         SkPaint paint;
-        paint.setTypeface(tf);
+        paint.setTypeface(sk_ref_sp(tf));
         paint.setTextSize(font.size);
 
         SkPaint::FontMetrics skfm;
         paint.getFontMetrics(&skfm);
-        metrics.height = std::abs(skfm.fAscent) + skfm.fDescent;
+        metrics.height = std::abs(std::ceilf(skfm.fAscent)) + std::ceilf(skfm.fDescent);
         metrics.top = std::abs(skfm.fTop);
         metrics.bottom = skfm.fBottom;
         metrics.ascent = std::abs(skfm.fAscent);

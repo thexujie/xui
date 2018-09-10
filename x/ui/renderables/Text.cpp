@@ -20,6 +20,7 @@ namespace ui::renderables
         if (!_text)
             return;
 
+        //graphics.drawRectangle(_rect, drawing::PathStyle().fill(0xffcccccc));
         graphics.drawTextBlob(*_text, rect().pos);
     }
 }

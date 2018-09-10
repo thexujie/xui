@@ -20,7 +20,7 @@ namespace drawing
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return { parseStrokeStyle(strs[0]) };
+            return core::vec2<stroke_style>{ parseStrokeStyle(strs[0]) };
         if (strs.size() == 2)
             return { parseStrokeStyle(strs[0]), parseStrokeStyle(strs[1]) };
         return {};
@@ -30,7 +30,7 @@ namespace drawing
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return { parseStrokeStyle(strs[0]) };
+            return core::vec4<stroke_style>{ parseStrokeStyle(strs[0]) };
         if (strs.size() == 2)
             return { parseStrokeStyle(strs[0]), parseStrokeStyle(strs[1]) };
         if (strs.size() == 4)

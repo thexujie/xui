@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ScriptService.h"
-#include "core/unicode.h"
 #include "win32/windows.h"
 
 namespace win32::uniscribe

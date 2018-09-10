@@ -14,6 +14,74 @@
 #include "SkTextBlob.h"
 #include "SkTypeface.h"
 
+static inline size_t utf32_to_utf8(const char32_t & ch, char * text)
+{
+    if (ch <= 0x7F)
+    {
+        text[0] = (char)ch;
+        return 1;
+    }
+    if (ch <= 0x7FF)
+    {
+        text[0] = 0xC0 | (ch >> 6);            /* 110xxxxx */
+        text[1] = 0x80 | (ch & 0x3F);          /* 10xxxxxx */
+        return 2;
+    }
+    if (ch <= 0xFFFF)
+    {
+        text[0] = 0xE0 | (ch >> 12);           /* 1110xxxx */
+        text[1] = 0x80 | ((ch >> 6) & 0x3F);   /* 10xxxxxx */
+        text[2] = 0x80 | (ch & 0x3F);          /* 10xxxxxx */
+        return 3;
+    }
+    if (ch <= 0x10FFFF)
+    {
+        text[0] = 0xF0 | (ch >> 18);           /* 11110xxx */
+        text[1] = 0x80 | ((ch >> 12) & 0x3F);  /* 10xxxxxx */
+        text[2] = 0x80 | ((ch >> 6) & 0x3F);   /* 10xxxxxx */
+        text[3] = 0x80 | (ch & 0x3F);          /* 10xxxxxx */
+        return 4;
+    }
+    return 0;
+}
+
+static inline size_t utf8_to_utf32(const char * text, size_t size, char32_t & ch)
+{
+    if (!size)
+    {
+        ch = 0;
+        return 0;
+    }
+
+    const uint8_t * start = reinterpret_cast<const uint8_t *>(text);
+    const uint8_t * curr = reinterpret_cast<const uint8_t *>(text);
+    uint32_t crtl = *start;
+    ch = *curr++;
+
+    uint32_t mask = ~0x7F;
+    if (crtl & 0x80)
+    {
+        mask = ~0x3F;
+        crtl <<= 1;
+        do
+        {
+            if (curr - start > size)
+            {
+                ch = 0;
+                return 0;
+            }
+
+            ch <<= 6;
+            ch |= ((*curr++) & 0x3F);
+            crtl <<= 1;
+
+            mask <<= 5;
+        } while (crtl & 0x80);
+    }
+    ch &= ~mask;
+    return curr - start;
+}
+
 namespace drawing::script
 {
     std::shared_ptr<hb_font_t> create_hb_font(SkTypeface * tf)
@@ -378,7 +446,6 @@ namespace drawing::script
                 seg.sindex = ++segment_index;
                 seg.item = iindex;
                 seg.line = line;
-                seg.offset = curr;
                 seg.trange.index = glyph.trange.index;
                 seg.grange.index = gindex;
                 _segments.push_back(seg);
@@ -435,6 +502,25 @@ namespace drawing::script
 
             ubidi_reorderVisual(_bidis.data(), row.srange.length, visual_indices.data());
             std::sort(_segments.begin() + row.srange.index, _segments.begin() + row.srange.end(), [&row, &visual_indices](const segment & lhs, const segment & rhs) { return visual_indices[lhs.sindex - row.srange.index] < visual_indices[rhs.sindex - row.srange.index]; });
+
+            float32_t offset = 0;
+            for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
+            {
+                auto & seg = _segments[sindex + row.srange.index];
+                seg.offset = offset;
+                offset += seg.width;
+
+                auto & fmetrics = _fonts[_items[seg.item].font].fmetrics;
+                float32_t pos = seg.offset;
+                for (size_t gindex = seg.grange.index; gindex < seg.grange.end(); ++gindex)
+                {
+                    auto & glyph = _glyphs[gindex];
+                    glyph.sindex = sindex;
+                    glyph.pos.x = pos;
+                    glyph.pos.y = row.ascent - fmetrics.ascent;
+                    pos += glyph.advance.cx;
+                }
+            }
         }
         return core::error_ok;
     }
@@ -461,7 +547,6 @@ namespace drawing::script
             paint.setAntiAlias(true);
             paint.setLCDRenderText(true);
             paint.setColor(item.color);
-            paint.setTextSize(_font.size);
             paint.setAutohinted(true);
             paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
@@ -534,12 +619,22 @@ namespace drawing::script
         return index;
     }
 
+    const glyph & Shaper::findGlyph(size_t index) const
+    {
+        static const glyph empty;
+        auto iter = std::upper_bound(_glyphs.begin(), _glyphs.end(), index, [](size_t value, const glyph & g) { return  g.trange.index <= value && value < g.trange.end(); });
+        if (iter == _glyphs.end())
+            return empty;
+        return *iter;
+    }
+
     core::rc32f Shaper::charRect(size_t index) const
     {
         auto iter = std::upper_bound(_glyphs.begin(), _glyphs.end(), index, [](size_t value, const glyph & g) { return  g.trange.index <= value && value < g.trange.end(); });
         if (iter == _glyphs.end())
             return {};
 
-        return {};
+        auto & fmetrics = _fonts[_items[_segments[iter->sindex].item].font].fmetrics;
+        return { iter->pos.x, iter->pos.y, iter->advance.cx, fmetrics.height };
     }
 }

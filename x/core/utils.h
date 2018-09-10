@@ -1134,4 +1134,118 @@ namespace core
     int32_t unicodetoansi(const char16_t * src, size_t length, char8_t * dst, int32_t size);
 
 #pragma endregion
+
+    inline size_t utf32_to_utf8(const char32_t & ch, char * text, size_t size)
+    {
+        if (ch <= 0x7F && size > 0)
+        {
+            text[0] = (char)ch;
+            return 1;
+        }
+        if (ch <= 0x7FF && size > 2)
+        {
+            text[0] = 0xC0 | (ch >> 6);            /* 110xxxxx */
+            text[1] = 0x80 | (ch & 0x3F);          /* 10xxxxxx */
+            return 2;
+        }
+        if (ch <= 0xFFFF && size > 3)
+        {
+            text[0] = 0xE0 | (ch >> 12);           /* 1110xxxx */
+            text[1] = 0x80 | ((ch >> 6) & 0x3F);   /* 10xxxxxx */
+            text[2] = 0x80 | (ch & 0x3F);          /* 10xxxxxx */
+            return 3;
+        }
+        if (ch <= 0x10FFFF && size > 4)
+        {
+            text[0] = 0xF0 | (ch >> 18);           /* 11110xxx */
+            text[1] = 0x80 | ((ch >> 12) & 0x3F);  /* 10xxxxxx */
+            text[2] = 0x80 | ((ch >> 6) & 0x3F);   /* 10xxxxxx */
+            text[3] = 0x80 | (ch & 0x3F);          /* 10xxxxxx */
+            return 4;
+        }
+        return 0;
+    }
+
+    inline size_t utf8_to_utf32(const char * text, size_t size, char32_t & ch)
+    {
+        if (!size)
+        {
+            ch = 0;
+            return 0;
+        }
+
+        const uint8_t * start = reinterpret_cast<const uint8_t *>(text);
+        const uint8_t * curr = reinterpret_cast<const uint8_t *>(text);
+        uint32_t crtl = *start;
+        ch = *curr++;
+
+        uint32_t mask = ~0x7F;
+        if (crtl & 0x80)
+        {
+            mask = ~0x3F;
+            crtl <<= 1;
+            do
+            {
+                if (curr - start > size)
+                {
+                    ch = 0;
+                    return 0;
+                }
+
+                ch <<= 6;
+                ch |= ((*curr++) & 0x3F);
+                crtl <<= 1;
+
+                mask <<= 5;
+            } while (crtl & 0x80);
+        }
+        ch &= ~mask;
+        return curr - start;
+    }
+
+    inline size_t utf32_to_utf16(char32_t ch, char16_t dst[2], size_t size)
+    {
+        if (!size)
+            return 0;
+
+        if (ch > 0xFFFF)
+        {
+            if (size < 2)
+                return 0;
+            dst[0] = uint16_t(0xD800 | ((ch - 0x10000) >> 10));
+            dst[1] = uint16_t(0xD800 | ((ch >> 10) - 64));
+            return 2;
+        }
+        else
+        {
+            dst[0] = uint16_t(ch);
+            return 1;
+        }
+    }
+
+    inline size_t utf16_to_utf32(const char16_t utf16[], size_t size, char32_t & ch)
+    {
+        if (!size)
+            return 0;
+
+        uint16_t ch1 = utf16[0];
+        if (ch1 >= 0xD800 && ch1 <= 0xDFFF)
+        {
+            if (ch1 < 0xDC00 && size > 1)
+            {
+                uint16_t w2 = utf16[1];
+                if (w2 >= 0xDC00 && w2 <= 0xDFFF)
+                {
+                    ch = (w2 & 0x03FF) + (((ch1 & 0x03FF) + 0x40) << 10);
+                    return 2;
+                }
+            }
+            return 0;
+        }
+        else
+        {
+            ch = ch1;
+            return 1;
+        }
+    }
 }

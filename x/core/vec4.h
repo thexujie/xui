@@ -14,7 +14,7 @@ namespace core
     public:
         vec4() : x(), y(), cx(), cy() { }
 
-        vec4(T _t)
+        explicit vec4(T _t)
             : x(_t), y(_t), cx(_t), cy(_t) { }
 
         vec4(T _x, T _y)
@@ -132,6 +132,28 @@ namespace core
             y = 0;
             cx = 0;
             cy = 0;
+        }
+
+        vec4 & expand(T bound)
+        {
+            return expand(bound, bound, bound, bound);
+        }
+
+        vec4 & expand(const vec4 & bound)
+        {
+            return expand(bound.bleft, bound.btop, bound.bright, bound.bbottom);
+        }
+
+        vec4 & expand(const T & expandX, const T & expandY)
+        {
+            return expand(expandX, expandY, expandX, expandY);
+        }
+
+        vec4 & expand(const T & eleft, const T & etop, const T & eright, const T & ebottom)
+        {
+            x -= eleft; y -= etop;
+            cx += (eleft + eright); cy += (etop + ebottom);
+            return *this;
         }
 
         vec4 expanded(T expand) const

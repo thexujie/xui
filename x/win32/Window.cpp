@@ -39,6 +39,7 @@ namespace win32
         auto scene = form->scene();
         form->shownChanged += std::weak_bind(&Window::onShownChanged, share_ref<Window>(), std::placeholders::_1);
         scene->rendered += std::weak_bind(&Window::onSceneRendered, share_ref<Window>(), std::placeholders::_1);
+        scene->rendered2 += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
         scene->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
         if(_imecontext)
             scene->setImeContext(_imecontext);
@@ -180,6 +181,11 @@ namespace win32
     void Window::onSceneRendered(const drawing::Region & region)
     {
         _render(region);
+    }
+
+    void Window::onSceneRendered2(const core::rc32i & rect)
+    {
+        _render(rect);
     }
 
     void Window::onSceneCaptured(bool capture)

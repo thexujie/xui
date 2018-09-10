@@ -340,10 +340,6 @@ int _tmain(int argc, const TCHAR * argv[])
     _CrtMemCheckpoint(&stateOld);
 #endif
 
-    char32_t ch = 0, ch2 = 0;
-    size_t nutf16 = core::utf16_to_utf32(u"ยิ้", 10, ch);
-    size_t nutf8 = core::utf8_to_utf32(u8"ยิ้", 30, ch2);
-
     std::string str = u8"𪚥𪚥𪚥ยิ้ยิ้abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello world قىلدىhello world تەتقىق قىلدىقىلدى";
     script::Shaper shaper;
     shaper.reset(str);

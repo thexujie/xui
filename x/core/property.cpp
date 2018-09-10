@@ -106,7 +106,7 @@ namespace core
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return { parseColor(strs[0])};
+            return core::vec2<core::color32>{ parseColor(strs[0])};
         if (strs.size() == 2)
             return { parseColor(strs[0]), parseColor(strs[1]) };
         return {};
@@ -116,7 +116,7 @@ namespace core
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return { parseColor(strs[0])};
+            return core::vec4<core::color32>{ parseColor(strs[0])};
         if (strs.size() == 2)
             return { parseColor(strs[0]), parseColor(strs[1]) };
         if (strs.size() == 4)
@@ -140,7 +140,7 @@ namespace core
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return { parseDimension(strs[0]) };
+            return core::vec2<core::dimensionf>{ parseDimension(strs[0]) };
         if (strs.size() == 2)
             return { parseDimension(strs[0]), parseDimension(strs[1]) };
         return {};
@@ -150,7 +150,7 @@ namespace core
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return { parseDimension(strs[0]) };
+            return core::vec4<core::dimensionf>{ parseDimension(strs[0]) };
         if (strs.size() == 2)
             return { parseDimension(strs[0]), parseDimension(strs[1]) };
         if (strs.size() == 4)

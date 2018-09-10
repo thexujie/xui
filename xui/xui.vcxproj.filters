@@ -23,12 +23,6 @@
     <ClCompile Include="win32\dll.cpp">
       <Filter>win32</Filter>
     </ClCompile>
-    <ClCompile Include="win32\uniscribe\script.cpp">
-      <Filter>win32\uniscribe</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\uniscribe\ScriptService.cpp">
-      <Filter>win32\uniscribe</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -50,12 +44,6 @@
     <ClInclude Include="win32\dll.h">
       <Filter>win32</Filter>
     </ClInclude>
-    <ClInclude Include="win32\uniscribe\script.h">
-      <Filter>win32\uniscribe</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\uniscribe\ScriptService.h">
-      <Filter>win32\uniscribe</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="win32">
@@ -63,9 +51,6 @@
     </Filter>
     <Filter Include="main">
       <UniqueIdentifier>{88779072-c8c3-48d8-b1d9-fd7315e9672e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="win32\uniscribe">
-      <UniqueIdentifier>{1563d03b-b08a-447f-ac87-6a14c3db607e}</UniqueIdentifier>
     </Filter>
     <Filter Include="samples">
       <UniqueIdentifier>{0f904187-4471-42fa-8f27-bb675c5afac1}</UniqueIdentifier>

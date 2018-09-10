@@ -37,11 +37,14 @@ namespace drawing::script
         section trange;
         uint16_t gid = 0;
         uint16_t gcount = 0;
-        core::vec2<float32_t> advance;
-        core::vec2<float32_t> offset;
+        core::vec2f advance;
+        core::vec2f offset;
         bool wordbreak = false;
         bool charbreak = false;
         bool standalone = false;
+
+        uint32_t sindex = 0;
+        core::vec2f pos;
     };
 
     struct segment
@@ -51,8 +54,9 @@ namespace drawing::script
         section grange;
         uint32_t item = 0;
         uint32_t line = 0;
-        float32_t offset = 0;
         float32_t width = 0;
+
+        float32_t offset = 0;
 #ifdef _DEBUG
         std::string _text;
 #endif
@@ -97,6 +101,7 @@ namespace drawing::script
         const drawing::fontmetrics & fontmetrics_at(uint16_t index) { return _fonts[index].fmetrics; }
 
     public:
+        const glyph & findGlyph(size_t index) const;
         core::rc32f charRect(size_t index) const;
 
     private:

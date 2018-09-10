@@ -254,6 +254,7 @@ namespace win32
         void onSizeChanged(const core::si32f & from, const core::si32f & to);
         void onSceneInvalidated(const core::rc32i & rect);
         void onSceneRendered(const drawing::Region & region);
+        void onSceneRendered2(const core::rc32i & rect);
         void onSceneCaptured(bool capture);
 
     private:

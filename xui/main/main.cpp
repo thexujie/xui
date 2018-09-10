@@ -3,10 +3,7 @@
 #include "core/core.h"
 #include "drawing/drawing.h"
 
-#include "win32/Bitmap.h"
-#include "win32/windows.h"
 #include "win32/Win32App.h"
-#include "win32/uniscribe/script.h"
 #include "ui/Container.h"
 #include "ui/Form.h"
 #include "ui/Desktop.h"
@@ -72,8 +69,8 @@ void xui_main()
         for (int cnt = 0; cnt < 100; ++cnt)
         {
             auto button = std::make_shared<ui::controls::Button>(core::format(u8"点击查看更多精彩内容 ", cnt * 100));
-            button->setBorder({ 2_px });
-            button->setBorderColors({ colors::DimGray });
+            button->setBorder({ 2_px, 2_px });
+            button->setBorderColors({ colors::DimGray, colors::DimGray });
             buttons->addControl(button);
         }
 
@@ -88,21 +85,21 @@ void xui_main()
     }
 
     auto text = std::make_shared<ui::controls::Text>(u8"ABCDEF这是一个很好的内容的G");
-    text->setBorder({ 2_px });
-    text->setBorderColors({ colors::DimGray });
+    text->setBorder({ 2_px, 2_px });
+    text->setBorderColors({ colors::DimGray, colors::DimGray });
 
     auto image0 = std::make_shared<ui::controls::Image>("applique0.jpg");
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
     image0->setImageFitting({ ui::renderables::image_fitting::repeat, ui::renderables::image_fitting::repeat });
-    image0->setPadding({ 1_em });
+    image0->setPadding({ 1_em, 1_em });
     image0->setBorder({ 10_px, 20_px, 30_px, 40_px });
     //image0->setBorder({ 40_px });
     image0->setBorderColors({ colors::Blue, colors::Red, colors::DarkCyan, colors::Green });
-    image0->setBorderStyles({ drawing::stroke_style::dashed });
+    image0->setBorderStyles({ drawing::stroke_style::dashed, drawing::stroke_style::dashed });
     //image0->setBackgroundColor(colors::Red);
-    image0->setMargin({ 0.5_em });
+    image0->setMargin({ 0.5_em, 0.5_em });
 
     auto scrollbar = std::make_shared<ui::controls::ScrollBar>();
     //image0->setBackgroundColor(colors::Green);
@@ -113,8 +110,8 @@ void xui_main()
     image->setImageSize({ 10_em, auto_value });
     image->setSize({ 20_em, 100_per });
     image->setImageFitting({ ui::renderables::image_fitting::repeat, ui::renderables::image_fitting::repeat });
-    image->setBorder({ 5_px });
-    image->setBorderColors({ colors::Azure });
+    image->setBorder({ 5_px, 5_px });
+    image->setBorderColors({ colors::Azure, colors::Azure });
 
     auto text2 = std::make_shared<ui::controls::Text>("XYZOPQRST");
     text2->setBackgroundColor(colors::Green);
@@ -122,8 +119,8 @@ void xui_main()
 
     auto form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em));
     form->formScene()->setStyleSheet(ss);
-    form->setBorder({ 1_px });
-    form->setBorderColors({ colors::Black });
+    form->setBorder({ 1_px, 1_px });
+    form->setBorderColors({ colors::Black, colors::Black });
     //form->setBorderStyles({ graphics::stroke_style::dashed });
     form->addControl(text);
     form->addControl(image0);
@@ -147,7 +144,7 @@ void xui_main()
         layer->setLayoutDirection(core::align::top);
         layer->setLayoutOrigin(ui::layout_origin::parent);
         layer->setMouseThrough(true);
-        layer->setSize({ 100_per });
+        layer->setSize({ 100_per, 100_per });
 
         auto tbx = std::make_shared<ui::controls::TextBox>();
         tbx->setText(rtft);

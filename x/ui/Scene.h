@@ -46,6 +46,7 @@ namespace ui
     public:
         core::event<void(const core::rc32i & rect)> invalidated;
         core::event<void(const drawing::Region & region)> rendered;
+        core::event<void(const core::rc32i & rect)> rendered2;
         core::event<void(bool capture)> captured;
 
     private:

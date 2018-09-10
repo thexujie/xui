@@ -53,9 +53,6 @@
     <ClCompile Include="drawing\image\formats\tga.cpp">
       <Filter>drawing\image\formats</Filter>
     </ClCompile>
-    <ClCompile Include="core\unicode.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="core\math.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -268,9 +265,6 @@
     </ClInclude>
     <ClInclude Include="drawing\image\formats\tga.h">
       <Filter>drawing\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="core\unicode.h">
-      <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\align.h">
       <Filter>core</Filter>

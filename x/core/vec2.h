@@ -8,7 +8,7 @@ namespace core
     public:
         vec2() : x(), y() { }
 
-        vec2(T _t) : x(_t), y(_t) { }
+        explicit vec2(T _t) : x(_t), y(_t) { }
 
         vec2(T _x, T _y) : x(_x), y(_y) { }
 

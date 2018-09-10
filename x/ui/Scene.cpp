@@ -162,14 +162,13 @@ namespace ui
 
             if (invalid_rect.empty())
                 break;
-            //invalid_rect.cy += 20;
 
             auto tms = core::datetime::high_resolution_s();
             if (!_renderBuffer || _renderBuffer->size().cx < invalid_rect.right() || _renderBuffer->size().cy < invalid_rect.bottom())
                 _renderBuffer = std::make_shared<drawing::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
 
             drawing::Graphics graphics(_renderBuffer);
-            graphics.setClipRect(invalid_rect.to<float32_t>(), false);
+            graphics.setClipRect(invalid_rect.to<float32_t>(), true);
             graphics.clear(_color_default);
             control()->render(graphics, invalid_region);
 

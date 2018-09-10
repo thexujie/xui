@@ -129,7 +129,6 @@ namespace core
 #include "core/bitflag.h"
 #include "core/error.h"
 #include "core/system.h"
-#include "core/unicode.h"
 #include "core/logger.h"
 #include "core/path.h"
 #include "core/color32.h"
