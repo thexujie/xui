@@ -3,6 +3,13 @@
 
 namespace ui::controls
 {
+    enum class image_fitting
+    {
+        none = 0,
+        scale,
+        repeat,
+    };
+
     class Image : public Control
     {
     public:
@@ -13,20 +20,22 @@ namespace ui::controls
         void setImage(std::string path);
         void setImage(std::shared_ptr<drawing::Image> image);
         void setImageSize(const core::vec2<core::dimensionf> & size);
-        void setImageFitting(const core::vec2<renderables::image_fitting> & fitting) { _image_fitting = fitting; }
-        const core::vec2<renderables::image_fitting> & imageFitting() const { return _image_fitting; }
+        void setImageFitting(const core::vec2<image_fitting> & fitting) { _image_fitting = fitting; }
+        const core::vec2<image_fitting> & imageFitting() const { return _image_fitting; }
         core::si32f contentSize() const override;
-
-        core::si32f _imageSize() const;
-        void updateContent() override;
+        void render(drawing::Graphics & graphics, const drawing::Region & region) const override;
 
     public:
         void onRectChanged(const core::rc32f & from, const core::rc32f & to) override;
 
     private:
+        core::si32f _imageSize() const;
+
+    private:
         std::shared_ptr<drawing::Image> _image;
         core::attribute<core::vec2<core::dimensionf>> _image_size;
-        core::vec2<renderables::image_fitting> _image_fitting = core::vec2<renderables::image_fitting>(renderables::image_fitting::none, renderables::image_fitting::none);
+        core::attribute<core::vec4f> _image_clip;
+        core::vec2<image_fitting> _image_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
 
         std::shared_ptr<renderables::Image> _image_obj;
     };

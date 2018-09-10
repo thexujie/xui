@@ -92,7 +92,7 @@ void xui_main()
     //image0->setBackgroundColor(colors::Green);
     image0->setImageSize({ 10_em, auto_value });
     image0->setSize({ 20_em, 30_em });
-    image0->setImageFitting({ ui::renderables::image_fitting::repeat, ui::renderables::image_fitting::repeat });
+    image0->setImageFitting({ ui::controls::image_fitting::repeat, ui::controls::image_fitting::repeat });
     image0->setPadding({ 1_em, 1_em });
     image0->setBorder({ 10_px, 20_px, 30_px, 40_px });
     //image0->setBorder({ 40_px });
@@ -109,7 +109,7 @@ void xui_main()
     //image->setBackgroundColor(colors::Green);
     image->setImageSize({ 10_em, auto_value });
     image->setSize({ 20_em, 100_per });
-    image->setImageFitting({ ui::renderables::image_fitting::repeat, ui::renderables::image_fitting::repeat });
+    image->setImageFitting({ ui::controls::image_fitting::repeat, ui::controls::image_fitting::repeat });
     image->setBorder({ 5_px, 5_px });
     image->setBorderColors({ colors::Azure, colors::Azure });
 

@@ -7,7 +7,7 @@ namespace ui::renderables
     {
         Renderable::render(graphics);
         graphics.save();
-        graphics.setClipPath(_clipPath);
+        graphics.setClipPath(*_clipPath);
         graphics.drawLine(_point0, _point1, _style);
         graphics.restore();
     }

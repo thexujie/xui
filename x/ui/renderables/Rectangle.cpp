@@ -10,7 +10,7 @@ namespace ui::renderables
             return;
 
         graphics.save();
-        graphics.setClipPath(_clipPath);
+        graphics.setClipPath(*_clipPath);
         graphics.drawRectangle(_rectangle, _style);
         graphics.restore();
     }

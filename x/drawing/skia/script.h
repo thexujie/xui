@@ -87,6 +87,7 @@ namespace drawing::script
         core::error wrap(float32_t end, wrap_mode mode);
 
         core::error build(SkTextBlobBuilder & builder, uint32_t index);
+        std::shared_ptr<class SkTextBlob> build(uint32_t index);
 
         core::si32f lineSize(uint32_t index);
 
@@ -132,5 +133,6 @@ namespace drawing::script
         std::vector<glyph> _glyphs;
         std::vector<segment> _segments;
         std::vector<row> _rows;
+        std::shared_ptr<class SkTextBlobBuilder> _builder;
     };
 }

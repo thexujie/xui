@@ -437,7 +437,7 @@ namespace script
         auto iter = _font_indices.find(font);
         if (iter == _font_indices.end())
         {
-            auto skfont = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref);
+            auto skfont = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref<>);
             auto hbfont = create_hb_font(skfont.get());
             if(!skfont || !hbfont)
                 throw core::error_not_supported;

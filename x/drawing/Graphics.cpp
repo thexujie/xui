@@ -55,16 +55,13 @@ namespace drawing
         _native->clipRect(skia::from(rect), aa);
     }
 
-    void Graphics::setClipPath(std::shared_ptr<drawing::Path> path, bool aa)
+    void Graphics::setClipPath(const drawing::Path & path, bool aa)
     {
         ++_statistics.setClipPath;
         if (!_native)
             return;
 
-        if (!path)
-            return;
-
-        _native->clipPath(path->native(), aa);
+        _native->clipPath(path.native(), aa);
     }
 
     void Graphics::setMatrix(const core::float3x2 & matrix)

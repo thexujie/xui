@@ -62,28 +62,50 @@ namespace ui::controls
         }
     }
 
-    void Image::updateContent()
+    void Image::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
-        if (_image)
-        {
-            if(!_image_obj)
-            {
-                _image_obj = std::make_shared<renderables::Image>(control_ref(), _image);
-                insert(_image_obj);
-            }
+        graphics.save();
+        auto box = contentBox();
+        graphics.setClipRect(box);
 
-            _image_obj->setRect(contentBox());
-            _image_obj->setImageSize(_imageSize());
-            _image_obj->setImageFitting(_image_fitting);
-        }
+        auto image_size = _imageSize();
+        core::rc32f rect = box;
+        if (_image_fitting.x == image_fitting::scale)
+            rect.cx = float32_t(_image->width());
         else
+            rect.cx = image_size.empty() ? float32_t(_image->width()) : image_size.cx;
+
+        if (_image_fitting.y == image_fitting::scale)
+            rect.cy = float32_t(_image->height());
+        else
+            rect.cy = image_size.empty() ? float32_t(_image->height()) : image_size.cy;
+
+        while (true)
         {
-            if(_image_obj)
+            // 一行一行来
+            while (true)
             {
-                remove(_image_obj);
-                _image_obj = nullptr;
+                if (_image_clip.available())
+                    graphics.drawImage(*_image, rect, _image_clip);
+                else
+                    graphics.drawImage(*_image, rect);
+
+                if (_image_fitting.x != image_fitting::repeat)
+                    break;
+
+                rect.x += rect.cx;
+                if (rect.x >= box.right())
+                    break;
             }
+            if (_image_fitting.y != image_fitting::repeat)
+                break;
+
+            rect.x = box.x;
+            rect.y += rect.cy;
+            if (rect.y >= box.bottom())
+                break;
         }
+        graphics.restore();
     }
 
     void Image::onRectChanged(const core::rc32f & from, const core::rc32f & to)

@@ -17,8 +17,9 @@ namespace ui::controls
         const std::string & text() const { return _text; }
 
         core::si32f contentSize() const override;
-        void updateContent() override;
         std::string styleName() const override;
+
+        void render(drawing::Graphics & graphics, const drawing::Region & region) const override;
     public:
         void onMouseEnter(const mosue_state & state);
         void onMouseMove(const mosue_state & state);
@@ -33,7 +34,5 @@ namespace ui::controls
     private:
         std::string _text;
         mutable std::shared_ptr<drawing::TextBlob> _textBlob;
-
-        std::shared_ptr<renderables::Text> _text_obj;
     };
 }

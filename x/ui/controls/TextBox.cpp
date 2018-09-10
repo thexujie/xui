@@ -76,28 +76,6 @@ namespace ui::controls
         return _textblob ? _textblob->size() : core::si32f();
     }
 
-    void TextBox::updateContent()
-    {
-        if (_textblob)
-        {
-            if(!_text_obj)
-            {
-                _text_obj = std::make_shared<renderables::Text>(control_ref());
-                insert(LOCAL_DEPTH_CONTENT, _text_obj);
-            }
-            _text_obj->setTextBlob(_textblob);
-            _text_obj->setRect(contentBox());
-        }
-
-        if (!_cursor_obj)
-        {
-            _cursor_obj = std::make_shared<renderables::Line>(control_ref());
-            _cursor_obj->setVisible(false);
-            insert(LOCAL_DEPTH_CONTENT + 1, _cursor_obj);
-        }
-    }
-
-
     std::string TextBox::styleName() const
     {
         if (_pressed)
@@ -106,6 +84,20 @@ namespace ui::controls
             return "textbox:hover";
         else
             return "textbox";
+    }
+
+    void TextBox::render(drawing::Graphics & graphics, const drawing::Region & region) const
+    {
+        if (_textblob)
+            graphics.drawTextBlob(*_textblob, contentBox().leftTop());
+
+        if(_shaper && _cursor_shown)
+        {
+            auto rcCurr = _shaper->charRect(_text.length() - 1);
+            auto cbox = contentBox();
+            graphics.drawLine({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y }, { cbox.x + rcCurr.right(), cbox.y + rcCurr.y + rcCurr.height }, 
+                drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(1));
+        }
     }
 
     void TextBox::onMouseEnter(const mosue_state & state)
@@ -143,19 +135,10 @@ namespace ui::controls
         _imecontext = imecontext;
         if(!_cursor_anim)
         {
-            auto accessor = make_accessor(&renderables::Line::setVisible, &renderables::Line::visible, core::parseBool, nullptr);
+            auto accessor = make_accessor(&TextBox::_setCursorShown, &TextBox::_cursorShown, core::parseBool, nullptr);
             auto interpolator = std::make_shared<core::property_interpolator_keyframes<bool>>();
             interpolator->set_values({ { 0.0f, true }, { 0.5f, false } });
-            {
-                std::lock_guard lock(*this);
-                if (!_cursor_obj)
-                {
-                    _cursor_obj = std::make_shared<renderables::Line>(control_ref());
-                    _cursor_obj->setVisible(false);
-                    insert(LOCAL_DEPTH_CONTENT + 1, _cursor_obj);
-                }
-            }
-            _cursor_anim = std::make_shared<core::property_animation>(_cursor_obj, accessor, interpolator);
+            _cursor_anim = std::make_shared<core::property_animation>(control_ref(), accessor, interpolator);
             _cursor_anim->setDuration(1s);
             _cursor_anim->setLoop(9999);
             appendAnimation(TEXTBOX_ANIMATION_GROUP_CURSOR, _cursor_anim);
@@ -172,8 +155,7 @@ namespace ui::controls
     {
         _imecontext = nullptr;
         //std::lock_guard lock(*this);
-        if (_cursor_obj)
-            _cursor_obj->setVisible(false);
+        _setCursorShown(false);
         if (_cursor_anim)
             _cursor_anim->stop();
         restyle();
@@ -224,14 +206,6 @@ namespace ui::controls
             {
                 auto rcCurr = _shaper->charRect(_text.length() - 1);
                 _imecontext->setCompositionPos(contentBox().leftTop() + core::vec2f(rcCurr.right(), 0));
-
-                if (_cursor_obj)
-                {
-                    auto cbox = contentBox();
-                    _cursor_obj->setRect({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y, 1, rcCurr.height });
-                    _cursor_obj->setPoints({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y }, { cbox.x + rcCurr.right(), cbox.y + rcCurr.y + rcCurr.height });
-                    _cursor_obj->setPathStyle(drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(1));
-                }
             }
             _imecontext->setCompositionFont(font());
         }
@@ -256,16 +230,22 @@ namespace ui::controls
         _shaper->itermize();
         _shaper->wrap(std::numeric_limits<float32_t>::max(), drawing::wrap_mode::word);
 
-        SkTextBlobBuilder builder;
-        _shaper->build(builder, 0);
-        auto native = std::shared_ptr<SkTextBlob>(builder.make().release(), [](SkTextBlob * ptr) { if (ptr) SkSafeUnref(ptr); });
+        auto native = _shaper->build(0);
         {
             std::lock_guard l(*this);
             _textblob->setNative(native, _shaper->lineSize(0));
-            if (_text_obj)
-                _text_obj->invalid();
+            invalid();
         }
 
         _updateIme();
+    }
+
+    void TextBox::_setCursorShown(bool vis)
+    {
+        if(_cursor_shown != vis)
+        {
+            _cursor_shown = vis;
+            invalid();
+        }
     }
 }

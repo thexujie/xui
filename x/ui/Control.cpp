@@ -476,6 +476,14 @@ namespace ui
         }
     }
 
+    void Control::_renderBackground(drawing::Graphics & graphics) const
+    {
+        if (!_background_color.available())
+            return;
+
+        graphics.drawRectangle(box(_background_box), drawing::PathStyle().fill(_background_color));
+    }
+
     void Control::_updateBorder()
     {
         if (_border && _border_colors)
@@ -547,6 +555,45 @@ namespace ui
         }
     }
 
+    void Control::_renderBorder(drawing::Graphics & graphics) const
+    {
+        if (_border && _border_colors)
+        {
+            if (std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
+                std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
+                std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
+            {
+                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
+            }
+            else
+            {
+                auto border = calc(_border);
+                const core::align edges[4] = { core::align::left, core::align::top, core::align::right, core::align::bottom };
+                drawing::Path path;
+                for (int32_t cnt = 0; cnt < 4; ++cnt)
+                {
+                    if (border[cnt] > 0 && _border_colors.value[cnt].visible())
+                    {
+                        auto points = boderPoints(edges[cnt]);
+                        auto line = boderLine(edges[cnt]);
+                        auto style = drawing::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]);
+
+                        path.clear();
+                        path.fromPoints(std::begin(points), std::end(points), true);
+
+                        graphics.save();
+                        graphics.setClipPath(path);
+                        graphics.drawLine(line[0], line[1], style);
+                        graphics.restore();
+                    }
+                    else
+                    {
+                    }
+                }
+            }
+        }
+    }
+
     void Control::_adjustSizeMinMax(core::si32f & size) const
     {
         if (_minSize.available())
@@ -580,6 +627,11 @@ namespace ui
                     size.cy = val;
             }
         }
+    }
+
+    void Control::invalid()
+    {
+        invalidate(_rect);
     }
 
     void Control::invalidate(const core::rc32f & rect)
@@ -639,14 +691,15 @@ namespace ui
         _renderables.clear();
     }
 
+    void Control::renderControl(drawing::Graphics & graphics, const drawing::Region & region) const
+    {
+        _renderBackground(graphics);
+        render(graphics, region);
+        _renderBorder(graphics);
+    }
+
     void Control::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
-        std::lock_guard lock(*this);
-        for (auto & rendereable : _renderables)
-        {
-            if (rendereable.second->visible() && region.intersects(rendereable.second->rect().ceil<int32_t>()))
-                rendereable.second->render(graphics);
-        }
     }
 
     void Control::clearAnimations(std::string group)

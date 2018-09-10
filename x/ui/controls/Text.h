@@ -11,8 +11,8 @@ namespace ui::controls
         ~Text();
 
         core::si32f contentSize() const override;
-        void updateContent() override;
 
+        void render(drawing::Graphics & graphics, const drawing::Region & region) const override;
     private:
         void _confirmBlob() const;
 

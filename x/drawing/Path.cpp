@@ -13,6 +13,12 @@ namespace drawing
     {
     }
 
+    void Path::clear()
+    {
+        if (_native)
+            _native->reset();
+    }
+
     void Path::close()
     {
         if (_native)

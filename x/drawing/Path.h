@@ -19,6 +19,7 @@ namespace drawing
         Path() = default;
         ~Path();
 
+        void clear();
         void close();
         void moveTo(const core::pt32f & pos);
         void lineTo(const core::pt32f & pos);

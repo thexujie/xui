@@ -15,7 +15,8 @@
 
 namespace drawing::skia
 {
-    inline void skia_unref(SkRefCnt * ptr)
+    template<typename T = SkRefCnt>
+    inline void skia_unref(T * ptr)
     {
         if (ptr)
             ptr->unref();

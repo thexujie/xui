@@ -170,7 +170,7 @@ namespace ui
             drawing::Graphics graphics(_renderBuffer);
             graphics.setClipRect(invalid_rect.to<float32_t>(), true);
             graphics.clear(_color_default);
-            control()->render(graphics, invalid_region);
+            control()->renderControl(graphics, invalid_region);
 
             //fps.acc(1);
             //auto cost = core::datetime::high_resolution_s() - tms;

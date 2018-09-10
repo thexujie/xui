@@ -345,7 +345,9 @@ namespace ui
 
     protected:
         void _updateBackground();
+        void _renderBackground(drawing::Graphics & graphics) const;
         void _updateBorder();
+        void _renderBorder(drawing::Graphics & graphics) const;
         void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:
@@ -413,6 +415,7 @@ namespace ui
         core::rc32f _rect_invalid;
 
    public:
+       void invalid();
        void invalidate(const core::rc32f & rect);
 
        void clear();
@@ -420,6 +423,7 @@ namespace ui
        void insert(int32_t depth, std::shared_ptr<component::Component> object);
        void remove(std::shared_ptr<component::Component> object);
 
+       virtual void renderControl(drawing::Graphics & graphics, const drawing::Region & region) const;
        virtual void render(drawing::Graphics & graphics, const drawing::Region & region) const;
 
        virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const { return nullptr; }

@@ -44,22 +44,6 @@ namespace ui::controls
         return _textBlob ? _textBlob->size() : core::si32f();
     }
 
-    void Button::updateContent()
-    {
-        _confirmBlob();
-        if (_textBlob)
-        {
-            if(!_text_obj)
-            {
-                _text_obj = std::make_shared<renderables::Text>(control_ref());
-                insert(LOCAL_DEPTH_CONTENT, _text_obj);
-            }
-            _text_obj->setTextBlob(_textBlob);
-            _text_obj->setRect(contentBox());
-        }
-    }
-
-
     std::string Button::styleName() const
     {
         if (_pressed)
@@ -68,6 +52,14 @@ namespace ui::controls
             return "button:hover";
         else
             return "button";
+    }
+
+    void Button::render(drawing::Graphics & graphics, const drawing::Region & region) const
+    {
+        if (!_textBlob)
+            return;
+
+        graphics.drawTextBlob(*_textBlob, contentBox().leftTop());
     }
 
     void Button::onMouseEnter(const mosue_state & state)

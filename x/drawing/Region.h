@@ -18,7 +18,7 @@ namespace drawing
         void setRect(const core::rc32i & rect);
         void addRect(const core::rc32i & rect);
 
-        bool intersects(const core::rc32i & rect)const;
+        bool intersects(const core::rc32i & rect) const;
         bool intersects(const Region & region)const;
 
         bool contains(const core::pt32i & point) const;

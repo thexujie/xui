@@ -26,18 +26,10 @@ namespace ui::controls
         return _textBlob ? _textBlob->size() : core::si32f();
     }
 
-    void Text::updateContent()
+    void Text::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
-        _confirmBlob();
-        if(_textBlob)
-        {
-            if(!_text_obj)
-            {
-                _text_obj = std::make_shared<renderables::Text>(control_ref(), _textBlob);
-                insert(_text_obj);
-            }
-            _text_obj->setRect(contentBox());
-        }
+        if (_textBlob)
+            graphics.drawTextBlob(*_textBlob, contentBox().leftTop());
     }
 
     void Text::_confirmBlob() const

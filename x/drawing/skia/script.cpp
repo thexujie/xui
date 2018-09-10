@@ -550,15 +550,16 @@ namespace drawing::script
             paint.setAutohinted(true);
             paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
-            SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(paint, seg.grange.length, seg.trange.length, SkString(), nullptr);
-            memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
+            //SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(paint, seg.grange.length, seg.trange.length, SkString(), nullptr);
+            SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunPos(paint, seg.grange.length, nullptr);
+            //memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
 
             for (size_t gindex = seg.grange.index, iglyph = 0; gindex < seg.grange.end(); ++gindex, ++iglyph)
             {
                 glyph & glyph = _glyphs[(item.level & 1) ? (seg.grange.end() - 1 - iglyph) : gindex];
 
                 runBuffer.glyphs[iglyph] = glyph.gid;
-                runBuffer.clusters[iglyph] = glyph.trange.index;
+                //runBuffer.clusters[iglyph] = glyph.trange.index;
                 runBuffer.pos[iglyph * 2 + 0] = offset_x + glyph.offset.x;
                 runBuffer.pos[iglyph * 2 + 1] = offset_y - glyph.offset.y + row.ascent;
                 offset_x += glyph.advance.cx;
@@ -567,6 +568,16 @@ namespace drawing::script
 
         }
         return core::error_ok;
+    }
+
+    std::shared_ptr<class SkTextBlob> Shaper::build(uint32_t index)
+    {
+        if (!_builder)
+            _builder = std::make_shared<SkTextBlobBuilder>();
+        auto err = build(*_builder, index);
+        if (err)
+            return nullptr;
+        return std::shared_ptr<SkTextBlob>(_builder->make().release(), skia::skia_unref<SkTextBlob>);
     }
 
     core::si32f Shaper::lineSize(uint32_t index)
@@ -603,7 +614,7 @@ namespace drawing::script
         auto iter = _font_indices.find(font);
         if (iter == _font_indices.end())
         {
-            auto skfont = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref);
+            auto skfont = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref<>);
             auto hbfont = create_hb_font(skfont.get());
             if(!skfont || !hbfont)
                 throw core::error_not_supported;
