@@ -423,7 +423,6 @@ namespace ui
        void insert(int32_t depth, std::shared_ptr<component::Component> object);
        void remove(std::shared_ptr<component::Component> object);
 
-       virtual void renderControl(drawing::Graphics & graphics, const drawing::Region & region) const;
        virtual void render(drawing::Graphics & graphics, const drawing::Region & region) const;
 
        virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const { return nullptr; }

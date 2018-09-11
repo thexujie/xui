@@ -56,10 +56,11 @@ namespace ui::controls
 
     void Button::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
-        if (!_textBlob)
-            return;
-
-        graphics.drawTextBlob(*_textBlob, contentBox().leftTop());
+        std::lock_guard l(*this);
+        _renderBackground(graphics);
+        if (_textBlob)
+            graphics.drawTextBlob(*_textBlob, contentBox().leftTop());
+        _renderBorder(graphics);
     }
 
     void Button::onMouseEnter(const mosue_state & state)

@@ -691,15 +691,10 @@ namespace ui
         _renderables.clear();
     }
 
-    void Control::renderControl(drawing::Graphics & graphics, const drawing::Region & region) const
-    {
-        _renderBackground(graphics);
-        render(graphics, region);
-        _renderBorder(graphics);
-    }
-
     void Control::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
+        _renderBackground(graphics);
+        _renderBorder(graphics);
     }
 
     void Control::clearAnimations(std::string group)

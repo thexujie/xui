@@ -64,6 +64,8 @@ namespace ui::controls
 
     void Image::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
+        std::lock_guard l(*this);
+        _renderBackground(graphics);
         graphics.save();
         auto box = contentBox();
         graphics.setClipRect(box);
@@ -106,6 +108,7 @@ namespace ui::controls
                 break;
         }
         graphics.restore();
+        _renderBorder(graphics);
     }
 
     void Image::onRectChanged(const core::rc32f & from, const core::rc32f & to)

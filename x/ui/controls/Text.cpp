@@ -28,8 +28,11 @@ namespace ui::controls
 
     void Text::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
+        std::lock_guard l(*this);
+        _renderBackground(graphics);
         if (_textBlob)
             graphics.drawTextBlob(*_textBlob, contentBox().leftTop());
+        _renderBorder(graphics);
     }
 
     void Text::_confirmBlob() const

@@ -57,8 +57,11 @@ namespace ui::controls
 
     void ScrollBar::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
+        std::lock_guard l(*this);
+        _renderBackground(graphics);
         core::rc32f bar_rect = barRect();
         graphics.drawRectangle(bar_rect, drawing::PathStyle().fill(_bar_color));
+        _renderBorder(graphics);
     }
 
     void ScrollBar::setValue(float32_t val)

@@ -88,16 +88,19 @@ namespace ui::controls
 
     void TextBox::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
+        std::lock_guard l(*this);
+        _renderBackground(graphics);
         if (_textblob)
             graphics.drawTextBlob(*_textblob, contentBox().leftTop());
 
-        if(_shaper && _cursor_shown)
+        if (_shaper && _cursor_shown)
         {
             auto rcCurr = _shaper->charRect(_text.length() - 1);
             auto cbox = contentBox();
-            graphics.drawLine({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y }, { cbox.x + rcCurr.right(), cbox.y + rcCurr.y + rcCurr.height }, 
+            graphics.drawLine({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y }, { cbox.x + rcCurr.right(), cbox.y + rcCurr.y + rcCurr.height },
                 drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(1));
         }
+        _renderBorder(graphics);
     }
 
     void TextBox::onMouseEnter(const mosue_state & state)

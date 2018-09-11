@@ -281,16 +281,17 @@ namespace ui
         return num;
     }
 
-    void Container::renderControl(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Container::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
-        Control::renderControl(graphics, region);
         std::lock_guard lock(*this);
+        _renderBackground(graphics);
         for (auto & iter : _controls)
         {
             auto rect = iter.second->realRect();
             if(region.intersects(rect.ceil<int32_t>()))
-                iter.second->renderControl(graphics, region);
+                iter.second->render(graphics, region);
         }
+        _renderBorder(graphics);
     }
 
     std::shared_ptr<Control> Container::findChild(const core::pt32f & pos, std::shared_ptr<Control> last) const
