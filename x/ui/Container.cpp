@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "Container.h"
-#include "renderables/Image.h"
-#include "renderables/Rectangle.h"
 #include "controls/ScrollBar.h"
 
 namespace ui

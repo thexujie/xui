@@ -1,9 +1,5 @@
 #include "stdafx.h"
 #include "Control.h"
-#include "renderables/Image.h"
-#include "renderables/Rectangle.h"
-#include "renderables/Path.h"
-#include "renderables/Line.h"
 
 namespace ui
 {
@@ -201,7 +197,17 @@ namespace ui
         if(!_delay_update)
         {
             _delay_update = true;
-            invoke([this]() {update(); });
+            invoke([this]() { update(); });
+        }
+    }
+
+    void Control::refresh(const core::rc32f & rect)
+    {
+        _rect_invalid.unite(rect);
+        if (!_delay_update)
+        {
+            _delay_update = true;
+            invoke([this]() { update(); });
         }
     }
 
@@ -382,11 +388,6 @@ namespace ui
         if (!s)
             return;
 
-        std::lock_guard lock(*this);
-        _updateBackground();
-        updateContent();
-        _updateBorder();
-
         if (!_rect_invalid.empty() && s)
             s->invalid(_rect_invalid);
         _rect_invalid.clear();
@@ -407,6 +408,12 @@ namespace ui
         return num;
     }
 
+    void Control::render(drawing::Graphics & graphics, const drawing::Region & region) const
+    {
+        _renderBackground(graphics);
+        _renderBorder(graphics);
+    }
+
     void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to)
     {
         refresh();
@@ -423,136 +430,12 @@ namespace ui
     {
     }
 
-    void Control::_updateBackground()
-    {
-        if (_background_image)
-        {
-            if (_background_rect_obj)
-            {
-                remove(_background_rect_obj);
-                _background_rect_obj = nullptr;
-            }
-
-            if(!_background_imgage_obj)
-            {
-                _background_imgage_obj = std::make_shared<renderables::Image>(control_ref(), _background_image.value);
-                insert(LOCAL_DEPTH_BACKGROUND, _background_imgage_obj);
-            }
-
-            _background_imgage_obj->setRect(box(_background_box));
-            if (_background_size.available())
-                _background_imgage_obj->setImageSize(calc(_background_size));
-            _background_imgage_obj->setImageFitting(_background_fitting);
-        }
-        else if (_background_color)
-        {
-            if (_background_imgage_obj)
-            {
-                remove(_background_imgage_obj);
-                _background_imgage_obj = nullptr;
-            }
-            if(!_background_rect_obj)
-            {
-                _background_rect_obj = std::make_shared<renderables::Rectangle>(control_ref());
-                insert(LOCAL_DEPTH_BACKGROUND, _background_rect_obj);
-            }
-
-            _background_rect_obj->setRect(box(_background_box));
-            _background_rect_obj->setRectangle(box(_background_box));
-            _background_rect_obj->setPathStyle(drawing::PathStyle().fill(_background_color));
-        }
-        else
-        {
-            if (_background_imgage_obj)
-            {
-                remove(_background_imgage_obj);
-                _background_imgage_obj = nullptr;
-            }
-            if (_background_rect_obj)
-            {
-                remove(_background_rect_obj);
-                _background_rect_obj = nullptr;
-            }
-        }
-    }
-
     void Control::_renderBackground(drawing::Graphics & graphics) const
     {
         if (!_background_color.available())
             return;
 
         graphics.drawRectangle(box(_background_box), drawing::PathStyle().fill(_background_color));
-    }
-
-    void Control::_updateBorder()
-    {
-        if (_border && _border_colors)
-        {
-            if(std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
-                std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
-                std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
-            {
-                if (!_border_rect_obj)
-                {
-                    _border_rect_obj = std::make_shared<renderables::Rectangle>(control_ref());
-                    insert(LOCAL_DEPTH_FOREGROUND, _border_rect_obj);
-                }
-
-                for (int32_t cnt = 0; cnt < 4; ++cnt)
-                {
-                    auto & border_obj = _border_line_objs[cnt];
-                    if (border_obj)
-                    {
-                        remove(border_obj);
-                        border_obj = nullptr;
-                    }
-                }
-                _border_rect_obj->setRect(box());
-                _border_rect_obj->setRectangle(box().expanded(calc(_border) * -0.5f));
-                _border_rect_obj->setPathStyle(drawing::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
-            }
-            else
-            {
-                if (_border_rect_obj)
-                {
-                    remove(_border_rect_obj);
-                    _border_rect_obj = nullptr;
-                }
-
-                auto border = calc(_border);
-                const core::align edges[4] = { core::align::left, core::align::top, core::align::right, core::align::bottom };
-                for(int32_t cnt = 0; cnt < 4; ++cnt)
-                {
-                    auto & border_obj = _border_line_objs[cnt];
-                    if (border[cnt] > 0 && _border_colors.value[cnt].visible())
-                    {
-                        auto path = std::make_shared<drawing::Path>();
-                        auto points = boderPoints(edges[cnt]);
-                        auto line = boderLine(edges[cnt]);
-                        path->fromPoints(std::begin(points), std::end(points), true);
-
-                        if (!border_obj)
-                        {
-                            border_obj = std::make_shared<renderables::Line>(control_ref());
-                            insert(LOCAL_DEPTH_FOREGROUND, border_obj);
-                        }
-
-                        border_obj->setRect(path->computeTightBounds());
-                        border_obj->setPoints(line[0], line[1]);
-                        border_obj->setClipPath(path);
-                        border_obj->setPathStyle(drawing::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]));
-                    }
-                    else
-                    {
-                        if (border_obj)
-                        {
-                            remove(border_obj);
-                            border_obj = nullptr;
-                        }
-                    }
-                }
-            }
-        }
     }
 
     void Control::_renderBorder(drawing::Graphics & graphics) const
@@ -627,74 +510,6 @@ namespace ui
                     size.cy = val;
             }
         }
-    }
-
-    void Control::invalid()
-    {
-        invalidate(_rect);
-    }
-
-    void Control::invalidate(const core::rc32f & rect)
-    {
-        if(_delay_update)
-            _rect_invalid.unite(rect);
-        else
-        {
-            auto s = scene();
-            if(s)
-                s->invalid(rect);
-        }
-    }
-
-    void Control::insert(int32_t depth, std::shared_ptr<component::Component> object)
-    {
-        assert(object);
-        if (!object)
-            throw core::exception(core::error_nullptr);
-
-        switch (object->type())
-        {
-        case ui::component::ComponentType::Renderable:
-            _renderables.insert(std::make_pair(depth, std::dynamic_pointer_cast<component::Renderable>(object)));
-            invalidate(object->rect());
-            break;
-        default:
-            break;
-        }
-    }
-
-    void Control::remove(std::shared_ptr<component::Component> object)
-    {
-        switch (object->type())
-        {
-        case ui::component::ComponentType::Renderable:
-            for (auto iter = _renderables.begin(); iter != _renderables.end(); ++iter)
-            {
-                if (iter->second == std::dynamic_pointer_cast<component::Renderable>(object))
-                {
-                    _renderables.erase(iter);
-                    break;
-                }
-            }
-            invalidate(object->rect());
-            break;
-        case ui::component::ComponentType::Interactable:
-            break;
-        default:
-            break;
-        }
-    }
-
-    void Control::clear()
-    {
-        std::lock_guard lock(*this);
-        _renderables.clear();
-    }
-
-    void Control::render(drawing::Graphics & graphics, const drawing::Region & region) const
-    {
-        _renderBackground(graphics);
-        _renderBorder(graphics);
     }
 
     void Control::clearAnimations(std::string group)

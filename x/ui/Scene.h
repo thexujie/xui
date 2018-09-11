@@ -1,10 +1,10 @@
 #pragma once
-#include "component/Renderable.h"
 #include "drawing/Region.h"
 #include "component/Style.h"
 
 namespace ui
 {
+    class Control;
     class ImeContext;
     enum class mouse_action;
     class mosue_state;
@@ -64,8 +64,6 @@ namespace ui
         core::color32 _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
-
-        std::list<std::shared_ptr<component::Renderable>> _renderables;
 
         std::shared_ptr<drawing::Bitmap> _renderBuffer;
 

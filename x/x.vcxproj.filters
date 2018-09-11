@@ -86,15 +86,6 @@
     <ClCompile Include="ui\component\Component.cpp">
       <Filter>ui\component</Filter>
     </ClCompile>
-    <ClCompile Include="ui\component\Renderable.cpp">
-      <Filter>ui\component</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\renderables\Rectangle.cpp">
-      <Filter>ui\renderables</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\renderables\Image.cpp">
-      <Filter>ui\renderables</Filter>
-    </ClCompile>
     <ClCompile Include="core\float2.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -116,23 +107,11 @@
     <ClCompile Include="ui\Container.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\renderables\Text.cpp">
-      <Filter>ui\renderables</Filter>
-    </ClCompile>
     <ClCompile Include="core\float3x2.cpp">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="drawing\Path.cpp">
       <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\renderables\Path.cpp">
-      <Filter>ui\renderables</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\renderables\Shape.cpp">
-      <Filter>ui\renderables</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\renderables\Line.cpp">
-      <Filter>ui\renderables</Filter>
     </ClCompile>
     <ClCompile Include="ui\component\Window.cpp">
       <Filter>ui\component</Filter>
@@ -326,15 +305,6 @@
     <ClInclude Include="ui\component\Component.h">
       <Filter>ui\component</Filter>
     </ClInclude>
-    <ClInclude Include="ui\component\Renderable.h">
-      <Filter>ui\component</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\renderables\Rectangle.h">
-      <Filter>ui\renderables</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\renderables\Image.h">
-      <Filter>ui\renderables</Filter>
-    </ClInclude>
     <ClInclude Include="core\float2.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -374,26 +344,14 @@
     <ClInclude Include="ui\Container.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\renderables\Text.h">
-      <Filter>ui\renderables</Filter>
-    </ClInclude>
     <ClInclude Include="core\float3x2.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="drawing\Path.h">
       <Filter>drawing</Filter>
     </ClInclude>
-    <ClInclude Include="ui\renderables\Path.h">
-      <Filter>ui\renderables</Filter>
-    </ClInclude>
     <ClInclude Include="core\utils.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\renderables\Shape.h">
-      <Filter>ui\renderables</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\renderables\Line.h">
-      <Filter>ui\renderables</Filter>
     </ClInclude>
     <ClInclude Include="ui\component\Window.h">
       <Filter>ui\component</Filter>
@@ -495,9 +453,6 @@
     </Filter>
     <Filter Include="ui\component">
       <UniqueIdentifier>{ffef13bd-9f74-4212-a93e-6e015552c663}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ui\renderables">
-      <UniqueIdentifier>{0858b256-5a76-46f9-b474-872ead193a26}</UniqueIdentifier>
     </Filter>
     <Filter Include="samples">
       <UniqueIdentifier>{01a7303d-087f-42bc-9c03-b9a2c9ec3601}</UniqueIdentifier>

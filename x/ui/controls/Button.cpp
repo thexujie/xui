@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Button.h"
-#include "ui/renderables/Text.h"
 
 namespace ui::controls
 {

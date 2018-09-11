@@ -1,9 +1,5 @@
 #pragma once
 #include "component/Style.h"
-#include "renderables/Text.h"
-#include "renderables/Image.h"
-#include "renderables/Line.h"
-#include "renderables/Rectangle.h"
 #include "drawing/Region.h"
 #include "Scene.h"
 
@@ -22,6 +18,13 @@ namespace ui
     const int32_t LOCAL_DEPTH_BACKGROUND = -100;
     const int32_t LOCAL_DEPTH_CONTENT = 0;
     const int32_t LOCAL_DEPTH_FOREGROUND = 100;
+
+    enum class image_fitting
+    {
+        none = 0,
+        scale,
+        repeat,
+    };
 
     enum class control_box
     {
@@ -65,7 +68,13 @@ namespace ui
         resize_cy = 0x0002,
         force = 0x0004,
     };
-    template<> struct enable_bitmasks<layout_flag> { static const bool enable = true; };
+
+    template<>
+    struct enable_bitmasks<layout_flag>
+    {
+        static const bool enable = true;
+    };
+
     typedef core::bitflag<layout_flag> layout_flags;
 
     enum class calc_flag
@@ -75,7 +84,13 @@ namespace ui
         donot_calc_percent_y = 0x0002,
         donot_calc_percent_xy = donot_calc_percent_x | donot_calc_percent_y,
     };
-    template<> struct enable_bitmasks<calc_flag> { static const bool enable = true; };
+
+    template<>
+    struct enable_bitmasks<calc_flag>
+    {
+        static const bool enable = true;
+    };
+
     typedef core::bitflag<calc_flag> calc_flags;
 
     enum class mouse_button
@@ -87,7 +102,12 @@ namespace ui
         mask = 0x00ff,
     };
 
-    template<> struct enable_bitmasks<mouse_button> { static const bool enable = true; };
+    template<>
+    struct enable_bitmasks<mouse_button>
+    {
+        static const bool enable = true;
+    };
+
     typedef core::bitflag<mouse_button> mouse_buttons;
 
     enum class mouse_action
@@ -198,7 +218,15 @@ namespace ui
         const core::color32 & color() const;
         const drawing::font & font() const;
 
-        void setVisible(bool vis) { if (_visible != vis) { _visible = vis; onVisibleChanged(vis); } }
+        void setVisible(bool vis)
+        {
+            if (_visible != vis)
+            {
+                _visible = vis;
+                onVisibleChanged(vis);
+            }
+        }
+
         bool visible() const { return _visible.value; }
 
         core::si32f realPos() const { return _rect.pos; }
@@ -232,13 +260,14 @@ namespace ui
                     return 0;
                 if (!p)
                     throw core::error_state;
-                if(_margin.value.bleft.unit == core::unit::per || _margin.value.bright.unit == core::unit::per)
+                if (_margin.value.bleft.unit == core::unit::per || _margin.value.bright.unit == core::unit::per)
                     throw core::error_bad_data;
                 return value.value / 100.0f * (p->width() - calc_x(_margin.value.bleft) - calc_x(_margin.value.bright));
             default:
                 return value.value * s->ratio();
             }
         }
+
         float32_t calc_y(const core::dimensionf & value, calc_flags flags = calc_flag::none) const
         {
             auto s = scene();
@@ -268,39 +297,74 @@ namespace ui
                 return value.value * s->ratio();
             }
         }
+
         core::vec2f calc(const core::vec2<core::dimensionf> & value, calc_flags flags = calc_flag::none) const
         {
             return { calc_x(value.x, flags), calc_y(value.y, flags) };
         }
+
         core::vec4f calc(const core::vec4<core::dimensionf> & value, calc_flags flags = calc_flag::none) const
         {
             return { calc(value.xy, flags), calc(value.zw, flags) };
         }
 
-       core::rc32f box() const;
-       core::rc32f controlBox() const { return box(); }
-       core::rc32f borderBox() const;
-       core::rc32f paddingBox() const;
-       core::rc32f contentBox() const;
-       core::rc32f box(control_box box) const;
+        core::rc32f box() const;
+        core::rc32f controlBox() const { return box(); }
+        core::rc32f borderBox() const;
+        core::rc32f paddingBox() const;
+        core::rc32f contentBox() const;
+        core::rc32f box(control_box box) const;
 
         void refresh();
+        void refresh(const core::rc32f & rect);
         void rearrange();
         void restyle();
 
-        void setBackgroundColor(core::color32 color) { if (!_background_color.available() || _background_color != color) { _background_color = color; refresh(); } }
+        void setBackgroundColor(core::color32 color)
+        {
+            if (!_background_color.available() || _background_color != color)
+            {
+                _background_color = color;
+                refresh();
+            }
+        }
+
         core::color32 backgroundColor() const { return _background_color; }
 
         void setBackgroundImage(std::shared_ptr<drawing::Image> image);
         std::shared_ptr<drawing::Image> backgroundImage() const;
 
-        void setMargin(const core::vec4<core::dimensionf> & margin) { if (_margin != margin) { _margin = margin; rearrange(); } }
+        void setMargin(const core::vec4<core::dimensionf> & margin)
+        {
+            if (_margin != margin)
+            {
+                _margin = margin;
+                rearrange();
+            }
+        }
+
         const core::vec4<core::dimensionf> & margin() const { return _margin; }
 
-        void setBorder(const core::vec4<core::dimensionf> & border) { if (!_border.available() || _border != border) { _border = border; refresh(); } }
+        void setBorder(const core::vec4<core::dimensionf> & border)
+        {
+            if (!_border.available() || _border != border)
+            {
+                _border = border;
+                refresh();
+            }
+        }
+
         const core::vec4<core::dimensionf> & border() const { return _border; }
 
-        void setPadding(const core::vec4<core::dimensionf> & padding) { if (_padding != padding) { _padding = padding; rearrange(); } }
+        void setPadding(const core::vec4<core::dimensionf> & padding)
+        {
+            if (_padding != padding)
+            {
+                _padding = padding;
+                rearrange();
+            }
+        }
+
         const core::vec4<core::dimensionf> & padding() const { return _padding; }
 
         void setBorderColors(const core::vec4<core::color32> & boderColors) { _border_colors = boderColors; }
@@ -328,10 +392,14 @@ namespace ui
 
         virtual void updateStyle();
         virtual void update();
-        virtual void updateContent() {}
 
         virtual int32_t animate();
 
+        virtual void render(drawing::Graphics & graphics, const drawing::Region & region) const;
+
+        virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const { return nullptr; }
+
+    public:
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
@@ -344,9 +412,7 @@ namespace ui
         core::event<void(bool vis)> visibleChanged;
 
     protected:
-        void _updateBackground();
         void _renderBackground(drawing::Graphics & graphics) const;
-        void _updateBorder();
         void _renderBorder(drawing::Graphics & graphics) const;
         void _adjustSizeMinMax(core::si32f & size) const;
 
@@ -382,7 +448,7 @@ namespace ui
         core::attribute<core::color32> _background_color = core::colors::Auto;
         layout_origin _background_position;
         core::attribute<core::vec2<core::dimensionf>> _background_size;
-        core::vec2<renderables::image_fitting> _background_fitting = core::vec2<renderables::image_fitting>(renderables::image_fitting::none, renderables::image_fitting::none);
+        core::vec2<image_fitting> _background_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
         control_box _background_box = control_box::layout_box;
 
         std::shared_ptr<component::StyleSheet> _styleSheet;
@@ -392,10 +458,6 @@ namespace ui
         core::pt32f _location;
         core::rc32f _rect;
 
-        std::shared_ptr<renderables::Image> _background_imgage_obj;
-        std::shared_ptr<renderables::Rectangle> _background_rect_obj;
-        std::shared_ptr<renderables::Rectangle> _border_rect_obj;
-        std::array<std::shared_ptr<renderables::Line>, 4> _border_line_objs;
 
         // true if need update
         bool _delay_update = false;
@@ -409,23 +471,9 @@ namespace ui
         ime_mode _ime_mode = ime_mode::disabled;
 
         core::float3x2 _transform;
-        std::multimap<int32_t, std::shared_ptr<component::Renderable>> _renderables;
 
         std::map<std::string, std::vector<std::shared_ptr<core::animation>>> _animations;
         core::rc32f _rect_invalid;
-
-   public:
-       void invalid();
-       void invalidate(const core::rc32f & rect);
-
-       void clear();
-       void insert(std::shared_ptr<component::Component> object) { insert(LOCAL_DEPTH_CONTENT, object); }
-       void insert(int32_t depth, std::shared_ptr<component::Component> object);
-       void remove(std::shared_ptr<component::Component> object);
-
-       virtual void render(drawing::Graphics & graphics, const drawing::Region & region) const;
-
-       virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const { return nullptr; }
 
     public:
         void clearAnimations() { _animations.clear(); }
@@ -448,17 +496,50 @@ namespace ui
 
             return _interactable ? hittest_result::client : hittest_result::stable;
         }
-        virtual void onMouseEnter(const mosue_state & state) { _mousein = true;  mouseEnter(state); }
-        virtual void onMouseMove(const mosue_state & state) { mouseMove(state); }
-        virtual void onMouseLeave(const mosue_state & state) { _pressed = false;  _mousein = false; mouseLeave(state); }
 
-        virtual void onMouseDown(const mosue_state & state) { _pressed = true;  mouseDown(state); }
-        virtual void onMouseUp(const mosue_state & state) { _pressed = false;  mouseUp(state); }
+        virtual void onMouseEnter(const mosue_state & state)
+        {
+            _mousein = true;
+            mouseEnter(state);
+        }
+
+        virtual void onMouseMove(const mosue_state & state) { mouseMove(state); }
+
+        virtual void onMouseLeave(const mosue_state & state)
+        {
+            _pressed = false;
+            _mousein = false;
+            mouseLeave(state);
+        }
+
+        virtual void onMouseDown(const mosue_state & state)
+        {
+            _pressed = true;
+            mouseDown(state);
+        }
+
+        virtual void onMouseUp(const mosue_state & state)
+        {
+            _pressed = false;
+            mouseUp(state);
+        }
+
         virtual void onMouseClick(const mosue_state & state) { mouseClick(state); }
         virtual void onMouseDBClick(const mosue_state & state) { mouseDBClick(state); }
         virtual void onMouseWheel(const mosue_state & state) { mouseWheel(state); }
-        virtual void onFocus(std::shared_ptr<ImeContext> imecontext) { _focused = true;  focus(); }
-        virtual void onBlur() { _focused = false; blur(); }
+
+        virtual void onFocus(std::shared_ptr<ImeContext> imecontext)
+        {
+            _focused = true;
+            focus();
+        }
+
+        virtual void onBlur()
+        {
+            _focused = false;
+            blur();
+        }
+
         virtual void onChar(char32_t ch) {}
 
         bool mousein() const { return _mousein; }

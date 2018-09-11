@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ScrollBar.h"
-#include "ui/renderables/Text.h"
 
 namespace ui::controls
 {
@@ -29,20 +28,6 @@ namespace ui::controls
     void ScrollBar::propertyTable(core::property_table & properties)
     {
         ScrollBar::propertyTableCallback(properties);
-    }
-
-    void ScrollBar::updateContent()
-    {
-        core::rc32f bar_rect = barRect();
-        if(!_bar)
-        {
-            _bar = std::make_shared<renderables::Rectangle>(control_ref());
-            insert(_bar);
-        }
-
-        _bar->setRect(bar_rect);
-        _bar->setRectangle(bar_rect);
-        _bar->setPathStyle(drawing::PathStyle().fill(_bar_color));
     }
 
     std::string ScrollBar::styleName() const
@@ -161,7 +146,7 @@ namespace ui::controls
         if (_bar_active)
         {
             _bar_drag_start_vallue = 0.0f;
-            _bar_drag_mouse_pos = { std::nanf("0") };
+            _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };
             _updateBarState(true, false);
             _updateMouse(state);
         }

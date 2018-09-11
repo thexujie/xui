@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "TextBox.h"
 #include <SkTextBlob.h>
-#include "ui/renderables/Text.h"
 #include "drawing/skia/script.h"
 
 namespace ui::controls
@@ -237,7 +236,7 @@ namespace ui::controls
         {
             std::lock_guard l(*this);
             _textblob->setNative(native, _shaper->lineSize(0));
-            invalid();
+            refresh();
         }
 
         _updateIme();
@@ -248,7 +247,7 @@ namespace ui::controls
         if(_cursor_shown != vis)
         {
             _cursor_shown = vis;
-            invalid();
+            refresh();
         }
     }
 }

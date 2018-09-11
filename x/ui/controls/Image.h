@@ -3,13 +3,6 @@
 
 namespace ui::controls
 {
-    enum class image_fitting
-    {
-        none = 0,
-        scale,
-        repeat,
-    };
-
     class Image : public Control
     {
     public:
@@ -36,7 +29,5 @@ namespace ui::controls
         core::attribute<core::vec2<core::dimensionf>> _image_size;
         core::attribute<core::vec4f> _image_clip;
         core::vec2<image_fitting> _image_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
-
-        std::shared_ptr<renderables::Image> _image_obj;
     };
 }

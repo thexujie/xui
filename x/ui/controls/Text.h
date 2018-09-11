@@ -19,7 +19,5 @@ namespace ui::controls
     private:
         std::string _text;
         mutable std::shared_ptr<drawing::TextBlob> _textBlob;
-
-        std::shared_ptr<renderables::Text> _text_obj;
     };
 }
