@@ -194,11 +194,7 @@ namespace ui
 
     void Control::refresh()
     {
-        if(!_delay_update)
-        {
-            _delay_update = true;
-            invoke([this]() { update(); });
-        }
+        refresh(_rect);
     }
 
     void Control::refresh(const core::rc32f & rect)
