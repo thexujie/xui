@@ -88,7 +88,7 @@ namespace drawing
     struct glyph_iterator
     {
         std::vector<glyph>  & glyphs;
-        section range;
+        section32 range;
         bool rtl = false;
         size_t curr = 0;
 
@@ -154,7 +154,7 @@ namespace drawing
         return font;
     }
 
-    core::error Shaper::reset(std::string text)
+    core::error Shaper::itermize(std::string text, const drawing::font & font, core::color32 color)
     {
         //SkShaper shaper(SkTypeface::MakeFromName(_font_default.family.c_str(), skia::from(_font_default.style)));
 
@@ -169,31 +169,29 @@ namespace drawing
         _items.clear();
 
         _text = text;
-        _rtf_font_indices.assign(_text.length(), font_default);
-        _rtf_colors.assign(_text.length(), _color_default);
+
+        _rtf_font_indices.assign(_text.length(), fontIndex(font));
+        _rtf_colors.assign(_text.length(), color);
 
         _font_indices.clear();
         //_fonts.clear();
-        fontIndex(_font_default);
 #ifdef _DEBUG
         _u32text.clear();
 #endif
-        _hbbuffer = { hb_buffer_create(), hb_buffer_destroy };
+        if(!_hbbuffer)
+            _hbbuffer = { hb_buffer_create(), hb_buffer_destroy };
         UErrorCode status = U_ZERO_ERROR;
-        _breaker_world = { icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
-        _breaker_character = { icu::BreakIterator::createCharacterInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
-        return core::error_ok;
-    }
+        if (!_breaker_world)
+            _breaker_world = { icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
+        if (!_breaker_character)
+            _breaker_character = { icu::BreakIterator::createCharacterInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
 
-    core::error Shaper::itermize()
-    {
         if(_text.empty())
             return core::error_ok;
 
         std::u16string u16str = core::u8str_u16str(_text);
 
-        UErrorCode status = U_ZERO_ERROR;
-        std::unique_ptr<UBiDi, decltype(&ubidi_close)> bidi(ubidi_openSized(u16str.length(), 0, &status), &ubidi_close);
+        std::unique_ptr<UBiDi, decltype(&ubidi_close)> bidi(ubidi_openSized((int32_t)u16str.length(), 0, &status), &ubidi_close);
         if (U_FAILURE(status))
         {
             core::logger::war() << __FUNCTIONW__ L" ubidi_openSized failed, " << status << ": " << u_errorName(status);
@@ -205,7 +203,7 @@ namespace drawing
 
         // The required lifetime of utf16 isn't well documented.
         // It appears it isn't used after ubidi_setPara except through ubidi_getText.
-        ubidi_setPara(bidi.get(), u16str.c_str(), u16str.length(), _defaultBidiLevel, nullptr, &status);
+        ubidi_setPara(bidi.get(), u16str.c_str(), (int32_t)u16str.length(), _defaultBidiLevel, nullptr, &status);
         if (U_FAILURE(status))
         {
             //SkDebugf("Bidi error: %s", u_errorName(status));
@@ -213,7 +211,7 @@ namespace drawing
 
         struct bidilevel
         {
-            section range;
+            section32 range;
             UBiDiLevel level;
         };
         std::vector<bidilevel> levels;
@@ -243,7 +241,7 @@ namespace drawing
         };
         typedef core::bitflag<flushflag> flushflags;
 
-        std::vector<section> utf16_ranges;
+        std::vector<section32> utf16_ranges;
         _items.push_back({});
         while(utf16_pos < u16str.length())
         {
@@ -262,9 +260,9 @@ namespace drawing
             size_t nutf32 = 1;
 
             for(size_t iutf16 = 0; iutf16 < nutf16; ++iutf16)
-                utf16_ranges.push_back({ utf8_pos, nutf8 });
+                utf16_ranges.push_back({ (uint32_t)utf8_pos, (uint32_t)nutf8 });
 
-            UBiDiLevel level = ubidi_getLevelAt(bidi.get(), utf16_pos);
+            UBiDiLevel level = ubidi_getLevelAt(bidi.get(), (int32_t)utf16_pos);
             hb_script script = (hb_script)hb_unicode_script(hb_unicode, cp_utf8);
             uint16_t font_index = _rtf_font_indices[utf8_pos];
             uint32_t color = _rtf_colors[utf8_pos];
@@ -312,10 +310,14 @@ namespace drawing
 
             }
 
-            if (script == hb_script::inherited || script == hb_script::common)
-                script = _items.back().script;
+            if (_items.back().script == hb_script::inherited || _items.back().script == hb_script::common)
+            {
+                // 之前部分不要的
+                _items.back().font = font_index;
+                _items.back().script = script;
+            }
 
-            if (script != _items.back().script)
+            if ((script != hb_script::inherited && script != hb_script::common) && (script != _items.back().script))
                 flush |= flushflag::script;
 
             if (level != _items.back().level)
@@ -332,7 +334,7 @@ namespace drawing
                 assert(_items.back().trange.length > 0);
                 _items.push_back({});
                 item & item_new = _items.back();
-                item_new.trange.index = utf8_pos;
+                item_new.trange.index = (uint32_t)utf8_pos;
                 item_new.script = script;
                 item_new.level = level;
                 item_new.font = font_index;
@@ -343,7 +345,7 @@ namespace drawing
             }
 
             item & item_last = _items.back();
-            item_last.trange.length += nutf8;
+            item_last.trange.length += (uint32_t)nutf8;
 
             utf8_pos += nutf8;
             utf16_pos += nutf16;
@@ -361,7 +363,7 @@ namespace drawing
         for (auto & item : _items)
         {
             hb_buffer_clear_contents(_hbbuffer.get());
-            hb_buffer_add_utf8(_hbbuffer.get(), _text.c_str(), _text.length(), item.trange.index, item.trange.length);
+            hb_buffer_add_utf8(_hbbuffer.get(), _text.c_str(), (int32_t)_text.length(), item.trange.index, item.trange.length);
             // TODO: features
             auto & font_cache = _fonts[item.font];
             const drawing::font & font = font_at(item.font);
@@ -480,18 +482,18 @@ namespace drawing
             {
                 segment seg = {};
                 seg.sindex = ++segment_index;
-                seg.item = iindex;
-                seg.line = line;
+                seg.item = (uint32_t)iindex;
+                seg.line = (uint32_t)line;
                 seg.trange.index = glyph.trange.index;
-                seg.grange.index = gindex;
+                seg.grange.index = (uint32_t)gindex;
                 _segments.push_back(seg);
 
                 if (flush.any(flushflag::width))
                 {
                     row new_row = {};
                     new_row.trange.index = glyph.trange.index;
-                    new_row.grange.index = gindex;
-                    new_row.srange = { _segments.size() - 1, 0};
+                    new_row.grange.index = (uint32_t)gindex;
+                    new_row.srange = { (uint32_t)(_segments.size() - 1), 0};
                     new_row.line = line;
                     _rows.push_back(new_row);
                     curr = 0;
@@ -536,7 +538,7 @@ namespace drawing
             for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
                 _bidis[sindex] = _items[_segments[sindex + row.srange.index].item].level;
 
-            ubidi_reorderLogical(_bidis.data(), _bidis.size(), visual_indices.data());
+            ubidi_reorderLogical(_bidis.data(), (int32_t)_bidis.size(), visual_indices.data());
 
             std::sort(_segments.begin() + row.srange.index, _segments.begin() + row.srange.end(), [&row, &visual_indices](const segment & lhs, const segment & rhs) { return visual_indices[lhs.sindex - row.srange.index] < visual_indices[rhs.sindex - row.srange.index]; });
 
@@ -557,7 +559,7 @@ namespace drawing
                     ltr ? ++gindex : --gindex)
                 {
                     auto & glyph = _glyphs[ltr ? gindex : gindex - 1];
-                    glyph.sindex = sindex;
+                    glyph.sindex = (uint32_t)sindex;
                     glyph.pos.x = pos;
                     glyph.pos.y = row.ascent - fmetrics.ascent;
                     glyph.size.cx = glyph.advance.cx;
@@ -624,13 +626,12 @@ namespace drawing
         return std::shared_ptr<SkTextBlob>(_builder->make().release(), skia::skia_unref<SkTextBlob>);
     }
 
-    std::shared_ptr<SkTextBlob> Shaper::shape(std::string text, core::si32f & size)
+    std::shared_ptr<SkTextBlob> Shaper::shape(std::string text, const drawing::font & font, core::color32 color, core::si32f & size)
     {
         if (!_builder)
             _builder = std::make_shared<SkTextBlobBuilder>();
 
-        reset(text);
-        itermize();
+        itermize(text, font, color);
         wrap(std::numeric_limits<float32_t>::max(), wrap_mode::word);
         size = lineSize(0);
         return build(0);
@@ -653,20 +654,20 @@ namespace drawing
         return size;
     }
 
-    void Shaper::setFont(section range, const drawing::font & font)
+    void Shaper::setFont(section32 range, const drawing::font & font)
     {
         uint16_t index = fontIndex(font);
         std::fill(_rtf_font_indices.begin() + range.index, _rtf_font_indices.begin() + range.end(), index);
     }
 
-    void Shaper::setColor(section range, uint32_t color)
+    void Shaper::setColor(section32 range, uint32_t color)
     {
         std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
     }
 
     uint16_t Shaper::fontIndex(const drawing::font & font)
     {
-        uint16_t index = font_default;
+        uint16_t index = 0;
         auto iter = _font_indices.find(font);
         if (iter == _font_indices.end())
         {

@@ -6,9 +6,12 @@ namespace core
 {
     using namespace math::xm;
 
-    float4x4 & float4x4::reset()
+    float4x4 & float4x4::identity()
     {
-        *this = identity;
+        rows[0] = { 1, 0, 0, 0 };
+        rows[1] = { 0, 1, 0, 0 };
+        rows[2] = { 0, 0, 1, 0 };
+        rows[3] = { 0, 0, 0, 1 };
         return *this;
     }
 

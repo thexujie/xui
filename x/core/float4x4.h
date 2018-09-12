@@ -51,7 +51,7 @@ namespace core
         }
 
     public:
-        float4x4 & reset();
+        float4x4 & identity();
         float4x4 & invert();
         float4x4 & transpose();
         float4x4 & multiply(const float4x4 & another);
@@ -104,8 +104,6 @@ namespace core
                 float32_t _41, _42, _43, _44;
             };
         };
-
-        inline static float4x4 identity = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
     };
 
 

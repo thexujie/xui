@@ -29,9 +29,8 @@ namespace drawing
         if (width < 0)
             width = std::numeric_limits<float32_t>::max();
 
-        Shaper shaper(format._font, format._color);
-        shaper.reset(str);
-        shaper.itermize();
+        Shaper shaper;
+        shaper.itermize(str, format._font, format._color);
         shaper.wrap(width, drawing::wrap_mode::word);
 
         _size = shaper.lineSize(0);

@@ -63,9 +63,19 @@ namespace core
             return static_cast<Enum>(static_cast<underlying>(_e) | static_cast<underlying>(e));
         }
 
+        bitflag operator | (const bitflag & f) const
+        {
+            return static_cast<Enum>(static_cast<underlying>(_e) | static_cast<underlying>(f._e));
+        }
+
         bitflag operator & (Enum e) const
         {
             return static_cast<Enum>(static_cast<underlying>(_e) & static_cast<underlying>(e));
+        }
+
+        bitflag operator & (const bitflag & f) const
+        {
+            return static_cast<Enum>(static_cast<underlying>(_e) & static_cast<underlying>(f._e));
         }
 
         bitflag operator !() const
@@ -84,9 +94,21 @@ namespace core
             return *this;
         }
 
+        bitflag & operator |= (const bitflag & f)
+        {
+            _e = static_cast<Enum>(static_cast<underlying>(_e) | static_cast<underlying>(f._e));
+            return *this;
+        }
+
         bitflag & operator &= (Enum e)
         {
             _e = static_cast<Enum>(static_cast<underlying>(_e) & static_cast<underlying>(e));
+            return *this;
+        }
+
+        bitflag & operator &= (const bitflag & f)
+        {
+            _e = static_cast<Enum>(static_cast<underlying>(_e) & static_cast<underlying>(f._e));
             return *this;
         }
 

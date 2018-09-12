@@ -120,7 +120,7 @@
 		<DisplayString>[MouseArea {_rect}]</DisplayString>
 	</Type>
 
-	<Type Name="core::section">
+	<Type Name="core::section_type&lt;*&gt;">
 		<DisplayString>[{index},{length}]</DisplayString>
 	</Type>
 	<Type Name="drawing::item">

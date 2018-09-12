@@ -4,9 +4,11 @@
 
 namespace core
 {
-    float3x2 & float3x2::reset()
+    float3x2 & float3x2::identity()
     {
-        *this = identity;
+        sx = sy = 1.0f;
+        shx = shy = 0.0f;
+        tx = ty = 0.0f;
         return *this;
     }
 
@@ -47,7 +49,7 @@ namespace core
         return *this;
     }
 
-    float3x2 float3x2::invert() const
+    float3x2 float3x2::inverted() const
     {
         const float32_t xm_eplison = 1.0e-12f;
 

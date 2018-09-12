@@ -206,7 +206,7 @@ namespace drawing
 
     struct item
     {
-        section trange;
+        section32 trange;
         // hb_script_t
         hb_script script = hb_script::invalid;
         uint8_t level = 0;
@@ -223,7 +223,7 @@ namespace drawing
 #ifdef _DEBUG
         std::string _text;
 #endif
-        section trange;
+        section32 trange;
         uint16_t gid = 0;
         uint16_t gcount = 0;
         core::vec2f advance;
@@ -240,8 +240,8 @@ namespace drawing
     struct segment
     {
         uint32_t sindex = 0;
-        section trange;
-        section grange;
+        section32 trange;
+        section32 grange;
         uint32_t item = 0;
         uint32_t line = 0;
         float32_t width = 0;
@@ -254,9 +254,9 @@ namespace drawing
 
     struct row
     {
-        section trange;
-        section grange;
-        section srange;
+        section32 trange;
+        section32 grange;
+        section32 srange;
         uint32_t line = 0;
         float32_t width = 0;
         float32_t ascent = 0;
@@ -270,21 +270,19 @@ namespace drawing
     {
     public:
         Shaper() = default;
-        Shaper(const drawing::font & font, core::color32 color) : _font_default(font), _color_default(color){}
 
-        core::error reset(std::string text);
-        core::error itermize();
+        core::error itermize(std::string text, const drawing::font & font, core::color32 color);
         core::error wrap(float32_t end, wrap_mode mode);
 
         core::error build(SkTextBlobBuilder & builder, uint32_t index);
         std::shared_ptr<SkTextBlob> build(uint32_t index);
 
-        std::shared_ptr<SkTextBlob> shape(std::string text, core::si32f & size);
+        std::shared_ptr<SkTextBlob> shape(std::string text, const drawing::font & font, core::color32 color, core::si32f & size);
 
         core::si32f lineSize(uint32_t index);
 
-        void setFont(section range, const drawing::font & font);
-        void setColor(section range, uint32_t color);
+        void setFont(section32 range, const drawing::font & font);
+        void setColor(section32 range, uint32_t color);
 
         uint16_t fontIndex(const drawing::font & font);
 
@@ -298,12 +296,9 @@ namespace drawing
         core::rc32f charRect(size_t tindex) const;
 
     private:
-        constexpr static uint16_t font_default = 0;
-
         // 0 ltr 1 rtl 0xfe auto but preffer ltf 0xff auto but preffer rtl
         uint8_t _defaultBidiLevel = 0xfe;
-        drawing::font _font_default;
-        core::color32 _color_default = core::colors::Black;
+
         std::string _text;
 
         std::unordered_map<drawing::font, uint16_t> _font_indices;

@@ -136,11 +136,6 @@ namespace core
                 float1 yz;
             };
         };
-
-        public:
-            inline static float3 _100 = float3(1, 0, 0);
-            inline static float3 _010 = float3(0, 1, 0);
-            inline static float3 _001 = float3(0, 0, 1);
     };
 
     inline float3 operator *(float1 rate, float3 vec)

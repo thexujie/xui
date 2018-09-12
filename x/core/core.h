@@ -86,13 +86,14 @@ namespace core
     using float32_t = ::float32_t;
     using float64_t = ::float64_t;
 
-    struct section
+    template<typename T>
+    struct section_type
     {
-        size_t index = 0;
-        size_t length = 0;
+        T index = 0;
+        T length = 0;
 
-        size_t end() const { return index + length; }
-        section operator + (const section & rhs)
+        T end() const { return index + length; }
+        section_type operator + (const section_type & rhs)
         {
             if (!length)
                 return rhs;
@@ -109,7 +110,7 @@ namespace core
             return { 0, 0 };
         }
 
-        section & operator += (const section & rhs)
+        section_type & operator += (const section_type & rhs)
         {
             if (!length)
                 *this = rhs;
@@ -124,6 +125,9 @@ namespace core
             return *this;
         }
     };
+
+    typedef section_type<size_t> section;
+    typedef section_type<uint32_t> section32;
 }
 
 #include "core/member_function_traits.h"

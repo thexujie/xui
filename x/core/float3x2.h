@@ -29,7 +29,7 @@ namespace core
         }
 
     public:
-        float3x2 & reset();
+        float3x2 & identity();
 
         static float3x2 translate(const float2 & pos) { return float3x2(1, 0, pos.x, 0, 1, pos.y); }
         static float3x2 translate(const float1 & tx, const float1 & ty) { return float3x2(1, 0, tx, 0, 1, ty); }
@@ -50,7 +50,7 @@ namespace core
         float3x2 operator *(const float3x2 & another) const;
         float3x2 & operator *=(const float3x2 & another);
 
-        float3x2 invert() const;
+        float3x2 inverted() const;
 
     public:
         union
@@ -80,8 +80,6 @@ namespace core
 
             float1 af[6];
         };
-
-        inline static float3x2 identity = float3x2(1, 0, 0, 0, 1, 0);
     };
 
     inline float2 operator * (const float2 & val, const float3x2 & m)

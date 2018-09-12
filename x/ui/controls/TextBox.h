@@ -3,6 +3,15 @@
 
 namespace ui::controls
 {
+    enum class shaper_flag
+    {
+        none = 0x0000,
+        shaper = 0x0001,
+        caret = 0x0002,
+    };
+    template<> struct enable_bitmasks<shaper_flag> { static const bool enable = true;};
+    typedef core::bitflag<shaper_flag> shaper_flags;
+
     class TextBox : public Control
     {
     public:
@@ -31,10 +40,11 @@ namespace ui::controls
         void onChar(char32_t ch) override;
 
     public:
-        void reshaper();
+        void reshaper(shaper_flags flags = nullptr);
         void caretLeft();
         void caretRight();
         void backSpace();
+        void insert(size_t offset, const char * text, size_t count);
 
     private:
         void _updateIme();
@@ -53,7 +63,8 @@ namespace ui::controls
         std::shared_ptr<ImeContext> _imecontext;
 
         bool _delay_shaper = false;
-        mutable std::shared_ptr<drawing::Shaper> _shaper;
+        shaper_flags _delay_shaper_flags = nullptr;
+        std::shared_ptr<drawing::Shaper> _shaper;
 
         bool _cursor_shown = false;
         size_t _cursor_pos = core::npos;

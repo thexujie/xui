@@ -54,11 +54,10 @@ void testImages()
 
 void xui_main()
 {
-    std::string rtft = u8"لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้㌶㌫hello ق قق ققق قققق aa  بالإضافة إلى العديد من المناطق الأخرى المجاورة كالأحواز وتركيا وتشاد ومالي";
+    std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้㌶㌫hello ق قق ققق قققق aa الأخرى المجاورة كالأحواز وتركيا وتشاد ومالي";
 
     drawing::Shaper shaper;
-    shaper.reset(rtft);
-    shaper.itermize();
+    shaper.itermize(rtft, drawing::font(), colors::Black);
     shaper.wrap(999999999, drawing::wrap_mode::word);
 
     std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
