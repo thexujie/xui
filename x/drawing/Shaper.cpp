@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "script.h"
+#include "Shaper.h"
 #include "drawing/skia/skia.h"
 
 #include <hb.h>
@@ -13,6 +13,7 @@
 #include "SkStream.h"
 #include "SkTextBlob.h"
 #include "SkTypeface.h"
+#include "skia/SkShaper.h"
 
 static inline size_t utf32_to_utf8(const char32_t & ch, char * text)
 {
@@ -82,8 +83,31 @@ static inline size_t utf8_to_utf32(const char * text, size_t size, char32_t & ch
     return curr - start;
 }
 
-namespace drawing::script
+namespace drawing
 {
+    struct glyph_iterator
+    {
+        std::vector<glyph>  & glyphs;
+        section range;
+        bool rtl = false;
+        size_t curr = 0;
+
+        size_t index() const
+        {
+            return curr;
+        }
+
+        void next()
+        {
+            ++curr;
+        }
+
+        bool ok()
+        {
+            return curr < range.end();
+        }
+    };
+
     std::shared_ptr<hb_font_t> create_hb_font(SkTypeface * tf)
     {
         int index = 0;
@@ -132,6 +156,13 @@ namespace drawing::script
 
     core::error Shaper::reset(std::string text)
     {
+        //SkShaper shaper(SkTypeface::MakeFromName(_font_default.family.c_str(), skia::from(_font_default.style)));
+
+        //SkPaint paint;
+        //SkTextBlobBuilder builder;
+        //SkRect rcBlob;
+        //SkPoint end = shaper.shape(builder, paint, text.c_str(), text.length(), true, {}, 999999999, rcBlob);
+
         _rows.clear();
         _segments.clear();
         _glyphs.clear();
@@ -139,12 +170,14 @@ namespace drawing::script
 
         _text = text;
         _rtf_font_indices.assign(_text.length(), font_default);
-        _rtf_colors.assign(_text.length(), _color);
+        _rtf_colors.assign(_text.length(), _color_default);
 
         _font_indices.clear();
         //_fonts.clear();
-        fontIndex(_font);
-
+        fontIndex(_font_default);
+#ifdef _DEBUG
+        _u32text.clear();
+#endif
         _hbbuffer = { hb_buffer_create(), hb_buffer_destroy };
         UErrorCode status = U_ZERO_ERROR;
         _breaker_world = { icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
@@ -187,7 +220,7 @@ namespace drawing::script
 
         hb_buffer_clear_contents(_hbbuffer.get());
         hb_buffer_set_content_type(_hbbuffer.get(), HB_BUFFER_CONTENT_TYPE_UNICODE);
-        hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_CHARACTERS);
+        hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
 
         hb_unicode_funcs_t * hb_unicode = hb_buffer_get_unicode_funcs(_hbbuffer.get());
 
@@ -216,33 +249,36 @@ namespace drawing::script
         {
             flushflags flush = nullptr;
 
-            char32_t ch_utf8 = 0;
-            char32_t ch_utf32 = 0;
-            size_t nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, ch_utf8);
-            size_t nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, ch_utf32);
-            if (ch_utf8 != ch_utf32)
+            char32_t cp_utf8 = 0;
+            char32_t cp_utf16 = 0;
+            size_t nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, cp_utf8);
+            size_t nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, cp_utf16);
+            if (cp_utf8 != cp_utf16)
                 break;
 
+#ifdef _DEBUG
+            _u32text.append(1, cp_utf8);
+#endif
             size_t nutf32 = 1;
 
             for(size_t iutf16 = 0; iutf16 < nutf16; ++iutf16)
                 utf16_ranges.push_back({ utf8_pos, nutf8 });
 
             UBiDiLevel level = ubidi_getLevelAt(bidi.get(), utf16_pos);
-            hb_script_t script = hb_unicode_script(hb_unicode, ch_utf8);
+            hb_script script = (hb_script)hb_unicode_script(hb_unicode, cp_utf8);
             uint16_t font_index = _rtf_font_indices[utf8_pos];
             uint32_t color = _rtf_colors[utf8_pos];
 
             // font 的 flush 需要考虑 fallback 的字体，测试一下
             auto & font_cache = _fonts[font_index];
             if (font_index_fb_last != core::nposu16 && 
-                (script == _items.back().script || script == HB_SCRIPT_INHERITED || script == HB_SCRIPT_COMMON) &&
-                _fonts[font_index_fb_last].skfont->charsToGlyphs(&ch_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
+                (script == _items.back().script || script == hb_script::inherited || script == hb_script::common) &&
+                _fonts[font_index_fb_last].skfont->charsToGlyphs(&cp_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
                 // 使用上一个 fallback 的字体搞定
                 font_index = font_index_fb_last;
             }
-            else if (font_cache.skfont->charsToGlyphs(&ch_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
+            else if (font_cache.skfont->charsToGlyphs(&cp_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
                 // 使用预期的字体搞定
                 font_index_fb_last = 0;
@@ -252,7 +288,7 @@ namespace drawing::script
                 // 慢慢找吧，fallbacking......
                 font_index_fb_last = 0;
                 sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
-                auto tf = fontMgr->matchFamilyStyleCharacter(nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, ch_utf8);
+                auto tf = fontMgr->matchFamilyStyleCharacter(nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, cp_utf8);
                 if (tf)
                 {
                     drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
@@ -264,7 +300,7 @@ namespace drawing::script
 
             if (utf8_pos == 0)
             {
-                assert((script != HB_SCRIPT_INHERITED && script != HB_SCRIPT_COMMON));
+                assert((script != hb_script::inherited && script != hb_script::common));
                 item & first = _items.back();
                 first.script = script;
                 first.level = level;
@@ -276,8 +312,8 @@ namespace drawing::script
 
             }
 
-            if (script == HB_SCRIPT_INHERITED || script == HB_SCRIPT_COMMON)
-                script = hb_script_t(_items.back().script);
+            if (script == hb_script::inherited || script == hb_script::common)
+                script = _items.back().script;
 
             if (script != _items.back().script)
                 flush |= flushflag::script;
@@ -327,6 +363,7 @@ namespace drawing::script
             hb_buffer_clear_contents(_hbbuffer.get());
             hb_buffer_add_utf8(_hbbuffer.get(), _text.c_str(), _text.length(), item.trange.index, item.trange.length);
             // TODO: features
+            auto & font_cache = _fonts[item.font];
             const drawing::font & font = font_at(item.font);
             auto hbfont = hbfont_at(item.font);
 
@@ -366,7 +403,6 @@ namespace drawing::script
                 glyph.gid = uint16_t(info.codepoint);
                 glyph.advance = { float32_t(pos.x_advance * coefX), float32_t(pos.y_advance * coefY) };
                 glyph.offset = { float32_t(pos.x_offset * coefX), float32_t(pos.y_offset * coefY) };
-
                 int32_t word_stop_utf16 = _breaker_world->current();
                 if (word_stop_utf16 != icu::BreakIterator::DONE && word_stop_utf16 < utf16_ranges.size())
                 {
@@ -500,24 +536,32 @@ namespace drawing::script
             for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
                 _bidis[sindex] = _items[_segments[sindex + row.srange.index].item].level;
 
-            ubidi_reorderVisual(_bidis.data(), row.srange.length, visual_indices.data());
+            ubidi_reorderLogical(_bidis.data(), _bidis.size(), visual_indices.data());
+
             std::sort(_segments.begin() + row.srange.index, _segments.begin() + row.srange.end(), [&row, &visual_indices](const segment & lhs, const segment & rhs) { return visual_indices[lhs.sindex - row.srange.index] < visual_indices[rhs.sindex - row.srange.index]; });
 
             float32_t offset = 0;
             for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
             {
                 auto & seg = _segments[sindex + row.srange.index];
+                auto & item = _items[seg.item];
                 seg.offset = offset;
                 offset += seg.width;
 
                 auto & fmetrics = _fonts[_items[seg.item].font].fmetrics;
                 float32_t pos = seg.offset;
-                for (size_t gindex = seg.grange.index; gindex < seg.grange.end(); ++gindex)
+
+                bool ltr = !(item.level & 1);
+                for (size_t gindex = (ltr ? seg.grange.index : seg.grange.end());
+                    gindex != (ltr ? seg.grange.end() : seg.grange.index);
+                    ltr ? ++gindex : --gindex)
                 {
-                    auto & glyph = _glyphs[gindex];
+                    auto & glyph = _glyphs[ltr ? gindex : gindex - 1];
                     glyph.sindex = sindex;
                     glyph.pos.x = pos;
                     glyph.pos.y = row.ascent - fmetrics.ascent;
+                    glyph.size.cx = glyph.advance.cx;
+                    glyph.size.cy = fmetrics.height;
                     pos += glyph.advance.cx;
                 }
             }
@@ -556,11 +600,11 @@ namespace drawing::script
 
             for (size_t gindex = seg.grange.index, iglyph = 0; gindex < seg.grange.end(); ++gindex, ++iglyph)
             {
-                glyph & glyph = _glyphs[(item.level & 1) ? (seg.grange.end() - 1 - iglyph) : gindex];
+                glyph & glyph = _glyphs[gindex];
 
                 runBuffer.glyphs[iglyph] = glyph.gid;
                 //runBuffer.clusters[iglyph] = glyph.trange.index;
-                runBuffer.pos[iglyph * 2 + 0] = offset_x + glyph.offset.x;
+                runBuffer.pos[iglyph * 2 + 0] = glyph.pos.x +  glyph.offset.x;
                 runBuffer.pos[iglyph * 2 + 1] = offset_y - glyph.offset.y + row.ascent;
                 offset_x += glyph.advance.cx;
                 offset_y += glyph.advance.cy;
@@ -570,7 +614,7 @@ namespace drawing::script
         return core::error_ok;
     }
 
-    std::shared_ptr<class SkTextBlob> Shaper::build(uint32_t index)
+    std::shared_ptr<SkTextBlob> Shaper::build(uint32_t index)
     {
         if (!_builder)
             _builder = std::make_shared<SkTextBlobBuilder>();
@@ -578,6 +622,18 @@ namespace drawing::script
         if (err)
             return nullptr;
         return std::shared_ptr<SkTextBlob>(_builder->make().release(), skia::skia_unref<SkTextBlob>);
+    }
+
+    std::shared_ptr<SkTextBlob> Shaper::shape(std::string text, core::si32f & size)
+    {
+        if (!_builder)
+            _builder = std::make_shared<SkTextBlobBuilder>();
+
+        reset(text);
+        itermize();
+        wrap(std::numeric_limits<float32_t>::max(), wrap_mode::word);
+        size = lineSize(0);
+        return build(0);
     }
 
     core::si32f Shaper::lineSize(uint32_t index)
@@ -633,16 +689,22 @@ namespace drawing::script
     const glyph & Shaper::findGlyph(size_t index) const
     {
         static const glyph empty;
-        auto iter = std::upper_bound(_glyphs.begin(), _glyphs.end(), index, [](size_t value, const glyph & g) { return  g.trange.index <= value && value < g.trange.end(); });
-        if (iter == _glyphs.end())
+        if (_glyphs.empty())
+            return empty;
+
+        if (index == core::npos)
+            return _glyphs.back();
+
+        auto iter = std::lower_bound(_glyphs.begin(), _glyphs.end(), index, [](const glyph & g, size_t value) { return  g.trange.end() <= value; });
+        if (iter == _glyphs.end() || iter->trange.end() <= index)
             return empty;
         return *iter;
     }
 
     core::rc32f Shaper::charRect(size_t index) const
     {
-        auto iter = std::upper_bound(_glyphs.begin(), _glyphs.end(), index, [](size_t value, const glyph & g) { return  g.trange.index <= value && value < g.trange.end(); });
-        if (iter == _glyphs.end())
+        auto iter = std::upper_bound(_glyphs.begin(), _glyphs.end(), index, [](size_t value, const glyph & g) { return  g.trange.index <= value; });
+        if (iter == _glyphs.end() || iter->trange.end() <= index)
             return {};
 
         auto & fmetrics = _fonts[_items[_segments[iter->sindex].item].font].fmetrics;

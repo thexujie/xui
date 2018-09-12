@@ -141,7 +141,7 @@ int app_main(int argc, const wchar_t * argv[])
             paint3.setTextScaleX(SkFloatToScalar(1.5f));
 
             const char text[] = "i love you";
-            std::string str = u8"一二三四五六七八九十ABCD EFGHI𪚥𪚥𪚥ยิ้ยิ้تىلىشۆھرەت زاكىر ئۈرۈمچى شەھىرىدە تەكشۈرۈپ 123456 تەتقىق قىلدى";
+            std::string str = u8"لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้㌶㌫hello ق قق ققق قققق aa  بالإضافة إلى العديد من المناطق الأخرى المجاورة كالأحواز وتركيا وتشاد ومالي";
             //canvas.drawText(str.c_str(), str.length(), 200.0f, 64.0f, paint1);
             //canvas.drawText(text, strlen(text), 200.0f, 144.0f, paint2);
             //canvas.drawText(text, strlen(text), 200.0f, 224.0f, paint3);

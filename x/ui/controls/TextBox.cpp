@@ -1,20 +1,16 @@
 #include "stdafx.h"
 #include "TextBox.h"
 #include <SkTextBlob.h>
-#include "drawing/skia/script.h"
 
 namespace ui::controls
 {
     static size_t textbox_u8_rfind_next(const std::string & str, size_t offset = core::npos)
     {
         if (offset == core::npos)
-            offset = str.length();
-
-        if (offset == 0)
-            return core::npos;
+            offset = str.length() - 1;
 
         size_t nfound = 1;
-        for (size_t index = offset; index > 0; --index)
+        for (size_t index = offset + 1; index > 0; --index)
         {
             uint8_t ch = str[index - 1];
 
@@ -39,7 +35,7 @@ namespace ui::controls
             nfound = nbytes;
         }
 
-        return nfound <= str.length() ? str.length() - nfound : core::npos;
+        return nfound <= offset ? offset - nfound + 1: core::npos;
     }
 
     const std::string TEXTBOX_ANIMATION_GROUP_CURSOR = "_textbox.cursor";
@@ -94,42 +90,63 @@ namespace ui::controls
 
         if (_shaper && _cursor_shown)
         {
-            auto rcCurr = _shaper->charRect(_text.length() - 1);
+            auto & glyph = _shaper->findGlyph(_cursor_pos);
+            core::rc32f rect = { glyph.pos.x, glyph.pos.y, glyph.size.cx, glyph.size.cy };
             auto cbox = contentBox();
-            graphics.drawLine({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y }, { cbox.x + rcCurr.right(), cbox.y + rcCurr.y + rcCurr.height },
-                drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(1));
+            //graphics.drawLine({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y }, { cbox.x + rcCurr.right(), cbox.y + rcCurr.y + rcCurr.height },
+            //    drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(1));
+            graphics.drawRectangle(rect.offseted(cbox.leftTop()), drawing::PathStyle().fill(0x80ff0000));
         }
         _renderBorder(graphics);
     }
 
-    void TextBox::onMouseEnter(const mosue_state & state)
+    void TextBox::onMouseEnter(const input_state & state)
     {
         Control::onMouseEnter(state);
         restyle();
     }
 
-    void TextBox::onMouseMove(const mosue_state & state)
+    void TextBox::onMouseMove(const input_state & state)
     {
         Control::onMouseMove(state);
     }
 
-    void TextBox::onMouseLeave(const mosue_state & state)
+    void TextBox::onMouseLeave(const input_state & state)
     {
         Control::onMouseLeave(state);
         restyle();
     }
 
     
-    void TextBox::onMouseDown(const mosue_state & state)
+    void TextBox::onMouseDown(const input_state & state, ui::mouse_button button)
     {
-        Control::onMouseDown(state);
+        Control::onMouseDown(state, button);
         restyle();
     }
 
-    void TextBox::onMouseUp(const mosue_state & state)
+    void TextBox::onMouseUp(const input_state & state, ui::mouse_button button)
     {
-        Control::onMouseUp(state);
+        Control::onMouseUp(state, button);
         restyle();
+    }
+
+    void TextBox::onKeyDown(const input_state & state, keycode key)
+    {
+        Control::onKeyDown(state, key);
+        switch(key)
+        {
+        case keycode::left:
+            caretLeft();
+            break;
+        case keycode::right:
+            caretRight();
+            break;
+        case keycode::backspace:
+            backSpace();
+            break;
+        default:
+            break;
+        }
     }
 
     void TextBox::onFocus(std::shared_ptr<ImeContext> imecontext)
@@ -166,21 +183,7 @@ namespace ui::controls
     void TextBox::onChar(char32_t ch)
     {
         if (ch <= 0xffff && std::iswcntrl((wint_t)ch))
-        {
-            if(ch == 8)
-            {
-                if(!_text.empty())
-                {
-                    auto pos = textbox_u8_rfind_next(_text);
-                    if (pos != core::npos)
-                    {
-                        _text.resize(pos);
-                        reshaper();
-                    }
-                }
-            }
             return;
-        }
         
         char chars[6] = { 0 };
         size_t len = core::utf32_to_utf8(ch, chars, 6);
@@ -197,6 +200,84 @@ namespace ui::controls
         }
     }
 
+    void TextBox::caretLeft()
+    {
+        if (!_shaper || !_cursor_pos)
+            return;
+
+        auto & glyph_curr = _shaper->findGlyph(_cursor_pos);
+        if (!glyph_curr.trange.index)
+            return;
+
+        size_t index = glyph_curr.trange.index - 1;
+        while(index > 0)
+        {
+            auto & glyph = _shaper->findGlyph(index);
+            if (!glyph.trange.length)
+                return;
+
+            if(glyph.charbreak)
+            {
+                _cursor_pos = glyph.trange.index;
+                _cursor_shown = true;
+                _cursor_anim->reset();
+                _updateIme();
+                refresh();
+                break;
+            }
+
+            if (!glyph.trange.index)
+                break;
+            index = glyph.trange.index - 1;
+        }
+    }
+
+    void TextBox::caretRight()
+    {
+        if (!_shaper || _cursor_pos >= _text.length())
+            return;
+
+        auto & glyph_curr = _shaper->findGlyph(_cursor_pos);
+        size_t index = glyph_curr.trange.end();
+        do
+        {
+            auto & glyph = _shaper->findGlyph(index);
+            if (!glyph.trange.length)
+                break;
+
+            if (glyph.charbreak)
+            {
+                _cursor_pos = glyph.trange.index;
+                _cursor_shown = true;
+                _cursor_anim->reset();
+                _updateIme();
+                refresh();
+                break;
+            }
+
+            if (glyph.trange.end() == _text.length())
+                break;
+            index = glyph.trange.end();
+        }
+        while (index <= _text.length());
+    }
+
+
+    void TextBox::backSpace()
+    {
+        //if (!_shaper || !_cursor_pos)
+        //    return;
+
+        auto & glyph = _shaper->findGlyph(_cursor_pos);
+        if (glyph.trange.length)
+        {
+            _text.erase(glyph.trange.index, glyph.trange.length);
+            if(_cursor_pos != core::npos && _cursor_pos >= glyph.trange.end())
+                _cursor_pos -= glyph.trange.length;
+            reshaper();
+        }
+    }
+
     void TextBox::_updateIme()
     {
         if (!_imecontext)
@@ -206,8 +287,9 @@ namespace ui::controls
         {
             if(_shaper)
             {
-                auto rcCurr = _shaper->charRect(_text.length() - 1);
-                _imecontext->setCompositionPos(contentBox().leftTop() + core::vec2f(rcCurr.right(), 0));
+                auto & glyph = _shaper->findGlyph(_cursor_pos == core::npos ? _text.length() - 1 : _cursor_pos);
+                core::rc32f rect = { glyph.pos.x, glyph.pos.y, glyph.size.cx, glyph.size.cy };
+                _imecontext->setCompositionPos(contentBox().leftTop() + core::vec2f(rect.right(), 0));
             }
             _imecontext->setCompositionFont(font());
         }
@@ -226,7 +308,7 @@ namespace ui::controls
             _textblob = std::make_shared<drawing::TextBlob>();
 
         if (!_shaper)
-            _shaper = std::make_shared<drawing::script::Shaper>();
+            _shaper = std::make_shared<drawing::Shaper>(_font, _color);
 
         _shaper->reset(_text);
         _shaper->itermize();

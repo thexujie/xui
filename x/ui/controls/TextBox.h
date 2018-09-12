@@ -1,11 +1,6 @@
 #pragma once
 #include "ui/Control.h"
 
-namespace drawing::script
-{
-    class Shaper;
-}
-
 namespace ui::controls
 {
     class TextBox : public Control
@@ -25,17 +20,21 @@ namespace ui::controls
 
         void render(drawing::Graphics & graphics, const drawing::Region & region) const override;
     public:
-        void onMouseEnter(const mosue_state & state) override;
-        void onMouseMove(const mosue_state & state) override;
-        void onMouseLeave(const mosue_state & state) override;
-        void onMouseDown(const mosue_state & state) override;
-        void onMouseUp(const mosue_state & state) override;
+        void onMouseEnter(const input_state & state) override;
+        void onMouseMove(const input_state & state) override;
+        void onMouseLeave(const input_state & state) override;
+        void onMouseDown(const input_state & state, ui::mouse_button button) override;
+        void onMouseUp(const input_state & state, ui::mouse_button button) override;
+        void onKeyDown(const input_state & state, keycode key) override;
         void onFocus(std::shared_ptr<ImeContext> imecontext) override;
         void onBlur() override;
         void onChar(char32_t ch) override;
 
     public:
         void reshaper();
+        void caretLeft();
+        void caretRight();
+        void backSpace();
 
     private:
         void _updateIme();
@@ -54,8 +53,9 @@ namespace ui::controls
         std::shared_ptr<ImeContext> _imecontext;
 
         bool _delay_shaper = false;
-        mutable std::shared_ptr<drawing::script::Shaper> _shaper;
+        mutable std::shared_ptr<drawing::Shaper> _shaper;
 
         bool _cursor_shown = false;
+        size_t _cursor_pos = core::npos;
     };
 }

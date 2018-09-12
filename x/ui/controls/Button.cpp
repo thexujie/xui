@@ -62,33 +62,33 @@ namespace ui::controls
         _renderBorder(graphics);
     }
 
-    void Button::onMouseEnter(const mosue_state & state)
+    void Button::onMouseEnter(const input_state & state)
     {
         Control::onMouseEnter(state);
         restyle();
     }
 
-    void Button::onMouseMove(const mosue_state & state)
+    void Button::onMouseMove(const input_state & state)
     {
         Control::onMouseMove(state);
     }
 
-    void Button::onMouseLeave(const mosue_state & state)
+    void Button::onMouseLeave(const input_state & state)
     {
         Control::onMouseLeave(state);
         restyle();
     }
 
     
-    void Button::onMouseDown(const mosue_state & state)
+    void Button::onMouseDown(const input_state & state, ui::mouse_button button)
     {
-        Control::onMouseDown(state);
+        Control::onMouseDown(state, button);
         restyle();
     }
 
-    void Button::onMouseUp(const mosue_state & state)
+    void Button::onMouseUp(const input_state & state, ui::mouse_button button)
     {
-        Control::onMouseUp(state);
+        Control::onMouseUp(state, button);
         restyle();
     }
 

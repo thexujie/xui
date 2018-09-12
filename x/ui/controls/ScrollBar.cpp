@@ -113,17 +113,17 @@ namespace ui::controls
             return { box.x + barPos(), box.y, barSize(), box.cy };
     }
 
-    void ScrollBar::onMouseEnter(const mosue_state & state)
+    void ScrollBar::onMouseEnter(const input_state & state)
     {
         _updateMouse(state);
     }
 
-    void ScrollBar::onMouseMove(const mosue_state & state)
+    void ScrollBar::onMouseMove(const input_state & state)
     {
         _updateMouse(state);
     }
 
-    void ScrollBar::onMouseLeave(const mosue_state & state)
+    void ScrollBar::onMouseLeave(const input_state & state)
     {
         _bar_drag_start_vallue = 0.0f;
         _bar_drag_mouse_pos = {std::nanf("0")};
@@ -131,7 +131,7 @@ namespace ui::controls
     }
 
     
-    void ScrollBar::onMouseDown(const mosue_state & state)
+    void ScrollBar::onMouseDown(const input_state & state)
     {
         if(_bar_hover)
         {
@@ -141,7 +141,7 @@ namespace ui::controls
         }
     }
 
-    void ScrollBar::onMouseUp(const mosue_state & state)
+    void ScrollBar::onMouseUp(const input_state & state)
     {
         if (_bar_active)
         {
@@ -152,7 +152,7 @@ namespace ui::controls
         }
     }
 
-    void ScrollBar::onMouseWheel(const mosue_state & state)
+    void ScrollBar::onMouseWheel(const input_state & state)
     {
         float32_t val = _val - lineValue() * state.wheelLines();
         setValue(std::clamp(val, _min, _max));
@@ -164,7 +164,7 @@ namespace ui::controls
         restyle();
     }
 
-    void ScrollBar::_updateMouse(const mosue_state & state)
+    void ScrollBar::_updateMouse(const input_state & state)
     {
         // ÕýÔÚÍÏ¶¯
         if(_bar_active)

@@ -32,10 +32,11 @@ namespace drawing
     font::font(const char * family_, float_t size_, font_style style_)
         : style(style_)
     {
-        if(!family_ || !family_[0] || size_ <= 0)
+        if (!family_ || !family_[0] || size_ <= 0)
         {
             std::call_once(flag, generate_default_font);
-            *this = default_font;
+            family = (family_ && family_[0]) ? family_ : default_font.family;
+            size = size_ > 0 ? size_ : default_font.size;
         }
         else
         {
@@ -44,7 +45,8 @@ namespace drawing
         }
     }
 
-    extern  void __fontmetrics(const drawing::font & font, drawing::fontmetrics & metrics);
+    extern void __fontmetrics(const drawing::font & font, drawing::fontmetrics & metrics);
+
     fontmetrics::fontmetrics(const font & font)
     {
         __fontmetrics(font, *this);

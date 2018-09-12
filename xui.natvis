@@ -123,16 +123,16 @@
 	<Type Name="core::section">
 		<DisplayString>[{index},{length}]</DisplayString>
 	</Type>
-	<Type Name="drawing::script::item">
+	<Type Name="drawing::item">
 		<DisplayString>{{&#x200E;{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={level}}}</DisplayString>
 	</Type>
-	<Type Name="drawing::script::glyph">
-		<DisplayString>{{&#x200E;{_text}, {trange}, pos={pos}}}</DisplayString>
+	<Type Name="drawing::glyph">
+		<DisplayString>{{&#x200E;{_text}&#x200E;[{gid}], {trange}, pos={pos}}}</DisplayString>
 	</Type>
-	<Type Name="drawing::script::segment">
+	<Type Name="drawing::segment">
 		<DisplayString>{{[{line}-{sindex}], {width}, &#x200E;{_text}&#x200E;, {trange}, {grange}}}</DisplayString>
 	</Type>
-	<Type Name="drawing::script::row">
+	<Type Name="drawing::row">
 		<DisplayString>{{[{line}], &#x200E;{_text}&#x200E;, {trange}, {grange}}}</DisplayString>
 	</Type>
 

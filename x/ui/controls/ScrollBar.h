@@ -49,18 +49,18 @@ namespace ui::controls
         float32_t barPos() const { return barSpace() * scrollRate(); }
         core::rc32f barRect() const;
     public:
-        void onMouseEnter(const mosue_state & state);
-        void onMouseMove(const mosue_state & state);
-        void onMouseLeave(const mosue_state & state);
-        void onMouseDown(const mosue_state & state);
-        void onMouseUp(const mosue_state & state);
-        void onMouseWheel(const mosue_state & state);
+        void onMouseEnter(const input_state & state);
+        void onMouseMove(const input_state & state);
+        void onMouseLeave(const input_state & state);
+        void onMouseDown(const input_state & state);
+        void onMouseUp(const input_state & state);
+        void onMouseWheel(const input_state & state);
 
     public:
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
 
     private:
-        void _updateMouse(const mosue_state & state);
+        void _updateMouse(const input_state & state);
         void _updateBarState(bool hover, bool active);
 
     public:

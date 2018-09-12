@@ -152,26 +152,23 @@ namespace drawing
 
         SkPaint paint;
         format.apply(paint);
-        SkShaper shaper(SkTypeface::MakeFromName(format._font.family.c_str(), skia::from(format._font.style)));
-        if (!_blobBuilder)
-            _blobBuilder = std::make_shared<SkTextBlobBuilder>();
-        SkRect rcBlob;
-        SkPoint end = shaper.shape(*_blobBuilder, paint, str.c_str(), str.length(), true, {}, -1, rcBlob);
+        Shaper shaper(format._font, format._color);
+        core::si32f size;
+        auto blob = shaper.shape(str, size);
 
         if (format._align & core::align::right)
-            point.x -= rcBlob.width();
+            point.x -= size.cx;
         else if (format._align & core::align::centerX)
-            point.x -= rcBlob.width() / 2;
+            point.x -= size.cx / 2;
         else {}
 
         if (format._align & core::align::bottom)
-            point.y -= rcBlob.height();
+            point.y -= size.cy;
         else if (format._align & core::align::centerY)
-            point.y -= rcBlob.height() / 2;
+            point.y -= size.cy / 2;
         else {}
 
-        sk_sp<SkTextBlob> blob = _blobBuilder->make();
-        _native->drawTextBlob(blob, point.x, point.y, paint);
+        _native->drawTextBlob(blob.get(), point.x, point.y, paint);
     }
 
     void Graphics::drawString(const std::string & str, core::rc32f rect, const StringFormat & format)
@@ -183,29 +180,25 @@ namespace drawing
         SkPaint paint;
         format.apply(paint);
 
-        SkShaper shaper(SkTypeface::MakeFromName(format._font.family.c_str(), skia::from(format._font.style)));
-
-        if (!_blobBuilder)
-            _blobBuilder = std::make_shared<SkTextBlobBuilder>();
-        SkRect rcBlob;
-        SkPoint end = shaper.shape(*_blobBuilder, paint, str.c_str(), str.length(), true, {}, rect.cx, rcBlob);
+        Shaper shaper(format._font, format._color);
+        core::si32f size;
+        auto blob = shaper.shape(str, size);
 
         core::pt32f point = rect.leftTop();
         if (format._align & core::align::right)
-            point.x = rect.right() - rcBlob.width();
+            point.x = rect.right() - size.cx;
         else if (format._align & core::align::centerX)
-            point.x = (rect.cx - rcBlob.width()) / 2;
+            point.x = (rect.cx - size.cx) / 2;
         else {}
 
         if (format._align & core::align::bottom)
-            point.y = rect.bottom() - rcBlob.height();
+            point.y = rect.bottom() - size.cy;
         else if (format._align & core::align::centerY)
-            point.y = (rect.cy - rcBlob.height()) / 2;
+            point.y = (rect.cy - size.cy) / 2;
         else {}
 
-        sk_sp<SkTextBlob> blob = _blobBuilder->make();
         _native->clipRect(skia::from(rect));
-        _native->drawTextBlob(blob, point.x, point.y, paint);
+        _native->drawTextBlob(blob.get(), point.x, point.y, paint);
         _native->clipRect(SkRect());
     }
 

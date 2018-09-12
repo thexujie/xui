@@ -4,10 +4,14 @@
 
 namespace ui
 {
+    enum class mouse_button;
+    enum class keycode : unsigned char;
+    class key_state;
+    enum class key_action;
     class Control;
     class ImeContext;
     enum class mouse_action;
-    class mosue_state;
+    class input_state;
 
     class Scene : public core::object
     {
@@ -37,11 +41,12 @@ namespace ui
         core::error animate();
 
     public:
-        void onMouseState(const mosue_state & state, mouse_action action);
+        void onMouse(const input_state & state, mouse_button button, mouse_action action);
+        void onKey(const input_state & state, keycode key,  key_action action);
         void onChar(char32_t ch);
 
     private:
-        void _updateMouseArea(const mosue_state & state, mouse_action action);
+        void _updateMouseArea(const input_state & state, mouse_action action);
 
     public:
         core::event<void(const core::rc32i & rect)> invalidated;

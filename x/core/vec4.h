@@ -259,6 +259,11 @@ namespace core
             return vec4(x + off_x, y + off_y, cx, cy);
         }
 
+        vec4 offseted(const vec2<T> & off) const
+        {
+            return vec4(x + off.x, y + off.y, cx, cy);
+        }
+
 
         //------------------------------------------------------- Àƒ‘Ú‘ÀÀ„
         template<typename = decltype(std::declval<T>() - std::declval<T>())>

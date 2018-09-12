@@ -13,8 +13,9 @@
 #include <string>
 #include <variant>
 #include <any>
-#include <set>
 
+#include <set>
+#include <bitset>
 #include <array>
 #include <vector>
 #include <map>

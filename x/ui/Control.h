@@ -1,4 +1,5 @@
 #pragma once
+
 #include "component/Style.h"
 #include "drawing/Region.h"
 #include "Scene.h"
@@ -102,6 +103,218 @@ namespace ui
         mask = 0x00ff,
     };
 
+    
+    /**
+    * 键盘按键。
+    */
+    enum class keycode : uint8_t
+    {
+        //! 不可用的按键码。
+        none = 0x0,
+
+        // 数字键
+        num0,
+        num1,
+        num2,
+        num3,
+        num4,
+        num5,
+        num6,
+        num7,
+        num8,
+        num9,
+        // 字符键
+        caps,
+        a,
+        b,
+        c,
+        d,
+        e,
+        f,
+        g,
+        h,
+        i,
+        j,
+        k,
+        l,
+        m,
+        n,
+        o,
+        p,
+        q,
+        r,
+        s,
+        t,
+        u,
+        v,
+        w,
+        x,
+        y,
+        z,
+
+        backspace,
+        tab,
+        enter,
+
+        escape,
+        space,
+
+        // 小键盘
+        numpad_lock,
+        numpad_0,
+        numpad_1,
+        numpad_2,
+        numpad_3,
+        numpad_4,
+        numpad_5,
+        numpad_6,
+        numpad_7,
+        numpad_8,
+        numpad_9,
+        numpad_add, // +
+        numpad_sub, // -
+        numpad_mul, // *
+        numpad_div,  // /
+        numpad_decimal, // .
+        numpad_enter, // enter
+        numpad_equal, // equal
+
+        // 功能键
+        f1,
+        f2,
+        f3,
+        f4,
+        f5,
+        f6,
+        f7,
+        f8,
+        f9,
+        f10,
+        f11,
+        f12,
+        f13,
+        f14,
+        f15,
+        f16,
+        f17,
+        f18,
+        f19,
+        f20,
+        f21,
+        f22,
+        f23,
+        f24,
+
+        // --  Sign
+        sub, // 减号 -_
+        equal, // 等于 =+
+        grave, // 抑音符 `~
+        comma, // 逗号 ，<
+        period, // 句号 .>
+        slash, // 斜杠 /?
+        semicolon, // 分号 ;:
+        colon, // 冒号 : (某些键盘有单独的冒号)
+        apostrophe, // 单引号、省字符 '
+        bracketL, // 左方括号 [{
+        bracketR, // 右方括号 ]}
+        backslash, // 反斜杠 \|
+
+        insert,
+        delete_,
+        home,
+        end,
+        pageup,
+        pagedown,
+
+        left,
+        up,
+        right,
+        down,
+
+        printscreen,
+        scrolllock,
+        pausebreak,
+
+        // -- win
+        winL,
+        winR,
+        // -- ctrl
+        control,
+        controlL,
+        controlR,
+        // -- shift
+        shift,
+        shiftL,
+        shiftR,
+        // -- alt
+        alt,
+        altL,
+        altR,
+        // -- app
+        apps,
+
+        // 特殊键
+        sleep,
+
+        clear,
+        select,
+        print,
+        excute,
+        help,
+
+        // -- ime
+        ime_kana,
+        ime_hangul,
+        ime_junja,
+        ime_final,
+        ime_hanja,
+        ime_kanji,
+        ime_convert,
+        ime_nonconvert,
+        ime_accept,
+        ime_modechange,
+        ime_processkey,
+
+        // -- browser
+        browser_back,
+        browser_forward,
+        browser_refresh,
+        browser_stop,
+        browser_search,
+        browser_favorites,
+        browser_home,
+
+        // -- volume
+        //! 静音
+        volume_mute,
+        volume_down,
+        volume_up,
+
+        // -- media
+        media_next,
+        media_prev,
+        media_stop,
+        media_playpause,
+
+        // -- launch
+        launch_mail,
+        launch_mediaselect,
+        launch_app1,
+        launch_app2,
+
+        // -- 其他
+        else_attn,
+        else_arsel,
+        else_exsel,
+        else_ereof,
+        else_play,
+        else_zoom,
+        else_pa1,
+        else_clear,
+
+        count,
+    };
+
     template<>
     struct enable_bitmasks<mouse_button>
     {
@@ -117,18 +330,18 @@ namespace ui
         move,
         press,
         click,
-        releas,
+        release,
         dbclick,
         leave,
 
         wheel_v,
     };
 
-    class mosue_state
+    class input_state
     {
     public:
-        mosue_state() = default;
-        mosue_state(const core::pt32f pos) : _pos(pos) {}
+        input_state() = default;
+        input_state(const core::pt32f pos) : _pos(pos) {}
 
         void setPos(const core::pt32f & pos) { _pos = pos; }
         const core::pt32f & pos() const { return _pos; }
@@ -139,10 +352,22 @@ namespace ui
         void setWheelLines(int32_t lines) { _wheel_lines = lines; }
         int32_t wheelLines() const { return _wheel_lines; }
 
+        void setKey(keycode key, bool active) { _keys[(uint8_t)key] = active; }
+        void setAllKeys(bool active) { for (size_t index = 0; index < 0xff; ++index) _keys[index] = active; }
+        bool key(keycode key) const { return _keys[(uint8_t)key]; }
+
     private:
         core::pt32f _pos;
         mouse_button _buttons = mouse_button::none;
         int32_t _wheel_lines = 0;
+        std::bitset<0xff> _keys;
+    };
+
+    enum class key_action
+    {
+        none = 0,
+        press,
+        release,
     };
 
     enum class ime_mode
@@ -216,6 +441,7 @@ namespace ui
         std::shared_ptr<Control> parent() const { return _parent.lock(); }
 
         const core::color32 & color() const;
+        void setFont(const drawing::font & font);
         const drawing::font & font() const;
 
         void setVisible(bool vis)
@@ -250,7 +476,7 @@ namespace ui
             case core::unit::px:
                 return value.value * s->ratio();
             case core::unit::em:
-                return value.value * drawing::fontmetrics(font()).height * s->ratio();
+                return value.value * drawing::fontmetrics(drawing::font()).height * s->ratio();
             case core::unit::pt:
                 return value.value * 72.0f * s->ratio();
             case core::unit::dot:
@@ -280,7 +506,7 @@ namespace ui
             case core::unit::px:
                 return value.value * s->ratio();
             case core::unit::em:
-                return value.value * drawing::fontmetrics(font()).height * s->ratio();
+                return value.value * drawing::fontmetrics(drawing::font()).height * s->ratio();
             case core::unit::pt:
                 return value.value * 72.0f * s->ratio();
             case core::unit::dot:
@@ -425,7 +651,7 @@ namespace ui
         int32_t _zvalue = ZVALUE_CONTENT;
         layout_origin _layout_origin = layout_origin::layout;
 
-        core::attribute<core::color32> _color;
+        core::attribute<core::color32> _color = core::colors::Auto;
         // 控件大小，包括 padding，不包括 margin。
         core::attribute<core::vec2<core::dimensionf>> _pos;
         core::attribute<core::vec2<core::dimensionf>> _size;
@@ -497,36 +723,38 @@ namespace ui
             return _interactable ? hittest_result::client : hittest_result::stable;
         }
 
-        virtual void onMouseEnter(const mosue_state & state)
+        virtual void onMouseEnter(const input_state & state)
         {
             _mousein = true;
             mouseEnter(state);
         }
 
-        virtual void onMouseMove(const mosue_state & state) { mouseMove(state); }
+        virtual void onMouseMove(const input_state & state) { mouseMove(state); }
 
-        virtual void onMouseLeave(const mosue_state & state)
+        virtual void onMouseLeave(const input_state & state)
         {
             _pressed = false;
             _mousein = false;
             mouseLeave(state);
         }
 
-        virtual void onMouseDown(const mosue_state & state)
+        virtual void onMouseDown(const input_state & state, mouse_button button)
         {
-            _pressed = true;
-            mouseDown(state);
+            if (button == mouse_button::left)
+                _pressed = true;
+            mouseDown(state, button);
         }
 
-        virtual void onMouseUp(const mosue_state & state)
+        virtual void onMouseUp(const input_state & state, mouse_button button)
         {
-            _pressed = false;
-            mouseUp(state);
+            if (button == mouse_button::left)
+                _pressed = false;
+            mouseUp(state, button);
         }
 
-        virtual void onMouseClick(const mosue_state & state) { mouseClick(state); }
-        virtual void onMouseDBClick(const mosue_state & state) { mouseDBClick(state); }
-        virtual void onMouseWheel(const mosue_state & state) { mouseWheel(state); }
+        virtual void onMouseClick(const input_state & state, mouse_button button) { mouseClick(state, button); }
+        virtual void onMouseDBClick(const input_state & state, mouse_button button) { mouseDBClick(state, button); }
+        virtual void onMouseWheel(const input_state & state) { mouseWheel(state); }
 
         virtual void onFocus(std::shared_ptr<ImeContext> imecontext)
         {
@@ -540,6 +768,8 @@ namespace ui
             blur();
         }
 
+        virtual void onKeyDown(const input_state & state, keycode key) {}
+        virtual void onKeyUp(const input_state & state, keycode key) {}
         virtual void onChar(char32_t ch) {}
 
         bool mousein() const { return _mousein; }
@@ -555,14 +785,14 @@ namespace ui
         bool acceptInput() const { return _accept_input; }
 
     public:
-        core::event<void(const mosue_state & state)> mouseEnter;
-        core::event<void(const mosue_state & state)> mouseMove;
-        core::event<void(const mosue_state & state)> mouseLeave;
-        core::event<void(const mosue_state & state)> mouseDown;
-        core::event<void(const mosue_state & state)> mouseUp;
-        core::event<void(const mosue_state & state)> mouseClick;
-        core::event<void(const mosue_state & state)> mouseDBClick;
-        core::event<void(const mosue_state & state)> mouseWheel;
+        core::event<void(const input_state & state)> mouseEnter;
+        core::event<void(const input_state & state)> mouseMove;
+        core::event<void(const input_state & state)> mouseLeave;
+        core::event<void(const input_state & state, mouse_button button)> mouseDown;
+        core::event<void(const input_state & state, mouse_button button)> mouseUp;
+        core::event<void(const input_state & state, mouse_button button)> mouseClick;
+        core::event<void(const input_state & state, mouse_button button)> mouseDBClick;
+        core::event<void(const input_state & state)> mouseWheel;
         core::event<void()> focus;
         core::event<void()> blur;
 

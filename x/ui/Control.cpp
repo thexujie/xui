@@ -88,6 +88,11 @@ namespace ui
             return _color;
     }
 
+    void Control::setFont(const drawing::font & font)
+    {
+        _font = font;
+    }
+
     const drawing::font & Control::font() const
     {
         if (_font.available())

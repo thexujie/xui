@@ -95,7 +95,7 @@
   <ItemGroup>
     <ClCompile Include="core\utils.cpp" />
     <ClCompile Include="drawing\drawing.cpp" />
-    <ClCompile Include="drawing\skia\script.cpp">
+    <ClCompile Include="drawing\Shaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="drawing\skia\skia.cpp" />
@@ -170,7 +170,7 @@
     <ClInclude Include="core\block_ptr.h" />
     <ClInclude Include="drawing\draw.h" />
     <ClInclude Include="drawing\drawing.h" />
-    <ClInclude Include="drawing\skia\script.h" />
+    <ClInclude Include="drawing\Shaper.h" />
     <ClInclude Include="ui\component\Component.h" />
     <ClInclude Include="ui\component\Style.h" />
     <ClInclude Include="ui\component\Window.h" />

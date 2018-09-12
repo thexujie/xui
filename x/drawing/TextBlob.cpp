@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "TextBlob.h"
-#include "skia/SkShaper.h"
+#include "Shaper.h"
 #include <SkTextBlob.h>
 #include "skia/skia.h"
-#include "skia/script.h"
 
 namespace drawing
 {
@@ -30,7 +29,7 @@ namespace drawing
         if (width < 0)
             width = std::numeric_limits<float32_t>::max();
 
-        script::Shaper shaper(format._font, format._color);
+        Shaper shaper(format._font, format._color);
         shaper.reset(str);
         shaper.itermize();
         shaper.wrap(width, drawing::wrap_mode::word);

@@ -21,11 +21,11 @@ namespace ui::controls
 
         void render(drawing::Graphics & graphics, const drawing::Region & region) const override;
     public:
-        void onMouseEnter(const mosue_state & state);
-        void onMouseMove(const mosue_state & state);
-        void onMouseLeave(const mosue_state & state);
-        void onMouseDown(const mosue_state & state);
-        void onMouseUp(const mosue_state & state);
+        void onMouseEnter(const input_state & state);
+        void onMouseMove(const input_state & state);
+        void onMouseLeave(const input_state & state);
+        void onMouseDown(const input_state & state, ui::mouse_button button);
+        void onMouseUp(const input_state & state, ui::mouse_button button);
 
     private:
         // ȷ�� textBlob �Ѿ�������

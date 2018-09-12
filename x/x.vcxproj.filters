@@ -170,8 +170,8 @@
     <ClCompile Include="drawing\drawing.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
-    <ClCompile Include="drawing\skia\script.cpp">
-      <Filter>drawing\skia</Filter>
+    <ClCompile Include="drawing\Shaper.cpp">
+      <Filter>drawing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -413,10 +413,10 @@
     <ClInclude Include="core\block_ptr.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="drawing\skia\script.h">
-      <Filter>drawing\skia</Filter>
-    </ClInclude>
     <ClInclude Include="drawing\draw.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing\Shaper.h">
       <Filter>drawing</Filter>
     </ClInclude>
   </ItemGroup>

@@ -444,10 +444,10 @@ namespace win32
             CASE_MSG(WM_CHAR, OnWmChar);
             //CASE_MSG(WM_UNICHAR, OnWmChar);
 
-            //CASE_MSG(WM_SYSKEYDOWN, OnWmKeyDown);
-            //CASE_MSG(WM_KEYDOWN, OnWmKeyDown);
-            //CASE_MSG(WM_SYSKEYUP, OnWmKeyUp);
-            //CASE_MSG(WM_KEYUP, OnWmKeyUp);
+            CASE_MSG(WM_SYSKEYDOWN, OnWmKeyDown);
+            CASE_MSG(WM_KEYDOWN, OnWmKeyDown);
+            CASE_MSG(WM_SYSKEYUP, OnWmKeyUp);
+            CASE_MSG(WM_KEYUP, OnWmKeyUp);
 
             //CASE_MSG(WM_SETCURSOR, OnWmSetCursor);
             //CASE_MSG(WM_QUERYDRAGICON, OnWmQueryDrag);
@@ -527,10 +527,10 @@ namespace win32
             tme.hwndTrack = (HWND)_handle;
             TrackMouseEvent(&tme);
             _trackingMouse = true;
-            s->onMouseState(_mouse_state, ui::mouse_action::enter);
+            s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::enter);
         }
 
-        s->onMouseState(_mouse_state, ui::mouse_action::move);
+        s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
         return 0;
     }
 
@@ -548,7 +548,7 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::mask, false);
         _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
-        s->onMouseState(_mouse_state, ui::mouse_action::leave);
+        s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
         return 0;
     }
 
@@ -562,7 +562,7 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, true);
         _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
-        s->onMouseState(_mouse_state, ui::mouse_action::press);
+        s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::press);
         return 0;
     }
 
@@ -576,7 +576,7 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, false);
         _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
-        s->onMouseState(_mouse_state, ui::mouse_action::releas);
+        s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
         return 0;
     }
 
@@ -597,7 +597,7 @@ namespace win32
         //core::pt32i wheel = core::pt32i(core::u32li16(uiParam), core::u32hi16(uiParam));
         _mouse_state.setWheelLines(core::u32hi16((uint32_t)uiParam) / WHEEL_DELTA);
         _mouse_state.setPos(core::pt32i(point.x, point.y).to<float32_t>());
-        s->onMouseState(_mouse_state, ui::mouse_action::wheel_v);
+        s->onMouse(_mouse_state, ui::mouse_button::none,  ui::mouse_action::wheel_v);
         return 0;
     }
 
@@ -605,6 +605,43 @@ namespace win32
     {
         if (auto s = scene())
             s->onChar(char32_t(uiParam));
+        return 0;
+    }
+
+    intx_t Window::OnWmKeyDown(uintx_t uiParam, intx_t iParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto s = f->scene();
+
+        ui::keycode key = virtualkey2keycode(uiParam);
+        _mouse_state.setKey(key, true);
+        s->onKey(_mouse_state, key, ui::key_action::press);
+        return 0;
+    }
+
+    intx_t Window::OnWmKeyUp(uintx_t uiParam, intx_t iParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto s = f->scene();
+
+        ui::keycode key = virtualkey2keycode(uiParam);
+        _mouse_state.setKey(key, false);
+        s->onKey(_mouse_state, key, ui::key_action::release);
+        return 0;
+    }
+
+    intx_t Window::OnWmSetFocus(uintx_t uiParam, intx_t iParam)
+    {
+        return 0;
+    }
+
+    intx_t Window::OnWmKillFocus(uintx_t uiParam, intx_t iParam)
+    {
+        _mouse_state.setAllKeys(false);
         return 0;
     }
 
@@ -667,5 +704,444 @@ namespace win32
             }
             return 0;
         }
+    }
+
+    ui::keycode virtualkey2keycode(uint32_t vkey)
+    {
+        if (vkey >= 0xff)
+            return ui::keycode::none;
+
+        const ui::keycode notmatch = ui::keycode::none;
+        const ui::keycode reserved = ui::keycode::none;
+        const ui::keycode unassigned = ui::keycode::none;
+        const ui::keycode none = ui::keycode::none;
+
+        static const ui::keycode keys[0xff] =
+        {
+            //! 不可用的按键码。
+            /*0x00*/none,
+            /*0x01*/none, // vk_lbutton
+            /*0x02*/none, // vk_rbutton
+            /*0x03*/none, // vk_cancel
+            /*0x04*/none, // vm_mbutton
+            /*0x05*/none, // vk_xbutton1
+            /*0x06*/none, // vk_xbutton2
+            /*0x07*/none,
+            /*0x08*/ui::keycode::backspace, // vk_back
+            /*0x09*/ui::keycode::tab, // vk_tab
+            /*0x0a*/none,
+            /*0x0b*/none,
+            /*0x0c*/ui::keycode::clear,
+            /*0x0d*/ui::keycode::enter,
+            /*0x0e*/none,
+            /*0x0f*/none,
+
+            /*0x10*/ui::keycode::shift,
+            /*0x11*/ui::keycode::control,
+            /*0x12*/ui::keycode::alt,
+            /*0x13*/ui::keycode::pausebreak,
+            /*0x14*/ui::keycode::caps,
+            /*0x15*/ui::keycode::ime_kana,
+            /*0x16*/ui::keycode::ime_hangul,
+            /*0x17*/ui::keycode::ime_junja,
+            /*0x18*/ui::keycode::ime_final,
+            /*0x19*/ui::keycode::ime_kanji,
+            /*0x1a*/none,
+            /*0x1b*/ui::keycode::escape,
+            /*0x1c*/ui::keycode::ime_convert,
+            /*0x1d*/ui::keycode::ime_nonconvert,
+            /*0x1e*/ui::keycode::ime_accept,
+            /*0x1f*/ui::keycode::ime_modechange,
+
+            /*0x20*/ui::keycode::space,
+            /*0x21*/ui::keycode::pageup,
+            /*0x22*/ui::keycode::pagedown,
+            /*0x23*/ui::keycode::end,
+            /*0x24*/ui::keycode::home,
+            /*0x25*/ui::keycode::left,
+            /*0x26*/ui::keycode::up,
+            /*0x27*/ui::keycode::right,
+            /*0x28*/ui::keycode::down,
+            /*0x29*/ui::keycode::select,
+            /*0x2a*/ui::keycode::print,
+            /*0x2b*/ui::keycode::excute,
+            /*0x2c*/ui::keycode::printscreen,
+            /*0x2d*/ui::keycode::insert,
+            /*0x2e*/ui::keycode::delete_,
+            /*0x2f*/ui::keycode::help,
+
+            /*0x30*/ui::keycode::num0,
+            /*0x31*/ui::keycode::num1,
+            /*0x32*/ui::keycode::num2,
+            /*0x33*/ui::keycode::num3,
+            /*0x34*/ui::keycode::num4,
+            /*0x35*/ui::keycode::num5,
+            /*0x36*/ui::keycode::num6,
+            /*0x37*/ui::keycode::num7,
+            /*0x38*/ui::keycode::num8,
+            /*0x39*/ui::keycode::num9,
+            /*0x3a*/none,
+            /*0x3b*/none,
+            /*0x3c*/none,
+            /*0x3d*/none,
+            /*0x3e*/none,
+            /*0x3f*/none,
+
+            /*0x40*/none,
+            /*0x41*/ui::keycode::a,
+            /*0x42*/ui::keycode::b,
+            /*0x43*/ui::keycode::c,
+            /*0x44*/ui::keycode::d,
+            /*0x45*/ui::keycode::e,
+            /*0x46*/ui::keycode::f,
+            /*0x47*/ui::keycode::g,
+            /*0x48*/ui::keycode::h,
+            /*0x49*/ui::keycode::i,
+            /*0x4a*/ui::keycode::j,
+            /*0x4b*/ui::keycode::k,
+            /*0x4c*/ui::keycode::l,
+            /*0x4d*/ui::keycode::m,
+            /*0x4e*/ui::keycode::n,
+            /*0x4f*/ui::keycode::o,
+            /*0x50*/ui::keycode::p,
+            /*0x51*/ui::keycode::q,
+            /*0x52*/ui::keycode::r,
+            /*0x53*/ui::keycode::s,
+            /*0x54*/ui::keycode::t,
+            /*0x55*/ui::keycode::u,
+            /*0x56*/ui::keycode::v,
+            /*0x57*/ui::keycode::w,
+            /*0x58*/ui::keycode::x,
+            /*0x59*/ui::keycode::y,
+            /*0x5a*/ui::keycode::z,
+            /*0x5b*/ui::keycode::winL,
+            /*0x5c*/ui::keycode::winR,
+            /*0x5d*/ui::keycode::apps,
+            /*0x5e*/none,
+            /*0x5f*/ui::keycode::sleep,
+
+            /*0x60*/ui::keycode::numpad_0,
+            /*0x61*/ui::keycode::numpad_1,
+            /*0x62*/ui::keycode::numpad_2,
+            /*0x63*/ui::keycode::numpad_3,
+            /*0x64*/ui::keycode::numpad_4,
+            /*0x65*/ui::keycode::numpad_5,
+            /*0x66*/ui::keycode::numpad_6,
+            /*0x67*/ui::keycode::numpad_7,
+            /*0x68*/ui::keycode::numpad_8,
+            /*0x69*/ui::keycode::numpad_9,
+            /*0x6a*/ui::keycode::numpad_mul,
+            /*0x6b*/ui::keycode::numpad_add,
+            /*0x6c*/ui::keycode::numpad_enter,
+            /*0x6d*/ui::keycode::numpad_sub,
+            /*0x6e*/ui::keycode::numpad_decimal,
+            /*0x6f*/ui::keycode::numpad_div,
+
+            /*0x70*/ui::keycode::f1,
+            /*0x71*/ui::keycode::f2,
+            /*0x72*/ui::keycode::f3,
+            /*0x73*/ui::keycode::f4,
+            /*0x74*/ui::keycode::f5,
+            /*0x75*/ui::keycode::f6,
+            /*0x76*/ui::keycode::f7,
+            /*0x77*/ui::keycode::f8,
+            /*0x78*/ui::keycode::f9,
+            /*0x79*/ui::keycode::f10,
+            /*0x7a*/ui::keycode::f11,
+            /*0x7b*/ui::keycode::f12,
+            /*0x7c*/ui::keycode::f13,
+            /*0x7d*/ui::keycode::f14,
+            /*0x7e*/ui::keycode::f15,
+            /*0x7f*/ui::keycode::f16,
+            /*0x80*/ui::keycode::f17,
+            /*0x81*/ui::keycode::f18,
+            /*0x82*/ui::keycode::f19,
+            /*0x83*/ui::keycode::f20,
+            /*0x84*/ui::keycode::f21,
+            /*0x85*/ui::keycode::f22,
+            /*0x86*/ui::keycode::f23,
+            /*0x87*/ui::keycode::f24,
+            /*0x88*/none,
+            /*0x89*/none,
+            /*0x8a*/none,
+            /*0x8b*/none,
+            /*0x8c*/none,
+            /*0x8d*/none,
+            /*0x8e*/none,
+            /*0x8f*/none,
+
+            /*0x90*/ui::keycode::numpad_lock,
+            /*0x91*/ui::keycode::scrolllock,
+            /*0x92*/ui::keycode::numpad_equal,
+            /*0x93*/none,
+            /*0x94*/none,
+            /*0x95*/none,
+            /*0x96*/none,
+            /*0x97*/none,
+            /*0x98*/none,
+            /*0x99*/none,
+            /*0x9a*/none,
+            /*0x9b*/none,
+            /*0x9c*/none,
+            /*0x9d*/none,
+            /*0x9e*/none,
+            /*0x9f*/none,
+
+            /*0xa0*/ui::keycode::shiftL,
+            /*0xa1*/ui::keycode::shiftR,
+            /*0xa2*/ui::keycode::controlL,
+            /*0xa3*/ui::keycode::controlR,
+            /*0xa4*/ui::keycode::altL,
+            /*0xa5*/ui::keycode::altR,
+            /*0xa6*/ui::keycode::browser_back,
+            /*0xa7*/ui::keycode::browser_forward,
+            /*0xa8*/ui::keycode::browser_forward,
+            /*0xa9*/ui::keycode::browser_stop,
+            /*0xaa*/ui::keycode::browser_search,
+            /*0xab*/ui::keycode::browser_favorites,
+            /*0xac*/ui::keycode::browser_home,
+            /*0xad*/ui::keycode::volume_mute,
+            /*0xae*/ui::keycode::volume_down,
+            /*0xaf*/ui::keycode::volume_up,
+
+            /*0xb0*/ui::keycode::media_next,
+            /*0xb1*/ui::keycode::media_prev,
+            /*0xb2*/ui::keycode::media_stop,
+            /*0xb3*/ui::keycode::media_playpause,
+            /*0xb4*/ui::keycode::launch_mail,
+            /*0xb5*/ui::keycode::launch_mediaselect,
+            /*0xb6*/ui::keycode::launch_app1,
+            /*0xb7*/ui::keycode::launch_app2,
+            /*0xb8*/none,
+            /*0xb9*/none,
+            /*0xba*/ui::keycode::semicolon,
+            /*0xbb*/ui::keycode::equal,
+            /*0xbc*/ui::keycode::comma,
+            /*0xbd*/ui::keycode::sub,
+            /*0xbe*/ui::keycode::period,
+            /*0xbf*/ui::keycode::slash,
+
+            /*0xc0*/ui::keycode::grave,
+            /*0xc1*/reserved,
+            /*0xc2*/reserved,
+            /*0xc3*/reserved,
+            /*0xc4*/reserved,
+            /*0xc5*/reserved,
+            /*0xc6*/reserved,
+            /*0xc7*/reserved,
+            /*0xc8*/reserved,
+            /*0xc9*/reserved,
+            /*0xca*/reserved,
+            /*0xcb*/reserved,
+            /*0xcc*/reserved,
+            /*0xcd*/reserved,
+            /*0xce*/reserved,
+            /*0xcf*/reserved,
+
+            /*0xd0*/reserved,
+            /*0xd1*/reserved,
+            /*0xd2*/reserved,
+            /*0xd3*/reserved,
+            /*0xd4*/reserved,
+            /*0xd5*/reserved,
+            /*0xd6*/reserved,
+            /*0xd7*/reserved,
+            /*0xd8*/unassigned,
+            /*0xd9*/unassigned,
+            /*0xda*/unassigned,
+            /*0xdb*/ui::keycode::bracketL,
+            /*0xdc*/ui::keycode::backslash,
+            /*0xdd*/ui::keycode::bracketR,
+            /*0xde*/ui::keycode::apostrophe,
+            /*0xdf*/none,
+
+            /*0xe0*/reserved,
+            /*0xe1*/notmatch,
+            /*0xe2*/ui::keycode::comma,
+            /*0xe3*/notmatch,
+            /*0xe4*/notmatch,
+            /*0xe5*/notmatch,
+            /*0xe6*/notmatch,
+            /*0xe7*/notmatch,
+            /*0xe8*/notmatch,
+            /*0xe9*/notmatch,
+            /*0xea*/notmatch,
+            /*0xeb*/notmatch,
+            /*0xec*/notmatch,
+            /*0xed*/notmatch,
+            /*0xee*/notmatch,
+            /*0xef*/notmatch,
+
+            /*0xf0*/notmatch,
+            /*0xf1*/notmatch,
+            /*0xf2*/notmatch,
+            /*0xf3*/notmatch,
+            /*0xf4*/notmatch,
+            /*0xf5*/notmatch,
+            /*0xf6*/notmatch,
+            /*0xf7*/notmatch,
+            /*0xf8*/notmatch,
+            /*0xf9*/notmatch,
+            /*0xfa*/notmatch,
+            /*0xfb*/notmatch,
+            /*0xfc*/notmatch,
+            /*0xfd*/notmatch,
+            /*0xfe*/notmatch,
+            /*0xff*/
+        };
+
+        ui::keycode key = keys[vkey];
+        return key;
+    }
+    uint32_t keycode2virtualkey(ui::keycode code)
+    {
+        const uint8_t NONE = 0;
+
+        if ((uint32_t)code >= 0xFF)
+            return NONE;
+
+        static const uint32_t KEYS[0xFF] =
+        {
+            NONE,
+            '0',
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+            '9',
+
+            VK_CAPITAL,
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
+
+            VK_BACK,
+            VK_TAB,
+            VK_RETURN,
+
+            VK_ESCAPE,
+            VK_SPACE,
+
+            VK_NUMLOCK,
+            VK_NUMPAD0,
+            VK_NUMPAD1,
+            VK_NUMPAD2,
+            VK_NUMPAD3,
+            VK_NUMPAD4,
+            VK_NUMPAD5,
+            VK_NUMPAD6,
+            VK_NUMPAD7,
+            VK_NUMPAD8,
+            VK_NUMPAD9,
+
+            VK_ADD,
+            VK_SUBTRACT,
+            VK_MULTIPLY,
+            VK_DIVIDE,
+            VK_DECIMAL,
+            NONE,
+            NONE,
+
+            VK_F1,
+            VK_F2,
+            VK_F3,
+            VK_F4,
+            VK_F5,
+            VK_F6,
+            VK_F7,
+            VK_F8,
+            VK_F9,
+            VK_F10,
+            VK_F11,
+            VK_F12,
+            VK_F13,
+            VK_F14,
+            VK_F15,
+            VK_F16,
+            VK_F17,
+            VK_F18,
+            VK_F19,
+            VK_F20,
+            VK_F21,
+            VK_F22,
+            VK_F23,
+            VK_F24,
+
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+            NONE,
+
+            VK_INSERT,
+            VK_DELETE,
+            VK_HOME,
+            VK_END,
+            VK_PRIOR,
+            VK_NEXT,
+
+            VK_LEFT,
+            VK_UP,
+            VK_RIGHT,
+            VK_DOWN,
+
+            VK_PRINT,
+            VK_SCROLL,
+            VK_PAUSE,
+
+            VK_LWIN,
+            VK_RWIN,
+
+            VK_CONTROL,
+            VK_LCONTROL,
+            VK_RCONTROL,
+
+            VK_SHIFT,
+            VK_LSHIFT,
+            VK_RSHIFT,
+
+            VK_MENU,
+            VK_LMENU,
+            VK_RMENU,
+
+            VK_APPS,
+
+            VK_SLEEP,
+        };
+        return KEYS[(uint32_t)code];
     }
 }

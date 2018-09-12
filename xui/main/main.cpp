@@ -54,6 +54,13 @@ void testImages()
 
 void xui_main()
 {
+    std::string rtft = u8"لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้㌶㌫hello ق قق ققق قققق aa  بالإضافة إلى العديد من المناطق الأخرى المجاورة كالأحواز وتركيا وتشاد ومالي";
+
+    drawing::Shaper shaper;
+    shaper.reset(rtft);
+    shaper.itermize();
+    shaper.wrap(999999999, drawing::wrap_mode::word);
+
     std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
     auto ss = std::make_shared<ui::component::StyleSheet>();
     ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
@@ -137,7 +144,7 @@ void xui_main()
 
     drawing::font font;
     drawing::fontmetrics fm(font);
-    std::string rtft = u8"𪚥𪚥𪚥ยิ้ยิ้abcdef,gh ijkl我爱ยิ้ยิ้你家㌶㍍㌶㌫㍊㍍我家𪚥𪚥𪚥 hello ق قق ققق قققق aa ققققق a قققققق";
+
     auto layer = std::make_shared<ui::Container>();
     {
         layer->setBackgroundColor(0x40ffffff);
@@ -147,8 +154,9 @@ void xui_main()
         layer->setSize({ 100_per, 100_per });
 
         auto tbx = std::make_shared<ui::controls::TextBox>();
+        tbx->setFont({"", font.size * 2});
         tbx->setText(rtft);
-        tbx->setSize({ 100_per, 2_em });
+        tbx->setSize({ 100_per, 3_em });
         tbx->setImeMode(ui::ime_mode::on);
         layer->addControl(tbx);
 
@@ -226,9 +234,6 @@ void xui_main()
 int main()
 {
     SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
-
-    drawing::StringFormat fmt;
-    auto textblob = std::make_shared<drawing::TextBlob>("abcdefg", fmt);
 
     auto app = std::make_shared<win32::Win32App>();
     xui_main();

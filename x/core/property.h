@@ -360,6 +360,8 @@ namespace core
         void setDuration(std::chrono::nanoseconds duration) { _duration = duration; }
         void setCurve(std::function<float32_t(float32_t)> curve) { _curve = curve; }
 
+        void yield() { _time = core::datetime::steady() + _duration * _loop_index; }
+        void reset() { _time = core::datetime::steady(); _loop_index = 0; }
         void start() { setState(animation_state::running); }
         void stop() { setState(animation_state::waiting); }
         void pause() { setState(animation_state::pausing); }
