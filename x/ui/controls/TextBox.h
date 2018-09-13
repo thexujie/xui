@@ -3,6 +3,50 @@
 
 namespace ui::controls
 {
+    struct cursor
+    {
+        cursor() = default;
+        cursor(size_t pos_) : pos(pos_) {}
+        cursor(size_t pos_, bool far_) : pos(pos_), far(far_) {}
+
+        union
+        {
+            size_t pos = drawing::cursor_pos_nopos;
+            struct
+            {
+                size_t index : 25;
+                size_t length : 6;
+                size_t far : 1;
+            };
+        };
+
+        size_t curr() const { return far ? index + length : index; }
+        size_t end() const { return index + length; }
+        cursor & operator = (size_t pos_)
+        {
+            pos = pos_;
+            return *this;
+        }
+
+        explicit operator size_t ()
+        {
+            return index;
+        }
+
+        bool operator == (const cursor & c) const { return curr() == c.curr(); }
+        bool operator != (const cursor & c) const { return curr() != c.curr(); }
+
+        bool operator == (size_t pos_) const { return index == pos_; }
+        bool operator != (size_t pos_) const { return index != pos_; }
+        bool operator < (size_t pos_) const { return index < pos_; }
+        bool operator <= (size_t pos_) const { return index <= pos_; }
+        bool operator > (size_t pos_) const { return index > pos_; }
+        bool operator >= (size_t pos_) const { return index >= pos_; }
+
+        static inline size_t mask = size_t(-1) >> 1;
+        static inline size_t npos = size_t(-1);
+    };
+
     enum class shaper_flag
     {
         none = 0x0000,
@@ -29,6 +73,7 @@ namespace ui::controls
 
         void render(drawing::Graphics & graphics, const drawing::Region & region) const override;
     public:
+        void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
         void onMouseEnter(const input_state & state) override;
         void onMouseMove(const input_state & state) override;
         void onMouseLeave(const input_state & state) override;
@@ -44,12 +89,20 @@ namespace ui::controls
         void caretLeft();
         void caretRight();
         void backSpace();
-        void insert(size_t offset, const char * text, size_t count);
+        void del();
+        void insert(const char * text, size_t count);
 
     private:
         void _updateIme();
         void _confirmBlob() const;
         void _doshaper();
+
+        const drawing::glyph & _glyph(cursor pos) const;
+        const drawing::glyph & _lastGlyph(cursor pos) const;
+        const drawing::glyph & _nextGlyph(cursor pos) const;
+
+        cursor _makeCursor(size_t index, bool far);
+        cursor advance(cursor pos, ptrdiff_t diff) const;
 
     private:
         void _setCursorShown(bool vis);
@@ -67,6 +120,7 @@ namespace ui::controls
         std::shared_ptr<drawing::Shaper> _shaper;
 
         bool _cursor_shown = false;
-        size_t _cursor_pos = core::npos;
+        cursor _cursor_pos = 0;
+        float32_t _scroll_pos = 0;
     };
 }

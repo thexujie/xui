@@ -39,6 +39,8 @@ namespace drawing::skia
         metrics.bottom = skfm.fBottom;
         metrics.ascent = std::abs(skfm.fAscent);
         metrics.descent = skfm.fDescent;
-        metrics.leading = skfm.fLeading;
+        metrics.width = skfm.fAvgCharWidth;
+        if (core::equal(metrics.width, 0.0f))
+            metrics.width = skfm.fXMax;
     }
 }

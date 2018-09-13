@@ -220,7 +220,7 @@ namespace ui
         backslash, // ·´Ð±¸Ü \|
 
         insert,
-        delete_,
+        del,
         home,
         end,
         pageup,
@@ -476,7 +476,7 @@ namespace ui
             case core::unit::px:
                 return value.value * s->ratio();
             case core::unit::em:
-                return value.value * drawing::fontmetrics(drawing::font()).height * s->ratio();
+                return value.value * drawing::fontmetrics(drawing::font()).height;
             case core::unit::pt:
                 return value.value * 72.0f * s->ratio();
             case core::unit::dot:
@@ -506,7 +506,7 @@ namespace ui
             case core::unit::px:
                 return value.value * s->ratio();
             case core::unit::em:
-                return value.value * drawing::fontmetrics(drawing::font()).height * s->ratio();
+                return value.value * drawing::fontmetrics(drawing::font()).height;
             case core::unit::pt:
                 return value.value * 72.0f * s->ratio();
             case core::unit::dot:

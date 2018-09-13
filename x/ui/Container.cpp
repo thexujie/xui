@@ -337,27 +337,6 @@ namespace ui
     void Container::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
         relayout();
-        //switch(_layout_direction)
-        //{
-        //case core::align::left:
-        //    layout(core::equal(from.cy, to.cy) ? layout_flag::none : layout_flag::resize_cy);
-        //    if (_scrollbar_h)
-        //    {
-        //        _scrollbar_h->setPageValue(contentBox().cx);
-        //        _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
-        //    }
-        //    break;
-        //case core::align::top:
-        //    layout(core::equal(from.cx, to.cx) ? layout_flag::none : layout_flag::resize_cx);
-        //    if (_scrollbar_v)
-        //    {
-        //        _scrollbar_v->setPageValue(contentBox().cy);
-        //        _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
-        //    }
-        //    break;
-        //default:
-        //    break;
-        //}
         Control::onSizeChanged(from, to);
     }
 

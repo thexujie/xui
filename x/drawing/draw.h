@@ -9,6 +9,7 @@ class SkTextBlobBuilder;
 namespace drawing
 {
     using core::section32;
+    using core::section8;
 
     enum class wrap_mode
     {

@@ -38,8 +38,6 @@ namespace ui
     void Form::setWindowSize(const core::si32f & size)
     {
         setShowSize(size);
-        layout(layout_flag::force);
-        update();
     }
 
     std::shared_ptr<Scene> Form::formScene() const

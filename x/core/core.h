@@ -128,6 +128,8 @@ namespace core
 
     typedef section_type<size_t> section;
     typedef section_type<uint32_t> section32;
+    typedef section_type<uint16_t> section16;
+    typedef section_type<uint8_t> section8;
 }
 
 #include "core/member_function_traits.h"

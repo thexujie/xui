@@ -43,10 +43,6 @@ namespace ui::controls
     {
         _accept_input = true;
         _shaper = std::make_shared<drawing::Shaper>();
-        auto accessor = make_accessor(&TextBox::_setCursorShown, &TextBox::_cursorShown, core::parseBool, nullptr);
-        auto interpolator = std::make_shared<core::property_interpolator_keyframes<bool>>();
-        interpolator->set_values({ { 0.0f, true }, { 0.5f, false } });
-        _cursor_anim = std::make_shared<core::property_animation>(control_ref(), accessor, interpolator);
     }
 
     TextBox::~TextBox()
@@ -88,21 +84,51 @@ namespace ui::controls
 
     void TextBox::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
+        auto cbox = contentBox();
         std::lock_guard l(*this);
         _renderBackground(graphics);
+        graphics.save();
+        graphics.setClipRect(cbox);
         if (_textblob)
-            graphics.drawTextBlob(*_textblob, contentBox().leftTop());
+            graphics.drawTextBlob(*_textblob, contentBox().leftTop().offseted(_scroll_pos, 0));
+        graphics.restore();
 
         if (_cursor_shown)
         {
-            auto & glyph = _shaper->findGlyph(_cursor_pos);
-            core::rc32f rect = { glyph.pos.x, glyph.pos.y, glyph.size.cx, glyph.size.cy };
-            auto cbox = contentBox();
-            //graphics.drawLine({ cbox.x + rcCurr.right(), cbox.y + rcCurr.y }, { cbox.x + rcCurr.right(), cbox.y + rcCurr.y + rcCurr.height },
-            //    drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(1));
-            graphics.drawRectangle(rect.offseted(cbox.leftTop()), drawing::PathStyle().fill(0x80ff0000));
+            if(_text.empty())
+            {
+                drawing::fontmetrics fmetrics(font());
+                graphics.drawRectangle({ cbox.leftTop(), { fmetrics.width, fmetrics.height } }, drawing::PathStyle().fill(0x80ff0000));
+            }
+            else
+            {
+                auto & glyph_curr = _shaper->findGlyph(_cursor_pos.index);
+                size_t gindex = glyph_curr.gindex + 1;
+                while(gindex > 0)
+                {
+                    auto & glyph = _shaper->glyphAt(gindex - 1);
+                    if (glyph.header)
+                    {
+                        core::rc32f rect = glyph.rect;
+                        rect.offset(cbox.leftTop()).offset(_scroll_pos, 0);
+                        graphics.drawRectangle(rect, drawing::PathStyle().fill(0x400000ff));
+                        if (_cursor_pos.far)
+                            graphics.drawLine(rect.rightTop(), rect.rightBottom(), drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(calc_x(1_px)));
+                        else
+                            graphics.drawLine(rect.leftTop(), rect.leftBottom(), drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(calc_x(1_px)));
+                        break;
+                    }
+                    --gindex;
+                }
+            }
         }
         _renderBorder(graphics);
+    }
+
+    void TextBox::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    {
+        reshaper(shaper_flag::caret);
+        Control::onSizeChanged(from, to);
     }
 
     void TextBox::onMouseEnter(const input_state & state)
@@ -126,6 +152,15 @@ namespace ui::controls
     void TextBox::onMouseDown(const input_state & state, ui::mouse_button button)
     {
         Control::onMouseDown(state, button);
+        auto cbox = contentBox();
+        float32_t pos = state.pos().x - cbox.x - _scroll_pos;
+        auto & glyph = _shaper->findGlyph(pos, 0);
+        if(glyph)
+        {
+            _cursor_pos = pos < glyph.rect.centerX() ?  glyph.trange.index : (glyph.trange.index | drawing::cursor_pos_far);
+            _cursor_anim ? _cursor_anim->reset() : nullptr;
+            reshaper(shaper_flag::caret);
+        }
         restyle();
     }
 
@@ -149,6 +184,9 @@ namespace ui::controls
         case keycode::backspace:
             backSpace();
             break;
+        case keycode::del:
+            del();
+            break;
         default:
             break;
         }
@@ -159,6 +197,10 @@ namespace ui::controls
         _imecontext = imecontext;
         if(!_cursor_anim)
         {
+            auto accessor = make_accessor(&TextBox::_setCursorShown, &TextBox::_cursorShown, core::parseBool, nullptr);
+            auto interpolator = std::make_shared<core::property_interpolator_keyframes<bool>>();
+            interpolator->set_values({ { 0.0f, true }, { 0.5f, false } });
+            _cursor_anim = std::make_shared<core::property_animation>(control_ref(), accessor, interpolator);
             _cursor_anim->setDuration(1s);
             _cursor_anim->setLoop(9999);
             appendAnimation(TEXTBOX_ANIMATION_GROUP_CURSOR, _cursor_anim);
@@ -176,8 +218,7 @@ namespace ui::controls
         _imecontext = nullptr;
         //std::lock_guard lock(*this);
         _setCursorShown(false);
-        if (_cursor_anim)
-            _cursor_anim->stop();
+        _cursor_anim ? _cursor_anim->stop() : nullptr;
         restyle();
     }
 
@@ -188,14 +229,25 @@ namespace ui::controls
         
         char chars[6] = { 0 };
         size_t len = core::utf32_to_utf8(ch, chars, 6);
-        auto & glyph_curr = _shaper->findGlyph(_cursor_pos);
-        if (!glyph_curr.trange.length)
-            return;
-        insert(glyph_curr.trange.end(), chars, len);
+        insert(chars, len);
     }
 
     void TextBox::reshaper(shaper_flags flags)
     {
+#ifdef  _DEBUG
+        size_t utf8_pos = 0;
+        size_t nutf8 = 0;
+        char32_t cp_utf8 = 0;
+        do
+        {
+            nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, cp_utf8);
+            utf8_pos += nutf8;
+        }
+        while (nutf8 > 0);
+        assert(utf8_pos <= _text.length());
+#endif
+
+
         _delay_shaper_flags |= flags;
         if(!_delay_shaper)
         {
@@ -206,90 +258,82 @@ namespace ui::controls
 
     void TextBox::caretLeft()
     {
-        if (!_cursor_pos)
+        auto & glyph_curr = _shaper->findGlyph(_cursor_pos.index);
+        if (!glyph_curr)
             return;
 
-        auto & glyph_curr = _shaper->findGlyph(_cursor_pos);
-        if (!glyph_curr.trange.index)
-            return;
-
-        size_t index = glyph_curr.trange.index - 1;
-        while(index >= 0)
+        size_t gindex = _cursor_pos.far ? glyph_curr.gindex + 1: glyph_curr.gindex;
+        while (gindex > 0)
         {
-            auto & glyph = _shaper->findGlyph(index);
-            if (!glyph.trange.length)
-                return;
-
-            if(glyph.charbreak)
+            --gindex;
+            auto &  glyph = _shaper->glyphAt(gindex);
+            if (glyph.header)
             {
-                _cursor_pos = glyph.trange.index;
-                _cursor_shown = true;
-                _cursor_anim->reset();
+                _cursor_pos = { glyph.trange.index, false };
+                _cursor_anim ? _cursor_anim->reset() : nullptr;
                 reshaper(shaper_flag::caret);
                 break;
             }
-
-            if (!glyph.trange.index)
-                break;
-            index = glyph.trange.index - 1;
         }
     }
 
     void TextBox::caretRight()
     {
-        if (_cursor_pos >= _text.length())
+        auto & glyph_curr = _shaper->findGlyph(_cursor_pos.index);
+        if (!glyph_curr)
             return;
 
-        auto & glyph_curr = _shaper->findGlyph(_cursor_pos);
-        size_t index = glyph_curr.trange.end();
-        do
+        size_t gindex = _cursor_pos.far ? glyph_curr.gindex + 1 : glyph_curr.gindex;
+        while(gindex < _shaper->glyphCount())
         {
-            auto & glyph = _shaper->findGlyph(index);
-            if (!glyph.trange.length)
-                break;
-
-            if (glyph.charbreak)
+            auto &  glyph = _shaper->glyphAt(gindex);
+            if (glyph.tailer)
             {
-                _cursor_pos = glyph.trange.index;
-                _cursor_shown = true;
-                _cursor_anim->reset();
+                _cursor_pos = { glyph.trange.index, true };
+                _cursor_anim ? _cursor_anim->reset() : nullptr;
                 reshaper(shaper_flag::caret);
                 break;
             }
-
-            if (glyph.trange.end() == _text.length())
-                break;
-            index = glyph.trange.end();
+            ++gindex;
         }
-        while (index <= _text.length());
     }
-
 
     void TextBox::backSpace()
     {
-        auto & glyph = _shaper->findGlyph(_cursor_pos);
-        if (glyph.trange.length)
+        auto & glyph_curr = _shaper->findGlyph(_cursor_pos.index);
+        if (!glyph_curr)
+            return;
+
+        if (!_cursor_pos.far && !glyph_curr.gindex)
+            return;
+
+        auto & glyph = _shaper->glyphAt(_cursor_pos.far ? glyph_curr.gindex : glyph_curr.gindex - 1);
+        if (glyph)
         {
             _text.erase(glyph.trange.index, glyph.trange.length);
-            if(_cursor_pos != core::npos && _cursor_pos >= glyph.trange.index)
-                _cursor_pos -= glyph.trange.length;
-            assert(_cursor_pos == core::npos || _cursor_pos < _text.length());
+            _cursor_pos = { glyph.trange.index, false };
+            _cursor_anim ? _cursor_anim->reset() : nullptr;
             reshaper(shaper_flag::shaper);
         }
     }
 
-    void TextBox::insert(size_t offset, const char * text, size_t count)
+    void TextBox::del()
     {
-        if (offset == core::npos)
-            _text.append(text, count);
-        else
-            _text.insert(offset, text, count);
+        auto & glyph_next = _nextGlyph(_cursor_pos);
+        if (!glyph_next)
+            return;
 
-        if (_cursor_pos != core::npos && _cursor_pos >= offset)
-            _cursor_pos += count;
+        _text.erase(glyph_next.trange.index, glyph_next.trange.length);
+        _cursor_pos = _makeCursor(glyph_next.trange.index, _cursor_pos.far);
+        _cursor_anim ? _cursor_anim->reset() : nullptr;
+        reshaper(shaper_flag::shaper);
+    }
 
-        _cursor_shown = true;
-        _cursor_anim->reset();
+    void TextBox::insert(const char * text, size_t count)
+    {
+        _text.insert(_cursor_pos.curr(), text, count);
+        _cursor_pos = _makeCursor(_cursor_pos.index + count, _cursor_pos.far);
+        _cursor_anim ? _cursor_anim->reset() : nullptr;
         reshaper(shaper_flag::shaper);
     }
 
@@ -300,9 +344,9 @@ namespace ui::controls
 
         if(_ime_mode != ime_mode::disabled)
         {
-            auto & glyph = _shaper->findGlyph(_cursor_pos == core::npos ? _text.length() - 1 : _cursor_pos);
-            core::rc32f rect = { glyph.pos.x, glyph.pos.y, glyph.size.cx, glyph.size.cy };
-            _imecontext->setCompositionPos(contentBox().leftTop() + core::vec2f(rect.right(), 0));
+            auto cbox = contentBox();
+            auto & glyph = _shaper->findGlyph(_cursor_pos.index);
+            _imecontext->setCompositionPos(cbox.leftTop() + core::vec2f(glyph.rect.right() + _scroll_pos, 0));
             _imecontext->setCompositionFont(font());
         }
     }
@@ -332,10 +376,88 @@ namespace ui::controls
         }
 
         if (_delay_shaper_flags.any(shaper_flag::shaper | shaper_flag::caret))
+        {
             refresh();
+            auto cbox = contentBox();
+            auto & glyph = _shaper->findGlyph(_cursor_pos.index);
+            if (glyph)
+            {
+                float32_t scroll_pos = _scroll_pos;
+                if (_scroll_pos + glyph.rect.x < 0)
+                    scroll_pos = -glyph.rect.x;
+                else if (_scroll_pos + glyph.rect.right() >= cbox.width)
+                    scroll_pos = cbox.cx - glyph.rect.right();
+                else {}
+
+                auto size =_shaper->lineSize(0);
+                if (_scroll_pos + size.cx < cbox.width)
+                {
+                    float32_t scroll_max = cbox.width - size.cx;
+                    if (scroll_max > 0)
+                        scroll_max = 0;
+                    scroll_pos = std::clamp(scroll_pos, scroll_max, 0.0f);
+                }
+                _scroll_pos = scroll_pos;
+            }
+        }
 
         _delay_shaper_flags.clear();
         _updateIme();
+    }
+
+    const drawing::glyph & TextBox::_glyph(cursor pos) const
+    {
+        auto & glyph = _shaper->findGlyph(pos.index);
+        if (pos.far)
+            return _shaper->findGlyph(glyph.trange.end());
+        else
+            return glyph;
+    }
+
+    const drawing::glyph & TextBox::_lastGlyph(cursor pos) const
+    {
+        if (pos.far)
+            return _shaper->findGlyph(pos.index);
+        else if (pos.index == 0)
+            return drawing::Shaper::empty_glyph;
+        else
+            return _shaper->findGlyph(pos.index - 1);
+    }
+
+    const drawing::glyph & TextBox::_nextGlyph(cursor pos) const
+    {
+        auto & glyph = _shaper->findGlyph(pos.index);
+        if (!pos.far)
+            return glyph;
+        else if(glyph.trange.end() >= _text.length())
+            return drawing::Shaper::empty_glyph;
+        else
+            return _shaper->findGlyph(glyph.trange.end());
+    }
+
+    cursor TextBox::_makeCursor(size_t index, bool far)
+    {
+        if (index == 0 || _text.empty())
+            return { 0, false };
+        if (index == _text.length())
+            return { _text.length() - 1, true };
+
+        size_t index2 = far ? index - 1 : index;
+        auto & glyph = _shaper->findGlyph(index2);
+        if(!glyph)
+            return { 0, false };
+
+        return { glyph.trange.index, far };
+    }
+
+    cursor TextBox::advance(cursor pos, ptrdiff_t diff) const
+    {
+        ptrdiff_t count = std::abs(diff);
+        while(count--)
+        {
+            auto & glyph = _shaper->findGlyph(pos.index);
+        }
+        return {};
     }
 
     void TextBox::_setCursorShown(bool vis)

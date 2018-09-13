@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "ui/Control.h"
+#include "Desktop.h"
 
 namespace ui
 {
     Scene::Scene(std::shared_ptr<Control> control) : _control(control)
     {
-        
+        _ratio = Desktop::instance().ppi().cy / 96.0f;
     }
 
     Scene::~Scene()

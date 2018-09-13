@@ -20,10 +20,23 @@ namespace core
             y = _y;
         }
 
-        void expand(T _cx, T _cy)
+        vec2 & expand(T _cx, T _cy)
         {
             w += _cx * 2;
             h += _cy * 2;
+            return *this;
+        }
+
+        vec2 & offset(const T & off_x, const T & off_y)
+        {
+            x += off_x;
+            y += off_y;
+            return *this;
+        }
+
+        vec2 offseted(const T & off_x, const T & off_y) const
+        {
+            return vec2(x + off_x, y + off_y);
         }
 
         void clear()

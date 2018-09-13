@@ -52,9 +52,23 @@ void testImages()
 //#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
 #pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
 
+class tobj
+{
+public:
+    static void * operator new(size_t size)
+    {
+        return malloc(size);
+    }
+
+    static void operator delete(void *p)
+    {
+        free(p);
+    }
+};
+
 void xui_main()
 {
-    std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้㌶㌫hello ق قق ققق قققق aa الأخرى المجاورة كالأحواز وتركيا وتشاد ومالي";
+    std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
 
     drawing::Shaper shaper;
     shaper.itermize(rtft, drawing::font(), colors::Black);

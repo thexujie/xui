@@ -111,6 +111,7 @@ namespace drawing
         float32_t descent = 0;
         float32_t leading = 0;
         float32_t weight = 0;
+        float32_t width = 0;
     };
 }
 

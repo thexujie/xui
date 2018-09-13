@@ -247,6 +247,13 @@ namespace core
         }
 
         // Æ«ÒÆ
+        vec4 & offset(const vec2<T> & off)
+        {
+            x += off.x;
+            y += off.y;
+            return *this;
+        }
+
         vec4 & offset(T off_x, T off_y)
         {
             x += off_x;

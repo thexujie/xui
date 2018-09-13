@@ -220,21 +220,24 @@ namespace drawing
 
     struct glyph
     {
+        uint16_t gindex = 0;
 #ifdef _DEBUG
         std::string _text;
 #endif
         section32 trange;
         uint16_t gid = 0;
-        uint16_t gcount = 0;
         core::vec2f advance;
         core::vec2f offset;
         bool wordbreak = false;
-        bool charbreak = false;
         bool standalone = false;
 
+        bool header = false;
+        bool tailer = false;
+
         uint32_t sindex = 0;
-        core::vec2f pos;
-        core::vec2f size;
+        core::vec4f rect;
+
+        operator bool() const { return trange.length > 0; }
     };
 
     struct segment
@@ -266,6 +269,10 @@ namespace drawing
 #endif
     };
 
+    constexpr size_t cursor_pos_mask = size_t(-1) >> 1;
+    constexpr size_t cursor_pos_far = ~cursor_pos_mask;
+    constexpr size_t cursor_pos_nopos = cursor_pos_far | cursor_pos_mask;
+
     class Shaper : public IShaper
     {
     public:
@@ -292,8 +299,10 @@ namespace drawing
         const drawing::fontmetrics & fontmetrics_at(uint16_t index) { return _fonts[index].fmetrics; }
 
     public:
+        const glyph & glyphAt(size_t tindex) const{ return _glyphs.at(tindex); }
+        size_t glyphCount() const { return _glyphs.size(); }
         const glyph & findGlyph(size_t tindex) const;
-        core::rc32f charRect(size_t tindex) const;
+        const glyph & findGlyph(float32_t pos, size_t lindex) const;
 
     private:
         // 0 ltr 1 rtl 0xfe auto but preffer ltf 0xff auto but preffer rtl
@@ -325,5 +334,8 @@ namespace drawing
         std::vector<segment> _segments;
         std::vector<row> _rows;
         std::shared_ptr<class SkTextBlobBuilder> _builder;
+
+    public:
+        static inline glyph empty_glyph = {};
     };
 }

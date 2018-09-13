@@ -654,7 +654,7 @@ namespace win32
     static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM uiParam, LPARAM iParam)
     {
         Window * pWindow = Window::fromHandle(hWnd);
-
+        LRESULT res = 0;
         switch (uiMessage)
         {
         case WM_MOVE:
@@ -680,7 +680,9 @@ namespace win32
         }
 
         if (pWindow)
-            return pWindow->handleMSG(uiMessage, uiParam, iParam);
+        {
+            res = pWindow->handleMSG(uiMessage, uiParam, iParam);
+        }
         else
         {
             //TimeT time;
@@ -700,10 +702,12 @@ namespace win32
                 win32::endLoop(0);
                 break;
             default:
-                return DefWindowProcW(hWnd, uiMessage, uiParam, iParam);
+                res = DefWindowProcW(hWnd, uiMessage, uiParam, iParam);
+                break;
             }
-            return 0;
         }
+        core::object::get_invoke_helper().trigger();
+        return res;
     }
 
     ui::keycode virtualkey2keycode(uint32_t vkey)
@@ -767,7 +771,7 @@ namespace win32
             /*0x2b*/ui::keycode::excute,
             /*0x2c*/ui::keycode::printscreen,
             /*0x2d*/ui::keycode::insert,
-            /*0x2e*/ui::keycode::delete_,
+            /*0x2e*/ui::keycode::del,
             /*0x2f*/ui::keycode::help,
 
             /*0x30*/ui::keycode::num0,

@@ -252,7 +252,10 @@ namespace drawing
             size_t nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, cp_utf8);
             size_t nutf16 = core::utf16_to_utf32(u16str.c_str() + utf16_pos, u16str.length() - utf16_pos, cp_utf16);
             if (cp_utf8 != cp_utf16)
+            {
+                assert(false);
                 break;
+            }
 
 #ifdef _DEBUG
             _u32text.append(1, cp_utf8);
@@ -298,7 +301,7 @@ namespace drawing
 
             if (utf8_pos == 0)
             {
-                assert((script != hb_script::inherited && script != hb_script::common));
+                assert(script != hb_script::inherited);
                 item & first = _items.back();
                 first.script = script;
                 first.level = level;
@@ -376,6 +379,9 @@ namespace drawing
 
             hb_shape(hbfont.get(), _hbbuffer.get(), nullptr, 0);
             uint32_t gcount = hb_buffer_get_length(_hbbuffer.get());
+            if (!gcount)
+                continue;
+
             if (item.level & 1)
             {
                 // Put the clusters back in logical order.
@@ -392,11 +398,13 @@ namespace drawing
             _glyphs.resize(_glyphs.size() + gcount);
             hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
             hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
+            uint8_t local_index = 0;
             for (uint32_t gindex = 0; gindex < gcount; ++gindex)
             {
                 const hb_glyph_info_t & info = infos[gindex];
                 const hb_glyph_position_t & pos = poses[gindex];
                 glyph & glyph = _glyphs[index_base + gindex];
+                glyph.gindex = index_base + gindex;
                 glyph.trange = { info.cluster, 1 };
                 if (gindex < gcount - 1)
                     glyph.trange.length = infos[gindex + 1].cluster - info.cluster;
@@ -427,12 +435,21 @@ namespace drawing
                     if (char_stop_utf16 < utf16_ranges.size())
                     {
                         int32_t char_stop_utf8 = utf16_ranges[char_stop_utf16].index;
-                        glyph.charbreak = char_stop_utf8 == glyph.trange.index;
+                        if (char_stop_utf8 == glyph.trange.index)
+                            glyph.header = true;
                     }
                 }
 
                 glyph.standalone = !(info.mask & HB_GLYPH_FLAG_UNSAFE_TO_BREAK);
             }
+
+            for (uint32_t gindex = 1; gindex < gcount; ++gindex)
+            {
+                glyph & glyph = _glyphs[index_base + gindex];
+                if(glyph.header)
+                    _glyphs[index_base + gindex - 1].tailer = true;
+            }
+            _glyphs[index_base + gcount - 1].tailer = true;
         }
 
 #ifdef _DEBUG
@@ -560,14 +577,15 @@ namespace drawing
                 {
                     auto & glyph = _glyphs[ltr ? gindex : gindex - 1];
                     glyph.sindex = (uint32_t)sindex;
-                    glyph.pos.x = pos;
-                    glyph.pos.y = row.ascent - fmetrics.ascent;
-                    glyph.size.cx = glyph.advance.cx;
-                    glyph.size.cy = fmetrics.height;
+                    glyph.rect.x = pos;
+                    glyph.rect.y = row.ascent - fmetrics.ascent;
+                    glyph.rect.cx = glyph.advance.cx;
+                    glyph.rect.cy = fmetrics.height;
                     pos += glyph.advance.cx;
                 }
             }
         }
+
         return core::error_ok;
     }
 
@@ -606,7 +624,7 @@ namespace drawing
 
                 runBuffer.glyphs[iglyph] = glyph.gid;
                 //runBuffer.clusters[iglyph] = glyph.trange.index;
-                runBuffer.pos[iglyph * 2 + 0] = glyph.pos.x +  glyph.offset.x;
+                runBuffer.pos[iglyph * 2 + 0] = glyph.rect.x +  glyph.offset.x;
                 runBuffer.pos[iglyph * 2 + 1] = offset_y - glyph.offset.y + row.ascent;
                 offset_x += glyph.advance.cx;
                 offset_y += glyph.advance.cy;
@@ -693,7 +711,8 @@ namespace drawing
         if (_glyphs.empty())
             return empty;
 
-        if (index == core::npos)
+        index &= cursor_pos_mask;
+        if (index == cursor_pos_mask)
             return _glyphs.back();
 
         auto iter = std::lower_bound(_glyphs.begin(), _glyphs.end(), index, [](const glyph & g, size_t value) { return  g.trange.end() <= value; });
@@ -702,13 +721,20 @@ namespace drawing
         return *iter;
     }
 
-    core::rc32f Shaper::charRect(size_t index) const
+    const glyph & Shaper::findGlyph(float32_t pos, size_t lindex) const
     {
-        auto iter = std::upper_bound(_glyphs.begin(), _glyphs.end(), index, [](size_t value, const glyph & g) { return  g.trange.index <= value; });
-        if (iter == _glyphs.end() || iter->trange.end() <= index)
+        static const glyph empty;
+
+        auto & row = _rows[lindex];
+
+        auto iter_seg = std::upper_bound(_segments.begin() + row.srange.index, _segments.begin() + row.srange.end(), pos, [](float32_t pos, const segment & seg) { return  pos < seg.offset + seg.width; });
+        if (iter_seg == _segments.begin() + row.srange.end() || iter_seg->offset + iter_seg->width <= pos)
             return {};
 
-        auto & fmetrics = _fonts[_items[_segments[iter->sindex].item].font].fmetrics;
-        return { iter->pos.x, iter->pos.y, iter->advance.cx, fmetrics.height };
+
+        auto iter = std::upper_bound(_glyphs.begin() + iter_seg->grange.index, _glyphs.begin() + iter_seg->grange.end(), pos, [](float32_t pos, const glyph & g) { return  pos < g.rect.right(); });
+        if (iter == _glyphs.begin() + iter_seg->grange.end())
+            return empty;
+        return *iter;
     }
 }
