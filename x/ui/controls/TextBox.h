@@ -14,14 +14,11 @@ namespace ui::controls
             size_t pos = drawing::cursor_pos_nopos;
             struct
             {
-                size_t index : 25;
-                size_t length : 6;
+                size_t index : 31;
                 size_t far : 1;
             };
         };
 
-        size_t curr() const { return far ? index + length : index; }
-        size_t end() const { return index + length; }
         cursor & operator = (size_t pos_)
         {
             pos = pos_;
@@ -32,9 +29,6 @@ namespace ui::controls
         {
             return index;
         }
-
-        bool operator == (const cursor & c) const { return curr() == c.curr(); }
-        bool operator != (const cursor & c) const { return curr() != c.curr(); }
 
         bool operator == (size_t pos_) const { return index == pos_; }
         bool operator != (size_t pos_) const { return index != pos_; }
@@ -118,7 +112,9 @@ namespace ui::controls
         std::shared_ptr<drawing::Shaper> _shaper;
 
         bool _cursor_shown = false;
-        cursor _cursor_pos = 0;
+        size_t _edit_pos = 0;
         float32_t _scroll_pos = 0;
+
+        cursor _cursor_pos = 0;
     };
 }

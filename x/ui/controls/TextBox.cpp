@@ -319,8 +319,8 @@ namespace ui::controls
 
     void TextBox::insert(const char * text, size_t count)
     {
-        _text.insert(_cursor_pos.curr(), text, count);
-        _cursor_pos = _makeCursor(_cursor_pos.index + count, _cursor_pos.far);
+        _text.insert(_edit_pos, text, count);
+        _edit_pos = _edit_pos + count;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
         reshaper(shaper_flag::shaper);
     }
