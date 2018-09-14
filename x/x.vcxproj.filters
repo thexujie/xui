@@ -155,9 +155,6 @@
     <ClCompile Include="core\utils.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="ui\controls\TextBox.cpp">
-      <Filter>ui\controls</Filter>
-    </ClCompile>
     <ClCompile Include="drawing\skia\skia.cpp">
       <Filter>drawing\skia</Filter>
     </ClCompile>
@@ -172,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="drawing\Shaper.cpp">
       <Filter>drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\TextLine.cpp">
+      <Filter>ui\controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -398,9 +398,6 @@
     <ClInclude Include="ui\controls\ScrollBar.h">
       <Filter>ui\controls</Filter>
     </ClInclude>
-    <ClInclude Include="ui\controls\TextBox.h">
-      <Filter>ui\controls</Filter>
-    </ClInclude>
     <ClInclude Include="ui\Scene.h">
       <Filter>ui</Filter>
     </ClInclude>
@@ -418,6 +415,9 @@
     </ClInclude>
     <ClInclude Include="drawing\Shaper.h">
       <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\TextLine.h">
+      <Filter>ui\controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

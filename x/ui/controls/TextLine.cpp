@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "TextBox.h"
+#include "TextLine.h"
 #include <SkTextBlob.h>
 
 namespace ui::controls
@@ -39,40 +39,40 @@ namespace ui::controls
     }
 
     const std::string TEXTBOX_ANIMATION_GROUP_CURSOR = "_textbox.cursor";
-    TextBox::TextBox()
+    TextLine::TextLine()
     {
         _accept_input = true;
         _shaper = std::make_shared<drawing::Shaper>();
     }
 
-    TextBox::~TextBox()
+    TextLine::~TextLine()
     {
         
     }
 
-    void TextBox::propertyTableCallback(core::property_table & properties)
+    void TextLine::propertyTableCallback(core::property_table & properties)
     {
         Control::propertyTableCallback(properties);
-        properties["text"] = core::make_accessor(&TextBox::setText, &TextBox::text, core::parseString, nullptr);
+        properties["text"] = core::make_accessor(&TextLine::setText, &TextLine::text, core::parseString, nullptr);
     }
 
-    void TextBox::propertyTable(core::property_table & properties)
+    void TextLine::propertyTable(core::property_table & properties)
     {
-        TextBox::propertyTableCallback(properties);
+        TextLine::propertyTableCallback(properties);
     }
 
-    void TextBox::setText(const std::string & text)
+    void TextLine::setText(const std::string & text)
     {
         _text = text;
         reshaper(shaper_flag::shaper);
     }
 
-    core::si32f TextBox::contentSize() const
+    core::si32f TextLine::contentSize() const
     {
         return _textblob ? _textblob->size() : core::si32f();
     }
 
-    std::string TextBox::styleName() const
+    std::string TextLine::styleName() const
     {
         if (_pressed)
             return "textbox:active";
@@ -82,7 +82,7 @@ namespace ui::controls
             return "textbox";
     }
 
-    void TextBox::render(drawing::Graphics & graphics, const drawing::Region & region) const
+    void TextLine::render(drawing::Graphics & graphics, const drawing::Region & region) const
     {
         auto cbox = contentBox();
         std::lock_guard l(*this);
@@ -142,31 +142,31 @@ namespace ui::controls
         _renderBorder(graphics);
     }
 
-    void TextBox::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    void TextLine::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
         reshaper(shaper_flag::caret);
         Control::onSizeChanged(from, to);
     }
 
-    void TextBox::onMouseEnter(const input_state & state)
+    void TextLine::onMouseEnter(const input_state & state)
     {
         Control::onMouseEnter(state);
         restyle();
     }
 
-    void TextBox::onMouseMove(const input_state & state)
+    void TextLine::onMouseMove(const input_state & state)
     {
         Control::onMouseMove(state);
     }
 
-    void TextBox::onMouseLeave(const input_state & state)
+    void TextLine::onMouseLeave(const input_state & state)
     {
         Control::onMouseLeave(state);
         restyle();
     }
 
     
-    void TextBox::onMouseDown(const input_state & state, ui::mouse_button button)
+    void TextLine::onMouseDown(const input_state & state, ui::mouse_button button)
     {
         Control::onMouseDown(state, button);
         auto cbox = contentBox();
@@ -182,13 +182,13 @@ namespace ui::controls
         restyle();
     }
 
-    void TextBox::onMouseUp(const input_state & state, ui::mouse_button button)
+    void TextLine::onMouseUp(const input_state & state, ui::mouse_button button)
     {
         Control::onMouseUp(state, button);
         restyle();
     }
 
-    void TextBox::onKeyDown(const input_state & state, keycode key)
+    void TextLine::onKeyDown(const input_state & state, keycode key)
     {
         Control::onKeyDown(state, key);
         switch(key)
@@ -210,12 +210,12 @@ namespace ui::controls
         }
     }
 
-    void TextBox::onFocus(std::shared_ptr<ImeContext> imecontext)
+    void TextLine::onFocus(std::shared_ptr<ImeContext> imecontext)
     {
         _imecontext = imecontext;
         if(!_cursor_anim)
         {
-            auto accessor = make_accessor(&TextBox::_setCursorShown, &TextBox::_cursorShown, core::parseBool, nullptr);
+            auto accessor = make_accessor(&TextLine::_setCursorShown, &TextLine::_cursorShown, core::parseBool, nullptr);
             auto interpolator = std::make_shared<core::property_interpolator_keyframes<bool>>();
             interpolator->set_values({ { 0.0f, true }, { 0.5f, false } });
             _cursor_anim = std::make_shared<core::property_animation>(control_ref(), accessor, interpolator);
@@ -231,7 +231,7 @@ namespace ui::controls
         _updateIme();
     }
 
-    void TextBox::onBlur()
+    void TextLine::onBlur()
     {
         _imecontext = nullptr;
         //std::lock_guard lock(*this);
@@ -240,7 +240,7 @@ namespace ui::controls
         restyle();
     }
 
-    void TextBox::onChar(char32_t ch)
+    void TextLine::onChar(char32_t ch)
     {
         if (ch <= 0xffff && std::iswcntrl((wint_t)ch))
             return;
@@ -250,7 +250,7 @@ namespace ui::controls
         insert(chars, len);
     }
 
-    void TextBox::reshaper(shaper_flags flags)
+    void TextLine::reshaper(shaper_flags flags)
     {
 #ifdef  _DEBUG
         size_t utf8_pos = 0;
@@ -273,7 +273,7 @@ namespace ui::controls
         }
     }
 
-    void TextBox::caretLeft()
+    void TextLine::caretLeft()
     {
         if (_cursor_pos < 1)
             return;
@@ -292,7 +292,7 @@ namespace ui::controls
 
     }
 
-    void TextBox::caretRight()
+    void TextLine::caretRight()
     {
         if (_cursor_pos + 1 >= _text.length())
             return;
@@ -310,7 +310,7 @@ namespace ui::controls
         reshaper(shaper_flag::caret);
     }
 
-    void TextBox::backSpace()
+    void TextLine::backSpace()
     {
         if (!_cursor_pos)
             return;
@@ -334,7 +334,7 @@ namespace ui::controls
         reshaper(shaper_flag::shaper);
     }
 
-    void TextBox::del()
+    void TextLine::del()
     {
         if (_cursor_pos + 1 >= _text.length())
             return;
@@ -355,7 +355,7 @@ namespace ui::controls
         reshaper(shaper_flag::shaper);
     }
 
-    void TextBox::insert(const char * text, size_t count)
+    void TextLine::insert(const char * text, size_t count)
     {
         _text.insert(_cursor_pos, text, count);
         //_cursor_far = _cursor_pos + count + 1 < _text.length();
@@ -365,7 +365,7 @@ namespace ui::controls
         reshaper(shaper_flag::shaper);
     }
 
-    void TextBox::_updateIme()
+    void TextLine::_updateIme()
     {
         if (!_imecontext)
             return;
@@ -385,12 +385,12 @@ namespace ui::controls
         }
     }
 
-    void TextBox::_confirmBlob() const
+    void TextLine::_confirmBlob() const
     {
 
     }
 
-    void TextBox::_doshaper()
+    void TextLine::_doshaper()
     {
         std::lock_guard l(*this);
         _delay_shaper = false;
@@ -411,7 +411,7 @@ namespace ui::controls
         _delay_shaper_flags.clear();
     }
 
-    void TextBox::_docaret()
+    void TextLine::_docaret()
     {
         if(!_text.empty())
         {
@@ -445,43 +445,7 @@ namespace ui::controls
         _updateIme();
     }
 
-    const drawing::glyph & TextBox::_lastGlyph(cursor pos) const
-    {
-        if (pos.far)
-            return _shaper->glyphAt(pos.index);
-        else if (pos.index == 0)
-            return drawing::Shaper::empty_glyph;
-        else
-            return _shaper->glyphAt(pos.index - 1);
-    }
-
-    const drawing::glyph & TextBox::_nextGlyph(cursor pos) const
-    {
-        auto & glyph = _shaper->glyphAt(pos.index);
-        if (!pos.far)
-            return glyph;
-        else if(glyph.trange.end() >= _text.length())
-            return drawing::Shaper::empty_glyph;
-        else
-            return _shaper->glyphAt(glyph.trange.end());
-    }
-
-    cursor TextBox::_makeCursor(size_t index, bool far)
-    {
-        if (index == 0 || _text.empty())
-            return { 0, false };
-        if (index == _text.length())
-            return { _text.length() - 1, true };
-
-        size_t index2 = far ? index - 1 : index;
-        auto & glyph = _shaper->findGlyph(index2);
-        if(!glyph)
-            return { 0, false };
-
-        return { glyph.trange.index, far };
-    }
-
-    void TextBox::_setCursorShown(bool vis)
+    void TextLine::_setCursorShown(bool vis)
     {
         if(_cursor_shown != vis)
         {

@@ -127,13 +127,16 @@
 		<DisplayString>{{&#x200E;{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={level}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::glyph">
-		<DisplayString>{{&#x200E;{_text}&#x200E;[{gid}], {trange}, pos={pos}}}</DisplayString>
+		<DisplayString>{{&#x200E;{_text}&#x200E;[{gid}], texts:{trange}, pos={pos}}}</DisplayString>
+	</Type>
+	<Type Name="drawing::cluster">
+		<DisplayString>{{&#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}, {advance.cx}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::segment">
-		<DisplayString>{{[{line}-{sindex}], {width}, &#x200E;{_text}&#x200E;, {trange}, {grange}}}</DisplayString>
+		<DisplayString>{{[{line}-{sindex}], &#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}, {width}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::row">
-		<DisplayString>{{[{line}], &#x200E;{_text}&#x200E;, {trange}, {grange}}}</DisplayString>
+		<DisplayString>{{[{line}], &#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}}}</DisplayString>
 	</Type>
 
 	<Type Name="std::basic_string&lt;char,*&gt;">

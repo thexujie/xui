@@ -107,7 +107,7 @@
     <ClCompile Include="ui\controls\Image.cpp" />
     <ClCompile Include="ui\controls\ScrollBar.cpp" />
     <ClCompile Include="ui\controls\Text.cpp" />
-    <ClCompile Include="ui\controls\TextBox.cpp" />
+    <ClCompile Include="ui\controls\TextLine.cpp" />
     <ClCompile Include="ui\Desktop.cpp" />
     <ClCompile Include="ui\Control.cpp" />
     <ClCompile Include="ui\Form.cpp" />
@@ -179,7 +179,7 @@
     <ClInclude Include="ui\controls\Image.h" />
     <ClInclude Include="ui\controls\ScrollBar.h" />
     <ClInclude Include="ui\controls\Text.h" />
-    <ClInclude Include="ui\controls\TextBox.h" />
+    <ClInclude Include="ui\controls\TextLine.h" />
     <ClInclude Include="ui\Desktop.h" />
     <ClInclude Include="ui\Control.h" />
     <ClInclude Include="ui\Form.h" />

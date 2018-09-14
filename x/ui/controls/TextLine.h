@@ -3,44 +3,6 @@
 
 namespace ui::controls
 {
-    struct cursor
-    {
-        cursor() = default;
-        cursor(size_t pos_) : pos(pos_) {}
-        cursor(size_t pos_, bool far_) : pos(pos_), far(far_) {}
-
-        union
-        {
-            size_t pos = drawing::cursor_pos_nopos;
-            struct
-            {
-                size_t index : 31;
-                size_t far : 1;
-            };
-        };
-
-        cursor & operator = (size_t pos_)
-        {
-            pos = pos_;
-            return *this;
-        }
-
-        explicit operator size_t ()
-        {
-            return index;
-        }
-
-        bool operator == (size_t pos_) const { return index == pos_; }
-        bool operator != (size_t pos_) const { return index != pos_; }
-        bool operator < (size_t pos_) const { return index < pos_; }
-        bool operator <= (size_t pos_) const { return index <= pos_; }
-        bool operator > (size_t pos_) const { return index > pos_; }
-        bool operator >= (size_t pos_) const { return index >= pos_; }
-
-        static inline size_t mask = size_t(-1) >> 1;
-        static inline size_t npos = size_t(-1);
-    };
-
     enum class shaper_flag
     {
         none = 0x0000,
@@ -50,11 +12,11 @@ namespace ui::controls
     template<> struct enable_bitmasks<shaper_flag> { static const bool enable = true;};
     typedef core::bitflag<shaper_flag> shaper_flags;
 
-    class TextBox : public Control
+    class TextLine : public Control
     {
     public:
-        TextBox();
-        ~TextBox();
+        TextLine();
+        ~TextLine();
 
         static void propertyTableCallback(core::property_table & properties);
         void propertyTable(core::property_table & properties) override;
@@ -91,11 +53,6 @@ namespace ui::controls
         void _confirmBlob() const;
         void _doshaper();
         void _docaret();
-
-        const drawing::glyph & _lastGlyph(cursor pos) const;
-        const drawing::glyph & _nextGlyph(cursor pos) const;
-
-        cursor _makeCursor(size_t index, bool far);
 
     private:
         void _setCursorShown(bool vis);

@@ -11,7 +11,7 @@
 #include "ui/controls/Image.h"
 #include "ui/controls/Button.h"
 #include "ui/controls/ScrollBar.h"
-#include "ui/controls/TextBox.h"
+#include "ui/controls/TextLine.h"
 
 using namespace core;
 
@@ -71,7 +71,7 @@ void xui_main()
     std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
 
     drawing::Shaper shaper;
-    shaper.itermize(rtft, drawing::font(), colors::Black);
+    shaper.itermize(u8"قق ققق ", drawing::font(), colors::Black);
     shaper.wrap(999999999, drawing::wrap_mode::word);
 
     std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
@@ -166,20 +166,29 @@ void xui_main()
         layer->setMouseThrough(true);
         layer->setSize({ 100_per, 100_per });
 
-        auto tbx = std::make_shared<ui::controls::TextBox>();
-        tbx->setFont({"", font.size * 2});
-        tbx->setText(rtft);
-        tbx->setSize({ 100_per, 3_em });
-        tbx->setImeMode(ui::ime_mode::on);
-        layer->addControl(tbx);
+        auto tln = std::make_shared<ui::controls::TextLine>();
+        tln->setFont({"", font.size * 2});
+        tln->setText(rtft);
+        tln->setSize({ 100_per, 3_em });
+        tln->setImeMode(ui::ime_mode::on);
+        layer->addControl(tln);
 
         form->addControl(layer);
     }
     {
-        auto tbx = std::make_shared<ui::controls::TextBox>();
-        tbx->setText(rtft);
-        tbx->setSize({ 100_per, 2_em });
-        layer->addControl(tbx);
+        auto tln = std::make_shared<ui::controls::TextLine>();
+        tln->setText(rtft);
+        tln->setSize({ 100_per, 2_em });
+        layer->addControl(tln);
+
+        form->addControl(layer);
+    }
+    {
+        auto tln = std::make_shared<ui::controls::TextLine>();
+        tln->setText(rtft);
+        tln->setSize({ 100_per, 10_em });
+        tln->setImeMode(ui::ime_mode::on);
+        layer->addControl(tln);
 
         form->addControl(layer);
     }
