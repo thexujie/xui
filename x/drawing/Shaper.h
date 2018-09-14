@@ -299,7 +299,7 @@ namespace drawing
         const drawing::fontmetrics & fontmetrics_at(uint16_t index) { return _fonts[index].fmetrics; }
 
     public:
-        const glyph & glyphAt(size_t tindex) const{ return _glyphs.at(tindex); }
+        const glyph & glyphAt(size_t tindex) const { if (!tindex && _glyphs.empty()) return empty_glyph; return _glyphs.at(tindex); }
         size_t glyphCount() const { return _glyphs.size(); }
         const glyph & findGlyph(size_t tindex) const;
         const glyph & findGlyph(float32_t pos, size_t lindex) const;

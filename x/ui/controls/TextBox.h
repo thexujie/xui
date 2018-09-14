@@ -97,12 +97,10 @@ namespace ui::controls
         void _confirmBlob() const;
         void _doshaper();
 
-        const drawing::glyph & _glyph(cursor pos) const;
         const drawing::glyph & _lastGlyph(cursor pos) const;
         const drawing::glyph & _nextGlyph(cursor pos) const;
 
         cursor _makeCursor(size_t index, bool far);
-        cursor advance(cursor pos, ptrdiff_t diff) const;
 
     private:
         void _setCursorShown(bool vis);
@@ -115,7 +113,7 @@ namespace ui::controls
 
         std::shared_ptr<ImeContext> _imecontext;
 
-        bool _delay_shaper = false;
+        std::atomic_bool _delay_shaper = false;
         shaper_flags _delay_shaper_flags = nullptr;
         std::shared_ptr<drawing::Shaper> _shaper;
 
