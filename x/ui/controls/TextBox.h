@@ -90,6 +90,7 @@ namespace ui::controls
         void _updateIme();
         void _confirmBlob() const;
         void _doshaper();
+        void _docaret();
 
         const drawing::glyph & _lastGlyph(cursor pos) const;
         const drawing::glyph & _nextGlyph(cursor pos) const;
@@ -107,14 +108,15 @@ namespace ui::controls
 
         std::shared_ptr<ImeContext> _imecontext;
 
-        std::atomic_bool _delay_shaper = false;
+        bool _delay_shaper = false;
         shaper_flags _delay_shaper_flags = nullptr;
         std::shared_ptr<drawing::Shaper> _shaper;
 
         bool _cursor_shown = false;
-        size_t _edit_pos = 0;
-        float32_t _scroll_pos = 0;
+        size_t _cursor_gindex = 0;
+        size_t _cursor_tindex = 0;
+        bool _cursor_far = false;
 
-        cursor _cursor_pos = 0;
+        float32_t _scroll_pos = 0;
     };
 }

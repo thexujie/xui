@@ -57,6 +57,7 @@ namespace win32
     {
         LOGFONTW lfont = {};
         core::textcpy(lfont.lfFaceName, std::size(lfont.lfFaceName), core::u8str_wstr(font.family).c_str());
+        lfont.lfHeight = -font.size;
         ImmSetCompositionFontW(HIMC(_imc), &lfont);
     }
 
