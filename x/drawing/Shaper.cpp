@@ -394,17 +394,17 @@ namespace drawing
             float32_t coefX = font.size *  1.0f / scaleX;
             float32_t coefY = font.size * 1.0f / scaleY;
 
-            size_t index_base = _glyphs.size();
+            size_t gindex_base = _glyphs.size();
+            size_t cindex_base = _clusters.size();
             _glyphs.resize(_glyphs.size() + gcount);
             hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
             hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
-            uint8_t local_index = 0;
             for (uint32_t gindex = 0; gindex < gcount; ++gindex)
             {
                 const hb_glyph_info_t & info = infos[gindex];
                 const hb_glyph_position_t & pos = poses[gindex];
-                glyph & glyph = _glyphs[index_base + gindex];
-                glyph.gindex = index_base + gindex;
+                glyph & glyph = _glyphs[gindex_base + gindex];
+                glyph.gindex = gindex_base + gindex;
                 glyph.trange = { info.cluster, 1 };
                 if (gindex < gcount - 1)
                     glyph.trange.length = infos[gindex + 1].cluster - info.cluster;
@@ -436,28 +436,43 @@ namespace drawing
                     {
                         int32_t char_stop_utf8 = utf16_ranges[char_stop_utf16].index;
                         if (char_stop_utf8 == glyph.trange.index)
-                            glyph.header = true;
+                        {
+                            glyph.charbreak = true;
+                            cluster cl;
+                            cl.cindex = (uint16_t)_clusters.size();
+                            cl.grange.index = glyph.gindex;
+                            _clusters.push_back(cl);
+                        }
                     }
                 }
 
                 glyph.standalone = !(info.mask & HB_GLYPH_FLAG_UNSAFE_TO_BREAK);
-            }
-
-            for (uint32_t gindex = 1; gindex < gcount; ++gindex)
-            {
-                glyph & glyph = _glyphs[index_base + gindex];
-                if(glyph.header)
-                    _glyphs[index_base + gindex - 1].tailer = true;
-            }
-            _glyphs[index_base + gcount - 1].tailer = true;
-        }
-
 #ifdef _DEBUG
-        for (auto & glyph : _glyphs)
-        {
-            glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
-        }
+                glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
 #endif
+                _clusters.back().grange.length += 1;
+            }
+
+            // ¼ÆËã range2
+            for (size_t cindex = 0; cindex < _clusters.size(); ++cindex)
+            {
+                cluster & cl = _clusters[cindex];
+                glyph & header = _glyphs[cl.grange.index];
+                cl.rect.cx = header.advance.cx;
+                cl.rect.cy = header.advance.cy;
+
+                for(size_t gindex = cl.grange.index; gindex < cl.grange.end(); ++gindex)
+                {
+                    glyph & gl = _glyphs[gindex];
+                    gl.cindex = cindex;
+                    gl.trange += gl.trange;
+                }
+#ifdef _DEBUG
+                cl._text = _text.substr(cl.trange.index, cl.trange.length);
+#endif
+            }
+        }
+
         return core::error_ok;
     }
 
@@ -735,6 +750,14 @@ namespace drawing
         auto iter = std::upper_bound(_glyphs.begin() + iter_seg->grange.index, _glyphs.begin() + iter_seg->grange.end(), pos, [](float32_t pos, const glyph & g) { return  pos < g.rect.right(); });
         if (iter == _glyphs.begin() + iter_seg->grange.end())
             return empty;
+        return *iter;
+    }
+
+    const cluster & Shaper::findCluster(size_t tindex) const
+    {
+        auto iter = std::upper_bound(_clusters.begin(), _clusters.end(), tindex, [](const cluster & cl, size_t tindex) { return  tindex < cl.trange.end(); });
+        if (iter == _clusters.end())
+            return empty_cluster;
         return *iter;
     }
 }

@@ -114,7 +114,7 @@ namespace ui::controls
 
         bool _cursor_shown = false;
         size_t _cursor_gindex = 0;
-        size_t _cursor_tindex = 0;
+        size_t _cursor_pos = 0;
         bool _cursor_far = false;
 
         float32_t _scroll_pos = 0;

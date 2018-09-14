@@ -102,11 +102,18 @@ namespace ui::controls
             }
             else
             {
+                auto & glyphs = _shaper->glyphs();
+                auto & cluster = _shaper->findCluster(_cursor_pos);
+
+                auto & glyph = _shaper->findGlyph(_cursor_pos);
+                if (!glyph)
+                    return;
+
                 size_t gindex = _cursor_gindex + 1;
                 while(gindex > 0)
                 {
                     auto & glyph = _shaper->glyphAt(gindex - 1);
-                    if (glyph.header)
+                    if (glyph.header())
                     {
                         core::rc32f rect = glyph.rect;
                         rect.offset(cbox.leftTop()).offset(_scroll_pos, 0);
@@ -158,7 +165,7 @@ namespace ui::controls
         {
             _cursor_gindex = glyph.gindex;
             _cursor_far = pos >= glyph.rect.centerX();
-            _cursor_tindex = _cursor_far ? glyph.trange.end() : glyph.trange.index;
+            _cursor_pos = _cursor_far ? glyph.trange.end() : glyph.trange.index;
             _cursor_anim ? _cursor_anim->reset() : nullptr;
             reshaper(shaper_flag::caret);
         }
@@ -258,42 +265,53 @@ namespace ui::controls
 
     void TextBox::caretLeft()
     {
+        if (_cursor_pos + 1 >= _text.length())
+            return;
+
         if (_delay_shaper_flags)
             _doshaper();
 
-        size_t gindex = _cursor_far ? _cursor_gindex + 1: _cursor_gindex;
-        while (gindex > 0)
+        auto & glyph = _shaper->findGlyph(_cursor_pos + 1);
+        if (!glyph)
+            return;
+
+        size_t gindex = glyph.gindex;
+        while(true)
         {
-            --gindex;
-            auto & glyph = _shaper->glyphAt(gindex);
-            if (glyph.header)
+            auto & glyph_test = _shaper->glyphAt(gindex);
+            if (glyph_test.header())
             {
-                _cursor_gindex = gindex;
-                _cursor_tindex = glyph.trange.index;
-                _cursor_far = false;
+                _cursor_pos = glyph_test.trange.index;
                 _cursor_anim ? _cursor_anim->reset() : nullptr;
-                _docaret();
                 break;
             }
+            if (!gindex)
+                break;
+            --gindex;
         }
+
     }
 
     void TextBox::caretRight()
     {
+        if (_cursor_pos + 1 >= _text.length())
+            return;
+
         if (_delay_shaper_flags)
             _doshaper();
 
-        size_t gindex = _cursor_far ? _cursor_gindex + 1 : _cursor_gindex;
-        while (gindex < _shaper->glyphCount())
+        auto & glyph = _shaper->findGlyph(_cursor_pos);
+        if (!glyph)
+            return;
+
+        size_t gindex = glyph.gindex;
+        while(gindex < _shaper->glyphCount())
         {
-            auto & glyph = _shaper->glyphAt(gindex);
-            if (glyph.tailer)
+            auto & glyph_test = _shaper->glyphAt(gindex);
+            if(glyph_test.tailer())
             {
-                _cursor_gindex = gindex;
-                _cursor_tindex = glyph.trange.end();
-                _cursor_far = true;
+                _cursor_pos = glyph_test.trange.end();
                 _cursor_anim ? _cursor_anim->reset() : nullptr;
-                _docaret();
                 break;
             }
             ++gindex;
@@ -302,52 +320,36 @@ namespace ui::controls
 
     void TextBox::backSpace()
     {
-        if (!_cursor_gindex && !_cursor_far)
+        if (!_cursor_pos)
             return;
 
         if (_delay_shaper_flags)
             _doshaper();
 
-        size_t gindex = _cursor_far ? _cursor_gindex : _cursor_gindex - 1;
-        auto & glyph = _shaper->glyphAt(gindex);
+        auto & glyph = _shaper->glyphAt(_cursor_pos - 1);
+        if (!glyph)
+            return;
+
         _text.erase(glyph.trange.index, glyph.trange.length);
-        if(_shaper->glyphCount() > 1 && gindex + 1 >= _shaper->glyphCount())
-        {
-            _cursor_gindex = gindex - 1;
-            _cursor_far = true;
-        }
-        else
-        {
-            _cursor_gindex = gindex;
-            _cursor_far = false;
-        }
-        _cursor_tindex = glyph.trange.index;
+        _cursor_pos -= glyph.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
         reshaper(shaper_flag::shaper);
     }
 
     void TextBox::del()
     {
-        if (_cursor_gindex >= _shaper->glyphCount() - 1 && _cursor_far)
+        if (_cursor_pos + 1 >= _text.length())
             return;
 
         if (_delay_shaper_flags)
             _doshaper();
 
-        size_t gindex = _cursor_far ? _cursor_gindex + 1: _cursor_gindex;
-        auto & glyph = _shaper->glyphAt(gindex);
-        if (gindex == 0)
-        {
-            _cursor_gindex = 0;
-            _cursor_tindex = 0;
-            _cursor_far = false;
-        }
-        else
-        {
-            _cursor_gindex = gindex - 1;
-            _cursor_far = true;
-        }
-        _cursor_tindex = glyph.trange.index;
+        auto & glyph = _shaper->glyphAt(_cursor_pos);
+        if (!glyph)
+            return;
+
+        _text.erase(glyph.trange.index, glyph.trange.length);
+        _cursor_pos = glyph.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
 
         reshaper(shaper_flag::shaper);
@@ -355,9 +357,9 @@ namespace ui::controls
 
     void TextBox::insert(const char * text, size_t count)
     {
-        _text.insert(_cursor_tindex, text, count);
+        _text.insert(_cursor_pos, text, count);
         _cursor_gindex = core::npos;
-        _cursor_tindex += count;
+        _cursor_pos += count;
         _cursor_far = true;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
         reshaper(shaper_flag::shaper);
@@ -410,7 +412,7 @@ namespace ui::controls
 
             if (_cursor_gindex == core::npos)
             {
-                auto & glyph_curr = _shaper->findGlyph((_cursor_far && _cursor_tindex > 0) ? _cursor_tindex - 1 : _cursor_tindex);
+                auto & glyph_curr = _shaper->findGlyph((_cursor_far && _cursor_pos > 0) ? _cursor_pos - 1 : _cursor_pos);
                 _cursor_gindex = glyph_curr.gindex;
             }
 

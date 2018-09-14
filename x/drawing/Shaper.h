@@ -221,22 +221,39 @@ namespace drawing
     struct glyph
     {
         uint16_t gindex = 0;
-#ifdef _DEBUG
-        std::string _text;
-#endif
+        uint16_t cindex = 0;
         section32 trange;
+        size_t tlength = 0;
         uint16_t gid = 0;
         core::vec2f advance;
         core::vec2f offset;
+        bool charbreak = false;
         bool wordbreak = false;
         bool standalone = false;
 
-        bool header = false;
-        bool tailer = false;
-
+        section32 local;
         uint32_t sindex = 0;
         core::vec4f rect;
 
+        operator bool() const { return trange.length > 0; }
+        bool header() const { return local.index == 0; }
+        bool tailer() const { return local.index == local.length - 1; }
+
+#ifdef _DEBUG
+        std::string _text;
+#endif
+    };
+
+    struct cluster
+    {
+        uint16_t cindex = 0;
+        section32 trange;
+        section32 grange;
+        core::vec4f rect;
+
+#ifdef _DEBUG
+        std::string _text;
+#endif
         operator bool() const { return trange.length > 0; }
     };
 
@@ -304,6 +321,10 @@ namespace drawing
         const glyph & findGlyph(size_t tindex) const;
         const glyph & findGlyph(float32_t pos, size_t lindex) const;
 
+        const std::vector<glyph> & glyphs() const { return _glyphs; }
+        const std::vector<cluster> & clusters() const { return _clusters; }
+        const cluster & findCluster(size_t tindex) const;
+
     private:
         // 0 ltr 1 rtl 0xfe auto but preffer ltf 0xff auto but preffer rtl
         uint8_t _defaultBidiLevel = 0xfe;
@@ -331,11 +352,13 @@ namespace drawing
 #endif
         std::vector<item> _items;
         std::vector<glyph> _glyphs;
+        std::vector<cluster> _clusters;
         std::vector<segment> _segments;
         std::vector<row> _rows;
         std::shared_ptr<class SkTextBlobBuilder> _builder;
 
     public:
         static inline glyph empty_glyph = {};
+        static inline cluster empty_cluster = {};
     };
 }
