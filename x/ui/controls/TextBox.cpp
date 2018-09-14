@@ -124,10 +124,11 @@ namespace ui::controls
                     cursor_tindex = _cursor_pos;
                     cursor_left = !_cursor_far;
                 }
-
                 auto & cluster = _shaper->findCluster(cursor_tindex);
                 if (cluster)
                 {
+                    if(cluster.rtl)
+                        cursor_left = !cursor_left;
                     core::rc32f rect = cluster.rect;
                     rect.offset(cbox.leftTop()).offset(_scroll_pos, 0);
                     graphics.drawRectangle(rect, drawing::PathStyle().fill(0x400000ff));
@@ -357,7 +358,8 @@ namespace ui::controls
     void TextBox::insert(const char * text, size_t count)
     {
         _text.insert(_cursor_pos, text, count);
-        _cursor_far = false;
+        //_cursor_far = _cursor_pos + count + 1 < _text.length();
+        _cursor_far = true;
         _cursor_pos += count;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
         reshaper(shaper_flag::shaper);
@@ -371,9 +373,15 @@ namespace ui::controls
         if(_ime_mode != ime_mode::disabled)
         {
             auto cbox = contentBox();
-            auto & cluster = _shaper->findCluster(_cursor_pos);
-            _imecontext->setCompositionPos(cbox.leftTop() + core::vec2f(cluster.rect.right() + _scroll_pos, 0));
-            _imecontext->setCompositionFont(font());
+            if(_text.empty())
+                _imecontext->setCompositionPos(cbox.leftTop().offseted(_scroll_pos, 0));
+            else
+            {
+                auto & cluster = _shaper->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+                assert(cluster);
+                _imecontext->setCompositionPos(cbox.leftTop().offseted(_cursor_far ? cluster.rect.right() : cluster.rect.left(), 0).offset(_scroll_pos, 0));
+            }
+            _imecontext->setCompositionFont(font()); 
         }
     }
 
@@ -405,13 +413,15 @@ namespace ui::controls
 
     void TextBox::_docaret()
     {
+        if(!_text.empty())
         {
             std::lock_guard l(*this);
 
-            auto cbox = contentBox();
-            auto & cluster = _shaper->findCluster(_cursor_pos);
+            auto & cluster = _shaper->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+            assert(cluster);
             if (cluster)
             {
+                auto cbox = contentBox();
                 float32_t scroll_pos = _scroll_pos;
                 if (_scroll_pos + cluster.rect.x < 0)
                     scroll_pos = -cluster.rect.x;

@@ -438,11 +438,11 @@ namespace drawing
                         int32_t char_stop_utf8 = utf16_ranges[char_stop_utf16].index;
                         if (char_stop_utf8 == glyph.trange.index)
                         {
-                            glyph.charbreak = true;
                             cluster cl;
                             cl.cindex = (uint16_t)_clusters.size();
                             cl.grange.index = glyph.gindex;
                             cl.trange.index = glyph.trange.index;
+                            cl.rtl = !!(item.level & 1);
                             _clusters.push_back(cl);
                         }
                     }
@@ -612,6 +612,7 @@ namespace drawing
         {
             segment & seg = _segments[row.srange.index + sindex];
             item & item = _items[seg.item];
+            bool ltr = !(item.level & 1);
 
             auto & font_cache = _fonts[item.font];
             float32_t offset_x = seg.offset;
@@ -628,19 +629,21 @@ namespace drawing
             SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunPos(paint, seg.grange.length, nullptr);
             //memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
 
-            for (size_t gindex = seg.grange.index, iglyph = 0; gindex < seg.grange.end(); ++gindex, ++iglyph)
+            for (size_t cindex = (ltr ? seg.crange.index : seg.crange.end()), iglyph = 0; cindex != (ltr ? seg.crange.end() : seg.crange.index); ltr ? ++cindex : --cindex)
             {
-                glyph & gl = _glyphs[gindex];
-                cluster & cl = _clusters[gl.cindex];
+                cluster & cl = _clusters[ltr ? cindex : cindex - 1];
+                for (size_t gindex = cl.grange.index; gindex != cl.grange.end(); ++gindex, ++iglyph)
+                {
+                    glyph & gl = _glyphs[gindex];
 
-                runBuffer.glyphs[iglyph] = gl.gid;
-                //runBuffer.clusters[iglyph] = glyph.trange.index;
-                runBuffer.pos[iglyph * 2 + 0] = offset_x +  gl.offset.x;
-                runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + row.ascent;
-                offset_x += gl.advance.cx;
-                offset_y += gl.advance.cy;
+                    runBuffer.glyphs[iglyph] = gl.gid;
+                    //runBuffer.clusters[iglyph] = glyph.trange.index;
+                    runBuffer.pos[iglyph * 2 + 0] = offset_x + gl.offset.x;
+                    runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + row.ascent;
+                    offset_y += gl.advance.cy;
+                    offset_x += gl.advance.cx;
+                }
             }
-
         }
         return core::error_ok;
     }

@@ -27,11 +27,23 @@ namespace core
             return *this;
         }
 
+        vec2 & offset(const vec2 & off)
+        {
+            x += off.x;
+            y += off.y;
+            return *this;
+        }
+
         vec2 & offset(const T & off_x, const T & off_y)
         {
             x += off_x;
             y += off_y;
             return *this;
+        }
+
+        vec2 offseted(const vec2 & off) const
+        {
+            return vec2(x + off.x, y + off.y);
         }
 
         vec2 offseted(const T & off_x, const T & off_y) const

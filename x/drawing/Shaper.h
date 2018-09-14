@@ -228,10 +228,8 @@ namespace drawing
         uint16_t gid = 0;
         core::vec2f advance;
         core::vec2f offset;
-        bool charbreak = false;
         bool wordbreak = false;
         bool standalone = false;
-
 
         operator bool() const { return trange.length > 0; }
 #ifdef _DEBUG
@@ -247,7 +245,7 @@ namespace drawing
         section32 grange;
         core::vec2f advance;
         core::vec4f rect;
-
+        bool rtl = false;
         operator bool() const { return trange.length > 0; }
 #ifdef _DEBUG
         std::string _text;
