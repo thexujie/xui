@@ -233,7 +233,6 @@ namespace drawing
 
         section32 local;
         uint32_t sindex = 0;
-        core::vec4f rect;
 
         operator bool() const { return trange.length > 0; }
         bool header() const { return local.index == 0; }
@@ -247,8 +246,10 @@ namespace drawing
     struct cluster
     {
         uint16_t cindex = 0;
+        uint16_t sindex = 0;
         section32 trange;
         section32 grange;
+        core::vec2f advance;
         core::vec4f rect;
 
 #ifdef _DEBUG
@@ -262,6 +263,7 @@ namespace drawing
         uint32_t sindex = 0;
         section32 trange;
         section32 grange;
+        section32 crange;
         uint32_t item = 0;
         uint32_t line = 0;
         float32_t width = 0;
@@ -275,7 +277,7 @@ namespace drawing
     struct row
     {
         section32 trange;
-        section32 grange;
+        section32 crange;
         section32 srange;
         uint32_t line = 0;
         float32_t width = 0;
@@ -316,14 +318,16 @@ namespace drawing
         const drawing::fontmetrics & fontmetrics_at(uint16_t index) { return _fonts[index].fmetrics; }
 
     public:
+        const std::vector<glyph> & glyphs() const { return _glyphs; }
         const glyph & glyphAt(size_t tindex) const { if (tindex >= _glyphs.size()) return empty_glyph; return _glyphs.at(tindex); }
         size_t glyphCount() const { return _glyphs.size(); }
         const glyph & findGlyph(size_t tindex) const;
-        const glyph & findGlyph(float32_t pos, size_t lindex) const;
 
-        const std::vector<glyph> & glyphs() const { return _glyphs; }
         const std::vector<cluster> & clusters() const { return _clusters; }
+        size_t clusterCount() const { return _clusters.size(); }
         const cluster & findCluster(size_t tindex) const;
+        const cluster & findCluster(float32_t pos, size_t lindex) const;
+        const cluster & clusterAt(size_t cindex) const { if (cindex >= _clusters.size()) return empty_cluster; return _clusters.at(cindex); }
 
     private:
         // 0 ltr 1 rtl 0xfe auto but preffer ltf 0xff auto but preffer rtl

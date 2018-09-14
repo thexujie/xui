@@ -163,17 +163,19 @@ namespace drawing
         //SkRect rcBlob;
         //SkPoint end = shaper.shape(builder, paint, text.c_str(), text.length(), true, {}, 999999999, rcBlob);
 
-        _rows.clear();
-        _segments.clear();
-        _glyphs.clear();
         _items.clear();
+
+        _glyphs.clear();
+        _clusters.clear();
+        _segments.clear();
+        _rows.clear();
 
         _text = text;
 
         _rtf_font_indices.assign(_text.length(), fontIndex(font));
         _rtf_colors.assign(_text.length(), color);
 
-        _font_indices.clear();
+        //_font_indices.clear();
         //_fonts.clear();
 #ifdef _DEBUG
         _u32text.clear();
@@ -395,7 +397,6 @@ namespace drawing
             float32_t coefY = font.size * 1.0f / scaleY;
 
             size_t gindex_base = _glyphs.size();
-            size_t cindex_base = _clusters.size();
             _glyphs.resize(_glyphs.size() + gcount);
             hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
             hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
@@ -441,6 +442,7 @@ namespace drawing
                             cluster cl;
                             cl.cindex = (uint16_t)_clusters.size();
                             cl.grange.index = glyph.gindex;
+                            cl.trange.index = glyph.trange.index;
                             _clusters.push_back(cl);
                         }
                     }
@@ -450,27 +452,21 @@ namespace drawing
 #ifdef _DEBUG
                 glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
 #endif
+                glyph.cindex = uint16_t(_clusters.size() - 1);
+                _clusters.back().trange.length += glyph.trange.length;
                 _clusters.back().grange.length += 1;
             }
+        }
 
-            // º∆À„ range2
-            for (size_t cindex = 0; cindex < _clusters.size(); ++cindex)
-            {
-                cluster & cl = _clusters[cindex];
-                glyph & header = _glyphs[cl.grange.index];
-                cl.rect.cx = header.advance.cx;
-                cl.rect.cy = header.advance.cy;
-
-                for(size_t gindex = cl.grange.index; gindex < cl.grange.end(); ++gindex)
-                {
-                    glyph & gl = _glyphs[gindex];
-                    gl.cindex = cindex;
-                    gl.trange += gl.trange;
-                }
+        // º∆À„ range2
+        for (size_t cindex = 0; cindex < _clusters.size(); ++cindex)
+        {
+            cluster & cl = _clusters[cindex];
+            glyph & header = _glyphs[cl.grange.index];
+            cl.advance = header.advance;
 #ifdef _DEBUG
-                cl._text = _text.substr(cl.trange.index, cl.trange.length);
+            cl._text = _text.substr(cl.trange.index, cl.trange.length);
 #endif
-            }
         }
 
         return core::error_ok;
@@ -478,6 +474,9 @@ namespace drawing
 
     core::error Shaper::wrap(float32_t end, wrap_mode mode)
     {
+        _rows.clear();
+        _segments.clear();
+
         _rows.push_back({});
         _segments.push_back({});
         ++_rows.back().srange.length;
@@ -495,36 +494,35 @@ namespace drawing
         };
         typedef core::bitflag<flushflag> flushflags;
 
-        uint32_t segment_index = 0;
-        for(size_t gindex = 0, iindex = 0; gindex < _glyphs.size(); ++gindex)
+        for(size_t cindex = 0, iindex = 0; cindex < _clusters.size(); ++cindex)
         {
             flushflags flush = nullptr;
-            glyph & glyph = _glyphs[gindex];
-            if (glyph.trange.index >= _items[iindex].trange.end())
+            cluster & cl = _clusters[cindex];
+            if (cl.trange.index >= _items[iindex].trange.end())
             {
                 ++iindex;
                 flush |= flushflag::item;
             }
 
-            if (curr + glyph.advance.cx > end && glyph.standalone && _segments.back().grange.length > 0)
+            if (curr + cl.advance.cx > end && _segments.back().crange.length > 0)
                 flush |= flushflag::width;
             else {}
 
             if(flush.any())
             {
                 segment seg = {};
-                seg.sindex = ++segment_index;
+                seg.sindex = _segments.size();
                 seg.item = (uint32_t)iindex;
                 seg.line = (uint32_t)line;
-                seg.trange.index = glyph.trange.index;
-                seg.grange.index = (uint32_t)gindex;
+                seg.trange.index = cl.trange.index;
+                seg.crange.index = (uint32_t)cindex;
                 _segments.push_back(seg);
 
                 if (flush.any(flushflag::width))
                 {
                     row new_row = {};
-                    new_row.trange.index = glyph.trange.index;
-                    new_row.grange.index = (uint32_t)gindex;
+                    new_row.trange.index = cl.trange.index;
+                    new_row.crange.index = (uint32_t)cindex;
                     new_row.srange = { (uint32_t)(_segments.size() - 1), 0};
                     new_row.line = line;
                     _rows.push_back(new_row);
@@ -537,18 +535,18 @@ namespace drawing
             else
             {
             }
-            curr += glyph.advance.cx;
+            curr += cl.advance.cx;
 
             segment & seg_last = _segments.back();
-            seg_last.trange.length += glyph.trange.length;
-            seg_last.grange.length += 1;
-            seg_last.width += glyph.advance.cx;
+            seg_last.trange.length += cl.trange.length;
+            seg_last.crange.length += 1;
+            seg_last.width += cl.advance.cx;
 
             row & row_this = _rows.back();
             auto & fmetrics = _fonts[_items[iindex].font].fmetrics;
-            row_this.trange.length += glyph.trange.length;
-            row_this.grange.length += 1;
-            row_this.width += glyph.advance.cx;
+            row_this.trange.length += cl.trange.length;
+            row_this.crange.length += 1;
+            row_this.width += cl.advance.cx;
             row_this.ascent = std::max(row_this.ascent, fmetrics.ascent);
             row_this.descent = std::max(row_this.descent, fmetrics.descent);
         }
@@ -586,17 +584,18 @@ namespace drawing
                 float32_t pos = seg.offset;
 
                 bool ltr = !(item.level & 1);
-                for (size_t gindex = (ltr ? seg.grange.index : seg.grange.end());
-                    gindex != (ltr ? seg.grange.end() : seg.grange.index);
-                    ltr ? ++gindex : --gindex)
+                for (size_t cindex = (ltr ? seg.crange.index : seg.crange.end());
+                    cindex != (ltr ? seg.crange.end() : seg.crange.index);
+                    ltr ? ++cindex : --cindex)
                 {
-                    auto & glyph = _glyphs[ltr ? gindex : gindex - 1];
-                    glyph.sindex = (uint32_t)sindex;
-                    glyph.rect.x = pos;
-                    glyph.rect.y = row.ascent - fmetrics.ascent;
-                    glyph.rect.cx = glyph.advance.cx;
-                    glyph.rect.cy = fmetrics.height;
-                    pos += glyph.advance.cx;
+                    auto & cluster = _clusters[ltr ? cindex : cindex - 1];
+                    cluster.sindex = (uint16_t)sindex;
+                    cluster.rect.x = pos;
+                    cluster.rect.y = row.ascent - fmetrics.ascent;
+                    cluster.rect.cx = cluster.advance.cx;
+                    cluster.rect.cy = fmetrics.height;
+                    pos += cluster.advance.cx;
+                    seg.grange += cluster.grange;
                 }
             }
         }
@@ -619,7 +618,7 @@ namespace drawing
             item & item = _items[seg.item];
 
             auto & font_cache = _fonts[item.font];
-            //float32_t offset_x = seg.offset;
+            float32_t offset_x = seg.offset;
             SkPaint paint;
             paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
             paint.setTextSize(font_cache.font.size);
@@ -635,14 +634,15 @@ namespace drawing
 
             for (size_t gindex = seg.grange.index, iglyph = 0; gindex < seg.grange.end(); ++gindex, ++iglyph)
             {
-                glyph & glyph = _glyphs[gindex];
+                glyph & gl = _glyphs[gindex];
+                cluster & cl = _clusters[gl.cindex];
 
-                runBuffer.glyphs[iglyph] = glyph.gid;
+                runBuffer.glyphs[iglyph] = gl.gid;
                 //runBuffer.clusters[iglyph] = glyph.trange.index;
-                runBuffer.pos[iglyph * 2 + 0] = glyph.rect.x +  glyph.offset.x;
-                runBuffer.pos[iglyph * 2 + 1] = offset_y - glyph.offset.y + row.ascent;
-                offset_x += glyph.advance.cx;
-                offset_y += glyph.advance.cy;
+                runBuffer.pos[iglyph * 2 + 0] = offset_x +  gl.offset.x;
+                runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + row.ascent;
+                offset_x += gl.advance.cx;
+                offset_y += gl.advance.cy;
             }
 
         }
@@ -736,27 +736,25 @@ namespace drawing
         return *iter;
     }
 
-    const glyph & Shaper::findGlyph(float32_t pos, size_t lindex) const
+    const cluster & Shaper::findCluster(size_t tindex) const
     {
-        static const glyph empty;
+        auto iter = std::upper_bound(_clusters.begin(), _clusters.end(), tindex, [](size_t tindex, const cluster & cl) { return  tindex < cl.trange.end(); });
+        if (iter == _clusters.end())
+            return empty_cluster;
+        return *iter;
+    }
 
+    const cluster & Shaper::findCluster(float32_t pos, size_t lindex) const
+    {
         auto & row = _rows[lindex];
 
         auto iter_seg = std::upper_bound(_segments.begin() + row.srange.index, _segments.begin() + row.srange.end(), pos, [](float32_t pos, const segment & seg) { return  pos < seg.offset + seg.width; });
         if (iter_seg == _segments.begin() + row.srange.end() || iter_seg->offset + iter_seg->width <= pos)
-            return {};
+            return empty_cluster;
 
 
-        auto iter = std::upper_bound(_glyphs.begin() + iter_seg->grange.index, _glyphs.begin() + iter_seg->grange.end(), pos, [](float32_t pos, const glyph & g) { return  pos < g.rect.right(); });
-        if (iter == _glyphs.begin() + iter_seg->grange.end())
-            return empty;
-        return *iter;
-    }
-
-    const cluster & Shaper::findCluster(size_t tindex) const
-    {
-        auto iter = std::upper_bound(_clusters.begin(), _clusters.end(), tindex, [](const cluster & cl, size_t tindex) { return  tindex < cl.trange.end(); });
-        if (iter == _clusters.end())
+        auto iter = std::upper_bound(_clusters.begin() + iter_seg->crange.index, _clusters.begin() + iter_seg->crange.end(), pos, [](float32_t pos, const cluster & cl) { return  pos < cl.rect.right(); });
+        if (iter == _clusters.begin() + iter_seg->grange.end())
             return empty_cluster;
         return *iter;
     }
