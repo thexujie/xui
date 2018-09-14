@@ -222,8 +222,9 @@ namespace drawing
     {
         uint16_t gindex = 0;
         uint16_t cindex = 0;
+        uint16_t sindex = 0;
+
         section32 trange;
-        size_t tlength = 0;
         uint16_t gid = 0;
         core::vec2f advance;
         core::vec2f offset;
@@ -231,13 +232,8 @@ namespace drawing
         bool wordbreak = false;
         bool standalone = false;
 
-        section32 local;
-        uint32_t sindex = 0;
 
         operator bool() const { return trange.length > 0; }
-        bool header() const { return local.index == 0; }
-        bool tailer() const { return local.index == local.length - 1; }
-
 #ifdef _DEBUG
         std::string _text;
 #endif
@@ -252,10 +248,10 @@ namespace drawing
         core::vec2f advance;
         core::vec4f rect;
 
+        operator bool() const { return trange.length > 0; }
 #ifdef _DEBUG
         std::string _text;
 #endif
-        operator bool() const { return trange.length > 0; }
     };
 
     struct segment

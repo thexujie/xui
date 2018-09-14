@@ -104,7 +104,7 @@ namespace ui::controls
             {
                 size_t cursor_tindex = _cursor_pos;
                 bool cursor_left = false;
-                if(cursor_tindex == _text.length() - 1)
+                if(cursor_tindex == _text.length())
                 {
                     cursor_tindex = _text.length() - 1;
                     cursor_left = false;

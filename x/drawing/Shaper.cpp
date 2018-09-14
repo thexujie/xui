@@ -477,9 +477,6 @@ namespace drawing
         _rows.clear();
         _segments.clear();
 
-        _rows.push_back({});
-        _segments.push_back({});
-        ++_rows.back().srange.length;
         if (_text.empty())
             return core::error_ok;
 
@@ -508,7 +505,7 @@ namespace drawing
                 flush |= flushflag::width;
             else {}
 
-            if(flush.any())
+            if(flush.any() || !cindex)
             {
                 segment seg = {};
                 seg.sindex = _segments.size();
@@ -518,7 +515,7 @@ namespace drawing
                 seg.crange.index = (uint32_t)cindex;
                 _segments.push_back(seg);
 
-                if (flush.any(flushflag::width))
+                if (flush.any(flushflag::width) || !cindex)
                 {
                     row new_row = {};
                     new_row.trange.index = cl.trange.index;
@@ -610,7 +607,6 @@ namespace drawing
 
         row & row = _rows[index];
 
-        float32_t offset_x = 0;
         float32_t offset_y = 0;
         for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
         {
@@ -754,7 +750,7 @@ namespace drawing
 
 
         auto iter = std::upper_bound(_clusters.begin() + iter_seg->crange.index, _clusters.begin() + iter_seg->crange.end(), pos, [](float32_t pos, const cluster & cl) { return  pos < cl.rect.right(); });
-        if (iter == _clusters.begin() + iter_seg->grange.end())
+        if (iter == _clusters.begin() + iter_seg->crange.end())
             return empty_cluster;
         return *iter;
     }
