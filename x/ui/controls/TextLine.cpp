@@ -42,7 +42,7 @@ namespace ui::controls
     TextLine::TextLine()
     {
         _accept_input = true;
-        _shaper = std::make_shared<drawing::Shaper>();
+        _clusterizer = std::make_shared<drawing::TextClusterizer>();
     }
 
     TextLine::~TextLine()
@@ -124,7 +124,7 @@ namespace ui::controls
                     cursor_tindex = _cursor_pos;
                     cursor_left = !_cursor_far;
                 }
-                auto & cluster = _shaper->findCluster(cursor_tindex);
+                auto & cluster = _clusterizer->findCluster(cursor_tindex);
                 if (cluster)
                 {
                     if(cluster.rtl)
@@ -171,7 +171,7 @@ namespace ui::controls
         Control::onMouseDown(state, button);
         auto cbox = contentBox();
         float32_t pos = state.pos().x - cbox.x - _scroll_pos;
-        auto & cluster = _shaper->findCluster(pos, 0);
+        auto & cluster = _clusterizer->findCluster(pos);
         if(cluster)
         {
             _cursor_far = pos >= cluster.rect.centerX();
@@ -281,7 +281,7 @@ namespace ui::controls
         if (_delay_shaper_flags)
             _doshaper();
 
-        auto & cluster = _shaper->findCluster(_cursor_pos - 1);
+        auto & cluster = _clusterizer->findCluster(_cursor_pos - 1);
         if(!cluster)
             return;
 
@@ -300,7 +300,7 @@ namespace ui::controls
         if (_delay_shaper_flags)
             _doshaper();
 
-        auto & cluster = _shaper->findCluster(_cursor_pos);
+        auto & cluster = _clusterizer->findCluster(_cursor_pos);
         if (!cluster)
             return;
 
@@ -318,12 +318,12 @@ namespace ui::controls
         if (_delay_shaper_flags)
             _doshaper();
 
-        auto & cluster = _shaper->findCluster(_cursor_pos - 1);
+        auto & cluster = _clusterizer->findCluster(_cursor_pos - 1);
         if (!cluster)
             return;
 
         //只删除最后一个 glyph
-        auto & glyph = _shaper->glyphAt(cluster.grange.end() - 1);
+        auto & glyph = _clusterizer->glyphAt(cluster.grange.end() - 1);
         if (!glyph)
             return;
 
@@ -342,7 +342,7 @@ namespace ui::controls
         if (_delay_shaper_flags)
             _doshaper();
 
-        auto & cluster = _shaper->findCluster(_cursor_pos);
+        auto & cluster = _clusterizer->findCluster(_cursor_pos);
         if (!cluster)
             return;
 
@@ -377,7 +377,7 @@ namespace ui::controls
                 _imecontext->setCompositionPos(cbox.leftTop().offseted(_scroll_pos, 0));
             else
             {
-                auto & cluster = _shaper->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+                auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
                 assert(cluster);
                 _imecontext->setCompositionPos(cbox.leftTop().offseted(_cursor_far ? cluster.rect.right() : cluster.rect.left(), 0).offset(_scroll_pos, 0));
             }
@@ -400,11 +400,11 @@ namespace ui::controls
             if (!_textblob)
                 _textblob = std::make_shared<drawing::TextBlob>();
 
-            _shaper->itermize(_text, _font, _color);
-            _shaper->wrap(std::numeric_limits<float32_t>::max(), drawing::wrap_mode::word);
+            _clusterizer->itermize(_text, _font, _color);
+            _clusterizer->layout();
 
-            auto native = _shaper->build(0);
-            _textblob->setNative(native, _shaper->lineSize(0));
+            auto native = _clusterizer->build();
+            _textblob->setNative(native, _clusterizer->bounds());
         }
 
         refresh();
@@ -417,7 +417,7 @@ namespace ui::controls
         {
             std::lock_guard l(*this);
 
-            auto & cluster = _shaper->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+            auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
             assert(cluster);
             if (cluster)
             {
@@ -429,7 +429,7 @@ namespace ui::controls
                     scroll_pos = cbox.cx - cluster.rect.right();
                 else {}
 
-                auto size = _shaper->lineSize(0);
+                auto size = _clusterizer->bounds();
                 if (_scroll_pos + size.cx < cbox.width)
                 {
                     float32_t scroll_max = cbox.width - size.cx;

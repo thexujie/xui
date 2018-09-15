@@ -133,7 +133,7 @@
 		<DisplayString>{{&#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}, {advance.cx}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::segment">
-		<DisplayString>{{[{line}-{sindex}], &#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}, {width}}}</DisplayString>
+		<DisplayString>{{[{lindex}-{sindex}], &#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}, {advance}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::row">
 		<DisplayString>{{[{line}], &#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}}}</DisplayString>

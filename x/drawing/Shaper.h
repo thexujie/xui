@@ -13,6 +13,9 @@ namespace icu
 
 namespace drawing
 {
+    using core::section32;
+    using core::section8;
+
     constexpr uint32_t hb_make_tag(char c1, char c2, char c3, char c4)
     {
         return ((uint32_t)((((uint8_t)(c1)) << 24) | (((uint8_t)(c2)) << 16) | (((uint8_t)(c3)) << 8) | ((uint8_t)(c4))));
@@ -206,12 +209,16 @@ namespace drawing
 
     struct item
     {
+        uint16_t iindex = 0;
         section32 trange;
+        section32 grange;
+        section32 crange;
         // hb_script_t
         hb_script script = hb_script::invalid;
         uint8_t level = 0;
         uint16_t font = 0;
         uint32_t color = 0;
+        core::vec2f advance;
 #ifdef _DEBUG
         std::string _text;
         drawing::font _font;
@@ -240,6 +247,7 @@ namespace drawing
     struct cluster
     {
         uint16_t cindex = 0;
+        uint16_t iindex = 0;
         uint16_t sindex = 0;
         section32 trange;
         section32 grange;
@@ -255,12 +263,12 @@ namespace drawing
     struct segment
     {
         uint32_t sindex = 0;
+        uint32_t lindex = 0;
+        uint32_t iindex = 0;
         section32 trange;
         section32 grange;
         section32 crange;
-        uint32_t item = 0;
-        uint32_t line = 0;
-        float32_t width = 0;
+        core::vec2f advance;
 
         float32_t offset = 0;
 #ifdef _DEBUG
@@ -286,50 +294,9 @@ namespace drawing
     constexpr size_t cursor_pos_far = ~cursor_pos_mask;
     constexpr size_t cursor_pos_nopos = cursor_pos_far | cursor_pos_mask;
 
-    class Shaper : public IShaper
+    class Shaper
     {
     public:
-        Shaper() = default;
-
-        core::error itermize(std::string text, const drawing::font & font, core::color32 color);
-        core::error wrap(float32_t end, wrap_mode mode);
-
-        core::error build(SkTextBlobBuilder & builder, uint32_t index);
-        std::shared_ptr<SkTextBlob> build(uint32_t index);
-
-        std::shared_ptr<SkTextBlob> shape(std::string text, const drawing::font & font, core::color32 color, core::si32f & size);
-
-        core::si32f lineSize(uint32_t index);
-
-        void setFont(section32 range, const drawing::font & font);
-        void setColor(section32 range, uint32_t color);
-
-        uint16_t fontIndex(const drawing::font & font);
-
-        const drawing::font & font_at(uint16_t index) { return _fonts[index].font; }
-        std::shared_ptr<SkTypeface> skfont_at(uint16_t index) { return _fonts[index].skfont; }
-        std::shared_ptr<hb_font_t> hbfont_at(uint16_t index) { return _fonts[index].hbfont; }
-        const drawing::fontmetrics & fontmetrics_at(uint16_t index) { return _fonts[index].fmetrics; }
-
-    public:
-        const std::vector<glyph> & glyphs() const { return _glyphs; }
-        const glyph & glyphAt(size_t tindex) const { if (tindex >= _glyphs.size()) return empty_glyph; return _glyphs.at(tindex); }
-        size_t glyphCount() const { return _glyphs.size(); }
-        const glyph & findGlyph(size_t tindex) const;
-
-        const std::vector<cluster> & clusters() const { return _clusters; }
-        size_t clusterCount() const { return _clusters.size(); }
-        const cluster & findCluster(size_t tindex) const;
-        const cluster & findCluster(float32_t pos, size_t lindex) const;
-        const cluster & clusterAt(size_t cindex) const { if (cindex >= _clusters.size()) return empty_cluster; return _clusters.at(cindex); }
-
-    private:
-        // 0 ltr 1 rtl 0xfe auto but preffer ltf 0xff auto but preffer rtl
-        uint8_t _defaultBidiLevel = 0xfe;
-
-        std::string _text;
-
-        std::unordered_map<drawing::font, uint16_t> _font_indices;
         struct font_cache
         {
             drawing::font font;
@@ -337,14 +304,74 @@ namespace drawing
             std::shared_ptr<hb_font_t> hbfont;
             drawing::fontmetrics fmetrics;
         };
+
+    public:
+        Shaper();
+        static Shaper & instance();
+
+        icu::BreakIterator & breaker_world() { return *_breaker_world; }
+        icu::BreakIterator & breaker_character() { return *_breaker_character; }
+
+        uint16_t indexFont(const drawing::font & font);
+
+        const std::vector<font_cache> & fonts(uint16_t index) const { return _fonts; }
+        const font_cache & cache(uint16_t index) const { return _fonts[index]; }
+        const drawing::font & font(uint16_t index) { return _fonts[index].font; }
+        std::shared_ptr<SkTypeface> & skfont(uint16_t index) { return _fonts[index].skfont; }
+        std::shared_ptr<hb_font_t> & hbfont(uint16_t index) { return _fonts[index].hbfont; }
+        const drawing::fontmetrics & fontmetrics(uint16_t index) { return _fonts[index].fmetrics; }
+
+    private:
+        std::unordered_map<drawing::font, uint16_t> _font_indices;
         std::vector<font_cache> _fonts;
-        std::vector<uint16_t> _rtf_font_indices;
-        std::vector<uint32_t> _rtf_colors;
 
         std::unique_ptr<hb_buffer_t, void(*)(hb_buffer_t *)> _hbbuffer = {nullptr, nullptr };
         std::unique_ptr<icu::BreakIterator, void(*)(icu::BreakIterator *)> _breaker_world = { nullptr, nullptr};
         std::unique_ptr<icu::BreakIterator, void(*)(icu::BreakIterator *)> _breaker_character = { nullptr, nullptr };
 
+
+    public:
+        static inline glyph empty_glyph = {};
+        static inline cluster empty_cluster = {};
+    };
+
+    class TextClusterizer
+    {
+    public:
+        TextClusterizer() = default;
+        ~TextClusterizer() = default;
+
+    public:
+        void setFont(section32 range, const drawing::font & font);
+        void setColor(section32 range, uint32_t color);
+
+    public:
+        core::error itermize(std::string text, const drawing::font & font, core::color32 color);
+        core::error layout();
+
+        core::si32f bounds() const;
+        std::shared_ptr<SkTextBlob> build();
+
+    public:
+        const std::vector<glyph> & glyphs() const { return _glyphs; }
+        size_t glyphCount() const { return _glyphs.size(); }
+        const glyph & glyphAt(size_t tindex) const { if (tindex >= _glyphs.size()) return Shaper::empty_glyph; return _glyphs.at(tindex); }
+        const glyph & findGlyph(size_t tindex) const;
+
+        const std::vector<cluster> & clusters() const { return _clusters; }
+        size_t clusterCount() const { return _clusters.size(); }
+        const cluster & clusterAt(size_t cindex) const { if (cindex >= _clusters.size()) return Shaper::empty_cluster; return _clusters.at(cindex); }
+        const cluster & findCluster(size_t tindex) const;
+        const cluster & findCluster(float32_t pos) const;
+
+    protected:
+        Shaper & _shaper = Shaper::instance();
+        std::string _text;
+        std::vector<uint16_t> _rtf_font_indices;
+        std::vector<uint32_t> _rtf_colors;
+
+        // 0 ltr 1 rtl 0xfe auto but preffer ltf 0xff auto but preffer rtl
+        uint8_t _defaultBidiLevel = 0xfe;
 #ifdef _DEBUG
         std::u32string _u32text;
 #endif
@@ -352,11 +379,31 @@ namespace drawing
         std::vector<glyph> _glyphs;
         std::vector<cluster> _clusters;
         std::vector<segment> _segments;
-        std::vector<row> _rows;
         std::shared_ptr<class SkTextBlobBuilder> _builder;
 
+        uint16_t _font_default = 0;
+        float32_t _ascent = 0.0f;
+        float32_t _descent = 0.0f;
+    };
+
+    class TextWraper : public TextClusterizer
+    {
     public:
-        static inline glyph empty_glyph = {};
-        static inline cluster empty_cluster = {};
+        TextWraper() = default;
+        ~TextWraper() = default;
+
+        using TextClusterizer::layout;
+        core::error layout(float32_t end, wrap_mode mode);
+
+    public:
+        core::si32f bounds() const;
+        std::shared_ptr<SkTextBlob> build();
+
+    public:
+        using TextClusterizer::findCluster;
+        const cluster & findCluster(float32_t pos, size_t lindex) const;
+
+    protected:
+        std::vector<row> _lines;
     };
 }

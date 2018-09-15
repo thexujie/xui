@@ -97,7 +97,7 @@ namespace core
             return vec2(x / vec.x, y / vec.y);
         }
 
-        template<typename = decltype(std::declval<T>() += std::declval<T>())>
+        template<typename = decltype(std::declval<T&>() += std::declval<T>())>
         vec2 & operator +=(const vec2 & vec)
         {
             x += vec.x;
@@ -105,7 +105,7 @@ namespace core
             return *this;
         }
 
-        template<typename = decltype(std::declval<T>() -= std::declval<T>())>
+        template<typename = decltype(std::declval<T&>() -= std::declval<T>())>
         vec2 & operator -=(const vec2 & vec)
         {
             x -= vec.x;
@@ -113,7 +113,7 @@ namespace core
             return *this;
         }
 
-        template<typename = decltype(std::declval<T>() *= std::declval<T>())>
+        template<typename = decltype(std::declval<T&>() *= std::declval<T>())>
         vec2 & operator *=(const vec2 & vec)
         {
             x *= vec.x;
@@ -121,7 +121,7 @@ namespace core
             return *this;
         }
 
-        template<typename = decltype(std::declval<T>() /= std::declval<T>())>
+        template<typename = decltype(std::declval<T&>() /= std::declval<T>())>
         vec2 & operator /=(const vec2 & vec)
         {
             x /= vec.x;

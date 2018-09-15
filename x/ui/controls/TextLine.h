@@ -67,7 +67,7 @@ namespace ui::controls
 
         bool _delay_shaper = false;
         shaper_flags _delay_shaper_flags = nullptr;
-        std::shared_ptr<drawing::Shaper> _shaper;
+        std::shared_ptr<drawing::TextClusterizer> _clusterizer;
 
         bool _cursor_shown = false;
         size_t _cursor_gindex = 0;

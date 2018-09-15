@@ -152,9 +152,11 @@ namespace drawing
 
         SkPaint paint;
         format.apply(paint);
-        Shaper shaper;
-        core::si32f size;
-        auto blob = shaper.shape(str, format._font, format._color, size);
+        TextClusterizer shaper;
+        shaper.itermize(str, format._font, format._color);
+        shaper.layout();
+        core::si32f size = shaper.bounds();
+        auto blob = shaper.build();
 
         if (format._align & core::align::right)
             point.x -= size.cx;
@@ -180,9 +182,11 @@ namespace drawing
         SkPaint paint;
         format.apply(paint);
 
-        Shaper shaper;
-        core::si32f size;
-        auto blob = shaper.shape(str, format._font, format._color, size);
+        TextClusterizer shaper;
+        shaper.itermize(str, format._font, format._color);
+        shaper.layout();
+        core::si32f size = shaper.bounds();
+        auto blob = shaper.build();
 
         core::pt32f point = rect.leftTop();
         if (format._align & core::align::right)

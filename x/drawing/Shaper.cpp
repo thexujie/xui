@@ -154,8 +154,56 @@ namespace drawing
         return font;
     }
 
-    core::error Shaper::itermize(std::string text, const drawing::font & font, core::color32 color)
+    Shaper::Shaper()
     {
+        UErrorCode status = U_ZERO_ERROR;
+        _breaker_world = { icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
+        _breaker_character = { icu::BreakIterator::createCharacterInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
+    }
+
+    Shaper & Shaper::instance()
+    {
+        static Shaper shaper;
+        return shaper;
+    }
+
+    uint16_t Shaper::indexFont(const drawing::font & font)
+    {
+        uint16_t index = 0;
+        auto iter = _font_indices.find(font);
+        if (iter == _font_indices.end())
+        {
+            auto skfont = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref<>);
+            auto hbfont = create_hb_font(skfont.get());
+            if(!skfont || !hbfont)
+                throw core::error_not_supported;
+
+            _fonts.push_back({ font, skfont, hbfont, drawing::fontmetrics(font) });
+            if (_fonts.size() > 0xfffe)
+                throw core::error_outofbound;
+            index = uint16_t(_fonts.size() - 1);
+            _font_indices[font] = index;
+        }
+        else
+            index = iter->second;
+        return index;
+    }
+
+
+    void TextClusterizer::setFont(section32 range, const drawing::font & font)
+    {
+        uint16_t index = _shaper.indexFont(font);
+        std::fill(_rtf_font_indices.begin() + range.index, _rtf_font_indices.begin() + range.end(), index);
+    }
+
+    void TextClusterizer::setColor(section32 range, uint32_t color)
+    {
+        std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
+    }
+
+    core::error TextClusterizer::itermize(std::string text, const drawing::font & font_default, core::color32 color_default)
+    {
+
         //SkShaper shaper(SkTypeface::MakeFromName(_font_default.family.c_str(), skia::from(_font_default.style)));
 
         //SkPaint paint;
@@ -167,28 +215,24 @@ namespace drawing
 
         _glyphs.clear();
         _clusters.clear();
-        _segments.clear();
-        _rows.clear();
 
         _text = text;
 
-        _rtf_font_indices.assign(_text.length(), fontIndex(font));
-        _rtf_colors.assign(_text.length(), color);
+        _font_default = _shaper.indexFont(font_default);
+        _rtf_font_indices.assign(_text.length(), _font_default);
+        _rtf_colors.assign(_text.length(), color_default);
 
         //_font_indices.clear();
         //_fonts.clear();
 #ifdef _DEBUG
         _u32text.clear();
 #endif
-        if(!_hbbuffer)
-            _hbbuffer = { hb_buffer_create(), hb_buffer_destroy };
+        std::unique_ptr<hb_buffer_t, void(*)(hb_buffer_t *)> _hbbuffer(hb_buffer_create(), hb_buffer_destroy);
         UErrorCode status = U_ZERO_ERROR;
-        if (!_breaker_world)
-            _breaker_world = { icu::BreakIterator::createLineInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
-        if (!_breaker_character)
-            _breaker_character = { icu::BreakIterator::createCharacterInstance(icu::Locale::getDefault(), status), [](icu::BreakIterator * ptr) { delete ptr; } };
+        auto & _breaker_world = _shaper.breaker_world();
+        auto & _breaker_character = _shaper.breaker_character();
 
-        if(_text.empty())
+        if (_text.empty())
             return core::error_ok;
 
         std::u16string u16str = core::u8str_u16str(_text);
@@ -224,8 +268,8 @@ namespace drawing
 
         hb_unicode_funcs_t * hb_unicode = hb_buffer_get_unicode_funcs(_hbbuffer.get());
 
-        _breaker_world->setText(u16str.c_str());
-        _breaker_character->setText(u16str.c_str());
+        _breaker_world.setText(u16str.c_str());
+        _breaker_character.setText(u16str.c_str());
 
         size_t utf8_pos = 0;
         size_t utf16_pos = 0;
@@ -240,12 +284,12 @@ namespace drawing
             script = 0x0004,
             font = 0x0008,
             color = 0x0010,
+            first = 0x0020,
         };
         typedef core::bitflag<flushflag> flushflags;
 
         std::vector<section32> utf16_ranges;
-        _items.push_back({});
-        while(utf16_pos < u16str.length())
+        while (utf16_pos < u16str.length())
         {
             flushflags flush = nullptr;
 
@@ -264,7 +308,7 @@ namespace drawing
 #endif
             size_t nutf32 = 1;
 
-            for(size_t iutf16 = 0; iutf16 < nutf16; ++iutf16)
+            for (size_t iutf16 = 0; iutf16 < nutf16; ++iutf16)
                 utf16_ranges.push_back({ (uint32_t)utf8_pos, (uint32_t)nutf8 });
 
             UBiDiLevel level = ubidi_getLevelAt(bidi.get(), (int32_t)utf16_pos);
@@ -273,10 +317,10 @@ namespace drawing
             uint32_t color = _rtf_colors[utf8_pos];
 
             // font 的 flush 需要考虑 fallback 的字体，测试一下
-            auto & font_cache = _fonts[font_index];
-            if (font_index_fb_last != core::nposu16 && 
+            auto & font_cache = _shaper.cache(font_index);
+            if (font_index_fb_last != core::nposu16 &&
                 (script == _items.back().script || script == hb_script::inherited || script == hb_script::common) &&
-                _fonts[font_index_fb_last].skfont->charsToGlyphs(&cp_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
+                _shaper.skfont(font_index_fb_last)->charsToGlyphs(&cp_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
                 // 使用上一个 fallback 的字体搞定
                 font_index = font_index_fb_last;
@@ -284,18 +328,18 @@ namespace drawing
             else if (font_cache.skfont->charsToGlyphs(&cp_utf8, SkTypeface::kUTF32_Encoding, nullptr, 1))
             {
                 // 使用预期的字体搞定
-                font_index_fb_last = 0;
+                font_index_fb_last = core::nposu16;
             }
             else
             {
                 // 慢慢找吧，fallbacking......
-                font_index_fb_last = 0;
+                font_index_fb_last = core::nposu16;
                 sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
                 auto tf = fontMgr->matchFamilyStyleCharacter(nullptr, drawing::skia::from(font_cache.font.style), nullptr, 0, cp_utf8);
                 if (tf)
                 {
                     drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
-                    uint16_t font_index_fb = fontIndex(font_fb);
+                    uint16_t font_index_fb = _shaper.indexFont(font_fb);
                     font_index_fb_last = font_index_fb;
                     font_index = font_index_fb;
                 }
@@ -304,46 +348,40 @@ namespace drawing
             if (utf8_pos == 0)
             {
                 assert(script != hb_script::inherited);
-                item & first = _items.back();
-                first.script = script;
-                first.level = level;
-                first.font = font_index;
-                first.color = color;
+                flush |= flushflag::first;
             }
             else
             {
+                if (_items.back().script == hb_script::inherited || _items.back().script == hb_script::common)
+                {
+                    // 之前部分不要的
+                    _items.back().font = font_index;
+                    _items.back().script = script;
+                }
 
+                if ((script != hb_script::inherited && script != hb_script::common) && (script != _items.back().script))
+                    flush |= flushflag::script;
+
+                if (level != _items.back().level)
+                    flush |= flushflag::level;
+
+                if (font_index != _items.back().font)
+                    flush |= flushflag::font;
+
+                if (color != _items.back().color)
+                    flush |= flushflag::color;
             }
-
-            if (_items.back().script == hb_script::inherited || _items.back().script == hb_script::common)
-            {
-                // 之前部分不要的
-                _items.back().font = font_index;
-                _items.back().script = script;
-            }
-
-            if ((script != hb_script::inherited && script != hb_script::common) && (script != _items.back().script))
-                flush |= flushflag::script;
-
-            if (level != _items.back().level)
-                flush |= flushflag::level;
-
-            if (font_index != _items.back().font)
-                flush |= flushflag::font;
-
-            if (color != _items.back().color)
-                flush |= flushflag::color;
 
             if (flush.any())
             {
-                assert(_items.back().trange.length > 0);
-                _items.push_back({});
-                item & item_new = _items.back();
-                item_new.trange.index = (uint32_t)utf8_pos;
-                item_new.script = script;
-                item_new.level = level;
-                item_new.font = font_index;
-                item_new.color = color;
+                item it;
+                it.iindex = _items.size();
+                it.trange.index = (uint32_t)utf8_pos;
+                it.script = script;
+                it.level = level;
+                it.font = font_index;
+                it.color = color;
+                _items.push_back(it);
             }
             else
             {
@@ -361,7 +399,7 @@ namespace drawing
         for (auto & item : _items)
         {
             item._text = _text.substr(item.trange.index, item.trange.length);
-            item._font = _fonts[item.font].font;
+            item._font = _shaper.font(item.font);
         }
 #endif
 
@@ -370,9 +408,8 @@ namespace drawing
             hb_buffer_clear_contents(_hbbuffer.get());
             hb_buffer_add_utf8(_hbbuffer.get(), _text.c_str(), (int32_t)_text.length(), item.trange.index, item.trange.length);
             // TODO: features
-            auto & font_cache = _fonts[item.font];
-            const drawing::font & font = font_at(item.font);
-            auto hbfont = hbfont_at(item.font);
+            auto & font_cache = _shaper.cache(item.font);
+            auto & hbfont = _shaper.hbfont(item.font);
 
             hb_buffer_set_script(_hbbuffer.get(), hb_script_t(item.script));
             hb_buffer_set_direction(_hbbuffer.get(), (item.level & 1) ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
@@ -393,10 +430,12 @@ namespace drawing
 
             int32_t scaleX = 0, scaleY = 0;
             hb_font_get_scale(hbfont.get(), &scaleX, &scaleY);
-            float32_t coefX = font.size *  1.0f / scaleX;
-            float32_t coefY = font.size * 1.0f / scaleY;
+            float32_t coefX = font_cache.font.size *  1.0f / scaleX;
+            float32_t coefY = font_cache.font.size * 1.0f / scaleY;
 
             size_t gindex_base = _glyphs.size();
+            size_t cindex_base = _clusters.size();
+            uint32_t ccount = 0;
             _glyphs.resize(_glyphs.size() + gcount);
             hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
             hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
@@ -414,11 +453,11 @@ namespace drawing
                 glyph.gid = uint16_t(info.codepoint);
                 glyph.advance = { float32_t(pos.x_advance * coefX), float32_t(pos.y_advance * coefY) };
                 glyph.offset = { float32_t(pos.x_offset * coefX), float32_t(pos.y_offset * coefY) };
-                int32_t word_stop_utf16 = _breaker_world->current();
+                int32_t word_stop_utf16 = _breaker_world.current();
                 if (word_stop_utf16 != icu::BreakIterator::DONE && word_stop_utf16 < utf16_ranges.size())
                 {
                     if (utf16_ranges[word_stop_utf16].index < glyph.trange.index)
-                        word_stop_utf16 = _breaker_world->next();
+                        word_stop_utf16 = _breaker_world.next();
 
                     if (word_stop_utf16 < utf16_ranges.size())
                     {
@@ -427,11 +466,11 @@ namespace drawing
                     }
                 }
 
-                int32_t char_stop_utf16 = _breaker_character->current();
+                int32_t char_stop_utf16 = _breaker_character.current();
                 if (char_stop_utf16 != icu::BreakIterator::DONE && char_stop_utf16 < utf16_ranges.size())
                 {
                     if (utf16_ranges[char_stop_utf16].index < glyph.trange.index)
-                        char_stop_utf16 = _breaker_character->next();
+                        char_stop_utf16 = _breaker_character.next();
 
                     if (char_stop_utf16 < utf16_ranges.size())
                     {
@@ -440,10 +479,12 @@ namespace drawing
                         {
                             cluster cl;
                             cl.cindex = (uint16_t)_clusters.size();
+                            cl.iindex = item.iindex;
                             cl.grange.index = glyph.gindex;
                             cl.trange.index = glyph.trange.index;
                             cl.rtl = !!(item.level & 1);
                             _clusters.push_back(cl);
+                            ++ccount;
                         }
                     }
                 }
@@ -456,14 +497,19 @@ namespace drawing
                 _clusters.back().trange.length += glyph.trange.length;
                 _clusters.back().grange.length += 1;
             }
+
+            item.grange = { uint32_t(gindex_base), gcount };
+            item.crange = { uint32_t(cindex_base), ccount };
         }
 
         // 计算 range2
         for (size_t cindex = 0; cindex < _clusters.size(); ++cindex)
         {
             cluster & cl = _clusters[cindex];
+            item & it = _items[cl.iindex];
             glyph & header = _glyphs[cl.grange.index];
             cl.advance = header.advance;
+            it.advance += header.advance;
 #ifdef _DEBUG
             cl._text = _text.substr(cl.trange.index, cl.trange.length);
 #endif
@@ -472,9 +518,176 @@ namespace drawing
         return core::error_ok;
     }
 
-    core::error Shaper::wrap(float32_t end, wrap_mode mode)
+    core::error TextClusterizer::layout()
     {
-        _rows.clear();
+        _segments.clear();
+        _ascent = 0.0f;
+        _descent = 0.0f;
+        if (_text.empty())
+            return core::error_ok;
+
+        std::vector<UBiDiLevel> _bidis(_items.size());
+        std::vector<int32_t> visual_indices(_items.size());
+        for(size_t iindex = 0; iindex < _items.size(); ++iindex)
+        {
+            auto & it = _items[iindex];
+            auto & fmetrics = _shaper.fontmetrics(it.font);
+
+            segment seg = {};
+            seg.sindex = _segments.size();
+            seg.iindex = (uint32_t)iindex;
+            seg.lindex = 0;
+            seg.trange = it.trange;
+            seg.crange = it.crange;
+            seg.advance = it.advance;
+            _segments.push_back(seg);
+
+            _ascent = std::max(_ascent, fmetrics.ascent);
+            _descent = std::max(_descent, fmetrics.descent);
+            _bidis[iindex] = it.level;
+        }
+
+#ifdef _DEBUG
+        for (auto & seg : _segments)
+            seg._text = _text.substr(seg.trange.index, seg.trange.length);
+#endif
+
+        ubidi_reorderLogical(_bidis.data(), (int32_t)_bidis.size(), visual_indices.data());
+        std::sort(_segments.begin(), _segments.end(), [&visual_indices](const segment & lhs, const segment & rhs) { return visual_indices[lhs.sindex] < visual_indices[rhs.sindex]; });
+
+        float32_t offset = 0;
+        for (size_t sindex = 0; sindex < _segments.size(); ++sindex)
+        {
+            auto & seg = _segments[sindex];
+            auto & item = _items[seg.iindex];
+            seg.offset = offset;
+            offset += seg.advance.cx;
+
+            auto & fmetrics = _shaper.fontmetrics(_items[seg.iindex].font);
+            float32_t pos = seg.offset;
+
+            bool ltr = !(item.level & 1);
+            for (size_t cindex = (ltr ? seg.crange.index : seg.crange.end());
+                cindex != (ltr ? seg.crange.end() : seg.crange.index);
+                ltr ? ++cindex : --cindex)
+            {
+                auto & cluster = _clusters[ltr ? cindex : cindex - 1];
+                cluster.sindex = (uint16_t)sindex;
+                cluster.rect.x = pos;
+                cluster.rect.y = _ascent - fmetrics.ascent;
+                cluster.rect.cx = cluster.advance.cx;
+                cluster.rect.cy = fmetrics.height;
+                pos += cluster.advance.cx;
+                seg.grange += cluster.grange;
+            }
+        }
+
+        return core::error_ok;
+    }
+
+    core::si32f TextClusterizer::bounds() const
+    {
+        float32_t ascent = 0.0f;
+        float32_t descent = 0.0f;
+        float32_t advance = 0.0f;
+        for(auto & seg : _segments)
+        {
+            advance += seg.advance.cx;
+            ascent = std::max(ascent, _shaper.fontmetrics(_items[seg.iindex].font).ascent);
+            descent = std::max(descent, _shaper.fontmetrics(_items[seg.iindex].font).descent);
+        }
+        return { advance, ascent + descent };
+    }
+
+    std::shared_ptr<SkTextBlob> TextClusterizer::build()
+    {
+        if (_text.empty())
+            return nullptr;
+
+        if (!_builder)
+            _builder = std::make_shared<SkTextBlobBuilder>();
+
+        float32_t offset_x = 0;
+        float32_t offset_y = 0;
+        for (size_t sindex = 0; sindex < _segments.size(); ++sindex)
+        {
+            auto & seg = _segments[sindex];
+            item & item = _items[seg.iindex];
+            bool ltr = !(item.level & 1);
+
+            auto & font_cache = _shaper.cache(item.font);
+            SkPaint paint;
+            paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
+            paint.setTextSize(font_cache.font.size);
+            paint.setAntiAlias(true);
+            paint.setLCDRenderText(true);
+            paint.setColor(item.color);
+            paint.setAutohinted(true);
+            paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+
+            //SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(paint, seg.grange.length, seg.trange.length, SkString(), nullptr);
+            SkTextBlobBuilder::RunBuffer runBuffer = _builder->allocRunPos(paint, seg.grange.length, nullptr);
+            //memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
+
+            for (size_t cindex = (ltr ? seg.crange.index : seg.crange.end()), iglyph = 0; cindex != (ltr ? seg.crange.end() : seg.crange.index); ltr ? ++cindex : --cindex)
+            {
+                cluster & cl = _clusters[ltr ? cindex : cindex - 1];
+                for (size_t gindex = cl.grange.index; gindex != cl.grange.end(); ++gindex, ++iglyph)
+                {
+                    glyph & gl = _glyphs[gindex];
+
+                    runBuffer.glyphs[iglyph] = gl.gid;
+                    //runBuffer.clusters[iglyph] = glyph.trange.index;
+                    runBuffer.pos[iglyph * 2 + 0] = offset_x + gl.offset.x;
+                    runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + _ascent;
+                    offset_y += gl.advance.cy;
+                    offset_x += gl.advance.cx;
+                }
+            }
+        }
+        return { _builder->make().release(), skia::skia_unref<SkTextBlob> };
+    }
+
+    const glyph & TextClusterizer::findGlyph(size_t index) const
+    {
+        static const glyph empty;
+        if (_glyphs.empty())
+            return empty;
+
+        index &= cursor_pos_mask;
+        if (index == cursor_pos_mask)
+            return _glyphs.back();
+
+        auto iter = std::lower_bound(_glyphs.begin(), _glyphs.end(), index, [](const glyph & g, size_t value) { return  g.trange.end() <= value; });
+        if (iter == _glyphs.end() || iter->trange.end() <= index)
+            return empty;
+        return *iter;
+    }
+
+    const cluster & TextClusterizer::findCluster(size_t tindex) const
+    {
+        auto iter = std::upper_bound(_clusters.begin(), _clusters.end(), tindex, [](size_t tindex, const cluster & cl) { return  tindex < cl.trange.end(); });
+        if (iter == _clusters.end())
+            return Shaper::empty_cluster;
+        return *iter;
+    }
+
+    const cluster & TextClusterizer::findCluster(float32_t pos) const
+    {
+        auto iter_seg = std::upper_bound(_segments.begin(), _segments.end(), pos, [](float32_t pos, const segment & seg) { return  pos < seg.offset + seg.advance.cx; });
+        if (iter_seg == _segments.end())
+            return Shaper::empty_cluster;
+
+
+        auto iter = std::upper_bound(_clusters.begin() + iter_seg->crange.index, _clusters.begin() + iter_seg->crange.end(), pos, [](float32_t pos, const cluster & cl) { return  pos < cl.rect.right(); });
+        if (iter == _clusters.begin() + iter_seg->crange.end())
+            return Shaper::empty_cluster;
+        return *iter;
+    }
+
+    core::error TextWraper::layout(float32_t end, wrap_mode mode)
+    {
+        _lines.clear();
         _segments.clear();
 
         if (_text.empty())
@@ -491,7 +704,7 @@ namespace drawing
         };
         typedef core::bitflag<flushflag> flushflags;
 
-        for(size_t cindex = 0, iindex = 0; cindex < _clusters.size(); ++cindex)
+        for (size_t cindex = 0, iindex = 0; cindex < _clusters.size(); ++cindex)
         {
             flushflags flush = nullptr;
             cluster & cl = _clusters[cindex];
@@ -505,12 +718,12 @@ namespace drawing
                 flush |= flushflag::width;
             else {}
 
-            if(flush.any() || !cindex)
+            if (flush.any() || !cindex)
             {
                 segment seg = {};
                 seg.sindex = _segments.size();
-                seg.item = (uint32_t)iindex;
-                seg.line = (uint32_t)line;
+                seg.iindex = (uint32_t)iindex;
+                seg.lindex = (uint32_t)line;
                 seg.trange.index = cl.trange.index;
                 seg.crange.index = (uint32_t)cindex;
                 _segments.push_back(seg);
@@ -520,14 +733,14 @@ namespace drawing
                     row new_row = {};
                     new_row.trange.index = cl.trange.index;
                     new_row.crange.index = (uint32_t)cindex;
-                    new_row.srange = { (uint32_t)(_segments.size() - 1), 0};
+                    new_row.srange = { (uint32_t)(_segments.size() - 1), 0 };
                     new_row.line = line;
-                    _rows.push_back(new_row);
+                    _lines.push_back(new_row);
                     curr = 0;
                     ++line;
                 }
 
-                ++_rows.back().srange.length;
+                ++_lines.back().srange.length;
             }
             else
             {
@@ -537,10 +750,10 @@ namespace drawing
             segment & seg_last = _segments.back();
             seg_last.trange.length += cl.trange.length;
             seg_last.crange.length += 1;
-            seg_last.width += cl.advance.cx;
+            seg_last.advance += cl.advance;
 
-            row & row_this = _rows.back();
-            auto & fmetrics = _fonts[_items[iindex].font].fmetrics;
+            row & row_this = _lines.back();
+            auto & fmetrics = _shaper.fontmetrics(_items[iindex].font);
             row_this.trange.length += cl.trange.length;
             row_this.crange.length += 1;
             row_this.width += cl.advance.cx;
@@ -551,19 +764,19 @@ namespace drawing
 #ifdef _DEBUG
         for (auto & seg : _segments)
             seg._text = _text.substr(seg.trange.index, seg.trange.length);
-        for(auto & row : _rows)
+        for (auto & row : _lines)
             row._text = _text.substr(row.trange.index, row.trange.length);
 #endif
 
         std::vector<UBiDiLevel> _bidis;
         std::vector<int32_t> visual_indices;
-        for (auto & row : _rows)
+        for (auto & row : _lines)
         {
             _bidis.resize(row.srange.length);
             visual_indices.resize(row.srange.length, 0);
 
             for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
-                _bidis[sindex] = _items[_segments[sindex + row.srange.index].item].level;
+                _bidis[sindex] = _items[_segments[sindex + row.srange.index].iindex].level;
 
             ubidi_reorderLogical(_bidis.data(), (int32_t)_bidis.size(), visual_indices.data());
 
@@ -573,11 +786,11 @@ namespace drawing
             for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
             {
                 auto & seg = _segments[sindex + row.srange.index];
-                auto & item = _items[seg.item];
+                auto & item = _items[seg.iindex];
                 seg.offset = offset;
-                offset += seg.width;
+                offset += seg.advance.cx;
 
-                auto & fmetrics = _fonts[_items[seg.item].font].fmetrics;
+                auto & fmetrics = _shaper.fontmetrics(_items[seg.iindex].font);
                 float32_t pos = seg.offset;
 
                 bool ltr = !(item.level & 1);
@@ -600,161 +813,99 @@ namespace drawing
         return core::error_ok;
     }
 
-    core::error Shaper::build(SkTextBlobBuilder & builder, uint32_t index)
+    core::si32f TextWraper::bounds() const
     {
         if (_text.empty())
-            return core::error_ok;
+            return {};
 
-        row & row = _rows[index];
-
-        float32_t offset_y = 0;
-        for (size_t sindex = 0; sindex < row.srange.length; ++sindex)
+        core::si32f size;
+        for (size_t lindex = 0; lindex < _lines.size(); ++lindex)
         {
-            segment & seg = _segments[row.srange.index + sindex];
-            item & item = _items[seg.item];
-            bool ltr = !(item.level & 1);
-
-            auto & font_cache = _fonts[item.font];
-            float32_t offset_x = seg.offset;
-            SkPaint paint;
-            paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
-            paint.setTextSize(font_cache.font.size);
-            paint.setAntiAlias(true);
-            paint.setLCDRenderText(true);
-            paint.setColor(item.color);
-            paint.setAutohinted(true);
-            paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-
-            //SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(paint, seg.grange.length, seg.trange.length, SkString(), nullptr);
-            SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunPos(paint, seg.grange.length, nullptr);
-            //memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
-
-            for (size_t cindex = (ltr ? seg.crange.index : seg.crange.end()), iglyph = 0; cindex != (ltr ? seg.crange.end() : seg.crange.index); ltr ? ++cindex : --cindex)
+            auto & ln = _lines[lindex];
+            float32_t width = 0;
+            for (size_t sindex = ln.srange.index; sindex < ln.srange.end(); ++sindex)
             {
-                cluster & cl = _clusters[ltr ? cindex : cindex - 1];
-                for (size_t gindex = cl.grange.index; gindex != cl.grange.end(); ++gindex, ++iglyph)
-                {
-                    glyph & gl = _glyphs[gindex];
-
-                    runBuffer.glyphs[iglyph] = gl.gid;
-                    //runBuffer.clusters[iglyph] = glyph.trange.index;
-                    runBuffer.pos[iglyph * 2 + 0] = offset_x + gl.offset.x;
-                    runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + row.ascent;
-                    offset_y += gl.advance.cy;
-                    offset_x += gl.advance.cx;
-                }
+                auto & seg = _segments[sindex];
+                width += seg.advance.cx;
             }
+
+            size.cx = std::max(size.cx, width);
+            size.cy += ln.ascent + ln.descent;
         }
-        return core::error_ok;
-    }
 
-    std::shared_ptr<SkTextBlob> Shaper::build(uint32_t index)
-    {
-        if (!_builder)
-            _builder = std::make_shared<SkTextBlobBuilder>();
-        auto err = build(*_builder, index);
-        if (err)
-            return nullptr;
-        return std::shared_ptr<SkTextBlob>(_builder->make().release(), skia::skia_unref<SkTextBlob>);
-    }
-
-    std::shared_ptr<SkTextBlob> Shaper::shape(std::string text, const drawing::font & font, core::color32 color, core::si32f & size)
-    {
-        if (!_builder)
-            _builder = std::make_shared<SkTextBlobBuilder>();
-
-        itermize(text, font, color);
-        wrap(std::numeric_limits<float32_t>::max(), wrap_mode::word);
-        size = lineSize(0);
-        return build(0);
-    }
-
-    core::si32f Shaper::lineSize(uint32_t index)
-    {
-        if (_text.empty())
-            return { 0, _fonts[0].fmetrics.height };
-
-        row & row = _rows[index];
-        core::si32f size = { 0, row.ascent + row.descent };
-
-        for (size_t sindex = row.srange.index; sindex < row.srange.end(); ++sindex)
-        {
-            segment & seg = _segments[sindex];
-            item & item = _items[seg.item];
-            size.cx += seg.width;
-        }
+        size.cy += _shaper.fontmetrics(_font_default).leading * (_lines.size() - 1);
         return size;
     }
 
-    void Shaper::setFont(section32 range, const drawing::font & font)
+    std::shared_ptr<SkTextBlob> TextWraper::build()
     {
-        uint16_t index = fontIndex(font);
-        std::fill(_rtf_font_indices.begin() + range.index, _rtf_font_indices.begin() + range.end(), index);
-    }
+        if (_text.empty())
+            return nullptr;
 
-    void Shaper::setColor(section32 range, uint32_t color)
-    {
-        std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
-    }
+        if (!_builder)
+            _builder = std::make_shared<SkTextBlobBuilder>();
 
-    uint16_t Shaper::fontIndex(const drawing::font & font)
-    {
-        uint16_t index = 0;
-        auto iter = _font_indices.find(font);
-        if (iter == _font_indices.end())
+        float32_t offset_y = 0;
+        for(size_t lindex = 0; lindex < _lines.size(); ++lindex)
         {
-            auto skfont = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref<>);
-            auto hbfont = create_hb_font(skfont.get());
-            if(!skfont || !hbfont)
-                throw core::error_not_supported;
+            auto & ln = _lines[lindex];
 
-            _fonts.push_back({ font, skfont, hbfont, drawing::fontmetrics(font) });
-            if (_fonts.size() > 0xfffe)
-                throw core::error_outofbound;
-            index = uint16_t(_fonts.size() - 1);
-            _font_indices[font] = index;
+            for (size_t sindex = 0; sindex < ln.srange.length; ++sindex)
+            {
+                segment & seg = _segments[ln.srange.index + sindex];
+                item & item = _items[seg.iindex];
+                bool ltr = !(item.level & 1);
+
+                auto & font_cache = _shaper.cache(item.font);
+                float32_t offset_x = seg.offset;
+                SkPaint paint;
+                paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
+                paint.setTextSize(font_cache.font.size);
+                paint.setAntiAlias(true);
+                paint.setLCDRenderText(true);
+                paint.setColor(item.color);
+                paint.setAutohinted(true);
+                paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+
+                //SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(paint, seg.grange.length, seg.trange.length, SkString(), nullptr);
+                SkTextBlobBuilder::RunBuffer runBuffer = _builder->allocRunPos(paint, seg.grange.length, nullptr);
+                //memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
+
+                for (size_t cindex = (ltr ? seg.crange.index : seg.crange.end()), iglyph = 0; cindex != (ltr ? seg.crange.end() : seg.crange.index); ltr ? ++cindex : --cindex)
+                {
+                    cluster & cl = _clusters[ltr ? cindex : cindex - 1];
+                    for (size_t gindex = cl.grange.index; gindex != cl.grange.end(); ++gindex, ++iglyph)
+                    {
+                        glyph & gl = _glyphs[gindex];
+
+                        runBuffer.glyphs[iglyph] = gl.gid;
+                        //runBuffer.clusters[iglyph] = glyph.trange.index;
+                        runBuffer.pos[iglyph * 2 + 0] = offset_x + gl.offset.x;
+                        runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + ln.ascent;
+                        offset_x += gl.advance.cx;
+                    }
+                }
+            }
+
+            offset_y += ln.ascent + ln.descent;
+            offset_y += _shaper.fontmetrics(_font_default).leading;
         }
-        else
-            index = iter->second;
-        return index;
+
+        return { _builder->make().release(), skia::skia_unref<SkTextBlob> };
     }
 
-    const glyph & Shaper::findGlyph(size_t index) const
+    const cluster & TextWraper::findCluster(float32_t pos, size_t lindex) const
     {
-        static const glyph empty;
-        if (_glyphs.empty())
-            return empty;
+        auto & row = _lines[lindex];
 
-        index &= cursor_pos_mask;
-        if (index == cursor_pos_mask)
-            return _glyphs.back();
-
-        auto iter = std::lower_bound(_glyphs.begin(), _glyphs.end(), index, [](const glyph & g, size_t value) { return  g.trange.end() <= value; });
-        if (iter == _glyphs.end() || iter->trange.end() <= index)
-            return empty;
-        return *iter;
-    }
-
-    const cluster & Shaper::findCluster(size_t tindex) const
-    {
-        auto iter = std::upper_bound(_clusters.begin(), _clusters.end(), tindex, [](size_t tindex, const cluster & cl) { return  tindex < cl.trange.end(); });
-        if (iter == _clusters.end())
-            return empty_cluster;
-        return *iter;
-    }
-
-    const cluster & Shaper::findCluster(float32_t pos, size_t lindex) const
-    {
-        auto & row = _rows[lindex];
-
-        auto iter_seg = std::upper_bound(_segments.begin() + row.srange.index, _segments.begin() + row.srange.end(), pos, [](float32_t pos, const segment & seg) { return  pos < seg.offset + seg.width; });
-        if (iter_seg == _segments.begin() + row.srange.end() || iter_seg->offset + iter_seg->width <= pos)
-            return empty_cluster;
+        auto iter_seg = std::upper_bound(_segments.begin() + row.srange.index, _segments.begin() + row.srange.end(), pos, [](float32_t pos, const segment & seg) { return  pos < seg.offset + seg.advance.cx; });
+        if (iter_seg == _segments.begin() + row.srange.end())
+            return Shaper::empty_cluster;
 
 
         auto iter = std::upper_bound(_clusters.begin() + iter_seg->crange.index, _clusters.begin() + iter_seg->crange.end(), pos, [](float32_t pos, const cluster & cl) { return  pos < cl.rect.right(); });
         if (iter == _clusters.begin() + iter_seg->crange.end())
-            return empty_cluster;
+            return Shaper::empty_cluster;
         return *iter;
     }
 }

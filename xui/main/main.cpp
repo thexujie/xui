@@ -70,9 +70,9 @@ void xui_main()
 {
     std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
 
-    drawing::Shaper shaper;
+    drawing::TextWraper shaper;
     shaper.itermize(u8"قق ققق ", drawing::font(), colors::Black);
-    shaper.wrap(999999999, drawing::wrap_mode::word);
+    shaper.layout(999999999, drawing::wrap_mode::word);
 
     std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
     auto ss = std::make_shared<ui::component::StyleSheet>();
