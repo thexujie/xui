@@ -269,7 +269,7 @@ namespace ui::controls
         if(!_delay_shaper)
         {
             _delay_shaper = true;
-            invoke([this]() { _doshaper(); _docaret(); });
+            invoke([this]() { _doshaper(); _updateIme(); });
         }
     }
 
@@ -328,7 +328,7 @@ namespace ui::controls
             return;
 
         _text.erase(glyph.trange.index, glyph.trange.length);
-        _cursor_far = true;
+        _cursor_far = glyph.trange.index > 0;
         _cursor_pos = glyph.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
         reshaper(shaper_flag::shaper);
@@ -385,11 +385,6 @@ namespace ui::controls
         }
     }
 
-    void TextLine::_confirmBlob() const
-    {
-
-    }
-
     void TextLine::_doshaper()
     {
         std::lock_guard l(*this);
@@ -407,16 +402,8 @@ namespace ui::controls
             _textblob->setNative(native, _clusterizer->bounds());
         }
 
-        refresh();
-        _delay_shaper_flags.clear();
-    }
-
-    void TextLine::_docaret()
-    {
         if(!_text.empty())
         {
-            std::lock_guard l(*this);
-
             auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
             assert(cluster);
             if (cluster)
@@ -442,7 +429,7 @@ namespace ui::controls
         }
 
         refresh();
-        _updateIme();
+        _delay_shaper_flags.clear();
     }
 
     void TextLine::_setCursorShown(bool vis)

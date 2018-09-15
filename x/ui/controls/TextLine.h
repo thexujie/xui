@@ -50,9 +50,7 @@ namespace ui::controls
 
     private:
         void _updateIme();
-        void _confirmBlob() const;
         void _doshaper();
-        void _docaret();
 
     private:
         void _setCursorShown(bool vis);
