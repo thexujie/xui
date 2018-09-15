@@ -165,7 +165,6 @@ namespace ui::controls
         restyle();
     }
 
-    
     void TextLine::onMouseDown(const input_state & state, ui::mouse_button button)
     {
         Control::onMouseDown(state, button);
