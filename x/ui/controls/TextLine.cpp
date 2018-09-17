@@ -42,6 +42,7 @@ namespace ui::controls
     TextLine::TextLine()
     {
         _accept_input = true;
+        _capture_buttons = mouse_button::left;
         _clusterizer = std::make_shared<drawing::TextClusterizer>();
     }
 
@@ -172,6 +173,26 @@ namespace ui::controls
 
     void TextLine::onMouseMove(const input_state & state)
     {
+        if(state.button(mouse_button::left))
+        {
+            auto cbox = contentBox();
+            float32_t pos = state.pos().x - cbox.x - _scroll_pos;
+            auto & cluster = _clusterizer->findCluster(pos);
+            if (!cluster)
+                return;
+
+            if (_cursor_pos_selected == core::npos)
+                _cursor_pos_selected = _cursor_pos;
+
+            bool cursor_far = (pos >= cluster.rect.centerX()) ^ (cluster.bidi == drawing::bidirection::rtl);
+            if(cursor_far)
+            {
+                _cursor_far = cursor_far;
+                _cursor_pos = _cursor_far ? cluster.trange.end() : cluster.trange.index;
+                _cursor_anim ? _cursor_anim->reset() : nullptr;
+                reshaper(shaper_flag::caret);
+            }
+        }
         Control::onMouseMove(state);
     }
 

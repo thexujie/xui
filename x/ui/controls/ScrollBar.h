@@ -52,8 +52,8 @@ namespace ui::controls
         void onMouseEnter(const input_state & state);
         void onMouseMove(const input_state & state);
         void onMouseLeave(const input_state & state);
-        void onMouseDown(const input_state & state);
-        void onMouseUp(const input_state & state);
+        void onMouseDown(const input_state & state, mouse_button button);
+        void onMouseUp(const input_state & state, mouse_button button);
         void onMouseWheel(const input_state & state);
 
     public:

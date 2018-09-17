@@ -102,6 +102,7 @@ namespace ui
         right = 0x0004,
         mask = 0x00ff,
     };
+    typedef core::bitflag<mouse_button> mouse_buttons;
 
     
     /**
@@ -346,8 +347,9 @@ namespace ui
         void setPos(const core::pt32f & pos) { _pos = pos; }
         const core::pt32f & pos() const { return _pos; }
 
-        void setButton(mouse_button button, bool active) { active ? (_buttons |= button) : (_buttons &= ~button); }
-        mouse_button buttons() const { return _buttons; }
+        void setButton(mouse_button button, bool active) { _buttons.set(button, active); }
+        mouse_buttons buttons() const { return _buttons; }
+        bool button(mouse_button button) const { return _buttons.any(button); }
 
         void setWheelLines(int32_t lines) { _wheel_lines = lines; }
         int32_t wheelLines() const { return _wheel_lines; }
@@ -358,7 +360,7 @@ namespace ui
 
     private:
         core::pt32f _pos;
-        mouse_button _buttons = mouse_button::none;
+        mouse_buttons _buttons = mouse_button::none;
         int32_t _wheel_lines = 0;
         std::bitset<0xff> _keys;
     };

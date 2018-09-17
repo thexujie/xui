@@ -116,22 +116,24 @@ namespace ui::controls
     void ScrollBar::onMouseEnter(const input_state & state)
     {
         _updateMouse(state);
+        Control::onMouseEnter(state);
     }
 
     void ScrollBar::onMouseMove(const input_state & state)
     {
         _updateMouse(state);
+        Control::onMouseMove(state);
     }
 
     void ScrollBar::onMouseLeave(const input_state & state)
     {
         _bar_drag_start_vallue = 0.0f;
-        _bar_drag_mouse_pos = {std::nanf("0")};
+        _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };
         _updateBarState(false, false);
+        Control::onMouseLeave(state);
     }
 
-    
-    void ScrollBar::onMouseDown(const input_state & state)
+    void ScrollBar::onMouseDown(const input_state & state, mouse_button button)
     {
         if(_bar_hover)
         {
@@ -139,9 +141,10 @@ namespace ui::controls
             _bar_drag_mouse_pos = state.pos();
             _updateBarState(true, true);
         }
+        Control::onMouseDown(state, button);
     }
 
-    void ScrollBar::onMouseUp(const input_state & state)
+    void ScrollBar::onMouseUp(const input_state & state, mouse_button button)
     {
         if (_bar_active)
         {
@@ -150,12 +153,14 @@ namespace ui::controls
             _updateBarState(true, false);
             _updateMouse(state);
         }
+        Control::onMouseUp(state, button);
     }
 
     void ScrollBar::onMouseWheel(const input_state & state)
     {
         float32_t val = _val - lineValue() * state.wheelLines();
         setValue(std::clamp(val, _min, _max));
+        Control::onMouseWheel(state);
     }
 
     void ScrollBar::onSizeChanged(const core::si32f & from, const core::si32f & to)

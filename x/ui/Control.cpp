@@ -420,12 +420,18 @@ namespace ui
         refresh();
         posChanged(from, to);
     }
+
     void Control::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        refresh();
         sizeChanged(from, to);
     }
-    void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to) { rectChanged(from, to); }
+
+    void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to)
+    {
+        refresh(from);
+        refresh(to);
+        rectChanged(from, to);
+    }
 
     void Control::onVisibleChanged(bool vis)
     {

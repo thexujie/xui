@@ -169,7 +169,7 @@ void xui_main()
         auto tln = std::make_shared<ui::controls::TextLine>();
         tln->setFont({"", font.size * 2});
         tln->setText(rtft);
-        tln->setSize({ 100_per, 3_em });
+        tln->setSize({ 100_per, auto_value });
         tln->setImeMode(ui::ime_mode::on);
         layer->addControl(tln);
 
@@ -178,7 +178,7 @@ void xui_main()
     {
         auto tln = std::make_shared<ui::controls::TextLine>();
         tln->setText(rtft);
-        tln->setSize({ 100_per, 2_em });
+        tln->setSize({ 100_per, auto_value });
         layer->addControl(tln);
 
         form->addControl(layer);
