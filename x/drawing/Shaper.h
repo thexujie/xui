@@ -207,6 +207,12 @@ namespace drawing
         invalid = hb_make_tag(0, 0, 0, 0),
     };
 
+    enum class bidirection
+    {
+        ltr = 0,
+        rtl,
+    };
+
     struct item
     {
         uint16_t iindex = 0;
@@ -216,6 +222,7 @@ namespace drawing
         // hb_script_t
         hb_script script = hb_script::invalid;
         uint8_t level = 0;
+        bidirection bidi = bidirection::ltr;
         uint16_t font = 0;
         uint32_t color = 0;
         core::vec2f advance;
@@ -232,6 +239,8 @@ namespace drawing
         uint16_t sindex = 0;
 
         section32 trange;
+
+        bidirection bidi = bidirection::ltr;
         uint16_t gid = 0;
         core::vec2f advance;
         core::vec2f offset;
@@ -253,7 +262,8 @@ namespace drawing
         section32 grange;
         core::vec2f advance;
         core::vec4f rect;
-        bool rtl = false;
+        bidirection bidi = bidirection::ltr;
+
         operator bool() const { return trange.length > 0; }
 #ifdef _DEBUG
         std::string _text;
@@ -270,6 +280,7 @@ namespace drawing
         section32 crange;
         core::vec2f advance;
 
+        bidirection bidi = bidirection::ltr;
         float32_t offset = 0;
 #ifdef _DEBUG
         std::string _text;
@@ -363,6 +374,8 @@ namespace drawing
         const cluster & clusterAt(size_t cindex) const { if (cindex >= _clusters.size()) return Shaper::empty_cluster; return _clusters.at(cindex); }
         const cluster & findCluster(size_t tindex) const;
         const cluster & findCluster(float32_t pos) const;
+
+        std::tuple < size_t, core::rc32f> textRect(size_t toffset, size_t tlength);
 
     protected:
         Shaper & _shaper = Shaper::instance();

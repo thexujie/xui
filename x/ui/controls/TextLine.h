@@ -51,6 +51,7 @@ namespace ui::controls
     private:
         void _updateIme();
         void _doshaper();
+        void _docaret();
 
     private:
         void _setCursorShown(bool vis);
@@ -73,5 +74,6 @@ namespace ui::controls
         bool _cursor_far = false;
 
         float32_t _scroll_pos = 0;
+        size_t _cursor_pos_selected = core::npos;
     };
 }

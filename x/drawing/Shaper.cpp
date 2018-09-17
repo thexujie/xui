@@ -83,8 +83,14 @@ static inline size_t utf8_to_utf32(const char * text, size_t size, char32_t & ch
     return curr - start;
 }
 
+
 namespace drawing
 {
+    static inline bidirection level_to_bidi(UBiDiLevel level)
+    {
+        return (level & 1) ? bidirection::rtl : bidirection::ltr;
+    }
+
     struct glyph_iterator
     {
         std::vector<glyph>  & glyphs;
@@ -237,19 +243,19 @@ namespace drawing
 
         std::u16string u16str = core::u8str_u16str(_text);
 
-        std::unique_ptr<UBiDi, decltype(&ubidi_close)> bidi(ubidi_openSized((int32_t)u16str.length(), 0, &status), &ubidi_close);
+        std::unique_ptr<UBiDi, decltype(&ubidi_close)> ubidi(ubidi_openSized((int32_t)u16str.length(), 0, &status), &ubidi_close);
         if (U_FAILURE(status))
         {
             core::logger::war() << __FUNCTIONW__ L" ubidi_openSized failed, " << status << ": " << u_errorName(status);
             return core::error_inner;
         }
-        assert(bidi);
-        if (!bidi)
+        assert(ubidi);
+        if (!ubidi)
             return core::error_outofmemory;
 
         // The required lifetime of utf16 isn't well documented.
         // It appears it isn't used after ubidi_setPara except through ubidi_getText.
-        ubidi_setPara(bidi.get(), u16str.c_str(), (int32_t)u16str.length(), _defaultBidiLevel, nullptr, &status);
+        ubidi_setPara(ubidi.get(), u16str.c_str(), (int32_t)u16str.length(), _defaultBidiLevel, nullptr, &status);
         if (U_FAILURE(status))
         {
             //SkDebugf("Bidi error: %s", u_errorName(status));
@@ -311,7 +317,7 @@ namespace drawing
             for (size_t iutf16 = 0; iutf16 < nutf16; ++iutf16)
                 utf16_ranges.push_back({ (uint32_t)utf8_pos, (uint32_t)nutf8 });
 
-            UBiDiLevel level = ubidi_getLevelAt(bidi.get(), (int32_t)utf16_pos);
+            UBiDiLevel level = ubidi_getLevelAt(ubidi.get(), (int32_t)utf16_pos);
             hb_script script = (hb_script)hb_unicode_script(hb_unicode, cp_utf8);
             uint16_t font_index = _rtf_font_indices[utf8_pos];
             uint32_t color = _rtf_colors[utf8_pos];
@@ -339,6 +345,13 @@ namespace drawing
                 if (tf)
                 {
                     drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
+                    fontmetrics fmetrics_fb(font_fb);
+                    fontmetrics fmetrics(font_cache.font);
+                    if(fmetrics_fb.ascent - fmetrics.ascent > 0.49f || fmetrics_fb.descent - fmetrics.descent > 0.49f)
+                    {
+                        float32_t rate = std::min(fmetrics.ascent / fmetrics_fb.ascent, fmetrics.descent / fmetrics_fb.descent);
+                        font_fb = drawing::skia::to(*tf, font_cache.font.size * rate);
+                    }
                     uint16_t font_index_fb = _shaper.indexFont(font_fb);
                     font_index_fb_last = font_index_fb;
                     font_index = font_index_fb;
@@ -379,6 +392,7 @@ namespace drawing
                 it.trange.index = (uint32_t)utf8_pos;
                 it.script = script;
                 it.level = level;
+                it.bidi = level_to_bidi(level);
                 it.font = font_index;
                 it.color = color;
                 _items.push_back(it);
@@ -412,7 +426,7 @@ namespace drawing
             auto & hbfont = _shaper.hbfont(item.font);
 
             hb_buffer_set_script(_hbbuffer.get(), hb_script_t(item.script));
-            hb_buffer_set_direction(_hbbuffer.get(), (item.level & 1) ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+            hb_buffer_set_direction(_hbbuffer.get(), (item.bidi == bidirection::rtl) ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
             // TODO: language
             hb_buffer_guess_segment_properties(_hbbuffer.get());
 
@@ -421,7 +435,7 @@ namespace drawing
             if (!gcount)
                 continue;
 
-            if (item.level & 1)
+            if (item.bidi == bidirection::rtl)
             {
                 // Put the clusters back in logical order.
                 // Note that the advances remain ltr.
@@ -482,7 +496,7 @@ namespace drawing
                             cl.iindex = item.iindex;
                             cl.grange.index = glyph.gindex;
                             cl.trange.index = glyph.trange.index;
-                            cl.rtl = !!(item.level & 1);
+                            cl.bidi = item.bidi;
                             _clusters.push_back(cl);
                             ++ccount;
                         }
@@ -539,6 +553,7 @@ namespace drawing
             seg.lindex = 0;
             seg.trange = it.trange;
             seg.crange = it.crange;
+            seg.bidi = it.bidi;
             seg.advance = it.advance;
             _segments.push_back(seg);
 
@@ -678,11 +693,58 @@ namespace drawing
         if (iter_seg == _segments.end())
             return Shaper::empty_cluster;
 
+        if(iter_seg->bidi == bidirection::rtl)
+        {
+            auto iter = std::upper_bound(_clusters.begin() + iter_seg->crange.index, _clusters.begin() + iter_seg->crange.end(), pos, [](float32_t pos, const cluster & cl) { return  pos >= cl.rect.x; });
+            if (iter == _clusters.begin() + iter_seg->crange.end())
+                return Shaper::empty_cluster;
+            return *iter;
+        }
+        else
+        {
+            auto iter = std::upper_bound(_clusters.begin() + iter_seg->crange.index, _clusters.begin() + iter_seg->crange.end(), pos, [](float32_t pos, const cluster & cl) { return  pos < cl.rect.right(); });
+            if (iter == _clusters.begin() + iter_seg->crange.end())
+                return Shaper::empty_cluster;
+            return *iter;
+        }
+    }
 
-        auto iter = std::upper_bound(_clusters.begin() + iter_seg->crange.index, _clusters.begin() + iter_seg->crange.end(), pos, [](float32_t pos, const cluster & cl) { return  pos < cl.rect.right(); });
-        if (iter == _clusters.begin() + iter_seg->crange.end())
-            return Shaper::empty_cluster;
-        return *iter;
+    std::tuple<size_t, core::rc32f> TextClusterizer::textRect(size_t toffset, size_t tlength)
+    {
+        if(!tlength)
+            return { core::npos, {} };
+
+        auto & cluster_header = findCluster(toffset);
+        if (!cluster_header)
+            return { core::npos, {} };
+
+        auto & cluster_tailer = findCluster(toffset + tlength - 1);
+        if (!cluster_tailer)
+            return { core::npos, {} };
+
+        auto & seg_first = _segments[cluster_header.sindex];
+        auto & seg_last = _segments[cluster_tailer.sindex];
+
+        if(seg_first.bidi == bidirection::ltr)
+        {
+            if (seg_first.sindex == seg_last.sindex)
+                return { core::npos, { cluster_header.rect.x, 0, cluster_tailer.rect.right() - cluster_header.rect.x, _ascent + _descent } };
+            else
+            {
+                auto & cluster_last = _clusters[seg_first.crange.end() - 1];
+                return { seg_first.trange.end(), { cluster_header.rect.x, 0, cluster_last.rect.right() - cluster_header.rect.x, _ascent + _descent } };
+            }
+        }
+        else
+        {
+            if (seg_first.sindex == seg_last.sindex)
+                return { core::npos, { cluster_tailer.rect.x, 0, cluster_header.rect.right() - cluster_tailer.rect.x, _ascent + _descent } };
+            else
+            {
+                auto & cluster_last = _clusters[seg_first.crange.end() - 1];
+                return { seg_first.trange.end(), { cluster_last.rect.x, 0, cluster_header.rect.right() - cluster_last.rect.x, _ascent + _descent } };
+            }
+        }
     }
 
     core::error TextWraper::layout(float32_t end, wrap_mode mode)

@@ -69,7 +69,7 @@ namespace ui::controls
 
     core::si32f TextLine::contentSize() const
     {
-        return _textblob ? _textblob->size() : core::si32f();
+        return { 0.0f, drawing::fontmetrics(font()).height };
     }
 
     std::string TextLine::styleName() const
@@ -89,6 +89,22 @@ namespace ui::controls
         _renderBackground(graphics);
         graphics.save();
         graphics.setClipRect(cbox);
+
+
+        if(_cursor_pos_selected != core::npos)
+        {
+            size_t off = std::min(_cursor_pos, _cursor_pos_selected);
+            size_t end = std::max(_cursor_pos, _cursor_pos_selected);
+            core::rc32f rect;
+            do
+            {
+               std::tie(off, rect) = _clusterizer->textRect(off, end - off);
+                if(!rect.empty())
+                    graphics.drawRectangle({ cbox.leftTop() + rect.leftTop(), rect.size}, drawing::PathStyle().fill(0x800000ff));
+            }
+            while (off != core::npos);
+        }
+
         if (_textblob)
             graphics.drawTextBlob(*_textblob, contentBox().leftTop().offseted(_scroll_pos, 0));
         graphics.restore();
@@ -127,7 +143,7 @@ namespace ui::controls
                 auto & cluster = _clusterizer->findCluster(cursor_tindex);
                 if (cluster)
                 {
-                    if(cluster.rtl)
+                    if(cluster.bidi == drawing::bidirection::rtl)
                         cursor_left = !cursor_left;
                     core::rc32f rect = cluster.rect;
                     rect.offset(cbox.leftTop()).offset(_scroll_pos, 0);
@@ -171,13 +187,21 @@ namespace ui::controls
         auto cbox = contentBox();
         float32_t pos = state.pos().x - cbox.x - _scroll_pos;
         auto & cluster = _clusterizer->findCluster(pos);
-        if(cluster)
+        if (!cluster)
+            return;
+
+        if(state.key(ui::keycode::shift))
         {
-            _cursor_far = pos >= cluster.rect.centerX();
-            _cursor_pos = _cursor_far ? cluster.trange.end() : cluster.trange.index;
-            _cursor_anim ? _cursor_anim->reset() : nullptr;
-            reshaper(shaper_flag::caret);
+            if (_cursor_pos_selected == core::npos)
+                _cursor_pos_selected = _cursor_pos;
         }
+        else
+            _cursor_pos_selected = core::npos;
+
+        _cursor_far = (pos >= cluster.rect.centerX()) ^ (cluster.bidi == drawing::bidirection::rtl);
+        _cursor_pos = _cursor_far ? cluster.trange.end() : cluster.trange.index;
+        _cursor_anim ? _cursor_anim->reset() : nullptr;
+        reshaper(shaper_flag::caret);
         restyle();
     }
 
@@ -193,9 +217,23 @@ namespace ui::controls
         switch(key)
         {
         case keycode::left:
+            if (state.key(ui::keycode::shift))
+            {
+                if (_cursor_pos_selected == core::npos)
+                    _cursor_pos_selected = _cursor_pos;
+            }
+            else
+                _cursor_pos_selected = core::npos;
             caretLeft();
             break;
         case keycode::right:
+            if (state.key(ui::keycode::shift))
+            {
+                if (_cursor_pos_selected == core::npos)
+                    _cursor_pos_selected = _cursor_pos;
+            }
+            else
+                _cursor_pos_selected = core::npos;
             caretRight();
             break;
         case keycode::backspace:
@@ -401,7 +439,7 @@ namespace ui::controls
             _textblob->setNative(native, _clusterizer->bounds());
         }
 
-        if(!_text.empty())
+        if (!_text.empty())
         {
             auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
             assert(cluster);
@@ -429,6 +467,37 @@ namespace ui::controls
 
         refresh();
         _delay_shaper_flags.clear();
+    }
+
+    void TextLine::_docaret()
+    {
+        if (!_text.empty())
+        {
+            auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+            assert(cluster);
+            if (cluster)
+            {
+                auto cbox = contentBox();
+                float32_t scroll_pos = _scroll_pos;
+                if (_scroll_pos + cluster.rect.x < 0)
+                    scroll_pos = -cluster.rect.x;
+                else if (_scroll_pos + cluster.rect.right() >= cbox.width)
+                    scroll_pos = cbox.cx - cluster.rect.right();
+                else {}
+
+                auto size = _clusterizer->bounds();
+                if (_scroll_pos + size.cx < cbox.width)
+                {
+                    float32_t scroll_max = cbox.width - size.cx;
+                    if (scroll_max > 0)
+                        scroll_max = 0;
+                    scroll_pos = std::clamp(scroll_pos, scroll_max, 0.0f);
+                }
+                _scroll_pos = scroll_pos;
+            }
+        }
+
+        refresh();
     }
 
     void TextLine::_setCursorShown(bool vis)
