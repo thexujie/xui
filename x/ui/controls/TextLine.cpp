@@ -173,25 +173,30 @@ namespace ui::controls
 
     void TextLine::onMouseMove(const input_state & state)
     {
-        if(state.button(mouse_button::left))
+        while (state.button(mouse_button::left))
         {
             auto cbox = contentBox();
             float32_t pos = state.pos().x - cbox.x - _scroll_pos;
             auto & cluster = _clusterizer->findCluster(pos);
             if (!cluster)
-                return;
+                break;
+
+            size_t cursor_pos = ((pos >= cluster.rect.centerX()) ^ (cluster.bidi == drawing::bidirection::rtl)) ? cluster.trange.end() : cluster.trange.index;
+            if (cursor_pos == _cursor_pos)
+                break;
 
             if (_cursor_pos_selected == core::npos)
                 _cursor_pos_selected = _cursor_pos;
 
-            bool cursor_far = (pos >= cluster.rect.centerX()) ^ (cluster.bidi == drawing::bidirection::rtl);
-            if(cursor_far)
+            bool cursor_far = cursor_pos > _cursor_pos;
+            if ((cursor_far ^ (cluster.bidi == drawing::bidirection::rtl)) ^ (pos < cluster.rect.centerX()))
             {
-                _cursor_far = cursor_far;
+                _cursor_far = cursor_far; 
                 _cursor_pos = _cursor_far ? cluster.trange.end() : cluster.trange.index;
                 _cursor_anim ? _cursor_anim->reset() : nullptr;
                 reshaper(shaper_flag::caret);
             }
+            break;
         }
         Control::onMouseMove(state);
     }
