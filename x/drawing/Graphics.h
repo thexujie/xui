@@ -74,10 +74,12 @@ namespace drawing
     public:
         void clear(core::color32 color);
         void save();
+        void saveLayer(const core::rc32f & bounds, uint8_t alpha);
         void restore();
         void setClipRect(const core::rc32f & rect, bool aa = true);
         void setClipPath(const drawing::Path & path, bool aa = true);
         void setMatrix(const core::float3x2 & matrix);
+        void setColorFilter(std::shared_ptr<ColorFilter> colorFilter);
 
         void drawLine(core::pt32f start, core::pt32f end, const PathStyle & style);
 
@@ -117,9 +119,14 @@ namespace drawing
         const SkCanvas * native_ptr() const { return _native.get(); }
 
     private:
+        void apply(SkPaint & paint) const;
+
+    private:
         std::shared_ptr<Bitmap> _pixmap;
         std::shared_ptr<SkCanvas> _native;
         std::shared_ptr<SkTextBlobBuilder> _blobBuilder;
         drawcall_statistics _statistics;
+
+        std::shared_ptr<ColorFilter> _colorFilter;
     };
 }

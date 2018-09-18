@@ -83,14 +83,13 @@ namespace ui::controls
             return "textbox";
     }
 
-    void TextLine::render(drawing::Graphics & graphics, const drawing::Region & region) const
+    void TextLine::draw(drawing::Graphics & graphics, const drawing::Region & region) const
     {
         auto cbox = contentBox();
         std::lock_guard l(*this);
-        _renderBackground(graphics);
+        _drawBackground(graphics);
         graphics.save();
         graphics.setClipRect(cbox);
-
 
         if(_cursor_pos_selected != core::npos)
         {
@@ -156,7 +155,7 @@ namespace ui::controls
                 }
             }
         }
-        _renderBorder(graphics);
+        _drawBorder(graphics);
     }
 
     void TextLine::onSizeChanged(const core::si32f & from, const core::si32f & to)

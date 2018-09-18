@@ -409,10 +409,20 @@ namespace ui
         return num;
     }
 
-    void Control::render(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Control::ondraw(drawing::Graphics & graphics, const drawing::Region & region) const
     {
-        _renderBackground(graphics);
-        _renderBorder(graphics);
+        uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
+        if (a != 0xff)
+            graphics.saveLayer(box(), a);
+        draw(graphics, region);
+        if (a != 0xff)
+            graphics.restore();
+    }
+
+    void Control::draw(drawing::Graphics & graphics, const drawing::Region & region) const
+    {
+        _drawBackground(graphics);
+        _drawBorder(graphics);
     }
 
     void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to)
@@ -437,7 +447,7 @@ namespace ui
     {
     }
 
-    void Control::_renderBackground(drawing::Graphics & graphics) const
+    void Control::_drawBackground(drawing::Graphics & graphics) const
     {
         if (!_background_color.available())
             return;
@@ -445,7 +455,7 @@ namespace ui
         graphics.drawRectangle(box(_background_box), drawing::PathStyle().fill(_background_color));
     }
 
-    void Control::_renderBorder(drawing::Graphics & graphics) const
+    void Control::_drawBorder(drawing::Graphics & graphics) const
     {
         if (_border && _border_colors)
         {

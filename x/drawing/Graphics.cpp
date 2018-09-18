@@ -8,6 +8,7 @@
 #include <SkDashPathEffect.h>
 #include <SkDiscretePathEffect.h>
 #include <Sk2DPathEffect.h>
+#include <SkColorFilter.h>
 
 namespace drawing
 {
@@ -33,8 +34,17 @@ namespace drawing
         ++_statistics.save;
         if (!_native)
             return;
-
         _native->save();
+    }
+
+    void Graphics::saveLayer(const core::rc32f & bounds, uint8_t alpha)
+    {
+        ++_statistics.save;
+        if (!_native)
+            return;
+
+        auto b = skia::from(bounds);
+        _native->saveLayerAlpha(&b, alpha);
     }
 
     void Graphics::restore()
@@ -73,6 +83,11 @@ namespace drawing
         _native->setMatrix(skia::from(matrix));
     }
 
+    void Graphics::setColorFilter(std::shared_ptr<ColorFilter> colorFilter)
+    {
+        _colorFilter = colorFilter;
+    }
+
     void Graphics::drawLine(core::pt32f start, core::pt32f end, const PathStyle & style)
     {
         ++_statistics.drawLine;
@@ -81,6 +96,7 @@ namespace drawing
 
         SkPaint paint;
         style.apply(paint);
+        apply(paint);
         _native->drawLine({ start.x, start.y }, { end.x, end.y }, paint);
     }
 
@@ -92,6 +108,7 @@ namespace drawing
 
         SkPaint paint;
         style.apply(paint);
+        apply(paint);
         _native->drawOval(skia::from(ellipse), paint);
     }
 
@@ -103,6 +120,7 @@ namespace drawing
 
         SkPaint paint;
         style.apply(paint);
+        apply(paint);
         _native->drawRect(skia::from(rect), paint);
     }
 
@@ -114,6 +132,7 @@ namespace drawing
 
         SkPaint paint;
         style.apply(paint);
+        apply(paint);
         _native->drawRoundRect(skia::from(rect), rx, ry, paint);
     }
 
@@ -141,6 +160,7 @@ namespace drawing
             paint.setAntiAlias(true);
         }
         style.apply(paint);
+        apply(paint);
         _native->drawPath(path->native(), paint);
     }
 
@@ -152,6 +172,7 @@ namespace drawing
 
         SkPaint paint;
         format.apply(paint);
+        apply(paint);
         TextClusterizer shaper;
         shaper.itermize(str, format._font, format._color);
         shaper.layout();
@@ -181,6 +202,7 @@ namespace drawing
 
         SkPaint paint;
         format.apply(paint);
+        apply(paint);
 
         TextClusterizer shaper;
         shaper.itermize(str, format._font, format._color);
@@ -213,6 +235,7 @@ namespace drawing
             return;
 
         SkPaint paint;
+        apply(paint);
 
         _native->drawTextBlob(blob.native_ptr(), point.x, point.y, paint);
     }
@@ -236,7 +259,9 @@ namespace drawing
             point.y -= size.cy / 2;
         else {}
 
-        _native->drawImage(&image.native(), point.x, point.y, nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::aligns align)
@@ -261,7 +286,9 @@ namespace drawing
         else
             point.y = rect.y;
 
-        _native->drawImage(&image.native(), point.x, point.y, nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32i region, core::aligns align)
@@ -282,7 +309,9 @@ namespace drawing
             point.y = point.y - region.cy / 2;
         else {}
 
-        _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, float32_t(region.x), float32_t(region.y)), nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, float32_t(region.x), float32_t(region.y)), &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, core::aligns align)
@@ -303,7 +332,9 @@ namespace drawing
             point.y = point.y - region.cy / 2;
         else {}
 
-        _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region, core::aligns align)
@@ -327,7 +358,9 @@ namespace drawing
         else
             point.y = rect.y;
 
-        _native->drawImage(&image.native(), point.x, point.y, nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region, core::aligns align)
@@ -351,7 +384,9 @@ namespace drawing
         else
             point.y = rect.y;
 
-        _native->drawImage(&image.native(), point.x, point.y, nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::pt32f point)
@@ -360,7 +395,9 @@ namespace drawing
         if (!_native)
             return;
 
-        _native->drawImage(&image.native(), point.x, point.y, nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::rc32f rect)
@@ -369,7 +406,9 @@ namespace drawing
         if (!_native)
             return;
 
-        _native->drawImageRect(&image.native(), skia::from(rect), nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImageRect(&image.native(), skia::from(rect), &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region)
@@ -378,7 +417,9 @@ namespace drawing
         if (!_native)
             return;
 
-        _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), &paint);
     }
 
     void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region)
@@ -387,7 +428,9 @@ namespace drawing
         if (!_native)
             return;
 
-        _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), nullptr);
+        SkPaint paint;
+        apply(paint);
+        _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), &paint);
     }
 
     void Graphics::fillPath(path_source & path, core::color32 color)
@@ -396,6 +439,8 @@ namespace drawing
         if (!_native)
             return;
 
+        SkPaint paint;
+        apply(paint);
         //_native->fillPath(path, color);
     }
 
@@ -413,5 +458,11 @@ namespace drawing
             return {};
 
         //return _native->MeasureString(str, font);
+    }
+
+    void Graphics::apply(SkPaint & paint) const
+    {
+        if (_colorFilter)
+            paint.setColorFilter(sk_ref_sp(_colorFilter->native_ptr()));
     }
 }

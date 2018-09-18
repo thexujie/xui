@@ -39,7 +39,7 @@ namespace ui
         void update() override;
         int32_t animate() override;
 
-        void render(drawing::Graphics & graphics, const drawing::Region & region) const override;
+        void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const override;
         std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const override;
 
         void onPosChanged(const core::pt32f & from, const core::pt32f & to) override;

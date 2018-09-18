@@ -94,6 +94,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\utils.cpp" />
+    <ClCompile Include="drawing\ColorFilter.cpp" />
     <ClCompile Include="drawing\drawing.cpp" />
     <ClCompile Include="drawing\Shaper.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -168,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\block_ptr.h" />
+    <ClInclude Include="drawing\ColorFilter.h" />
     <ClInclude Include="drawing\draw.h" />
     <ClInclude Include="drawing\drawing.h" />
     <ClInclude Include="drawing\Shaper.h" />

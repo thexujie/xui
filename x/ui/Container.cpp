@@ -279,17 +279,22 @@ namespace ui
         return num;
     }
 
-    void Container::render(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Container::ondraw(drawing::Graphics & graphics, const drawing::Region & region) const
     {
-        std::lock_guard lock(*this);
-        _renderBackground(graphics);
+        uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
+        std::lock_guard lock(*this);        
+        if (a != 0xff)
+            graphics.saveLayer(box(), a);
+        _drawBackground(graphics);
         for (auto & iter : _controls)
         {
             auto rect = iter.second->realRect();
             if(region.intersects(rect.ceil<int32_t>()))
-                iter.second->render(graphics, region);
+                iter.second->ondraw(graphics, region);
         }
-        _renderBorder(graphics);
+        _drawBorder(graphics);
+        if (a != 0xff)
+            graphics.restore();
     }
 
     std::shared_ptr<Control> Container::findChild(const core::pt32f & pos, std::shared_ptr<Control> last) const

@@ -85,6 +85,7 @@ void xui_main()
 
     auto buttons = std::make_shared<ui::Container>();
     {
+        //buttons->setAlpha(0.5f);
         buttons->setLayoutDirection(core::align::top);
         for (int cnt = 0; cnt < 100; ++cnt)
         {

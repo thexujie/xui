@@ -8,6 +8,24 @@ class SkTextBlobBuilder;
 
 namespace drawing
 {
+    enum class blend_mode
+    {
+        clear,
+        src,
+        dst,
+        src_over,
+        dst_over,
+        src_in,
+        dst_in,
+        src_out,
+        dst_out,
+        src_atop,
+        dst_atop,
+        xor,
+        plus,
+        overlay,
+    };
+
     enum class wrap_mode
     {
         none = 0,

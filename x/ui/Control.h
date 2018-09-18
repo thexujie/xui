@@ -408,6 +408,9 @@ namespace ui
         void setZValue(int32_t zvalue) { _zvalue = zvalue; }
         int32_t ZValue() const { return _zvalue; }
 
+        void setAlpha(float32_t alpha) { _alpha = alpha; }
+        int32_t alpha() const { return _alpha; }
+
         void setLayoutOrigin(layout_origin origin) { _layout_origin = origin; }
         layout_origin layoutOrigin() const { return _layout_origin; }
 
@@ -623,7 +626,8 @@ namespace ui
 
         virtual int32_t animate();
 
-        virtual void render(drawing::Graphics & graphics, const drawing::Region & region) const;
+        virtual void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const;
+        virtual void draw(drawing::Graphics & graphics, const drawing::Region & region) const;
 
         virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const { return nullptr; }
 
@@ -640,8 +644,8 @@ namespace ui
         core::event<void(bool vis)> visibleChanged;
 
     protected:
-        void _renderBackground(drawing::Graphics & graphics) const;
-        void _renderBorder(drawing::Graphics & graphics) const;
+        void _drawBackground(drawing::Graphics & graphics) const;
+        void _drawBorder(drawing::Graphics & graphics) const;
         void _adjustSizeMinMax(core::si32f & size) const;
 
     protected:
@@ -686,6 +690,7 @@ namespace ui
         core::pt32f _location;
         core::rc32f _rect;
 
+        float32_t _alpha = 1.0f;
 
         // true if need update
         bool _delay_update = false;

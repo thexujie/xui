@@ -19,7 +19,7 @@ namespace ui::controls
         core::si32f contentSize() const override;
         std::string styleName() const override;
 
-        void render(drawing::Graphics & graphics, const drawing::Region & region) const override;
+        void draw(drawing::Graphics & graphics, const drawing::Region & region) const override;
     public:
         void onMouseEnter(const input_state & state);
         void onMouseMove(const input_state & state);

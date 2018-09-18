@@ -194,7 +194,7 @@ namespace ui
             auto c = control();
             if (!c)
                 continue;
-            c->render(graphics, invalid_region);
+            c->ondraw(graphics, invalid_region);
 
             //fps.acc(1);
             //auto cost = core::datetime::high_resolution_s() - tms;

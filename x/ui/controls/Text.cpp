@@ -25,13 +25,13 @@ namespace ui::controls
         return _textBlob ? _textBlob->size() : core::si32f();
     }
 
-    void Text::render(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Text::draw(drawing::Graphics & graphics, const drawing::Region & region) const
     {
         std::lock_guard l(*this);
-        _renderBackground(graphics);
+        _drawBackground(graphics);
         if (_textBlob)
             graphics.drawTextBlob(*_textBlob, contentBox().leftTop());
-        _renderBorder(graphics);
+        _drawBorder(graphics);
     }
 
     void Text::_confirmBlob() const

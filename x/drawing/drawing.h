@@ -14,4 +14,5 @@
 #include "drawing/Image.h"
 #include "drawing/Path.h"
 #include "drawing/Region.h"
+#include "drawing/ColorFilter.h"
 #include "drawing/Graphics.h"
