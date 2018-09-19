@@ -41,8 +41,10 @@ namespace win32
         scene->rendered += std::weak_bind(&Window::onSceneRendered, share_ref<Window>(), std::placeholders::_1);
         scene->rendered2 += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
         scene->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
-        if(_imecontext)
-            scene->setImeContext(_imecontext);
+        if (_ime_context)
+            scene->setImeContext(_ime_context);
+        if (_cursor_context)
+            scene->setCursorContext(_cursor_context);
         return core::error_ok;
     }
 
@@ -66,11 +68,15 @@ namespace win32
         SetPropW(hwnd, WINDOW_PROP_OLD_WNDPROC, (HANDLE)pfnWndProcOld);
         _handle = handle;
 
-        _imecontext = std::make_shared<win32::ImeContext>(handle);
+        _ime_context = std::make_shared<win32::ImeContext>(handle);
+        _cursor_context = std::make_shared<win32::CursorContext>(handle);
         if (auto f = form())
         {
             if(auto s =  f->scene())
-                s->setImeContext(_imecontext);
+            {
+                s->setImeContext(_ime_context);
+                s->setCursorContext(_cursor_context);
+            }
         }
 
         return core::error_ok;
@@ -91,8 +97,8 @@ namespace win32
         RemovePropW(hwnd, WINDOW_PROP_THIS_PTR);
         RemovePropW(hwnd, WINDOW_PROP_DLG_RESULT);
         RemovePropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
-        _imecontext->release();
-        _imecontext.reset();
+        _ime_context->release();
+        _ime_context.reset();
     }
 
     void Window::move(const core::pt32f & pos)
@@ -236,7 +242,7 @@ namespace win32
             wcex.cbWndExtra = 0;
             wcex.hInstance = hInstance;
             wcex.hIcon = NULL;
-            wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+            wcex.hCursor = /*::LoadCursor(NULL, IDC_ARROW)*/NULL;
             wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND + 1);
             wcex.lpszMenuName = NULL;
             wcex.lpszClassName = WINDOW_CLASS_NAME;
@@ -549,6 +555,8 @@ namespace win32
         _mouse_state.setButton(ui::mouse_button::mask, false);
         _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
+        if(_cursor_context)
+            _cursor_context->reset();
         return 0;
     }
 
@@ -691,7 +699,6 @@ namespace win32
             switch (uiMessage)
             {
             case WM_PAINT:
-                if (true)
                 {
                     PAINTSTRUCT ps;
                     HDC hdc = ::BeginPaint(hWnd, &ps);

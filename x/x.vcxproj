@@ -247,6 +247,7 @@
     <ClInclude Include="drawing\TextBlob.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui\Scene.h" />
+    <ClInclude Include="ui\UICommon.h" />
     <ClInclude Include="win32\ImeContext.h" />
     <ClInclude Include="win32\win32.h" />
     <ClInclude Include="win32\Window.h" />

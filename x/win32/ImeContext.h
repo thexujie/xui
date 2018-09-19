@@ -20,5 +20,24 @@ namespace win32
         handle_t _hwnd = nullptr;
         handle_t _imc = nullptr;
     };
+
+    class CursorContext : public ui::CursorContext
+    {
+    public:
+        CursorContext(handle_t hwnd);
+        ~CursorContext();
+
+        void setCursor(ui::cursor c) override;
+        void resetCursor() override;
+
+    public:
+        void reset();
+        void apply();
+    private:
+        handle_t _hwnd = nullptr;
+        void * _id = nullptr;
+        void * _id_last = nullptr;
+    };
+
 }
 

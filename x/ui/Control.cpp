@@ -551,4 +551,26 @@ namespace ui
         if (s)
             s->animate();
     }
+
+    void Control::onMouseEnter(const input_state & state)
+    {
+        if (auto s = scene())
+        {
+            s->cursorContext()->setCursor(_cursor);
+        }
+        _mousein = true;
+        mouseEnter(state);
+    }
+
+    void Control::onMouseLeave(const input_state & state)
+    {
+        if (auto s = scene())
+        {
+            s->cursorContext()->resetCursor();
+        }
+        _pressed = false;
+        _mousein = false;
+        mouseLeave(state);
+    }
+
 }

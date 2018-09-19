@@ -425,6 +425,9 @@
     <ClInclude Include="drawing\ColorFilter.h">
       <Filter>drawing</Filter>
     </ClInclude>
+    <ClInclude Include="ui\UICommon.h">
+      <Filter>ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">

@@ -119,7 +119,8 @@ namespace win32
         bool _mouseIn = false;
         bool _trackingMouse = false;
 
-        std::shared_ptr<win32::ImeContext> _imecontext;
+        std::shared_ptr<win32::ImeContext> _ime_context;
+        std::shared_ptr<win32::CursorContext> _cursor_context;
     public:
         core::event<void()> closed;
 

@@ -1,17 +1,11 @@
 #pragma once
 #include "drawing/Region.h"
 #include "component/Style.h"
+#include "UICommon.h"
 
 namespace ui
 {
-    enum class mouse_button;
-    enum class keycode : unsigned char;
-    class key_state;
-    enum class key_action;
     class Control;
-    class ImeContext;
-    enum class mouse_action;
-    class input_state;
 
     class Scene : public core::object
     {
@@ -26,14 +20,16 @@ namespace ui
         const core::si32f & size() const { return _rect.size; }
         const core::rc32f & viewRect() const { return _rect; }
 
-        void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _styleSheet = styleSheet;  }
-        std::shared_ptr<component::StyleSheet> styleSheet() const { return _styleSheet; }
+        void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _style_sheet = styleSheet;  }
+        std::shared_ptr<component::StyleSheet> styleSheet() const { return _style_sheet; }
 
-        void setImeContext(std::shared_ptr<ui::ImeContext> imecontext) { _imecontext = imecontext; }
-        std::shared_ptr<ui::ImeContext> imeContext() const { return _imecontext; }
+        void setImeContext(std::shared_ptr<ui::ImeContext> ime_context) { _ime_context = ime_context; }
+        std::shared_ptr<ui::ImeContext> imeContext() const { return _ime_context; }
 
+        void setCursorContext(std::shared_ptr<CursorContext> cursor_context)  { _cursor_context = cursor_context; }
+        std::shared_ptr<CursorContext> cursorContext() const { return _cursor_context; }
 
-        std::shared_ptr<drawing::Bitmap> bitmap() const { return _renderBuffer; }
+        std::shared_ptr<drawing::Bitmap> bitmap() const { return _draw_buffer; }
         void invalid(const core::rc32f & rect);
         const core::rc32i & invalidRect() const { return _invalid_rect; }
 
@@ -70,15 +66,16 @@ namespace ui
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
 
-        std::shared_ptr<drawing::Bitmap> _renderBuffer;
+        std::shared_ptr<drawing::Bitmap> _draw_buffer;
 
-        std::shared_ptr<Control> _interactbale_current;
-        std::shared_ptr<Control> _interactbale_input;
+        std::shared_ptr<Control> _current_control;
+        std::shared_ptr<Control> _current_input;
 
-        std::shared_ptr<component::StyleSheet> _styleSheet;
+        std::shared_ptr<component::StyleSheet> _style_sheet;
 
         core::timer _animation_timer;
 
-        std::shared_ptr<ui::ImeContext> _imecontext;
+        std::shared_ptr<ui::ImeContext> _ime_context;
+        std::shared_ptr<ui::CursorContext> _cursor_context;
     };
 }

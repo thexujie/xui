@@ -56,15 +56,15 @@ namespace ui
             break;
         case mouse_action::move:
             _updateMouseArea(state, action);
-            if (_interactbale_current)
-                _interactbale_current->onMouseMove(state);
+            if (_current_control)
+                _current_control->onMouseMove(state);
             break;
         case mouse_action::wheel_v:
-            if (_interactbale_current && _interactbale_current->acceptWheelV())
-                _interactbale_current->onMouseWheel(state);
+            if (_current_control && _current_control->acceptWheelV())
+                _current_control->onMouseWheel(state);
             else
             {
-                auto obj = _interactbale_current;
+                auto obj = _current_control;
                 while (true)
                 {
                     obj = control()->findChild(state.pos(), obj);
@@ -81,38 +81,38 @@ namespace ui
             _updateMouseArea(state, action);
             break;
         case mouse_action::press:
-            if (_interactbale_current)
+            if (_current_control)
             {
-                if (_interactbale_current->captureButtons())
+                if (_current_control->captureButtons())
                     captured(true);
-                _interactbale_current->onMouseDown(state, button);
+                _current_control->onMouseDown(state, button);
             }
             else{}
 
-            if(_interactbale_current != _interactbale_input)
+            if(_current_control != _current_input)
             {
-                if (_interactbale_input)
-                    _interactbale_input->onBlur();
+                if (_current_input)
+                    _current_input->onBlur();
 
-                if (_interactbale_current && _interactbale_current->acceptInput())
+                if (_current_control && _current_control->acceptInput())
                 {
-                    _interactbale_input = _interactbale_current;
-                    if (_interactbale_input)
-                        _interactbale_input->onFocus(_imecontext);
+                    _current_input = _current_control;
+                    if (_current_input)
+                        _current_input->onFocus(_ime_context);
                 }
                 else
                 {
-                    _interactbale_input = nullptr;
-                    if (_imecontext)
-                        _imecontext->setImeMode(ui::ime_mode::disabled);
+                    _current_input = nullptr;
+                    if (_ime_context)
+                        _ime_context->setImeMode(ui::ime_mode::disabled);
                 }
             }
             break;
         case mouse_action::release:
-            if (_interactbale_current)
+            if (_current_control)
             {
-                _interactbale_current->onMouseUp(state, button);
-                if (_interactbale_current->captureButtons())
+                _current_control->onMouseUp(state, button);
+                if (_current_control->captureButtons())
                     captured(false);
             }
             _updateMouseArea(state, action);
@@ -125,17 +125,17 @@ namespace ui
 
     void Scene::onKey(const input_state & state, keycode key, key_action action)
     {
-        if (_interactbale_input)
+        if (_current_input)
         {
             switch (action)
             {
             case ui::key_action::none:
                 break;
             case ui::key_action::press:
-                _interactbale_input->onKeyDown(state, key);
+                _current_input->onKeyDown(state, key);
                 break;
             case ui::key_action::release:
-                _interactbale_input->onKeyUp(state, key);
+                _current_input->onKeyUp(state, key);
                 break;
             default:
                 break;
@@ -145,24 +145,24 @@ namespace ui
 
     void Scene::onChar(char32_t ch)
     {
-        if (_interactbale_input)
-            _interactbale_input->onChar(ch);
+        if (_current_input)
+            _current_input->onChar(ch);
     }
 
     void Scene::_updateMouseArea(const input_state & state, mouse_action action)
     {
         auto ma = action == mouse_action::leave ?  nullptr : control()->findChild(state.pos());
         // do not update while capturing one or more button(s)
-        if (_interactbale_current != ma &&
-            (!_interactbale_current || !(_interactbale_current->captureButtons() & state.buttons())))
+        if (_current_control != ma &&
+            (!_current_control || !(_current_control->captureButtons() & state.buttons())))
         {
-            if (_interactbale_current)
-                _interactbale_current->onMouseLeave(state);
+            if (_current_control)
+                _current_control->onMouseLeave(state);
 
-            _interactbale_current = ma;
+            _current_control = ma;
 
-            if (_interactbale_current)
-                _interactbale_current->onMouseEnter(state);
+            if (_current_control)
+                _current_control->onMouseEnter(state);
         }
     }
 
@@ -185,10 +185,10 @@ namespace ui
                 continue;
 
             auto tms = core::datetime::high_resolution_s();
-            if (!_renderBuffer || _renderBuffer->size().cx < invalid_rect.right() || _renderBuffer->size().cy < invalid_rect.bottom())
-                _renderBuffer = std::make_shared<drawing::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
+            if (!_draw_buffer || _draw_buffer->size().cx < invalid_rect.right() || _draw_buffer->size().cy < invalid_rect.bottom())
+                _draw_buffer = std::make_shared<drawing::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
 
-            drawing::Graphics graphics(_renderBuffer);
+            drawing::Graphics graphics(_draw_buffer);
             graphics.setClipRect(invalid_rect.to<float32_t>(), true);
             graphics.clear(_color_default);
             auto c = control();
@@ -203,10 +203,10 @@ namespace ui
                 break;
             //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
             rendered(invalid_region);
-            //rendered(core::rc32i{{}, _renderBuffer ->size()});
+            //rendered(core::rc32i{{}, _draw_buffer ->size()});
             static bool save = false;
             if (save)
-                _renderBuffer->Save("scene.png");
+                _draw_buffer->Save("scene.png");
 
             std::unique_lock<std::mutex> lock(_mtx);
             _cv_render.wait(lock, [this]() {return !_invalid_rect.empty() || _exit; });

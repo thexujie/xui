@@ -70,4 +70,69 @@ namespace win32
             _imc = nullptr;
         }
     }
+
+
+    CursorContext::CursorContext(handle_t hwnd)
+    {
+        
+    }
+
+    CursorContext::~CursorContext()
+    {
+        
+    }
+
+    static LPCSTR win_cursor_id(ui::cursor c)
+    {
+        switch(c)
+        {
+        case ui::cursor::unknown: return IDC_ARROW;
+        case ui::cursor::normal: return IDC_ARROW;
+        case ui::cursor::cross: return IDC_CROSS;
+        case ui::cursor::hand: return IDC_HAND;
+        case ui::cursor::help: return IDC_HELP;
+        case ui::cursor::wait: return IDC_WAIT;
+        case ui::cursor::ibeam: return IDC_IBEAM;
+        case ui::cursor::notaviliable: return IDC_NO;
+        case ui::cursor::resizelr: return IDC_SIZEWE;
+        case ui::cursor::resizetb: return IDC_SIZENS;
+        case ui::cursor::resizeltrb: return IDC_SIZENESW;
+        case ui::cursor::resizelbrt: return IDC_SIZENWSE;
+        case ui::cursor::resizeall: return IDC_SIZEALL;
+        default: return NULL;
+        }
+    }
+
+    void CursorContext::setCursor(ui::cursor c)
+    {
+        _id_last = _id ? _id : IDC_ARROW;
+        auto id = win_cursor_id(c);
+        if (!id || id == _id)
+            return;
+
+        _id = (void *)id;
+        ::SetCursor(::LoadCursor(NULL, id));
+    }
+
+    void CursorContext::resetCursor()
+    {
+        if(_id_last)
+        {
+            ::SetCursor(::LoadCursor(NULL, (LPCSTR)_id_last));
+            _id = _id_last;
+            _id_last = nullptr;
+        }
+    }
+
+    void CursorContext::reset()
+    {
+        _id = nullptr;
+        _id_last = nullptr;
+    }
+
+    void CursorContext::apply()
+    {
+        if (_id)
+            ::SetCursor(::LoadCursor(NULL, (LPCSTR)_id));
+    }
 }
