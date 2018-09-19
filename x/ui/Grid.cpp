@@ -6,7 +6,7 @@ namespace ui
 {
     Grid::Grid()
     {
-        _interactable = false;
+        _layout_direction = core::align::none;
     }
 
     Grid::~Grid()
@@ -14,44 +14,68 @@ namespace ui
 
     }
 
-    void Grid::setLayoutDirection(core::align layout)
+    void Grid::setRows(std::initializer_list<core::dimensionf> & rows)
     {
-        _layout_direction = layout;
+        _rows.assign(rows);
+    }
+
+    void Grid::setCols(std::initializer_list<core::dimensionf> & cols)
+    {
+        _cols.assign(cols);
     }
 
     core::si32f Grid::contentSize() const
     {
-        core::si32f size;
-        float32_t margin = 0;
-        for (auto & iter : _controls)
+        if(_cells.empty())
         {
-            auto & control = iter.second;
-            auto lo = control->layoutOrigin();
-            if (lo != layout_origin::layout && lo != layout_origin::sticky)
-                continue;
-
-            auto m = control->realMargin();
-
-            if (_layout_direction == core::align::left || _layout_direction == core::align::right)
+            auto & cells = const_cast<std::vector<Cell> &>(_cells);
+            cells.resize(_rows.size() * _cols.size(), {});
+            for(size_t row = 0; row < _rows.size(); ++row)
             {
-                margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
-                size.cx += margin;
-                auto psize = control->expectSize();
-                margin = _layout_direction == core::align::left ? m.bright : m.bleft;
-                size.cx = size.cx + psize.cx;
-                size.cy = std::max(size.cy, psize.cy + m.bheight());
+                for (size_t col = 0; col < _cols.size(); ++col)
+                {
+                    auto & cell = cells[row * _cols.size() + col];
+                    cell.row = row;
+                    cell.col= row;
+                }
             }
-            else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
-            {
-                margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
-                size.cy += margin;
-                auto psize = control->expectSize();
-                margin = _layout_direction == core::align::top ? m.bbottom : m.btop;
-                size.cy += psize.cy;
-                size.cx = std::max(size.cx, psize.cx + m.bwidth());
-            }
-            else {}
         }
+
+        core::si32f size;
+        std::vector<float32_t> widths;
+        std::vector<float32_t> heights;
+
+        for (auto & item : _items)
+        {
+            auto & row_size = _rows[item.row];
+            auto & col_size = _rows[item.row];
+
+            for(auto & control : item.controls)
+            {
+                auto lo = control->layoutOrigin();
+                if (lo != layout_origin::layout && lo != layout_origin::sticky)
+                    continue;
+
+                auto expect_size = control->expectSize();
+                auto m = control->realMargin();
+
+
+                if (col_size.avi())
+                    widths[item.col] = calc_x(col_size);
+                else
+                    widths[item.col] = std::max(widths[item.col], expect_size.cx + m.bwidth());
+
+                if (row_size.avi())
+                    heights[item.col] = calc_y(row_size);
+                else
+                    heights[item.row] = std::max(heights[item.row], expect_size.cy + m.bheight());
+            }
+        }
+
+        for (auto & w : widths)
+            size.cx += w;
+        for (auto & h : heights)
+            size.cy += h;
         return size;
     }
 
@@ -60,107 +84,64 @@ namespace ui
         if (!_invalid_layout && !flags.any(layout_flag::force))
             return;
 
-        float32_t margin = 0;
-        core::si32f fitting_size = expectSize();
         core::rc32f box = paddingBox();
-        float32_t layout_pos = 0;
-        core::si32f layout_size;
-        switch (_layout_direction)
-        {
-        case core::align::left:
-            layout_pos = _rect.x;
-            break;
-        case core::align::top:
-            layout_pos = _rect.y;
-            break;
-        default:
-            break;
-        }
-        std::set<std::string> setes;
-        for (auto & iter : _controls)
-        {
-            auto& control = iter.second;
-            auto margins = control->realMargin();
-            auto lo = control->layoutOrigin();
-            auto control_size = control->prefferSize(calc_flag::none);
+        std::vector<float32_t> widths;
+        std::vector<float32_t> heights;
 
-            if (lo == layout_origin::layout || lo == layout_origin::sticky)
+        for (auto & cell : _cells)
+        {
+            auto & row_size = _rows[cell.row];
+            auto & col_size = _rows[cell.row];
+
+            for (auto & control : cell.controls)
             {
-                switch (_layout_direction)
-                {
-                case core::align::left:
-                    margin = std::max(margin, margins.bleft);
-                    control->place({ layout_pos + layout_size.cx + margin, box.y + margins.btop, control_size.cx, fitting_size.cy - margins.bheight() }, control_size);
-                    layout_size.cx += margin + control_size.cx;
-                    margin = margins.bright;
-                    break;
-                case core::align::top:
-                    margin = std::max(margin, margins.btop);
-                    control->place({ box.x + margins.bleft, layout_pos + layout_size.cy + margin, fitting_size.cx - margins.bwidth(), control_size.cy }, control_size);
-                    layout_size.cy += margin + control_size.cy;
-                    margin = margins.bbottom;
-                    break;
-                default:
-                    break;
-                }
-            }
-            else
-            {
-                switch (lo)
-                {
-                case layout_origin::parent:
-                    control->place(contentBox(), control_size);
-                    break;
-                case layout_origin::scene:
-                    control->place(scene()->rect(), control_size);
-                    break;
-                default:
-                    break;
-                }
+                auto lo = control->layoutOrigin();
+                if (lo != layout_origin::layout && lo != layout_origin::sticky)
+                    continue;
+
+                auto expect_size = control->expectSize();
+                auto m = control->realMargin();
+
+
+                if (col_size.avi())
+                    widths[cell.col] = calc_x(col_size);
+                else
+                    widths[cell.col] = std::max(widths[cell.col], expect_size.cx + m.bwidth());
+
+                if (row_size.avi())
+                    heights[cell.col] = calc_y(row_size);
+                else
+                    heights[cell.row] = std::max(heights[cell.row], expect_size.cy + m.bheight());
             }
         }
 
-        if (_layout_direction == core::align::left)
-        {
-            layout_size.cx += margin;
-        }
-        else if (_layout_direction == core::align::top)
-        {
-            layout_size.cy += margin;
-        }
-        setLayoutedSize(layout_size);
-        _invalid_layout = false;
-    }
 
-    void Grid::onPosChanged(const core::pt32f & from, const core::pt32f & to)
-    {
-        relayout();
-        Control::onPosChanged(from, to);
-    }
-
-    void Grid::onSizeChanged(const core::si32f & from, const core::si32f & to)
-    {
-        relayout();
-        Control::onSizeChanged(from, to);
-    }
-
-    void Grid::relayout()
-    {
-        if (!_invalid_layout)
+        for (auto & cell : _cells)
         {
-            _invalid_layout = true;
-            invoke([this]() {layout(nullptr); });
+            for (auto & control : cell.controls)
+            {
+                auto lo = control->layoutOrigin();
+                if (lo != layout_origin::layout && lo != layout_origin::sticky)
+                    continue;
+
+                auto expect_size = control->expectSize();
+                auto m = control->realMargin();
+
+                auto & row_size = _rows[cell.row];
+                auto & col_size = _rows[cell.row];
+
+                if (col_size.avi())
+                    widths[cell.col] = calc_x(col_size);
+                else
+                    widths[cell.col] = std::max(widths[cell.col], expect_size.cx + m.bwidth());
+
+                if (row_size.avi())
+                    heights[cell.col] = calc_y(row_size);
+                else
+                    heights[cell.row] = std::max(heights[cell.row], expect_size.cy + m.bheight());
+            }
         }
     }
 
-    void Grid::onScrollValueChangedV(float32_t from, float32_t to)
-    {
-        relayout();
-    }
-
-    void Grid::onScrollValueChangedH(float32_t from, float32_t to)
-    {
-        relayout();
-    }
 }
 

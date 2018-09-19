@@ -62,7 +62,7 @@ namespace ui
         }
 
         auto rect = core::rc32f(calc(_pos), calc(_size));
-        Scrollable::place(rect, rect.size);
+        Container::place(rect, rect.size);
 
         if(!_window)
         {
@@ -86,14 +86,14 @@ namespace ui
 
     void Form::enteringScene(std::shared_ptr<Scene> & scene)
     {
-        Scrollable::enteringScene(scene);
+        Container::enteringScene(scene);
     }
 
     void Form::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
         if (_window)
             _window->resize(to);
-        Scrollable::onSizeChanged(from, to);
+        Container::onSizeChanged(from, to);
     }
 
     void Form::onClose()

@@ -7,25 +7,35 @@ namespace ui
     class Grid : public Container
     {
     public:
+        struct Cell
+        {
+            size_t row = 0;
+            size_t col = 0;
+            size_t row_pan = 1;
+            size_t col_pan = 1;
+        };
+
+        struct Item
+        {
+            size_t row = 0;
+            size_t col = 0;
+            std::vector<std::shared_ptr<Control>> controls;
+        };
+
+    public:
         Grid();
         virtual ~Grid();
 
-        void setLayoutDirection(core::align layout);
+        void setRows(std::initializer_list<core::dimensionf> & rows);
+        void setCols(std::initializer_list<core::dimensionf> & cols);
 
         core::si32f contentSize() const override;
-        void layout(layout_flags flags);
-
-        void onPosChanged(const core::pt32f & from, const core::pt32f & to) override;
-        void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
-
-        void relayout();
-
-    private:
-        void onScrollValueChangedV(float32_t from, float32_t to);
-        void onScrollValueChangedH(float32_t from, float32_t to);
+        void layout(layout_flags flags) override;
 
     protected:
-        core::align _layout_direction = core::align::left;
-        bool _invalid_layout = false;
+        std::vector<core::dimensionf> _rows;
+        std::vector<core::dimensionf> _cols;
+        std::vector<Cell> _cells;
+        std::vector<Item> _items;
     };
 }

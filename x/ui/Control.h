@@ -234,7 +234,7 @@ namespace ui
         std::array<core::pt32f, 2> boderLine(core::align edge) const;
 
         void setAlpha(float32_t alpha) { _alpha = alpha; }
-        int32_t alpha() const { return _alpha; }
+        float32_t alpha() const { return _alpha; }
         bool acceptClip() const { return _accept_clip; }
         void setMouseThrough(bool b) { _mouse_through = b; }
         bool mouseThrough() const { return _mouse_through; }

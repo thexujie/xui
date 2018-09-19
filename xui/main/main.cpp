@@ -76,7 +76,7 @@ void xui_main()
     auto src = screen->rect();
     auto ppi = ui::Desktop::instance().ppi();
 
-    auto buttons = std::make_shared<ui::Scrollable>();
+    auto buttons = std::make_shared<ui::Container>();
     {
         //buttons->setAlpha(0.5f);
         buttons->setLayoutDirection(core::align::top);
@@ -152,7 +152,7 @@ void xui_main()
     drawing::font font;
     drawing::fontmetrics fm(font);
 
-    auto layer = std::make_shared<ui::Scrollable>();
+    auto layer = std::make_shared<ui::Container>();
     {
         layer->setBackgroundColor(0x40ffffff);
         layer->setLayoutDirection(core::align::top);
@@ -181,10 +181,8 @@ void xui_main()
         layer->addControl(tln);
     }
     {
-        auto container = std::make_shared<ui::Scrollable>();
+        auto container = std::make_shared<ui::Grid>();
         container->setSize({ 100_per, auto_value });
-
-        container->setLayoutDirection(core::align::left);
         {
             auto tln = std::make_shared<ui::controls::TextLine>();
             tln->setText(rtft);
