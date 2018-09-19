@@ -176,6 +176,12 @@
     <ClCompile Include="drawing\ColorFilter.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
+    <ClCompile Include="ui\Grid.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Scrollable.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -426,6 +432,15 @@
       <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="ui\UICommon.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Grid.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Scrollable.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>

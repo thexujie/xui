@@ -1,10 +1,10 @@
 #pragma once
-#include "Container.h"
 #include "component/Window.h"
+#include "Scrollable.h"
 
 namespace ui
 {
-    class Form : public Container
+    class Form : public Scrollable
     {
     public:
         Form();

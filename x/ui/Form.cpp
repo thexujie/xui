@@ -8,13 +8,11 @@ namespace ui
 {
     Form::Form()
     {
-        _top_level = true;
     }
 
     Form::Form(core::vec2<core::dimensionf> & size)
     {
         _size = size;
-        _top_level = true;
     }
 
     Form::~Form()
@@ -64,7 +62,7 @@ namespace ui
         }
 
         auto rect = core::rc32f(calc(_pos), calc(_size));
-        Control::place(rect, rect.size);
+        Scrollable::place(rect, rect.size);
 
         if(!_window)
         {
@@ -88,14 +86,14 @@ namespace ui
 
     void Form::enteringScene(std::shared_ptr<Scene> & scene)
     {
-        Container::enteringScene(scene);
+        Scrollable::enteringScene(scene);
     }
 
     void Form::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
         if (_window)
             _window->resize(to);
-        Container::onSizeChanged(from, to);
+        Scrollable::onSizeChanged(from, to);
     }
 
     void Form::onClose()

@@ -2,16 +2,9 @@
 
 #include "core/core.h"
 #include "drawing/drawing.h"
+#include "ui/ui.h"
 
 #include "win32/Win32App.h"
-#include "ui/Container.h"
-#include "ui/Form.h"
-#include "ui/Desktop.h"
-#include "ui/controls/Text.h"
-#include "ui/controls/Image.h"
-#include "ui/controls/Button.h"
-#include "ui/controls/ScrollBar.h"
-#include "ui/controls/TextLine.h"
 
 using namespace core;
 
@@ -83,7 +76,7 @@ void xui_main()
     auto src = screen->rect();
     auto ppi = ui::Desktop::instance().ppi();
 
-    auto buttons = std::make_shared<ui::Container>();
+    auto buttons = std::make_shared<ui::Scrollable>();
     {
         //buttons->setAlpha(0.5f);
         buttons->setLayoutDirection(core::align::top);
@@ -159,7 +152,7 @@ void xui_main()
     drawing::font font;
     drawing::fontmetrics fm(font);
 
-    auto layer = std::make_shared<ui::Container>();
+    auto layer = std::make_shared<ui::Scrollable>();
     {
         layer->setBackgroundColor(0x40ffffff);
         layer->setLayoutDirection(core::align::top);
@@ -173,16 +166,12 @@ void xui_main()
         tln->setSize({ 100_per, auto_value });
         tln->setImeMode(ui::ime_mode::on);
         layer->addControl(tln);
-
-        form->addControl(layer);
     }
     {
         auto tln = std::make_shared<ui::controls::TextLine>();
         tln->setText(rtft);
         tln->setSize({ 100_per, auto_value });
         layer->addControl(tln);
-
-        form->addControl(layer);
     }
     {
         auto tln = std::make_shared<ui::controls::TextLine>();
@@ -190,9 +179,37 @@ void xui_main()
         tln->setSize({ 100_per, 10_em });
         tln->setImeMode(ui::ime_mode::on);
         layer->addControl(tln);
-
-        form->addControl(layer);
     }
+    {
+        auto container = std::make_shared<ui::Scrollable>();
+        container->setSize({ 100_per, auto_value });
+
+        container->setLayoutDirection(core::align::left);
+        {
+            auto tln = std::make_shared<ui::controls::TextLine>();
+            tln->setText(rtft);
+            tln->setSize({ auto_value, auto_value });
+            tln->setImeMode(ui::ime_mode::on);
+            container->addControl(tln);
+        }
+        {
+            auto tln = std::make_shared<ui::controls::TextLine>();
+            tln->setText(rtft);
+            tln->setSize({ auto_value, auto_value });
+            tln->setImeMode(ui::ime_mode::on);
+            container->addControl(tln);
+        }
+        {
+            auto tln = std::make_shared<ui::controls::TextLine>();
+            tln->setText(rtft);
+            tln->setSize({ auto_value, auto_value });
+            tln->setImeMode(ui::ime_mode::on);
+            container->addControl(tln);
+        }
+
+        layer->addControl(container);
+    }
+    form->addControl(layer);
 
     //auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
     //{
