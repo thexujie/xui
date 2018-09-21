@@ -116,8 +116,8 @@
 	<Type Name="ui::controls::TextBox">
 		<DisplayString>[TextBox control]</DisplayString>
 	</Type>
-	<Type Name="ui::component::MouseArea">
-		<DisplayString>[MouseArea {_rect}]</DisplayString>
+	<Type Name="ui::Grid">
+		<DisplayString>[Grid container]</DisplayString>
 	</Type>
 
 	<Type Name="core::section_type&lt;*&gt;">

@@ -168,8 +168,28 @@ namespace ui
 
     void Container::onSizeChanged(const core::si32f & from, const core::si32f & to)
     {
-        relayout();
+        layout_flags flags = nullptr;
+        if (!core::equal(from.cx, to.cx))
+            flags |= layout_flag::resize_cx;
+        if (!core::equal(from.cy, to.cy))
+            flags |= layout_flag::resize_cy;
+        relayout(flags);
         Control::onSizeChanged(from, to);
+    }
+
+    void Container::relayout(layout_flags flags)
+    {
+        _invalid_layout_flags |= flags;
+        if (!_invalid_layout)
+        {
+            _invalid_layout = true;
+            invoke([this]()
+            {
+                layout(_invalid_layout_flags);
+                _invalid_layout = false;
+                _invalid_layout_flags = nullptr;
+            });
+        }
     }
 
     void Container::setLayoutDirection(core::align layout)
@@ -345,7 +365,6 @@ namespace ui
             layout_size.cy += margin;
         }
         setLayoutedSize(layout_size);
-        _invalid_layout = false;
 
         switch (_layout_direction)
         {

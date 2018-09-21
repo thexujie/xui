@@ -119,9 +119,7 @@ namespace ui
                     return 0;
                 if (!p)
                     throw core::error_state;
-                if (_margin.value.bleft.unit == core::unit::per || _margin.value.bright.unit == core::unit::per)
-                    throw core::error_bad_data;
-                return value.value / 100.0f * (p->width() - calc_x(_margin.value.bleft) - calc_x(_margin.value.bright));
+                return value.value / 100.0f * p->width();
             default:
                 return value.value * s->ratio();
             }
@@ -149,9 +147,7 @@ namespace ui
                     return 0;
                 if (!p)
                     throw core::error_state;
-                if (_margin.value.btop.unit == core::unit::per || _margin.value.bbottom.unit == core::unit::per)
-                    throw core::error_bad_data;
-                return value.value / 100.0f * (p->height() - calc_y(_margin.value.btop) - calc_y(_margin.value.bbottom));
+                return value.value / 100.0f * p->height();
             default:
                 return value.value * s->ratio();
             }

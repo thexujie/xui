@@ -181,31 +181,33 @@ void xui_main()
         layer->addControl(tln);
     }
     {
-        auto container = std::make_shared<ui::Grid>();
-        container->setSize({ 100_per, auto_value });
+        auto grid = std::make_shared<ui::Grid>();
+        grid->setSize({ 100_per, auto_value });
+        grid->setRows({ 100_per });
+        grid->setCols({ 33.333_per , 33.333_per , 33.333_per });
         {
             auto tln = std::make_shared<ui::controls::TextLine>();
             tln->setText(rtft);
             tln->setSize({ auto_value, auto_value });
             tln->setImeMode(ui::ime_mode::on);
-            container->addControl(tln);
+            grid->addControl(0, 0, tln);
         }
         {
             auto tln = std::make_shared<ui::controls::TextLine>();
             tln->setText(rtft);
             tln->setSize({ auto_value, auto_value });
             tln->setImeMode(ui::ime_mode::on);
-            container->addControl(tln);
+            grid->addControl(0, 1, tln);
         }
         {
             auto tln = std::make_shared<ui::controls::TextLine>();
             tln->setText(rtft);
             tln->setSize({ auto_value, auto_value });
             tln->setImeMode(ui::ime_mode::on);
-            container->addControl(tln);
+            grid->addControl(0, 2, tln);
         }
 
-        layer->addControl(container);
+        layer->addControl(grid);
     }
     form->addControl(layer);
 

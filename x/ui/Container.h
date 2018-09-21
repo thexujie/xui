@@ -41,14 +41,7 @@ namespace ui
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
 
     public:
-        void relayout()
-        {
-            if (!_invalid_layout)
-            {
-                _invalid_layout = true;
-                invoke([this]() {layout(nullptr); });
-            }
-        }
+        void relayout(layout_flags flags = nullptr);
         void setLayoutDirection(core::align layout);
         void setScrollbarVisionV(scrollbar_vision scrollbar_vision);
         void setScrollbarVisionH(scrollbar_vision scrollbar_vision);
@@ -77,6 +70,7 @@ namespace ui
         std::shared_ptr<controls::ScrollBar> _scrollbar_v;
         std::shared_ptr<controls::ScrollBar> _scrollbar_h;
         bool _invalid_layout = false;
+        layout_flags _invalid_layout_flags = nullptr;
 
         core::align _layout_direction = core::align::left;
     };

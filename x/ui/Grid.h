@@ -13,29 +13,35 @@ namespace ui
             size_t col = 0;
             size_t row_pan = 1;
             size_t col_pan = 1;
+            core::rc32f rect;
+            std::vector<std::shared_ptr<Control>> controls;
         };
 
         struct Item
         {
             size_t row = 0;
             size_t col = 0;
-            std::vector<std::shared_ptr<Control>> controls;
+            std::shared_ptr<Control> control;
         };
 
     public:
         Grid();
         virtual ~Grid();
 
-        void setRows(std::initializer_list<core::dimensionf> & rows);
-        void setCols(std::initializer_list<core::dimensionf> & cols);
+        void setRows(const std::initializer_list<core::dimensionf> & rows);
+        void setCols(const std::initializer_list<core::dimensionf> & cols);
+        void addControl(size_t row, size_t col, std::shared_ptr<Control> control);
 
         core::si32f contentSize() const override;
         void layout(layout_flags flags) override;
 
+    private:
+        void _splitGrid(bool force = false) const;
+
     protected:
-        std::vector<core::dimensionf> _rows;
-        std::vector<core::dimensionf> _cols;
-        std::vector<Cell> _cells;
-        std::vector<Item> _items;
+        std::vector<core::dimensionf> _row_sizes;
+        std::vector<core::dimensionf> _col_sizes;
+        mutable std::vector<Cell> _cells;
+        mutable std::vector<Item> _items;
     };
 }
