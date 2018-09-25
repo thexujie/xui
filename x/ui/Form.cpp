@@ -6,11 +6,11 @@
 
 namespace ui
 {
-    Form::Form()
+    Form::Form(form_styles styles) :_styles(styles)
     {
     }
 
-    Form::Form(core::vec2<core::dimensionf> & size)
+    Form::Form(core::vec2<core::dimensionf> & size, form_styles styles) : _styles(styles)
     {
         _size = size;
     }

@@ -19,7 +19,7 @@
     transition-duration: 200ms
 }
 
-.textbox {
+.textline {
     border: 1px;
     border-color: #f000;
     padding: 1em 0.5em;
@@ -28,12 +28,12 @@
     transition-duration: 500ms
 }
 
-.textbox:hover {
+.textline:hover {
     border: 2px;
     background-color: #a888;
 }
 
-.textbox:active {
+.textline:active {
     border: 2px;
     background-color: #f888;
     transition-duration: 200ms
@@ -58,3 +58,23 @@
 .grid {
     margin: 0.2em;
 }
+
+.radio {
+    padding: 0.5em 0.25em;
+    background-color: #a2f2;
+    hole-border-size: 1.5px;
+    hole-border-color: #f888;
+    transition-duration: 500ms;
+}
+
+.radio:hover {
+    background-color: #a2ff;
+    hole-border-color: #f444;
+}
+
+.radio:active {
+    hole-border-color: #f444;
+    transition-duration: 200ms
+}
+
+

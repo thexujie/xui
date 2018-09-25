@@ -4,13 +4,28 @@
 
 namespace ui
 {
+    enum class form_style
+    {
+        normal = 0,
+        popup = 0x0001,
+
+        frameless = 0x10000,
+        nomin = 0x100000,
+        nomax = 0x200000,
+    };
+
+    template<> struct enable_bitmasks<form_style> { static const bool enable = true; };
+    typedef core::bitflag<form_style> form_styles;
+
     class Form : public Container
     {
     public:
-        Form();
-        Form(core::vec2<core::dimensionf> & size);
+        Form(form_styles styles = nullptr);
+        Form(core::vec2<core::dimensionf> & size, form_styles styles = nullptr);
         ~Form();
 
+        void setStyles(form_styles styles) { if (styles != _styles) { _styles = styles; stylesChanged(_styles); } }
+        form_styles styles() const { return _styles; }
         const core::pt32f & windowPos() const { return _rect_window.pos; }
         //const core::pt32f & windowSize() const { return _rect_window.size; }
         //const core::rc32f & windowRect() const { return _rect_window; }
@@ -31,6 +46,7 @@ namespace ui
         void onClose();
 
     public:
+        core::event<void(form_styles styles)> stylesChanged;
         core::event<void(const core::pt32f & from, const core::pt32f & to)> windowPosChanged;
         //core::event<void(const core::si32f & from, const core::si32f & to)> windowSizeChanged;
         //core::event<void(const core::rc32f & from, const core::rc32f & to)> windowRectChanged;
@@ -42,5 +58,6 @@ namespace ui
         std::shared_ptr<component::Window> _window;
         core::rc32f _rect_window;
         bool _shown = false;
+        form_styles _styles = nullptr;
     };
 }

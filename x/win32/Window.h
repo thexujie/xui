@@ -26,6 +26,7 @@ namespace win32
 
     private:
         void onShownChanged(bool shown);
+        void onStylesChanged(ui::form_styles styles);
         void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         void onSizeChanged(const core::si32f & from, const core::si32f & to);
         void onSceneInvalidated(const core::rc32i & rect);

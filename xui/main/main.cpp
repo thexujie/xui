@@ -59,6 +59,13 @@ public:
     }
 };
 
+#include "ui/controls/Radio.h"
+
+struct tc
+{
+    int ab = 34;
+};
+
 void xui_main()
 {
     std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
@@ -130,7 +137,7 @@ void xui_main()
     text2->setBackgroundColor(colors::Green);
     text2->setPadding({ 1_em, 0.5_em });
 
-    auto form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em));
+    auto form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em), ui::form_style::normal);
     form->formScene()->setStyleSheet(ss);
     form->setBorder({ 1_px, 1_px });
     form->setBorderColors({ colors::Black, colors::Black });
@@ -207,6 +214,27 @@ void xui_main()
         }
 
         layer->addControl(grid);
+    }
+    {
+        auto container = std::make_shared<ui::Container>();
+        container->setLayoutDirection(core::align::top);
+        container->setSize({ 100_per, auto_value });
+
+        {
+            auto rbtn = std::make_shared<ui::controls::Radio>();
+            rbtn->setText(u8"将数据放置于上方");
+            rbtn->setGroup("abcd");
+            container->addControl(rbtn);
+        }
+        {
+            auto rbtn = std::make_shared<ui::controls::Radio>();
+            rbtn->setText(u8"将数据放置于尾部，便于实时查看");
+            rbtn->setGroup("abcd");
+            container->addControl(rbtn);
+        }
+        layer->addControl(container);
+        container->setBorder({ 1_px, 1_px });
+        container->setBorderColors({ colors::Red , colors::Red });
     }
     form->addControl(layer);
 

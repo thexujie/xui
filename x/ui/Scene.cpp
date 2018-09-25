@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "ui/Control.h"
+#include "ui/controls/Radio.h"
 #include "Desktop.h"
 
 namespace ui
@@ -35,6 +36,29 @@ namespace ui
         if (!_th_render.joinable())
             _th_render = std::thread(std::bind(&Scene::renderThread, this));
         _cv_render.notify_all();
+    }
+
+    std::shared_ptr<controls::RadioGroup> Scene::radioGroup(std::string name)
+    {
+        auto iter = _radio_groups.find(name);
+        if (iter == _radio_groups.end())
+        {
+            auto group = std::make_shared<controls::RadioGroup>(name);
+            _radio_groups[name] = group;
+            return group;
+        }
+        else
+        {
+            auto ptr = iter->second.lock();
+            if (!ptr)
+            {
+                auto group = std::make_shared<controls::RadioGroup>(name);
+                _radio_groups[name] = group;
+                return group;
+            }
+            else
+                return ptr;
+        }
     }
 
     core::error Scene::animate()

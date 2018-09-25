@@ -17,6 +17,12 @@ namespace core
             return *this;
         }
 
+        bitflag & operator = (const bitflag & another)
+        {
+            _e = another._e;
+            return *this;
+        }
+
         bitflag & set(Enum e, bool b)
         {
             if(b)

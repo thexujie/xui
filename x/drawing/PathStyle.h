@@ -81,11 +81,12 @@ namespace drawing
             return *this;
         }
 
-        PathStyle & stoke(core::color32 color, stroke_style stroke_style = stroke_style::solid)
+        PathStyle & stoke(core::color32 color, float32_t width = 1.0f, stroke_style stroke_style = stroke_style::solid)
         {
             _mode = PathMode::Stroke;
             _stroke_style = stroke_style;
             _color = color;
+            _width = width;
             return *this;
         }
 

@@ -132,7 +132,7 @@ namespace core
     typedef section_type<uint8_t> section8;
 }
 
-#include "core/member_function_traits.h"
+#include "core/member_traits.h"
 #include "core/bitflag.h"
 #include "core/error.h"
 #include "core/system.h"

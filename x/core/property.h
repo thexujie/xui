@@ -130,28 +130,34 @@ namespace core
 
         void set(object & self, const property_value & val)
         {
-            auto & s = dynamic_cast<typename member_function_traits<SetterT>::instance_type &>(self);
+            auto & s = dynamic_cast<ClassT &>(self);
             auto & v = dynamic_cast<const property_value_type<T> &>(val);
             (s.*setter)(v.get());
         }
 
         void get(object & self, property_value & val)
         {
-            auto & s = dynamic_cast<const typename member_function_traits<SetterT>::instance_type &>(self);
+            auto & s = dynamic_cast<ClassT &>(self);
             auto & v = dynamic_cast<property_value_type<T> &>(val);
-            v.set((s.*getter)());
+            if constexpr(std::is_member_object_pointer_v<GetterT>)
+                v.set(s.*getter);
+            else
+                v.set((s.*getter)());
         }
 
         void set_value(object & self, const T & val)
         {
-            auto & s = dynamic_cast<typename member_function_traits<SetterT>::instance_type &>(self);
+            auto & s = dynamic_cast<ClassT &>(self);
             (s.*setter)(val);
         }
 
         T get_value(object & self)
         {
-            auto & s = dynamic_cast<typename member_function_traits<SetterT>::instance_type &>(self);
-            return (s.*getter)();
+            auto & s = dynamic_cast<ClassT &>(self);
+            if constexpr (std::is_member_object_pointer_v<GetterT>)
+                return s.*getter;
+            else
+                return (s.*getter)();
         }
 
 
@@ -191,12 +197,13 @@ namespace core
 
     template<typename SetterT, typename GetterT>
     static auto make_accessor(SetterT setter, GetterT getter,
-        std::function<std::decay_t<typename member_function_traits<GetterT>::return_type>(const std::string &)> store,
-        std::function<std::string(const std::decay_t<typename member_function_traits<GetterT>::return_type> &)> fetch)
+        std::function<std::decay_t<typename member_traits<GetterT>::value_type>(const std::string &)> store,
+        std::function<std::string(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch)
     {
         static_assert(std::is_member_function_pointer<SetterT>::value);
-        static_assert(std::is_member_function_pointer<GetterT>::value);
-        return std::make_shared<property_accessor_impl<typename member_function_traits<SetterT>::instance_type, std::decay_t<typename member_function_traits<GetterT>::return_type>, SetterT, GetterT>>(setter, getter, store, fetch);
+        static_assert(std::is_member_pointer<GetterT>::value);
+
+        return std::make_shared<property_accessor_impl<typename member_traits<SetterT>::instance_type, std::decay_t<typename member_traits<GetterT>::value_type>, SetterT, GetterT>>(setter, getter, store, fetch);
     }
 
     typedef std::map<std::string, std::shared_ptr<core::property_accessor>> property_table;

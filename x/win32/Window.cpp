@@ -36,8 +36,23 @@ namespace win32
     core::error Window::attatch(std::shared_ptr<ui::Form> form)
     {
         _form = form;
+        uint32_t style = 0;
+        uint32_t styleEx = 0;
+        auto fs = form->styles();
+        if (fs.any(ui::form_style::popup))
+        {
+            _style = WS_POPUP | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
+            _styleEx = 0;
+        }
+        else /*if (fs.all(ui::form_style::normal))*/
+        {
+            _style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+            _styleEx = 0;
+        }
+
         auto scene = form->scene();
         form->shownChanged += std::weak_bind(&Window::onShownChanged, share_ref<Window>(), std::placeholders::_1);
+        form->stylesChanged += std::weak_bind(&Window::onStylesChanged, share_ref<Window>(), std::placeholders::_1);
         scene->rendered += std::weak_bind(&Window::onSceneRendered, share_ref<Window>(), std::placeholders::_1);
         scene->rendered2 += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
         scene->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
@@ -151,6 +166,25 @@ namespace win32
             if (hwnd)
                 ::ShowWindow(hwnd, SW_HIDE);
         }
+    }
+
+    void Window::onStylesChanged(ui::form_styles styles)
+    {
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return;
+
+        //if (fs.any(ui::form_style::popup))
+        //{
+        //    _style = WS_POPUP | WS_BORDER | WS_SYSMENU;
+        //    _styleEx = 0;
+        //}
+        //else /*if (fs.all(ui::form_style::normal))*/
+        //{
+        //    _style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+        //    _styleEx = 0;
+        //}
+
     }
 
     void Window::onPosChanged(const core::pt32f & from, const core::pt32f & to)

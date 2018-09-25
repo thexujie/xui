@@ -179,6 +179,9 @@
     <ClCompile Include="ui\Grid.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controls\Radio.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -377,9 +380,6 @@
     <ClInclude Include="core\property.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="core\member_function_traits.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="drawing\Region.h">
       <Filter>drawing</Filter>
     </ClInclude>
@@ -436,6 +436,12 @@
     </ClInclude>
     <ClInclude Include="ui\ui.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Radio.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="core\member_traits.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -106,6 +106,7 @@
     <ClCompile Include="ui\Container.cpp" />
     <ClCompile Include="ui\controls\Button.cpp" />
     <ClCompile Include="ui\controls\Image.cpp" />
+    <ClCompile Include="ui\controls\Radio.cpp" />
     <ClCompile Include="ui\controls\ScrollBar.cpp" />
     <ClCompile Include="ui\controls\Text.cpp" />
     <ClCompile Include="ui\controls\TextLine.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="ui\Container.h" />
     <ClInclude Include="ui\controls\Button.h" />
     <ClInclude Include="ui\controls\Image.h" />
+    <ClInclude Include="ui\controls\Radio.h" />
     <ClInclude Include="ui\controls\ScrollBar.h" />
     <ClInclude Include="ui\controls\Text.h" />
     <ClInclude Include="ui\controls\TextLine.h" />
@@ -213,7 +215,7 @@
     <ClInclude Include="core\math\xmi.h" />
     <ClInclude Include="core\math\xmi_argb.h" />
     <ClInclude Include="core\math\xmm.h" />
-    <ClInclude Include="core\member_function_traits.h" />
+    <ClInclude Include="core\member_traits.h" />
     <ClInclude Include="core\network\addr.h" />
     <ClInclude Include="core\network\http.h" />
     <ClInclude Include="core\network\socket.h" />

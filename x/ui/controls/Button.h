@@ -28,7 +28,6 @@ namespace ui::controls
         void onMouseUp(const input_state & state, ui::mouse_button button);
 
     private:
-        // ȷ�� textBlob �Ѿ�������
         void _confirmBlob() const;
 
     private:

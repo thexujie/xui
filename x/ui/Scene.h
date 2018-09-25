@@ -6,6 +6,10 @@
 namespace ui
 {
     class Control;
+    namespace controls
+    {
+        class RadioGroup;
+    }
 
     class Scene : public core::object
     {
@@ -19,6 +23,7 @@ namespace ui
         const core::rc32f & rect() const { return _rect; }
         const core::si32f & size() const { return _rect.size; }
         const core::rc32f & viewRect() const { return _rect; }
+        std::shared_ptr<controls::RadioGroup> radioGroup(std::string name);
 
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _style_sheet = styleSheet;  }
         std::shared_ptr<component::StyleSheet> styleSheet() const { return _style_sheet; }
@@ -77,5 +82,7 @@ namespace ui
 
         std::shared_ptr<ui::ImeContext> _ime_context;
         std::shared_ptr<ui::CursorContext> _cursor_context;
+
+        std::map<std::string, std::weak_ptr<controls::RadioGroup>> _radio_groups;
     };
 }

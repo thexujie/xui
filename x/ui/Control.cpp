@@ -487,7 +487,7 @@ namespace ui
                 std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
                 std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
             {
-                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc(_border.value.x)));
+                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathStyle().stoke(_border_colors.value.x, calc(_border.value.x), _border_styles.value[0]));
             }
             else
             {
@@ -500,7 +500,7 @@ namespace ui
                     {
                         auto points = boderPoints(edges[cnt]);
                         auto line = boderLine(edges[cnt]);
-                        auto style = drawing::PathStyle().stoke(_border_colors.value[cnt], _border_styles.value[cnt]).width(border.arr[cnt]);
+                        auto style = drawing::PathStyle().stoke(_border_colors.value[cnt], border.arr[cnt], _border_styles.value[cnt]);
 
                         path.clear();
                         path.fromPoints(std::begin(points), std::end(points), true);

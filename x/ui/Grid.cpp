@@ -80,7 +80,6 @@ namespace ui
 
     void Grid::_splitGrid(bool force) const
     {
-        core::si32f size;
         std::vector<float32_t> widths;
         std::vector<float32_t> heights;
 
