@@ -165,6 +165,9 @@ namespace ui::component
             walker.skip();
             char ch = 0;
             name = walker.readTo("{:", 2, ch);
+            if (walker.eof())
+                break;
+
             core::trim(name);
             walker.skip();
 

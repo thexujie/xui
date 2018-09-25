@@ -64,9 +64,9 @@ namespace ui
         void setShowRect(const core::rc32f & size);
 
         // expectSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
-        core::si32f expectSize() const { return prefferSize(calc_flag::donot_calc_percent_xy); }
+        core::si32f prefferSize() const;
         // prefferSize 计算出的期望大小
-        core::si32f prefferSize(calc_flags flags = calc_flag::none) const;
+        core::si32f prefferSize(const core::vec2<float32_t> & spacing) const;
         virtual core::si32f contentSize() const { return core::si32f(); }
 
         std::shared_ptr<Scene> scene() const { return _scene.lock(); }
@@ -97,10 +97,9 @@ namespace ui
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
 
-        float32_t calc_x(const core::dimensionf & value, calc_flags flags = calc_flag::none) const
+        float32_t calc(const core::dimensionf & value) const
         {
             auto s = scene();
-            auto p = parent();
             if (!s)
                 throw core::error_state;
 
@@ -115,20 +114,15 @@ namespace ui
             case core::unit::dot:
                 return value.value;
             case core::unit::per:
-                if (flags.any(calc_flag::donot_calc_percent_x))
-                    return 0;
-                if (!p)
-                    throw core::error_state;
-                return value.value / 100.0f * p->width();
+                return 0;
             default:
                 return value.value * s->ratio();
             }
         }
 
-        float32_t calc_y(const core::dimensionf & value, calc_flags flags = calc_flag::none) const
+        float32_t calc(const core::dimensionf & value, float32_t spacing) const
         {
             auto s = scene();
-            auto p = parent();
             if (!s)
                 throw core::error_state;
 
@@ -143,24 +137,30 @@ namespace ui
             case core::unit::dot:
                 return value.value;
             case core::unit::per:
-                if (flags.any(calc_flag::donot_calc_percent_y))
-                    return 0;
-                if (!p)
-                    throw core::error_state;
-                return value.value / 100.0f * p->height();
+                return value.value / 100.0f * spacing;
             default:
                 return value.value * s->ratio();
             }
         }
 
-        core::vec2f calc(const core::vec2<core::dimensionf> & value, calc_flags flags = calc_flag::none) const
+        core::vec2f calc(const core::vec2<core::dimensionf> & value) const
         {
-            return { calc_x(value.x, flags), calc_y(value.y, flags) };
+            return { calc(value.x), calc(value.y) };
         }
 
-        core::vec4f calc(const core::vec4<core::dimensionf> & value, calc_flags flags = calc_flag::none) const
+        core::vec2f calc(const core::vec2<core::dimensionf> & value, const core::vec2<float32_t> & spacing) const
         {
-            return { calc(value.xy, flags), calc(value.zw, flags) };
+            return { calc(value.x, spacing.cx), calc(value.y, spacing.cy) };
+        }
+
+        core::vec4f calc(const core::vec4<core::dimensionf> & value) const
+        {
+            return { calc(value.xy), calc(value.zw) };
+        }
+
+        core::vec4f calc(const core::vec4<core::dimensionf> & value, const core::vec2<float32_t> & spacing) const
+        {
+            return { calc(value.x, spacing.cx), calc(value.y, spacing.cy), calc(value.cx, spacing.cx), calc(value.cy, spacing.cy) };
         }
 
         core::rc32f box() const;

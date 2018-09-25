@@ -34,6 +34,7 @@ namespace ui
 
         core::si32f contentSize() const override;
         void layout(layout_flags flags) override;
+        std::string styleName() const override { return "grid"; }
 
     private:
         void _splitGrid(bool force = false) const;

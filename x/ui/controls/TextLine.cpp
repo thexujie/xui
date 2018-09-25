@@ -150,9 +150,9 @@ namespace ui::controls
                     rect.offset(cbox.leftTop()).offset(_scroll_pos, 0);
                     graphics.drawRectangle(rect, drawing::PathStyle().fill(0x400000ff));
                     if (cursor_left)
-                        graphics.drawLine(rect.leftTop(), rect.leftBottom(), drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(calc_x(1_px)));
+                        graphics.drawLine(rect.leftTop(), rect.leftBottom(), drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(calc(1_px)));
                     else
-                        graphics.drawLine(rect.rightTop(), rect.rightBottom(), drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(calc_x(1_px)));
+                        graphics.drawLine(rect.rightTop(), rect.rightBottom(), drawing::PathStyle().stoke(core::colors::Red, drawing::stroke_style::solid).width(calc(1_px)));
                 }
             }
         }

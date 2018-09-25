@@ -113,8 +113,8 @@
 	<Type Name="ui::controls::ScrollBar">
 		<DisplayString>[ScrollBar control]</DisplayString>
 	</Type>
-	<Type Name="ui::controls::TextBox">
-		<DisplayString>[TextBox control]</DisplayString>
+	<Type Name="ui::controls::TextLine">
+		<DisplayString>[TextLine control]</DisplayString>
 	</Type>
 	<Type Name="ui::Grid">
 		<DisplayString>[Grid container]</DisplayString>

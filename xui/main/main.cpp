@@ -67,7 +67,6 @@ void xui_main()
     shaper.itermize(u8"قق ققق ", drawing::font(), colors::Black);
     shaper.layout(999999999, drawing::wrap_mode::word);
 
-    std::string str = ".button { border: 1px; padding : 1em, 0.5em;background-color:#2888} .button hoving{border: 2px; background-color:#a888}";
     auto ss = std::make_shared<ui::component::StyleSheet>();
     ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
 
@@ -135,7 +134,6 @@ void xui_main()
     form->formScene()->setStyleSheet(ss);
     form->setBorder({ 1_px, 1_px });
     form->setBorderColors({ colors::Black, colors::Black });
-    //form->setBorderStyles({ graphics::stroke_style::dashed });
     form->addControl(text);
     form->addControl(image0);
     form->addControl(scrollbar);
@@ -145,7 +143,6 @@ void xui_main()
     form->show();
     form->centerScreen();
     form->closed += []() { win32::endLoop(0); };
-    //form->setScrollbarVisionV(ui::scrollbar_vision::always);
     form->setScrollbarVisionH(ui::scrollbar_vision::always);
     const core::property_table & props = core::app().properties<ui::controls::Button>();
 
@@ -176,7 +173,9 @@ void xui_main()
     {
         auto tln = std::make_shared<ui::controls::TextLine>();
         tln->setText(rtft);
-        tln->setSize({ 100_per, 10_em });
+        tln->setSize({ auto_value, 10_em });
+        tln->setAnchor({ 0_px, 0_px, 0_px, 0_px });
+        tln->setAnchorBorders(core::align::leftRight);
         tln->setImeMode(ui::ime_mode::on);
         layer->addControl(tln);
     }

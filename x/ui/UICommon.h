@@ -61,22 +61,6 @@ namespace ui
 
     typedef core::bitflag<layout_flag> layout_flags;
 
-    enum class calc_flag
-    {
-        none = 0,
-        donot_calc_percent_x = 0x0001,
-        donot_calc_percent_y = 0x0002,
-        donot_calc_percent_xy = donot_calc_percent_x | donot_calc_percent_y,
-    };
-
-    template<>
-    struct enable_bitmasks<calc_flag>
-    {
-        static const bool enable = true;
-    };
-
-    typedef core::bitflag<calc_flag> calc_flags;
-
     enum class mouse_button
     {
         none = 0,

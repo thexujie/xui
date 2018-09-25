@@ -268,19 +268,19 @@ namespace ui
             {
                 margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
                 size.cx += margin;
-                auto expect_size = control->expectSize();
+                auto perffer_size = control->prefferSize();
                 margin = _layout_direction == core::align::left ? m.bright : m.bleft;
-                size.cx = size.cx + expect_size.cx;
-                size.cy = std::max(size.cy, expect_size.cy + m.bheight());
+                size.cx = size.cx + perffer_size.cx;
+                size.cy = std::max(size.cy, perffer_size.cy + m.bheight());
             }
             else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
             {
                 margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
                 size.cy += margin;
-                auto expect_size = control->expectSize();
+                auto perffer_size = control->prefferSize();
                 margin = _layout_direction == core::align::top ? m.bbottom : m.btop;
-                size.cy += expect_size.cy;
-                size.cx = std::max(size.cx, expect_size.cx + m.bwidth());
+                size.cy += perffer_size.cy;
+                size.cx = std::max(size.cx, perffer_size.cx + m.bwidth());
             }
             else {}
         }
@@ -292,9 +292,12 @@ namespace ui
         if (!_invalid_layout && !flags.any(layout_flag::force))
             return;
 
+        if (!scene())
+            return;
+
         float32_t margin = 0;
-        core::si32f expect_size = expectSize();
         core::rc32f box = paddingBox();
+        core::si32f spacing = box.size;
         float32_t layout_pos = 0;
         core::si32f layout_size;
         switch (_layout_direction)
@@ -312,36 +315,83 @@ namespace ui
         default:
             break;
         }
+
+        float32_t margin_size = 0;
+        float32_t fixed_size = 0;
+        for (auto & iter : _controls)
+        {
+            auto & control = iter.second;
+            auto lo = control->layoutOrigin();
+            if (lo != layout_origin::layout && lo != layout_origin::sticky)
+                continue;
+
+            auto m = control->realMargin();
+            auto s = control->size();
+
+            if (_layout_direction == core::align::left || _layout_direction == core::align::right)
+            {
+                margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
+                if (s.cx.unit != core::unit::per && s.cx.avi())
+                    fixed_size += calc(s.cx);
+            }
+            else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
+            {
+                margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
+                if (s.cy.unit != core::unit::per && s.cy.avi())
+                    fixed_size += calc(s.cy);
+            }
+            else {}
+            margin_size += margin;
+        }
+
+        if (_layout_direction == core::align::left || _layout_direction == core::align::right)
+        {
+            spacing.cx -= margin_size;
+            spacing.cx -= fixed_size;
+        }
+        else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
+        {
+            spacing.cy -= margin_size;
+            spacing.cy -= fixed_size;
+        }
+        else {}
+
         std::set<std::string> setes;
         for (auto & iter : _controls)
         {
             auto& control = iter.second;
             auto margins = control->realMargin();
             auto lo = control->layoutOrigin();
-            auto preffer_size = control->prefferSize(calc_flag::none);
 
             if (lo == layout_origin::layout || lo == layout_origin::sticky)
             {
                 switch (_layout_direction)
                 {
                 case core::align::left:
+                {
+                    auto preffer_size = control->prefferSize({ spacing.cx, spacing.cy - margins.bheight() });
                     margin = std::max(margin, margins.bleft);
-                    control->place({ layout_pos + layout_size.cx + margin, box.y + margins.btop, preffer_size.cx, expect_size.cy - margins.bheight() }, preffer_size);
+                    control->place({ layout_pos + layout_size.cx + margin, box.y + margins.btop, preffer_size.cx, box.cy - margins.bheight() }, preffer_size);
                     layout_size.cx += margin + preffer_size.cx;
                     margin = margins.bright;
                     break;
+                }
                 case core::align::top:
+                {
+                    auto preffer_size = control->prefferSize({ spacing.cx - margins.bwidth(), spacing.cy });
                     margin = std::max(margin, margins.btop);
-                    control->place({ box.x + margins.bleft, layout_pos + layout_size.cy + margin, expect_size.cx - margins.bwidth(), preffer_size.cy }, preffer_size);
+                    control->place({ box.x + margins.bleft, layout_pos + layout_size.cy + margin, box.cx - margins.bwidth(), preffer_size.cy }, preffer_size);
                     layout_size.cy += margin + preffer_size.cy;
                     margin = margins.bbottom;
                     break;
+                }
                 default:
                     break;
                 }
             }
             else
             {
+                auto preffer_size = control->prefferSize(box.size);
                 switch (lo)
                 {
                 case layout_origin::parent:

@@ -51,30 +51,54 @@ namespace ui
         return nullptr;
     }
 
-    core::si32f Control::prefferSize(calc_flags flags) const
+    core::si32f Control::prefferSize() const
     {
         // 如果设置了固定大小，直接返回即可
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
-            return calc(_size.value, flags);
+            return calc(_size.value);
 
         core::si32f size = contentSize() + calc(_padding).bsize();
         if (_size.available())
         {
             if (_size.value.cx.avi())
-                size.cx = calc_x(_size.value.cx, flags);
+                size.cx = calc(_size.value.cx);
             else if (_size.value.cy.avi())
-                size.cy = calc_y(_size.value.cy, flags);
+                size.cy = calc(_size.value.cy);
             else {}
         }
 
         auto p = parent();
         if (_anchor_borders.all(core::align::leftRight))
-            size.cx = p->width() - (calc_x(_anchor.value.bleft) + calc_x(_anchor.value.bright));
+            size.cx = p->width() - (calc(_anchor.value.bleft) + calc(_anchor.value.bright));
         if (_anchor_borders.all(core::align::topBottom))
-            size.cy = p->width() - (calc_y(_anchor.value.btop) + calc_y(_anchor.value.bbottom));
+            size.cy = p->width() - (calc(_anchor.value.btop) + calc(_anchor.value.bbottom));
         _adjustSizeMinMax(size);
         return size;
     }
+
+    core::si32f Control::prefferSize(const core::vec2<float32_t> & spacing) const
+    {
+        if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
+            return calc(_size, spacing);
+
+        core::si32f size = contentSize() + calc(_padding, spacing).bsize();
+        if (_size.available())
+        {
+            if (_size.value.cx.avi())
+                size.cx = calc(_size.value.cx, spacing.cx);
+            else if (_size.value.cy.avi())
+                size.cy = calc(_size.value.cy, spacing.cy);
+            else {}
+        }
+
+        if (_anchor_borders.all(core::align::leftRight))
+            size.cx = spacing.cx - calc(_anchor.value.bleft + _anchor.value.bright, spacing.cx);
+        if (_anchor_borders.all(core::align::topBottom))
+            size.cy = spacing.cy - calc(_anchor.value.btop + _anchor.value.bbottom, spacing.cy);
+        _adjustSizeMinMax(size);
+        return size;
+    }
+
 
     const core::color32 & Control::color() const
     {
@@ -463,7 +487,7 @@ namespace ui
                 std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
                 std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
             {
-                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc_x(_border.value.x)));
+                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathStyle().stoke(_border_colors.value.x, _border_styles.value[0]).width(calc(_border.value.x)));
             }
             else
             {
@@ -500,13 +524,13 @@ namespace ui
         {
             if (_minSize.value.cx.avi())
             {
-                float32_t val = calc_x(_minSize.value.cx);
+                float32_t val = calc(_minSize.value.cx);
                 if (size.cx < val)
                     size.cx = val;
             }
             if (_minSize.value.cy.avi())
             {
-                float32_t val = calc_y(_minSize.value.cy);
+                float32_t val = calc(_minSize.value.cy);
                 if (size.cy < val)
                     size.cy = val;
             }
@@ -516,13 +540,13 @@ namespace ui
         {
             if (_maxSize.value.cx.avi())
             {
-                float32_t val = calc_x(_maxSize.value.cx);
+                float32_t val = calc(_maxSize.value.cx);
                 if (size.cx > val)
                     size.cx = val;
             }
             if (_maxSize.value.cy.avi())
             {
-                float32_t val = calc_y(_maxSize.value.cy);
+                float32_t val = calc(_maxSize.value.cy);
                 if (size.cy > val)
                     size.cy = val;
             }

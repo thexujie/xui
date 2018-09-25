@@ -37,9 +37,9 @@ namespace ui
 
         for (auto & item : _items)
         {
-            auto esize = item.control->expectSize();
-            widths[item.col] = std::max(widths[item.col], esize.cx);
-            heights[item.row] = std::max(heights[item.row], esize.cy);
+            auto psize = item.control->prefferSize();
+            widths[item.col] = std::max(widths[item.col], psize.cx);
+            heights[item.row] = std::max(heights[item.row], psize.cy);
         }
 
         core::si32f size;
@@ -71,7 +71,7 @@ namespace ui
                 if (lo != layout_origin::layout && lo != layout_origin::sticky)
                     continue;
 
-                auto expect_size = control->expectSize();
+                auto expect_size = control->prefferSize();
                 auto m = control->realMargin();
                 control->place(cell.rect.offseted(pbox.pos), cell.rect.size);
             }
@@ -105,7 +105,7 @@ namespace ui
                 if (row_size.unit == core::unit::per)
                     height = pbox.height * row_size.value / 100.0f;
                 else
-                    height = calc_y(row_size);
+                    height = calc(row_size);
             }
             else
             {
@@ -113,7 +113,7 @@ namespace ui
                 {
                     auto & cell = _cells[row * _col_sizes.size() + col];
                     for(auto & control : cell.controls)
-                        height = std::max(height, control->expectSize().cy);
+                        height = std::max(height, control->prefferSize().cy);
                 }
             }
 
@@ -135,7 +135,7 @@ namespace ui
                 if (col_size.unit == core::unit::per)
                     width = pbox.width * col_size.value / 100.0f;
                 else
-                    width = calc_x(col_size);
+                    width = calc(col_size);
             }
             else
             {
@@ -143,7 +143,7 @@ namespace ui
                 {
                     auto & cell = _cells[row * _col_sizes.size() + col];
                     for (auto & control : cell.controls)
-                        width = std::max(width, control->expectSize().cx);
+                        width = std::max(width, control->prefferSize().cx);
                 }
             }
 
