@@ -68,6 +68,7 @@
 }
 
 .radio:hover {
+    hole-border-size: 2px;
     background-color: #a2ff;
     hole-border-color: #f444;
 }

@@ -182,6 +182,18 @@
     <ClCompile Include="ui\controls\Radio.cpp">
       <Filter>ui\controls</Filter>
     </ClCompile>
+    <ClCompile Include="ui\base\Radio.cpp">
+      <Filter>ui\base</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\RadioGroup.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\base\Check.cpp">
+      <Filter>ui\base</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Check.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -443,6 +455,18 @@
     <ClInclude Include="core\member_traits.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="ui\base\Radio.h">
+      <Filter>ui\base</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\RadioGroup.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\base\Check.h">
+      <Filter>ui\base</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Check.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -486,6 +510,9 @@
     </Filter>
     <Filter Include="ui\controls">
       <UniqueIdentifier>{c28c3689-fa5c-445e-bb2b-d129ff1168b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\base">
+      <UniqueIdentifier>{b7e8d4dd-e310-4cb2-b5fa-99e52d17094f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

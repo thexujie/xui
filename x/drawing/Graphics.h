@@ -5,34 +5,42 @@ class SkTextBlobBuilder;
 
 namespace drawing
 {
+    enum class point_mode
+    {
+        points,
+        lines,
+        polygon,
+    };
+
     struct drawcall_statistics
     {
-        int32_t save = 0;
-        int32_t restore = 0;
-        int32_t setClipRect = 0;
-        int32_t setClipPath = 0;
-        int32_t setMatrix = 0;
-        int32_t drawLine = 0;
-        int32_t drawEllipse = 0;
-        int32_t drawRectangle = 0;
-        int32_t drawRoundRect = 0;
-        int32_t drawPath = 0;
-        int32_t drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref = 0;
-        int32_t drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref = 0;
-        int32_t drawTextBlob = 0;
-        int32_t drawImage__const_Image_ref__core_pt32f__core_aligns = 0;
-        int32_t drawImage__const_Image_ref__core_rc32f__core_aligns = 0;
-        int32_t drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns = 0;
-        int32_t drawImage__const_Image_ref__core_pt32f__core_rc32f_core_aligns = 0;
-        int32_t drawImage__const_Image_ref__core_rc32f__core_rc32i_core_aligns = 0;
-        int32_t drawImage__const_Image_ref__core_rc32f__core_rc32f_core_aligns = 0;
-        int32_t drawImage__const_Image_ref__core_pt32f = 0;
-        int32_t drawImage__const_Image_ref__core_rc32f = 0;
-        int32_t drawImage__const_Image_ref__core_rc32f__core_rc32i = 0;
-        int32_t drawImage__const_Image_ref__core_rc32f__core_rc32f = 0;
-        int32_t fillPath = 0;
+        uint32_t save = 0;
+        uint32_t restore = 0;
+        uint32_t setClipRect = 0;
+        uint32_t setClipPath = 0;
+        uint32_t setMatrix = 0;
+        uint32_t drawLine = 0;
+        uint32_t drawEllipse = 0;
+        uint32_t drawRectangle = 0;
+        uint32_t drawRoundRect = 0;
+        uint32_t drawPoints = 0;
+        uint32_t drawPath = 0;
+        uint32_t drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref = 0;
+        uint32_t drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref = 0;
+        uint32_t drawTextBlob = 0;
+        uint32_t drawImage__const_Image_ref__core_pt32f__core_aligns = 0;
+        uint32_t drawImage__const_Image_ref__core_rc32f__core_aligns = 0;
+        uint32_t drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns = 0;
+        uint32_t drawImage__const_Image_ref__core_pt32f__core_rc32f_core_aligns = 0;
+        uint32_t drawImage__const_Image_ref__core_rc32f__core_rc32i_core_aligns = 0;
+        uint32_t drawImage__const_Image_ref__core_rc32f__core_rc32f_core_aligns = 0;
+        uint32_t drawImage__const_Image_ref__core_pt32f = 0;
+        uint32_t drawImage__const_Image_ref__core_rc32f = 0;
+        uint32_t drawImage__const_Image_ref__core_rc32f__core_rc32i = 0;
+        uint32_t drawImage__const_Image_ref__core_rc32f__core_rc32f = 0;
+        uint32_t fillPath = 0;
 
-        int32_t total() const
+        uint32_t total() const
         {
             return 
                 //save +
@@ -87,6 +95,8 @@ namespace drawing
         void drawRectangle(core::rc32f rect, const PathStyle & style);
         void drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const PathStyle & style);
 
+        void drawPoints(const core::pt32f points[], size_t count, point_mode mode, const PathStyle & style);
+        void drawPath(const Path & path, const PathStyle & style);
         void drawPath(const std::shared_ptr<drawing::Path> & path, const PathStyle & style);
 
         void drawString(const std::string & str, core::pt32f point, const StringFormat & format);

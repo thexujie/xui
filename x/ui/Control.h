@@ -97,67 +97,20 @@ namespace ui
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
 
-        float32_t calc(const core::dimensionf & value) const
-        {
-            auto s = scene();
-            if (!s)
-                throw core::error_state;
-
-            switch (value.unit)
-            {
-            case core::unit::px:
-                return value.value * s->ratio();
-            case core::unit::em:
-                return value.value * drawing::fontmetrics(drawing::font()).height;
-            case core::unit::pt:
-                return value.value * 72.0f * s->ratio();
-            case core::unit::dot:
-                return value.value;
-            case core::unit::per:
-                return 0;
-            default:
-                return value.value * s->ratio();
-            }
-        }
-
-        float32_t calc(const core::dimensionf & value, float32_t spacing) const
-        {
-            auto s = scene();
-            if (!s)
-                throw core::error_state;
-
-            switch (value.unit)
-            {
-            case core::unit::px:
-                return value.value * s->ratio();
-            case core::unit::em:
-                return value.value * drawing::fontmetrics(drawing::font()).height;
-            case core::unit::pt:
-                return value.value * 72.0f * s->ratio();
-            case core::unit::dot:
-                return value.value;
-            case core::unit::per:
-                return value.value / 100.0f * spacing;
-            default:
-                return value.value * s->ratio();
-            }
-        }
-
+        float32_t calc(const core::dimensionf & value) const;
+        float32_t calc(const core::dimensionf & value, float32_t spacing) const;
         core::vec2f calc(const core::vec2<core::dimensionf> & value) const
         {
             return { calc(value.x), calc(value.y) };
         }
-
         core::vec2f calc(const core::vec2<core::dimensionf> & value, const core::vec2<float32_t> & spacing) const
         {
             return { calc(value.x, spacing.cx), calc(value.y, spacing.cy) };
         }
-
         core::vec4f calc(const core::vec4<core::dimensionf> & value) const
         {
             return { calc(value.xy), calc(value.zw) };
         }
-
         core::vec4f calc(const core::vec4<core::dimensionf> & value, const core::vec2<float32_t> & spacing) const
         {
             return { calc(value.x, spacing.cx), calc(value.y, spacing.cy), calc(value.cx, spacing.cx), calc(value.cy, spacing.cy) };

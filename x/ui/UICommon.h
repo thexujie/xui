@@ -2,7 +2,6 @@
 
 namespace ui
 {
-
     enum class image_fitting
     {
         none = 0,
@@ -70,6 +69,13 @@ namespace ui
         mask = 0x00ff,
     };
     typedef core::bitflag<mouse_button> mouse_buttons;
+
+    enum class check_state
+    {
+        unchecked = 0,
+        checked,
+        unknown,
+    };
 
 
     /**

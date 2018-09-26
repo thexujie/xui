@@ -36,25 +36,6 @@ namespace ui::controls
         _text = text;
     }
 
-    void Radio::setGroup(std::string group)
-    {
-        if(group != _group)
-        {
-            if(_radio_group)
-            {
-                _radio_group->removeRadio(share_ref<Radio>());
-                _radio_group = nullptr;
-            }
-            _group = group;
-            if(!group.empty())
-            {
-                if (auto s = scene())
-                    _radio_group = s->radioGroup(group);
-            }
-
-        }
-    }
-
     core::si32f Radio::contentSize() const
     {
         _confirmBlob();
@@ -101,26 +82,6 @@ namespace ui::controls
         _drawBorder(graphics);
     }
 
-    void Radio::enteringScene(std::shared_ptr<Scene> & scene)
-    {
-        if (!_group.empty())
-        {
-            _radio_group = scene->radioGroup(_group);
-            _radio_group->addRadio(share_ref<Radio>());
-        }
-        Control::enteringScene(scene);
-    }
-
-    void Radio::leavingScene()
-    {
-        if (_radio_group)
-        {
-            _radio_group->removeRadio(share_ref<Radio>());
-            _radio_group = nullptr;
-        }
-        Control::leavingScene();
-    }
-
     void Radio::onMouseEnter(const input_state & state)
     {
         Control::onMouseEnter(state);
@@ -149,18 +110,8 @@ namespace ui::controls
     {
         Control::onMouseUp(state, RadioButton);
         restyle();
-        setCheckState(_state == check_state::checked ? check_state::unchecked : check_state::checked);
-    }
-
-    void Radio::setCheckState(check_state state)
-    {
-        if(_state != state)
-        {
-            if (_radio_group && state == check_state::checked)
-                _radio_group->check(share_ref<Radio>());
-            _state = state;
-            refresh();
-        }
+        if(_state != check_state::checked)
+            setCheckState(check_state::checked);
     }
 
     void Radio::_confirmBlob() const

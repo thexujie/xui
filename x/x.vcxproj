@@ -100,11 +100,14 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="drawing\skia\skia.cpp" />
+    <ClCompile Include="ui\base\Check.cpp" />
+    <ClCompile Include="ui\base\Radio.cpp" />
     <ClCompile Include="ui\component\Component.cpp" />
     <ClCompile Include="ui\component\Style.cpp" />
     <ClCompile Include="ui\component\Window.cpp" />
     <ClCompile Include="ui\Container.cpp" />
     <ClCompile Include="ui\controls\Button.cpp" />
+    <ClCompile Include="ui\controls\Check.cpp" />
     <ClCompile Include="ui\controls\Image.cpp" />
     <ClCompile Include="ui\controls\Radio.cpp" />
     <ClCompile Include="ui\controls\ScrollBar.cpp" />
@@ -164,6 +167,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ui\Grid.cpp" />
+    <ClCompile Include="ui\RadioGroup.cpp" />
     <ClCompile Include="ui\Scene.cpp" />
     <ClCompile Include="win32\ImeContext.cpp" />
     <ClCompile Include="win32\Window.cpp" />
@@ -175,11 +179,14 @@
     <ClInclude Include="drawing\draw.h" />
     <ClInclude Include="drawing\drawing.h" />
     <ClInclude Include="drawing\Shaper.h" />
+    <ClInclude Include="ui\base\Check.h" />
+    <ClInclude Include="ui\base\Radio.h" />
     <ClInclude Include="ui\component\Component.h" />
     <ClInclude Include="ui\component\Style.h" />
     <ClInclude Include="ui\component\Window.h" />
     <ClInclude Include="ui\Container.h" />
     <ClInclude Include="ui\controls\Button.h" />
+    <ClInclude Include="ui\controls\Check.h" />
     <ClInclude Include="ui\controls\Image.h" />
     <ClInclude Include="ui\controls\Radio.h" />
     <ClInclude Include="ui\controls\ScrollBar.h" />
@@ -250,6 +257,7 @@
     <ClInclude Include="drawing\TextBlob.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui\Grid.h" />
+    <ClInclude Include="ui\RadioGroup.h" />
     <ClInclude Include="ui\Scene.h" />
     <ClInclude Include="ui\ui.h" />
     <ClInclude Include="ui\UICommon.h" />

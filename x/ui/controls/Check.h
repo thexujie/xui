@@ -1,15 +1,15 @@
 #pragma once
 
-#include "ui/base/Radio.h"
+#include "ui/base/Check.h"
 
 namespace ui::controls
 {
-    class Radio : public base::Radio
+    class Check : public base::Check
     {
     public:
-        Radio();
-        Radio(std::string text);
-        ~Radio();
+        Check();
+        Check(std::string text);
+        ~Check();
 
         static void propertyTableCallback(core::property_table & properties);
         void propertyTable(core::property_table & properties) override;
@@ -50,7 +50,7 @@ namespace ui::controls
         core::color32 _hole_color = core::colors::Transparent;
 
         core::dimensionf _dot_border_size = 1_px;
-        core::color32 _dot_border_color = core::colors::Gray;
-        core::color32 _dot_color = core::colors::Black;
+        core::color32 _dot_border_color = core::colors::Black;
+        core::color32 _dot_color = core::colors::Gray;
     };
 }

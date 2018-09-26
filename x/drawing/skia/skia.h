@@ -9,6 +9,7 @@
 #include <SkCanvas.h>
 #include <SkString.h>
 #include <SkTypeface.h>
+#include <SkPaint.h>
 #include "drawing/image/image.h"
 #include "drawing/PathStyle.h"
 #include "drawing/font.h"
@@ -151,6 +152,17 @@ namespace drawing::skia
         case SkBlendMode::kPlus: return blend_mode::plus;
         case SkBlendMode::kOverlay: return blend_mode::overlay;
         default: return blend_mode::src;
+        }
+    }
+
+    inline SkCanvas::PointMode from(point_mode mode)
+    {
+        switch (mode)
+        {
+        case point_mode::points: return SkCanvas::PointMode::kPoints_PointMode;
+        case point_mode::lines: return SkCanvas::PointMode::kLines_PointMode;
+        case point_mode::polygon: return SkCanvas::PointMode::kPolygon_PointMode;
+        default: return SkCanvas::PointMode::kPoints_PointMode;
         }
     }
 }

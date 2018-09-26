@@ -129,6 +129,52 @@ namespace ui
             return _font;
     }
 
+    float32_t Control::calc(const core::dimensionf & value) const
+    {
+        auto s = scene();
+        if (!s)
+            throw core::error_state;
+
+        switch (value.unit)
+        {
+        case core::unit::px:
+            return value.value * s->ratio();
+        case core::unit::em:
+            return value.value * drawing::fontmetrics(drawing::font()).height;
+        case core::unit::pt:
+            return value.value * 72.0f * s->ratio();
+        case core::unit::dot:
+            return value.value;
+        case core::unit::per:
+            return 0;
+        default:
+            return value.value * s->ratio();
+        }
+    }
+
+    float32_t Control::calc(const core::dimensionf & value, float32_t spacing) const
+    {
+        auto s = scene();
+        if (!s)
+            throw core::error_state;
+
+        switch (value.unit)
+        {
+        case core::unit::px:
+            return value.value * s->ratio();
+        case core::unit::em:
+            return value.value * drawing::fontmetrics(drawing::font()).height;
+        case core::unit::pt:
+            return value.value * 72.0f * s->ratio();
+        case core::unit::dot:
+            return value.value;
+        case core::unit::per:
+            return value.value / 100.0f * spacing;
+        default:
+            return value.value * s->ratio();
+        }
+    }
+
     void Control::move(const core::vec2<core::dimensionf> & pos)
     {
         if (_pos != _pos)

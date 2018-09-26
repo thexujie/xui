@@ -5,6 +5,7 @@
 #include "ui/ui.h"
 
 #include "win32/Win32App.h"
+#include "ui/controls/Check.h"
 
 using namespace core;
 
@@ -232,9 +233,51 @@ void xui_main()
             rbtn->setGroup("abcd");
             container->addControl(rbtn);
         }
+        {
+            auto rbtn = std::make_shared<ui::controls::Radio>();
+            rbtn->setText(u8"Lucccccccccy");
+            rbtn->setGroup("abcd");
+            container->addControl(rbtn);
+        }
+        {
+            auto rbtn = std::make_shared<ui::controls::Radio>();
+            rbtn->setText(u8"Vickyyyyyyy");
+            rbtn->setGroup("abcd");
+            container->addControl(rbtn);
+        }
         layer->addControl(container);
         container->setBorder({ 1_px, 1_px });
         container->setBorderColors({ colors::Red , colors::Red });
+    }
+    {
+        auto container = std::make_shared<ui::Container>();
+        container->setLayoutDirection(core::align::top);
+        container->setSize({ 100_per, auto_value });
+
+        {
+            auto rbtn = std::make_shared<ui::controls::Check>();
+            rbtn->setText(u8"将数据放置于上方");
+            container->addControl(rbtn);
+        }
+        {
+            auto rbtn = std::make_shared<ui::controls::Check>();
+            rbtn->setText(u8"将数据放置于尾部，便于实时查看");
+            container->addControl(rbtn);
+        }
+        {
+            auto rbtn = std::make_shared<ui::controls::Check>();
+            rbtn->setText(u8"Lucccccccccy");
+            container->addControl(rbtn);
+        }
+        {
+            auto rbtn = std::make_shared<ui::controls::Check>();
+            rbtn->setText(u8"Vickyyyyyyy");
+            container->addControl(rbtn);
+            rbtn->stateChanged += [](ui::check_state state) { win32::endLoop(0); };
+        }
+        layer->addControl(container);
+        container->setBorder({ 1_px, 1_px });
+        container->setBorderColors({ colors::Red, colors::Red });
     }
     form->addControl(layer);
 

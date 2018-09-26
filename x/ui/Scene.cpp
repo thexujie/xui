@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "ui/Control.h"
-#include "ui/controls/Radio.h"
+#include "ui/RadioGroup.h"
 #include "Desktop.h"
 
 namespace ui
@@ -38,12 +38,12 @@ namespace ui
         _cv_render.notify_all();
     }
 
-    std::shared_ptr<controls::RadioGroup> Scene::radioGroup(std::string name)
+    std::shared_ptr<RadioGroup> Scene::radioGroup(std::string name)
     {
         auto iter = _radio_groups.find(name);
         if (iter == _radio_groups.end())
         {
-            auto group = std::make_shared<controls::RadioGroup>(name);
+            auto group = std::make_shared<RadioGroup>(name);
             _radio_groups[name] = group;
             return group;
         }
@@ -52,7 +52,7 @@ namespace ui
             auto ptr = iter->second.lock();
             if (!ptr)
             {
-                auto group = std::make_shared<controls::RadioGroup>(name);
+                auto group = std::make_shared<RadioGroup>(name);
                 _radio_groups[name] = group;
                 return group;
             }

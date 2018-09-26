@@ -9,6 +9,7 @@
 #include <SkDiscretePathEffect.h>
 #include <Sk2DPathEffect.h>
 #include <SkColorFilter.h>
+#include <SkDrawable.h>
 
 namespace drawing
 {
@@ -136,6 +137,30 @@ namespace drawing
         _native->drawRoundRect(skia::from(rect), rx, ry, paint);
     }
 
+    void Graphics::drawPoints(const core::pt32f points[], size_t count, point_mode mode, const PathStyle & style)
+    {
+        ++_statistics.drawPoints;
+        if (!_native)
+            return;
+
+        SkPaint paint;
+        style.apply(paint);
+        apply(paint);
+        _native->drawPoints(skia::from(mode), count, reinterpret_cast<const SkPoint *>(points), paint);
+    }
+
+    void Graphics::drawPath(const Path & path, const PathStyle & style)
+    {
+        ++_statistics.drawPath;
+        if (!_native)
+            return;
+
+        SkPaint paint;
+        style.apply(paint);
+        apply(paint);
+        _native->drawPath(path.native(), paint);
+    }
+
     void Graphics::drawPath(const std::shared_ptr<drawing::Path> & path, const PathStyle & style)
     {
         ++_statistics.drawPath;
@@ -143,22 +168,22 @@ namespace drawing
             return;
 
         SkPaint paint;
-        {
-            SkScalar scale = 10.0f;
-            SkPath path;
-            static const int8_t pts[] = { 2, 2, 1, 3, 0, 3, 2, 1, 3, 1,
-                4, 0, 4, 1, 5, 1, 4, 2, 4, 3, 2, 5, 2, 4, 3, 3, 2, 3 };
-            path.moveTo(2 * scale, 3 * scale);
-            for (size_t i = 0; i < sizeof(pts) / sizeof(pts[0]); i += 2)
-            {
-                path.lineTo(pts[i] * scale, pts[i + 1] * scale);
-            }
-            path.close();
-            SkMatrix matrix = SkMatrix::MakeScale(4 * scale);
-            SkPaint paint;
-            paint.setPathEffect(SkPath2DPathEffect::Make(matrix, path));
-            paint.setAntiAlias(true);
-        }
+        ////{
+        ////    SkScalar scale = 10.0f;
+        ////    SkPath path;
+        ////    static const int8_t pts[] = { 2, 2, 1, 3, 0, 3, 2, 1, 3, 1,
+        ////        4, 0, 4, 1, 5, 1, 4, 2, 4, 3, 2, 5, 2, 4, 3, 3, 2, 3 };
+        ////    path.moveTo(2 * scale, 3 * scale);
+        ////    for (size_t i = 0; i < sizeof(pts) / sizeof(pts[0]); i += 2)
+        ////    {
+        ////        path.lineTo(pts[i] * scale, pts[i + 1] * scale);
+        ////    }
+        ////    path.close();
+        ////    SkMatrix matrix = SkMatrix::MakeScale(4 * scale);
+        ////    SkPaint paint;
+        ////    paint.setPathEffect(SkPath2DPathEffect::Make(matrix, path));
+        ////    paint.setAntiAlias(true);
+        ////}
         style.apply(paint);
         apply(paint);
         _native->drawPath(path->native(), paint);

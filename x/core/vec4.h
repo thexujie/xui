@@ -469,6 +469,18 @@ namespace core
             return vec4<T2>(lt, rb - lt);
         }
 
+
+        template<typename = decltype(std::declval<T>() * std::declval<float>())>
+        vec2<T> leftBorder(float rate) const { return vec2<T>(x, y + cy * rate); }
+
+        template<typename = decltype(std::declval<T>() * std::declval<float>())>
+        vec2<T> topBorder(float rate) const { return vec2<T>(x + cx * rate, y); }
+
+        template<typename = decltype(std::declval<T>() * std::declval<float>())>
+        vec2<T> rightBorder(float rate) const { return vec2<T>(x + cx, y + cy * rate); }
+
+        template<typename = decltype(std::declval<T>() * std::declval<float>())>
+        vec2<T> bottomBorder(float rate) const { return vec2<T>(x + cx * rate, y + cy); }
     public:
         union
         {
