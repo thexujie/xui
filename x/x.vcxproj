@@ -111,6 +111,7 @@
     <ClCompile Include="ui\controls\Image.cpp" />
     <ClCompile Include="ui\controls\Radio.cpp" />
     <ClCompile Include="ui\controls\ScrollBar.cpp" />
+    <ClCompile Include="ui\controls\Spacer.cpp" />
     <ClCompile Include="ui\controls\Text.cpp" />
     <ClCompile Include="ui\controls\TextLine.cpp" />
     <ClCompile Include="ui\Desktop.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="ui\controls\Image.h" />
     <ClInclude Include="ui\controls\Radio.h" />
     <ClInclude Include="ui\controls\ScrollBar.h" />
+    <ClInclude Include="ui\controls\Spacer.h" />
     <ClInclude Include="ui\controls\Text.h" />
     <ClInclude Include="ui\controls\TextLine.h" />
     <ClInclude Include="ui\Desktop.h" />

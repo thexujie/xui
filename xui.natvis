@@ -27,6 +27,10 @@
 		<DisplayString Condition="unit==3">{value}dot</DisplayString>
 		<DisplayString Condition="unit==4">{value}%</DisplayString>
 	</Type>
+	<Type Name="core::attribute&lt;*&gt;">
+		<DisplayString Condition="_available==false">not available</DisplayString>
+		<DisplayString Condition="_available==true">{value}</DisplayString>
+	</Type>
 
 	<Type Name="drawing::font">
 		<DisplayString>{{{family}, {size}}}</DisplayString>

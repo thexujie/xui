@@ -67,6 +67,7 @@ struct tc
     int ab = 34;
 };
 
+//#define BASE_LAYER
 void xui_main()
 {
     std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
@@ -83,6 +84,7 @@ void xui_main()
     auto src = screen->rect();
     auto ppi = ui::Desktop::instance().ppi();
 
+#ifdef BASE_LAYER
     auto buttons = std::make_shared<ui::Container>();
     {
         //buttons->setAlpha(0.5f);
@@ -137,17 +139,20 @@ void xui_main()
     auto text2 = std::make_shared<ui::controls::Text>("XYZOPQRST");
     text2->setBackgroundColor(colors::Green);
     text2->setPadding({ 1_em, 0.5_em });
+#endif
 
     auto form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em), ui::form_style::normal);
     form->formScene()->setStyleSheet(ss);
     form->setBorder({ 1_px, 1_px });
     form->setBorderColors({ colors::Black, colors::Black });
+#ifdef BASE_LAYER
     form->addControl(text);
     form->addControl(image0);
     form->addControl(scrollbar);
     form->addControl(buttons);
     form->addControl(image);
     form->addControl(text2);
+#endif
     form->show();
     form->centerScreen();
     form->closed += []() { win32::endLoop(0); };
@@ -275,6 +280,27 @@ void xui_main()
             container->addControl(rbtn);
             rbtn->stateChanged += [](ui::check_state state) { win32::endLoop(0); };
         }
+        layer->addControl(container);
+        container->setBorder({ 1_px, 1_px });
+        container->setBorderColors({ colors::Red, colors::Red });
+    }
+    {
+        auto container = std::make_shared<ui::Container>(core::align::left);
+        container->setSize({ 100_per, auto_value });
+
+        container->addSpacer(50_per);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里确定");
+            container->addControl(rbtn);
+        }
+        container->addSpacer(2_em);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里取消");
+            container->addControl(rbtn);
+        }
+        container->addSpacer(50_per);
         layer->addControl(container);
         container->setBorder({ 1_px, 1_px });
         container->setBorderColors({ colors::Red, colors::Red });

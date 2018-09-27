@@ -1,12 +1,18 @@
 #include "stdafx.h"
 #include "Container.h"
 #include "controls/ScrollBar.h"
+#include "controls/Spacer.h"
 
 namespace ui
 {
     Container::Container()
     {
         _interactable = false;
+    }
+
+    Container::Container(core::align layout) : _layout_direction(layout)
+    {
+        
     }
 
     Container::~Container()
@@ -31,6 +37,13 @@ namespace ui
         else
             _controls.insert(std::make_pair(control->ZValue(), control));
         relayout();
+    }
+
+    void Container::addSpacer(core::dimensionf size)
+    {
+        auto spacer = std::make_shared<controls::Spacer>();
+        spacer->setSize({ size , size });
+        addControl(spacer);
     }
 
     void Container::removeControl(std::shared_ptr<Control> control)
@@ -131,14 +144,11 @@ namespace ui
             if (hittest == hittest_result::nowhere)
                 continue;
 
-            if (hittest == hittest_result::client)
-                return iter.second;
-
             auto child = iter.second->findChild(pos, last);
             if (child)
                 return child;
 
-            if (hittest == hittest_result::stable)
+            if (hittest == hittest_result::client || hittest == hittest_result::stable)
                 return iter.second;
 
             control = iter.second;
@@ -318,6 +328,7 @@ namespace ui
 
         float32_t margin_size = 0;
         float32_t fixed_size = 0;
+
         for (auto & iter : _controls)
         {
             auto & control = iter.second;

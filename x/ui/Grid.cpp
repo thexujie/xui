@@ -6,7 +6,6 @@ namespace ui
 {
     Grid::Grid()
     {
-        _layout_direction = core::align::none;
     }
 
     Grid::~Grid()

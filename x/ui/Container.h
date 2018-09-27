@@ -19,9 +19,11 @@ namespace ui
     {
     public:
         Container();
+        Container(core::align layout);
         virtual ~Container();
 
         void addControl(std::shared_ptr<Control> control);
+        void addSpacer(core::dimensionf size);
         void removeControl(std::shared_ptr<Control> control);
         std::multimap<int32_t, std::shared_ptr<Control>> & children() { return _controls; }
 
