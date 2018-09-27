@@ -78,7 +78,7 @@ namespace ui::controls
             points[2] = rc_hole.rightBorder(0.1f);
 
             if (_dot_border_color.visible())
-                graphics.drawPoints(points, 3, drawing::point_mode::polygon, drawing::PathStyle().stoke(_dot_border_color, calc(lw)));
+                graphics.drawPoints(points, 3, drawing::point_mode::polygon, drawing::PathStyle().stoke(_dot_border_color, calc(lw)).join(drawing::join_style::round));
         }
         else if (_state == check_state::unknown)
         {

@@ -67,7 +67,7 @@ struct tc
     int ab = 34;
 };
 
-//#define BASE_LAYER
+#define BASE_LAYER
 void xui_main()
 {
     std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
@@ -286,6 +286,7 @@ void xui_main()
     }
     {
         auto container = std::make_shared<ui::Container>(core::align::left);
+        container->setFallMode(false);
         container->setSize({ 100_per, auto_value });
 
         container->addSpacer(50_per);

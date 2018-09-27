@@ -45,6 +45,7 @@ namespace ui
     public:
         void relayout(layout_flags flags = nullptr);
         void setLayoutDirection(core::align layout);
+        void setFallMode(bool fall);
         void setScrollbarVisionV(scrollbar_vision scrollbar_vision);
         void setScrollbarVisionH(scrollbar_vision scrollbar_vision);
 
@@ -64,7 +65,9 @@ namespace ui
 
     protected:
         std::multimap<int32_t, std::shared_ptr<Control>> _controls;
+        core::align _layout_direction = core::align::left;
         bool _clip_clild = true;
+        bool _fall_mode = true;
         core::si32f _layouted_size;
 
         scrollbar_vision _scrollbar_vision_v = scrollbar_vision::auto_hide;
@@ -73,7 +76,5 @@ namespace ui
         std::shared_ptr<controls::ScrollBar> _scrollbar_h;
         bool _invalid_layout = false;
         layout_flags _invalid_layout_flags = nullptr;
-
-        core::align _layout_direction = core::align::left;
     };
 }

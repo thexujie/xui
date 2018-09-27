@@ -26,6 +26,13 @@ namespace drawing
         inherit,
     };
 
+    enum class join_style
+    {
+        miter = 0,
+        round,
+        bevel,
+    };
+
     struct stroke_style_name
     {
         stroke_style style;
@@ -96,6 +103,18 @@ namespace drawing
             return *this;
         }
 
+        PathStyle & miter(float32_t miter)
+        {
+            _miter = miter;
+            return *this;
+        }
+
+        PathStyle & join(join_style join)
+        {
+            _join_style = join;
+            return *this;
+        }
+
         void apply(SkPaint & paint) const;
 
         bool operator == (const PathStyle & another) const
@@ -111,7 +130,9 @@ namespace drawing
 
         PathMode _mode = PathMode::Stroke;
         stroke_style _stroke_style = stroke_style::none;
+        join_style _join_style = join_style::miter;
         float32_t _width = 1.0f;
+        float32_t _miter = std::nanf("0");
         core::color32 _color = core::colors::Transparent;
         bool _aa = true;
     };

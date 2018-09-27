@@ -207,6 +207,11 @@ namespace ui
         _layout_direction = layout;
     }
 
+    void Container::setFallMode(bool fall)
+    {
+        _fall_mode = fall;
+    }
+
     void Container::setScrollbarVisionV(scrollbar_vision scrollbar_vision)
     {
         if (_scrollbar_vision_v != scrollbar_vision)
@@ -328,6 +333,7 @@ namespace ui
 
         float32_t margin_size = 0;
         float32_t fixed_size = 0;
+        float32_t total_per = 0;
 
         for (auto & iter : _controls)
         {
@@ -338,18 +344,29 @@ namespace ui
 
             auto m = control->realMargin();
             auto s = control->size();
+            auto ps = control->prefferSize();
 
             if (_layout_direction == core::align::left || _layout_direction == core::align::right)
             {
                 margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
-                if (s.cx.unit != core::unit::per && s.cx.avi())
-                    fixed_size += calc(s.cx);
+                if (s.cx.avi())
+                {
+                    if (s.cx.unit == core::unit::per)
+                        total_per += s.cx.value;
+                    else
+                        fixed_size += ps.cx;
+                }
             }
             else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
             {
                 margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
-                if (s.cy.unit != core::unit::per && s.cy.avi())
-                    fixed_size += calc(s.cy);
+                if (s.cy.avi())
+                {
+                    if (s.cy.unit == core::unit::per)
+                        total_per += s.cy.value;
+                    else
+                        fixed_size += ps.cy;
+                }
             }
             else {}
             margin_size += margin;
@@ -373,6 +390,7 @@ namespace ui
             auto& control = iter.second;
             auto margins = control->realMargin();
             auto lo = control->layoutOrigin();
+            auto & si = control->size();
 
             if (lo == layout_origin::layout || lo == layout_origin::sticky)
             {
@@ -381,6 +399,9 @@ namespace ui
                 case core::align::left:
                 {
                     auto preffer_size = control->prefferSize({ spacing.cx, spacing.cy - margins.bheight() });
+                    if ((!_fall_mode && si.cx.avi() && si.cx.per()) && total_per > 0)
+                        preffer_size.cx = (si.cx.value / total_per) * spacing.cx;
+
                     margin = std::max(margin, margins.bleft);
                     control->place({ layout_pos + layout_size.cx + margin, box.y + margins.btop, preffer_size.cx, box.cy - margins.bheight() }, preffer_size);
                     layout_size.cx += margin + preffer_size.cx;
@@ -390,6 +411,9 @@ namespace ui
                 case core::align::top:
                 {
                     auto preffer_size = control->prefferSize({ spacing.cx - margins.bwidth(), spacing.cy });
+                    if ((!_fall_mode && si.cy.avi() && si.cy.per()) && total_per > 0)
+                        preffer_size.cy = (si.cy.value / total_per) * spacing.cy;
+
                     margin = std::max(margin, margins.btop);
                     control->place({ box.x + margins.bleft, layout_pos + layout_size.cy + margin, box.cx - margins.bwidth(), preffer_size.cy }, preffer_size);
                     layout_size.cy += margin + preffer_size.cy;

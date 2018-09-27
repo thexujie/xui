@@ -165,4 +165,15 @@ namespace drawing::skia
         default: return SkCanvas::PointMode::kPoints_PointMode;
         }
     }
+
+    inline SkPaint::Join from(join_style style)
+    {
+        switch (style)
+        {
+        case join_style::miter: return SkPaint::Join::kMiter_Join;
+        case join_style::round: return SkPaint::Join::kRound_Join;
+        case join_style::bevel: return SkPaint::Join::kBevel_Join;
+        default: return SkPaint::Join::kMiter_Join;
+        }
+    }
 }
