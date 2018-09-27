@@ -8,6 +8,12 @@ namespace ui
     class Control;
     class RadioGroup;
 
+    enum class scene_event
+    {
+        none = 0,
+        update_mouse_pos,
+    };
+
     class Scene : public core::object
     {
     public:
@@ -20,6 +26,8 @@ namespace ui
         const core::rc32f & rect() const { return _rect; }
         const core::si32f & size() const { return _rect.size; }
         const core::rc32f & viewRect() const { return _rect; }
+
+        void setEvent(scene_event evt);
         std::shared_ptr<RadioGroup> radioGroup(std::string name);
 
         void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet) { _style_sheet = styleSheet;  }
@@ -51,6 +59,7 @@ namespace ui
         core::event<void(const drawing::Region & region)> rendered;
         core::event<void(const core::rc32i & rect)> rendered2;
         core::event<void(bool capture)> captured;
+        core::event<void(scene_event evt)> evented;
 
     private:
         void renderThread();

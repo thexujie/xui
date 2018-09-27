@@ -33,6 +33,7 @@ namespace win32
         void onSceneRendered(const drawing::Region & region);
         void onSceneRendered2(const core::rc32i & rect);
         void onSceneCaptured(bool capture);
+        void onSceneEvented(ui::scene_event evt);
 
     private:
         core::error _createWindow();

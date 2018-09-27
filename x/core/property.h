@@ -2,6 +2,9 @@
 
 namespace core
 {
+    template<typename T>
+    T property_parser(const std::string & str);
+
     class property_value
     {
     public:
@@ -197,8 +200,8 @@ namespace core
 
     template<typename SetterT, typename GetterT>
     static auto make_accessor(SetterT setter, GetterT getter,
-        std::function<std::decay_t<typename member_traits<GetterT>::value_type>(const std::string &)> store,
-        std::function<std::string(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch)
+        std::function<std::decay_t<typename member_traits<GetterT>::value_type>(const std::string &)> store = property_parser<std::decay_t<typename member_traits<GetterT>::value_type>>,
+        std::function<std::string(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch = nullptr)
     {
         static_assert(std::is_member_function_pointer<SetterT>::value);
         static_assert(std::is_member_pointer<GetterT>::value);
@@ -254,6 +257,22 @@ namespace core
         return std::make_shared<property_interpolator_type<T>>(inter);
     }
 
+    template<>
+    inline float32_t property_parser<float32_t>(const std::string & str)
+    {
+        return std::atof(str.c_str());
+    }
+
+    template<>
+    inline core::vec2<float32_t> property_parser<core::vec2<float32_t>>(const std::string & str)
+    {
+        std::vector<std::string> strs = core::split(str, ' ');
+        if (strs.size() == 1)
+            return core::vec2<float32_t>{ property_parser<float32_t>(strs[0]) };
+        if (strs.size() == 2)
+            return { property_parser<float32_t>(strs[0]), property_parser<float32_t>(strs[1]) };
+        return {};
+    }
 
     bool parseBool(const std::string & str);
     std::string parseString(const std::string & str);

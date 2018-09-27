@@ -38,7 +38,6 @@ namespace ui::controls
         return nfound <= offset ? offset - nfound + 1: core::npos;
     }
 
-    const std::string TEXTBOX_ANIMATION_GROUP_CURSOR = "_textbox.cursor";
     TextLine::TextLine()
     {
         _accept_input = true;
@@ -284,7 +283,7 @@ namespace ui::controls
             _cursor_anim = std::make_shared<core::property_animation>(control_ref(), accessor, interpolator);
             _cursor_anim->setDuration(1s);
             _cursor_anim->setLoop(9999);
-            appendAnimation(TEXTBOX_ANIMATION_GROUP_CURSOR, _cursor_anim);
+            appendAnimation(CONTROL_ANIMATION_GROUP_CONTROL, _cursor_anim);
         }
         _cursor_anim->start();
         restyle();
@@ -357,7 +356,7 @@ namespace ui::controls
 
     void TextLine::caretRight()
     {
-        if (_cursor_pos + 1 >= _text.length())
+        if (_cursor_pos >= _text.length())
             return;
 
         if (_delay_shaper_flags)
@@ -399,7 +398,7 @@ namespace ui::controls
 
     void TextLine::del()
     {
-        if (_cursor_pos + 1 >= _text.length())
+        if (_cursor_pos >= _text.length())
             return;
 
         if (_delay_shaper_flags)
@@ -411,7 +410,7 @@ namespace ui::controls
 
         // É¾³ýÕû¸ö cluster
         _text.erase(cluster.trange.index, cluster.trange.length);
-        _cursor_far = false;
+        _cursor_far = cluster.trange.index > 0;
         _cursor_pos = cluster.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
 

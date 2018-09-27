@@ -19,6 +19,9 @@ namespace ui
     const int32_t LOCAL_DEPTH_CONTENT = 0;
     const int32_t LOCAL_DEPTH_FOREGROUND = 100;
 
+    const std::string CONTROL_ANIMATION_GROUP_STYLE = "_style";
+    const std::string CONTROL_ANIMATION_GROUP_CONTROL = "_control";
+
     class Control : public core::object
     {
     public:
@@ -210,7 +213,7 @@ namespace ui
         virtual void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const;
         virtual void draw(drawing::Graphics & graphics, const drawing::Region & region) const;
 
-        virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const { return nullptr; }
+        virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const { return nullptr; }
 
     public:
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);

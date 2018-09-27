@@ -3,8 +3,6 @@
 
 namespace ui
 {
-    const std::string CONTROL_ANIMATION_GROUP_STYLE = "_style";
-
     Control::Control() { }
     Control::~Control() { }
 

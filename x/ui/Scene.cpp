@@ -38,6 +38,11 @@ namespace ui
         _cv_render.notify_all();
     }
 
+    void Scene::setEvent(scene_event evt)
+    {
+        invoke([this, evt]() {evented(evt);});
+    }
+
     std::shared_ptr<RadioGroup> Scene::radioGroup(std::string name)
     {
         auto iter = _radio_groups.find(name);
@@ -84,24 +89,12 @@ namespace ui
                 _current_control->onMouseMove(state);
             break;
         case mouse_action::wheel_v:
-            if (_current_control && _current_control->acceptWheelV())
-                _current_control->onMouseWheel(state);
-            else
+            if (auto curr = control()->findChild(state.pos(), nullptr, ui::findchild_flag::accept_wheel_v))
             {
-                auto obj = _current_control;
-                while (true)
-                {
-                    obj = control()->findChild(state.pos(), obj);
-                    if (!obj)
-                        break;
-
-                    if (!obj->acceptWheelV())
-                        continue;
-
-                    obj->onMouseWheel(state);
-                    break;
-                }
+                if (curr->acceptWheelV())
+                    curr->onMouseWheel(state);
             }
+            else {}
             _updateMouseArea(state, action);
             break;
         case mouse_action::press:

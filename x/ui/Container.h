@@ -37,10 +37,11 @@ namespace ui
         int32_t animate() override;
 
         void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const override;
-        std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr) const override;
+        std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
 
         void onPosChanged(const core::pt32f & from, const core::pt32f & to) override;
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
+        void onMouseWheel(const input_state & state) override;
 
     public:
         void relayout(layout_flags flags = nullptr);
@@ -60,6 +61,10 @@ namespace ui
         void onScrollValueChangedV(float32_t from, float32_t to);
         void onScrollValueChangedH(float32_t from, float32_t to);
 
+    private:
+        void _animScroll(core::vec2f scroll_pos);
+        void _setScrollPos(core::vec2f scroll_pos);
+
     public:
         core::event<void(const core::si32f & from, const core::si32f & to)> layoutedSizeChaged;
 
@@ -68,13 +73,17 @@ namespace ui
         core::align _layout_direction = core::align::left;
         bool _clip_clild = true;
         bool _fall_mode = true;
+
         core::si32f _layouted_size;
 
+        core::vec2f _scroll_pos;
         scrollbar_vision _scrollbar_vision_v = scrollbar_vision::auto_hide;
         scrollbar_vision _scrollbar_vision_h = scrollbar_vision::auto_hide;
         std::shared_ptr<controls::ScrollBar> _scrollbar_v;
         std::shared_ptr<controls::ScrollBar> _scrollbar_h;
         bool _invalid_layout = false;
         layout_flags _invalid_layout_flags = nullptr;
+
+        std::shared_ptr<core::property_animation> _scroll_anim;
     };
 }

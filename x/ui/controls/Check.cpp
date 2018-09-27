@@ -71,7 +71,7 @@ namespace ui::controls
         if(_state == check_state::checked)
         {
             auto lw = 2_px;
-            rc_hole.expand(-calc(lw) * 1.5);
+            rc_hole.expand(-calc(lw) * 1.5f);
             core::pt32f points[3];
             points[0] = rc_hole.leftBorder(0.5f);
             points[1] = rc_hole.bottomBorder(0.4f);

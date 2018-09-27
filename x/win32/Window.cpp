@@ -56,6 +56,7 @@ namespace win32
         scene->rendered += std::weak_bind(&Window::onSceneRendered, share_ref<Window>(), std::placeholders::_1);
         scene->rendered2 += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
         scene->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
+        scene->evented += std::weak_bind(&Window::onSceneEvented, share_ref<Window>(), std::placeholders::_1);
         if (_ime_context)
             scene->setImeContext(_ime_context);
         if (_cursor_context)
@@ -251,6 +252,24 @@ namespace win32
             std::cout << " release captured window" << std::endl;
         }
         
+    }
+
+    void Window::onSceneEvented(ui::scene_event evt)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto s = f->scene();
+
+        _mouse_state.setWheelLines(0);
+        switch(evt)
+        {
+        case ui::scene_event::update_mouse_pos:
+            s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::none);
+            break;
+        default:
+            break;
+        }
     }
 
     core::error Window::_createWindow()

@@ -77,6 +77,17 @@ namespace ui
         unknown,
     };
 
+    enum class findchild_flag
+    {
+        none = 0,
+        accept_wheel_v = 0x0001,
+    };
+    template<>
+    struct enable_bitmasks<findchild_flag>
+    {
+        static const bool enable = true;
+    };
+    typedef core::bitflag<findchild_flag> findchild_flags;
 
     /**
     * ¼üÅÌ°´¼ü¡£
