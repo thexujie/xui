@@ -351,11 +351,15 @@ namespace drawing
                     drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
                     fontmetrics fmetrics_fb(font_fb);
                     fontmetrics fmetrics(font_cache.font);
-                    //if(fmetrics_fb.ascent - fmetrics.ascent > 0.49f || fmetrics_fb.descent - fmetrics.descent > 0.49f)
-                    //{
-                    //    float32_t rate = std::min(fmetrics.ascent / fmetrics_fb.ascent, fmetrics.descent / fmetrics_fb.descent);
-                    //    font_fb = drawing::skia::to(*tf, font_cache.font.size * rate);
-                    //}
+                    if(fmetrics_fb.ascent - fmetrics.ascent > 0.49f || fmetrics_fb.descent - fmetrics.descent > 0.49f)
+                    {
+                        //float32_t rate0 = fmetrics.height / fmetrics_fb.height;
+                        float32_t rate = std::min(fmetrics.ascent / fmetrics_fb.ascent, fmetrics.descent / fmetrics_fb.descent);
+                        //if (rate < rate0)
+                        //    rate = rate0;
+                        //float32_t rate = fmetrics.height / fmetrics_fb.height;
+                        font_fb = drawing::skia::to(*tf, font_cache.font.size * rate);
+                    }
                     uint16_t font_index_fb = _shaper.indexFont(font_fb);
                     font_index_fb_last = font_index_fb;
                     font_index = font_index_fb;
@@ -392,14 +396,7 @@ namespace drawing
                 it.bidi = level_to_bidi(level);
                 it.font = font_index;
                 it.color = color;
-                _items.push_back(it); 
-#ifdef _DEBUG
-                if(!_items.empty())
-                {
-                    _items.back()._text = _text.substr(_items.back().trange.index, _items.back().trange.length);
-                    _items.back()._font = _shaper.font(_items.back().font);
-                }
-#endif
+                _items.push_back(it);
             }
             else
             {
@@ -663,7 +660,8 @@ namespace drawing
                     runBuffer.glyphs[iglyph] = gl.gid;
                     //runBuffer.clusters[iglyph] = glyph.trange.index;
                     runBuffer.pos[iglyph * 2 + 0] = offset_x + gl.offset.x;
-                    runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + _ascent;
+                    runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + _ascent; // 基线对齐
+                    //runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + font_cache.fmetrics.ascent; // 顶对齐
                     offset_y += gl.advance.cy;
                     offset_x += gl.advance.cx;
                 }

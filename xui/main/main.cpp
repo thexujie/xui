@@ -70,7 +70,8 @@ struct tc
 #define BASE_LAYER
 void xui_main()
 {
-    std::string rtft = u8"heသွက်ဂွံဗၠးၜးတ်ိတ်llo لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
+    //std::string rtft = u8"heသွက်ဂွံဗၠးၜးတ်ိတ်llo لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
+    std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
 
     drawing::TextWraper shaper;
     shaper.itermize(u8"قق ققق ", drawing::font(), colors::Black);
@@ -171,8 +172,8 @@ void xui_main()
         layer->setSize({ 100_per, 100_per });
 
         auto tln = std::make_shared<ui::controls::TextLine>();
-        tln->setFont({"", font.size * 2});
-        tln->setText(rtft);
+        tln->setFont({"", font.size * 4});
+        tln->setText(u8"သွက်ဂွံဗၠးၜးတ်ိတ်");
         tln->setSize({ 100_per, auto_value });
         tln->setImeMode(ui::ime_mode::on);
         layer->addControl(tln);
