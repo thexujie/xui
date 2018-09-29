@@ -77,7 +77,11 @@ namespace ui
     core::si32f Control::prefferSize(const core::vec2<float32_t> & spacing) const
     {
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
-            return calc(_size, spacing);
+        {
+            core::si32f size = calc(_size, spacing);
+            _adjustSizeMinMax(size);
+            return size;
+        }
 
         core::si32f size = contentSize() + calc(_padding, spacing).bsize();
         if (_size.available())
@@ -97,6 +101,42 @@ namespace ui
         return size;
     }
 
+    core::si32f Control::adjustSize(const core::si32f & size) const
+    {
+        core::si32f asize = size;
+        if (_minSize.available())
+        {
+            if (_minSize.value.cx.avi())
+            {
+                float32_t val = calc(_minSize.value.cx);
+                if (asize.cx < val)
+                    asize.cx = val;
+            }
+            if (_minSize.value.cy.avi())
+            {
+                float32_t val = calc(_minSize.value.cy);
+                if (asize.cy < val)
+                    asize.cy = val;
+            }
+        }
+
+        if (_maxSize.available())
+        {
+            if (_maxSize.value.cx.avi())
+            {
+                float32_t val = calc(_maxSize.value.cx);
+                if (asize.cx > val)
+                    asize.cx = val;
+            }
+            if (_maxSize.value.cy.avi())
+            {
+                float32_t val = calc(_maxSize.value.cy);
+                if (asize.cy > val)
+                    asize.cy = val;
+            }
+        }
+        return asize;
+    }
 
     const core::color32 & Control::color() const
     {
@@ -375,6 +415,11 @@ namespace ui
 
     void Control::place(const core::rc32f & rect, const core::si32f & size)
     {
+        assert(!std::isnan(size.cx) && !std::isnan(size.cy));
+        assert(!std::isnan(rect.x) && !std::isnan(rect.y));
+        assert(!std::isnan(rect.cx) && !std::isnan(rect.cy));
+        assert(rect.cx < 1e6 && rect.cy < 1e6);
+
         core::pt32f pos;
         if (_anchor_borders.all(core::align::leftTop))
             pos = rect.leftTop();
@@ -591,6 +636,41 @@ namespace ui
             if (_maxSize.value.cy.avi())
             {
                 float32_t val = calc(_maxSize.value.cy);
+                if (size.cy > val)
+                    size.cy = val;
+            }
+        }
+    }
+
+    void Control::_adjustSizeMinMax(core::si32f & size, const core::vec2<float32_t> & spacing) const
+    {
+        if (_minSize.available())
+        {
+            if (_minSize.value.cx.avi())
+            {
+                float32_t val = calc(_minSize.value.cx, spacing.cx);
+                if (size.cx < val)
+                    size.cx = val;
+            }
+            if (_minSize.value.cy.avi())
+            {
+                float32_t val = calc(_minSize.value.cy, spacing.cy);
+                if (size.cy < val)
+                    size.cy = val;
+            }
+        }
+
+        if (_maxSize.available())
+        {
+            if (_maxSize.value.cx.avi())
+            {
+                float32_t val = calc(_maxSize.value.cx, spacing.cx);
+                if (size.cx > val)
+                    size.cx = val;
+            }
+            if (_maxSize.value.cy.avi())
+            {
+                float32_t val = calc(_maxSize.value.cy, spacing.cy);
                 if (size.cy > val)
                     size.cy = val;
             }

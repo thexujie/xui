@@ -25,7 +25,7 @@ namespace ui
     void Container::addControl(std::shared_ptr<Control> control)
     {
         std::lock_guard lock(*this);
-        if (std::any_of(_controls.begin(), _controls.end(), [&control](const auto & pair) { return pair.second == control; }))
+        if (std::find(_controls.begin(), _controls.end(), control) != _controls.end())
             return;
 
         auto s = scene();
@@ -33,77 +33,73 @@ namespace ui
         if(s)
         {
             control->enteringScene(s);
-            _controls.insert(std::make_pair(control->ZValue(), control));
+            _controls.push_back(control);
             control->enterScene(s);
         }
         else
-            _controls.insert(std::make_pair(control->ZValue(), control));
+            _controls.push_back(control);
         relayout();
     }
 
-    void Container::addSpacer(core::dimensionf size)
+    std::shared_ptr<controls::Spacer> Container::addSpacer(core::dimensionf size)
     {
         auto spacer = std::make_shared<controls::Spacer>();
         spacer->setSize({ size , size });
         addControl(spacer);
+        return spacer;
     }
 
     void Container::removeControl(std::shared_ptr<Control> control)
     {
         std::lock_guard lock(*this);
         control->leavingScene();
-        for (auto iter = _controls.begin(); iter != _controls.end(); )
-        {
-            if (iter->second == control)
-            {
-                control->setParent(nullptr);
-                _controls.erase(iter);
-                break;
-            }
-        }
+        auto iter = std::find(_controls.begin(), _controls.end(), control);
+        if (iter != _controls.end())
+            _controls.erase(iter);
         control->leaveScene();
     }
 
     void Container::enteringScene(std::shared_ptr<Scene> & scene)
     {
         Control::enteringScene(scene);
-        for (auto & iter : _controls)
-            iter.second->enteringScene(scene);
+        for (auto & control : _controls)
+            control->enteringScene(scene);
     }
 
     void Container::enterScene(std::shared_ptr<Scene> & scene)
     {
         Control::enterScene(scene);
-        for (auto & iter : _controls)
-            iter.second->enterScene(scene);
+        relayout();
+        for (auto & control : _controls)
+            control->enterScene(scene);
     }
 
     void Container::leavingScene()
     {
-        for (auto & iter : _controls)
-            iter.second->leavingScene();
+        for (auto & control : _controls)
+            control->leavingScene();
         Control::leavingScene();
     }
 
     void Container::leaveScene()
     {
-        for (auto & iter : _controls)
-            iter.second->leaveScene();
+        for (auto & control : _controls)
+            control->leaveScene();
         Control::leaveScene();
     }
 
     void Container::update()
     {
         Control::update();
-        for (auto & iter : _controls)
-            iter.second->update();
+        for (auto & control : _controls)
+            control->update();
     }
 
     int32_t Container::animate()
     {
         int32_t num = Control::animate();
-        for (auto & iter : _controls)
-            num += iter.second->animate();
+        for (auto & control : _controls)
+            num += control->animate();
         return num;
     }
 
@@ -114,11 +110,11 @@ namespace ui
         if (a != 0xff)
             graphics.saveLayer(box(), a);
         _drawBackground(graphics);
-        for (auto & iter : _controls)
+        for (auto & control : _controls)
         {
-            auto rect = iter.second->realRect();
+            auto rect = control->realRect();
             if(region.intersects(rect.ceil<int32_t>()))
-                iter.second->ondraw(graphics, region);
+                control->ondraw(graphics, region);
         }
         _drawBorder(graphics);
         if (a != 0xff)
@@ -141,47 +137,47 @@ namespace ui
         bool found = false;
 
         core::pt32f scrolled_pos = pos;
-        std::shared_ptr<Control> control = nullptr;
+        std::shared_ptr<Control> control_found = nullptr;
         if (!(flags & findchild_flag::accept_wheel_v) || _accept_wheel_v)
         {
             if (!_mouse_through)
-                control = control_ref();
+                control_found = control_ref();
         }
 
-        for (auto & iter : core::reverse(_controls))
+        for (auto & control : core::reverse(_controls))
         {
             if (last && !found)
             {
-                if (iter.second == last)
+                if (control == last)
                     found = true;
                 continue;
             }
 
-            auto hittest = iter.second->hitTest(scrolled_pos);
+            auto hittest = control->hitTest(scrolled_pos);
             if (hittest == hittest_result::nowhere)
                 continue;
 
-            auto child = iter.second->findChild(scrolled_pos, last, flags);
+            auto child = control->findChild(scrolled_pos, last, flags);
             if (child)
                 return child;
 
             if(flags & findchild_flag::accept_wheel_v)
             {
-                if(iter.second->acceptWheelV())
+                if(control->acceptWheelV())
                 {
                     if (hittest == hittest_result::client || hittest == hittest_result::stable)
-                        return iter.second;
+                        return control;
                 }
             }
             else
             {
                 if (hittest == hittest_result::client || hittest == hittest_result::stable)
-                    return iter.second;
+                    return control;
 
-                control = iter.second;
+                control_found = control;
             }
         }
-        return control;
+        return control_found;
     }
 
     void Container::onLayoutedSizeChaged(const core::si32f & from, const core::si32f & to)
@@ -227,7 +223,7 @@ namespace ui
     void Container::relayout(layout_flags flags)
     {
         _invalid_layout_flags |= flags;
-        if (!_invalid_layout)
+        if (!_invalid_layout && scene())
         {
             _invalid_layout = true;
             invoke([this]()
@@ -244,9 +240,9 @@ namespace ui
         _layout_direction = layout;
     }
 
-    void Container::setFallMode(bool fall)
+    void Container::setCompactLayout(bool b)
     {
-        _fall_mode = fall;
+        _compact_layout = b;
     }
 
     void Container::setScrollbarVisionV(scrollbar_vision scrollbar_vision)
@@ -340,9 +336,8 @@ namespace ui
     {
         core::si32f size;
         float32_t margin = 0;
-        for (auto & iter : _controls)
+        for (auto & control : _controls)
         {
-            auto & control = iter.second;
             auto lo = control->layoutOrigin();
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
                 continue;
@@ -392,9 +387,9 @@ namespace ui
         float32_t fixed_size = 0;
         float32_t total_per = 0;
 
-        for (auto & iter : _controls)
+        for (size_t cnt = 0; cnt < _controls.size(); ++cnt)
         {
-            auto & control = iter.second;
+            auto & control = _controls[cnt];
             auto lo = control->layoutOrigin();
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
                 continue;
@@ -408,7 +403,7 @@ namespace ui
                 margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
                 if (s.cx.avi())
                 {
-                    if (s.cx.unit == core::unit::per)
+                    if (s.cx.per())
                         total_per += s.cx.value;
                     else
                         fixed_size += ps.cx;
@@ -419,15 +414,27 @@ namespace ui
                 margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
                 if (s.cy.avi())
                 {
-                    if (s.cy.unit == core::unit::per)
+                    if (s.cy.per())
                         total_per += s.cy.value;
                     else
                         fixed_size += ps.cy;
                 }
             }
             else {}
+
             margin_size += margin;
+
+            if (_layout_direction == core::align::left || _layout_direction == core::align::right)
+            {
+                margin = std::max(margin, _layout_direction == core::align::left ? m.bright : m.bleft);
+            }
+            else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
+            {
+                margin = std::max(margin, _layout_direction == core::align::top ? m.bbottom : m.btop);
+            }
+            else {}
         }
+        margin_size += margin;
 
         if (_layout_direction == core::align::left || _layout_direction == core::align::right)
         {
@@ -441,10 +448,14 @@ namespace ui
         }
         else {}
 
+        spacing.cx = std::max(spacing.cx, 0.0f);
+        spacing.cy = std::max(spacing.cy, 0.0f);
+
+        float32_t compat_size = 0;
+        float32_t compat_scale =0;
         std::set<std::string> setes;
-        for (auto & iter : _controls)
+        for (auto & control : _controls)
         {
-            auto& control = iter.second;
             auto margins = control->realMargin();
             auto lo = control->layoutOrigin();
             auto & si = control->size();
@@ -455,22 +466,23 @@ namespace ui
                 {
                 case core::align::left:
                 {
-                    auto preffer_size = control->prefferSize({ spacing.cx, spacing.cy - margins.bheight() });
-                    if ((!_fall_mode && si.cx.avi() && si.cx.per()) && total_per > 0)
-                        preffer_size.cx = (si.cx.value / total_per) * spacing.cx;
-
+                    bool compact = _compact_layout && si.cx.per();
+                    auto preffer_size = control->prefferSize({ compact ? (spacing.cx - compat_size ) / ((total_per - compat_scale) / 100.0f): spacing.cx, spacing.cy - margins.bheight() });
                     margin = std::max(margin, margins.bleft);
                     control->place({ layout_pos.x + layout_size.cx + margin, layout_pos.y + margins.btop, preffer_size.cx, box.cy - margins.bheight() }, preffer_size);
                     layout_size.cx += margin + preffer_size.cx;
                     margin = margins.bright;
+
+                    if(compact)
+                    {
+                        compat_scale += si.cx.value;
+                        compat_size += preffer_size.cx;
+                    }
                     break;
                 }
                 case core::align::top:
                 {
                     auto preffer_size = control->prefferSize({ spacing.cx - margins.bwidth(), spacing.cy });
-                    if ((!_fall_mode && si.cy.avi() && si.cy.per()) && total_per > 0)
-                        preffer_size.cy = (si.cy.value / total_per) * spacing.cy;
-
                     margin = std::max(margin, margins.btop);
                     control->place({ layout_pos.x + margins.bleft, layout_pos.y + layout_size.cy + margin, box.cx - margins.bwidth(), preffer_size.cy }, preffer_size);
                     layout_size.cy += margin + preffer_size.cy;

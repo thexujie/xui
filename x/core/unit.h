@@ -49,11 +49,11 @@ namespace core
         bool avi() const { return !std::isnan(value); }
         bool nan() const { return std::isnan(value); }
 
-        bool px() const { return unit == unit::px; }
-        bool em() const { return unit == unit::em; }
-        bool pt() const { return unit == unit::pt; }
-        bool dot() const { return unit == unit::dot; }
-        bool per() const { return unit == unit::per; }
+        bool px() const { return unit == unit::px && !std::isnan(value); }
+        bool em() const { return unit == unit::em && !std::isnan(value); }
+        bool pt() const { return unit == unit::pt && !std::isnan(value); }
+        bool dot() const { return unit == unit::dot && !std::isnan(value); }
+        bool per() const { return unit == unit::per && !std::isnan(value); }
 
         T  value;
         core::unit unit = core::unit::px;

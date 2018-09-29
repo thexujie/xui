@@ -110,6 +110,12 @@
 	<Type Name="ui::Container">
 		<DisplayString>[Container, {_controls}]</DisplayString>
 	</Type>
+	<Type Name="ui::controls::Spacer">
+		<DisplayString>[Spacer control]</DisplayString>
+	</Type>
+	<Type Name="ui::controls::Text">
+		<DisplayString>[Text control]</DisplayString>
+	</Type>
 	<Type Name="ui::controls::Button">
 		<DisplayString>[Button control]</DisplayString>
 	</Type>

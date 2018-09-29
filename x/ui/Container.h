@@ -6,6 +6,7 @@ namespace ui
     namespace controls
     {
         class ScrollBar;
+        class Spacer;
     }
 
     enum class scrollbar_vision
@@ -23,9 +24,9 @@ namespace ui
         virtual ~Container();
 
         void addControl(std::shared_ptr<Control> control);
-        void addSpacer(core::dimensionf size);
+        std::shared_ptr<controls::Spacer> addSpacer(core::dimensionf size);
         void removeControl(std::shared_ptr<Control> control);
-        std::multimap<int32_t, std::shared_ptr<Control>> & children() { return _controls; }
+        std::vector<std::shared_ptr<Control>> & children() { return _controls; }
 
         void enteringScene(std::shared_ptr<Scene> & scene) override;
         void enterScene(std::shared_ptr<Scene> & scene) override;
@@ -46,7 +47,7 @@ namespace ui
     public:
         void relayout(layout_flags flags = nullptr);
         void setLayoutDirection(core::align layout);
-        void setFallMode(bool fall);
+        void setCompactLayout(bool fall);
         void setScrollbarVisionV(scrollbar_vision scrollbar_vision);
         void setScrollbarVisionH(scrollbar_vision scrollbar_vision);
 
@@ -69,10 +70,10 @@ namespace ui
         core::event<void(const core::si32f & from, const core::si32f & to)> layoutedSizeChaged;
 
     protected:
-        std::multimap<int32_t, std::shared_ptr<Control>> _controls;
+        std::vector<std::shared_ptr<Control>> _controls;
         core::align _layout_direction = core::align::left;
         bool _clip_clild = true;
-        bool _fall_mode = true;
+        bool _compact_layout = true;
 
         core::si32f _layouted_size;
 

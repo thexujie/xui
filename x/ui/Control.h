@@ -70,6 +70,9 @@ namespace ui
         core::si32f prefferSize() const;
         // prefferSize 计算出的期望大小
         core::si32f prefferSize(const core::vec2<float32_t> & spacing) const;
+        // 根据最大最小值调整
+        core::si32f adjustSize(const core::si32f & size) const;
+
         virtual core::si32f contentSize() const { return core::si32f(); }
 
         std::shared_ptr<Scene> scene() const { return _scene.lock(); }
@@ -231,6 +234,7 @@ namespace ui
         void _drawBackground(drawing::Graphics & graphics) const;
         void _drawBorder(drawing::Graphics & graphics) const;
         void _adjustSizeMinMax(core::si32f & size) const;
+        void _adjustSizeMinMax(core::si32f & size, const core::vec2<float32_t> & spacing) const;
 
     protected:
         mutable std::mutex _mtx;

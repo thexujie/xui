@@ -286,19 +286,40 @@ void xui_main()
     }
     {
         auto container = std::make_shared<ui::Container>(core::align::left);
-        container->setFallMode(false);
+        container->setBackgroundColor(core::colors::LightBlue);
+        container->setCompactLayout(true);
         container->setSize({ 100_per, auto_value });
 
-        container->addSpacer(50_per);
+        auto spacer1 = container->addSpacer(50_per);
+        spacer1->setMaxSize({4_em, core::auto_value});
         {
             auto rbtn = std::make_shared<ui::controls::Button>();
             rbtn->setText(u8"点击这里确定");
             container->addControl(rbtn);
         }
         container->addSpacer(2_em);
+        //container->addSpacer(50_per);
         {
             auto rbtn = std::make_shared<ui::controls::Button>();
             rbtn->setText(u8"点击这里取消");
+            container->addControl(rbtn);
+        }
+        container->addSpacer(50_per);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里再次取消");
+            container->addControl(rbtn);
+        }
+        container->addSpacer(50_per);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里再次取消");
+            container->addControl(rbtn);
+        }
+        container->addSpacer(50_per);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里再次取消");
             container->addControl(rbtn);
         }
         container->addSpacer(50_per);
