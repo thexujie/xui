@@ -508,9 +508,6 @@
     <Filter Include="ui\component">
       <UniqueIdentifier>{ffef13bd-9f74-4212-a93e-6e015552c663}</UniqueIdentifier>
     </Filter>
-    <Filter Include="samples">
-      <UniqueIdentifier>{01a7303d-087f-42bc-9c03-b9a2c9ec3601}</UniqueIdentifier>
-    </Filter>
     <Filter Include="utils">
       <UniqueIdentifier>{caf49446-0379-4ef1-b44e-e734eb5ec6e1}</UniqueIdentifier>
     </Filter>
@@ -533,9 +530,6 @@
     </None>
     <None Include="core\math\xmf_vec.inl">
       <Filter>core\math</Filter>
-    </None>
-    <None Include="samples\layout.xml">
-      <Filter>samples</Filter>
     </None>
   </ItemGroup>
 </Project>

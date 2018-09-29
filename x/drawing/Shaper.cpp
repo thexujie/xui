@@ -4,6 +4,7 @@
 
 #include <hb.h>
 #include <hb-ot.h>
+#include <hb-icu.h>
 #include <unicode/brkiter.h>
 #include <unicode/locid.h>
 #include <unicode/ubidi.h>
@@ -270,9 +271,12 @@ namespace drawing
 
         hb_buffer_clear_contents(_hbbuffer.get());
         hb_buffer_set_content_type(_hbbuffer.get(), HB_BUFFER_CONTENT_TYPE_UNICODE);
-        hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
+        //hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
+        hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES);
 
         hb_unicode_funcs_t * hb_unicode = hb_buffer_get_unicode_funcs(_hbbuffer.get());
+        //hb_unicode_funcs_t * hb_unicode = hb_icu_get_unicode_funcs();
+        //std::unique_ptr<hb_unicode_funcs_t, void(*)(hb_unicode_funcs_t *)> hb_unicode(hb_unicode_funcs_create(), hb_unicode_funcs_destroy);
 
         _breaker_world.setText(u16str.c_str());
         _breaker_character.setText(u16str.c_str());
@@ -347,11 +351,11 @@ namespace drawing
                     drawing::font font_fb = drawing::skia::to(*tf, font_cache.font.size);
                     fontmetrics fmetrics_fb(font_fb);
                     fontmetrics fmetrics(font_cache.font);
-                    if(fmetrics_fb.ascent - fmetrics.ascent > 0.49f || fmetrics_fb.descent - fmetrics.descent > 0.49f)
-                    {
-                        float32_t rate = std::min(fmetrics.ascent / fmetrics_fb.ascent, fmetrics.descent / fmetrics_fb.descent);
-                        font_fb = drawing::skia::to(*tf, font_cache.font.size * rate);
-                    }
+                    //if(fmetrics_fb.ascent - fmetrics.ascent > 0.49f || fmetrics_fb.descent - fmetrics.descent > 0.49f)
+                    //{
+                    //    float32_t rate = std::min(fmetrics.ascent / fmetrics_fb.ascent, fmetrics.descent / fmetrics_fb.descent);
+                    //    font_fb = drawing::skia::to(*tf, font_cache.font.size * rate);
+                    //}
                     uint16_t font_index_fb = _shaper.indexFont(font_fb);
                     font_index_fb_last = font_index_fb;
                     font_index = font_index_fb;
@@ -365,13 +369,6 @@ namespace drawing
             }
             else
             {
-                if (_items.back().script == hb_script::inherited || _items.back().script == hb_script::common)
-                {
-                    // 之前部分不要的
-                    _items.back().font = font_index;
-                    _items.back().script = script;
-                }
-
                 if ((script != hb_script::inherited && script != hb_script::common) && (script != _items.back().script))
                     flush |= flushflag::script;
 
@@ -395,10 +392,22 @@ namespace drawing
                 it.bidi = level_to_bidi(level);
                 it.font = font_index;
                 it.color = color;
-                _items.push_back(it);
+                _items.push_back(it); 
+#ifdef _DEBUG
+                if(!_items.empty())
+                {
+                    _items.back()._text = _text.substr(_items.back().trange.index, _items.back().trange.length);
+                    _items.back()._font = _shaper.font(_items.back().font);
+                }
+#endif
             }
             else
             {
+                if (_items.back().script == hb_script::inherited || _items.back().script == hb_script::common)
+                {
+                    _items.back().font = font_index;
+                    _items.back().script = script;
+                }
             }
 
             item & item_last = _items.back();

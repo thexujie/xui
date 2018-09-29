@@ -273,9 +273,6 @@
     <None Include="core\math\xmf_matr.inl" />
     <None Include="core\math\xmf_quat.inl" />
     <None Include="core\math\xmf_vec.inl" />
-    <None Include="samples\layout.xml">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
