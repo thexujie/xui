@@ -236,8 +236,7 @@ namespace drawing
 #endif
         std::unique_ptr<hb_buffer_t, void(*)(hb_buffer_t *)> _hbbuffer(hb_buffer_create(), hb_buffer_destroy);
         UErrorCode status = U_ZERO_ERROR;
-        auto & _breaker_world = _shaper.breaker_world();
-        auto & _breaker_character = _shaper.breaker_character();
+        auto & breaker_world = _shaper.breaker_world();
 
         if (_text.empty())
             return core::error_ok;
@@ -278,8 +277,7 @@ namespace drawing
         //hb_unicode_funcs_t * hb_unicode = hb_icu_get_unicode_funcs();
         //std::unique_ptr<hb_unicode_funcs_t, void(*)(hb_unicode_funcs_t *)> hb_unicode(hb_unicode_funcs_create(), hb_unicode_funcs_destroy);
 
-        _breaker_world.setText(u16str.c_str());
-        _breaker_character.setText(u16str.c_str());
+        breaker_world.setText(u16str.c_str());
 
         size_t utf8_pos = 0;
         size_t utf16_pos = 0;
@@ -489,11 +487,11 @@ namespace drawing
                     cl.bidi = item.bidi;
                     cl.wordbreak = false;
 
-                    int32_t word_stop_utf16 = _breaker_world.current();
+                    int32_t word_stop_utf16 = breaker_world.current();
                     if (word_stop_utf16 != icu::BreakIterator::DONE && word_stop_utf16 < utf16_ranges.size())
                     {
                         if (utf16_ranges[word_stop_utf16].index < cl.trange.index)
-                            word_stop_utf16 = _breaker_world.next();
+                            word_stop_utf16 = breaker_world.next();
 
                         if (word_stop_utf16 < utf16_ranges.size())
                         {
