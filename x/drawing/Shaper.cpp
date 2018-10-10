@@ -95,7 +95,7 @@ namespace drawing
     struct glyph_iterator
     {
         std::vector<glyph>  & glyphs;
-        section32 range;
+        span32 range;
         bool rtl = false;
         size_t curr = 0;
 
@@ -197,13 +197,13 @@ namespace drawing
     }
 
 
-    void TextClusterizer::setFont(section32 range, const drawing::font & font)
+    void TextClusterizer::setFont(span32 range, const drawing::font & font)
     {
         uint16_t index = _shaper.indexFont(font);
         std::fill(_rtf_font_indices.begin() + range.index, _rtf_font_indices.begin() + range.end(), index);
     }
 
-    void TextClusterizer::setColor(section32 range, uint32_t color)
+    void TextClusterizer::setColor(span32 range, uint32_t color)
     {
         std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
     }
@@ -264,7 +264,7 @@ namespace drawing
 
         struct bidilevel
         {
-            section32 range;
+            span32 range;
             UBiDiLevel level;
         };
         std::vector<bidilevel> levels;
@@ -298,7 +298,8 @@ namespace drawing
         };
         typedef core::bitflag<flushflag> flushflags;
 
-        std::vector<section32> utf16_ranges;
+        std::vector<span32> utf16_ranges;
+        std::vector<span32> nutf32_spans;
         while (utf16_pos < u16str.length())
         {
             flushflags flush = nullptr;
@@ -320,6 +321,7 @@ namespace drawing
 
             for (size_t iutf16 = 0; iutf16 < nutf16; ++iutf16)
                 utf16_ranges.push_back({ (uint32_t)utf8_pos, (uint32_t)nutf8 });
+            nutf32_spans.push_back({ (uint32_t)utf8_pos, (uint32_t)nutf8 });
 
             UBiDiLevel level = ubidi_getLevelAt(ubidi.get(), (int32_t)utf16_pos);
             hb_script script = (hb_script)hb_unicode_script(hb_unicode, cp_utf8);
@@ -456,6 +458,8 @@ namespace drawing
             size_t gindex_base = _glyphs.size();
             size_t cindex_base = _clusters.size();
             uint32_t ccount = 0;
+            uint32_t cluster_last = core::nposu32;
+
             _glyphs.resize(_glyphs.size() + gcount);
             hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
             hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
@@ -465,54 +469,45 @@ namespace drawing
                 const hb_glyph_position_t & pos = poses[gindex];
                 glyph & glyph = _glyphs[gindex_base + gindex];
                 glyph.gindex = gindex_base + gindex;
-                glyph.trange = { info.cluster, 1 };
-                if (gindex < gcount - 1)
-                    glyph.trange.length = infos[gindex + 1].cluster - info.cluster;
-                else
-                    glyph.trange.length = item.trange.end() - info.cluster;
+                glyph.codepoint = info.codepoint;
+                glyph.trange = nutf32_spans[gindex_base + gindex];
+                //if (gindex < gcount - 1)
+                //    glyph.trange.length = infos[gindex + 1].cluster - info.cluster;
+                //else
+                //    glyph.trange.length = item.trange.end() - info.cluster;
                 glyph.gid = uint16_t(info.codepoint);
                 glyph.advance = { float32_t(pos.x_advance * coefX), float32_t(pos.y_advance * coefY) };
                 glyph.offset = { float32_t(pos.x_offset * coefX), float32_t(pos.y_offset * coefY) };
-                int32_t word_stop_utf16 = _breaker_world.current();
-                if (word_stop_utf16 != icu::BreakIterator::DONE && word_stop_utf16 < utf16_ranges.size())
+
+                if(!ccount || cluster_last != info.cluster)
                 {
-                    if (utf16_ranges[word_stop_utf16].index < glyph.trange.index)
-                        word_stop_utf16 = _breaker_world.next();
+                    cluster cl;
+                    cl.cindex = (uint16_t)_clusters.size();
+                    cl.iindex = item.iindex;
+                    cl.grange.index = glyph.gindex;
+                    cl.trange.index = glyph.trange.index;
+                    cl.bidi = item.bidi;
+                    cl.wordbreak = false;
 
-                    if (word_stop_utf16 < utf16_ranges.size())
+                    int32_t word_stop_utf16 = _breaker_world.current();
+                    if (word_stop_utf16 != icu::BreakIterator::DONE && word_stop_utf16 < utf16_ranges.size())
                     {
-                        int32_t word_stop_utf8 = utf16_ranges[word_stop_utf16].index;
-                        glyph.wordbreak = word_stop_utf8 == glyph.trange.index;
-                    }
-                }
+                        if (utf16_ranges[word_stop_utf16].index < cl.trange.index)
+                            word_stop_utf16 = _breaker_world.next();
 
-                int32_t char_stop_utf16 = _breaker_character.current();
-                if (char_stop_utf16 != icu::BreakIterator::DONE && char_stop_utf16 < utf16_ranges.size())
-                {
-                    if (utf16_ranges[char_stop_utf16].index < glyph.trange.index)
-                        char_stop_utf16 = _breaker_character.next();
-
-                    if (char_stop_utf16 < utf16_ranges.size())
-                    {
-                        int32_t char_stop_utf8 = utf16_ranges[char_stop_utf16].index;
-                        if (char_stop_utf8 == glyph.trange.index)
+                        if (word_stop_utf16 < utf16_ranges.size())
                         {
-                            cluster cl;
-                            cl.cindex = (uint16_t)_clusters.size();
-                            cl.iindex = item.iindex;
-                            cl.grange.index = glyph.gindex;
-                            cl.trange.index = glyph.trange.index;
-                            cl.bidi = item.bidi;
-                            _clusters.push_back(cl);
-                            ++ccount;
+                            int32_t word_stop_utf8 = utf16_ranges[word_stop_utf16].index;
+                            cl.wordbreak = word_stop_utf8 == glyph.trange.index;
                         }
                     }
+
+                    _clusters.push_back(cl);
+                    ++ccount;
+                    cluster_last = info.cluster;
                 }
 
                 glyph.standalone = !(info.mask & HB_GLYPH_FLAG_UNSAFE_TO_BREAK);
-#ifdef _DEBUG
-                glyph._text = _text.substr(glyph.trange.index, glyph.trange.length);
-#endif
                 glyph.cindex = uint16_t(_clusters.size() - 1);
                 _clusters.back().trange.length += glyph.trange.length;
                 _clusters.back().grange.length += 1;

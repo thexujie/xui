@@ -137,7 +137,7 @@
 		<DisplayString>{{&#x200E;{_text}, {trange}, script={script}, font={font}[{_font}], color={color}, rtl={level}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::glyph">
-		<DisplayString>{{&#x200E;{_text}&#x200E;[{gid}], texts:{trange}, pos={pos}}}</DisplayString>
+		<DisplayString>{{&#x200E;{codepoint}&#x200E;[{gid}], texts:{trange}, pos={pos}}}</DisplayString>
 	</Type>
 	<Type Name="drawing::cluster">
 		<DisplayString>{{&#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}, {advance.cx}}}</DisplayString>

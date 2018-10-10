@@ -87,13 +87,13 @@ namespace core
     using float64_t = ::float64_t;
 
     template<typename T>
-    struct section_type
+    struct span_type
     {
         T index = 0;
         T length = 0;
 
         T end() const { return index + length; }
-        section_type operator + (const section_type & rhs)
+        span_type operator + (const span_type & rhs)
         {
             if (!length)
                 return rhs;
@@ -110,7 +110,7 @@ namespace core
             return { 0, 0 };
         }
 
-        section_type & operator += (const section_type & rhs)
+        span_type & operator += (const span_type & rhs)
         {
             if (!length)
                 *this = rhs;
@@ -126,10 +126,10 @@ namespace core
         }
     };
 
-    typedef section_type<size_t> section;
-    typedef section_type<uint32_t> section32;
-    typedef section_type<uint16_t> section16;
-    typedef section_type<uint8_t> section8;
+    typedef span_type<size_t> span;
+    typedef span_type<uint32_t> span32;
+    typedef span_type<uint16_t> span16;
+    typedef span_type<uint8_t> span8;
 }
 
 #include "core/member_traits.h"

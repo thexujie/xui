@@ -13,8 +13,8 @@ namespace icu
 
 namespace drawing
 {
-    using core::section32;
-    using core::section8;
+    using core::span32;
+    using core::span8;
 
     constexpr uint32_t hb_make_tag(char c1, char c2, char c3, char c4)
     {
@@ -216,9 +216,9 @@ namespace drawing
     struct item
     {
         uint16_t iindex = 0;
-        section32 trange;
-        section32 grange;
-        section32 crange;
+        span32 trange;
+        span32 grange;
+        span32 crange;
         // hb_script_t
         hb_script script = hb_script::invalid;
         uint8_t level = 0;
@@ -237,20 +237,17 @@ namespace drawing
         uint16_t gindex = 0;
         uint16_t cindex = 0;
         uint16_t sindex = 0;
+        char32_t codepoint = 0;
 
-        section32 trange;
+        span32 trange;
 
         bidirection bidi = bidirection::ltr;
         uint16_t gid = 0;
         core::vec2f advance;
         core::vec2f offset;
-        bool wordbreak = false;
         bool standalone = false;
 
         operator bool() const { return trange.length > 0; }
-#ifdef _DEBUG
-        std::string _text;
-#endif
     };
 
     struct cluster
@@ -258,11 +255,12 @@ namespace drawing
         uint16_t cindex = 0;
         uint16_t iindex = 0;
         uint16_t sindex = 0;
-        section32 trange;
-        section32 grange;
+        span32 trange;
+        span32 grange;
         core::vec2f advance;
         core::vec4f rect;
         bidirection bidi = bidirection::ltr;
+        bool wordbreak = false;
 
         operator bool() const { return trange.length > 0; }
 #ifdef _DEBUG
@@ -275,9 +273,9 @@ namespace drawing
         uint32_t sindex = 0;
         uint32_t lindex = 0;
         uint32_t iindex = 0;
-        section32 trange;
-        section32 grange;
-        section32 crange;
+        span32 trange;
+        span32 grange;
+        span32 crange;
         core::vec2f advance;
 
         bidirection bidi = bidirection::ltr;
@@ -289,9 +287,9 @@ namespace drawing
 
     struct row
     {
-        section32 trange;
-        section32 crange;
-        section32 srange;
+        span32 trange;
+        span32 crange;
+        span32 srange;
         uint32_t line = 0;
         float32_t width = 0;
         float32_t ascent = 0;
@@ -353,8 +351,8 @@ namespace drawing
         ~TextClusterizer() = default;
 
     public:
-        void setFont(section32 range, const drawing::font & font);
-        void setColor(section32 range, uint32_t color);
+        void setFont(span32 range, const drawing::font & font);
+        void setColor(span32 range, uint32_t color);
 
     public:
         core::error itermize(std::string text, const drawing::font & font, core::color32 color);
