@@ -91,16 +91,16 @@ namespace drawing
 
         void drawLine(core::pt32f start, core::pt32f end, const PathStyle & style);
 
-        void drawEllipse(core::rc32f ellipse, const PathStyle & style);
-        void drawRectangle(core::rc32f rect, const PathStyle & style);
-        void drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const PathStyle & style);
+        void drawEllipse(const core::rc32f & ellipse, const PathStyle & style);
+        void drawRectangle(const core::rc32f & rect, const PathStyle & style);
+        void drawRoundRect(const core::rc32f & rect, float32_t rx, float32_t ry, const PathStyle & style);
 
         void drawPoints(const core::pt32f points[], size_t count, point_mode mode, const PathStyle & style);
         void drawPath(const Path & path, const PathStyle & style);
         void drawPath(const std::shared_ptr<drawing::Path> & path, const PathStyle & style);
 
-        void drawString(const std::string & str, core::pt32f point, const StringFormat & format);
-        void drawString(const std::string & str, core::rc32f rect, const StringFormat & format);
+        void drawString(const std::string & str, const core::pt32f & pos, const StringFormat & format);
+        void drawString(const std::string & str, const core::rc32f & rect, const StringFormat & format);
         void drawTextBlob(const drawing::TextBlob & blob, core::pt32f point);
 
         void drawImage(const Image & image, core::pt32f point, core::aligns align);

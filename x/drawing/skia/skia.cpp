@@ -34,6 +34,15 @@ namespace drawing::skia
 
         SkPaint::FontMetrics skfm;
         paint.getFontMetrics(&skfm);
+        //metrics.height = std::abs(std::ceilf(skfm.fAscent)) + std::ceilf(skfm.fDescent);
+        //metrics.top = std::abs(skfm.fTop);
+        //metrics.bottom = skfm.fBottom;
+        //metrics.ascent = std::abs(skfm.fAscent);
+        //metrics.descent = skfm.fDescent;
+        //metrics.width = skfm.fAvgCharWidth;
+        //if (core::equal(metrics.width, 0.0f))
+        //    metrics.width = skfm.fXMax;
+
         metrics.height = std::abs(std::ceilf(skfm.fAscent)) + std::ceilf(skfm.fDescent);
         metrics.top = std::abs(skfm.fTop);
         metrics.bottom = skfm.fBottom;

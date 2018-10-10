@@ -100,7 +100,7 @@ namespace ui::controls
             {
                std::tie(off, rect) = _clusterizer->textRect(off, end - off);
                 if(!rect.empty())
-                    graphics.drawRectangle({ cbox.leftTop() + rect.leftTop(), rect.size}, drawing::PathStyle().fill(0x800000ff));
+                    graphics.drawRectangle({ (cbox.leftTop() + rect.leftTop()).offset(_scroll_pos, 0.0f), rect.size }, drawing::PathStyle().fill(0x800000ff));
             }
             while (off != core::npos);
         }

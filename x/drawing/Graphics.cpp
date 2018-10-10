@@ -101,7 +101,7 @@ namespace drawing
         _native->drawLine({ start.x, start.y }, { end.x, end.y }, paint);
     }
 
-    void Graphics::drawEllipse(core::rc32f ellipse, const PathStyle & style)
+    void Graphics::drawEllipse(const core::rc32f & ellipse, const PathStyle & style)
     {
         ++_statistics.drawEllipse;
         if (!_native)
@@ -113,7 +113,7 @@ namespace drawing
         _native->drawOval(skia::from(ellipse), paint);
     }
 
-    void Graphics::drawRectangle(core::rc32f rect, const PathStyle & style)
+    void Graphics::drawRectangle(const core::rc32f & rect, const PathStyle & style)
     {
         ++_statistics.drawRectangle;
         if (!_native)
@@ -125,7 +125,7 @@ namespace drawing
         _native->drawRect(skia::from(rect), paint);
     }
 
-    void Graphics::drawRoundRect(core::rc32f rect, float32_t rx, float32_t ry, const PathStyle & style)
+    void Graphics::drawRoundRect(const core::rc32f & rect, float32_t rx, float32_t ry, const PathStyle & style)
     {
         ++_statistics.drawRoundRect;
         if (!_native)
@@ -189,7 +189,7 @@ namespace drawing
         _native->drawPath(path->native(), paint);
     }
 
-    void Graphics::drawString(const std::string & str, core::pt32f point, const StringFormat & format)
+    void Graphics::drawString(const std::string & str, const core::pt32f & pos, const StringFormat & format)
     {
         ++_statistics.drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref;
         if (!_native)
@@ -204,6 +204,7 @@ namespace drawing
         core::si32f size = shaper.bounds();
         auto blob = shaper.build();
 
+        core::pt32f point = pos;
         if (format._align & core::align::right)
             point.x -= size.cx;
         else if (format._align & core::align::centerX)
@@ -219,7 +220,7 @@ namespace drawing
         _native->drawTextBlob(blob.get(), point.x, point.y, paint);
     }
 
-    void Graphics::drawString(const std::string & str, core::rc32f rect, const StringFormat & format)
+    void Graphics::drawString(const std::string & str, const core::rc32f & rect, const StringFormat & format)
     {
         ++_statistics.drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref;
         if (!_native)

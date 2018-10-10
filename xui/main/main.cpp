@@ -74,7 +74,7 @@ void xui_main()
     std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
 
     drawing::TextWraper shaper;
-    shaper.itermize(u8"قق ققق ", drawing::font(), colors::Black);
+    shaper.itermize(u8"ยิ้ยิ้ยิ้ ", drawing::font(), colors::Black);
     shaper.layout(999999999, drawing::wrap_mode::word);
 
     auto ss = std::make_shared<ui::component::StyleSheet>();
@@ -188,6 +188,7 @@ void xui_main()
         auto tln = std::make_shared<ui::controls::TextLine>();
         tln->setText(rtft);
         tln->setSize({ auto_value, 10_em });
+        tln->setFont({ "", font.size * 9 });
         tln->setAnchor({ 0_px, 0_px, 0_px, 0_px });
         tln->setAnchorBorders(core::align::leftRight);
         tln->setImeMode(ui::ime_mode::on);

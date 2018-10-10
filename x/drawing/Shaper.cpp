@@ -353,7 +353,7 @@ namespace drawing
                     fontmetrics fmetrics(font_cache.font);
                     if(fmetrics_fb.ascent - fmetrics.ascent > 0.49f || fmetrics_fb.descent - fmetrics.descent > 0.49f)
                     {
-                        //float32_t rate0 = fmetrics.height / fmetrics_fb.height;
+                        //float32_t rate = fmetrics.height / fmetrics_fb.height;
                         float32_t rate = std::min(fmetrics.ascent / fmetrics_fb.ascent, fmetrics.descent / fmetrics_fb.descent);
                         //if (rate < rate0)
                         //    rate = rate0;
