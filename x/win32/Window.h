@@ -8,6 +8,7 @@ namespace win32
 {
     enum class windowmessage_bock
     {
+        all = 0x10000,
         wm_size = 0x0001,
     };
     typedef core::bitflag<windowmessage_bock> windowmessage_bocks;
@@ -65,7 +66,7 @@ namespace win32
         virtual intx_t OnWmShow(uintx_t wParam, intx_t lParam){ return 0;}
         virtual intx_t OnWmPaint(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmNcPaint(uintx_t wParam, intx_t lParam);
-        virtual intx_t OnWmNcActivate(uintx_t wParam, intx_t lParam){ return 0;}
+        virtual intx_t OnWmNcActivate(uintx_t wParam, intx_t lParam);
 
         virtual intx_t OnWmMouseMove(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmMouseLeave(uintx_t wParam, intx_t lParam);
@@ -114,7 +115,7 @@ namespace win32
 
         virtual intx_t OnWmNcCalcSize(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmNcMouseMove(uintx_t wParam, intx_t lParam){ return 0;}
-        virtual intx_t OnWmGetMinMaxInfo(uintx_t wParam, intx_t lParam){ return 0;}
+        virtual intx_t OnWmGetMinMaxInfo(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmSysCommand(uintx_t wParam, intx_t lParam){ return 0;}
 
     private:

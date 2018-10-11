@@ -36,19 +36,12 @@ namespace win32
     core::error Window::attatch(std::shared_ptr<ui::Form> form)
     {
         _form = form;
-        uint32_t style = 0;
-        uint32_t styleEx = 0;
+        _style = WS_OVERLAPPED | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+        _styleEx = 0;
+
         auto fs = form->styles();
-        if (fs.any(ui::form_style::frameless))
-        {
-            _style = WS_POPUP | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
-            _styleEx = 0;
-        }
-        else /*if (fs.all(ui::form_style::normal))*/
-        {
-            _style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
-            _styleEx = 0;
-        }
+        //if (!fs.any(ui::form_style::frameless))
+        //    _style |= WS_BORDER;
 
         auto scene = form->scene();
         form->shownChanged += std::weak_bind(&Window::onShownChanged, share_ref<Window>(), std::placeholders::_1);
@@ -182,33 +175,20 @@ namespace win32
         auto pos = f->windowPos().to<int32_t>();
         auto size = f->realSize().to<int32_t>();
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
-        //if (styles.any(ui::form_style::frameless))
-        //{
-        //    _style = WS_POPUP;
-        //    //_style = WS_POPUP | WS_BORDER | WS_SYSMENU;
-        //    _styleEx = 0;
-        //}
-        //else /*if (styles.all(ui::form_style::frameless))*/
-        //{
-        //    _style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
-        //    _styleEx = 0;
-        //}
 
-        _style = WS_OVERLAPPED;
+        _message_blocks.set(windowmessage_bock::all, true);
         if (styles.any(ui::form_style::frameless))
-            _style |= WS_DLGFRAME;
+            _style = WS_OVERLAPPED | WS_THICKFRAME;
         else
-            _style |= WS_SYSMENU | WS_BORDER | WS_DLGFRAME | WS_THICKFRAME;
-
+            _style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
         if (!styles.any(ui::form_style::nomin))
             _style |= WS_MINIMIZEBOX;
-
         if (!styles.any(ui::form_style::nomax))
             _style |= WS_MAXIMIZEBOX;
-
-        if(f->shown())
+        if (f->shown())
             _style |= WS_VISIBLE;
-
+        ::SetWindowLongPtrW(hwnd, GWL_STYLE, _style);
+        _message_blocks.set(windowmessage_bock::all, false);
         if (!styles.any(ui::form_style::frameless))
             ::AdjustWindowRect(&rect, _style, FALSE);
         else
@@ -217,11 +197,10 @@ namespace win32
             ::ClientToScreen(hwnd, &pt);
             rect = { pt.x, pt.y, pt.x + size.cx, pt.y + size.cy };
         }
-
-        _message_blocks.set(windowmessage_bock::wm_size, true);
-        ::MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, TRUE);
-        ::SetWindowLongPtrW(hwnd, GWL_STYLE, _style);
-        _message_blocks.set(windowmessage_bock::wm_size, false);
+        SetWindowPos(hwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+            SWP_DRAWFRAME | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
+        //::MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
+        //RedrawWindow(hwnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE);
     }
 
     void Window::onPosChanged(const core::pt32f & from, const core::pt32f & to)
@@ -502,6 +481,9 @@ namespace win32
 #define CASE_MSG(M, F) case M: return F(wParam, lParam)
     intx_t Window::handleMSG(uint32_t uiMessage, uintx_t wParam, intx_t lParam)
     {
+        if (_message_blocks.any(windowmessage_bock::all))
+            return OnDefault(uiMessage, wParam, lParam);
+
         auto f = form();
         if (!f)
             return OnDefault(uiMessage, wParam, lParam);
@@ -514,7 +496,7 @@ namespace win32
             CASE_MSG(WM_ERASEBKGND, OnWmEraseBack);
             CASE_MSG(WM_PAINT, OnWmPaint);
             CASE_MSG(WM_NCPAINT, OnWmNcPaint);
-            //CASE_MSG(WM_NCACTIVATE, OnWmNcActivate);
+            CASE_MSG(WM_NCACTIVATE, OnWmNcActivate);
 
             CASE_MSG(WM_MOUSEMOVE, OnWmMouseMove);
             CASE_MSG(WM_MOUSELEAVE, OnWmMouseLeave);
@@ -558,7 +540,7 @@ namespace win32
             //CASE_MSG(WM_CLOSE, OnWmClose);
             //CASE_MSG(WM_DESTROY, OnWmDestroy);
 
-            //CASE_MSG(WM_GETMINMAXINFO, OnWmGetMinMaxInfo);
+            CASE_MSG(WM_GETMINMAXINFO, OnWmGetMinMaxInfo);
             //CASE_MSG(WM_SYSCOMMAND, OnWmSysCommand);
 
             CASE_MSG(WM_REFRESH, OnWmRefresh);
@@ -593,8 +575,8 @@ namespace win32
 
     intx_t Window::OnWmSize(uintx_t wParam, intx_t lParam)
     {
-        if(_message_blocks.any(windowmessage_bock::wm_size))
-            return 0;
+        if (_message_blocks.any(windowmessage_bock::wm_size))
+            return OnDefault(WM_SIZE, wParam, lParam);
 
         auto f = form();
         if (!f)
@@ -628,14 +610,33 @@ namespace win32
 
     intx_t Window::OnWmNcPaint(uintx_t wParam, intx_t lParam)
     {
-        //auto f = form();
-        //if (!f)
-        //    throw core::exception(core::error_nullptr);
-        //auto styles = f->styles();
-        //if(styles.any(ui::form_style::frameless))
-        //    return 0;
+        return OnDefault(WM_NCPAINT, wParam, lParam);
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+        auto styles = f->styles();
+        if(styles.any(ui::form_style::frameless))
+            return 0;
 
         return OnDefault(WM_NCPAINT, wParam, lParam);
+    }
+
+    intx_t Window::OnWmNcActivate(uintx_t wParam, intx_t lParam)
+    {
+        // 如果不处理 frameless，偶尔会多出一个 ncpaint 灰边。
+        HWND hwnd = (HWND)_handle;
+        auto f = form();
+        if(!hwnd || !f)
+            return OnDefault(WM_NCACTIVATE, wParam, lParam);
+
+        if (::IsIconic(hwnd))
+            return 1;
+
+        auto styles = f->styles();
+        if (styles.any(ui::form_style::frameless))
+            return true;
+        return OnDefault(WM_NCACTIVATE, wParam, lParam);
+
     }
 
     intx_t Window::OnWmMouseMove(uintx_t wParam, intx_t lParam)
@@ -768,18 +769,22 @@ namespace win32
 
     intx_t Window::OnWmHitTest(uintx_t wParam, intx_t lParam)
     {
+        intx_t def = OnDefault(WM_NCHITTEST, wParam, lParam);
+        if (def != HTCLIENT)
+            return def;
+
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
-            return OnDefault(WM_PAINT, wParam, lParam);
+            return def;
 
         auto s = scene();
         auto c = s ? s->control() : nullptr;
         if (!c)
-            return OnDefault(WM_NCHITTEST, wParam, lParam);
+            return def;
 
         POINT posi = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ScreenToClient(hwnd, &posi);
-        auto pos = core::pt32f(posi.x, posi.y);
+        auto pos = core::pt32f((float32_t)posi.x, (float32_t)posi.y);
         auto child = c->findChild(pos);
         if(!child)
             return HTNOWHERE;
@@ -808,6 +813,11 @@ namespace win32
 
     intx_t Window::OnWmNcCalcSize(uintx_t wParam, intx_t lParam)
     {
+        // 这个消息只能用来确定客户区大小，不能限制窗口区域。
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return OnDefault(WM_NCCALCSIZE, wParam, lParam);
+
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
@@ -819,6 +829,7 @@ namespace win32
             if (styles.any(ui::form_style::frameless))
             {
                 WINDOWPOS & wpos = *ncsize.lppos;
+                RECT & wrect = ncsize.rgrc[0];
                 //ncsize.rgrc[1] = ncsize.rgrc[0];
                 //wpos.x = 0;
                 //wpos.y = 0;
@@ -828,6 +839,41 @@ namespace win32
             }
         }
         return OnDefault(WM_NCCALCSIZE, wParam, lParam);
+    }
+
+    intx_t Window::OnWmGetMinMaxInfo(uintx_t wParam, intx_t lParam)
+    {
+        HWND hwnd = (HWND)_handle;
+        auto f = form();
+        if (!hwnd || !f)
+            return OnDefault(WM_GETMINMAXINFO, wParam, lParam);
+
+
+        auto styles = f->styles();
+        if (styles.any(ui::form_style::frameless))
+        {
+            MINMAXINFO & info = *reinterpret_cast<MINMAXINFO *>(lParam);
+
+            HMONITOR hm = ::MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
+            MONITORINFO mi = { sizeof(MONITORINFO) };
+            ::GetMonitorInfoW(hm, &mi);
+            info.ptMaxPosition = { mi.rcWork.left - mi.rcMonitor.left, mi.rcWork.top - mi.rcMonitor.top };
+            info.ptMaxSize = { mi.rcWork.right - mi.rcWork.left, mi.rcWork.bottom - mi.rcWork.top };
+            info.ptMaxTrackSize = info.ptMaxSize;
+            auto & min = f->minSize();
+            auto & max = f->maxSize();
+            if (min.cx.avi())
+                info.ptMinTrackSize.x = (int32_t)f->calc(min.cx);
+            if (min.cy.avi())
+                info.ptMinTrackSize.x = (int32_t)f->calc(min.cy);
+            if (max.cx.avi())
+                info.ptMaxTrackSize.x = (int32_t)f->calc(max.cx);
+            if (max.cy.avi())
+                info.ptMaxTrackSize.x = (int32_t)f->calc(max.cy);
+            return OnDefault(WM_GETMINMAXINFO, wParam, lParam);
+        }
+        else
+            return OnDefault(WM_GETMINMAXINFO, wParam, lParam);
     }
 
     Window * Window::fromHandle(handle_t handle)

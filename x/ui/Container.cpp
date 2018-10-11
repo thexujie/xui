@@ -137,13 +137,7 @@ namespace ui
         bool found = false;
 
         core::pt32f scrolled_pos = pos;
-        std::shared_ptr<Control> control_found = nullptr;
-        if (!(flags & findchild_flag::accept_wheel_v) || _accept_wheel_v)
-        {
-            if (!_mouse_through)
-                control_found = control_ref();
-        }
-
+        std::shared_ptr<Control> control_found = _mouse_through ? nullptr : control_ref();
         for (auto & control : core::reverse(_controls))
         {
             if (last && !found)

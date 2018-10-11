@@ -5,12 +5,12 @@ namespace ui::controls
 {
     Image::Image()
     {
-        
+        _interactable = false;
     }
 
     Image::Image(std::string path) : _image(std::make_shared<drawing::Image>(path))
     {
-
+        _interactable = false;
     }
 
     Image::~Image()

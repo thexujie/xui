@@ -104,36 +104,30 @@ namespace ui
     core::si32f Control::adjustSize(const core::si32f & size) const
     {
         core::si32f asize = size;
-        if (_minSize.available())
+        if (_minSize.value.cx.avi())
         {
-            if (_minSize.value.cx.avi())
-            {
-                float32_t val = calc(_minSize.value.cx);
-                if (asize.cx < val)
-                    asize.cx = val;
-            }
-            if (_minSize.value.cy.avi())
-            {
-                float32_t val = calc(_minSize.value.cy);
-                if (asize.cy < val)
-                    asize.cy = val;
-            }
+            float32_t val = calc(_minSize.value.cx);
+            if (asize.cx < val)
+                asize.cx = val;
+        }
+        if (_minSize.value.cy.avi())
+        {
+            float32_t val = calc(_minSize.value.cy);
+            if (asize.cy < val)
+                asize.cy = val;
         }
 
-        if (_maxSize.available())
+        if (_maxSize.value.cx.avi())
         {
-            if (_maxSize.value.cx.avi())
-            {
-                float32_t val = calc(_maxSize.value.cx);
-                if (asize.cx > val)
-                    asize.cx = val;
-            }
-            if (_maxSize.value.cy.avi())
-            {
-                float32_t val = calc(_maxSize.value.cy);
-                if (asize.cy > val)
-                    asize.cy = val;
-            }
+            float32_t val = calc(_maxSize.value.cx);
+            if (asize.cx > val)
+                asize.cx = val;
+        }
+        if (_maxSize.value.cy.avi())
+        {
+            float32_t val = calc(_maxSize.value.cy);
+            if (asize.cy > val)
+                asize.cy = val;
         }
         return asize;
     }

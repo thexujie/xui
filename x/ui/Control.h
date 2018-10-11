@@ -254,8 +254,8 @@ namespace ui
         core::attribute<core::vec4<core::color32>> _border_colors;
         core::attribute<core::vec4<drawing::stroke_style>> _border_styles;
         core::attribute<core::vec4<core::dimensionf>> _margin;
-        core::attribute<core::vec2<core::dimensionf>> _minSize;
-        core::attribute<core::vec2<core::dimensionf>> _maxSize;
+        core::attribute<core::vec2<core::dimensionf>> _minSize = core::vec2{ core::auto_value , core::auto_value };
+        core::attribute<core::vec2<core::dimensionf>> _maxSize = core::vec2{ core::auto_value, core::auto_value };
 
         core::aligns _anchor_borders = core::align::leftTop;
         core::attribute<core::vec4<core::dimensionf>> _anchor;
