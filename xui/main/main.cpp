@@ -67,11 +67,29 @@ struct tc
     int ab = 34;
 };
 
+std::shared_ptr<ui::Form> g_form;
+
+void setFormType(ui::form_style style)
+{
+    auto styles = g_form->styles();
+    styles.set(ui::form_style::mask_type, false);
+    styles.set(style, true);
+    g_form->setStyles(styles);
+}
+
+void setStyle(ui::form_style style, bool b)
+{
+    auto styles = g_form->styles();
+    styles.set(style, b);
+    g_form->setStyles(styles);
+}
+
 #define BASE_LAYER
+
 void xui_main()
 {
     //std::string rtft = u8"heသွက်ဂွံဗၠးၜးတ်ိတ်llo لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
-    std::string rtft = u8"hello لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
+    std::string rtft = u8"hello لغة عربية‎𪚥𪚥བོད་ཀྱི་སྐད་ཡིག།𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
 
     drawing::TextWraper shaper;
     shaper.itermize(u8"ยิ้ยิ้ยิ้ ", drawing::font(), colors::Black);
@@ -142,7 +160,8 @@ void xui_main()
     text2->setPadding({ 1_em, 0.5_em });
 #endif
 
-    auto form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em), ui::form_style::normal);
+    std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em), ui::form_style::normal);
+    g_form = form;
     form->formScene()->setStyleSheet(ss);
     form->setBorder({ 1_px, 1_px });
     form->setBorderColors({ colors::Black, colors::Black });
@@ -281,6 +300,41 @@ void xui_main()
             rbtn->setText(u8"Vickyyyyyyy");
             container->addControl(rbtn);
             rbtn->stateChanged += [](ui::check_state state) { win32::endLoop(0); };
+        }
+        layer->addControl(container);
+        container->setBorder({ 1_px, 1_px });
+        container->setBorderColors({ colors::Red, colors::Red });
+    }
+    {
+        auto container = std::make_shared<ui::Container>();
+        container->setLayoutDirection(core::align::top);
+        container->setSize({ 100_per, auto_value });
+
+        {
+            auto rbtn = std::make_shared<ui::controls::Check>();
+            rbtn->setText(u8"min box");
+            container->addControl(rbtn);
+            rbtn->stateChanged += [](ui::check_state state) {setStyle(ui::form_style::nomin, state == ui::check_state::unchecked); };
+        }
+        {
+            auto rbtn = std::make_shared<ui::controls::Check>();
+            rbtn->setText(u8"max box");
+            container->addControl(rbtn);
+            rbtn->stateChanged += [](ui::check_state state) {setStyle(ui::form_style::nomax, state == ui::check_state::unchecked); };
+        }
+        {
+            auto rbtn = std::make_shared<ui::controls::Radio>();
+            rbtn->setText(u8"normal");
+            rbtn->setGroup("window style");
+            container->addControl(rbtn);
+            rbtn->stateChanged += [](ui::check_state state) {setFormType(ui::form_style::normal); };
+        }
+        {
+            auto rbtn = std::make_shared<ui::controls::Radio>();
+            rbtn->setText(u8"frameless");
+            rbtn->setGroup("window style");
+            container->addControl(rbtn);
+            rbtn->stateChanged += [](ui::check_state state) {setFormType(ui::form_style::frameless); };
         }
         layer->addControl(container);
         container->setBorder({ 1_px, 1_px });

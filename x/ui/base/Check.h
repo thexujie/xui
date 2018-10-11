@@ -25,5 +25,7 @@ namespace ui::base
 
     public:
         core::event<void(check_state state)> stateChanged;
+        core::event<void()> checked;
+        core::event<void()> unchecked;
     };
 }

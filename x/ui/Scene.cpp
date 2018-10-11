@@ -30,17 +30,23 @@ namespace ui
             _invalid_region.addRect(rc);
         }
 
-        //if(!_renderer.valid() || _renderer.wait_for(0s) == std::future_status::ready)
-        //    _renderer = std::async(std::bind(&Scene::renderThread, this));
-
         if (!_th_render.joinable())
             _th_render = std::thread(std::bind(&Scene::renderThread, this));
         _cv_render.notify_all();
     }
 
+    std::shared_ptr<drawing::Bitmap> Scene::readBegin()
+    {
+        return _draw_buffer;
+    }
+
+    void Scene::readEnd()
+    {
+    }
+
     void Scene::setEvent(scene_event evt)
     {
-        invoke([this, evt]() {evented(evt);});
+        invoke([this, evt]() {evented(evt); });
     }
 
     std::shared_ptr<RadioGroup> Scene::radioGroup(std::string name)
@@ -213,17 +219,20 @@ namespace ui
                 continue;
             c->ondraw(graphics, invalid_region);
 
+            static bool save = false;
+            if (save)
+                _draw_buffer->Save("scene.png");
+
             //fps.acc(1);
             //auto cost = core::datetime::high_resolution_s() - tms;
             //core::dbg_output(core::string::format(graphics.statistics().total(), " drawcalls, ", cost, " s, fps=", fps.fps()));
             if (_exit)
                 break;
             //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
+
+            //invoke([this, region = std::move(invalid_region)]() { rendered(region); });
             rendered(invalid_region);
             //rendered(core::rc32i{{}, _draw_buffer ->size()});
-            static bool save = false;
-            if (save)
-                _draw_buffer->Save("scene.png");
 
             std::unique_lock<std::mutex> lock(_mtx);
             _cv_render.wait(lock, [this]() {return !_invalid_rect.empty() || _exit; });

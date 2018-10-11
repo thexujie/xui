@@ -7,11 +7,12 @@ namespace ui
     enum class form_style
     {
         normal = 0,
-        popup = 0x0001,
+        frameless = 0x0001,
 
-        frameless = 0x10000,
         nomin = 0x100000,
         nomax = 0x200000,
+
+        mask_type = 0x000f,
     };
 
     template<> struct enable_bitmasks<form_style> { static const bool enable = true; };
@@ -37,6 +38,7 @@ namespace ui
         std::shared_ptr<Scene> formScene() const;
 
         void show();
+        bool shown() const { return _shown; }
         void centerScreen(int32_t screenIndex = 0);
 
         void enteringScene(std::shared_ptr<Scene> & scene) override;

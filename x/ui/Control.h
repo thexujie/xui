@@ -94,7 +94,7 @@ namespace ui
 
         bool visible() const { return _visible.value; }
 
-        core::si32f realPos() const { return _rect.pos; }
+        core::pt32f realPos() const { return _rect.pos; }
         core::si32f realSize() const { return _rect.size; }
         float32_t realWidth() const { return _rect.cx; }
         float32_t realHeight() const { return _rect.cy; }

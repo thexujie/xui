@@ -40,6 +40,17 @@ namespace ui::base
             _state = state;
             refresh();
             stateChanged(_state);
+            switch(state)
+            {
+            case check_state::unchecked:
+                unchecked();
+                break;
+            case check_state::checked:
+                checked();
+                break;
+            default:
+                break;
+            }
         }
     }
 }

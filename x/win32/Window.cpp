@@ -6,19 +6,19 @@ namespace win32
 {
     const uint32_t WM_REFRESH = WM_USER + 1;
 
-    static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM uiParam, LPARAM iParam);
-    //static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM uiParam, LPARAM iParam)
+    static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam);
+    //static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam)
     //{
     //    if (uiMessage == WM_NCCREATE)
     //    {
-    //        CREATESTRUCT * pcs = (CREATESTRUCT *)iParam;
+    //        CREATESTRUCT * pcs = (CREATESTRUCT *)lParam;
     //        if (pcs->lpCreateParams)
     //        {
     //            ((Window *)pcs->lpCreateParams)->SetHandle(hWnd);
     //        }
     //    }
 
-    //    return DefWindowProcW(hWnd, uiMessage, uiParam, iParam);
+    //    return DefWindowProcW(hWnd, uiMessage, wParam, lParam);
     //}
 
     Window::Window()
@@ -39,7 +39,7 @@ namespace win32
         uint32_t style = 0;
         uint32_t styleEx = 0;
         auto fs = form->styles();
-        if (fs.any(ui::form_style::popup))
+        if (fs.any(ui::form_style::frameless))
         {
             _style = WS_POPUP | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
             _styleEx = 0;
@@ -171,21 +171,57 @@ namespace win32
 
     void Window::onStylesChanged(ui::form_styles styles)
     {
+        auto f = form();
+        if (!f)
+            return;
+
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
-        //if (fs.any(ui::form_style::popup))
+        auto pos = f->windowPos().to<int32_t>();
+        auto size = f->realSize().to<int32_t>();
+        RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
+        //if (styles.any(ui::form_style::frameless))
         //{
-        //    _style = WS_POPUP | WS_BORDER | WS_SYSMENU;
+        //    _style = WS_POPUP;
+        //    //_style = WS_POPUP | WS_BORDER | WS_SYSMENU;
         //    _styleEx = 0;
         //}
-        //else /*if (fs.all(ui::form_style::normal))*/
+        //else /*if (styles.all(ui::form_style::frameless))*/
         //{
-        //    _style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+        //    _style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
         //    _styleEx = 0;
         //}
 
+        _style = WS_OVERLAPPED;
+        if (styles.any(ui::form_style::frameless))
+            _style |= WS_DLGFRAME;
+        else
+            _style |= WS_SYSMENU | WS_BORDER | WS_DLGFRAME | WS_THICKFRAME;
+
+        if (!styles.any(ui::form_style::nomin))
+            _style |= WS_MINIMIZEBOX;
+
+        if (!styles.any(ui::form_style::nomax))
+            _style |= WS_MAXIMIZEBOX;
+
+        if(f->shown())
+            _style |= WS_VISIBLE;
+
+        if (!styles.any(ui::form_style::frameless))
+            ::AdjustWindowRect(&rect, _style, FALSE);
+        else
+        {
+            POINT pt = {0, 0 };
+            ::ClientToScreen(hwnd, &pt);
+            rect = { pt.x, pt.y, pt.x + size.cx, pt.y + size.cy };
+        }
+
+        _message_blocks.set(windowmessage_bock::wm_size, true);
+        ::MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, TRUE);
+        ::SetWindowLongPtrW(hwnd, GWL_STYLE, _style);
+        _message_blocks.set(windowmessage_bock::wm_size, false);
     }
 
     void Window::onPosChanged(const core::pt32f & from, const core::pt32f & to)
@@ -396,7 +432,7 @@ namespace win32
         auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
 
         auto scene = f->scene();
-        std::shared_ptr<drawing::Bitmap> bitmap = scene->bitmap();
+        std::shared_ptr<drawing::Bitmap> bitmap = scene->readBegin();
 
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -417,6 +453,7 @@ namespace win32
         SetDIBitsToDevice(hdc, 
             rc.x, rc.y, rc.cx, rc.cy, 
             rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+        scene->readEnd();
         ReleaseDC(hwnd, hdc);
     }
 
@@ -426,9 +463,10 @@ namespace win32
         if (!f)
             return;
 
-
         auto scene = f->scene();
-        std::shared_ptr<drawing::Bitmap> bitmap = scene->bitmap();
+        std::shared_ptr<drawing::Bitmap> bitmap = scene->readBegin();
+        if (!bitmap)
+            return;
 
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -457,24 +495,25 @@ namespace win32
                 rc.x, rc.y, rc.cx, rc.cy,
                 rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
         }
+        scene->readEnd();
         ReleaseDC(hwnd, hdc);
     }
 
-#define CASE_MSG(M, F) case M: return F(uiParam, iParam)
-    intx_t Window::handleMSG(uint32_t uiMessage, uintx_t uiParam, intx_t iParam)
+#define CASE_MSG(M, F) case M: return F(wParam, lParam)
+    intx_t Window::handleMSG(uint32_t uiMessage, uintx_t wParam, intx_t lParam)
     {
         auto f = form();
         if (!f)
-            return OnDefault(uiMessage, uiParam, iParam);
+            return OnDefault(uiMessage, wParam, lParam);
 
         switch (uiMessage)
         {
-            //CASE_MSG(WM_NCHITTEST, OnWmHitTest);
-            //CASE_MSG(WM_NCCALCSIZE, OnWmNcCalcSize);
+            CASE_MSG(WM_NCHITTEST, OnWmHitTest);
+            CASE_MSG(WM_NCCALCSIZE, OnWmNcCalcSize);
             //CASE_MSG(WM_SHOWWINDOW, OnWmShow);
             CASE_MSG(WM_ERASEBKGND, OnWmEraseBack);
-            //CASE_MSG(WM_PAINT, OnWmPaint);
-            //CASE_MSG(WM_NCPAINT, OnWmNcPaint);
+            CASE_MSG(WM_PAINT, OnWmPaint);
+            CASE_MSG(WM_NCPAINT, OnWmNcPaint);
             //CASE_MSG(WM_NCACTIVATE, OnWmNcActivate);
 
             CASE_MSG(WM_MOUSEMOVE, OnWmMouseMove);
@@ -528,21 +567,21 @@ namespace win32
             f->onClose();
             return 0;
         default:
-            return OnDefault(uiMessage, uiParam, iParam);
+            return OnDefault(uiMessage, wParam, lParam);
         }
     }
 
-    intx_t Window::OnDefault(uint32_t uiMessage, uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnDefault(uint32_t uiMessage, uintx_t wParam, intx_t lParam)
     {
         assert(_handle);
         HWND hwnd = (HWND)_handle;
         WNDPROC pfnOldWndProc = (WNDPROC)GetPropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
         if (!pfnOldWndProc)
             pfnOldWndProc = DefWindowProcW;
-        return (intx_t)CallWindowProcW(pfnOldWndProc, hwnd, (UINT)uiMessage, (WPARAM)uiParam, (LPARAM)iParam);
+        return (intx_t)CallWindowProcW(pfnOldWndProc, hwnd, (UINT)uiMessage, (WPARAM)wParam, (LPARAM)lParam);
     }
 
-    intx_t Window::OnWmMove(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmMove(uintx_t wParam, intx_t lParam)
     {
         auto f = form();
         if (!f)
@@ -552,8 +591,11 @@ namespace win32
         return 0;
     }
 
-    intx_t Window::OnWmSize(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmSize(uintx_t wParam, intx_t lParam)
     {
+        if(_message_blocks.any(windowmessage_bock::wm_size))
+            return 0;
+
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
@@ -562,12 +604,41 @@ namespace win32
         return 0;
     }
 
-     intx_t Window::OnWmRefresh(uintx_t uiParam, intx_t iParam)
+     intx_t Window::OnWmRefresh(uintx_t wParam, intx_t lParam)
     {
         return 0;
     }
 
-    intx_t Window::OnWmMouseMove(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmPaint(uintx_t wParam, intx_t lParam)
+    {
+        return OnDefault(WM_PAINT, wParam, lParam);
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return OnDefault(WM_PAINT, wParam, lParam);
+
+        //_render
+        PAINTSTRUCT ps;
+        HDC hdc = ::BeginPaint(hwnd, &ps);
+        _render({ ps.rcPaint.left, ps.rcPaint.top,
+            ps.rcPaint.right - ps.rcPaint.left,
+            ps.rcPaint.bottom - ps.rcPaint.top });
+        ::EndPaint(hwnd, &ps);
+        return 0;
+    }
+
+    intx_t Window::OnWmNcPaint(uintx_t wParam, intx_t lParam)
+    {
+        //auto f = form();
+        //if (!f)
+        //    throw core::exception(core::error_nullptr);
+        //auto styles = f->styles();
+        //if(styles.any(ui::form_style::frameless))
+        //    return 0;
+
+        return OnDefault(WM_NCPAINT, wParam, lParam);
+    }
+
+    intx_t Window::OnWmMouseMove(uintx_t wParam, intx_t lParam)
     {
         auto f = form();
         if (!f)
@@ -575,10 +646,10 @@ namespace win32
         auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
-        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
+        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         if (!_trackingMouse)
         {
-            //OnWmMouseEnter(uiMessage, uiParam, iParam);
+            //OnWmMouseEnter(uiMessage, wParam, lParam);
             TRACKMOUSEEVENT tme;
             tme.cbSize = sizeof(TRACKMOUSEEVENT);
             tme.dwFlags = TME_LEAVE;
@@ -593,7 +664,7 @@ namespace win32
         return 0;
     }
 
-    intx_t Window::OnWmMouseLeave(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmMouseLeave(uintx_t wParam, intx_t lParam)
     {
         if (!_trackingMouse)
             return 0;
@@ -606,14 +677,14 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::mask, false);
-        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
+        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
         if(_cursor_context)
             _cursor_context->reset();
         return 0;
     }
 
-    intx_t Window::OnWmMouseDownL(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmMouseDownL(uintx_t wParam, intx_t lParam)
     {
         auto f = form();
         if (!f)
@@ -622,12 +693,12 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, true);
-        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
+        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::press);
         return 0;
     }
 
-    intx_t Window::OnWmMouseUpL(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmMouseUpL(uintx_t wParam, intx_t lParam)
     {
         auto f = form();
         if (!f)
@@ -636,12 +707,12 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, false);
-        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam)).to<float32_t>());
+        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
         return 0;
     }
 
-    intx_t Window::OnWmMouseWheelV(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmMouseWheelV(uintx_t wParam, intx_t lParam)
     {
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -652,58 +723,111 @@ namespace win32
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        POINT point = { core::i32li16((int32_t)iParam), core::i32hi16((int32_t)iParam) };
+        POINT point = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ::ScreenToClient(hwnd, &point);
-        //core::pt32i point = core::pt32i(core::i32li16(iParam), core::i32hi16(iParam));
-        //core::pt32i wheel = core::pt32i(core::u32li16(uiParam), core::u32hi16(uiParam));
-        _mouse_state.setWheelLines(core::u32hi16((uint32_t)uiParam) / WHEEL_DELTA);
+        //core::pt32i point = core::pt32i(core::i32li16(lParam), core::i32hi16(lParam));
+        //core::pt32i wheel = core::pt32i(core::u32li16(wParam), core::u32hi16(wParam));
+        _mouse_state.setWheelLines(core::u32hi16((uint32_t)wParam) / WHEEL_DELTA);
         _mouse_state.setPos(core::pt32i(point.x, point.y).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::none,  ui::mouse_action::wheel_v);
         return 0;
     }
 
-    intx_t Window::OnWmChar(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmChar(uintx_t wParam, intx_t lParam)
     {
         if (auto s = scene())
-            s->onChar(char32_t(uiParam));
+            s->onChar(char32_t(wParam));
         return 0;
     }
 
-    intx_t Window::OnWmKeyDown(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmKeyDown(uintx_t wParam, intx_t lParam)
     {
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        ui::keycode key = virtualkey2keycode(uiParam);
+        ui::keycode key = virtualkey2keycode(wParam);
         _mouse_state.setKey(key, true);
         s->onKey(_mouse_state, key, ui::key_action::press);
         return 0;
     }
 
-    intx_t Window::OnWmKeyUp(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmKeyUp(uintx_t wParam, intx_t lParam)
     {
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
         auto s = f->scene();
 
-        ui::keycode key = virtualkey2keycode(uiParam);
+        ui::keycode key = virtualkey2keycode(wParam);
         _mouse_state.setKey(key, false);
         s->onKey(_mouse_state, key, ui::key_action::release);
         return 0;
     }
 
-    intx_t Window::OnWmSetFocus(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmHitTest(uintx_t wParam, intx_t lParam)
+    {
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return OnDefault(WM_PAINT, wParam, lParam);
+
+        auto s = scene();
+        auto c = s ? s->control() : nullptr;
+        if (!c)
+            return OnDefault(WM_NCHITTEST, wParam, lParam);
+
+        POINT posi = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
+        ScreenToClient(hwnd, &posi);
+        auto pos = core::pt32f(posi.x, posi.y);
+        auto child = c->findChild(pos);
+        if(!child)
+            return HTNOWHERE;
+
+        auto ht = child->hitTest(pos - c->realPos());
+        switch(ht)
+        {
+        case ui::hittest_result::nowhere: return HTNOWHERE;
+        case ui::hittest_result::client: return HTCLIENT;
+        case ui::hittest_result::stable: return HTCAPTION;
+        case ui::hittest_result::transparent: return HTCAPTION;
+        default: return HTNOWHERE;
+        }
+    }
+
+    intx_t Window::OnWmSetFocus(uintx_t wParam, intx_t lParam)
     {
         return 0;
     }
 
-    intx_t Window::OnWmKillFocus(uintx_t uiParam, intx_t iParam)
+    intx_t Window::OnWmKillFocus(uintx_t wParam, intx_t lParam)
     {
         _mouse_state.setAllKeys(false);
         return 0;
+    }
+
+    intx_t Window::OnWmNcCalcSize(uintx_t wParam, intx_t lParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+
+        if(wParam)
+        {
+            NCCALCSIZE_PARAMS & ncsize = *reinterpret_cast<NCCALCSIZE_PARAMS *>(lParam);
+            auto styles = f->styles();
+            if (styles.any(ui::form_style::frameless))
+            {
+                WINDOWPOS & wpos = *ncsize.lppos;
+                //ncsize.rgrc[1] = ncsize.rgrc[0];
+                //wpos.x = 0;
+                //wpos.y = 0;
+                //wpos.cx = 0;
+                //wpos.cy = 0;
+                return 0;
+            }
+        }
+        return OnDefault(WM_NCCALCSIZE, wParam, lParam);
     }
 
     Window * Window::fromHandle(handle_t handle)
@@ -712,7 +836,7 @@ namespace win32
     }
 
 
-    static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM uiParam, LPARAM iParam)
+    static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam)
     {
         Window * pWindow = Window::fromHandle(hWnd);
         LRESULT res = 0;
@@ -736,19 +860,19 @@ namespace win32
             break;
         default:
             //Printf("消息：[%02d:%02d:%02d:%03d][0x%04X][%s](%u, %d)\n", time.Hour, time.Minute, time.Second, time.MimiSecond, 
-            //uiMessage, GetWmMessageText(uiMessage), uiParam, iParam);
+            //uiMessage, GetWmMessageText(uiMessage), wParam, lParam);
             break;
         }
 
         if (pWindow)
         {
-            res = pWindow->handleMSG(uiMessage, uiParam, iParam);
+            res = pWindow->handleMSG(uiMessage, wParam, lParam);
         }
         else
         {
             //TimeT time;
             //Printf(_T("未处理的消息：[%02d:%02d:%02d:%03d][0x%04X][%s](%u, %d)\n"), time.Hour, time.Minute, time.Second, time.MimiSecond,
-            //	   uiMessage, GetWmMessageText(uiMessage), uiParam, iParam);
+            //	   uiMessage, GetWmMessageText(uiMessage), wParam, lParam);
             switch (uiMessage)
             {
             case WM_PAINT:
@@ -762,7 +886,7 @@ namespace win32
                 win32::endLoop(0);
                 break;
             default:
-                res = DefWindowProcW(hWnd, uiMessage, uiParam, iParam);
+                res = DefWindowProcW(hWnd, uiMessage, wParam, lParam);
                 break;
             }
         }

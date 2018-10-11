@@ -43,6 +43,10 @@ namespace ui
         void invalid(const core::rc32f & rect);
         const core::rc32i & invalidRect() const { return _invalid_rect; }
 
+        std::shared_ptr<drawing::Bitmap> readBegin();
+        void readEnd();
+
+
     public:
         core::error animate();
 
@@ -50,6 +54,7 @@ namespace ui
         void onMouse(const input_state & state, mouse_button button, mouse_action action);
         void onKey(const input_state & state, keycode key,  key_action action);
         void onChar(char32_t ch);
+
 
     private:
         void _updateMouseArea(const input_state & state, mouse_action action);
@@ -64,7 +69,15 @@ namespace ui
     private:
         void renderThread();
         void animationTimerTick(core::timer & t, int64_t tick);
+
     protected:
+        enum buffer_state
+        {
+            idle = 0,
+            writing,
+            reading,
+        };
+
         std::mutex _mtx;
         std::condition_variable _cv_render;
         std::thread _th_render;
