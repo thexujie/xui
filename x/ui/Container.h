@@ -35,6 +35,7 @@ namespace ui
 
         core::si32f contentSize() const override;
         void update() override;
+        void invalid(const core::rc32f & rect) override;
         int32_t animate() override;
 
     public:

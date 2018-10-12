@@ -190,7 +190,6 @@ namespace ui
 
         void setAlpha(float32_t alpha) { _alpha = alpha; }
         float32_t alpha() const { return _alpha; }
-        bool acceptClip() const { return _accept_clip; }
         void setMouseThrough(bool b) { _mouse_through = b; }
         bool mouseThrough() const { return _mouse_through; }
         void setImeMode(ime_mode mode) { _ime_mode = mode; }
@@ -210,6 +209,7 @@ namespace ui
 
         virtual void updateStyle();
         virtual void update();
+        virtual void invalid(const core::rc32f & rect);
 
         virtual int32_t animate();
 
@@ -285,8 +285,6 @@ namespace ui
         enum class cursor _cursor = cursor::unknown;
         float32_t _alpha = 1.0f;
 
-        bool _clip_children = true;
-        bool _accept_clip = true;
         bool _interactable = true;
         bool _mouse_through = false;
 

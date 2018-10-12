@@ -493,12 +493,21 @@ namespace ui
 
         _delay_update = false;
         auto s = scene();
-        if (!s)
+        auto p = parent();
+        if (!s || !p)
             return;
 
         if (!_rect_invalid.empty() && s)
-            s->invalid(_rect_invalid);
+        {
+            invalid(_rect_invalid);
+        }
         _rect_invalid.clear();
+    }
+
+    void Control::invalid(const core::rc32f & rect)
+    {
+        if (auto p = parent())
+            p->invalid(rect);
     }
 
     int32_t Control::animate()

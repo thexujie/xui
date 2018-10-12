@@ -44,7 +44,7 @@ namespace drawing::image
         if (!ext || !ext[0])
             return image_type_none;
 
-        if (length < 0)
+        if (length == core::npos)
             length = core::textlen(ext, 16);
 
         if (ext[0] == '.')

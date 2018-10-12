@@ -336,6 +336,13 @@ void xui_main()
             container->addControl(rbtn);
             rbtn->stateChanged += [](ui::check_state state) {setFormType(ui::form_style::frameless); };
         }
+        {
+            auto rbtn = std::make_shared<ui::controls::Radio>();
+            rbtn->setText(u8"layered");
+            rbtn->setGroup("window style");
+            container->addControl(rbtn);
+            rbtn->stateChanged += [](ui::check_state state) {setFormType(ui::form_style::layered); };
+        }
         layer->addControl(container);
         container->setBorder({ 1_px, 1_px });
         container->setBorderColors({ colors::Red, colors::Red });

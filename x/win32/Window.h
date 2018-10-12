@@ -48,6 +48,7 @@ namespace win32
 
         core::pt32i _pos() const;
         core::si32i _size() const;
+        core::rc32i _rect() const;
         core::vec4i _border() const;
         core::vec4i _padding() const;
 

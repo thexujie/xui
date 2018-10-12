@@ -39,11 +39,11 @@ namespace ui
         void setCursorContext(std::shared_ptr<CursorContext> cursor_context)  { _cursor_context = cursor_context; }
         std::shared_ptr<CursorContext> cursorContext() const { return _cursor_context; }
 
-        std::shared_ptr<drawing::Bitmap> bitmap() const { return _draw_buffer; }
+        std::shared_ptr<drawing::GraphicsDevice> bitmap() const { return _draw_buffer; }
         void invalid(const core::rc32f & rect);
         const core::rc32i & invalidRect() const { return _invalid_rect; }
 
-        std::shared_ptr<drawing::Bitmap> readBegin();
+        std::shared_ptr<drawing::GraphicsDevice> readBegin();
         void readEnd();
 
 
@@ -90,7 +90,7 @@ namespace ui
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
 
-        std::shared_ptr<drawing::Bitmap> _draw_buffer;
+        std::shared_ptr<drawing::Surface> _draw_buffer;
 
         std::shared_ptr<Control> _current_control;
         std::shared_ptr<Control> _current_input;

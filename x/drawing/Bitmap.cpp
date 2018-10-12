@@ -2,6 +2,7 @@
 #include "Bitmap.h"
 
 #include "skia/skia.h"
+#include "win32/windows.h"
 
 namespace drawing
 {
@@ -42,5 +43,104 @@ namespace drawing
 
         SkFILEWStream stream(path.c_str());
         return SkEncodeImage(&stream, *_native, skia::from(type), quality) ? core::error_ok : core::error_inner;
+    }
+
+    Surface::Surface(const core::si32i & size)
+    {
+        createWin32Bitmap(size);
+    }
+
+    Surface::~Surface()
+    {
+        if (_bmp)
+        {
+            ::DeleteObject(_bmp);
+            _bmp = nullptr;
+        }
+        if(_hdc)
+        {
+            ::DeleteDC((HDC)_hdc);
+            _hdc = nullptr;
+        }
+    }
+
+    core::error Surface::createWin32Bitmap(const core::si32i & size)
+    {
+        _native.reset();
+
+        if (!_hdc)
+        {
+            HDC hdcScreen = ::GetDC(NULL);
+            _hdc = ::CreateCompatibleDC(hdcScreen);
+            ::ReleaseDC(NULL, hdcScreen);
+        }
+
+        if (_bmp)
+        {
+            ::SelectObject((HDC)_hdc, _bmp);
+            ::DeleteObject(_bmp);
+            _bmp = nullptr;
+        }
+
+        int32_t strike = 4;
+        int32_t pitch = size.cx * strike;
+        if (pitch & 0x4)
+            pitch += 0x4 - (pitch & 0x4);
+
+        BITMAPINFO bmpInfo = { 0 };
+        bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        bmpInfo.bmiHeader.biWidth = size.cx;
+        bmpInfo.bmiHeader.biHeight = size.cy;
+        bmpInfo.bmiHeader.biPlanes = 1;
+        bmpInfo.bmiHeader.biBitCount = (uint16_t)(strike << 3);
+        bmpInfo.bmiHeader.biCompression = BI_RGB;
+        bmpInfo.bmiHeader.biSizeImage = (uint32_t)(size.cy * pitch);
+
+        void * data = nullptr;
+        HBITMAP bmp = ::CreateDIBSection((HDC)_hdc, &bmpInfo, DIB_RGB_COLORS, &data, NULL, 0);
+        if (!bmp)
+            return core::error_inner;
+
+        _size = size;
+        _data = data;
+        _strike = strike;
+        _pitch = pitch;
+        _bmp = bmp;
+        _native = std::shared_ptr<SkSurface>(SkSurface::MakeRasterDirect(SkImageInfo::MakeN32Premul(size.cx, size.cy), data, pitch).release(), skia::skia_unref<SkSurface>);
+
+        return core::error_ok;
+    }
+
+    bitmap_buffer Surface::buffer() const
+    {
+        if (!_native)
+            return {};
+
+        bitmap_buffer buffer = {};
+        buffer.data = static_cast<byte_t *>(_data);
+        buffer.size = _size;
+        buffer.strike = _strike;
+        buffer.pitch = _pitch;
+        return buffer;
+    }
+
+    core::si32i Surface::size() const
+    {
+        return _size;
+    }
+
+    core::error Surface::Save(std::string path, image::image_type type, int32_t quality)
+    {
+        if (!_native)
+            return core::error_nullptr;
+
+        if (type == image::image_type_none)
+            type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
+
+        SkBitmap bitmap;
+        bitmap.allocN32Pixels(_size.cx, _size.cy);
+        _native->readPixels(bitmap, 0, 0);
+        SkFILEWStream stream(path.c_str());
+        return SkEncodeImage(&stream, bitmap, skia::from(type), quality) ? core::error_ok : core::error_inner;
     }
 }

@@ -382,6 +382,21 @@ namespace win32
         return core::vec2i(winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
     }
 
+    core::rc32i Window::_rect() const
+    {
+        if (!_handle)
+            return {};
+        HWND hwnd = (HWND)_handle;
+
+        WINDOWINFO winfo;
+        ::GetWindowInfo(hwnd, &winfo);
+
+        if (_form_styles.any(ui::form_style::frameless))
+            return core::rc32i(winfo.rcWindow.left, winfo.rcWindow.top, winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
+        else
+            return core::rc32i(winfo.rcClient.left, winfo.rcClient.top, winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
+    }
+
     core::vec4i Window::_border() const
     {
         if (!_handle)
@@ -422,7 +437,7 @@ namespace win32
         auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
 
         auto scene = f->scene();
-        std::shared_ptr<drawing::Bitmap> bitmap = scene->readBegin();
+        std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
 
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -453,40 +468,59 @@ namespace win32
         if (!f)
             return;
 
-        auto scene = f->scene();
-        std::shared_ptr<drawing::Bitmap> bitmap = scene->readBegin();
-        if (!bitmap)
-            return;
-
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
-        drawing::bitmap_buffer buffer = bitmap->buffer();
-        BITMAPINFO bmi;
-        memset(&bmi, 0, sizeof(bmi));
-        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        bmi.bmiHeader.biWidth = buffer.size.cx;
-        bmi.bmiHeader.biHeight = -buffer.size.cy;
-        bmi.bmiHeader.biPlanes = 1;
-        bmi.bmiHeader.biBitCount = 32;
-        bmi.bmiHeader.biCompression = BI_RGB;
-        bmi.bmiHeader.biSizeImage = 0;
+        auto scene = f->scene();
+        std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
+        if (!bitmap)
+            return;
 
-        HDC hdc = GetDC(hwnd);
-        drawing::RegionIterator ri(region);
-        while (!ri.done())
+        if(_form_styles.all(ui::form_style::layered))
         {
-            auto rect = ri.rect();
-            ri.next();
+            async([this, &hwnd, &bitmap]()
+            {
+                auto rect = _rect();
+                POINT pos_dst = { rect.x, rect.y };
+                SIZE size_dst = { rect.cx, rect.cy };
+                POINT pos_src = { 0, 0 };
+                BLENDFUNCTION bf = { 0 };
+                bf.AlphaFormat = AC_SRC_ALPHA;
+                bf.BlendFlags = 0;
+                bf.BlendOp = AC_SRC_ALPHA;
+                bf.SourceConstantAlpha = 0xFF;
+                UpdateLayeredWindow(hwnd, NULL, &pos_dst, &size_dst, (HDC)bitmap->hdc(), &pos_src, 0, &bf, ULW_ALPHA);
+            });
+        }
+        else
+        {
+            drawing::bitmap_buffer buffer = bitmap->buffer();
+            BITMAPINFO bmi;
+            memset(&bmi, 0, sizeof(bmi));
+            bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+            bmi.bmiHeader.biWidth = buffer.size.cx;
+            bmi.bmiHeader.biHeight = -buffer.size.cy;
+            bmi.bmiHeader.biPlanes = 1;
+            bmi.bmiHeader.biBitCount = 32;
+            bmi.bmiHeader.biCompression = BI_RGB;
+            bmi.bmiHeader.biSizeImage = 0;
 
-            auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
-            SetDIBitsToDevice(hdc,
-                rc.x, rc.y, rc.cx, rc.cy,
-                rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+            HDC hdc = GetDC(hwnd);
+            drawing::RegionIterator ri(region);
+            while (!ri.done())
+            {
+                auto rect = ri.rect();
+                ri.next();
+
+                auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+                SetDIBitsToDevice(hdc,
+                    rc.x, rc.y, rc.cx, rc.cy,
+                    rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+            }
+            ReleaseDC(hwnd, hdc);
         }
         scene->readEnd();
-        ReleaseDC(hwnd, hdc);
     }
 
 #define CASE_MSG(M, F) case M: return F(wParam, lParam)

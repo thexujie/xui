@@ -35,7 +35,7 @@ namespace ui
         _cv_render.notify_all();
     }
 
-    std::shared_ptr<drawing::Bitmap> Scene::readBegin()
+    std::shared_ptr<drawing::GraphicsDevice> Scene::readBegin()
     {
         return _draw_buffer;
     }
@@ -216,7 +216,10 @@ namespace ui
 
             auto tms = core::datetime::high_resolution_s();
             if (!_draw_buffer || _draw_buffer->size().cx < invalid_rect.right() || _draw_buffer->size().cy < invalid_rect.bottom())
-                _draw_buffer = std::make_shared<drawing::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
+            {
+                //_draw_buffer = std::make_shared<drawing::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
+                _draw_buffer = std::make_shared<drawing::Surface>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
+            }
 
             drawing::Graphics graphics(_draw_buffer);
             graphics.setClipRect(invalid_rect.to<float32_t>(), true);

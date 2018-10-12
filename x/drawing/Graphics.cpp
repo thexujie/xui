@@ -21,6 +21,12 @@ namespace drawing
         _native = std::make_shared<SkCanvas>(pixmap->native());
     }
 
+    Graphics::Graphics(std::shared_ptr<Surface> surface)
+    {
+        _surface = surface;
+        _native = std::shared_ptr<SkCanvas>(surface->native().getCanvas(), [](SkCanvas *){});
+    }
+
     void Graphics::clear(core::color32 color)
     {
         _statistics = {};

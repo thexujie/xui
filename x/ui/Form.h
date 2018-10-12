@@ -8,6 +8,7 @@ namespace ui
     {
         normal = 0,
         frameless = 0x0001,
+        layered = frameless | 0x0002,
 
         nomin = 0x100000,
         nomax = 0x200000,
@@ -42,10 +43,12 @@ namespace ui
         void centerScreen(int32_t screenIndex = 0);
 
     public:
+        void invalid(const core::rc32f & rect) override;
         std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
         void enteringScene(std::shared_ptr<Scene> & scene) override;
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
 
+        void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const override;
     public:
         void onClose();
 

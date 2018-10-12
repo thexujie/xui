@@ -78,6 +78,7 @@ namespace drawing
 
         //Graphics(core::si32i size);
         Graphics(std::shared_ptr<Bitmap> pixmap);
+        Graphics(std::shared_ptr<Surface> pixmap);
 
     public:
         void clear(core::color32 color);
@@ -133,6 +134,7 @@ namespace drawing
 
     private:
         std::shared_ptr<Bitmap> _pixmap;
+        std::shared_ptr<Surface> _surface;
         std::shared_ptr<SkCanvas> _native;
         std::shared_ptr<SkTextBlobBuilder> _blobBuilder;
         drawcall_statistics _statistics;

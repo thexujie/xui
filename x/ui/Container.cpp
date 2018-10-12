@@ -95,6 +95,17 @@ namespace ui
             control->update();
     }
 
+    void Container::invalid(const core::rc32f & rect)
+    {
+        if(auto p = parent())
+        {
+            if (_clip_clild)
+                p->invalid(rect.intersected(_rect));
+            else
+                p->invalid(rect);
+        }
+    }
+
     int32_t Container::animate()
     {
         int32_t num = Control::animate();

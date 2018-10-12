@@ -7,6 +7,7 @@
 #include <SkStream.h>
 #include <SkImage.h>
 #include <SkCanvas.h>
+#include <SkSurface.h>
 #include <SkString.h>
 #include <SkTypeface.h>
 #include <SkPaint.h>

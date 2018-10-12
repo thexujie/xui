@@ -74,7 +74,7 @@ namespace ui
         }
 
         _shown = true;
-        scene()->invalid(core::rc32f(core::pt32f(), realSize()));
+        invalid(core::rc32f(core::pt32f(), realSize()));
         shownChanged(true);
     }
 
@@ -84,6 +84,12 @@ namespace ui
         auto s = calc(size());
         auto p = rc.leftTop() + (rc.size - s) * 0.5;
         setWindowPos(p);
+    }
+
+    void Form::invalid(const core::rc32f & rect)
+    {
+        if(_form_scene)
+            _form_scene->invalid(rect.intersected(core::rc32f(core::pt32f(), realSize())));
     }
 
     std::shared_ptr<Control> Form::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const
@@ -102,6 +108,13 @@ namespace ui
         if (_window)
             _window->resize(to);
         Container::onSizeChanged(from, to);
+    }
+
+    void Form::ondraw(drawing::Graphics & graphics, const drawing::Region & region) const
+    {
+        if (_styles.all(form_style::layered))
+            graphics.clear(0);
+        Container::ondraw(graphics, region);
     }
 
     void Form::onClose()
