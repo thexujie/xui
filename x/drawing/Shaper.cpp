@@ -441,6 +441,15 @@ namespace drawing
             if (!gcount)
                 continue;
 
+#ifdef _DEBUG
+            //const span32 & span_beg = nutf32_spans[_glyphs.size()];
+            //const span32 & span_end = nutf32_spans[_glyphs.size() + gcount - 1];
+            //if(item.trange.length != span_end.end() - span_beg.index)
+            //{
+            //assert(item.trange.length == span_end.end() - span_beg.index);
+            //}
+#endif
+
             if (item.bidi == bidirection::rtl)
             {
                 // Put the clusters back in logical order.
@@ -468,7 +477,7 @@ namespace drawing
                 glyph & glyph = _glyphs[gindex_base + gindex];
                 glyph.gindex = gindex_base + gindex;
                 glyph.codepoint = info.codepoint;
-                glyph.trange = nutf32_spans[gindex_base + gindex];
+
                 //if (gindex < gcount - 1)
                 //    glyph.trange.length = infos[gindex + 1].cluster - info.cluster;
                 //else
@@ -483,7 +492,7 @@ namespace drawing
                     cl.cindex = (uint16_t)_clusters.size();
                     cl.iindex = item.iindex;
                     cl.grange.index = glyph.gindex;
-                    cl.trange.index = glyph.trange.index;
+                    cl.trange.index = info.cluster;
                     cl.bidi = item.bidi;
                     cl.wordbreak = false;
 
@@ -496,7 +505,7 @@ namespace drawing
                         if (word_stop_utf16 < utf16_ranges.size())
                         {
                             int32_t word_stop_utf8 = utf16_ranges[word_stop_utf16].index;
-                            cl.wordbreak = word_stop_utf8 == glyph.trange.index;
+                            cl.wordbreak = word_stop_utf8 == info.cluster;
                         }
                     }
 
@@ -507,7 +516,7 @@ namespace drawing
 
                 glyph.standalone = !(info.mask & HB_GLYPH_FLAG_UNSAFE_TO_BREAK);
                 glyph.cindex = uint16_t(_clusters.size() - 1);
-                _clusters.back().trange.length += glyph.trange.length;
+                //_clusters.back().trange.length += glyph.trange.length;
                 _clusters.back().grange.length += 1;
             }
 
@@ -519,6 +528,10 @@ namespace drawing
         for (size_t cindex = 0; cindex < _clusters.size(); ++cindex)
         {
             cluster & cl = _clusters[cindex];
+            if(cindex < _clusters.size() - 1)
+                cl.trange.length = _clusters[cindex + 1].trange.index - cl.trange.index;
+            else
+                cl.trange.length = uint32_t(_text.length()) - cl.trange.index;
             item & it = _items[cl.iindex];
             glyph & header = _glyphs[cl.grange.index];
             cl.advance = header.advance;
@@ -661,22 +674,6 @@ namespace drawing
             }
         }
         return { _builder->make().release(), skia::skia_unref<SkTextBlob> };
-    }
-
-    const glyph & TextClusterizer::findGlyph(size_t index) const
-    {
-        static const glyph empty;
-        if (_glyphs.empty())
-            return empty;
-
-        index &= cursor_pos_mask;
-        if (index == cursor_pos_mask)
-            return _glyphs.back();
-
-        auto iter = std::lower_bound(_glyphs.begin(), _glyphs.end(), index, [](const glyph & g, size_t value) { return  g.trange.end() <= value; });
-        if (iter == _glyphs.end() || iter->trange.end() <= index)
-            return empty;
-        return *iter;
     }
 
     const cluster & TextClusterizer::findCluster(size_t tindex) const

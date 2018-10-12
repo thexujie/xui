@@ -384,14 +384,15 @@ namespace ui::controls
         if (!cluster)
             return;
 
-        //只删除最后一个 glyph
-        auto & glyph = _clusterizer->glyphAt(cluster.grange.end() - 1);
-        if (!glyph)
-            return;
+        //////只删除最后一个 glyph
+        ////auto & glyph = _clusterizer->glyphAt(cluster.grange.end() - 1);
+        ////if (!glyph)
+        ////    return;
 
-        _text.erase(glyph.trange.index, glyph.trange.length);
-        _cursor_far = glyph.trange.index > 0;
-        _cursor_pos = glyph.trange.index;
+        ////_text.erase(glyph.trange.index, glyph.trange.length);
+        _text.erase(cluster.trange.index, cluster.trange.length);
+        _cursor_far = cluster.trange.index > 0;
+        _cursor_pos = cluster.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
         reshaper(shaper_flag::shaper);
     }

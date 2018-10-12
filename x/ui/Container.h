@@ -37,6 +37,8 @@ namespace ui
         void update() override;
         int32_t animate() override;
 
+    public:
+        core::aligns wheelFreedom() const override;
         void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const override;
         std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
 

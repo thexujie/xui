@@ -365,6 +365,7 @@ namespace ui
 
         void setAcceptWheelV(bool b) { _accept_wheel_v = b; }
         bool acceptWheelV() const { return _accept_wheel_v; }
+        virtual core::aligns wheelFreedom() const { return core::align::none; }
 
         void setAcceptInput(bool b) { _accept_input = b; }
         bool acceptInput() const { return _accept_input; }

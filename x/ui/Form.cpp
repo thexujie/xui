@@ -8,11 +8,13 @@ namespace ui
 {
     Form::Form(form_styles styles) :_styles(styles)
     {
+        _mouse_through = false;
     }
 
     Form::Form(core::vec2<core::dimensionf> & size, form_styles styles) : _styles(styles)
     {
         _size = size;
+        _mouse_through = false;
     }
 
     Form::~Form()
@@ -82,6 +84,12 @@ namespace ui
         auto s = calc(size());
         auto p = rc.leftTop() + (rc.size - s) * 0.5;
         setWindowPos(p);
+    }
+
+    std::shared_ptr<Control> Form::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const
+    {
+        auto child = Container::findChild(pos, last, flags);
+        return child ? child : control_ref();
     }
 
     void Form::enteringScene(std::shared_ptr<Scene> & scene)

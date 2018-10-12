@@ -95,12 +95,19 @@ namespace ui
                 _current_control->onMouseMove(state);
             break;
         case mouse_action::wheel_v:
-            if (auto curr = control()->findChild(state.pos(), nullptr, ui::findchild_flag::accept_wheel_v))
+            if (auto curr = control()->findChild(state.pos()))
             {
-                if (curr->acceptWheelV())
-                    curr->onMouseWheel(state);
+                while(curr)
+                {
+                    if (curr->acceptWheelV() && curr->wheelFreedom().any())
+                    {
+                        curr->onMouseWheel(state);
+                        break;
+                    }
+                    else
+                        curr = curr->parent();
+                }
             }
-            else {}
             _updateMouseArea(state, action);
             break;
         case mouse_action::press:

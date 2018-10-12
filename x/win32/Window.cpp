@@ -6,6 +6,20 @@ namespace win32
 {
     const uint32_t WM_REFRESH = WM_USER + 1;
 
+    static uint32_t formStylesToWinStyles(ui::form_styles styles)
+    {
+        uint32_t style = 0;
+        if (styles.any(ui::form_style::frameless))
+            style = WS_OVERLAPPED | WS_THICKFRAME;
+        else
+            style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
+        if (!styles.any(ui::form_style::nomin))
+            style |= WS_MINIMIZEBOX;
+        if (!styles.any(ui::form_style::nomax))
+            style |= WS_MAXIMIZEBOX;
+        return style;
+    }
+
     static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam);
     //static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam)
     //{
@@ -36,12 +50,8 @@ namespace win32
     core::error Window::attatch(std::shared_ptr<ui::Form> form)
     {
         _form = form;
-        _style = WS_OVERLAPPED | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+        _style = formStylesToWinStyles(form->styles());
         _styleEx = 0;
-
-        auto fs = form->styles();
-        //if (!fs.any(ui::form_style::frameless))
-        //    _style |= WS_BORDER;
 
         auto scene = form->scene();
         form->shownChanged += std::weak_bind(&Window::onShownChanged, share_ref<Window>(), std::placeholders::_1);
@@ -176,15 +186,9 @@ namespace win32
         auto size = f->realSize().to<int32_t>();
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
 
+        _form_styles = styles;
         _message_blocks.set(windowmessage_bock::all, true);
-        if (styles.any(ui::form_style::frameless))
-            _style = WS_OVERLAPPED | WS_THICKFRAME;
-        else
-            _style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
-        if (!styles.any(ui::form_style::nomin))
-            _style |= WS_MINIMIZEBOX;
-        if (!styles.any(ui::form_style::nomax))
-            _style |= WS_MAXIMIZEBOX;
+        _style = formStylesToWinStyles(styles);
         if (f->shown())
             _style |= WS_VISIBLE;
         ::SetWindowLongPtrW(hwnd, GWL_STYLE, _style);
@@ -339,13 +343,16 @@ namespace win32
 
     core::error Window::_adjustWindow(const core::pt32i & pos, const core::si32i & size)
     {
-        if (!_handle)
-            return core::error_nullptr;
 
         HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return core::error_ok;
+
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
-        ::AdjustWindowRect(&rect, _style, FALSE);
-        ::MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
+        if (!_form_styles.any(ui::form_style::frameless))
+            ::AdjustWindowRect(&rect, _style, FALSE);
+        SetWindowPos(hwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+            SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
         return core::error_ok;
     }
 
@@ -353,11 +360,15 @@ namespace win32
     {
         if (!_handle)
             return {};
-
         HWND hwnd = (HWND)_handle;
+
         WINDOWINFO winfo;
         ::GetWindowInfo(hwnd, &winfo);
-        return core::vec2i(winfo.rcClient.left, winfo.rcClient.top);
+
+        if (_form_styles.any(ui::form_style::frameless))
+            return core::vec2i(winfo.rcWindow.left, winfo.rcWindow.top);
+        else
+            return core::vec2i(winfo.rcClient.left, winfo.rcClient.top);
     }
 
     core::si32i Window::_size() const
@@ -625,16 +636,11 @@ namespace win32
     {
         // 如果不处理 frameless，偶尔会多出一个 ncpaint 灰边。
         HWND hwnd = (HWND)_handle;
-        auto f = form();
-        if(!hwnd || !f)
+        if(!hwnd || ::IsIconic(hwnd))
             return OnDefault(WM_NCACTIVATE, wParam, lParam);
 
-        if (::IsIconic(hwnd))
-            return 1;
-
-        auto styles = f->styles();
-        if (styles.any(ui::form_style::frameless))
-            return true;
+        if (_form_styles.any(ui::form_style::frameless))
+            return 0;
         return OnDefault(WM_NCACTIVATE, wParam, lParam);
 
     }
@@ -787,7 +793,7 @@ namespace win32
         auto pos = core::pt32f((float32_t)posi.x, (float32_t)posi.y);
         auto child = c->findChild(pos);
         if(!child)
-            return HTNOWHERE;
+            return HTCAPTION;
 
         auto ht = child->hitTest(pos - c->realPos());
         switch(ht)
@@ -818,15 +824,10 @@ namespace win32
         if (!hwnd)
             return OnDefault(WM_NCCALCSIZE, wParam, lParam);
 
-        auto f = form();
-        if (!f)
-            throw core::exception(core::error_nullptr);
-
         if(wParam)
         {
             NCCALCSIZE_PARAMS & ncsize = *reinterpret_cast<NCCALCSIZE_PARAMS *>(lParam);
-            auto styles = f->styles();
-            if (styles.any(ui::form_style::frameless))
+            if (_form_styles.any(ui::form_style::frameless))
             {
                 WINDOWPOS & wpos = *ncsize.lppos;
                 RECT & wrect = ncsize.rgrc[0];
@@ -848,9 +849,7 @@ namespace win32
         if (!hwnd || !f)
             return OnDefault(WM_GETMINMAXINFO, wParam, lParam);
 
-
-        auto styles = f->styles();
-        if (styles.any(ui::form_style::frameless))
+        if (_form_styles.any(ui::form_style::frameless))
         {
             MINMAXINFO & info = *reinterpret_cast<MINMAXINFO *>(lParam);
 

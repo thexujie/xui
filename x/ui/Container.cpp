@@ -103,6 +103,11 @@ namespace ui
         return num;
     }
 
+    core::aligns Container::wheelFreedom() const
+    {
+        return (_scrollbar_v || _scrollbar_h) ? core::align::mask : core::align::none;
+    }
+
     void Container::ondraw(drawing::Graphics & graphics, const drawing::Region & region) const
     {
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
@@ -137,7 +142,7 @@ namespace ui
         bool found = false;
 
         core::pt32f scrolled_pos = pos;
-        std::shared_ptr<Control> control_found = _mouse_through ? nullptr : control_ref();
+        std::shared_ptr<Control> control_found = nullptr;
         for (auto & control : core::reverse(_controls))
         {
             if (last && !found)
@@ -155,21 +160,13 @@ namespace ui
             if (child)
                 return child;
 
-            if(flags & findchild_flag::accept_wheel_v)
-            {
-                if(control->acceptWheelV())
-                {
-                    if (hittest == hittest_result::client || hittest == hittest_result::stable)
-                        return control;
-                }
-            }
-            else
-            {
-                if (hittest == hittest_result::client || hittest == hittest_result::stable)
-                    return control;
+            if (!flags.any(findchild_flag::disalbe_transparent) && hittest == hittest_result::transparent)
+                continue;
 
-                control_found = control;
-            }
+            if (hittest == hittest_result::client || hittest == hittest_result::stable)
+                return control;
+
+            control_found = control;
         }
         return control_found;
     }

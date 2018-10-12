@@ -120,6 +120,7 @@ namespace win32
 
     private:
         std::weak_ptr<ui::Form> _form;
+        ui::form_styles _form_styles = nullptr;
         uint32_t _style = 0;
         uint32_t _styleEx = 0;
         handle_t _handle = nullptr;

@@ -80,7 +80,7 @@ namespace ui
     enum class findchild_flag
     {
         none = 0,
-        accept_wheel_v = 0x0001,
+        disalbe_transparent = 0x0001,
     };
     template<>
     struct enable_bitmasks<findchild_flag>

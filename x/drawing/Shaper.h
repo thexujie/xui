@@ -239,15 +239,11 @@ namespace drawing
         uint16_t sindex = 0;
         char32_t codepoint = 0;
 
-        span32 trange;
-
         bidirection bidi = bidirection::ltr;
         uint16_t gid = 0;
         core::vec2f advance;
         core::vec2f offset;
         bool standalone = false;
-
-        operator bool() const { return trange.length > 0; }
     };
 
     struct cluster
@@ -365,7 +361,6 @@ namespace drawing
         const std::vector<glyph> & glyphs() const { return _glyphs; }
         size_t glyphCount() const { return _glyphs.size(); }
         const glyph & glyphAt(size_t tindex) const { if (tindex >= _glyphs.size()) return Shaper::empty_glyph; return _glyphs.at(tindex); }
-        const glyph & findGlyph(size_t tindex) const;
 
         const std::vector<cluster> & clusters() const { return _clusters; }
         size_t clusterCount() const { return _clusters.size(); }

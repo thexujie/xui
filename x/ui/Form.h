@@ -41,6 +41,8 @@ namespace ui
         bool shown() const { return _shown; }
         void centerScreen(int32_t screenIndex = 0);
 
+    public:
+        std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
         void enteringScene(std::shared_ptr<Scene> & scene) override;
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
 
