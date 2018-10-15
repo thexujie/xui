@@ -2,6 +2,18 @@
 
 namespace core
 {
+    template <typename T, typename = void>
+    struct bitflag_helper
+    {
+        typedef T underlying_type;
+    };
+
+    template <typename T>
+    struct bitflag_helper<T, std::enable_if_t<std::is_enum_v<T>>>
+    {
+        typedef typename std::underlying_type<T>::type underlying_type;
+    };
+
     template<typename Enum>
     struct bitflag
     {
@@ -9,7 +21,7 @@ namespace core
         bitflag(Enum e) : _e(e) {}
         bitflag(std::nullptr_t) : _e(static_cast<Enum>(0)) {}
 
-        using underlying = typename std::underlying_type<Enum>::type;
+        using underlying = typename bitflag_helper<Enum>::underlying_type;
 
         bitflag & operator = (Enum e)
         {
@@ -122,6 +134,9 @@ namespace core
         {
             return static_cast<underlying>(_e);
         }
+
+        const Enum & get() const { return _e; }
+        Enum & get() { return _e; }
 
     private:
         Enum _e = static_cast<Enum>(0);

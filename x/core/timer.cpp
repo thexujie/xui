@@ -10,7 +10,7 @@ namespace core
         ptimer->callback();
     }
 
-    const wchar_t _timerHWND_ClassName[] = L"{2A84CC0A-7D4F-42AB-9311-DEA336A1F289}";
+    const wchar_t _timerHWND_ClassName[] = L"timer.{2A84CC0A-7D4F-42AB-9311-DEA336A1F289}";
     static thread_local std::shared_ptr<struct TimerContext> __timerContext;
     struct TimerContext
     {
@@ -47,7 +47,7 @@ namespace core
                    RegisterClassExW(&wcex);
                }
                _timerHWND = CreateWindowExW(0, _timerHWND_ClassName, L"_timerHWND", WS_OVERLAPPEDWINDOW,
-                   0, 0, CW_DEFAULT, CW_DEFAULT, NULL, NULL, hInstance, NULL);
+                   0, 0, CW_DEFAULT, CW_DEFAULT, HWND_MESSAGE, NULL, hInstance, NULL);
            }
 
            ::SetTimer(_timerHWND, (UINT_PTR)(void *)ptimer, (UINT)period.count(), TimerCallBack);

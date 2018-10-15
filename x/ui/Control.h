@@ -209,7 +209,8 @@ namespace ui
 
         virtual void updateStyle();
         virtual void update();
-        virtual void invalid(const core::rc32f & rect);
+        void invalidate() { invalidate(_rect); }
+        virtual void invalidate(const core::rc32f & rect);
 
         virtual int32_t animate();
 

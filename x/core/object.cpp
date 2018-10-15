@@ -126,32 +126,38 @@ namespace core
 
         invoker_map invokers;
         task_map tasks;
+        while(true)
         {
-            std::lock_guard<std::mutex> lock(_mtx);
-            invokers = std::move(_invokers);
-            tasks = std::move(_tasks);
+            {
+                std::lock_guard<std::mutex> lock(_mtx);
+                invokers = std::move(_invokers);
+                tasks = std::move(_tasks);
+            }
+
+            if (invokers.empty() && tasks.empty())
+                break;
+
+            for (invoker_map::iterator iter = invokers.begin(); iter != invokers.end(); ++iter)
+            {
+                auto invoker = iter->first.lock();
+                if (!invoker)
+                    continue;
+
+                for (auto & fun : iter->second)
+                    fun();
+            }
+
+            for (task_map::iterator iter = tasks.begin(); iter != tasks.end(); ++iter)
+            {
+                auto invoker = iter->first.lock();
+                if (!invoker)
+                    continue;
+
+                for (auto & task : iter->second)
+                    task->trigger();
+            }
+
         }
-
-        for (invoker_map::iterator iter = invokers.begin(); iter != invokers.end(); ++iter)
-        {
-            auto invoker = iter->first.lock();
-            if (!invoker)
-                continue;
-
-            for (auto & fun : iter->second)
-                fun();
-        }
-
-        for (task_map::iterator iter = tasks.begin(); iter != tasks.end(); ++iter)
-        {
-            auto invoker = iter->first.lock();
-            if (!invoker)
-                continue;
-
-            for (auto & task : iter->second)
-                task->trigger();
-        }
-
         return error_ok;
     }
 }

@@ -47,7 +47,7 @@ namespace drawing
 
     Surface::Surface(const core::si32i & size)
     {
-        createWin32Bitmap(size);
+        resize(size);
     }
 
     Surface::~Surface()
@@ -64,7 +64,7 @@ namespace drawing
         }
     }
 
-    core::error Surface::createWin32Bitmap(const core::si32i & size)
+    core::error Surface::resize(const core::si32i & size)
     {
         _native.reset();
 
@@ -75,13 +75,6 @@ namespace drawing
             ::ReleaseDC(NULL, hdcScreen);
         }
 
-        if (_bmp)
-        {
-            ::SelectObject((HDC)_hdc, _bmp);
-            ::DeleteObject(_bmp);
-            _bmp = nullptr;
-        }
-
         int32_t strike = 4;
         int32_t pitch = size.cx * strike;
         if (pitch & 0x4)
@@ -90,7 +83,7 @@ namespace drawing
         BITMAPINFO bmpInfo = { 0 };
         bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         bmpInfo.bmiHeader.biWidth = size.cx;
-        bmpInfo.bmiHeader.biHeight = size.cy;
+        bmpInfo.bmiHeader.biHeight = -size.cy;
         bmpInfo.bmiHeader.biPlanes = 1;
         bmpInfo.bmiHeader.biBitCount = (uint16_t)(strike << 3);
         bmpInfo.bmiHeader.biCompression = BI_RGB;
@@ -101,6 +94,22 @@ namespace drawing
         if (!bmp)
             return core::error_inner;
 
+        //if(_data)
+        //{
+        //    int32_t width = std::min(size.cx, _size.cx);
+        //    int32_t height = std::min(size.cy, _size.cy);
+
+        //    for(int32_t row = 0; row < height; ++row)
+        //        memcpy((byte_t *)data + pitch * row, (byte_t *)_data + _pitch * row, width * 4);
+        //}
+
+        if (_bmp)
+        {
+            ::DeleteObject(_bmp);
+            _bmp = nullptr;
+        }
+
+        ::SelectObject((HDC)_hdc, bmp);
         _size = size;
         _data = data;
         _strike = strike;

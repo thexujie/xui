@@ -189,9 +189,13 @@ namespace win32
         _form_styles = styles;
         _message_blocks.set(windowmessage_bock::all, true);
         _style = formStylesToWinStyles(styles);
+        _styleEx = 0;
+        _styleEx = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
+        _styleEx.set(WS_EX_LAYERED, styles.all(ui::form_style::layered));
         if (f->shown())
             _style |= WS_VISIBLE;
         ::SetWindowLongPtrW(hwnd, GWL_STYLE, _style);
+        ::SetWindowLongPtrW(hwnd, GWL_EXSTYLE, _styleEx);
         _message_blocks.set(windowmessage_bock::all, false);
         if (!styles.any(ui::form_style::frameless))
             ::AdjustWindowRect(&rect, _style, FALSE);
@@ -203,6 +207,7 @@ namespace win32
         }
         SetWindowPos(hwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             SWP_DRAWFRAME | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
+        f->invalidate();
         //::MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
         //RedrawWindow(hwnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE);
     }
@@ -284,7 +289,8 @@ namespace win32
         switch(evt)
         {
         case ui::scene_event::update_mouse_pos:
-            s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::none);
+            if(_mouse_state.hoving())
+                s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::none);
             break;
         default:
             break;
@@ -430,36 +436,36 @@ namespace win32
 
     void Window::_render(const core::rc32i & rect)
     {
-        auto f = form();
-        if (!f)
-            return;
+        //auto f = form();
+        //if (!f)
+        //    return;
 
-        auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+        //auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
 
-        auto scene = f->scene();
-        std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
+        //auto scene = f->scene();
+        //std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
 
-        HWND hwnd = (HWND)_handle;
-        if (!hwnd)
-            return;
+        //HWND hwnd = (HWND)_handle;
+        //if (!hwnd)
+        //    return;
 
-        drawing::bitmap_buffer buffer = bitmap->buffer();
-        BITMAPINFO bmi;
-        memset(&bmi, 0, sizeof(bmi));
-        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        bmi.bmiHeader.biWidth = buffer.size.cx;
-        bmi.bmiHeader.biHeight = -buffer.size.cy;
-        bmi.bmiHeader.biPlanes = 1;
-        bmi.bmiHeader.biBitCount = 32;
-        bmi.bmiHeader.biCompression = BI_RGB;
-        bmi.bmiHeader.biSizeImage = 0;
+        //drawing::bitmap_buffer buffer = bitmap->buffer();
+        //BITMAPINFO bmi;
+        //memset(&bmi, 0, sizeof(bmi));
+        //bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        //bmi.bmiHeader.biWidth = buffer.size.cx;
+        //bmi.bmiHeader.biHeight = -buffer.size.cy;
+        //bmi.bmiHeader.biPlanes = 1;
+        //bmi.bmiHeader.biBitCount = 32;
+        //bmi.bmiHeader.biCompression = BI_RGB;
+        //bmi.bmiHeader.biSizeImage = 0;
 
-        HDC hdc = GetDC(hwnd);
-        SetDIBitsToDevice(hdc, 
-            rc.x, rc.y, rc.cx, rc.cy, 
-            rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
-        scene->readEnd();
-        ReleaseDC(hwnd, hdc);
+        //HDC hdc = GetDC(hwnd);
+        //SetDIBitsToDevice(hdc, 
+        //    rc.x, rc.y, rc.cx, rc.cy, 
+        //    rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+        //scene->readEnd();
+        //ReleaseDC(hwnd, hdc);
     }
 
     void Window::_render(const drawing::Region & region)
@@ -479,7 +485,7 @@ namespace win32
 
         if(_form_styles.all(ui::form_style::layered))
         {
-            async([this, &hwnd, &bitmap]()
+            //async([this, &hwnd, &bitmap]()
             {
                 auto rect = _rect();
                 POINT pos_dst = { rect.x, rect.y };
@@ -488,37 +494,54 @@ namespace win32
                 BLENDFUNCTION bf = { 0 };
                 bf.AlphaFormat = AC_SRC_ALPHA;
                 bf.BlendFlags = 0;
-                bf.BlendOp = AC_SRC_ALPHA;
+                bf.BlendOp = AC_SRC_OVER;
                 bf.SourceConstantAlpha = 0xFF;
                 UpdateLayeredWindow(hwnd, NULL, &pos_dst, &size_dst, (HDC)bitmap->hdc(), &pos_src, 0, &bf, ULW_ALPHA);
-            });
+            }
+            //);
         }
         else
         {
-            drawing::bitmap_buffer buffer = bitmap->buffer();
-            BITMAPINFO bmi;
-            memset(&bmi, 0, sizeof(bmi));
-            bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-            bmi.bmiHeader.biWidth = buffer.size.cx;
-            bmi.bmiHeader.biHeight = -buffer.size.cy;
-            bmi.bmiHeader.biPlanes = 1;
-            bmi.bmiHeader.biBitCount = 32;
-            bmi.bmiHeader.biCompression = BI_RGB;
-            bmi.bmiHeader.biSizeImage = 0;
-
-            HDC hdc = GetDC(hwnd);
-            drawing::RegionIterator ri(region);
-            while (!ri.done())
+            HDC hdst = GetDC(hwnd);
+            HDC hsrc = (HDC)bitmap->hdc();
+            if(hsrc)
             {
-                auto rect = ri.rect();
-                ri.next();
+                drawing::RegionIterator ri(region);
+                while (!ri.done())
+                {
+                    auto rect = ri.rect();
+                    ri.next();
 
-                auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
-                SetDIBitsToDevice(hdc,
-                    rc.x, rc.y, rc.cx, rc.cy,
-                    rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+                    auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+                    BitBlt(hdst, rc.x, rc.y, rc.cx, rc.cy, hsrc, rc.x, rc.y, SRCCOPY);
+                }
             }
-            ReleaseDC(hwnd, hdc);
+            else
+            {
+                drawing::bitmap_buffer buffer = bitmap->buffer();
+                BITMAPINFO bmi;
+                memset(&bmi, 0, sizeof(bmi));
+                bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+                bmi.bmiHeader.biWidth = buffer.size.cx;
+                bmi.bmiHeader.biHeight = -buffer.size.cy;
+                bmi.bmiHeader.biPlanes = 1;
+                bmi.bmiHeader.biBitCount = 32;
+                bmi.bmiHeader.biCompression = BI_RGB;
+                bmi.bmiHeader.biSizeImage = 0;
+
+                drawing::RegionIterator ri(region);
+                while (!ri.done())
+                {
+                    auto rect = ri.rect();
+                    ri.next();
+
+                    auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+                    SetDIBitsToDevice(hdst,
+                        rc.x, rc.y, rc.cx, rc.cy,
+                        rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+                }
+            }
+            ReleaseDC(hwnd, hdst);
         }
         scene->readEnd();
     }
@@ -698,6 +721,7 @@ namespace win32
             tme.hwndTrack = (HWND)_handle;
             TrackMouseEvent(&tme);
             _trackingMouse = true;
+            _mouse_state.setHoving(true);
             s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::enter);
         }
 
@@ -718,6 +742,7 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::mask, false);
+        _mouse_state.setHoving(false);
         _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
         if(_cursor_context)
@@ -817,6 +842,7 @@ namespace win32
         if (!hwnd)
             return def;
 
+        auto f =form();
         auto s = scene();
         auto c = s ? s->control() : nullptr;
         if (!c)
@@ -825,17 +851,19 @@ namespace win32
         POINT posi = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ScreenToClient(hwnd, &posi);
         auto pos = core::pt32f((float32_t)posi.x, (float32_t)posi.y);
-        auto child = c->findChild(pos);
-        if(!child)
-            return HTCAPTION;
-
-        auto ht = child->hitTest(pos - c->realPos());
-        switch(ht)
+        auto htf = f->hitTestForm(pos);
+        switch (htf)
         {
-        case ui::hittest_result::nowhere: return HTNOWHERE;
-        case ui::hittest_result::client: return HTCLIENT;
-        case ui::hittest_result::stable: return HTCAPTION;
-        case ui::hittest_result::transparent: return HTCAPTION;
+        case ui::form_hittest::client: return HTCLIENT;
+        case ui::form_hittest::caption: return HTCAPTION;
+        case ui::form_hittest::resize_leftTop: return HTTOPLEFT;
+        case ui::form_hittest::resize_top: return HTTOP;
+        case ui::form_hittest::resize_rightTop: return HTTOPRIGHT;
+        case ui::form_hittest::resize_right: return HTRIGHT;
+        case ui::form_hittest::resize_rightBottom: return HTBOTTOMRIGHT;
+        case ui::form_hittest::resize_bottom: return HTBOTTOM;
+        case ui::form_hittest::resize_leftBottom: return HTBOTTOMLEFT;
+        case ui::form_hittest::resize_left: return HTLEFT;
         default: return HTNOWHERE;
         }
     }

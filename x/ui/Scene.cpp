@@ -181,7 +181,7 @@ namespace ui
 
     void Scene::_updateMouseArea(const input_state & state, mouse_action action)
     {
-        auto ma = action == mouse_action::leave ?  nullptr : control()->findChild(state.pos());
+        auto ma = action == mouse_action::leave || !state.hoving() ?  nullptr : control()->findChild(state.pos());
         // do not update while capturing one or more button(s)
         if (_current_control != ma &&
             (!_current_control || !(_current_control->captureButtons() & state.buttons())))
@@ -215,20 +215,22 @@ namespace ui
                 continue;
 
             auto tms = core::datetime::high_resolution_s();
-            if (!_draw_buffer || _draw_buffer->size().cx < invalid_rect.right() || _draw_buffer->size().cy < invalid_rect.bottom())
-            {
-                //_draw_buffer = std::make_shared<drawing::Bitmap>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
-                _draw_buffer = std::make_shared<drawing::Surface>(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
-            }
+            if (!_draw_buffer)
+                _draw_buffer = std::make_shared<drawing::Surface>();
+
+            if (_draw_buffer->size().cx < invalid_rect.right() || _draw_buffer->size().cy < invalid_rect.bottom())
+                _draw_buffer->resize(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
 
             drawing::Graphics graphics(_draw_buffer);
-            graphics.setClipRect(invalid_rect.to<float32_t>(), true);
-            graphics.clear(_color_default);
+            graphics.save();
+            //graphics.setClipRect(invalid_rect.to<float32_t>(), true);
+            graphics.setClipRegion(invalid_region);
+            graphics.clear(0);
             auto c = control();
             if (!c)
                 continue;
             c->ondraw(graphics, invalid_region);
-
+            graphics.restore();
             static bool save = false;
             if (save)
                 _draw_buffer->Save("scene.png");

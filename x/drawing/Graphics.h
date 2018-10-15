@@ -17,6 +17,7 @@ namespace drawing
         uint32_t save = 0;
         uint32_t restore = 0;
         uint32_t setClipRect = 0;
+        uint32_t setClipRegion = 0;
         uint32_t setClipPath = 0;
         uint32_t setMatrix = 0;
         uint32_t drawLine = 0;
@@ -74,11 +75,11 @@ namespace drawing
     {
     public:
         Graphics() = default;
-        ~Graphics() = default;
 
         //Graphics(core::si32i size);
         Graphics(std::shared_ptr<Bitmap> pixmap);
         Graphics(std::shared_ptr<Surface> pixmap);
+        ~Graphics();
 
     public:
         void clear(core::color32 color);
@@ -86,6 +87,7 @@ namespace drawing
         void saveLayer(const core::rc32f & bounds, uint8_t alpha);
         void restore();
         void setClipRect(const core::rc32f & rect, bool aa = true);
+        void setClipRegion(const drawing::Region & region);
         void setClipPath(const drawing::Path & path, bool aa = true);
         void setMatrix(const core::float3x2 & matrix);
         void setColorFilter(std::shared_ptr<ColorFilter> colorFilter);

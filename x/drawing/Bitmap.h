@@ -47,7 +47,7 @@ namespace drawing
         Surface(const core::si32i & size);
         ~Surface();
 
-        core::error createWin32Bitmap(const core::si32i & size);
+        core::error resize(const core::si32i & size);
 
         operator bool() const { return !!_native; }
         bitmap_buffer buffer() const override;

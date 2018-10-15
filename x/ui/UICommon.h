@@ -355,6 +355,9 @@ namespace ui
         mouse_buttons buttons() const { return _buttons; }
         bool button(mouse_button button) const { return _buttons.any(button); }
 
+        void setHoving(bool h) { _hoving = h; }
+        bool hoving() const { return _hoving; }
+
         void setWheelLines(int32_t lines) { _wheel_lines = lines; }
         int32_t wheelLines() const { return _wheel_lines; }
 
@@ -365,6 +368,7 @@ namespace ui
     private:
         core::pt32f _pos;
         mouse_buttons _buttons = mouse_button::none;
+        bool _hoving = false;
         int32_t _wheel_lines = 0;
         std::bitset<0xff> _keys;
     };

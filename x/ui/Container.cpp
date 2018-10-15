@@ -95,14 +95,14 @@ namespace ui
             control->update();
     }
 
-    void Container::invalid(const core::rc32f & rect)
+    void Container::invalidate(const core::rc32f & rect)
     {
         if(auto p = parent())
         {
             if (_clip_clild)
-                p->invalid(rect.intersected(_rect));
+                p->invalidate(rect.intersected(_rect));
             else
-                p->invalid(rect);
+                p->invalidate(rect);
         }
     }
 

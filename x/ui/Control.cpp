@@ -499,15 +499,15 @@ namespace ui
 
         if (!_rect_invalid.empty() && s)
         {
-            invalid(_rect_invalid);
+            invalidate(_rect_invalid);
         }
         _rect_invalid.clear();
     }
 
-    void Control::invalid(const core::rc32f & rect)
+    void Control::invalidate(const core::rc32f & rect)
     {
         if (auto p = parent())
-            p->invalid(rect);
+            p->invalidate(rect);
     }
 
     int32_t Control::animate()

@@ -16,6 +16,23 @@ namespace ui
         mask_type = 0x000f,
     };
 
+    enum class form_hittest
+    {
+        nowhere = 0,
+        client,
+        caption,
+        resize_leftTop,
+        resize_top,
+        resize_rightTop,
+        resize_right,
+        resize_rightBottom,
+        resize_bottom,
+        resize_leftBottom,
+        resize_left,
+        minimize,
+        maximize,
+    };
+
     template<> struct enable_bitmasks<form_style> { static const bool enable = true; };
     typedef core::bitflag<form_style> form_styles;
 
@@ -28,6 +45,9 @@ namespace ui
 
         void setStyles(form_styles styles) { if (styles != _styles) { _styles = styles; stylesChanged(_styles); } }
         form_styles styles() const { return _styles; }
+        void setResizeBorders(const core::vec4<core::dimensionf> & borders) { _resize_borders = borders; }
+        const core::vec4<core::dimensionf> & resizeBorders() const { return _resize_borders; }
+
         const core::pt32f & windowPos() const { return _rect_window.pos; }
         //const core::pt32f & windowSize() const { return _rect_window.size; }
         //const core::rc32f & windowRect() const { return _rect_window; }
@@ -43,12 +63,15 @@ namespace ui
         void centerScreen(int32_t screenIndex = 0);
 
     public:
-        void invalid(const core::rc32f & rect) override;
+        using Container::invalidate;
+        void invalidate(const core::rc32f & rect) override;
         std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
         void enteringScene(std::shared_ptr<Scene> & scene) override;
         void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
 
         void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const override;
+
+        virtual form_hittest hitTestForm(const core::pt32f & pos) const;
     public:
         void onClose();
 
@@ -64,6 +87,8 @@ namespace ui
         std::shared_ptr<Scene> _form_scene;
         std::shared_ptr<component::Window> _window;
         core::rc32f _rect_window;
+        core::attribute<core::vec4<core::dimensionf>> _resize_borders;
+
         bool _shown = false;
         form_styles _styles = nullptr;
     };

@@ -27,9 +27,13 @@ namespace drawing
         _native = std::shared_ptr<SkCanvas>(surface->native().getCanvas(), [](SkCanvas *){});
     }
 
+    Graphics::~Graphics()
+    {
+        assert(_statistics.save == _statistics.restore);
+    }
+
     void Graphics::clear(core::color32 color)
     {
-        _statistics = {};
         if (!_native)
             return;
 
@@ -70,6 +74,15 @@ namespace drawing
             return;
 
         _native->clipRect(skia::from(rect), aa);
+    }
+
+    void Graphics::setClipRegion(const drawing::Region & region)
+    {
+        ++_statistics.setClipRegion;
+        if (!_native)
+            return;
+
+        _native->clipRegion(region.native());
     }
 
     void Graphics::setClipPath(const drawing::Path & path, bool aa)

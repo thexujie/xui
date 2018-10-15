@@ -165,6 +165,8 @@ void xui_main()
     form->formScene()->setStyleSheet(ss);
     form->setBorder({ 1_px, 1_px });
     form->setBorderColors({ colors::Black, colors::Black });
+    form->setBackgroundColor(0x80ffffff);
+    form->setResizeBorders({ 4_px, 4_px });
 #ifdef BASE_LAYER
     form->addControl(text);
     form->addControl(image0);
@@ -358,6 +360,7 @@ void xui_main()
         {
             auto rbtn = std::make_shared<ui::controls::Button>();
             rbtn->setText(u8"点击这里确定");
+            rbtn->setCursor(ui::cursor::hand);
             container->addControl(rbtn);
         }
         container->addSpacer(2_em);
@@ -365,6 +368,7 @@ void xui_main()
         {
             auto rbtn = std::make_shared<ui::controls::Button>();
             rbtn->setText(u8"点击这里取消");
+            rbtn->setCursor(ui::cursor::wait);
             container->addControl(rbtn);
         }
         container->addSpacer(50_per);
