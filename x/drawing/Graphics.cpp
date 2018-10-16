@@ -103,6 +103,15 @@ namespace drawing
         _native->setMatrix(skia::from(matrix));
     }
 
+    void Graphics::resetMatrix()
+    {
+        ++_statistics.resetMatrix;
+        if (!_native)
+            return;
+
+        _native->resetMatrix();
+    }
+
     void Graphics::setColorFilter(std::shared_ptr<ColorFilter> colorFilter)
     {
         _colorFilter = colorFilter;

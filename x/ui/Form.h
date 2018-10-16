@@ -16,19 +16,12 @@ namespace ui
         mask_type = 0x000f,
     };
 
-    enum class form_hittest
+    enum class form_show_state
     {
-        nowhere = 0,
-        client,
-        caption,
-        resize_leftTop,
-        resize_top,
-        resize_rightTop,
-        resize_right,
-        resize_rightBottom,
-        resize_bottom,
-        resize_leftBottom,
-        resize_left,
+        hide = 0,
+        show,
+        show_noactive,
+        normalize,
         minimize,
         maximize,
     };
@@ -55,11 +48,17 @@ namespace ui
         void setWindowPos(const core::vec2<core::dimensionf> & pos) { setWindowPos(calc(pos)); }
         void setWindowSize(const core::si32f & size);
         void setWindowSize(const core::vec2<core::dimensionf> & size) { setWindowSize(calc(size)); }
+        void setWindowShown(form_show_state fs);
 
         std::shared_ptr<Scene> formScene() const;
 
-        void show();
-        bool shown() const { return _shown; }
+        void show() { show(form_show_state::show); }
+        void show(form_show_state fs);
+
+        form_show_state shownState() const { return _shown; }
+        bool shown() const { return _shown != form_show_state::hide; }
+        void close();
+
         void centerScreen(int32_t screenIndex = 0);
 
     public:
@@ -71,7 +70,8 @@ namespace ui
 
         void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const override;
 
-        virtual form_hittest hitTestForm(const core::pt32f & pos) const;
+        virtual hittest_form hitTestForm(const core::pt32f & pos) const;
+
     public:
         void onClose();
 
@@ -80,7 +80,7 @@ namespace ui
         core::event<void(const core::pt32f & from, const core::pt32f & to)> windowPosChanged;
         //core::event<void(const core::si32f & from, const core::si32f & to)> windowSizeChanged;
         //core::event<void(const core::rc32f & from, const core::rc32f & to)> windowRectChanged;
-        core::event<void(bool shown)> shownChanged;
+        core::event<void(form_show_state fs)> shownChanged;
         core::event<void()> closed;
 
     private:
@@ -89,7 +89,7 @@ namespace ui
         core::rc32f _rect_window;
         core::attribute<core::vec4<core::dimensionf>> _resize_borders;
 
-        bool _shown = false;
+        form_show_state _shown = form_show_state::hide;
         form_styles _styles = nullptr;
     };
 }

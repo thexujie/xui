@@ -32,6 +32,24 @@ namespace ui
         transparent,
     };
 
+    enum class hittest_form
+    {
+        nowhere = 0,
+        client,
+        caption,
+        resize_leftTop,
+        resize_top,
+        resize_rightTop,
+        resize_right,
+        resize_rightBottom,
+        resize_bottom,
+        resize_leftBottom,
+        resize_left,
+        close,
+        minimize,
+        maximize,
+    };
+
     enum class layout_origin
     {
         // Ä¬ÈÏÎ»ÖÃ

@@ -7,6 +7,8 @@
 
 namespace ui
 {
+    class Container;
+
     const int32_t ZVALUE_BACKGROUND = -100;
     const int32_t ZVALUE_CONTENT = 0;
     const int32_t ZVALUE_FOREGROUND = 100;
@@ -47,12 +49,15 @@ namespace ui
 
         void setPos(const core::vec2<core::dimensionf> & pos) { _pos = pos; }
         const core::vec2<core::dimensionf> & pos() const { return _pos; }
-        void setSize(const core::vec2<core::dimensionf> & size) { _size = size; }
+        void 
+        setSize(const core::vec2<core::dimensionf> & size) { _size = size; }
         const core::vec2<core::dimensionf> & size() const { return _size; }
-        void setMinSize(const core::vec2<core::dimensionf> & minSize) { _minSize = minSize; }
-        const core::vec2<core::dimensionf> & minSize() const { return _minSize; }
-        void setMaxSize(const core::vec2<core::dimensionf> & maxSize) { _maxSize = maxSize; }
-        const core::vec2<core::dimensionf> & maxSize() const { return _maxSize; }
+        void setMinSize(const core::vec2<core::dimensionf> & minSize) { _min_size = minSize; }
+        const core::vec2<core::dimensionf> & minSize() const { return _min_size; }
+        void setMaxSize(const core::vec2<core::dimensionf> & maxSize) { _max_size = maxSize; }
+        const core::vec2<core::dimensionf> & maxSize() const { return _max_size; }
+        void setFixedAspect(const core::vec2<float32_t> & maxSize) { _fixed_aspect = maxSize; }
+        const core::vec2<float32_t> & fixedAspect() const { return _fixed_aspect; }
 
         void setAnchorBorders(core::aligns borders) { _anchor_borders = borders; }
         core::aligns anchorBorders() const { return _anchor_borders; }
@@ -66,18 +71,17 @@ namespace ui
         void setShowSize(const core::vec2f & size);
         void setShowRect(const core::rc32f & size);
 
-        // expectSize 是一个不依赖父控件大小的『期望大小』，由控件本身决定
-        core::si32f prefferSize() const;
         // prefferSize 计算出的期望大小
         core::si32f prefferSize(const core::vec2<float32_t> & spacing) const;
         // 根据最大最小值调整
         core::si32f adjustSize(const core::si32f & size) const;
 
+        virtual core::si32f fittingSize(const core::si32f & spacing) const { return { std::nanf(0) , std::nanf(0) }; }
         virtual core::si32f contentSize() const { return core::si32f(); }
 
         std::shared_ptr<Scene> scene() const { return _scene.lock(); }
-        void setParent(std::shared_ptr<Control> parent) { _parent = parent; }
-        std::shared_ptr<Control> parent() const { return _parent.lock(); }
+        void setParent(std::shared_ptr<Container> parent) { _parent = parent; }
+        std::shared_ptr<Container> parent() const { return _parent.lock(); }
 
         const core::color32 & color() const;
         void setFont(const drawing::font & font);
@@ -148,15 +152,7 @@ namespace ui
         void setBackgroundImage(std::shared_ptr<drawing::Image> image);
         std::shared_ptr<drawing::Image> backgroundImage() const;
 
-        void setMargin(const core::vec4<core::dimensionf> & margin)
-        {
-            if (_margin != margin)
-            {
-                _margin = margin;
-                rearrange();
-            }
-        }
-
+        void setMargin(const core::vec4<core::dimensionf> & margin);
         const core::vec4<core::dimensionf> & margin() const { return _margin; }
 
         void setBorder(const core::vec4<core::dimensionf> & border)
@@ -234,14 +230,14 @@ namespace ui
     protected:
         void _drawBackground(drawing::Graphics & graphics) const;
         void _drawBorder(drawing::Graphics & graphics) const;
-        void _adjustSizeMinMax(core::si32f & size) const;
-        void _adjustSizeMinMax(core::si32f & size, const core::vec2<float32_t> & spacing) const;
+        void _adjustSize(core::si32f & size) const;
+        void _adjustSize(core::si32f & size, const core::vec2<float32_t> & spacing) const;
 
     protected:
         mutable std::mutex _mtx;
 
         std::weak_ptr<Scene> _scene;
-        std::weak_ptr<Control> _parent;
+        std::weak_ptr<Container> _parent;
 
         int32_t _zvalue = ZVALUE_CONTENT;
         layout_origin _layout_origin = layout_origin::layout;
@@ -250,13 +246,14 @@ namespace ui
         // 控件大小，包括 padding，不包括 margin。
         core::attribute<core::vec2<core::dimensionf>> _pos;
         core::attribute<core::vec2<core::dimensionf>> _size;
+        core::attribute<core::vec2<float32_t>> _fixed_aspect;
         core::attribute<core::vec4<core::dimensionf>> _padding;
         core::attribute<core::vec4<core::dimensionf>> _border;
         core::attribute<core::vec4<core::color32>> _border_colors;
         core::attribute<core::vec4<drawing::stroke_style>> _border_styles;
         core::attribute<core::vec4<core::dimensionf>> _margin;
-        core::attribute<core::vec2<core::dimensionf>> _minSize = core::vec2{ core::auto_value , core::auto_value };
-        core::attribute<core::vec2<core::dimensionf>> _maxSize = core::vec2{ core::auto_value, core::auto_value };
+        core::attribute<core::vec2<core::dimensionf>> _min_size = core::vec2{ core::auto_value , core::auto_value };
+        core::attribute<core::vec2<core::dimensionf>> _max_size = core::vec2{ core::auto_value, core::auto_value };
 
         core::aligns _anchor_borders = core::align::leftTop;
         core::attribute<core::vec4<core::dimensionf>> _anchor;
@@ -316,6 +313,11 @@ namespace ui
                 return hittest_result::transparent;
 
             return _interactable ? hittest_result::client : hittest_result::stable;
+        }
+
+        virtual hittest_form hitTestForm(const core::pt32f & pos) const
+        {
+            return (_mouse_through || !_interactable) ? hittest_form::caption : hittest_form::client;
         }
 
         virtual void onMouseEnter(const input_state & state);

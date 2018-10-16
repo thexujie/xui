@@ -1,14 +1,11 @@
 ﻿#include "stdafx.h"
 
-#include "core/core.h"
-#include "drawing/drawing.h"
-#include "ui/ui.h"
-
 #include "win32/Win32App.h"
 #include "ui/controls/Check.h"
+#include "controls/XForm.h"
+#include "controls/ShapeButton.h"
 
 using namespace core;
-
 
 void testImages()
 {
@@ -171,7 +168,7 @@ void xui_main()
     form->addControl(text);
     form->addControl(image0);
     form->addControl(scrollbar);
-    form->addControl(buttons);
+    //form->addControl(buttons);
     form->addControl(image);
     form->addControl(text2);
 #endif
@@ -191,7 +188,46 @@ void xui_main()
         layer->setLayoutOrigin(ui::layout_origin::parent);
         layer->setMouseThrough(true);
         layer->setSize({ 100_per, 100_per });
+    }
 
+    // 标题栏
+    {
+        auto title = std::make_shared<xui::controls::XTitleBar>();
+        title->setSize({ 100_per, 1.6_em });
+        title->setBackgroundColor(0xffd6dbe9);
+        //{
+        //    auto rbtn = std::make_shared<ui::controls::Button>();
+        //    rbtn->setText(u8"标题栏上的按钮");
+        //    title->addControl(rbtn);
+        //}
+        {
+            auto shbtn = std::make_shared<xui::controls::ShapeButton>();
+            auto path = std::make_shared<drawing::Path>();
+            path->moveTo({ 0.3f, 0.3f });
+            path->lineTo({ 0.7f, 0.7f });
+            path->moveTo({ 0.7f, 0.3f });
+            path->lineTo({ 0.3f, 0.7f });
+            shbtn->setPath(path);
+            shbtn->setHitTestForm(ui::hittest_form::close);
+            shbtn->click += []() {g_form->closed(); };
+            title->addControl(shbtn);
+        }
+        {
+            auto shbtn = std::make_shared<xui::controls::ShapeButton>();
+            auto path = std::make_shared<drawing::Path>();
+            path->moveTo({ 0.3f, 0.3f });
+            path->lineTo({ 0.7f, 0.3f });
+            path->lineTo({ 0.7f, 0.7f });
+            path->lineTo({ 0.3f, 0.7f });
+            path->close();
+            shbtn->setPath(path);
+            shbtn->setHitTestForm(ui::hittest_form::maximize);
+            shbtn->click += []() {g_form->show(g_form->shownState() == ui::form_show_state::maximize ? ui::form_show_state::normalize : ui::form_show_state::maximize); };
+            title->addControl(shbtn);
+        }
+        layer->addControl(title);
+    }
+    {
         auto tln = std::make_shared<ui::controls::TextLine>();
         tln->setFont({"", font.size * 4});
         tln->setText(u8"သွက်ဂွံဗၠးၜးတ်ိတ်");

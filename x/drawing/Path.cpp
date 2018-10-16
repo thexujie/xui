@@ -43,6 +43,19 @@ namespace drawing
         _native->arcTo(skia::from(pos0), skia::from(po1), radius);
     }
 
+    void Path::transform(const core::float3x2 & matrix)
+    {
+        _confirmNative();
+        _native->transform(skia::from(matrix));
+    }
+
+    void Path::transform(const core::float3x2 & matrix, Path & output)
+    {
+        _confirmNative();
+        output._confirmNative();
+        _native->transform(skia::from(matrix), output.native_ptr());
+    }
+
     void Path::_confirmNative()
     {
         if (!_native)

@@ -6,7 +6,7 @@ namespace core
     {
         // 像素（72dpi）
         px = 0,
-        // 标准字符代销
+        // 标准字符高度
         em,
         // 点
         pt,

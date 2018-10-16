@@ -25,6 +25,9 @@ namespace drawing
         void lineTo(const core::pt32f & pos);
         void arcTo(const core::pt32f & pos0, const core::pt32f & po1, float32_t radius);
 
+        void transform(const core::float3x2 & matrix);
+        void transform(const core::float3x2 & matrix, Path & output);
+
         template<class Iter>
         void fromPoints(Iter iter, const Iter end, bool bclose)
         {

@@ -197,6 +197,9 @@
     <ClCompile Include="win32\win32.cpp">
       <Filter>win32</Filter>
     </ClCompile>
+    <ClCompile Include="ui\base\Button.cpp">
+      <Filter>ui\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -469,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="ui\controls\Spacer.h">
       <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\base\Button.h">
+      <Filter>ui\base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

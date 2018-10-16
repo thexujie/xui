@@ -157,18 +157,49 @@ namespace win32
         return _handle;
     }
 
-    void Window::onShownChanged(bool shown)
+    void Window::onShownChanged(ui::form_show_state shown)
     {
-        if(shown)
+        switch(shown)
         {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOW);
-        }
-        else
+        case ui::form_show_state::hide:
         {
             HWND hwnd = (HWND)_handle;
             if (hwnd)
                 ::ShowWindow(hwnd, SW_HIDE);
+            break;
+        }
+        case ui::form_show_state::show:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOW);
+            break;
+        }
+        case ui::form_show_state::show_noactive:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+            break;
+        }
+        case ui::form_show_state::normalize:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOWNORMAL);
+            break;
+        }
+        case ui::form_show_state::minimize:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOWMINIMIZED);
+            break;
+        }
+        case ui::form_show_state::maximize:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+            break;
+        }
+        default:
+            break;
         }
     }
 
@@ -560,7 +591,7 @@ namespace win32
         {
             CASE_MSG(WM_NCHITTEST, OnWmHitTest);
             CASE_MSG(WM_NCCALCSIZE, OnWmNcCalcSize);
-            //CASE_MSG(WM_SHOWWINDOW, OnWmShow);
+            CASE_MSG(WM_SHOWWINDOW, OnWmShow);
             CASE_MSG(WM_ERASEBKGND, OnWmEraseBack);
             CASE_MSG(WM_PAINT, OnWmPaint);
             CASE_MSG(WM_NCPAINT, OnWmNcPaint);
@@ -651,12 +682,29 @@ namespace win32
             throw core::exception(core::error_nullptr);
 
         f->setWindowSize(_size().to<float32_t>());
+        switch(wParam)
+        {
+        case SIZE_MINIMIZED: f->setWindowShown(ui::form_show_state::minimize); break;
+        case SIZE_MAXIMIZED: f->setWindowShown(ui::form_show_state::maximize); break;
+        case SIZE_RESTORED: f->setWindowShown(ui::form_show_state::show); break;
+        default: break;
+        }
         return 0;
     }
 
      intx_t Window::OnWmRefresh(uintx_t wParam, intx_t lParam)
     {
         return 0;
+    }
+
+    intx_t Window::OnWmShow(uintx_t wParam, intx_t lParam)
+    {
+        if(!wParam)
+        {
+            if (auto f = form())
+                f->setWindowShown(ui::form_show_state::hide);
+        }
+        return OnDefault(WM_SHOWWINDOW, wParam, lParam);
     }
 
     intx_t Window::OnWmPaint(uintx_t wParam, intx_t lParam)
@@ -851,19 +899,23 @@ namespace win32
         POINT posi = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ScreenToClient(hwnd, &posi);
         auto pos = core::pt32f((float32_t)posi.x, (float32_t)posi.y);
-        auto htf = f->hitTestForm(pos);
+        auto child = f->findChild(pos);
+        if(!child)
+            return HTNOWHERE;
+
+        auto htf = child->hitTestForm(pos - child->realPos());
         switch (htf)
         {
-        case ui::form_hittest::client: return HTCLIENT;
-        case ui::form_hittest::caption: return HTCAPTION;
-        case ui::form_hittest::resize_leftTop: return HTTOPLEFT;
-        case ui::form_hittest::resize_top: return HTTOP;
-        case ui::form_hittest::resize_rightTop: return HTTOPRIGHT;
-        case ui::form_hittest::resize_right: return HTRIGHT;
-        case ui::form_hittest::resize_rightBottom: return HTBOTTOMRIGHT;
-        case ui::form_hittest::resize_bottom: return HTBOTTOM;
-        case ui::form_hittest::resize_leftBottom: return HTBOTTOMLEFT;
-        case ui::form_hittest::resize_left: return HTLEFT;
+        case ui::hittest_form::client: return HTCLIENT;
+        case ui::hittest_form::caption: return HTCAPTION;
+        case ui::hittest_form::resize_leftTop: return HTTOPLEFT;
+        case ui::hittest_form::resize_top: return HTTOP;
+        case ui::hittest_form::resize_rightTop: return HTTOPRIGHT;
+        case ui::hittest_form::resize_right: return HTRIGHT;
+        case ui::hittest_form::resize_rightBottom: return HTBOTTOMRIGHT;
+        case ui::hittest_form::resize_bottom: return HTBOTTOM;
+        case ui::hittest_form::resize_leftBottom: return HTBOTTOMLEFT;
+        case ui::hittest_form::resize_left: return HTLEFT;
         default: return HTNOWHERE;
         }
     }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Control.h"
+#include "Container.h"
 
 namespace ui
 {
@@ -49,37 +50,12 @@ namespace ui
         return nullptr;
     }
 
-    core::si32f Control::prefferSize() const
-    {
-        // 如果设置了固定大小，直接返回即可
-        if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
-            return calc(_size.value);
-
-        core::si32f size = contentSize() + calc(_padding).bsize();
-        if (_size.available())
-        {
-            if (_size.value.cx.avi())
-                size.cx = calc(_size.value.cx);
-            else if (_size.value.cy.avi())
-                size.cy = calc(_size.value.cy);
-            else {}
-        }
-
-        auto p = parent();
-        if (_anchor_borders.all(core::align::leftRight))
-            size.cx = p->width() - (calc(_anchor.value.bleft) + calc(_anchor.value.bright));
-        if (_anchor_borders.all(core::align::topBottom))
-            size.cy = p->width() - (calc(_anchor.value.btop) + calc(_anchor.value.bbottom));
-        _adjustSizeMinMax(size);
-        return size;
-    }
-
     core::si32f Control::prefferSize(const core::vec2<float32_t> & spacing) const
     {
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
         {
             core::si32f size = calc(_size, spacing);
-            _adjustSizeMinMax(size);
+            _adjustSize(size);
             return size;
         }
 
@@ -97,35 +73,35 @@ namespace ui
             size.cx = spacing.cx - calc(_anchor.value.bleft + _anchor.value.bright, spacing.cx);
         if (_anchor_borders.all(core::align::topBottom))
             size.cy = spacing.cy - calc(_anchor.value.btop + _anchor.value.bbottom, spacing.cy);
-        _adjustSizeMinMax(size);
+        _adjustSize(size);
         return size;
     }
 
     core::si32f Control::adjustSize(const core::si32f & size) const
     {
         core::si32f asize = size;
-        if (_minSize.value.cx.avi())
+        if (_min_size.value.cx.avi())
         {
-            float32_t val = calc(_minSize.value.cx);
+            float32_t val = calc(_min_size.value.cx);
             if (asize.cx < val)
                 asize.cx = val;
         }
-        if (_minSize.value.cy.avi())
+        if (_min_size.value.cy.avi())
         {
-            float32_t val = calc(_minSize.value.cy);
+            float32_t val = calc(_min_size.value.cy);
             if (asize.cy < val)
                 asize.cy = val;
         }
 
-        if (_maxSize.value.cx.avi())
+        if (_max_size.value.cx.avi())
         {
-            float32_t val = calc(_maxSize.value.cx);
+            float32_t val = calc(_max_size.value.cx);
             if (asize.cx > val)
                 asize.cx = val;
         }
-        if (_maxSize.value.cy.avi())
+        if (_max_size.value.cy.avi())
         {
-            float32_t val = calc(_maxSize.value.cy);
+            float32_t val = calc(_max_size.value.cy);
             if (asize.cy > val)
                 asize.cy = val;
         }
@@ -390,6 +366,16 @@ namespace ui
         return _background_image.value;
     }
 
+    void Control::setMargin(const core::vec4<core::dimensionf> & margin)
+    {
+        if (_margin != margin)
+        {
+            _margin = margin;
+            if (auto p = parent())
+                p->relayout(nullptr);
+        }
+    }
+
     void Control::enteringScene(std::shared_ptr<Scene> & scene)
     {
         _scene = scene;
@@ -610,70 +596,92 @@ namespace ui
         }
     }
 
-    void Control::_adjustSizeMinMax(core::si32f & size) const
+    void Control::_adjustSize(core::si32f & size) const
     {
-        if (_minSize.available())
+        auto p = parent();
+        if (p && _fixed_aspect)
         {
-            if (_minSize.value.cx.avi())
+            auto layout_direction = p->layoutDirection();
+            if (!std::isnan(_fixed_aspect.value.cx))
+                size.cx = size.cy * _fixed_aspect.value.cx;
+            else if (!std::isnan(_fixed_aspect.value.cy))
+                size.cy = size.cx * _fixed_aspect.value.cy;
+            else {}
+        }
+
+        if (_min_size.available())
+        {
+            if (_min_size.value.cx.avi())
             {
-                float32_t val = calc(_minSize.value.cx);
+                float32_t val = calc(_min_size.value.cx);
                 if (size.cx < val)
                     size.cx = val;
             }
-            if (_minSize.value.cy.avi())
+            if (_min_size.value.cy.avi())
             {
-                float32_t val = calc(_minSize.value.cy);
+                float32_t val = calc(_min_size.value.cy);
                 if (size.cy < val)
                     size.cy = val;
             }
         }
 
-        if (_maxSize.available())
+        if (_max_size.available())
         {
-            if (_maxSize.value.cx.avi())
+            if (_max_size.value.cx.avi())
             {
-                float32_t val = calc(_maxSize.value.cx);
+                float32_t val = calc(_max_size.value.cx);
                 if (size.cx > val)
                     size.cx = val;
             }
-            if (_maxSize.value.cy.avi())
+            if (_max_size.value.cy.avi())
             {
-                float32_t val = calc(_maxSize.value.cy);
+                float32_t val = calc(_max_size.value.cy);
                 if (size.cy > val)
                     size.cy = val;
             }
         }
     }
 
-    void Control::_adjustSizeMinMax(core::si32f & size, const core::vec2<float32_t> & spacing) const
+    void Control::_adjustSize(core::si32f & size, const core::vec2<float32_t> & spacing) const
     {
-        if (_minSize.available())
+        auto p = parent();
+        if (p && _fixed_aspect)
         {
-            if (_minSize.value.cx.avi())
+            auto layout_direction = p->layoutDirection();
+            if (!std::isnan(_fixed_aspect.value.cx))
+                size.cx = size.cy * _fixed_aspect.value.cx;
+            else if (!std::isnan(_fixed_aspect.value.cy))
+                size.cy = size.cx * _fixed_aspect.value.cy;
+            else {}
+        }
+
+        if (_min_size.available())
+        {
+            if (_min_size.value.cx.avi())
             {
-                float32_t val = calc(_minSize.value.cx, spacing.cx);
+                float32_t val = calc(_min_size.value.cx, spacing.cx);
                 if (size.cx < val)
                     size.cx = val;
             }
-            if (_minSize.value.cy.avi())
+            if (_min_size.value.cy.avi())
             {
-                float32_t val = calc(_minSize.value.cy, spacing.cy);
+                float32_t val = calc(_min_size.value.cy, spacing.cy);
                 if (size.cy < val)
                     size.cy = val;
             }
         }
 
-        if (_maxSize.available())
+        if (_max_size.available())
         {
-            if (_maxSize.value.cx.avi())
+            if (_max_size.value.cx.avi())
             {
-                float32_t val = calc(_maxSize.value.cx, spacing.cx);
+                float32_t val = calc(_max_size.value.cx, spacing.cx);
                 if (size.cx > val)
                     size.cx = val;
             }
-            if (_maxSize.value.cy.avi())
+            if (_max_size.value.cy.avi())
             {
-                float32_t val = calc(_maxSize.value.cy, spacing.cy);
+                float32_t val = calc(_max_size.value.cy, spacing.cy);
                 if (size.cy > val)
                     size.cy = val;
             }

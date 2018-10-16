@@ -141,6 +141,7 @@ namespace ui
         case mouse_action::release:
             if (_current_control)
             {
+                _current_control->onMouseClick(state, button);
                 _current_control->onMouseUp(state, button);
                 if (_current_control->captureButtons())
                     captured(false);

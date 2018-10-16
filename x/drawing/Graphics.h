@@ -20,6 +20,7 @@ namespace drawing
         uint32_t setClipRegion = 0;
         uint32_t setClipPath = 0;
         uint32_t setMatrix = 0;
+        uint32_t resetMatrix = 0;
         uint32_t drawLine = 0;
         uint32_t drawEllipse = 0;
         uint32_t drawRectangle = 0;
@@ -90,6 +91,7 @@ namespace drawing
         void setClipRegion(const drawing::Region & region);
         void setClipPath(const drawing::Path & path, bool aa = true);
         void setMatrix(const core::float3x2 & matrix);
+        void resetMatrix();
         void setColorFilter(std::shared_ptr<ColorFilter> colorFilter);
 
         void drawLine(core::pt32f start, core::pt32f end, const PathStyle & style);

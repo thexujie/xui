@@ -100,6 +100,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="drawing\skia\skia.cpp" />
+    <ClCompile Include="ui\base\Button.cpp" />
     <ClCompile Include="ui\base\Check.cpp" />
     <ClCompile Include="ui\base\Radio.cpp" />
     <ClCompile Include="ui\component\Component.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="drawing\draw.h" />
     <ClInclude Include="drawing\drawing.h" />
     <ClInclude Include="drawing\Shaper.h" />
+    <ClInclude Include="ui\base\Button.h" />
     <ClInclude Include="ui\base\Check.h" />
     <ClInclude Include="ui\base\Radio.h" />
     <ClInclude Include="ui\component\Component.h" />

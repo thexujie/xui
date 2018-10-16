@@ -1,9 +1,9 @@
 #pragma once
-#include "ui/Control.h"
+#include "ui/base/Button.h"
 
 namespace ui::controls
 {
-    class Button : public Control
+    class Button : public ui::base::Button
     {
     public:
         Button();
@@ -17,15 +17,8 @@ namespace ui::controls
         const std::string & text() const { return _text; }
 
         core::si32f contentSize() const override;
-        std::string styleName() const override;
 
         void draw(drawing::Graphics & graphics, const drawing::Region & region) const override;
-    public:
-        void onMouseEnter(const input_state & state);
-        void onMouseMove(const input_state & state);
-        void onMouseLeave(const input_state & state);
-        void onMouseDown(const input_state & state, ui::mouse_button button);
-        void onMouseUp(const input_state & state, ui::mouse_button button);
 
     private:
         void _confirmBlob() const;

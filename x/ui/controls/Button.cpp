@@ -43,16 +43,6 @@ namespace ui::controls
         return _textBlob ? _textBlob->size() : core::si32f();
     }
 
-    std::string Button::styleName() const
-    {
-        if (_pressed)
-            return "button:active";
-        else if (_mousein)
-            return "button:hover";
-        else
-            return "button";
-    }
-
     void Button::draw(drawing::Graphics & graphics, const drawing::Region & region) const
     {
         std::lock_guard l(*this);
@@ -60,36 +50,6 @@ namespace ui::controls
         if (_textBlob)
             graphics.drawTextBlob(*_textBlob, contentBox().leftTop());
         _drawBorder(graphics);
-    }
-
-    void Button::onMouseEnter(const input_state & state)
-    {
-        Control::onMouseEnter(state);
-        restyle();
-    }
-
-    void Button::onMouseMove(const input_state & state)
-    {
-        Control::onMouseMove(state);
-    }
-
-    void Button::onMouseLeave(const input_state & state)
-    {
-        Control::onMouseLeave(state);
-        restyle();
-    }
-
-    
-    void Button::onMouseDown(const input_state & state, ui::mouse_button button)
-    {
-        Control::onMouseDown(state, button);
-        restyle();
-    }
-
-    void Button::onMouseUp(const input_state & state, ui::mouse_button button)
-    {
-        Control::onMouseUp(state, button);
-        restyle();
     }
 
     void Button::_confirmBlob() const

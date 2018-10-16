@@ -42,6 +42,11 @@ namespace ui
         setShowSize(size);
     }
 
+    void Form::setWindowShown(form_show_state fs)
+    {
+        _shown = fs;
+    }
+
     std::shared_ptr<Scene> Form::formScene() const
     {
         auto s = scene();
@@ -53,31 +58,32 @@ namespace ui
         return _form_scene;
     }
 
-    void Form::show()
+    void Form::show(form_show_state fs)
     {
-        if (_shown)
-            return;
-
-        if (!scene())
+        if (_shown != fs)
         {
-            auto s = formScene();
-            enteringScene(s);
-            enterScene(s);
+            _shown = fs;
+
+            if (!scene())
+            {
+                auto s = formScene();
+                enteringScene(s);
+                enterScene(s);
+            }
+
+            if (!_window)
+            {
+                auto window = std::make_shared<win32::Window>();
+                window->attatch(share_ref<Form>());
+                _window = window;
+            }
+            shownChanged(fs);
         }
+    }
 
-        auto rect = core::rc32f(calc(_pos), calc(_size));
-        Container::place(rect, rect.size);
-
-        if(!_window)
-        {
-            auto window = std::make_shared<win32::Window>();
-            window->attatch(share_ref<Form>());
-            _window = window;
-        }
-
-        _shown = true;
-        invalidate(core::rc32f(core::pt32f(), realSize()));
-        shownChanged(true);
+    void Form::close()
+    {
+        invoke([this]() {closed(); });
     }
 
     void Form::centerScreen(int32_t screenIndex)
@@ -96,6 +102,16 @@ namespace ui
 
     std::shared_ptr<Control> Form::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const
     {
+        if (_clip_clild && !_rect.contains(pos))
+            return nullptr;
+
+        if (_resize_borders)
+        {
+            auto b = calc(_resize_borders.value);
+            if (!_rect.expanded(-b).contains(pos))
+                return control_ref();
+        }
+
         auto child = Container::findChild(pos, last, flags);
         return child ? child : control_ref();
     }
@@ -117,13 +133,10 @@ namespace ui
         Container::ondraw(graphics, region);
     }
 
-    form_hittest Form::hitTestForm(const core::pt32f & pos) const
+    hittest_form Form::hitTestForm(const core::pt32f & pos) const
     {
-        if (!_rect.contains(pos))
-            return form_hittest::nowhere;
-
         if(!_resize_borders)
-            return form_hittest::client;
+            return Container::hitTestForm(pos);
 
         enum
         {
@@ -148,29 +161,15 @@ namespace ui
 
         switch (temp)
         {
-        case left | top: return form_hittest::resize_leftTop;
-        case top: return form_hittest::resize_top;
-        case right | top: return form_hittest::resize_rightTop;
-        case right: return form_hittest::resize_right;
-        case right | bottom: return form_hittest::resize_rightBottom;
-        case bottom: return form_hittest::resize_bottom;
-        case left | bottom: return form_hittest::resize_leftBottom;
-        case left: return form_hittest::resize_left;
-        default: break;
-        }
-
-        auto child = findChild(pos);
-        if (!child)
-            return form_hittest::client;
-
-        auto ht = child->hitTest(pos);
-        switch (ht)
-        {
-        case ui::hittest_result::nowhere: return form_hittest::nowhere;
-        case ui::hittest_result::client: return form_hittest::client;
-        case ui::hittest_result::stable: return form_hittest::caption;
-        case ui::hittest_result::transparent: return form_hittest::caption;
-        default: return form_hittest::client;
+        case left | top: return hittest_form::resize_leftTop;
+        case top: return hittest_form::resize_top;
+        case right | top: return hittest_form::resize_rightTop;
+        case right: return hittest_form::resize_right;
+        case right | bottom: return hittest_form::resize_rightBottom;
+        case bottom: return hittest_form::resize_bottom;
+        case left | bottom: return hittest_form::resize_leftBottom;
+        case left: return hittest_form::resize_left;
+        default: return Container::hitTestForm(pos);
         }
     }
 

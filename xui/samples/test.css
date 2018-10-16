@@ -80,3 +80,18 @@
 }
 
 
+.shapebutton {
+    padding: 1em 0.5em;
+    background-color: #0000;
+    margin: 0.2em;
+    transition-duration: 500ms
+}
+
+.shapebutton:hover {
+    background-color: #a888;
+}
+
+.shapebutton:active {
+    background-color: #a2f2;
+    transition-duration: 200ms
+}

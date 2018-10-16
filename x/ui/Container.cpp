@@ -337,6 +337,7 @@ namespace ui
     core::si32f Container::contentSize() const
     {
         core::si32f size;
+        core::rc32f box = paddingBox();
         float32_t margin = 0;
         for (auto & control : _controls)
         {
@@ -350,7 +351,7 @@ namespace ui
             {
                 margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
                 size.cx += margin;
-                auto perffer_size = control->prefferSize();
+                auto perffer_size = control->prefferSize({});
                 margin = _layout_direction == core::align::left ? m.bright : m.bleft;
                 size.cx = size.cx + perffer_size.cx;
                 size.cy = std::max(size.cy, perffer_size.cy + m.bheight());
@@ -359,7 +360,7 @@ namespace ui
             {
                 margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
                 size.cy += margin;
-                auto perffer_size = control->prefferSize();
+                auto perffer_size = control->prefferSize({});
                 margin = _layout_direction == core::align::top ? m.bbottom : m.btop;
                 size.cy += perffer_size.cy;
                 size.cx = std::max(size.cx, perffer_size.cx + m.bwidth());
@@ -392,13 +393,14 @@ namespace ui
         for (size_t cnt = 0; cnt < _controls.size(); ++cnt)
         {
             auto & control = _controls[cnt];
+
             auto lo = control->layoutOrigin();
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
                 continue;
 
             auto m = control->realMargin();
             auto s = control->size();
-            auto ps = control->prefferSize();
+            auto ps = control->prefferSize({});
 
             if (_layout_direction == core::align::left || _layout_direction == core::align::right)
             {
@@ -453,6 +455,7 @@ namespace ui
         spacing.cx = std::max(spacing.cx, 0.0f);
         spacing.cy = std::max(spacing.cy, 0.0f);
 
+        margin = 0;
         float32_t compat_size = 0;
         float32_t compat_scale =0;
         std::set<std::string> setes;
@@ -468,6 +471,7 @@ namespace ui
                 {
                 case core::align::left:
                 {
+                    //core::pt32f layout_pos = _rect.pos - _scroll_pos;
                     bool compact = _compact_layout && si.cx.per();
                     auto preffer_size = control->prefferSize({ compact ? (spacing.cx - compat_size ) / ((total_per - compat_scale) / 100.0f): spacing.cx, spacing.cy - margins.bheight() });
                     margin = std::max(margin, margins.bleft);
@@ -476,6 +480,22 @@ namespace ui
                     margin = margins.bright;
 
                     if(compact)
+                    {
+                        compat_scale += si.cx.value;
+                        compat_size += preffer_size.cx;
+                    }
+                    break;
+                }
+                case core::align::right:
+                {
+                    bool compact = _compact_layout && si.cx.per();
+                    auto preffer_size = control->prefferSize({ compact ? (spacing.cx - compat_size) / ((total_per - compat_scale) / 100.0f) : spacing.cx, spacing.cy - margins.bheight() });
+                    margin = std::max(margin, margins.bright);
+                    control->place({ (_rect.right() - _scroll_pos.x) - (layout_size.cx + margin) - preffer_size.cx, layout_pos.y + margins.btop, preffer_size.cx, box.cy - margins.bheight() }, preffer_size);
+                    layout_size.cx += margin + preffer_size.cx;
+                    margin = margins.bleft;
+
+                    if (compact)
                     {
                         compat_scale += si.cx.value;
                         compat_size += preffer_size.cx;
@@ -512,7 +532,7 @@ namespace ui
             }
         }
 
-        if (_layout_direction == core::align::left)
+        if (_layout_direction == core::align::left || _layout_direction == core::align::right)
         {
             layout_size.cx += margin;
         }
@@ -525,6 +545,7 @@ namespace ui
         switch (_layout_direction)
         {
         case core::align::left:
+        case core::align::right:
             if (_scrollbar_h)
             {
                 _scrollbar_h->setPageValue(contentBox().cx);
@@ -532,6 +553,7 @@ namespace ui
             }
             break;
         case core::align::top:
+        case core::align::bottom:
             if (_scrollbar_v)
             {
                 _scrollbar_v->setPageValue(contentBox().cy);
