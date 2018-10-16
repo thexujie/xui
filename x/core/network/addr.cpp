@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "addr.h"
 
-#include "win32/windows.h"
+#include "win32/win32.h"
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 

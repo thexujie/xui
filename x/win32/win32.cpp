@@ -1,6 +1,5 @@
 #include "stdafx.h"
-#include "windows.h"
-#include "core/string.h"
+#include "win32.h"
 
 namespace win32
 {
@@ -62,7 +61,7 @@ namespace win32
         static const char RES_TYPES[res_count][16] = { "FILE" };
 
         int index = std::clamp((int)type, 0, res_count - 1);
-        HRSRC hRes = FindResourceA(NULL, (const char *)id, RES_TYPES[index]);
+        HRSRC hRes = FindResourceA(NULL, (const char *)(uintmax_t)id, RES_TYPES[index]);
         if (hRes)
         {
             HGLOBAL hData = LoadResource(NULL, hRes);
@@ -166,7 +165,7 @@ namespace win32
 
         drawing::font font;
         font.family = core::wstr_u8str(metrics.lfMessageFont.lfFaceName);
-        font.size = metrics.lfMessageFont.lfHeight;
+        font.size = float(metrics.lfMessageFont.lfHeight);
         return font;
     }
 
@@ -196,6 +195,7 @@ namespace win32
         logfont.lfCharSet = DEFAULT_CHARSET;
         logfont.lfOutPrecision = OUT_DEFAULT_PRECIS;
         logfont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+
         logfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
         return logfont;
     }
@@ -207,7 +207,6 @@ namespace win32
         ReleaseDC(NULL, hdcScreen);
         return logfont;
     }
-
 
     handle_t instance()
     {

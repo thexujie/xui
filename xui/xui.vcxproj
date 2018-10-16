@@ -101,21 +101,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="win32\Bitmap.cpp" />
-    <ClCompile Include="win32\com_ptr.cpp" />
-    <ClCompile Include="win32\dll.cpp" />
-    <ClCompile Include="win32\GDIObjectCache.cpp" />
     <ClCompile Include="win32\Win32App.cpp" />
-    <ClCompile Include="win32\windows.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="win32\Bitmap.h" />
-    <ClInclude Include="win32\com_ptr.h" />
-    <ClInclude Include="win32\dll.h" />
-    <ClInclude Include="win32\GDIObjectCache.h" />
     <ClInclude Include="win32\Win32App.h" />
-    <ClInclude Include="win32\windows.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\x\x.vcxproj">

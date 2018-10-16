@@ -59,9 +59,6 @@
     <ClCompile Include="core\core.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="win32\windows.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="drawing\skia\SkShaper.cpp">
       <Filter>drawing\skia</Filter>
     </ClCompile>
@@ -197,6 +194,9 @@
     <ClCompile Include="ui\controls\Spacer.cpp">
       <Filter>ui\controls</Filter>
     </ClCompile>
+    <ClCompile Include="win32\win32.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -286,9 +286,6 @@
     </ClInclude>
     <ClInclude Include="core\vec4.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\windows.h">
-      <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="win32\win32.h">
       <Filter>win32</Filter>

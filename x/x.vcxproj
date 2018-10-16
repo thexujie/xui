@@ -172,7 +172,7 @@
     <ClCompile Include="ui\Scene.cpp" />
     <ClCompile Include="win32\ImeContext.cpp" />
     <ClCompile Include="win32\Window.cpp" />
-    <ClCompile Include="win32\windows.cpp" />
+    <ClCompile Include="win32\win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\block_ptr.h" />
@@ -266,7 +266,6 @@
     <ClInclude Include="win32\ImeContext.h" />
     <ClInclude Include="win32\win32.h" />
     <ClInclude Include="win32\Window.h" />
-    <ClInclude Include="win32\windows.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="core\math\xmf_base.inl" />

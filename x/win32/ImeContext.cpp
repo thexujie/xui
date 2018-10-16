@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ImeContext.h"
-#include "win32/windows.h"
+#include "win32/win32.h"
 #include <Imm.h>
 #pragma comment(lib, "imm32.lib")
 

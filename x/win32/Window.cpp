@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Window.h"
-#include "win32/windows.h"
+#include "win32/win32.h"
 
 namespace win32
 {

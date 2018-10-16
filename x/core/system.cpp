@@ -3,7 +3,7 @@
 #include "path.h"
 #include "string.h"
 
-#include "win32/windows.h"
+#include "win32/win32.h"
 #include <shlobj.h>
 
 namespace core

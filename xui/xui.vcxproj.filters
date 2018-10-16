@@ -2,46 +2,16 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="win32\windows.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="main\main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="win32\Bitmap.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\GDIObjectCache.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="win32\Win32App.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\com_ptr.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\dll.cpp">
       <Filter>win32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="win32\windows.h">
-      <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\Bitmap.h">
-      <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\GDIObjectCache.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="win32\Win32App.h">
-      <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\com_ptr.h">
-      <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\dll.h">
       <Filter>win32</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "object.h"
-#include "win32/windows.h"
+#include "win32/win32.h"
 
 namespace core
 {
