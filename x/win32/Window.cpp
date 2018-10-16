@@ -822,6 +822,7 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, false);
         _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
+        s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::click);
         s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
         return 0;
     }
