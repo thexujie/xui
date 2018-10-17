@@ -193,8 +193,8 @@ void xui_main()
     // 标题栏
     {
         auto title = std::make_shared<xui::controls::XTitleBar>();
-        title->setSize({ 100_per, 1.6_em });
-        title->setBackgroundColor(0xffd6dbe9);
+        title->setSize({ 100_per, 1.8_em });
+        title->setBackgroundColor(0xfff1f1f0);
         //{
         //    auto rbtn = std::make_shared<ui::controls::Button>();
         //    rbtn->setText(u8"标题栏上的按钮");
@@ -432,13 +432,13 @@ void xui_main()
     }
     form->addControl(layer);
 
-    //auto inter = [](const core::color32 & s, const core::color32 & e, float32_t inter)-> core::color32
+    //auto inter = [](const core::color & s, const core::color & e, float32_t inter)-> core::color
     //{
     //    auto a = s.a + (e.a - s.a) * inter;
     //    auto r = s.r + (e.r - s.r) * inter;
     //    auto g = s.g + (e.g - s.g) * inter;
     //    auto b = s.b + (e.b - s.b) * inter;
-    //    return core::color32(a, r, g, b);
+    //    return core::color(a, r, g, b);
     //};
 
     //auto prop = props.at("background-color");
@@ -450,7 +450,7 @@ void xui_main()
     //    if (!control->is_type_of<ui::controls::Button>())
     //        continue;
 
-    //    auto interpolator = make_interpolator<core::color32>(inter);
+    //    auto interpolator = make_interpolator<core::color>(inter);
     //    prop->serialize("red", interpolator->start());
     //    prop->serialize("green", interpolator->end());
 

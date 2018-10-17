@@ -204,7 +204,7 @@
     <ClInclude Include="core\attribute.h" />
     <ClInclude Include="core\base64.h" />
     <ClInclude Include="core\bitflag.h" />
-    <ClInclude Include="core\color32.h" />
+    <ClInclude Include="core\color.h" />
     <ClInclude Include="core\core.h" />
     <ClInclude Include="core\counter_fps.h" />
     <ClInclude Include="core\datetime.h" />

@@ -108,7 +108,7 @@ namespace ui
         return asize;
     }
 
-    const core::color32 & Control::color() const
+    const core::color & Control::color() const
     {
         if (_color.available())
             return _color;

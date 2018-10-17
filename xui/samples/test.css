@@ -81,6 +81,7 @@
 
 
 .shapebutton {
+    shape-color: #f444;
     padding: 1em 0.5em;
     background-color: #0000;
     margin: 0.2em;
@@ -88,10 +89,10 @@
 }
 
 .shapebutton:hover {
-    background-color: #a888;
+    background-color: #f666;
 }
 
 .shapebutton:active {
-    background-color: #a2f2;
+    background-color: #f888;
     transition-duration: 200ms
 }

@@ -27,6 +27,7 @@ namespace xui::controls
     void ShapeButton::propertyTableCallback(core::property_table & properties)
     {
         Control::propertyTableCallback(properties);
+        properties["shape-color"] = core::make_accessor(&ShapeButton::_setShapeColor, &ShapeButton::_shape_color, core::parseColor, nullptr);
     }
 
     void ShapeButton::propertyTable(core::property_table & properties)
@@ -65,8 +66,17 @@ namespace xui::controls
             //matrix *= core::float3x2::translate(box.x + box.cx * 0.5f, box.y + box.cy * 0.5f);
             //matrix *= core::float3x2::scale(box.cx, box.cy);
             //matrix *= core::float3x2::translate(box.x, box.y);
-            graphics.drawPath(path, drawing::PathStyle().stoke(core::colors::Red, calc(1.5_px)));
+            graphics.drawPath(path, drawing::PathStyle().stoke(_shape_color, calc(1.5_px)));
         }
         _drawBorder(graphics);
+    }
+
+    void ShapeButton::_setShapeColor(core::color color)
+    {
+        if(_shape_color != color)
+        {
+            _shape_color = color;
+            invalidate();
+        }
     }
 }

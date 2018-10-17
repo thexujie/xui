@@ -32,7 +32,7 @@ namespace drawing
         assert(_statistics.save == _statistics.restore);
     }
 
-    void Graphics::clear(core::color32 color)
+    void Graphics::clear(core::color color)
     {
         if (!_native)
             return;
@@ -487,7 +487,7 @@ namespace drawing
         _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), &paint);
     }
 
-    void Graphics::fillPath(path_source & path, core::color32 color)
+    void Graphics::fillPath(path_source & path, core::color color)
     {
         ++_statistics.fillPath;
         if (!_native)

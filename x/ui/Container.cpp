@@ -122,9 +122,12 @@ namespace ui
     void Container::ondraw(drawing::Graphics & graphics, const drawing::Region & region) const
     {
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
-        std::lock_guard lock(*this);        
+        std::lock_guard lock(*this);
         if (a != 0xff)
             graphics.saveLayer(box(), a);
+        //else
+            //graphics.saveLayer(box(), a);
+        //graphics.setClipRect(_rect);
         _drawBackground(graphics);
         for (auto & control : _controls)
         {
@@ -134,7 +137,7 @@ namespace ui
         }
         _drawBorder(graphics);
         if (a != 0xff)
-            graphics.restore();
+        graphics.restore();
     }
 
     std::shared_ptr<Control> Container::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const

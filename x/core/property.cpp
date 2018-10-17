@@ -24,7 +24,7 @@ namespace core
         return std::string(str.data(), str.length());
     }
 
-    core::color32 parseColor(const std::string & str)
+    core::color parseColor(const std::string & str)
     {
         if (str.empty())
             return colors::Auto;
@@ -102,21 +102,21 @@ namespace core
         return colors::Auto;
     }
 
-    core::vec2<core::color32> parseColor2D(const std::string & str)
+    core::vec2<core::color> parseColor2D(const std::string & str)
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return core::vec2<core::color32>{ parseColor(strs[0])};
+            return core::vec2<core::color>{ parseColor(strs[0])};
         if (strs.size() == 2)
             return { parseColor(strs[0]), parseColor(strs[1]) };
         return {};
     }
 
-    core::vec4<core::color32> parseColor4D(const std::string & str)
+    core::vec4<core::color> parseColor4D(const std::string & str)
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return core::vec4<core::color32>{ parseColor(strs[0])};
+            return core::vec4<core::color>{ parseColor(strs[0])};
         if (strs.size() == 2)
             return { parseColor(strs[0]), parseColor(strs[1]) };
         if (strs.size() == 4)

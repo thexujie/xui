@@ -276,9 +276,9 @@ namespace core
 
     bool parseBool(const std::string & str);
     std::string parseString(const std::string & str);
-    core::color32 parseColor(const std::string & str);
-    core::vec2<core::color32> parseColor2D(const std::string & str);
-    core::vec4<core::color32> parseColor4D(const std::string & str);
+    core::color parseColor(const std::string & str);
+    core::vec2<core::color> parseColor2D(const std::string & str);
+    core::vec4<core::color> parseColor4D(const std::string & str);
     core::dimensionf parseDimension(const std::string & str);
     core::vec2<core::dimensionf> parseDimension2D(const std::string & str);
     core::vec4<core::dimensionf> parseDimension4D(const std::string & str);
@@ -357,13 +357,13 @@ namespace core
     };
 
     template<>
-    inline core::color32 property_interpolator_calc<core::color32>(const core::color32 & s, const core::color32 & e, float32_t proportion)
+    inline core::color property_interpolator_calc<core::color>(const core::color & s, const core::color & e, float32_t proportion)
     {
         auto a = s.a + (e.a - s.a) * proportion;
         auto r = s.r + (e.r - s.r) * proportion;
         auto g = s.g + (e.g - s.g) * proportion;
         auto b = s.b + (e.b - s.b) * proportion;
-        return core::color32(uint8_t(a), uint8_t(r), uint8_t(g), uint8_t(b));
+        return core::color(uint8_t(a), uint8_t(r), uint8_t(g), uint8_t(b));
     }
 
 

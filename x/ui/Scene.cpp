@@ -21,12 +21,11 @@ namespace ui
         }
     }
 
-    void Scene::invalid(const core::rc32f & rect)
+    void Scene::invalidate(const core::rc32f & rect)
     {
         {
             std::lock_guard<std::mutex> lock(_mtx);
             auto rc = rect.ceil<int32_t>();
-            _invalid_rect.unite(rc);
             _invalid_region.addRect(rc);
         }
 
@@ -210,21 +209,19 @@ namespace ui
             drawing::Region invalid_region;
             {
                 std::lock_guard<std::mutex> lock(_mtx);
-                invalid_rect = std::move(_invalid_rect);
                 invalid_region = std::move(_invalid_region);
-                _invalid_rect.clear();
-                _invalid_region.clear();
             }
 
-            if (invalid_rect.empty())
+            if (invalid_region.empty())
                 continue;
 
             auto tms = core::datetime::high_resolution_s();
             if (!_draw_buffer)
                 _draw_buffer = std::make_shared<drawing::Surface>();
 
-            if (_draw_buffer->size().cx < invalid_rect.right() || _draw_buffer->size().cy < invalid_rect.bottom())
-                _draw_buffer->resize(core::si32i{ invalid_rect.right(), invalid_rect.bottom() });
+            auto bounds = invalid_region.bounds();
+            if (_draw_buffer->size().cx < bounds.right() || _draw_buffer->size().cy < bounds.bottom())
+                _draw_buffer->resize(core::si32i{ bounds.right(), bounds.bottom() });
 
             drawing::Graphics graphics(_draw_buffer);
             graphics.save();
@@ -252,7 +249,7 @@ namespace ui
             //rendered(core::rc32i{{}, _draw_buffer ->size()});
 
             std::unique_lock<std::mutex> lock(_mtx);
-            _cv_render.wait(lock, [this]() {return !_invalid_rect.empty() || _exit; });
+            _cv_render.wait(lock, [this]() {return !_invalid_region.empty() || _exit; });
         }
     }
 

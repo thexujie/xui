@@ -97,7 +97,7 @@ namespace ui
     void Form::invalidate(const core::rc32f & rect)
     {
         if(_form_scene)
-            _form_scene->invalid(rect.intersected(core::rc32f(core::pt32f(), realSize())));
+            _form_scene->invalidate(rect.intersected(core::rc32f(core::pt32f(), realSize())));
     }
 
     std::shared_ptr<Control> Form::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const

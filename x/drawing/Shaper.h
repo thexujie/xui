@@ -351,7 +351,7 @@ namespace drawing
         void setColor(span32 range, uint32_t color);
 
     public:
-        core::error itermize(std::string text, const drawing::font & font, core::color32 color);
+        core::error itermize(std::string text, const drawing::font & font, core::color color);
         core::error layout();
 
         core::si32f bounds() const;

@@ -138,7 +138,7 @@ namespace core
 #include "core/system.h"
 #include "core/logger.h"
 #include "core/path.h"
-#include "core/color32.h"
+#include "core/color.h"
 #include "core/object.h"
 #include "core/counter_fps.h"
 #include "core/event.h"

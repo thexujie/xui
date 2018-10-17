@@ -83,7 +83,7 @@ namespace ui
         void setParent(std::shared_ptr<Container> parent) { _parent = parent; }
         std::shared_ptr<Container> parent() const { return _parent.lock(); }
 
-        const core::color32 & color() const;
+        const core::color & color() const;
         void setFont(const drawing::font & font);
         const drawing::font & font() const;
 
@@ -138,7 +138,7 @@ namespace ui
         void rearrange();
         void restyle();
 
-        void setBackgroundColor(core::color32 color)
+        void setBackgroundColor(core::color color)
         {
             if (!_background_color.available() || _background_color != color)
             {
@@ -147,7 +147,7 @@ namespace ui
             }
         }
 
-        core::color32 backgroundColor() const { return _background_color; }
+        core::color backgroundColor() const { return _background_color; }
 
         void setBackgroundImage(std::shared_ptr<drawing::Image> image);
         std::shared_ptr<drawing::Image> backgroundImage() const;
@@ -177,10 +177,10 @@ namespace ui
 
         const core::vec4<core::dimensionf> & padding() const { return _padding; }
 
-        void setBorderColors(const core::vec4<core::color32> & boderColors) { _border_colors = boderColors; }
-        const core::vec4<core::color32> & borderColors() const { return _border_colors; }
+        void setBorderColors(const core::vec4<core::color> & boderColors) { _border_colors = boderColors; }
+        const core::vec4<core::color> & borderColors() const { return _border_colors; }
         void setBorderStyles(const core::vec4<drawing::stroke_style> & boderStyles) { _border_styles = boderStyles; }
-        const core::vec4<core::color32> & boderColors() const { return _border_colors; }
+        const core::vec4<core::color> & boderColors() const { return _border_colors; }
         std::array<core::pt32f, 4> boderPoints(core::align edge) const;
         std::array<core::pt32f, 2> boderLine(core::align edge) const;
 
@@ -242,14 +242,14 @@ namespace ui
         int32_t _zvalue = ZVALUE_CONTENT;
         layout_origin _layout_origin = layout_origin::layout;
 
-        core::attribute<core::color32> _color = core::colors::Auto;
+        core::attribute<core::color> _color = core::colors::Auto;
         // 控件大小，包括 padding，不包括 margin。
         core::attribute<core::vec2<core::dimensionf>> _pos;
         core::attribute<core::vec2<core::dimensionf>> _size;
         core::attribute<core::vec2<float32_t>> _fixed_aspect;
         core::attribute<core::vec4<core::dimensionf>> _padding;
         core::attribute<core::vec4<core::dimensionf>> _border;
-        core::attribute<core::vec4<core::color32>> _border_colors;
+        core::attribute<core::vec4<core::color>> _border_colors;
         core::attribute<core::vec4<drawing::stroke_style>> _border_styles;
         core::attribute<core::vec4<core::dimensionf>> _margin;
         core::attribute<core::vec2<core::dimensionf>> _min_size = core::vec2{ core::auto_value , core::auto_value };
@@ -263,7 +263,7 @@ namespace ui
         core::attribute<bool> _visible = true;
         // background
         core::attribute<std::shared_ptr<drawing::Image>> _background_image;
-        core::attribute<core::color32> _background_color = core::colors::Auto;
+        core::attribute<core::color> _background_color = core::colors::Auto;
         layout_origin _background_position;
         core::attribute<core::vec2<core::dimensionf>> _background_size;
         core::vec2<image_fitting> _background_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);

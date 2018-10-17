@@ -15,7 +15,7 @@ namespace drawing
             return *this;
         }
 
-        StringFormat & color(core::color32 color_)
+        StringFormat & color(core::color color_)
         {
             _color = color_;
             return *this;
@@ -42,7 +42,7 @@ namespace drawing
         void apply(SkPaint & paint) const;
 
         drawing::font _font;
-        core::color32 _color = core::colors::Black;
+        core::color _color = core::colors::Black;
         core::aligns _align = core::align::leftTop;
         bool _lcd = true;
         bool _hint = true;

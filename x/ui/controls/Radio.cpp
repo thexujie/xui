@@ -124,7 +124,7 @@ namespace ui::controls
         }
     }
 
-    void Radio::_setHoleColor(core::color32 color)
+    void Radio::_setHoleColor(core::color color)
     {
         if(_hole_color != color)
         {
@@ -142,7 +142,7 @@ namespace ui::controls
         }
     }
 
-    void Radio::_setHoleBorderColor(core::color32 color)
+    void Radio::_setHoleBorderColor(core::color color)
     {
         if (_hole_border_color != color)
         {

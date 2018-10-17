@@ -20,6 +20,6 @@ namespace drawing
         std::shared_ptr<SkColorFilter> _native;
 
     public:
-        static std::shared_ptr<ColorFilter> createBlendMode(core::color32 color, blend_mode mode);
+        static std::shared_ptr<ColorFilter> createBlendMode(core::color color, blend_mode mode);
     };
 }

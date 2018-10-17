@@ -208,7 +208,7 @@ namespace drawing
         std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
     }
 
-    core::error TextClusterizer::itermize(std::string text, const drawing::font & font_default, core::color32 color_default)
+    core::error TextClusterizer::itermize(std::string text, const drawing::font & font_default, core::color color_default)
     {
 
         //SkShaper shaper(SkTypeface::MakeFromName(_font_default.family.c_str(), skia::from(_font_default.style)));

@@ -17,14 +17,14 @@ namespace ui::controls
 
         std::string styleName() const override;
 
-        void setBarColor(const core::color32 & color) { if (_bar_color != color) { _bar_color = color; refresh(); } }
-        const core::color32 & barColor() const { return _bar_color; }
+        void setBarColor(const core::color & color) { if (_bar_color != color) { _bar_color = color; refresh(); } }
+        const core::color & barColor() const { return _bar_color; }
 
         void setBarBorder(const core::dimensionf & border) { if (_bar_border != border) { _bar_border = border; refresh(); } }
         const core::dimensionf & barBorder() const { return _bar_border; }
 
-        void setBarBorderColor(const core::color32 & color) { if (_bar_border_color != color) { _bar_border_color = color; refresh(); } }
-        const core::color32 & barBorderColor() const { return _bar_border_color; }
+        void setBarBorderColor(const core::color & color) { if (_bar_border_color != color) { _bar_border_color = color; refresh(); } }
+        const core::color & barBorderColor() const { return _bar_border_color; }
 
         void setBarBorderStyle(const drawing::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; refresh(); } }
         const drawing::stroke_style & barBorderStyle() const { return _bar_border_style; }
@@ -70,9 +70,9 @@ namespace ui::controls
         core::align _direction = core::align::top;
 
         // bar
-        core::attribute<core::color32> _bar_color;
+        core::attribute<core::color> _bar_color;
         core::attribute<core::dimensionf> _bar_border;
-        core::attribute<core::color32> _bar_border_color;
+        core::attribute<core::color> _bar_border_color;
         core::attribute<drawing::stroke_style> _bar_border_style;
 
         float32_t _min = 0.0f;

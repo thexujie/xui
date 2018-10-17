@@ -40,8 +40,7 @@ namespace ui
         std::shared_ptr<CursorContext> cursorContext() const { return _cursor_context; }
 
         std::shared_ptr<drawing::GraphicsDevice> bitmap() const { return _draw_buffer; }
-        void invalid(const core::rc32f & rect);
-        const core::rc32i & invalidRect() const { return _invalid_rect; }
+        void invalidate(const core::rc32f & rect);
 
         std::shared_ptr<drawing::GraphicsDevice> readBegin();
         void readEnd();
@@ -83,10 +82,9 @@ namespace ui
         std::thread _th_render;
         std::atomic_bool _exit = false;
 
-        core::rc32i _invalid_rect;
         drawing::Region _invalid_region;
         std::weak_ptr<Control> _control;
-        core::color32 _color_default = core::colors::AliceBlue;
+        core::color _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
 

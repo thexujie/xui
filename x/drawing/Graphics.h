@@ -83,7 +83,7 @@ namespace drawing
         ~Graphics();
 
     public:
-        void clear(core::color32 color);
+        void clear(core::color color);
         void save();
         void saveLayer(const core::rc32f & bounds, uint8_t alpha);
         void restore();
@@ -122,7 +122,7 @@ namespace drawing
 
     public:
         const drawcall_statistics & statistics() const { return _statistics; }
-        void fillPath(path_source & path, core::color32 color);
+        void fillPath(path_source & path, core::color color);
         fontmetrics GetFontMetrics(font font);
         core::si32i MeasureString(std::string str, font font);
 

@@ -248,9 +248,6 @@
     <ClInclude Include="core\app.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="core\color32.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="core\object.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -475,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="ui\base\Button.h">
       <Filter>ui\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\color.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -81,14 +81,14 @@ namespace drawing
             return *this;
         }
 
-        PathStyle & fill(core::color32 color)
+        PathStyle & fill(core::color color)
         {
             _mode = PathMode::Fill;
             _color = color;
             return *this;
         }
 
-        PathStyle & stoke(core::color32 color, float32_t width = 1.0f, stroke_style stroke_style = stroke_style::solid)
+        PathStyle & stoke(core::color color, float32_t width = 1.0f, stroke_style stroke_style = stroke_style::solid)
         {
             _mode = PathMode::Stroke;
             _stroke_style = stroke_style;
@@ -133,7 +133,7 @@ namespace drawing
         join_style _join_style = join_style::miter;
         float32_t _width = 1.0f;
         float32_t _miter = std::nanf("0");
-        core::color32 _color = core::colors::Transparent;
+        core::color _color = core::colors::Transparent;
         bool _aa = true;
     };
 
