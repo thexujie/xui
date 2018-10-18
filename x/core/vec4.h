@@ -192,10 +192,8 @@ namespace core
 
         vec4 intersected(const vec4 & another) const
         {
-            if (another.empty())
-                return *this;
-            else if (empty())
-                return another;
+            if (another.empty() || empty())
+                return vec4();
             else
             {
                 T x_min = std::max(x, another.x);

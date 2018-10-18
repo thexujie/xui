@@ -529,7 +529,6 @@ namespace ui
 
     void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to)
     {
-        refresh();
         posChanged(from, to);
     }
 
@@ -584,7 +583,7 @@ namespace ui
                         path.fromPoints(std::begin(points), std::end(points), true);
 
                         graphics.save();
-                        graphics.setClipPath(path);
+                        //graphics.setClipPath(path);
                         graphics.drawLine(line[0], line[1], style);
                         graphics.restore();
                     }
