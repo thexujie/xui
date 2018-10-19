@@ -476,8 +476,8 @@ namespace ui
     void Control::update()
     {
         check_invoke();
+		_delay_update = false;
 
-        _delay_update = false;
         auto s = scene();
         auto p = parent();
         if (!s || !p)
@@ -511,17 +511,17 @@ namespace ui
         return num;
     }
 
-    void Control::ondraw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Control::ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
         if (a != 0xff)
             graphics.saveLayer(box(), a);
-        draw(graphics, region);
+        draw(graphics, clip);
         if (a != 0xff)
             graphics.restore();
     }
 
-    void Control::draw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Control::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
         _drawBackground(graphics);
         _drawBorder(graphics);

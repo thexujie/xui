@@ -494,7 +494,10 @@ void xui_main()
 
 int main()
 {
-    SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+	HMODULE Shcore = GetModuleHandleW(L"Shcore.dll");
+	auto pfn_SetProcessDpiAwareness = (decltype(SetProcessDpiAwareness) *)GetProcAddress(Shcore, "SetProcessDpiAwareness");
+	if(pfn_SetProcessDpiAwareness)
+		pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 
     auto app = std::make_shared<win32::Win32App>();
     xui_main();

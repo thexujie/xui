@@ -83,7 +83,7 @@ namespace ui::controls
             return "textline";
     }
 
-    void TextLine::draw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void TextLine::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
         auto cbox = contentBox();
         std::lock_guard l(*this);

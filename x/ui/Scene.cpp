@@ -31,7 +31,8 @@ namespace ui
 
         if (!_th_render.joinable())
             _th_render = std::thread(std::bind(&Scene::renderThread, this));
-        _cv_render.notify_all();
+		if(control()->updateCompleted())
+			_cv_render.notify_all();
     }
 
     std::shared_ptr<drawing::GraphicsDevice> Scene::readBegin()
@@ -88,6 +89,14 @@ namespace ui
         case mouse_action::enter:
             _updateMouseArea(state, action);
             break;
+		case mouse_action::leave:
+			if(_captured_control)
+			{
+				captured(false);
+				_captured_control = nullptr;
+			}
+			_updateMouseArea(state, action);
+			break;
         case mouse_action::move:
             _updateMouseArea(state, action);
             if (_current_control)
@@ -113,7 +122,10 @@ namespace ui
             if (_current_control)
             {
                 if (_current_control->captureButtons())
+                {
+					_captured_control = _current_control;
                     captured(true);
+                }
                 _current_control->onMouseDown(state, button);
             }
             else{}
@@ -144,11 +156,14 @@ namespace ui
             break;
         case mouse_action::release:
             if (_current_control)
-            {
                 _current_control->onMouseUp(state, button);
-                if (_current_control->captureButtons())
-                    captured(false);
-            }
+
+			if(_captured_control && !state.buttons().any())
+			{
+				captured(false);
+				_captured_control = nullptr;
+			}
+
             _updateMouseArea(state, action);
             break;
         default:
@@ -185,6 +200,9 @@ namespace ui
 
     void Scene::_updateMouseArea(const input_state & state, mouse_action action)
     {
+		if(_captured_control)
+			return;
+
         auto ma = action == mouse_action::leave || !state.hoving() ?  nullptr : control()->findChild(state.pos());
         // do not update while capturing one or more button(s)
         if (_current_control != ma &&
@@ -223,15 +241,15 @@ namespace ui
             if (_draw_buffer->size().cx < bounds.right() || _draw_buffer->size().cy < bounds.bottom())
                 _draw_buffer->resize(core::si32i{ bounds.right(), bounds.bottom() });
 
+			auto boundsf = bounds.to<float32_t>();
             drawing::Graphics graphics(_draw_buffer);
             graphics.save();
-            //graphics.setClipRect(invalid_rect.to<float32_t>(), true);
-            graphics.setClipRegion(invalid_region);
+            graphics.setClipRect(bounds.to<float32_t>(), true);
             graphics.clear(0);
             auto c = control();
             if (!c)
                 continue;
-            c->ondraw(graphics, invalid_region);
+            c->ondraw(graphics, boundsf);
             graphics.restore();
             static bool save = false;
             if (save)
@@ -245,7 +263,7 @@ namespace ui
             //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
 
             //invoke([this, region = std::move(invalid_region)]() { rendered(region); });
-            rendered(invalid_region);
+            rendered(bounds);
             //rendered(core::rc32i{{}, _draw_buffer ->size()});
 
             std::unique_lock<std::mutex> lock(_mtx);

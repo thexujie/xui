@@ -12,7 +12,7 @@ namespace ui::controls
 
         core::si32f contentSize() const override;
 
-        void draw(drawing::Graphics & graphics, const drawing::Region & region) const override;
+        void draw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
     private:
         void _confirmBlob() const;
 

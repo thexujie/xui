@@ -43,7 +43,8 @@ namespace drawing
         paint.setColor(_color);
         paint.setStrokeWidth(_width);
         paint.setStyle(skia::from(_mode));
-        paint.setStrokeJoin(skia::from(_join_style));
+		paint.setBlendMode(skia::from(_blend_mode));
+		paint.setStrokeJoin(skia::from(_join_style));
         if (!std::isnan(_miter))
             paint.setStrokeMiter(_miter);
         if(_mode == PathMode::Stroke)

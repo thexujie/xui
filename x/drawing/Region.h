@@ -9,7 +9,11 @@ namespace drawing
     public:
         Region() = default;
         Region(const Region & another);
-        Region(Region && another) noexcept : _native(std::move(another._native)) {}
+        Region(Region && another) noexcept : _native(std::move(another._native)) 
+#ifdef _DEBUG
+		, _rects(std::move(another._rects))
+#endif
+    	{}
         ~Region();
 
         void clear();
@@ -41,6 +45,9 @@ namespace drawing
         const SkRegion * native_ptr() const { return _native.get(); }
     private:
         std::shared_ptr<SkRegion> _native;
+#ifdef _DEBUG
+		std::vector<core::rc32i> _rects;
+#endif
     };
 
     class RegionIterator

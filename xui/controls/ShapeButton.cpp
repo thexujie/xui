@@ -50,7 +50,7 @@ namespace xui::controls
             return "shapebutton";
     }
 
-    void ShapeButton::draw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void ShapeButton::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
         auto b = box();
         std::lock_guard l(*this);

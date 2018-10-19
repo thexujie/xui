@@ -40,7 +40,7 @@ namespace ui::controls
             return "scrollbar";
     }
 
-    void ScrollBar::draw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void ScrollBar::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
         std::lock_guard l(*this);
         _drawBackground(graphics);

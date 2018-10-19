@@ -206,12 +206,13 @@ namespace ui
         virtual void updateStyle();
         virtual void update();
         void invalidate() { invalidate(_rect); }
-        virtual void invalidate(const core::rc32f & rect);
+		virtual void invalidate(const core::rc32f & rect);
+		virtual bool updateCompleted() const { return !_delay_update; }
 
         virtual int32_t animate();
 
-        virtual void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const;
-        virtual void draw(drawing::Graphics & graphics, const drawing::Region & region) const;
+        virtual void ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const;
+        virtual void draw(drawing::Graphics & graphics, const core::rc32f & clip) const;
 
         virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const { return nullptr; }
 

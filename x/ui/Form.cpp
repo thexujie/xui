@@ -128,9 +128,9 @@ namespace ui
         Container::onSizeChanged(from, to);
     }
 
-    void Form::ondraw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Form::ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
-        Container::ondraw(graphics, region);
+        Container::ondraw(graphics, clip);
     }
 
     hittest_form Form::hitTestForm(const core::pt32f & pos) const

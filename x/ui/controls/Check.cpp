@@ -54,7 +54,7 @@ namespace ui::controls
             return "radio";
     }
 
-    void Check::draw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Check::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
         auto box = paddingBox();
         auto fm = drawing::fontmetrics(font());

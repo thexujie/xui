@@ -29,7 +29,7 @@ namespace ui::controls
         void setBarBorderStyle(const drawing::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; refresh(); } }
         const drawing::stroke_style & barBorderStyle() const { return _bar_border_style; }
 
-        void draw(drawing::Graphics & graphics, const drawing::Region & region) const override;
+        void draw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
     public:
         float32_t value() const { return _val; }
         float32_t minValue() const { return _min; }

@@ -56,8 +56,7 @@ namespace win32
         auto scene = form->scene();
         form->shownChanged += std::weak_bind(&Window::onShownChanged, share_ref<Window>(), std::placeholders::_1);
         form->stylesChanged += std::weak_bind(&Window::onStylesChanged, share_ref<Window>(), std::placeholders::_1);
-        scene->rendered += std::weak_bind(&Window::onSceneRendered, share_ref<Window>(), std::placeholders::_1);
-        scene->rendered2 += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
+        scene->rendered += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
         scene->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
         scene->evented += std::weak_bind(&Window::onSceneEvented, share_ref<Window>(), std::placeholders::_1);
         if (_ime_context)
@@ -286,13 +285,9 @@ namespace win32
 
     void Window::onSceneCaptured(bool capture)
     {
-        if (!can_safe_invoke())
-        {
-            invoke([this, capture]() { onSceneCaptured(capture); });
-            return;
-        }
+		check_invoke();
 
-        HWND hwnd = (HWND)_handle;
+    	HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
@@ -467,36 +462,62 @@ namespace win32
 
     void Window::_render(const core::rc32i & rect)
     {
-        //auto f = form();
-        //if (!f)
-        //    return;
 
-        //auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+		auto f = form();
+		if(!f)
+			return;
 
-        //auto scene = f->scene();
-        //std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
+		HWND hwnd = (HWND)_handle;
+		if(!hwnd)
+			return;
 
-        //HWND hwnd = (HWND)_handle;
-        //if (!hwnd)
-        //    return;
+		auto scene = f->scene();
+		std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
+		if(!bitmap)
+			return;
 
-        //drawing::bitmap_buffer buffer = bitmap->buffer();
-        //BITMAPINFO bmi;
-        //memset(&bmi, 0, sizeof(bmi));
-        //bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        //bmi.bmiHeader.biWidth = buffer.size.cx;
-        //bmi.bmiHeader.biHeight = -buffer.size.cy;
-        //bmi.bmiHeader.biPlanes = 1;
-        //bmi.bmiHeader.biBitCount = 32;
-        //bmi.bmiHeader.biCompression = BI_RGB;
-        //bmi.bmiHeader.biSizeImage = 0;
+		if(_form_styles.all(ui::form_style::layered))
+		{
+			auto rcwindow = _rect();
+			POINT pos_dst = { rcwindow.x, rcwindow.y };
+			SIZE size_dst = { rcwindow.cx, rcwindow.cy };
+			POINT pos_src = { 0, 0 };
+			BLENDFUNCTION bf = { 0 };
+			bf.AlphaFormat = AC_SRC_ALPHA;
+			bf.BlendFlags = 0;
+			bf.BlendOp = AC_SRC_OVER;
+			bf.SourceConstantAlpha = 0xFF;
+			UpdateLayeredWindow(hwnd, NULL, &pos_dst, &size_dst, (HDC)bitmap->hdc(), &pos_src, 0, &bf, ULW_ALPHA);
+		}
+		else
+		{
+			HDC hdst = GetDC(hwnd);
+			HDC hsrc = (HDC)bitmap->hdc();
+			if(hsrc)
+			{
+				BitBlt(hdst, rect.x, rect.y, rect.cx, rect.cy, hsrc, rect.x, rect.y, SRCCOPY);
+			}
+			else
+			{
+				drawing::bitmap_buffer buffer = bitmap->buffer();
+				BITMAPINFO bmi;
+				memset(&bmi, 0, sizeof(bmi));
+				bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+				bmi.bmiHeader.biWidth = buffer.size.cx;
+				bmi.bmiHeader.biHeight = -buffer.size.cy;
+				bmi.bmiHeader.biPlanes = 1;
+				bmi.bmiHeader.biBitCount = 32;
+				bmi.bmiHeader.biCompression = BI_RGB;
+				bmi.bmiHeader.biSizeImage = 0;
 
-        //HDC hdc = GetDC(hwnd);
-        //SetDIBitsToDevice(hdc, 
-        //    rc.x, rc.y, rc.cx, rc.cy, 
-        //    rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
-        //scene->readEnd();
-        //ReleaseDC(hwnd, hdc);
+				auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+				SetDIBitsToDevice(hdst,
+					rc.x, rc.y, rc.cx, rc.cy,
+					rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+			}
+			ReleaseDC(hwnd, hdst);
+		}
+		scene->readEnd();
     }
 
     void Window::_render(const drawing::Region & region)

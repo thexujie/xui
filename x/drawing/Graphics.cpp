@@ -217,6 +217,46 @@ namespace drawing
         _native->drawPath(path->native(), paint);
     }
 
+	void Graphics::drawRegion(const Region & region, const PathStyle & style)
+	{
+		++_statistics.drawPath;
+		if(!_native)
+			return;
+
+		SkPaint paint;
+		style.apply(paint);
+		apply(paint);
+		_native->drawRegion(region.native(), paint);
+	}
+
+	void Graphics::drawRegion(const std::shared_ptr<drawing::Region> & region, const PathStyle & style)
+	{
+		++_statistics.drawPath;
+		if(!_native)
+			return;
+
+		SkPaint paint;
+		////{
+		////    SkScalar scale = 10.0f;
+		////    SkPath path;
+		////    static const int8_t pts[] = { 2, 2, 1, 3, 0, 3, 2, 1, 3, 1,
+		////        4, 0, 4, 1, 5, 1, 4, 2, 4, 3, 2, 5, 2, 4, 3, 3, 2, 3 };
+		////    path.moveTo(2 * scale, 3 * scale);
+		////    for (size_t i = 0; i < sizeof(pts) / sizeof(pts[0]); i += 2)
+		////    {
+		////        path.lineTo(pts[i] * scale, pts[i + 1] * scale);
+		////    }
+		////    path.close();
+		////    SkMatrix matrix = SkMatrix::MakeScale(4 * scale);
+		////    SkPaint paint;
+		////    paint.setPathEffect(SkPath2DPathEffect::Make(matrix, path));
+		////    paint.setAntiAlias(true);
+		////}
+		style.apply(paint);
+		apply(paint);
+		_native->drawRegion(region->native(), paint);
+	}
+
     void Graphics::drawString(const std::string & str, const core::pt32f & pos, const StringFormat & format)
     {
         ++_statistics.drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref;

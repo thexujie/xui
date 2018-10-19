@@ -75,6 +75,12 @@ namespace drawing
             return *this;
         }
 
+		PathStyle & blend(blend_mode bmode)
+		{
+			_blend_mode = bmode;
+			return *this;
+		}
+
         PathStyle & width(float32_t width)
         {
             _width = width;
@@ -129,6 +135,7 @@ namespace drawing
         bool operator != (const PathStyle & another) const { return !operator==(another); }
 
         PathMode _mode = PathMode::Stroke;
+		blend_mode _blend_mode = blend_mode::src_over;
         stroke_style _stroke_style = stroke_style::none;
         join_style _join_style = join_style::miter;
         float32_t _width = 1.0f;

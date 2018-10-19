@@ -187,6 +187,7 @@ namespace core
             ++_loop_index;
             if (_loop <= 0 || _loop_index >= _loop)
             {
+				_interpolator->interpolate(*object, *_accessor, _curve(1.0f));
                 setState(animation_state::waiting);
                 return false;
             }

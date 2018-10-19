@@ -37,11 +37,12 @@ namespace ui
         void update() override;
         using Control::invalidate;
         void invalidate(const core::rc32f & rect) override;
+		bool updateCompleted() const override;
         int32_t animate() override;
 
     public:
         core::aligns wheelFreedom() const override;
-        void ondraw(drawing::Graphics & graphics, const drawing::Region & region) const override;
+        void ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
         std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
 
         void onPosChanged(const core::pt32f & from, const core::pt32f & to) override;

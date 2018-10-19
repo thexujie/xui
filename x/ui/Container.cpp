@@ -106,6 +106,19 @@ namespace ui
         }
     }
 
+	bool Container::updateCompleted() const
+    {
+		if(_delay_update || _invalid_layout)
+			return false;
+
+		for(auto & control : _controls)
+		{
+			if(!control->updateCompleted())
+				return false;
+		}
+		return true;
+    }
+
     int32_t Container::animate()
     {
         int32_t num = Control::animate();
@@ -119,7 +132,7 @@ namespace ui
         return (_scrollbar_v || _scrollbar_h) ? core::align::mask : core::align::none;
     }
 
-    void Container::ondraw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Container::ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
         std::lock_guard lock(*this);
@@ -132,8 +145,8 @@ namespace ui
         for (auto & control : _controls)
         {
             auto rect = control->realRect();
-            if(region.intersects(rect.ceil<int32_t>()))
-                control->ondraw(graphics, region);
+            if(clip.intersect_with(rect))
+                control->ondraw(graphics, clip);
         }
         _drawBorder(graphics);
         if (a != 0xff)
@@ -236,6 +249,7 @@ namespace ui
                 layout(_invalid_layout_flags);
                 _invalid_layout = false;
                 _invalid_layout_flags = nullptr;
+				invalidate({});
             });
         }
     }

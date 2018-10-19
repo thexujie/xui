@@ -104,6 +104,9 @@ namespace drawing
         void drawPath(const Path & path, const PathStyle & style);
         void drawPath(const std::shared_ptr<drawing::Path> & path, const PathStyle & style);
 
+		void drawRegion(const Region & region, const PathStyle & style);
+		void drawRegion(const std::shared_ptr<drawing::Region> & region, const PathStyle & style);
+
         void drawString(const std::string & str, const core::pt32f & pos, const StringFormat & format);
         void drawString(const std::string & str, const core::rc32f & rect, const StringFormat & format);
         void drawTextBlob(const drawing::TextBlob & blob, core::pt32f point);

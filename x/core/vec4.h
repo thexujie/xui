@@ -172,6 +172,20 @@ namespace core
         }
 
         // ½»¼¯
+		bool intersect_with(const vec4 & another) const
+		{
+			if(another.empty() || empty())
+				return false;
+			else
+			{
+				T x_min = std::max(x, another.x);
+				T x_max = std::min(right(), another.right());
+				T y_min = std::max(y, another.y);
+				T y_max = std::min(bottom(), another.bottom());
+				return x_max > x_min && y_max > y_min;
+			}
+		}
+
         vec4 & intersect(const vec4 & another)
         {
             if (another.empty() || empty())

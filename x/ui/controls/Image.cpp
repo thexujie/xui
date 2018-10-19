@@ -62,7 +62,7 @@ namespace ui::controls
         }
     }
 
-    void Image::draw(drawing::Graphics & graphics, const drawing::Region & region) const
+    void Image::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
         std::lock_guard l(*this);
         _drawBackground(graphics);

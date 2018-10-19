@@ -60,8 +60,7 @@ namespace ui
 
     public:
         core::event<void(const core::rc32i & rect)> invalidated;
-        core::event<void(const drawing::Region & region)> rendered;
-        core::event<void(const core::rc32i & rect)> rendered2;
+        core::event<void(const core::rc32i & rect)> rendered;
         core::event<void(bool capture)> captured;
         core::event<void(scene_event evt)> evented;
 
@@ -91,7 +90,8 @@ namespace ui
         std::shared_ptr<drawing::Surface> _draw_buffer;
 
         std::shared_ptr<Control> _current_control;
-        std::shared_ptr<Control> _current_input;
+		std::shared_ptr<Control> _current_input;
+		std::shared_ptr<Control> _captured_control;
 
         std::shared_ptr<component::StyleSheet> _style_sheet;
 
