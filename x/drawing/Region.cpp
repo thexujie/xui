@@ -41,6 +41,9 @@ namespace drawing
 
     void Region::addRect(const core::rc32i & rect)
     {
+		if(rect.empty())
+			return;
+
         _confirmNative();
 #ifdef _DEBUG
 		_rects.push_back(rect);
