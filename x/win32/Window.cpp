@@ -207,9 +207,8 @@ namespace win32
         if (!hwnd)
             return;
 
-        auto pos = f->windowPos().to<int32_t>();
         auto size = f->realSize().to<int32_t>();
-        RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
+		RECT rect = {};
 
         _form_styles = styles;
         _message_blocks.set(windowmessage_bock::all, true);
@@ -219,19 +218,23 @@ namespace win32
         _styleEx.set(WS_EX_LAYERED, styles.all(ui::form_style::layered));
         if (f->shown())
             _style |= WS_VISIBLE;
+		if(styles.any(ui::form_style::frameless))
+		{
+			POINT pt = { 0, 0 };
+			::ClientToScreen(hwnd, &pt);
+			rect = { pt.x, pt.y, pt.x + size.cx, pt.y + size.cy };
+		}
+		else
+		{
+			auto pos = f->windowPos().to<int32_t>();
+			rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
+			::AdjustWindowRect(&rect, _style, FALSE);
+		}
         ::SetWindowLongPtrW(hwnd, GWL_STYLE, _style);
         ::SetWindowLongPtrW(hwnd, GWL_EXSTYLE, _styleEx);
         _message_blocks.set(windowmessage_bock::all, false);
-        if (!styles.any(ui::form_style::frameless))
-            ::AdjustWindowRect(&rect, _style, FALSE);
-        else
-        {
-            POINT pt = {0, 0 };
-            ::ClientToScreen(hwnd, &pt);
-            rect = { pt.x, pt.y, pt.x + size.cx, pt.y + size.cy };
-        }
         SetWindowPos(hwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-            SWP_DRAWFRAME | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
+            SWP_DRAWFRAME | SWP_NOACTIVATE | SWP_NOZORDER);
         f->invalidate();
         //::MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
         //RedrawWindow(hwnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE);
@@ -341,7 +344,7 @@ namespace win32
             wcex.cbWndExtra = 0;
             wcex.hInstance = hInstance;
             wcex.hIcon = NULL;
-			wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+			wcex.hCursor = /*::LoadCursor(NULL, IDC_ARROW)*/NULL;
             wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND + 1);
             wcex.lpszMenuName = NULL;
             wcex.lpszClassName = WINDOW_CLASS_NAME;
