@@ -2,8 +2,6 @@
 
 #include "win32/Win32App.h"
 #include "ui/controls/Check.h"
-#include "controls/XForm.h"
-#include "controls/ShapeButton.h"
 
 using namespace core;
 
@@ -192,39 +190,9 @@ void xui_main()
 
     // 标题栏
     {
-        auto title = std::make_shared<xui::controls::XTitleBar>();
+        auto title = std::make_shared<ui::controlsex::TitleBar>(form);
         title->setSize({ 100_per, 1.8_em });
         title->setBackgroundColor(0xfff1f1f0);
-        //{
-        //    auto rbtn = std::make_shared<ui::controls::Button>();
-        //    rbtn->setText(u8"标题栏上的按钮");
-        //    title->addControl(rbtn);
-        //}
-        {
-            auto shbtn = std::make_shared<xui::controls::ShapeButton>();
-            auto path = std::make_shared<drawing::Path>();
-            path->moveTo({ 0.3f, 0.3f });
-            path->lineTo({ 0.7f, 0.7f });
-            path->moveTo({ 0.7f, 0.3f });
-            path->lineTo({ 0.3f, 0.7f });
-            shbtn->setPath(path);
-            shbtn->setHitTestForm(ui::hittest_form::close);
-            shbtn->click += []() {g_form->closed(); };
-            title->addControl(shbtn);
-        }
-        {
-            auto shbtn = std::make_shared<xui::controls::ShapeButton>();
-            auto path = std::make_shared<drawing::Path>();
-            path->moveTo({ 0.3f, 0.3f });
-            path->lineTo({ 0.7f, 0.3f });
-            path->lineTo({ 0.7f, 0.7f });
-            path->lineTo({ 0.3f, 0.7f });
-            path->close();
-            shbtn->setPath(path);
-            shbtn->setHitTestForm(ui::hittest_form::maximize);
-            shbtn->click += []() {g_form->show(g_form->formState() == ui::form_state::maximize ? ui::form_state::normalize : ui::form_state::maximize); };
-            title->addControl(shbtn);
-        }
         layer->addControl(title);
     }
     {
@@ -351,12 +319,14 @@ void xui_main()
         {
             auto rbtn = std::make_shared<ui::controls::Check>();
             rbtn->setText(u8"min box");
+			rbtn->setCheckState(ui::check_state::checked);
             container->addControl(rbtn);
             rbtn->stateChanged += [](ui::check_state state) {setStyle(ui::form_style::nomin, state == ui::check_state::unchecked); };
         }
         {
             auto rbtn = std::make_shared<ui::controls::Check>();
             rbtn->setText(u8"max box");
+			rbtn->setCheckState(ui::check_state::checked);
             container->addControl(rbtn);
             rbtn->stateChanged += [](ui::check_state state) {setStyle(ui::form_style::nomax, state == ui::check_state::unchecked); };
         }
@@ -364,6 +334,7 @@ void xui_main()
             auto rbtn = std::make_shared<ui::controls::Radio>();
             rbtn->setText(u8"normal");
             rbtn->setGroup("window style");
+			rbtn->setCheckState(ui::check_state::checked);
             container->addControl(rbtn);
             rbtn->stateChanged += [](ui::check_state state) {setFormType(ui::form_style::normal); };
         }
@@ -485,6 +456,7 @@ void xui_main()
         {
             a->update();
         }
+		//g_form->centerScreen();
     };
 
     t.start();

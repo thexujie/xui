@@ -80,7 +80,7 @@
 }
 
 
-.shapebutton {
+.titlebutton {
     shape-color: #f444;
     padding: 1em 0.5em;
     background-color: #0000;
@@ -88,11 +88,11 @@
     transition-duration: 500ms
 }
 
-.shapebutton:hover {
+.titlebutton:hover {
     background-color: #f666;
 }
 
-.shapebutton:active {
+.titlebutton:active {
     background-color: #f888;
     transition-duration: 200ms
 }
