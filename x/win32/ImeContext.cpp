@@ -23,6 +23,10 @@ namespace win32
         if (!_imc)
             _imc = ImmGetContext(HWND(_hwnd));
 
+		if(mode == _mode)
+			return;
+		_mode = mode;
+
         switch(mode)
         {
         case ui::ime_mode::disabled:
@@ -84,7 +88,7 @@ namespace win32
         
     }
 
-    static LPCSTR win_cursor_id(ui::cursor c)
+    static LPCTSTR win_cursor_id(ui::cursor c)
     {
         switch(c)
         {
@@ -120,7 +124,7 @@ namespace win32
     {
         if(_id_last)
         {
-            ::SetCursor(::LoadCursor(NULL, (LPCSTR)_id_last));
+            ::SetCursor(::LoadCursor(NULL, (LPCTSTR)_id_last));
             _id = _id_last;
             _id_last = nullptr;
         }
@@ -135,6 +139,6 @@ namespace win32
     void CursorContext::apply()
     {
         if (_id)
-            ::SetCursor(::LoadCursor(NULL, (LPCSTR)_id));
+            ::SetCursor(::LoadCursor(NULL, (LPCTSTR)_id));
     }
 }

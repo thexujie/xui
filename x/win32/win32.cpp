@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "win32.h"
 
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+
 namespace win32
 {
     std::string winerr_str(int32_t err)
@@ -210,6 +212,8 @@ namespace win32
 
     handle_t instance()
     {
+		assert((HINSTANCE)&__ImageBase == GetModuleHandleW(NULL));
+		//return ((HINSTANCE)&__ImageBase);
         return (handle_t)GetModuleHandleW(NULL);
     }
 

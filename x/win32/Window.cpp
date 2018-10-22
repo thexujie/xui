@@ -21,20 +21,14 @@ namespace win32
         return style;
     }
 
-    static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam);
-    //static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam)
-    //{
-    //    if (uiMessage == WM_NCCREATE)
-    //    {
-    //        CREATESTRUCT * pcs = (CREATESTRUCT *)lParam;
-    //        if (pcs->lpCreateParams)
-    //        {
-    //            ((Window *)pcs->lpCreateParams)->SetHandle(hWnd);
-    //        }
-    //    }
+	// 如果不搞一个自定义的函数，会导致一些问题。
+	// 已知的，会导致 imm 相关功能无效，但不知道原因。
+	LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
 
-    //    return DefWindowProcW(hWnd, uiMessage, wParam, lParam);
-    //}
+    static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam);
 
     Window::Window()
     {
@@ -342,7 +336,7 @@ namespace win32
         {
             wcex.cbSize = sizeof(WNDCLASSEXW);
             wcex.style = 0;
-            wcex.lpfnWndProc = DefWindowProcW;
+            wcex.lpfnWndProc = DefaultWndProc;
             wcex.cbClsExtra = 0;
             wcex.cbWndExtra = 0;
             wcex.hInstance = hInstance;

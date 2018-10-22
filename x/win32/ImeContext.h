@@ -19,6 +19,7 @@ namespace win32
     private:
         handle_t _hwnd = nullptr;
         handle_t _imc = nullptr;
+		ui::ime_mode _mode = ui::ime_mode::disabled;
     };
 
     class CursorContext : public ui::CursorContext

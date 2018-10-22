@@ -522,7 +522,7 @@ namespace drawing::image
         COLOR_MODE_TEXT(format_x32y32z32f);
 
         default:
-            return _T("color_mode unkonwn");
+            return "color_mode unkonwn";
         }
     }
 
