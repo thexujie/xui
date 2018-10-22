@@ -193,10 +193,10 @@ namespace ui
         void setCursor(cursor cs) { _cursor = cs; }
         cursor cursor() const { return _cursor; }
 
-        virtual void enteringScene(std::shared_ptr<Scene> & scene);
-        virtual void enterScene(std::shared_ptr<Scene> & scene);
-        virtual void leavingScene();
-        virtual void leaveScene();
+        virtual void onEnteringScene(std::shared_ptr<Scene> & scene);
+        virtual void onEnterScene(std::shared_ptr<Scene> & scene);
+        virtual void onLeavingScene();
+        virtual void onLeaveScene();
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸

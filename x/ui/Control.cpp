@@ -148,7 +148,9 @@ namespace ui
         case core::unit::px:
             return value.value * s->ratio();
         case core::unit::em:
-            return value.value * drawing::fontmetrics(drawing::font()).height;
+			return value.value * drawing::fontmetrics(drawing::font()).height;
+		case core::unit::ft:
+            return value.value * drawing::fontmetrics(font()).height;
         case core::unit::pt:
             return value.value * 72.0f * s->ratio();
         case core::unit::dot:
@@ -376,22 +378,22 @@ namespace ui
         }
     }
 
-    void Control::enteringScene(std::shared_ptr<Scene> & scene)
+    void Control::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
         _scene = scene;
         restyle();
     }
 
-    void Control::enterScene(std::shared_ptr<Scene> & scene)
+    void Control::onEnterScene(std::shared_ptr<Scene> & scene)
     {
     }
 
-    void Control::leavingScene()
+    void Control::onLeavingScene()
     {
         _scene.reset();
     }
 
-    void Control::leaveScene() { }
+    void Control::onLeaveScene() { }
 
     void Control::place(const core::rc32f & rect, const core::si32f & size)
     {

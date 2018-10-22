@@ -20,9 +20,6 @@ namespace drawing
     {
         if (_native)
             _native->setEmpty();
-#ifdef _DEBUG
-		_rects.clear();
-#endif
     }
 
     bool Region::empty() const
@@ -45,9 +42,6 @@ namespace drawing
 			return;
 
         _confirmNative();
-#ifdef _DEBUG
-		_rects.push_back(rect);
-#endif
         _native->op(skia::from(rect), SkRegion::Op::kUnion_Op);
     }
 

@@ -17,6 +17,7 @@ namespace win32
             style |= WS_MINIMIZEBOX;
         if (!styles.any(ui::form_style::nomax))
             style |= WS_MAXIMIZEBOX;
+		style |= WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
         return style;
     }
 
@@ -54,8 +55,8 @@ namespace win32
         _styleEx = 0;
 
         auto scene = form->scene();
-        form->shownChanged += std::weak_bind(&Window::onShownChanged, share_ref<Window>(), std::placeholders::_1);
-        form->stylesChanged += std::weak_bind(&Window::onStylesChanged, share_ref<Window>(), std::placeholders::_1);
+        form->stateChanged += std::weak_bind(&Window::onStateChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
+        form->stylesChanged += std::weak_bind(&Window::onStylesChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
         scene->rendered += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
         scene->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
         scene->evented += std::weak_bind(&Window::onSceneEvented, share_ref<Window>(), std::placeholders::_1);
@@ -156,42 +157,42 @@ namespace win32
         return _handle;
     }
 
-    void Window::onShownChanged(ui::form_show_state shown)
+    void Window::onStateChanged(ui::form_state, ui::form_state state)
     {
-        switch(shown)
+        switch(state)
         {
-        case ui::form_show_state::hide:
+        case ui::form_state::hide:
         {
             HWND hwnd = (HWND)_handle;
             if (hwnd)
                 ::ShowWindow(hwnd, SW_HIDE);
             break;
         }
-        case ui::form_show_state::show:
+        case ui::form_state::show:
         {
             HWND hwnd = (HWND)handle();
             ShowWindow(hwnd, SW_SHOW);
             break;
         }
-        case ui::form_show_state::show_noactive:
+        case ui::form_state::show_noactive:
         {
             HWND hwnd = (HWND)handle();
             ShowWindow(hwnd, SW_SHOWNOACTIVATE);
             break;
         }
-        case ui::form_show_state::normalize:
+        case ui::form_state::normalize:
         {
             HWND hwnd = (HWND)handle();
             ShowWindow(hwnd, SW_SHOWNORMAL);
             break;
         }
-        case ui::form_show_state::minimize:
+        case ui::form_state::minimize:
         {
             HWND hwnd = (HWND)handle();
             ShowWindow(hwnd, SW_SHOWMINIMIZED);
             break;
         }
-        case ui::form_show_state::maximize:
+        case ui::form_state::maximize:
         {
             HWND hwnd = (HWND)handle();
             ShowWindow(hwnd, SW_SHOWMAXIMIZED);
@@ -202,7 +203,7 @@ namespace win32
         }
     }
 
-    void Window::onStylesChanged(ui::form_styles styles)
+    void Window::onStylesChanged(ui::form_styles, ui::form_styles styles)
     {
         auto f = form();
         if (!f)
@@ -346,7 +347,7 @@ namespace win32
             wcex.cbWndExtra = 0;
             wcex.hInstance = hInstance;
             wcex.hIcon = NULL;
-            wcex.hCursor = /*::LoadCursor(NULL, IDC_ARROW)*/NULL;
+			wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
             wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND + 1);
             wcex.lpszMenuName = NULL;
             wcex.lpszClassName = WINDOW_CLASS_NAME;
@@ -639,8 +640,8 @@ namespace win32
             CASE_MSG(WM_SIZE, OnWmSize);
             //CASE_MSG(WM_SETTEXT, OnWmSetText);
             //CASE_MSG(WM_ACTIVATE, OnWmActive);
-            //CASE_MSG(WM_SETFOCUS, OnWmSetFocus);
-            //CASE_MSG(WM_KILLFOCUS, OnWmKillFocus);
+            CASE_MSG(WM_SETFOCUS, OnWmSetFocus);
+            CASE_MSG(WM_KILLFOCUS, OnWmKillFocus);
             CASE_MSG(WM_CHAR, OnWmChar);
             //CASE_MSG(WM_UNICHAR, OnWmChar);
 
@@ -653,7 +654,7 @@ namespace win32
             //CASE_MSG(WM_QUERYDRAGICON, OnWmQueryDrag);
             //CASE_MSG(WM_DROPFILES, OnWmDropFiles);
             //CASE_MSG(WM_NOTIFY, OnWmNotify);
-            //CASE_MSG(WM_CAPTURECHANGED, OnWmCaptureChanged);
+            CASE_MSG(WM_CAPTURECHANGED, OnWmCaptureChanged);
             //CASE_MSG(WM_MOUSEACTIVATE, OnWmMouseActive);
             //CASE_MSG(WM_NCMOUSEMOVE, OnWmNcMouseMove);
 
@@ -705,9 +706,9 @@ namespace win32
         f->setWindowSize(_size().to<float32_t>());
         switch(wParam)
         {
-        case SIZE_MINIMIZED: f->setWindowShown(ui::form_show_state::minimize); break;
-        case SIZE_MAXIMIZED: f->setWindowShown(ui::form_show_state::maximize); break;
-        case SIZE_RESTORED: f->setWindowShown(ui::form_show_state::show); break;
+        case SIZE_MINIMIZED: f->setFormState(ui::form_state::minimize); break;
+        case SIZE_MAXIMIZED: f->setFormState(ui::form_state::maximize); break;
+        case SIZE_RESTORED: f->setFormState(ui::form_state::show); break;
         default: break;
         }
         return 0;
@@ -723,7 +724,7 @@ namespace win32
         if(!wParam)
         {
             if (auto f = form())
-                f->setWindowShown(ui::form_show_state::hide);
+                f->setFormState(ui::form_state::hide);
         }
         return OnDefault(WM_SHOWWINDOW, wParam, lParam);
     }
@@ -942,15 +943,22 @@ namespace win32
         }
     }
 
+	intx_t Window::OnWmCaptureChanged(uintx_t wParam, intx_t lParam)
+    {
+		if(auto s = scene())
+			s->onCaptured(_handle == GetCapture());
+		return OnDefault(WM_CAPTURECHANGED, wParam, lParam);
+    }
+
     intx_t Window::OnWmSetFocus(uintx_t wParam, intx_t lParam)
     {
-        return 0;
+		return OnDefault(WM_SETFOCUS, wParam, lParam);
     }
 
     intx_t Window::OnWmKillFocus(uintx_t wParam, intx_t lParam)
     {
         _mouse_state.setAllKeys(false);
-        return 0;
+		return OnDefault(WM_KILLFOCUS, wParam, lParam);
     }
 
     intx_t Window::OnWmNcCalcSize(uintx_t wParam, intx_t lParam)

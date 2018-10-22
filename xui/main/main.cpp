@@ -86,7 +86,7 @@ void setStyle(ui::form_style style, bool b)
 void xui_main()
 {
     //std::string rtft = u8"heသွက်ဂွံဗၠးၜးတ်ိတ်llo لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
-    std::string rtft = u8"hello لغة عربية‎𪚥𪚥བོད་ཀྱི་སྐད་ཡིག།𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
+    std::string rtft = u8"hello لغة عربية‎𪚥𪚥བོད་ཀྱི་སྐད་ཡིག།𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق قققق";
 
     drawing::TextWraper shaper;
     shaper.itermize(u8"ยิ้ยิ้ยิ้ ", drawing::font(), colors::Black);
@@ -222,7 +222,7 @@ void xui_main()
             path->close();
             shbtn->setPath(path);
             shbtn->setHitTestForm(ui::hittest_form::maximize);
-            shbtn->click += []() {g_form->show(g_form->shownState() == ui::form_show_state::maximize ? ui::form_show_state::normalize : ui::form_show_state::maximize); };
+            shbtn->click += []() {g_form->show(g_form->formState() == ui::form_state::maximize ? ui::form_state::normalize : ui::form_state::maximize); };
             title->addControl(shbtn);
         }
         layer->addControl(title);
@@ -244,7 +244,7 @@ void xui_main()
     {
         auto tln = std::make_shared<ui::controls::TextLine>();
         tln->setText(rtft);
-        tln->setSize({ auto_value, 10_em });
+        //tln->setSize({ auto_value, 10_em });
         tln->setFont({ "", font.size * 9 });
         tln->setAnchor({ 0_px, 0_px, 0_px, 0_px });
         tln->setAnchorBorders(core::align::leftRight);

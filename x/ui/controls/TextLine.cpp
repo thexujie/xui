@@ -105,8 +105,8 @@ namespace ui::controls
             while (off != core::npos);
         }
 
-        if (_textblob)
-            graphics.drawTextBlob(*_textblob, contentBox().leftTop().offseted(_scroll_pos, 0));
+        if (_text_blob)
+            graphics.drawTextBlob(*_text_blob, contentBox().leftTop().offseted(_scroll_pos, 0));
         graphics.restore();
 
         if (_cursor_shown)
@@ -274,7 +274,7 @@ namespace ui::controls
 
     void TextLine::onFocus(std::shared_ptr<ImeContext> imecontext)
     {
-        _imecontext = imecontext;
+        _ime_context = imecontext;
         if(!_cursor_anim)
         {
             auto accessor = make_accessor(&TextLine::_setCursorShown, &TextLine::_cursorShown, core::parseBool, nullptr);
@@ -288,14 +288,14 @@ namespace ui::controls
         _cursor_anim->start();
         restyle();
 
-        if(_imecontext)
-            _imecontext->setImeMode(_ime_mode);
+        if(_ime_context)
+            _ime_context->setImeMode(_ime_mode);
         _updateIme();
     }
 
     void TextLine::onBlur()
     {
-        _imecontext = nullptr;
+        _ime_context = nullptr;
         //std::lock_guard lock(*this);
         _setCursorShown(false);
         _cursor_anim ? _cursor_anim->stop() : nullptr;
@@ -430,21 +430,21 @@ namespace ui::controls
 
     void TextLine::_updateIme()
     {
-        if (!_imecontext)
+        if (!_ime_context)
             return;
 
         if(_ime_mode != ime_mode::disabled)
         {
             auto cbox = contentBox();
             if(_text.empty())
-                _imecontext->setCompositionPos(cbox.leftTop().offseted(_scroll_pos, 0));
+                _ime_context->setCompositionPos(cbox.leftTop().offseted(_scroll_pos, 0));
             else
             {
                 auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
                 assert(cluster);
-                _imecontext->setCompositionPos(cbox.leftTop().offseted(_cursor_far ? cluster.rect.right() : cluster.rect.left(), 0).offset(_scroll_pos, 0));
+                _ime_context->setCompositionPos(cbox.leftTop().offseted(_cursor_far ? cluster.rect.right() : cluster.rect.left(), 0).offset(_scroll_pos, 0));
             }
-            _imecontext->setCompositionFont(font()); 
+            _ime_context->setCompositionFont(font()); 
         }
     }
 
@@ -455,14 +455,14 @@ namespace ui::controls
 
         if(_delay_shaper_flags.any(shaper_flag::shaper))
         {
-            if (!_textblob)
-                _textblob = std::make_shared<drawing::TextBlob>();
+            if (!_text_blob)
+                _text_blob = std::make_shared<drawing::TextBlob>();
 
             _clusterizer->itermize(_text, _font, _color);
             _clusterizer->layout();
 
             auto native = _clusterizer->build();
-            _textblob->setNative(native, _clusterizer->bounds());
+            _text_blob->setNative(native, _clusterizer->bounds());
         }
 
         if (!_text.empty())

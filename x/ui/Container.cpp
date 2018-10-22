@@ -32,9 +32,9 @@ namespace ui
         control->setParent(share_ref<Container>());
         if(s)
         {
-            control->enteringScene(s);
+            control->onEnteringScene(s);
             _controls.push_back(control);
-            control->enterScene(s);
+            control->onEnterScene(s);
         }
         else
             _controls.push_back(control);
@@ -52,40 +52,40 @@ namespace ui
     void Container::removeControl(std::shared_ptr<Control> control)
     {
         std::lock_guard lock(*this);
-        control->leavingScene();
+        control->onLeavingScene();
         auto iter = std::find(_controls.begin(), _controls.end(), control);
         if (iter != _controls.end())
             _controls.erase(iter);
-        control->leaveScene();
+        control->onLeaveScene();
     }
 
-    void Container::enteringScene(std::shared_ptr<Scene> & scene)
+    void Container::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
-        Control::enteringScene(scene);
+        Control::onEnteringScene(scene);
         for (auto & control : _controls)
-            control->enteringScene(scene);
+            control->onEnteringScene(scene);
     }
 
-    void Container::enterScene(std::shared_ptr<Scene> & scene)
+    void Container::onEnterScene(std::shared_ptr<Scene> & scene)
     {
-        Control::enterScene(scene);
+        Control::onEnterScene(scene);
         relayout();
         for (auto & control : _controls)
-            control->enterScene(scene);
+            control->onEnterScene(scene);
     }
 
-    void Container::leavingScene()
+    void Container::onLeavingScene()
     {
         for (auto & control : _controls)
-            control->leavingScene();
-        Control::leavingScene();
+            control->onLeavingScene();
+        Control::onLeavingScene();
     }
 
-    void Container::leaveScene()
+    void Container::onLeaveScene()
     {
         for (auto & control : _controls)
-            control->leaveScene();
-        Control::leaveScene();
+            control->onLeaveScene();
+        Control::onLeaveScene();
     }
 
     void Container::update()

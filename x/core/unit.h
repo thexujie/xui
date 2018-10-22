@@ -8,6 +8,8 @@ namespace core
         px = 0,
         // 标准字符高度
         em,
+		// 当前字符高度
+		ft,
         // 点
         pt,
         //真实像素
@@ -50,7 +52,8 @@ namespace core
         bool nan() const { return std::isnan(value); }
 
         bool px() const { return unit == unit::px && !std::isnan(value); }
-        bool em() const { return unit == unit::em && !std::isnan(value); }
+		bool em() const { return unit == unit::em && !std::isnan(value); }
+		bool ft() const { return unit == unit::ft && !std::isnan(value); }
         bool pt() const { return unit == unit::pt && !std::isnan(value); }
         bool dot() const { return unit == unit::dot && !std::isnan(value); }
         bool per() const { return unit == unit::per && !std::isnan(value); }
@@ -62,7 +65,8 @@ namespace core
     typedef unit_value<float32_t> dimensionf;
 
     inline dimensionf unit_px(float32_t val) { return dimensionf(val, core::unit::px); }
-    inline dimensionf unit_em(float32_t val) { return dimensionf(val, core::unit::em); }
+	inline dimensionf unit_em(float32_t val) { return dimensionf(val, core::unit::em); }
+	inline dimensionf unit_ft(float32_t val) { return dimensionf(val, core::unit::ft); }
     inline dimensionf unit_pt(float32_t val) { return dimensionf(val, core::unit::pt); }
     inline dimensionf unit_dot(float32_t val) { return dimensionf(val, core::unit::dot); }
 
@@ -78,6 +82,11 @@ namespace core
         {
             return dimensionf(static_cast<float32_t>(val), core::unit::em);
         }
+
+		constexpr dimensionf operator "" _ft(unsigned long long  val)
+		{
+			return dimensionf(static_cast<float32_t>(val), core::unit::ft);
+		}
 
         constexpr dimensionf operator "" _pt(unsigned long long  val)
         {
@@ -103,6 +112,11 @@ namespace core
         {
             return dimensionf(static_cast<float32_t>(val), core::unit::em);
         }
+
+		constexpr dimensionf operator "" _ft(long double  val)
+		{
+			return dimensionf(static_cast<float32_t>(val), core::unit::ft);
+		}
 
         constexpr dimensionf operator "" _pt(long double  val)
         {
@@ -130,6 +144,7 @@ namespace core
     {
         { core::unit::px, "px" },
         { core::unit::em, "em" },
+        { core::unit::ft, "ft" },
         { core::unit::pt, "pt" },
         { core::unit::dot, "dot" },
         { core::unit::per, "per" },

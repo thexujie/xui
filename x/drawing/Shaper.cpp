@@ -609,6 +609,8 @@ namespace drawing
             }
         }
 
+		_ascent = _shaper.fontmetrics(_font_default).ascent;
+		_descent = _shaper.fontmetrics(_font_default).descent;
         return core::error_ok;
     }
 

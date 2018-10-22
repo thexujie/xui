@@ -28,10 +28,10 @@ namespace ui
         void removeControl(std::shared_ptr<Control> control);
         std::vector<std::shared_ptr<Control>> & children() { return _controls; }
 
-        void enteringScene(std::shared_ptr<Scene> & scene) override;
-        void enterScene(std::shared_ptr<Scene> & scene) override;
-        void leavingScene() override;
-        void leaveScene() override;
+        void onEnteringScene(std::shared_ptr<Scene> & scene) override;
+        void onEnterScene(std::shared_ptr<Scene> & scene) override;
+        void onLeavingScene() override;
+        void onLeaveScene() override;
 
         core::si32f contentSize() const override;
         void update() override;

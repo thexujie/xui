@@ -42,11 +42,6 @@ namespace ui
         setShowSize(size);
     }
 
-    void Form::setWindowShown(form_show_state fs)
-    {
-        _shown = fs;
-    }
-
     std::shared_ptr<Scene> Form::formScene() const
     {
         auto s = scene();
@@ -58,17 +53,28 @@ namespace ui
         return _form_scene;
     }
 
-    void Form::show(form_show_state fs)
+	void Form::setFormState(form_state fs)
+	{
+		if(_form_state != fs)
+		{
+			auto old = _form_state;
+			_form_state = fs;
+			onFormStateChanged(old, _form_state);
+		}
+	}
+
+    void Form::show(form_state fs)
     {
-        if (_shown != fs)
+        if (_form_state != fs)
         {
-            _shown = fs;
+			auto old = _form_state;
+            _form_state = fs;
 
             if (!scene())
             {
                 auto s = formScene();
-                enteringScene(s);
-                enterScene(s);
+                onEnteringScene(s);
+                onEnterScene(s);
             }
 
             if (!_window)
@@ -77,7 +83,7 @@ namespace ui
                 window->attatch(share_ref<Form>());
                 _window = window;
             }
-            shownChanged(fs);
+			stateChanged(_form_state, fs);
         }
     }
 
@@ -116,9 +122,9 @@ namespace ui
         return child ? child : control_ref();
     }
 
-    void Form::enteringScene(std::shared_ptr<Scene> & scene)
+    void Form::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
-        Container::enteringScene(scene);
+        Container::onEnteringScene(scene);
     }
 
     void Form::onSizeChanged(const core::si32f & from, const core::si32f & to)
@@ -171,6 +177,16 @@ namespace ui
         case left: return hittest_form::resize_left;
         default: return Container::hitTestForm(pos);
         }
+    }
+
+	void Form::onFormStylesChanged(form_styles from, form_styles to)
+    {
+		stylesChanged(from, to);
+    }
+
+	void Form::onFormStateChanged(form_state from, form_state to)
+    {
+		stateChanged(from, to);
     }
 
     void Form::onClose()

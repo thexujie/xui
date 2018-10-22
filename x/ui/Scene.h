@@ -53,6 +53,7 @@ namespace ui
         void onMouse(const input_state & state, mouse_button button, mouse_action action);
         void onKey(const input_state & state, keycode key,  key_action action);
         void onChar(char32_t ch);
+		void onCaptured(bool c);
 
 
     private:

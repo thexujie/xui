@@ -59,10 +59,10 @@ namespace ui::controls
 
     private:
         std::string _text;
-        mutable std::shared_ptr<drawing::TextBlob> _textblob;
+        mutable std::shared_ptr<drawing::TextBlob> _text_blob;
         std::shared_ptr<core::property_animation> _cursor_anim;
 
-        std::shared_ptr<ImeContext> _imecontext;
+        std::shared_ptr<ImeContext> _ime_context;
 
         bool _delay_shaper = false;
         shaper_flags _delay_shaper_flags = nullptr;

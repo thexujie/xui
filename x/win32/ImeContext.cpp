@@ -8,9 +8,9 @@ namespace win32
 {
     ImeContext::ImeContext(handle_t hwnd) :_hwnd(hwnd)
     {
-        _imc = ImmGetContext(HWND(_hwnd));
-        ImmSetOpenStatus(HIMC(_imc), FALSE);
-        ImmAssociateContext(HWND(_hwnd), NULL);
+        //_imc = ImmGetContext(HWND(_hwnd));
+        //ImmSetOpenStatus(HIMC(_imc), FALSE);
+        //ImmAssociateContext(HWND(_hwnd), NULL);
     }
 
     ImeContext::~ImeContext()
@@ -36,7 +36,8 @@ namespace win32
             ImmAssociateContext(HWND(_hwnd), HIMC(_imc));
             ImmSetOpenStatus(HIMC(_imc), FALSE);
             break;
-        default: ;
+        default: 
+        	break;
         }
     }
 
@@ -46,7 +47,7 @@ namespace win32
             _imc = ImmGetContext(HWND(_hwnd));
 
         COMPOSITIONFORM cpf = { 0 };
-        cpf.dwStyle = CFS_FORCE_POSITION;
+        cpf.dwStyle = CFS_POINT;
         cpf.ptCurrentPos.x = (int32_t)pos.x;
         cpf.ptCurrentPos.y = (int32_t)pos.y;
 
@@ -56,6 +57,7 @@ namespace win32
     void ImeContext::setCompositionFont(const drawing::font & font)
     {
         LOGFONTW lfont = {};
+		ImmGetCompositionFontW(HIMC(_imc), &lfont);
         core::textcpy(lfont.lfFaceName, std::size(lfont.lfFaceName), core::u8str_wstr(font.family).c_str());
         lfont.lfHeight = -font.size;
         ImmSetCompositionFontW(HIMC(_imc), &lfont);

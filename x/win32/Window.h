@@ -32,8 +32,8 @@ namespace win32
         intx_t handleMSG(uint32_t uiMessage, uintx_t wParam, intx_t lParam);
 
     private:
-        void onShownChanged(ui::form_show_state shown);
-        void onStylesChanged(ui::form_styles styles);
+        void onStateChanged(ui::form_state, ui::form_state state);
+        void onStylesChanged(ui::form_styles, ui::form_styles styles);
         void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         void onSizeChanged(const core::si32f & from, const core::si32f & to);
         void onSceneInvalidated(const core::rc32i & rect);
@@ -111,7 +111,7 @@ namespace win32
 
         virtual intx_t OnWmClose(uintx_t wParam, intx_t lParam){ return 0;}
         virtual intx_t OnWmDestroy(uintx_t wParam, intx_t lParam){ return 0;}
-        virtual intx_t OnWmCaptureChanged(uintx_t wParam, intx_t lParam){ return 0;}
+		virtual intx_t OnWmCaptureChanged(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmMouseActive(uintx_t wParam, intx_t lParam){ return 0;}
 
         virtual intx_t OnWmNcCalcSize(uintx_t wParam, intx_t lParam);

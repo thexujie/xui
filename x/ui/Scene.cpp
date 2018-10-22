@@ -198,6 +198,15 @@ namespace ui
             _current_input->onChar(ch);
     }
 
+	void Scene::onCaptured(bool c)
+    {
+	    if(!c)
+	    {
+			if(_captured_control)
+				_captured_control = nullptr;
+	    }
+    }
+
     void Scene::_updateMouseArea(const input_state & state, mouse_action action)
     {
 		if(_captured_control)
