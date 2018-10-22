@@ -44,6 +44,7 @@ namespace ui::controls
         _capture_buttons = mouse_button::left;
         _clusterizer = std::make_shared<drawing::TextClusterizer>();
         _cursor = cursor::ibeam;
+		_ime_mode = ime_mode::on;
     }
 
     TextLine::~TextLine()
