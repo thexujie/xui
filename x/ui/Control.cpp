@@ -488,12 +488,7 @@ namespace ui
 		if(!_aviliable || !_visible)
 			return;
 
-        auto s = scene();
-        auto p = parent();
-        if (!s || !p)
-            return;
-
-        if (!_rect_invalid.empty() && s)
+        if (!_rect_invalid.empty())
         {
             invalidate(_rect_invalid);
         }

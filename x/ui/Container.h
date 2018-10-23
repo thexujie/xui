@@ -69,7 +69,10 @@ namespace ui
         void onScrollValueChangedV(float32_t from, float32_t to);
         void onScrollValueChangedH(float32_t from, float32_t to);
 
-    private:
+	protected:
+		void _confirmLayout();
+
+	private:
         void _animScroll(core::vec2f scroll_pos);
         void _setScrollPos(core::vec2f scroll_pos);
 

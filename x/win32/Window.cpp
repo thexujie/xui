@@ -11,7 +11,7 @@ namespace win32
 		uint32_t style = 0;
 		uint32_t styleEx = 0;
         if (styles.any(ui::form_style::frameless))
-            style = WS_OVERLAPPED;
+            style = WS_POPUP;
         else
             style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME;
         if (!styles.any(ui::form_style::nomin))
@@ -40,6 +40,14 @@ namespace win32
 	// 已知的，会导致 imm 相关功能无效，但不知道原因。
 	LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
+		if(message == WM_CREATE)
+		{
+			CREATESTRUCT * cs = reinterpret_cast<CREATESTRUCT *>(lParam);
+			Window * window = static_cast<Window *>(cs->lpCreateParams);
+			if(window)
+				window->attatch(hWnd);
+		}
+
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
@@ -47,7 +55,6 @@ namespace win32
 
     Window::Window()
     {
-        _style = WS_OVERLAPPEDWINDOW;
     }
 
     Window::~Window()
@@ -60,7 +67,7 @@ namespace win32
     core::error Window::attatch(std::shared_ptr<ui::Form> form)
     {
         _form = form;
-        std::tie(_style, _styleEx) = formStylesToWinStyles(form->styles());
+		_form_styles = form ? form->styles() : nullptr;
 
         auto scene = form->scene();
         form->stateChanged += std::weak_bind(&Window::onStateChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
@@ -242,7 +249,7 @@ namespace win32
 		uint32_t flags = SWP_FRAMECHANGED;
         _form_styles = styles;
         _message_blocks.set(windowmessage_bock::all, true);
-		std::tie(_style, _styleEx) = formStylesToWinStyles(_form_styles);
+		auto[style, styleEx] = formStylesToWinStyles(f->styles());
 		if(styles.any(ui::form_style::frameless))
 		{
 			POINT pt = { 0, 0 };
@@ -254,7 +261,7 @@ namespace win32
 			auto pos = f->windowPos().to<int32_t>();
 			rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
 			//::AdjustWindowRect(&rect, _style, FALSE);
-			::AdjustWindowRectEx(&rect, _style, FALSE, _styleEx);
+			::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
 		}
 
 		// 开关任务栏按钮，需要先隐藏，再 show
@@ -264,11 +271,11 @@ namespace win32
 			flags |= SWP_SHOWWINDOW;
 		}
 		else if(f->shown())
-			_style |= WS_VISIBLE;
+			style |= WS_VISIBLE;
 		else {}
 
-        ::SetWindowLongPtrW(hwnd, GWL_STYLE, _style);
-        ::SetWindowLongPtrW(hwnd, GWL_EXSTYLE, _styleEx);
+        ::SetWindowLongPtrW(hwnd, GWL_STYLE, style);
+        ::SetWindowLongPtrW(hwnd, GWL_EXSTYLE, styleEx);
         _message_blocks.set(windowmessage_bock::all, false);
 
 		HWND hwndInsert = NULL;
@@ -401,28 +408,32 @@ namespace win32
         auto pos = f->windowPos().to<int32_t>();
         auto size = f->realSize().convert(ceilf).to<int32_t>();
 
+		auto[style, styleEx] = formStylesToWinStyles(f->styles());
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
-        ::AdjustWindowRect(&rect, _style, FALSE);
+        ::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
 
         HWND hwnd = CreateWindowExW(
-            _styleEx, WINDOW_CLASS_NAME, NULL, _style,
+			styleEx, WINDOW_CLASS_NAME, NULL, style,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             NULL, NULL, hInstance, NULL);
 
         attatch(hwnd);
+		assert(hwnd == _handle);
+		//SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE);
         return core::error_ok;
     }
 
     core::error Window::_adjustWindow(const core::pt32i & pos, const core::si32i & size)
     {
-
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return core::error_ok;
 
+		uint32_t style = GetWindowLongW(hwnd, GWL_STYLE);
+		uint32_t styleEx = GetWindowLongW(hwnd, GWL_EXSTYLE);
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
         if (!_form_styles.any(ui::form_style::frameless))
-            ::AdjustWindowRect(&rect, _style, FALSE);
+            ::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
         SetWindowPos(hwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
         return core::error_ok;
@@ -770,7 +781,7 @@ namespace win32
 
     intx_t Window::OnWmPaint(uintx_t wParam, intx_t lParam)
     {
-        return OnDefault(WM_PAINT, wParam, lParam);
+        //return OnDefault(WM_PAINT, wParam, lParam);
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return OnDefault(WM_PAINT, wParam, lParam);
@@ -778,10 +789,11 @@ namespace win32
         //_render
         PAINTSTRUCT ps;
         HDC hdc = ::BeginPaint(hwnd, &ps);
+		::EndPaint(hwnd, &ps);
+
         _render({ ps.rcPaint.left, ps.rcPaint.top,
             ps.rcPaint.right - ps.rcPaint.left,
             ps.rcPaint.bottom - ps.rcPaint.top });
-        ::EndPaint(hwnd, &ps);
         return 0;
     }
 

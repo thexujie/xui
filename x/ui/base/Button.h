@@ -7,7 +7,6 @@ namespace ui::base
     {
     public:
         Button();
-        Button(std::string text);
         ~Button();
 
         static void propertyTableCallback(core::property_table & properties);

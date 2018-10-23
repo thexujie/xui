@@ -330,6 +330,17 @@ namespace ui
         relayout();
     }
 
+	void Container::_confirmLayout()
+    {
+		if(_invalid_layout)
+		{
+			Container * pthis = const_cast<Container *>(this);
+			pthis->layout(_invalid_layout_flags);
+			pthis->_invalid_layout = false;
+			pthis->_invalid_layout_flags = nullptr;
+		}
+    }
+
     void Container::_animScroll(core::vec2f scroll_pos)
     {
         if(!_style_transition)

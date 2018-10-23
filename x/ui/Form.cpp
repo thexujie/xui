@@ -75,6 +75,9 @@ namespace ui
                 auto s = formScene();
                 onEnteringScene(s);
                 onEnterScene(s);
+
+				auto form_size = calc(_size);
+				place(core::rc32f(core::pt32f(), form_size), form_size);
             }
 
             if (!_window)

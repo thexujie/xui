@@ -10,6 +10,8 @@
 #include "ui/controls/Text.h"
 #include "ui/controls/Image.h"
 #include "ui/controls/Button.h"
+#include "ui/controls/Radio.h"
+#include "ui/controls/Check.h"
 #include "ui/controls/ScrollBar.h"
 #include "ui/controls/TextLine.h"
 

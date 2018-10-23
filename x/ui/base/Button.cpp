@@ -9,12 +9,6 @@ namespace ui::base
         _padding = { 1_em, 0.5_em };
     }
 
-    Button::Button(std::string text)
-    {
-        _border = core::vec4<core::dimensionf>{ 1_px };
-        _padding = { 1_em, 0.5_em };
-    }
-
     Button::~Button()
     {
 

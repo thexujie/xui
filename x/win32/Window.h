@@ -122,8 +122,6 @@ namespace win32
     private:
         std::weak_ptr<ui::Form> _form;
         ui::form_styles _form_styles = nullptr;
-        uint64_t _style = 0;
-        core::bitflag<uint64_t> _styleEx = nullptr;
         handle_t _handle = nullptr;
         windowmessage_bocks _message_blocks = nullptr;
 

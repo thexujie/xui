@@ -86,6 +86,12 @@ namespace core
     using float32_t = ::float32_t;
     using float64_t = ::float64_t;
 
+#ifdef _WIN64
+	using pointer_t = uint64_t;
+#else
+	using pointer_t = uint32_t;
+#endif
+
     template<typename T>
     struct span_type
     {
