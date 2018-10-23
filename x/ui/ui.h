@@ -16,3 +16,5 @@
 #include "ui/Container.h"
 #include "ui/Grid.h"
 #include "ui/Form.h"
+
+#include "ui/controlsex/TitleBar.h"

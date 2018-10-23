@@ -50,6 +50,43 @@ namespace ui
         maximize,
     };
 
+	enum class title_action
+	{
+		none = 0,
+		close,
+		minimize,
+		maximize,
+	};
+
+	enum class form_style
+	{
+		normal = 0,
+		frameless = 0x0001,
+		layered = frameless | 0x0002,
+
+		nomin = 0x100000,
+		nomax = 0x200000,
+		noclose = 0x400000,
+
+		notaskbutton = 0x1000000,
+		noresizable = 0x2000000,
+		topmost = 0x4000000,
+
+		mask_type = 0x000f,
+	};
+	template<> struct enable_bitmasks<form_style> { static const bool enable = true; };
+	typedef core::bitflag<form_style> form_styles;
+
+	enum class form_state
+	{
+		hide = 0,
+		show,
+		show_noactive,
+		normalize,
+		minimize,
+		maximize,
+	};
+
     enum class layout_origin
     {
         // Ä¬ÈÏÎ»ÖÃ

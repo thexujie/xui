@@ -95,8 +95,17 @@ namespace ui
                 onVisibleChanged(vis);
             }
         }
+		bool visible() const { return _visible; }
 
-        bool visible() const { return _visible.value; }
+		void setAviliable(bool avi)
+		{
+			if(_aviliable != avi)
+			{
+				_aviliable = avi;
+				onAviliableChanged(avi);
+			}
+		}
+		bool aviliable() const { return _aviliable; }
 
         core::pt32f realPos() const { return _rect.pos; }
         core::si32f realSize() const { return _rect.size; }
@@ -220,7 +229,8 @@ namespace ui
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
         virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
         virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
-        virtual void onVisibleChanged(bool vis);
+		virtual void onVisibleChanged(bool vis);
+		virtual void onAviliableChanged(bool avi);
 
     public:
         core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
@@ -261,7 +271,8 @@ namespace ui
 
         core::attribute<drawing::font> _font;
 
-        core::attribute<bool> _visible = true;
+		bool _visible = true;
+		bool _aviliable = true;
         // background
         core::attribute<std::shared_ptr<drawing::Image>> _background_image;
         core::attribute<core::color> _background_color = core::colors::Auto;
@@ -307,7 +318,7 @@ namespace ui
     public:
         virtual hittest_result hitTest(const core::pt32f & pos) const
         {
-            if (!_rect.contains(pos))
+            if (!_visible || !_rect.contains(pos))
                 return hittest_result::nowhere;
 
             if (_mouse_through)

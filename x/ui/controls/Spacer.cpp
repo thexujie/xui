@@ -5,7 +5,7 @@ namespace ui::controls
 {
     Spacer::Spacer()
     {
-        
+		_mouse_through = true;
     }
 
     Spacer::~Spacer()

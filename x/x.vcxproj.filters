@@ -200,6 +200,9 @@
     <ClCompile Include="ui\base\Button.cpp">
       <Filter>ui\base</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controlsex\TitleBar.cpp">
+      <Filter>ui\controlsex</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -476,6 +479,9 @@
     <ClInclude Include="core\color.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="ui\controlsex\TitleBar.h">
+      <Filter>ui\controlsex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -519,6 +525,9 @@
     </Filter>
     <Filter Include="ui\base">
       <UniqueIdentifier>{b7e8d4dd-e310-4cb2-b5fa-99e52d17094f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\controlsex">
+      <UniqueIdentifier>{c61b4aa2-20c2-40f0-a536-5c2ec8c0280b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

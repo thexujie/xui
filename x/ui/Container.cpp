@@ -59,6 +59,16 @@ namespace ui
         control->onLeaveScene();
     }
 
+	void Container::clearControls()
+    {
+		std::lock_guard lock(*this);
+		for(auto & control : _controls)
+			control->onLeavingScene();
+		auto controls = std::move(_controls);
+		for(auto & control : _controls)
+			control->onLeaveScene();
+    }
+
     void Container::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
         Control::onEnteringScene(scene);
@@ -98,12 +108,7 @@ namespace ui
     void Container::invalidate(const core::rc32f & rect)
     {
         if(auto p = parent())
-        {
-            if (_clip_clild)
-                p->invalidate(rect.intersected(_rect));
-            else
-                p->invalidate(rect);
-        }
+			p->invalidate(rect);
     }
 
 	bool Container::updateCompleted() const
@@ -144,6 +149,9 @@ namespace ui
         _drawBackground(graphics);
         for (auto & control : _controls)
         {
+			if(!control->aviliable())
+				continue;
+
             auto rect = control->realRect();
             if(clip.intersect_with(rect))
                 control->ondraw(graphics, clip);
@@ -172,6 +180,9 @@ namespace ui
         std::shared_ptr<Control> control_found = nullptr;
         for (auto & control : core::reverse(_controls))
         {
+			if(!control->aviliable())
+				continue;
+
             if (last && !found)
             {
                 if (control == last)
@@ -358,6 +369,9 @@ namespace ui
         float32_t margin = 0;
         for (auto & control : _controls)
         {
+			if(!control->aviliable())
+				continue;
+
             auto lo = control->layoutOrigin();
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
                 continue;
@@ -410,6 +424,8 @@ namespace ui
         for (size_t cnt = 0; cnt < _controls.size(); ++cnt)
         {
             auto & control = _controls[cnt];
+			if(!control->aviliable())
+				continue;
 
             auto lo = control->layoutOrigin();
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
@@ -478,6 +494,9 @@ namespace ui
         std::set<std::string> setes;
         for (auto & control : _controls)
         {
+			if(!control->aviliable())
+				continue;
+
             auto margins = control->realMargin();
             auto lo = control->layoutOrigin();
             auto & si = control->size();

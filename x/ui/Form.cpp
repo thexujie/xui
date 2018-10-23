@@ -152,6 +152,9 @@ namespace ui
             bottom = 0x0008,
         };
 
+		if(_form_state == form_state::maximize)
+			return Container::hitTestForm(pos);
+
         auto b = calc(_resize_borders.value);
         uint32_t temp = 0;
         if (pos.x < b.bleft)
@@ -193,4 +196,23 @@ namespace ui
     {
         invoke([this]() {closed(); });
     }
+
+	void Form::onTitleAction(title_action action)
+	{
+		switch(action)
+		{
+		case title_action::none: 
+			break;
+		case title_action::close:
+			onClose();
+			break;
+		case title_action::minimize:
+			show(form_state::minimize);
+			break;
+		case title_action::maximize:
+			show(_form_state == form_state::maximize ? form_state::normalize : form_state::maximize);
+			break;
+		default:;
+		}
+	}
 }

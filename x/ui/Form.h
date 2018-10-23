@@ -4,31 +4,6 @@
 
 namespace ui
 {
-    enum class form_style
-    {
-        normal = 0,
-        frameless = 0x0001,
-        layered = frameless | 0x0002,
-
-        nomin = 0x100000,
-        nomax = 0x200000,
-
-        mask_type = 0x000f,
-    };
-
-    enum class form_state
-    {
-        hide = 0,
-        show,
-        show_noactive,
-        normalize,
-        minimize,
-        maximize,
-    };
-
-    template<> struct enable_bitmasks<form_style> { static const bool enable = true; };
-    typedef core::bitflag<form_style> form_styles;
-
     class Form : public Container
     {
     public:
@@ -76,6 +51,7 @@ namespace ui
 		virtual void onFormStylesChanged(form_styles from, form_styles to);
 		virtual void onFormStateChanged(form_state from, form_state to);
 		virtual void onClose();
+		virtual void onTitleAction(title_action action);
 
     public:
         core::event<void(form_styles from, form_styles to)> stylesChanged;

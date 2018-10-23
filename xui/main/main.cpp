@@ -330,6 +330,25 @@ void xui_main()
             container->addControl(rbtn);
             rbtn->stateChanged += [](ui::check_state state) {setStyle(ui::form_style::nomax, state == ui::check_state::unchecked); };
         }
+		{
+			auto rbtn = std::make_shared<ui::controls::Check>();
+			rbtn->setText(u8"resizable");
+			rbtn->setCheckState(ui::check_state::checked);
+			container->addControl(rbtn);
+			rbtn->stateChanged += [](ui::check_state state) {setStyle(ui::form_style::noresizable, state == ui::check_state::unchecked); };
+		}
+		{
+			auto rbtn = std::make_shared<ui::controls::Check>();
+			rbtn->setText(u8"no task button");
+			container->addControl(rbtn);
+			rbtn->stateChanged += [](ui::check_state state) {setStyle(ui::form_style::notaskbutton, state == ui::check_state::checked); };
+		}
+		{
+			auto rbtn = std::make_shared<ui::controls::Check>();
+			rbtn->setText(u8"top most");
+			container->addControl(rbtn);
+			rbtn->stateChanged += [](ui::check_state state) {setStyle(ui::form_style::topmost, state == ui::check_state::checked); };
+		}
         {
             auto rbtn = std::make_shared<ui::controls::Radio>();
             rbtn->setText(u8"normal");
@@ -464,10 +483,25 @@ void xui_main()
     win32::runLoop();
 }
 
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR    lpCmdLine,
+	_In_ int       nCmdShow)
+{
+	HMODULE Shcore = GetModuleHandleW(L"Shcore.dll");
+	auto pfn_SetProcessDpiAwareness = reinterpret_cast<decltype(SetProcessDpiAwareness) *>(GetProcAddress(Shcore, "SetProcessDpiAwareness"));
+	if(pfn_SetProcessDpiAwareness)
+		pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+
+	auto app = std::make_shared<win32::Win32App>();
+	xui_main();
+	return 0;
+}
+
 int main()
 {
 	HMODULE Shcore = GetModuleHandleW(L"Shcore.dll");
-	auto pfn_SetProcessDpiAwareness = (decltype(SetProcessDpiAwareness) *)GetProcAddress(Shcore, "SetProcessDpiAwareness");
+	auto pfn_SetProcessDpiAwareness = reinterpret_cast<decltype(SetProcessDpiAwareness) *>(GetProcAddress(Shcore, "SetProcessDpiAwareness"));
 	if(pfn_SetProcessDpiAwareness)
 		pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 

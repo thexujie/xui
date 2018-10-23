@@ -64,7 +64,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;../deps/FreeImage/lib/x64/</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/icu/bin/x64d/icuucd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>

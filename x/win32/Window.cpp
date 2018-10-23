@@ -6,19 +6,34 @@ namespace win32
 {
     const uint32_t WM_REFRESH = WM_USER + 1;
 
-    static uint32_t formStylesToWinStyles(ui::form_styles styles)
+    static std::tuple<uint32_t, uint32_t> formStylesToWinStyles(ui::form_styles styles)
     {
-        uint32_t style = 0;
+		uint32_t style = 0;
+		uint32_t styleEx = 0;
         if (styles.any(ui::form_style::frameless))
-            style = WS_OVERLAPPED | WS_THICKFRAME;
+            style = WS_OVERLAPPED;
         else
-            style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME | WS_SYSMENU | WS_THICKFRAME;
+            style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME;
         if (!styles.any(ui::form_style::nomin))
             style |= WS_MINIMIZEBOX;
         if (!styles.any(ui::form_style::nomax))
             style |= WS_MAXIMIZEBOX;
+		if(!styles.any(ui::form_style::noresizable))
+			style |= WS_THICKFRAME;
+
+		style |= WS_SYSMENU;
 		style |= WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-        return style;
+
+		if(styles.all(ui::form_style::layered))
+			styleEx |= WS_EX_LAYERED;
+
+		if(styles.any(ui::form_style::notaskbutton))
+			styleEx |= WS_EX_TOOLWINDOW;
+
+		if(styles.any(ui::form_style::topmost))
+			styleEx |= WS_EX_TOPMOST;
+
+		return { style, styleEx };
     }
 
 	// 如果不搞一个自定义的函数，会导致一些问题。
@@ -45,8 +60,7 @@ namespace win32
     core::error Window::attatch(std::shared_ptr<ui::Form> form)
     {
         _form = form;
-        _style = formStylesToWinStyles(form->styles());
-        _styleEx = 0;
+        std::tie(_style, _styleEx) = formStylesToWinStyles(form->styles());
 
         auto scene = form->scene();
         form->stateChanged += std::weak_bind(&Window::onStateChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
@@ -112,6 +126,7 @@ namespace win32
         RemovePropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
         _ime_context->release();
         _ime_context.reset();
+		_handle = nullptr;
     }
 
     void Window::move(const core::pt32f & pos)
@@ -197,11 +212,26 @@ namespace win32
         }
     }
 
-    void Window::onStylesChanged(ui::form_styles, ui::form_styles styles)
+    void Window::onStylesChanged(ui::form_styles styels_old, ui::form_styles styles)
     {
-        auto f = form();
-        if (!f)
-            return;
+		auto f = form();
+		if(!f)
+			return;
+
+		//if(styels_old.any(ui::form_style::tool) != styles.any(ui::form_style::tool))
+		//{
+		//	HWND hwnd = (HWND)_handle;
+		//	if(hwnd)
+		//	{
+		//		detach();
+		//		::DestroyWindow(hwnd);
+		//	}
+		//	std::tie(_style, _styleEx) = formStylesToWinStyles(styles);
+		//	_createWindow();
+		//	if(f->shown())
+		//		onStateChanged(ui::form_state::hide, f->formState());
+		//	return;
+		//}
 
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -209,15 +239,10 @@ namespace win32
 
         auto size = f->realSize().to<int32_t>();
 		RECT rect = {};
-
+		uint32_t flags = SWP_FRAMECHANGED;
         _form_styles = styles;
         _message_blocks.set(windowmessage_bock::all, true);
-        _style = formStylesToWinStyles(styles);
-        _styleEx = 0;
-        _styleEx = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
-        _styleEx.set(WS_EX_LAYERED, styles.all(ui::form_style::layered));
-        if (f->shown())
-            _style |= WS_VISIBLE;
+		std::tie(_style, _styleEx) = formStylesToWinStyles(_form_styles);
 		if(styles.any(ui::form_style::frameless))
 		{
 			POINT pt = { 0, 0 };
@@ -228,16 +253,33 @@ namespace win32
 		{
 			auto pos = f->windowPos().to<int32_t>();
 			rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
-			::AdjustWindowRect(&rect, _style, FALSE);
+			//::AdjustWindowRect(&rect, _style, FALSE);
+			::AdjustWindowRectEx(&rect, _style, FALSE, _styleEx);
 		}
+
+		// 开关任务栏按钮，需要先隐藏，再 show
+		if(styels_old.any(ui::form_style::notaskbutton) != styles.any(ui::form_style::notaskbutton))
+		{
+			::ShowWindow(hwnd, SW_HIDE);
+			flags |= SWP_SHOWWINDOW;
+		}
+		else if(f->shown())
+			_style |= WS_VISIBLE;
+		else {}
+
         ::SetWindowLongPtrW(hwnd, GWL_STYLE, _style);
         ::SetWindowLongPtrW(hwnd, GWL_EXSTYLE, _styleEx);
         _message_blocks.set(windowmessage_bock::all, false);
-        SetWindowPos(hwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-            SWP_DRAWFRAME | SWP_NOACTIVATE | SWP_NOZORDER);
+
+		HWND hwndInsert = NULL;
+		// 窗口已经创建后，styleex 的 WS_EX_TOPMOST 不会生效的
+		if(styels_old.any(ui::form_style::topmost) == styles.any(ui::form_style::topmost))
+			flags |= SWP_NOZORDER;
+		else
+			hwndInsert = styles.any(ui::form_style::topmost) ? HWND_TOPMOST : HWND_NOTOPMOST;
+        SetWindowPos(hwnd, hwndInsert, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, flags);
+
         f->invalidate();
-        //::MoveWindow(hwnd, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, FALSE);
-        //RedrawWindow(hwnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE);
     }
 
     void Window::onPosChanged(const core::pt32f & from, const core::pt32f & to)

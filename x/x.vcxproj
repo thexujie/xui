@@ -108,6 +108,7 @@
     <ClCompile Include="ui\component\Style.cpp" />
     <ClCompile Include="ui\component\Window.cpp" />
     <ClCompile Include="ui\Container.cpp" />
+    <ClCompile Include="ui\controlsex\TitleBar.cpp" />
     <ClCompile Include="ui\controls\Button.cpp" />
     <ClCompile Include="ui\controls\Check.cpp" />
     <ClCompile Include="ui\controls\Image.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="ui\component\Style.h" />
     <ClInclude Include="ui\component\Window.h" />
     <ClInclude Include="ui\Container.h" />
+    <ClInclude Include="ui\controlsex\TitleBar.h" />
     <ClInclude Include="ui\controls\Button.h" />
     <ClInclude Include="ui\controls\Check.h" />
     <ClInclude Include="ui\controls\Image.h" />

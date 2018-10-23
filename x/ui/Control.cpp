@@ -284,6 +284,9 @@ namespace ui
 
     void Control::refresh(const core::rc32f & rect)
     {
+		if(!_aviliable || !_visible)
+			return;
+
         _rect_invalid.unite(rect);
         if (!_delay_update)
         {
@@ -294,6 +297,8 @@ namespace ui
 
     void Control::rearrange()
     {
+		if(auto p = parent())
+			p->relayout();
     }
 
     void Control::restyle()
@@ -480,6 +485,9 @@ namespace ui
         check_invoke();
 		_delay_update = false;
 
+		if(!_aviliable || !_visible)
+			return;
+
         auto s = scene();
         auto p = parent();
         if (!s || !p)
@@ -515,6 +523,9 @@ namespace ui
 
     void Control::ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const
     {
+		if(!_visible)
+			return;
+
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
         if (a != 0xff)
             graphics.saveLayer(box(), a);
@@ -548,6 +559,17 @@ namespace ui
 
     void Control::onVisibleChanged(bool vis)
     {
+		refresh(realRect());
+    }
+
+	void Control::onAviliableChanged(bool avi)
+    {
+		refresh(realRect());
+		if(auto p = parent())
+		{
+			p->relayout();
+			p->refresh();
+		}
     }
 
     void Control::_drawBackground(drawing::Graphics & graphics) const

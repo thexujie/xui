@@ -23,9 +23,10 @@ namespace ui
         Container(core::align layout);
         virtual ~Container();
 
-        void addControl(std::shared_ptr<Control> control);
+		void addControl(std::shared_ptr<Control> control);
         std::shared_ptr<controls::Spacer> addSpacer(core::dimensionf size);
         void removeControl(std::shared_ptr<Control> control);
+		void clearControls();
         std::vector<std::shared_ptr<Control>> & children() { return _controls; }
 
         void onEnteringScene(std::shared_ptr<Scene> & scene) override;
