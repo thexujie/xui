@@ -418,6 +418,7 @@ namespace win32
 			styleEx, WINDOW_CLASS_NAME, NULL, style | WS_BORDER | WS_DLGFRAME,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             NULL, NULL, hInstance, this);
+		// TRICK: 这样搞一下，可以避免用 SetWindowRgn，见 OnWmSize。
         ::SetWindowLongPtrW(hwnd, GWL_STYLE, style);
 
         //attatch(hwnd);
@@ -806,9 +807,9 @@ namespace win32
         HDC hdc = ::BeginPaint(hwnd, &ps);
 		::EndPaint(hwnd, &ps);
 
-        //_render({ ps.rcPaint.left, ps.rcPaint.top,
-        //    ps.rcPaint.right - ps.rcPaint.left,
-        //    ps.rcPaint.bottom - ps.rcPaint.top });
+        _render({ ps.rcPaint.left, ps.rcPaint.top,
+            ps.rcPaint.right - ps.rcPaint.left,
+            ps.rcPaint.bottom - ps.rcPaint.top });
         return 0;
     }
 

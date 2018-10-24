@@ -41,4 +41,5 @@ void views_main()
 		//form->addControl(tln);
 	}
 	//form->addControl(layer);
+	win32::runLoop();
 }

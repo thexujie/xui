@@ -420,4 +420,5 @@ void all_main()
 	};
 
 	t.start();
+	win32::runLoop();
 }

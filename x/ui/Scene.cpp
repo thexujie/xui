@@ -37,11 +37,13 @@ namespace ui
 
     std::shared_ptr<drawing::GraphicsDevice> Scene::readBegin()
     {
+		_mtx_buffer.lock();
         return _draw_buffer;
     }
 
     void Scene::readEnd()
     {
+		_mtx_buffer.unlock();
     }
 
     void Scene::setEvent(scene_event evt)
@@ -235,7 +237,7 @@ namespace ui
             core::rc32i invalid_rect;
             drawing::Region invalid_region;
             {
-                std::lock_guard<std::mutex> lock(_mtx);
+                std::lock_guard<std::mutex> l(_mtx);
                 invalid_region = std::move(_invalid_region);
             }
 
@@ -243,6 +245,7 @@ namespace ui
                 continue;
 
             auto tms = core::datetime::high_resolution_s();
+			std::unique_lock<std::mutex> lock_buffer(_mtx_buffer);
             if (!_draw_buffer)
                 _draw_buffer = std::make_shared<drawing::Surface>();
 
@@ -263,6 +266,7 @@ namespace ui
             static bool save = false;
             if (save)
                 _draw_buffer->Save("scene.png");
+			lock_buffer.unlock();
 
             //fps.acc(1);
             //auto cost = core::datetime::high_resolution_s() - tms;

@@ -88,6 +88,7 @@ namespace ui
         float32_t _ratio = 1.0f;
         core::rc32f _rect;
 
+		std::mutex _mtx_buffer;
         std::shared_ptr<drawing::Surface> _draw_buffer;
 
         std::shared_ptr<Control> _current_control;
