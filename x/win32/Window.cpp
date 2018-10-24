@@ -33,6 +33,8 @@ namespace win32
 		if(styles.any(ui::form_style::topmost))
 			styleEx |= WS_EX_TOPMOST;
 
+		//styleEx |= WS_EX_OVERLAPPEDWINDOW;
+		//styleEx |= WS_EX_PALETTEWINDOW;
 		return { style, styleEx };
     }
 
@@ -415,9 +417,9 @@ namespace win32
         HWND hwnd = CreateWindowExW(
 			styleEx, WINDOW_CLASS_NAME, NULL, style,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-            NULL, NULL, hInstance, NULL);
+            NULL, NULL, hInstance, this);
 
-        attatch(hwnd);
+        //attatch(hwnd);
 		assert(hwnd == _handle);
 		//SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE);
         return core::error_ok;
@@ -542,14 +544,21 @@ namespace win32
 		}
 		else
 		{
-			HDC hdst = GetDC(hwnd);
 			HDC hsrc = (HDC)bitmap->hdc();
 			if(hsrc)
 			{
-				BitBlt(hdst, rect.x, rect.y, rect.cx, rect.cy, hsrc, rect.x, rect.y, SRCCOPY);
+				async([&hwnd, &hsrc, &bitmap, &rect]()
+				{
+					//HDC hdst = GetDCEx(hwnd, NULL, DCX_WINDOW);
+					HDC hdst = GetWindowDC(hwnd);
+					BitBlt(hdst, rect.x, rect.y, rect.cx, rect.cy, hsrc, rect.x, rect.y, SRCCOPY);
+					ReleaseDC(hwnd, hdst);
+				});
+				/*BitBlt(hdst, rect.x, rect.y, rect.cx, rect.cy, hsrc, rect.x, rect.y, SRCCOPY);*/
 			}
 			else
 			{
+				HDC hdst = GetDC(hwnd);
 				drawing::bitmap_buffer buffer = bitmap->buffer();
 				BITMAPINFO bmi;
 				memset(&bmi, 0, sizeof(bmi));
@@ -565,8 +574,8 @@ namespace win32
 				SetDIBitsToDevice(hdst,
 					rc.x, rc.y, rc.cx, rc.cy,
 					rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
+				ReleaseDC(hwnd, hdst);
 			}
-			ReleaseDC(hwnd, hdst);
 		}
 		scene->readEnd();
     }
@@ -791,15 +800,15 @@ namespace win32
         HDC hdc = ::BeginPaint(hwnd, &ps);
 		::EndPaint(hwnd, &ps);
 
-        _render({ ps.rcPaint.left, ps.rcPaint.top,
-            ps.rcPaint.right - ps.rcPaint.left,
-            ps.rcPaint.bottom - ps.rcPaint.top });
+        //_render({ ps.rcPaint.left, ps.rcPaint.top,
+        //    ps.rcPaint.right - ps.rcPaint.left,
+        //    ps.rcPaint.bottom - ps.rcPaint.top });
         return 0;
     }
 
     intx_t Window::OnWmNcPaint(uintx_t wParam, intx_t lParam)
     {
-        return OnDefault(WM_NCPAINT, wParam, lParam);
+        //return OnDefault(WM_NCPAINT, wParam, lParam);
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
@@ -1019,13 +1028,14 @@ namespace win32
         if (!hwnd)
             return OnDefault(WM_NCCALCSIZE, wParam, lParam);
 
+		assert(wParam);
         if(wParam)
         {
             NCCALCSIZE_PARAMS & ncsize = *reinterpret_cast<NCCALCSIZE_PARAMS *>(lParam);
             if (_form_styles.any(ui::form_style::frameless))
             {
-                WINDOWPOS & wpos = *ncsize.lppos;
-                RECT & wrect = ncsize.rgrc[0];
+                //WINDOWPOS & wpos = *ncsize.lppos;
+                //RECT & wrect = ncsize.rgrc[0];
                 //ncsize.rgrc[1] = ncsize.rgrc[0];
                 //wpos.x = 0;
                 //wpos.y = 0;

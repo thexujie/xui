@@ -34,5 +34,13 @@ void views_main()
 		title->setBackgroundColor(0xfff1f1f0);
 		form->addControl(title);
 	}
+	{
+		auto tln = std::make_shared<ui::controls::TextLine>();
+		tln->setFont({ "", drawing::font().size * 4 });
+		tln->setText("Hello Hello");
+		tln->setSize({ 100_per, 100_per });
+		tln->setImeMode(ui::ime_mode::on);
+		form->addControl(tln);
+	}
 	//form->addControl(layer);
 }
