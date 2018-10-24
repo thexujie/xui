@@ -11,7 +11,7 @@ namespace win32
 		uint32_t style = 0;
 		uint32_t styleEx = 0;
         if (styles.any(ui::form_style::frameless))
-            style = WS_POPUP;
+            style = WS_OVERLAPPED;
         else
             style = WS_OVERLAPPED | WS_BORDER | WS_DLGFRAME;
         if (!styles.any(ui::form_style::nomin))
@@ -415,9 +415,10 @@ namespace win32
         ::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
 
         HWND hwnd = CreateWindowExW(
-			styleEx, WINDOW_CLASS_NAME, NULL, style,
+			styleEx, WINDOW_CLASS_NAME, NULL, style | WS_BORDER | WS_DLGFRAME,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             NULL, NULL, hInstance, this);
+        ::SetWindowLongPtrW(hwnd, GWL_STYLE, style);
 
         //attatch(hwnd);
 		assert(hwnd == _handle);
@@ -515,7 +516,6 @@ namespace win32
 
     void Window::_render(const core::rc32i & rect)
     {
-
 		auto f = form();
 		if(!f)
 			return;
@@ -545,20 +545,13 @@ namespace win32
 		else
 		{
 			HDC hsrc = (HDC)bitmap->hdc();
+            HDC hdst = GetDC(hwnd);
 			if(hsrc)
 			{
-				async([&hwnd, &hsrc, &bitmap, &rect]()
-				{
-					//HDC hdst = GetDCEx(hwnd, NULL, DCX_WINDOW);
-					HDC hdst = GetWindowDC(hwnd);
-					BitBlt(hdst, rect.x, rect.y, rect.cx, rect.cy, hsrc, rect.x, rect.y, SRCCOPY);
-					ReleaseDC(hwnd, hdst);
-				});
-				/*BitBlt(hdst, rect.x, rect.y, rect.cx, rect.cy, hsrc, rect.x, rect.y, SRCCOPY);*/
+				BitBlt(hdst, rect.x, rect.y, rect.cx, rect.cy, hsrc, rect.x, rect.y, SRCCOPY);
 			}
 			else
 			{
-				HDC hdst = GetDC(hwnd);
 				drawing::bitmap_buffer buffer = bitmap->buffer();
 				BITMAPINFO bmi;
 				memset(&bmi, 0, sizeof(bmi));
@@ -574,8 +567,8 @@ namespace win32
 				SetDIBitsToDevice(hdst,
 					rc.x, rc.y, rc.cx, rc.cy,
 					rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
-				ReleaseDC(hwnd, hdst);
 			}
+            ReleaseDC(hwnd, hdst);
 		}
 		scene->readEnd();
     }
@@ -721,10 +714,11 @@ namespace win32
             //CASE_MSG(WM_DESTROY, OnWmDestroy);
 
             CASE_MSG(WM_GETMINMAXINFO, OnWmGetMinMaxInfo);
-            //CASE_MSG(WM_SYSCOMMAND, OnWmSysCommand);
+            CASE_MSG(WM_SYSCOMMAND, OnWmSysCommand);
+            CASE_MSG(WM_WINDOWPOSCHANGING, OnWmWindowPosChanging);
+            CASE_MSG(WM_WINDOWPOSCHANGED, OnWmWindowPosChanged);
 
             CASE_MSG(WM_REFRESH, OnWmRefresh);
-
         case WM_CLOSE:
             f->onClose();
             return 0;
@@ -755,6 +749,18 @@ namespace win32
 
     intx_t Window::OnWmSize(uintx_t wParam, intx_t lParam)
     {
+        auto size = _size();
+        // https://docs.microsoft.com/zh-cn/windows/desktop/Controls/cookbook-overview
+        //To avoid applying visual styles to a top level window, give the window a non-null region (SetWindowRgn). 
+        //The system assumes that a window with a non-NULL region is a specialized window that does not use visual styles.
+        //A child window associated with a non-visual-styles top level window may still apply visual styles even though the parent window does not.
+        //WINDOWPOS & wp = *reinterpret_cast<WINDOWPOS *>(lParam);
+        //if (_form_styles.any(ui::form_style::frameless))
+        //{
+        //    HRGN hrgn = CreateRectRgn(0, 0, size.cx, size.cy);
+        //    SetWindowRgn((HWND)_handle, hrgn, FALSE);
+        //}
+
         if (_message_blocks.any(windowmessage_bock::wm_size))
             return OnDefault(WM_SIZE, wParam, lParam);
 
@@ -762,7 +768,7 @@ namespace win32
         if (!f)
             throw core::exception(core::error_nullptr);
 
-        f->setWindowSize(_size().to<float32_t>());
+        f->setWindowSize(size.to<float32_t>());
         switch(wParam)
         {
         case SIZE_MINIMIZED: f->setFormState(ui::form_state::minimize); break;
@@ -1078,6 +1084,21 @@ namespace win32
         }
         else
             return OnDefault(WM_GETMINMAXINFO, wParam, lParam);
+    }
+
+    intx_t Window::OnWmSysCommand(uintx_t wParam, intx_t lParam)
+    {
+        return OnDefault(WM_SYSCOMMAND, wParam, lParam);
+    }
+
+    intx_t Window::OnWmWindowPosChanging(uintx_t wParam, intx_t lParam)
+    {
+        return OnDefault(WM_WINDOWPOSCHANGING, wParam, lParam);
+    }
+
+    intx_t Window::OnWmWindowPosChanged(uintx_t wParam, intx_t lParam) 
+    {
+        return OnDefault(WM_WINDOWPOSCHANGED, wParam, lParam);
     }
 
     Window * Window::fromHandle(handle_t handle)

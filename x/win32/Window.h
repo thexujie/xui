@@ -117,7 +117,9 @@ namespace win32
         virtual intx_t OnWmNcCalcSize(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmNcMouseMove(uintx_t wParam, intx_t lParam){ return 0;}
         virtual intx_t OnWmGetMinMaxInfo(uintx_t wParam, intx_t lParam);
-        virtual intx_t OnWmSysCommand(uintx_t wParam, intx_t lParam){ return 0;}
+        virtual intx_t OnWmSysCommand(uintx_t wParam, intx_t lParam);
+        virtual intx_t OnWmWindowPosChanging(uintx_t wParam, intx_t lParam);
+        virtual intx_t OnWmWindowPosChanged(uintx_t wParam, intx_t lParam);
 
     private:
         std::weak_ptr<ui::Form> _form;

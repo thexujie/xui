@@ -20,7 +20,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 
 	auto app = std::make_shared<win32::Win32App>();
-	views_main();
+    views_main();
 	return win32::runLoop();
 }
 

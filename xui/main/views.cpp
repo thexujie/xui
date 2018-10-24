@@ -1,17 +1,15 @@
 ﻿#include "stdafx.h"
 
-std::shared_ptr<ui::Form> g_form;
 void views_main()
 {
 	auto ss = std::make_shared<ui::component::StyleSheet>();
 	ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
 
 	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em), ui::form_style::frameless);
-	g_form = form;
 	form->formScene()->setStyleSheet(ss);
 	form->setBorder({ 1_px, 1_px });
 	form->setBorderColors({ core::colors::Black, core::colors::Black });
-	form->setBackgroundColor(0x80ffffff);
+	form->setBackgroundColor(0xfffcfcfc);
 	form->setResizeBorders({ 4_px, 4_px });
 	form->setLayoutDirection(core::align::top);
 	form->show();
@@ -40,7 +38,7 @@ void views_main()
 		tln->setText("Hello Hello");
 		tln->setSize({ 100_per, 100_per });
 		tln->setImeMode(ui::ime_mode::on);
-		form->addControl(tln);
+		//form->addControl(tln);
 	}
 	//form->addControl(layer);
 }
