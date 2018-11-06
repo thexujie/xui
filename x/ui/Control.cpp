@@ -282,6 +282,19 @@ namespace ui
         }
     }
 
+    void Control::refresh()
+    {
+        if (!_delay_update)
+        {
+            _delay_update = true;
+            invoke([this]()
+            {
+                update();
+                _delay_update = false;
+            });
+        }
+    }
+
     void Control::repaint()
     {
         repaint(_rect);
@@ -292,10 +305,10 @@ namespace ui
 		if(!_aviliable || !_visible)
 			return;
 
-        _rect_invalid.unite(rect);
-        if (!_delay_invalidate)
+        _rect_repaint.unite(rect);
+        if (!_delay_repaint)
         {
-            _delay_invalidate = true;
+            _delay_repaint = true;
             invoke([this]() { invalidate(); });
         }
     }
@@ -519,16 +532,16 @@ namespace ui
     void Control::invalidate()
     {
         check_invoke();
-		_delay_invalidate = false;
+		_delay_repaint = false;
 
 		if(!_aviliable || !_visible)
 			return;
 
-        if (!_rect_invalid.empty())
+        if (!_rect_repaint.empty())
         {
-            invalidate(_rect_invalid);
+            invalidate(_rect_repaint);
         }
-        _rect_invalid.clear();
+        _rect_repaint.clear();
     }
 
     void Control::invalidate(const core::rectf & rect)

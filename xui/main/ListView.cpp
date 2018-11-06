@@ -58,7 +58,7 @@ namespace ui
         return {};
     }
 
-    void ListView::layout(layout_flags flags)
+    void ListView::update()
     {
         auto box = contentBox();
         float32_t top = -_scroll_pos.y;
@@ -81,28 +81,6 @@ namespace ui
             item->place(item_box,  s);
             top += s.cy + m.bheight() + p.bheight();
             height += s.cy + m.bheight() + p.bheight();
-        }
-
-        {
-            for (auto & control : _controls)
-            {
-                if (!control->aviliable())
-                    continue;
-
-                auto lo = control->layoutOrigin();
-                auto preffer_size = control->prefferSize(box.size);
-                switch (lo)
-                {
-                case layout_origin::parent:
-                    control->place(box, preffer_size);
-                    break;
-                case layout_origin::scene:
-                    control->place(scene()->rect(), preffer_size);
-                    break;
-                default:
-                    break;
-                }
-            }
         }
 
         setLayoutedSize({ box.cx, height });

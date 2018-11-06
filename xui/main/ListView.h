@@ -46,7 +46,7 @@ namespace ui
 		std::string styleName() const override;
 
         core::sizef contentSize() const override;
-        void layout(layout_flags flags) override;
+        void update() override;
 		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
 	public:

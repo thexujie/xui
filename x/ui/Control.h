@@ -145,6 +145,7 @@ namespace ui
         core::rectf contentBox() const;
         core::rectf box(control_box box) const;
 
+        void refresh();
         void repaint();
         void repaint(const core::rectf & rect);
         void rearrange();
@@ -216,10 +217,11 @@ namespace ui
         virtual void place(const core::rectf & rect, const core::sizef & size);
         virtual std::string styleName() const { return {}; }
 
+        virtual void update() {}
         virtual void updateStyle();
         virtual void invalidate();
 		virtual void invalidate(const core::rectf & rect);
-		virtual bool validCompleted() const { return !_delay_invalidate; }
+		virtual bool validCompleted() const { return !_delay_repaint; }
 
         virtual int32_t animate();
 
@@ -292,7 +294,8 @@ namespace ui
         core::pointf _location;
         core::rectf _rect;
 
-        bool _delay_invalidate = false;
+        bool _delay_update = false;
+        bool _delay_repaint = false;
         bool _delay_style = false;
         enum class cursor _cursor = cursor::unknown;
         float32_t _alpha = 1.0f;
@@ -305,7 +308,7 @@ namespace ui
         core::float3x2 _transform;
 
         std::map<std::string, std::vector<std::shared_ptr<core::animation>>> _animations;
-        core::rectf _rect_invalid;
+        core::rectf _rect_repaint;
 
     public:
         void clearAnimations() { _animations.clear(); }

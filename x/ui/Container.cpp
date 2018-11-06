@@ -106,7 +106,7 @@ namespace ui
 
 	bool Container::validCompleted() const
     {
-		if(_delay_invalidate || _invalid_layout)
+		if(_delay_repaint || _invalid_layout)
 			return false;
 
 		for(auto & control : _controls)

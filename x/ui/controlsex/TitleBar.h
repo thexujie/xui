@@ -27,7 +27,7 @@ namespace ui::controlsex
 
 		std::string styleName() const override;
 
-		void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
+		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
 	public:
 		void onMouseClick(const ui::input_state & state, ui::mouse_button button) override;

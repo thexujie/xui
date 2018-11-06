@@ -70,7 +70,7 @@ namespace ui
         auto iter = _items.begin() + index;
         item->enterView(share_ref<View>());
         _items.insert(iter, item);
-        relayout();
+        refresh();
         return index;
     }
 
@@ -80,7 +80,7 @@ namespace ui
         auto iter = _items.begin() + index;
         _items.erase(iter);
         item->leaveView();
-        relayout();
+        refresh();
         return index;
     }
 

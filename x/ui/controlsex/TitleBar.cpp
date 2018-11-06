@@ -51,7 +51,7 @@ namespace ui::controlsex
 			return "titlebutton";
 	}
 
-	void TitleButton::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+	void TitleButton::paint(drawing::Graphics & graphics, const core::rectf & clip) const
 	{
 		auto b = box();
 		if(_path)
