@@ -70,7 +70,14 @@ namespace ui
             auto m = calc(item->margin());
             auto p = calc(item->padding());
 
-            core::rectf item_box = {box.x + m.bleft, box.y + top + m.btop, box.cx - m.bwidth(), p.bheight() + s.cy};
+            if (item->flags().any(item_flag::placed))
+            {
+                top += s.cy + m.bheight() + p.bheight();
+                height += s.cy + m.bheight() + p.bheight();
+                continue;
+            }
+
+            core::rectf item_box = {m.bleft, top + m.btop, box.cx - m.bwidth(), p.bheight() + s.cy};
             item->place(item_box,  s);
             top += s.cy + m.bheight() + p.bheight();
             height += s.cy + m.bheight() + p.bheight();
@@ -100,30 +107,31 @@ namespace ui
 
         setLayoutedSize({ box.cx, height });
         scene()->setEvent(scene_event::update_mouse_pos);
-        refresh();
+        repaint();
     }
 
-	void ListView::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+	void ListView::paint(drawing::Graphics & graphics, const core::rectf & clip) const
 	{
         graphics.save();
         graphics.setClipRect(contentBox());
-        for(size_t index = 0; index != _items.size(); ++index)
+        for(size_t index = 0; index != _views.size(); ++index)
         {
-            auto & item = _items[index];
-            auto rect = item->rect();
+            auto & view = _views[index];
+            auto data = view->data();
+            auto rect = view->box();
             if (rect.bottom() <= clip.y)
                 continue;
 
             if (rect.y >= clip.bottom())
                 break;
 
-            auto & flags = item->flags();
+            auto & flags = data->flags();
             if (flags.any(item_flag::selected))
-                graphics.drawRectangle(item->box(), drawing::PathStyle().fill(_selected_color));
+                graphics.drawRectangle(data->box(), drawing::PathStyle().fill(_selected_color));
             else if (flags.any(item_flag::marked))
-                graphics.drawRectangle(item->box(), drawing::PathStyle().fill(_marked_color));
+                graphics.drawRectangle(data->box(), drawing::PathStyle().fill(_marked_color));
             else {}
-            item->draw(graphics, clip);
+            data->draw(graphics, clip);
         }
         graphics.restore();
 	}

@@ -41,7 +41,7 @@ namespace ui
 
     public:
         core::aligns wheelFreedom() const override;
-        void ondraw(drawing::Graphics & graphics, const core::rectf & clip) const override;
+        void prepaint(drawing::Graphics & graphics, const core::rectf & clip) const override;
         std::shared_ptr<Control> findChild(const core::pointf & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
 
         void onPosChanged(const core::pointf & from, const core::pointf & to) override;

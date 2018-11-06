@@ -22,7 +22,7 @@ namespace ui
         
     };
 
-    class ListViewItem : public ViewItem
+    class ListViewItem : public ItemData
     {
     public:
         ListViewItem(std::string text, drawing::wrap_mode wrap_mode = drawing::wrap_mode::none) : _text(text), _wrap_mode(wrap_mode) {}
@@ -47,7 +47,7 @@ namespace ui
 
         core::sizef contentSize() const override;
         void layout(layout_flags flags) override;
-		void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
+		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
 	public:
         void onMouseMove(const ui::input_state & state) override;

@@ -38,7 +38,7 @@ namespace ui::base
         if (_state != state)
         {
             _state = state;
-            refresh();
+            repaint();
             stateChanged(_state);
             switch(state)
             {

@@ -145,8 +145,8 @@ namespace ui
         core::rectf contentBox() const;
         core::rectf box(control_box box) const;
 
-        void refresh();
-        void refresh(const core::rectf & rect);
+        void repaint();
+        void repaint(const core::rectf & rect);
         void rearrange();
         void restyle();
 
@@ -155,7 +155,7 @@ namespace ui
             if (!_background_color.available() || _background_color != color)
             {
                 _background_color = color;
-                refresh();
+                repaint();
             }
         }
 
@@ -172,7 +172,7 @@ namespace ui
             if (!_border.available() || _border != border)
             {
                 _border = border;
-                refresh();
+                repaint();
             }
         }
 
@@ -223,8 +223,8 @@ namespace ui
 
         virtual int32_t animate();
 
-        virtual void ondraw(drawing::Graphics & graphics, const core::rectf & clip) const;
-        virtual void draw(drawing::Graphics & graphics, const core::rectf & clip) const;
+        virtual void prepaint(drawing::Graphics & graphics, const core::rectf & clip) const;
+        virtual void paint(drawing::Graphics & graphics, const core::rectf & clip) const;
 
         virtual std::shared_ptr<Control> findChild(const core::pointf & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const { return nullptr; }
 

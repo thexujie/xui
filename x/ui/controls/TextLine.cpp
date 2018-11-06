@@ -84,7 +84,7 @@ namespace ui::controls
             return "textline";
     }
 
-    void TextLine::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void TextLine::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         auto cbox = contentBox();
         graphics.save();
@@ -489,7 +489,7 @@ namespace ui::controls
             }
         }
 
-        refresh();
+        repaint();
         _delay_shaper_flags.clear();
     }
 
@@ -521,7 +521,7 @@ namespace ui::controls
             }
         }
 
-        refresh();
+        repaint();
     }
 
     void TextLine::_setCursorShown(bool vis)
@@ -529,7 +529,7 @@ namespace ui::controls
         if(_cursor_shown != vis)
         {
             _cursor_shown = vis;
-            refresh();
+            repaint();
         }
     }
 }

@@ -45,7 +45,7 @@ namespace ui
         void onEnteringScene(std::shared_ptr<Scene> & scene) override;
         void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
 
-        void ondraw(drawing::Graphics & graphics, const core::rectf & clip) const override;
+        void prepaint(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
         virtual hittest_form hitTestForm(const core::pointf & pos) const;
 

@@ -12,24 +12,24 @@ namespace ui::controls
         static void propertyTableCallback(core::property_table & properties);
         void propertyTable(core::property_table & properties) override;
 
-        void setDirection(core::align direction) { if (_direction != direction) { _direction = direction; refresh(); } }
+        void setDirection(core::align direction) { if (_direction != direction) { _direction = direction; repaint(); } }
         core::align direction() const { return _direction; }
 
         std::string styleName() const override;
 
-        void setBarColor(const core::color & color) { if (_bar_color != color) { _bar_color = color; refresh(); } }
+        void setBarColor(const core::color & color) { if (_bar_color != color) { _bar_color = color; repaint(); } }
         const core::color & barColor() const { return _bar_color; }
 
-        void setBarBorder(const core::dimensionf & border) { if (_bar_border != border) { _bar_border = border; refresh(); } }
+        void setBarBorder(const core::dimensionf & border) { if (_bar_border != border) { _bar_border = border; repaint(); } }
         const core::dimensionf & barBorder() const { return _bar_border; }
 
-        void setBarBorderColor(const core::color & color) { if (_bar_border_color != color) { _bar_border_color = color; refresh(); } }
+        void setBarBorderColor(const core::color & color) { if (_bar_border_color != color) { _bar_border_color = color; repaint(); } }
         const core::color & barBorderColor() const { return _bar_border_color; }
 
-        void setBarBorderStyle(const drawing::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; refresh(); } }
+        void setBarBorderStyle(const drawing::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; repaint(); } }
         const drawing::stroke_style & barBorderStyle() const { return _bar_border_style; }
 
-        void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
+        void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
     public:
         float32_t value() const { return _val; }
         float32_t minValue() const { return _min; }

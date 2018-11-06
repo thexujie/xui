@@ -261,7 +261,7 @@ namespace ui
             auto c = control();
             if (!c)
                 continue;
-            c->ondraw(graphics, boundsf);
+            c->prepaint(graphics, boundsf);
             graphics.restore();
             static bool save = false;
             if (save)

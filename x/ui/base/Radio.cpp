@@ -69,7 +69,7 @@ namespace ui::base
             _state = state;
             if (_radio_group && state == check_state::checked)
                 _radio_group->check(share_ref<Radio>());
-            refresh();
+            repaint();
             stateChanged(state);
         }
     }

@@ -3,7 +3,7 @@
 
 namespace ui
 {
-    const core::vec4<core::dimensionf> & ViewItem::margin() const
+    const core::vec4<core::dimensionf> & ItemData::margin() const
     {
         auto v = view();
         if (!v)
@@ -15,7 +15,7 @@ namespace ui
             return v->itemMargin();
     }
 
-    const core::vec4<core::dimensionf> & ViewItem::padding() const
+    const core::vec4<core::dimensionf> & ItemData::padding() const
     {
         auto v = view();
         if (!v)
@@ -27,7 +27,7 @@ namespace ui
             return v->itemPadding();
     }
 
-    core::rectf ViewItem::contentBox() const
+    core::rectf ItemData::contentBox() const
     {
         auto v = view();
         if (!v)
@@ -60,12 +60,12 @@ namespace ui
         View::propertyTableCallback(properties);
 	}
 
-    size_t View::addItem(std::shared_ptr<ViewItem> item)
+    size_t View::addItem(std::shared_ptr<ItemData> item)
     {
         return insertItem(_items.size(), item);
     }
 
-    size_t View::insertItem(size_t index, std::shared_ptr<ViewItem> item)
+    size_t View::insertItem(size_t index, std::shared_ptr<ItemData> item)
     {
         auto iter = _items.begin() + index;
         item->enterView(share_ref<View>());
@@ -84,7 +84,7 @@ namespace ui
         return index;
     }
 
-    std::shared_ptr<ViewItem> View::findItem(const core::pointf & pos) const
+    std::shared_ptr<ItemData> View::findItem(const core::pointf & pos) const
     {
         _confirmLayout();
         for (size_t index = 0; index != _items.size(); ++index)
@@ -105,7 +105,7 @@ namespace ui
         return nullptr;
     }
 
-    void View::_setMarkedItem(std::shared_ptr<ViewItem> item)
+    void View::_setMarkedItem(std::shared_ptr<ItemData> item)
     {
         if (item != _marked_item)
         {
@@ -113,19 +113,19 @@ namespace ui
             {
                 _marked_item->setFlag(item_flag::marked, false);
                 if (_marked_color)
-                    refresh(_marked_item->box());
+                    repaint(_marked_item->box());
             }
             _marked_item = item;
             if (_marked_item)
             {
                 _marked_item->setFlag(item_flag::marked, true);
                 if (_marked_color)
-                    refresh(_marked_item->box());
+                    repaint(_marked_item->box());
             }
         }
     }
 
-    void View::_setSelectedItem(std::shared_ptr<ViewItem> item)
+    void View::_setSelectedItem(std::shared_ptr<ItemData> item)
     {
         if (item != _selected_item)
         {
@@ -133,14 +133,14 @@ namespace ui
             {
                 _selected_item->setFlag(item_flag::selected, false);
                 if (_marked_color)
-                    refresh(_marked_item->box());
+                    repaint(_marked_item->box());
             }
             _selected_item = item;
             if (_selected_item)
             {
                 _selected_item->setFlag(item_flag::selected, true);
                 if (_marked_color)
-                    refresh(_marked_item->box());
+                    repaint(_marked_item->box());
             }
         }
     }

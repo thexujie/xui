@@ -13,7 +13,7 @@ namespace ui::controls
         
     }
 
-    void Spacer::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Spacer::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
     }
 }

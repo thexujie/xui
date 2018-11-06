@@ -54,7 +54,7 @@ namespace ui::controls
             return "radio";
     }
 
-    void Check::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Check::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         auto box = paddingBox();
         auto fm = drawing::fontmetrics(font());
@@ -138,7 +138,7 @@ namespace ui::controls
         if(_hole_color != color)
         {
             _hole_color = color;
-            refresh();
+            repaint();
         }
     }
 
@@ -147,7 +147,7 @@ namespace ui::controls
         if (_hole_border_size != border_size)
         {
             _hole_border_size = border_size;
-            refresh();
+            repaint();
         }
     }
 
@@ -156,7 +156,7 @@ namespace ui::controls
         if (_hole_border_color != color)
         {
             _hole_border_color = color;
-            refresh();
+            repaint();
         }
     }
 }

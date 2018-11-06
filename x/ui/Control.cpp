@@ -282,12 +282,12 @@ namespace ui
         }
     }
 
-    void Control::refresh()
+    void Control::repaint()
     {
-        refresh(_rect);
+        repaint(_rect);
     }
 
-    void Control::refresh(const core::rectf & rect)
+    void Control::repaint(const core::rectf & rect)
     {
 		if(!_aviliable || !_visible)
 			return;
@@ -370,7 +370,7 @@ namespace ui
         if (image == _background_image.value)
             return;
         _background_image = image;
-        refresh();
+        repaint();
     }
 
     std::shared_ptr<drawing::Image> Control::backgroundImage() const
@@ -406,7 +406,7 @@ namespace ui
 
     void Control::onEnterScene(std::shared_ptr<Scene> & scene)
     {
-        refresh();
+        repaint();
     }
 
     void Control::onLeavingScene()
@@ -552,7 +552,7 @@ namespace ui
         return num;
     }
 
-    void Control::ondraw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Control::prepaint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
 		if(!_visible)
 			return;
@@ -563,14 +563,14 @@ namespace ui
 		{
             std::lock_guard l(*this);
             _drawBackground(graphics);
-            draw(graphics, clip);
+            paint(graphics, clip);
             _drawBorder(graphics);
 		}
         if (a != 0xff)
             graphics.restore();
     }
 
-    void Control::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Control::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
     }
 
@@ -586,23 +586,23 @@ namespace ui
 
     void Control::onRectChanged(const core::rectf & from, const core::rectf & to)
     {
-        refresh(from);
-        refresh(to);
+        repaint(from);
+        repaint(to);
         rectChanged(from, to);
     }
 
     void Control::onVisibleChanged(bool vis)
     {
-		refresh(realRect());
+		repaint(realRect());
     }
 
 	void Control::onAviliableChanged(bool avi)
     {
-		refresh(realRect());
+		repaint(realRect());
 		if(auto p = parent())
 		{
 			p->relayout();
-			p->refresh();
+			p->repaint();
 		}
     }
 

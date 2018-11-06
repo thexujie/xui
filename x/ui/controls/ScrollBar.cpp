@@ -40,7 +40,7 @@ namespace ui::controls
             return "scrollbar";
     }
 
-    void ScrollBar::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void ScrollBar::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         core::rectf bar_rect = barRect();
         graphics.drawRectangle(bar_rect, drawing::PathStyle().fill(_bar_color));
@@ -53,7 +53,7 @@ namespace ui::controls
         {
             auto old_val = _val;
             _val = val;
-            refresh();
+            repaint();
             valueChagned(old_val, val);
         }
     }
@@ -73,7 +73,7 @@ namespace ui::controls
             }
             _min = min;
             _max = max;
-            refresh();
+            repaint();
         }
     }
 

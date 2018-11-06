@@ -27,7 +27,7 @@ namespace ui::controls
         core::sizef contentSize() const override;
         std::string styleName() const override;
 
-        void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
+        void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
     public:
         void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
         void onMouseEnter(const input_state & state) override;

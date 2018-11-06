@@ -43,7 +43,7 @@ namespace ui::controls
         return _textBlob ? _textBlob->size() : core::sizef();
     }
 
-    void Button::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Button::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         if (_textBlob)
             graphics.drawTextBlob(*_textBlob, contentBox().leftTop(), drawing::StringFormat().color(color()));

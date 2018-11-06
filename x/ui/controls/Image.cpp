@@ -62,7 +62,7 @@ namespace ui::controls
         }
     }
 
-    void Image::draw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Image::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         graphics.save();
         auto box = contentBox();

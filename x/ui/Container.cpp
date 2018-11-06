@@ -130,7 +130,7 @@ namespace ui
         return (_scrollbar_v || _scrollbar_h) ? core::align::mask : core::align::none;
     }
 
-    void Container::ondraw(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Container::prepaint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
         std::lock_guard lock(*this);
@@ -139,7 +139,7 @@ namespace ui
         else
             graphics.save();
         _drawBackground(graphics);
-        draw(graphics, clip);
+        paint(graphics, clip);
         for (auto & control : _controls)
         {
 			if(!control->aviliable())
@@ -147,7 +147,7 @@ namespace ui
 
             auto rect = control->realRect();
             if(clip.intersect_with(rect))
-                control->ondraw(graphics, clip);
+                control->prepaint(graphics, clip);
         }
         _drawBorder(graphics);
         graphics.restore();

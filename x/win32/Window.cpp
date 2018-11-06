@@ -288,7 +288,7 @@ namespace win32
 			hwndInsert = styles.any(ui::form_style::topmost) ? HWND_TOPMOST : HWND_NOTOPMOST;
         SetWindowPos(hwnd, hwndInsert, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, flags);
 
-        f->refresh();
+        f->repaint();
     }
 
     void Window::onPosChanged(const core::pointf & from, const core::pointf & to)

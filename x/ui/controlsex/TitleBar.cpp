@@ -80,7 +80,7 @@ namespace ui::controlsex
 		if(_shape_color != color)
 		{
 			_shape_color = color;
-			refresh();
+			repaint();
 		}
 	}
 

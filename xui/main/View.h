@@ -13,6 +13,8 @@ namespace ui
         marked = 0x0001,
         activated = 0x0002,
         selected = 0x0004,
+
+        placed = 0x10000,
     };
     typedef core::bitflag<item_flag> item_flags;
 
@@ -22,10 +24,10 @@ namespace ui
         full_row,
     };
 
-    class ViewItem
+    class ItemData
     {
     public:
-        virtual ~ViewItem() {}
+        virtual ~ItemData() {}
         std::shared_ptr<View> view() const { return _view.lock(); }
         virtual void enterView(std::shared_ptr<View> view) { _view = view; }
         virtual void leaveView() { _view.reset(); }
@@ -57,6 +59,23 @@ namespace ui
         item_flags _flags;
     };
 
+    class ItemView
+    {
+    public:
+        virtual ~ItemView() {}
+        std::shared_ptr<View> view() const { return _view.lock(); }
+        virtual void enterView(std::shared_ptr<View> view) { _view = view; }
+        virtual void leaveView() { _view.reset(); }
+
+        std::shared_ptr<ItemData> data() const { return _data; }
+        const core::rectf & box() const { return _box; }
+    protected:
+        std::weak_ptr<View> _view;
+        std::shared_ptr<ItemData> _data;
+        core::rectf _box;
+        core::sizef _size;
+    };
+
 	class View : public ui::Container
 	{
 	public:
@@ -67,10 +86,10 @@ namespace ui
 		void propertyTable(core::property_table & properties) override;
 
 	public:
-        size_t addItem(std::shared_ptr<ViewItem> item);
-        size_t insertItem(size_t index, std::shared_ptr<ViewItem> item);
+        size_t addItem(std::shared_ptr<ItemData> item);
+        size_t insertItem(size_t index, std::shared_ptr<ItemData> item);
         size_t eraseItem(size_t index);
-        std::shared_ptr<ViewItem> findItem(const core::pointf & pos) const;
+        std::shared_ptr<ItemData> findItem(const core::pointf & pos) const;
 
         void setItemMargin(const core::vec4<core::dimensionf> & spacing) { _item_margin = spacing; }
         const core::vec4<core::dimensionf> & itemMargin() const { return _item_margin; }
@@ -82,13 +101,14 @@ namespace ui
         core::color selectedColor() const { return _selected_color; }
 
     protected:
-        void _setMarkedItem(std::shared_ptr<ViewItem> item);
-        void _setSelectedItem(std::shared_ptr<ViewItem> item);
+        void _setMarkedItem(std::shared_ptr<ItemData> item);
+        void _setSelectedItem(std::shared_ptr<ItemData> item);
 
 	protected:
-        std::vector<std::shared_ptr<ViewItem>> _items;
-        std::shared_ptr<ViewItem> _marked_item;
-        std::shared_ptr<ViewItem> _selected_item;
+        std::vector<std::shared_ptr<ItemData>> _items;
+        std::vector<std::shared_ptr<ItemView>> _views;
+        std::shared_ptr<ItemData> _marked_item;
+        std::shared_ptr<ItemData> _selected_item;
         select_mode _select_mode = select_mode::full_row;
         core::attribute<core::vec4<core::dimensionf>> _item_margin;
         core::attribute<core::vec4<core::dimensionf>> _item_padding;
