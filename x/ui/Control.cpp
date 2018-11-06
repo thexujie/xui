@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Control.h"
 #include "Container.h"
+#include <optional>
 
 namespace ui
 {
@@ -50,16 +51,16 @@ namespace ui
         return nullptr;
     }
 
-    core::si32f Control::prefferSize(const core::vec2<float32_t> & spacing) const
+    core::sizef Control::prefferSize(const core::vec2<float32_t> & spacing) const
     {
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
         {
-            core::si32f size = calc(_size, spacing);
+            core::sizef size = calc(_size, spacing);
             _adjustSize(size);
             return size;
         }
 
-        core::si32f size = contentSize() + calc(_padding, spacing).bsize();
+        core::sizef size = contentSize() + edges().bsize();
         if (_size.available())
         {
             if (_size.value.cx.avi())
@@ -69,17 +70,20 @@ namespace ui
             else {}
         }
 
-        if (_anchor_borders.all(core::align::leftRight))
-            size.cx = spacing.cx - calc(_anchor.value.bleft + _anchor.value.bright, spacing.cx);
-        if (_anchor_borders.all(core::align::topBottom))
-            size.cy = spacing.cy - calc(_anchor.value.btop + _anchor.value.bbottom, spacing.cy);
+        if(_anchor_borders)
+        {
+            if (_anchor_borders.value.all(core::align::leftRight))
+                size.cx = spacing.cx - calc(_anchor.value.bleft + _anchor.value.bright, spacing.cx);
+            if (_anchor_borders.value.all(core::align::topBottom))
+                size.cy = spacing.cy - calc(_anchor.value.btop + _anchor.value.bbottom, spacing.cy);
+        }
         _adjustSize(size);
         return size;
     }
 
-    core::si32f Control::adjustSize(const core::si32f & size) const
+    core::sizef Control::adjustSize(const core::sizef & size) const
     {
-        core::si32f asize = size;
+        core::sizef asize = size;
         if (_min_size.value.cx.avi())
         {
             float32_t val = calc(_min_size.value.cx);
@@ -210,7 +214,7 @@ namespace ui
         {
             _rect.pos = pos;
             onPosChanged(pos_old, pos);
-            onRectChanged(core::rc32f(pos_old, _rect.size), core::rc32f(pos, _rect.size));
+            onRectChanged(core::rectf(pos_old, _rect.size), core::rectf(pos, _rect.size));
         }
     }
 
@@ -221,11 +225,11 @@ namespace ui
         {
             _rect.size = size;
             onSizeChanged(size_old, size);
-            onRectChanged(core::rc32f(_rect.pos, size_old), core::rc32f(_rect.pos, _rect.size));
+            onRectChanged(core::rectf(_rect.pos, size_old), core::rectf(_rect.pos, _rect.size));
         }
     }
 
-    void Control::setShowRect(const core::rc32f & rect)
+    void Control::setShowRect(const core::rectf & rect)
     {
         auto rect_old = _rect;
         bool rectchanged = false;
@@ -245,27 +249,28 @@ namespace ui
             onRectChanged(rect_old, rect);
     }
 
-    core::rc32f Control::box() const
+    core::rectf Control::box() const
     {
-        return core::rc32f(_rect.pos, _rect.size);
+        return core::rectf(_rect.pos, _rect.size);
     }
 
-    core::rc32f Control::borderBox() const
+    core::rectf Control::borderBox() const
     {
-        return core::rc32f(_rect.pos + calc(_border).bleftTop(), _rect.size - calc(_border).bsize());
+        return core::rectf(_rect.pos + calc(_border).bleftTop(), _rect.size - calc(_border).bsize());
     }
 
-    core::rc32f Control::paddingBox() const
+    core::rectf Control::paddingBox() const
     {
-        return core::rc32f(_rect.pos + calc(_padding).bleftTop(), _rect.size - calc(_padding).bsize());
+        return core::rectf(_rect.pos + calc(_padding).bleftTop(), _rect.size - calc(_padding).bsize());
     }
 
-    core::rc32f Control::contentBox() const
+    core::rectf Control::contentBox() const
     {
-        return paddingBox();
+        core::vec4f e = edges();
+        return core::rectf(_rect.pos + e.bleftTop(), _rect.size - e.bsize());
     }
 
-    core::rc32f Control::box(control_box cbox) const
+    core::rectf Control::box(control_box cbox) const
     {
         switch (cbox)
         {
@@ -282,16 +287,16 @@ namespace ui
         refresh(_rect);
     }
 
-    void Control::refresh(const core::rc32f & rect)
+    void Control::refresh(const core::rectf & rect)
     {
 		if(!_aviliable || !_visible)
 			return;
 
         _rect_invalid.unite(rect);
-        if (!_delay_update)
+        if (!_delay_invalidate)
         {
-            _delay_update = true;
-            invoke([this]() { update(); });
+            _delay_invalidate = true;
+            invoke([this]() { invalidate(); });
         }
     }
 
@@ -383,6 +388,16 @@ namespace ui
         }
     }
 
+    core::vec4f Control::edges() const
+    {
+        auto padding = calc(_padding);
+        auto border = calc(_border);
+        return { std::max(padding.bleft, border.bleft) ,
+            std::max(padding.btop, border.btop) ,
+            std::max(padding.bright, border.bright) ,
+            std::max(padding.bbottom, border.bbottom) };
+    }
+
     void Control::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
         _scene = scene;
@@ -391,6 +406,7 @@ namespace ui
 
     void Control::onEnterScene(std::shared_ptr<Scene> & scene)
     {
+        refresh();
     }
 
     void Control::onLeavingScene()
@@ -400,24 +416,44 @@ namespace ui
 
     void Control::onLeaveScene() { }
 
-    void Control::place(const core::rc32f & rect, const core::si32f & size)
+    void Control::place(const core::rectf & rect, const core::sizef & size)
     {
         assert(!std::isnan(size.cx) && !std::isnan(size.cy));
         assert(!std::isnan(rect.x) && !std::isnan(rect.y));
         assert(!std::isnan(rect.cx) && !std::isnan(rect.cy));
         assert(rect.cx < 1e6 && rect.cy < 1e6);
 
-        core::pt32f pos;
-        if (_anchor_borders.all(core::align::leftTop))
-            pos = rect.leftTop();
-        else if (_anchor_borders.all(core::align::rightTop))
-            pos = rect.rightTop() - core::pt32f(size.cx, 0);
-        else if (_anchor_borders.all(core::align::rightBottom))
-            pos = rect.rightBottom() - core::pt32f(size.cx, size.cy);
-        else if (_anchor_borders.all(core::align::leftBottom))
-            pos = rect.leftBottom() - core::pt32f(0, size.cy);
-        else
-            pos = rect.leftTop();
+        core::pt32f pos = rect.leftTop();
+
+        if(_anchor_borders)
+        {
+            if (_anchor_borders.value.all(core::align::leftTop))
+                pos = rect.leftTop();
+            else if (_anchor_borders.value.all(core::align::rightTop))
+                pos = rect.rightTop() - core::pt32f(size.cx, 0);
+            else if (_anchor_borders.value.all(core::align::rightBottom))
+                pos = rect.rightBottom() - core::pt32f(size.cx, size.cy);
+            else if (_anchor_borders.value.all(core::align::leftBottom))
+                pos = rect.leftBottom() - core::pt32f(0, size.cy);
+            else {}
+        }
+        else if(_place_alignment)
+        {
+            if (_place_alignment.value.any(core::align::right))
+                pos.x = rect.right() - size.cx;
+            else if (_place_alignment.value.any(core::align::centerX))
+                pos.x = rect.centerX() - size.cx / 2;
+            else
+                pos.x = rect.x;
+
+            if (_place_alignment.value.any(core::align::bottom))
+                pos.y = rect.bottom() - size.cy;
+            else if (_place_alignment.value.any(core::align::centerY))
+                pos.y = rect.centerY() - size.cy / 2;
+            else
+                pos.y = rect.y;
+        }
+        else{}
 
         setShowRect({ pos, size });
     }
@@ -480,10 +516,10 @@ namespace ui
         _style = style;
     }
 
-    void Control::update()
+    void Control::invalidate()
     {
         check_invoke();
-		_delay_update = false;
+		_delay_invalidate = false;
 
 		if(!_aviliable || !_visible)
 			return;
@@ -495,7 +531,7 @@ namespace ui
         _rect_invalid.clear();
     }
 
-    void Control::invalidate(const core::rc32f & rect)
+    void Control::invalidate(const core::rectf & rect)
     {
         if (auto p = parent())
             p->invalidate(rect);
@@ -516,7 +552,7 @@ namespace ui
         return num;
     }
 
-    void Control::ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void Control::ondraw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
 		if(!_visible)
 			return;
@@ -524,12 +560,15 @@ namespace ui
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
         if (a != 0xff)
             graphics.saveLayer(box(), a);
-        draw(graphics, clip);
+		{
+            std::lock_guard l(*this);
+            draw(graphics, clip);
+		}
         if (a != 0xff)
             graphics.restore();
     }
 
-    void Control::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void Control::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         _drawBackground(graphics);
         _drawBorder(graphics);
@@ -540,12 +579,12 @@ namespace ui
         posChanged(from, to);
     }
 
-    void Control::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    void Control::onSizeChanged(const core::sizef & from, const core::sizef & to)
     {
         sizeChanged(from, to);
     }
 
-    void Control::onRectChanged(const core::rc32f & from, const core::rc32f & to)
+    void Control::onRectChanged(const core::rectf & from, const core::rectf & to)
     {
         refresh(from);
         refresh(to);
@@ -614,7 +653,7 @@ namespace ui
         }
     }
 
-    void Control::_adjustSize(core::si32f & size) const
+    void Control::_adjustSize(core::sizef & size) const
     {
         auto p = parent();
         if (p && _fixed_aspect)
@@ -660,7 +699,7 @@ namespace ui
         }
     }
 
-    void Control::_adjustSize(core::si32f & size, const core::vec2<float32_t> & spacing) const
+    void Control::_adjustSize(core::sizef & size, const core::vec2<float32_t> & spacing) const
     {
         auto p = parent();
         if (p && _fixed_aspect)

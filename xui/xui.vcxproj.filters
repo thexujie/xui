@@ -14,11 +14,17 @@
     <ClCompile Include="main\views.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="main\ListView.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="win32\Win32App.h">
       <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="main\ListView.h">
+      <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -30,9 +36,6 @@
     </Filter>
     <Filter Include="samples">
       <UniqueIdentifier>{0f904187-4471-42fa-8f27-bb675c5afac1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="controls">
-      <UniqueIdentifier>{1c596b97-608b-43b4-b202-a8c72fdf17eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

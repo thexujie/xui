@@ -36,7 +36,7 @@ namespace drawing
     struct bitmap_buffer
     {
         byte_t * data = nullptr;
-        core::si32i size;
+        core::sizei size;
         int32_t strike = 0;
         int32_t pitch = 0;
         bool flip_y = false;

@@ -129,6 +129,9 @@
 	<Type Name="ui::Grid">
 		<DisplayString>[Grid container]</DisplayString>
 	</Type>
+	<Type Name="ui::controlsex::ListView">
+		<DisplayString>[ListView container]</DisplayString>
+	</Type>
 
 	<Type Name="core::section_type&lt;*&gt;">
 		<DisplayString>[{index},{length}]</DisplayString>

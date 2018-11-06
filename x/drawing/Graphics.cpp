@@ -13,7 +13,7 @@
 
 namespace drawing
 {
-    //Graphics::Graphics(core::si32i size): _native(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(dimension))) { }
+    //Graphics::Graphics(core::sizei size): _native(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(dimension))) { }
 
     Graphics::Graphics(std::shared_ptr<Bitmap> pixmap)
     {
@@ -48,7 +48,7 @@ namespace drawing
         _native->save();
     }
 
-    void Graphics::saveLayer(const core::rc32f & bounds, uint8_t alpha)
+    void Graphics::saveLayer(const core::rectf & bounds, uint8_t alpha)
     {
         ++_statistics.save;
         if (!_native)
@@ -67,7 +67,7 @@ namespace drawing
         _native->restore();
     }
 
-    void Graphics::setClipRect(const core::rc32f & rect, bool aa)
+    void Graphics::setClipRect(const core::rectf & rect, bool aa)
     {
         ++_statistics.setClipRect;
         if (!_native)
@@ -129,7 +129,7 @@ namespace drawing
         _native->drawLine({ start.x, start.y }, { end.x, end.y }, paint);
     }
 
-    void Graphics::drawEllipse(const core::rc32f & ellipse, const PathStyle & style)
+    void Graphics::drawEllipse(const core::rectf & ellipse, const PathStyle & style)
     {
         ++_statistics.drawEllipse;
         if (!_native)
@@ -141,7 +141,7 @@ namespace drawing
         _native->drawOval(skia::from(ellipse), paint);
     }
 
-    void Graphics::drawRectangle(const core::rc32f & rect, const PathStyle & style)
+    void Graphics::drawRectangle(const core::rectf & rect, const PathStyle & style)
     {
         ++_statistics.drawRectangle;
         if (!_native)
@@ -153,7 +153,7 @@ namespace drawing
         _native->drawRect(skia::from(rect), paint);
     }
 
-    void Graphics::drawRoundRect(const core::rc32f & rect, float32_t rx, float32_t ry, const PathStyle & style)
+    void Graphics::drawRoundRect(const core::rectf & rect, float32_t rx, float32_t ry, const PathStyle & style)
     {
         ++_statistics.drawRoundRect;
         if (!_native)
@@ -269,7 +269,7 @@ namespace drawing
         TextClusterizer shaper;
         shaper.itermize(str, format._font, format._color);
         shaper.layout();
-        core::si32f size = shaper.bounds();
+        core::sizef size = shaper.bounds();
         auto blob = shaper.build();
 
         core::pt32f point = pos;
@@ -288,7 +288,7 @@ namespace drawing
         _native->drawTextBlob(blob.get(), point.x, point.y, paint);
     }
 
-    void Graphics::drawString(const std::string & str, const core::rc32f & rect, const StringFormat & format)
+    void Graphics::drawString(const std::string & str, const core::rectf & rect, const StringFormat & format)
     {
         ++_statistics.drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref;
         if (!_native)
@@ -301,7 +301,7 @@ namespace drawing
         TextClusterizer shaper;
         shaper.itermize(str, format._font, format._color);
         shaper.layout();
-        core::si32f size = shaper.bounds();
+        core::sizef size = shaper.bounds();
         auto blob = shaper.build();
 
         core::pt32f point = rect.leftTop();
@@ -317,18 +317,21 @@ namespace drawing
             point.y = (rect.cy - size.cy) / 2;
         else {}
 
-        _native->clipRect(skia::from(rect));
+        //_native->save();
+        //_native->clipRect(skia::from(rect));
         _native->drawTextBlob(blob.get(), point.x, point.y, paint);
-        _native->clipRect(SkRect());
+        //_native->clipRect(SkRect());
+        //_native->restore();
     }
 
-    void Graphics::drawTextBlob(const drawing::TextBlob & blob, core::pt32f point)
+    void Graphics::drawTextBlob(const drawing::TextBlob & blob, core::pt32f point, const StringFormat & format)
     {
         ++_statistics.drawTextBlob;
         if (!_native)
             return;
 
         SkPaint paint;
+        format.apply(paint);
         apply(paint);
 
         _native->drawTextBlob(blob.native_ptr(), point.x, point.y, paint);
@@ -358,7 +361,7 @@ namespace drawing
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::aligns align)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_aligns;
         if (!_native)
@@ -385,7 +388,7 @@ namespace drawing
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32i region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::recti region, core::aligns align)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns;
         if (!_native)
@@ -408,7 +411,7 @@ namespace drawing
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, float32_t(region.x), float32_t(region.y)), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::rc32f region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::pt32f point, core::rectf region, core::aligns align)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f__core_rc32f_core_aligns;
         if (!_native)
@@ -431,7 +434,7 @@ namespace drawing
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::recti region, core::aligns align)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32i_core_aligns;
         if (!_native)
@@ -457,7 +460,7 @@ namespace drawing
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::rectf region, core::aligns align)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32f_core_aligns;
         if (!_native)
@@ -494,7 +497,7 @@ namespace drawing
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect)
+    void Graphics::drawImage(const Image & image, core::rectf rect)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f;
         if (!_native)
@@ -505,7 +508,7 @@ namespace drawing
         _native->drawImageRect(&image.native(), skia::from(rect), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32i region)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::recti region)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32i;
         if (!_native)
@@ -516,7 +519,7 @@ namespace drawing
         _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rc32f rect, core::rc32f region)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::rectf region)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32f;
         if (!_native)
@@ -546,7 +549,7 @@ namespace drawing
         //return _native->GetFontMetrics(font);
     }
 
-    core::si32i Graphics::MeasureString(std::string str, font font)
+    core::sizei Graphics::MeasureString(std::string str, font font)
     {
         if (!_native)
             return {};

@@ -23,6 +23,12 @@ namespace core
         vec4(T _x, T _y, T _w, T _h)
             : x(_x), y(_y), cx(_w), cy(_h) { }
 
+        vec4(const T (& _arr)[4])
+            : x(_arr[0]), y(_arr[1]), cx(_arr[2]), cy(_arr[3]) { }
+
+        vec4(const std::array<T, 4> & _arr)
+            : x(_arr[0]), y(_arr[1]), cx(_arr[2]), cy(_arr[3]) { }
+
         vec4(const vec2<T> & _pos, const vec2<T> & _size)
             : pos(_pos), size(_size) { }
 
@@ -571,8 +577,8 @@ namespace core
         };
     };
 
-    typedef vec4<int32_t> rc32i;
-    typedef vec4<float32_t> rc32f;
+    typedef vec4<int32_t> recti;
+    typedef vec4<float32_t> rectf;
     typedef vec4<int32_t> vec4i;
     typedef vec4<float32_t> vec4f;
 }

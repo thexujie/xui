@@ -330,7 +330,6 @@ namespace drawing
         std::unordered_map<drawing::font, uint16_t> _font_indices;
         std::vector<font_cache> _fonts;
 
-        std::unique_ptr<hb_buffer_t, void(*)(hb_buffer_t *)> _hbbuffer = { nullptr, nullptr };
         std::unique_ptr<icu::BreakIterator, void(*)(icu::BreakIterator *)> _breaker_world = { nullptr, nullptr };
         std::unique_ptr<icu::BreakIterator, void(*)(icu::BreakIterator *)> _breaker_character = { nullptr, nullptr };
 
@@ -354,7 +353,7 @@ namespace drawing
         core::error itermize(std::string text, const drawing::font & font, core::color color);
         core::error layout();
 
-        core::si32f bounds() const;
+        core::sizef bounds() const;
         std::shared_ptr<SkTextBlob> build();
 
     public:
@@ -368,7 +367,7 @@ namespace drawing
         const cluster & findCluster(size_t tindex) const;
         const cluster & findCluster(float32_t pos) const;
 
-        std::tuple<size_t, core::rc32f> textRect(size_t toffset, size_t tlength);
+        std::tuple<size_t, core::rectf> textRect(size_t toffset, size_t tlength);
 
     protected:
         Shaper & _shaper = Shaper::instance();
@@ -402,7 +401,7 @@ namespace drawing
         core::error layout(float32_t end, wrap_mode mode);
 
     public:
-        core::si32f bounds() const;
+        core::sizef bounds() const;
         std::shared_ptr<SkTextBlob> build();
 
     public:

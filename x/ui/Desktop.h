@@ -10,8 +10,8 @@ namespace ui
         Screen(void * handle);
         ~Screen();
 
-        core::si32i size();
-        core::rc32i rect();
+        core::sizei size();
+        core::recti rect();
 
     private:
         void * _handle = nullptr;
@@ -24,7 +24,7 @@ namespace ui
         ~Desktop();
 
         core::vec2i ppi() const;
-        core::si32i size() const;
+        core::sizei size() const;
         int32_t numScreens() const;
         std::shared_ptr<Screen> screen(int32_t index);
 

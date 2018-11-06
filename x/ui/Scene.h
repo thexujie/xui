@@ -23,9 +23,9 @@ namespace ui
     public:
         std::shared_ptr<Control> control() const { return _control.lock(); }
         float32_t ratio() const { return _ratio; }
-        const core::rc32f & rect() const { return _rect; }
-        const core::si32f & size() const { return _rect.size; }
-        const core::rc32f & viewRect() const { return _rect; }
+        const core::rectf & rect() const { return _rect; }
+        const core::sizef & size() const { return _rect.size; }
+        const core::rectf & viewRect() const { return _rect; }
 
         void setEvent(scene_event evt);
         std::shared_ptr<RadioGroup> radioGroup(std::string name);
@@ -40,7 +40,7 @@ namespace ui
         std::shared_ptr<CursorContext> cursorContext() const { return _cursor_context; }
 
         std::shared_ptr<drawing::GraphicsDevice> bitmap() const { return _draw_buffer; }
-        void invalidate(const core::rc32f & rect);
+        void invalidate(const core::rectf & rect);
 
         std::shared_ptr<drawing::GraphicsDevice> readBegin();
         void readEnd();
@@ -60,8 +60,8 @@ namespace ui
         void _updateMouseArea(const input_state & state, mouse_action action);
 
     public:
-        core::event<void(const core::rc32i & rect)> invalidated;
-        core::event<void(const core::rc32i & rect)> rendered;
+        core::event<void(const core::recti & rect)> invalidated;
+        core::event<void(const core::recti & rect)> rendered;
         core::event<void(bool capture)> captured;
         core::event<void(scene_event evt)> evented;
 
@@ -86,7 +86,7 @@ namespace ui
         std::weak_ptr<Control> _control;
         core::color _color_default = core::colors::AliceBlue;
         float32_t _ratio = 1.0f;
-        core::rc32f _rect;
+        core::rectf _rect;
 
 		std::mutex _mtx_buffer;
         std::shared_ptr<drawing::Surface> _draw_buffer;

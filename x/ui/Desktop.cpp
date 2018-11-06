@@ -14,21 +14,21 @@ namespace ui
         
     }
 
-    core::si32i Screen::size()
+    core::sizei Screen::size()
     {
         HMONITOR hm = (HMONITOR)_handle;
         MONITORINFO mi = { sizeof(MONITORINFO) };
         ::GetMonitorInfoW(hm, &mi);
-        return core::si32i(mi.rcMonitor.right - mi.rcMonitor.left,
+        return core::sizei(mi.rcMonitor.right - mi.rcMonitor.left,
             mi.rcMonitor.bottom - mi.rcMonitor.top);
     }
 
-    core::rc32i Screen::rect()
+    core::recti Screen::rect()
     {
         HMONITOR hm = (HMONITOR)_handle;
         MONITORINFO mi = { sizeof(MONITORINFO) };
         ::GetMonitorInfoW(hm, &mi);
-        return core::rc32i(mi.rcMonitor.left,
+        return core::recti(mi.rcMonitor.left,
             mi.rcMonitor.top,
             mi.rcMonitor.right - mi.rcMonitor.left,
             mi.rcMonitor.bottom - mi.rcMonitor.top);
@@ -69,12 +69,12 @@ namespace ui
         return val;
     }
 
-    core::si32i Desktop::size() const
+    core::sizei Desktop::size() const
     {
         HWND hdesktop=::GetDesktopWindow();
         RECT rect = {};
         GetWindowRect(hdesktop, &rect);
-        return core::si32i(rect.right, rect.bottom);
+        return core::sizei(rect.right, rect.bottom);
     }
 
     void Desktop::_enumScreens()

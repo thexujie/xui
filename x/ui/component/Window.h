@@ -9,6 +9,6 @@ namespace ui::component
         ~Window();
 
         virtual void move(const core::pt32f & pos) = 0;
-        virtual void resize(const core::si32f & size) = 0;
+        virtual void resize(const core::sizef & size) = 0;
     };
 }

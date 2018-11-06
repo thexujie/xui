@@ -21,7 +21,7 @@ namespace ui::component
     {
     public:
         Component(ComponentType type, std::shared_ptr<ui::Control> control);
-        Component(ComponentType type, std::shared_ptr<ui::Control> control, const core::rc32f & rect);
+        Component(ComponentType type, std::shared_ptr<ui::Control> control, const core::rectf & rect);
 
         virtual ~Component() = default;
 
@@ -30,18 +30,18 @@ namespace ui::component
         void setVisible(bool vis) { if (_visible != vis) { _visible = vis;  onVisibleChanged(vis); } }
         bool visible() const { return _visible; }
 
-        void setRect(const core::rc32f & rect) { if (_rect != rect) { auto old_rect = _rect; _rect = rect; onRectChanged(old_rect, rect); } }
-        core::rc32f rect() const { return _rect; }
+        void setRect(const core::rectf & rect) { if (_rect != rect) { auto old_rect = _rect; _rect = rect; onRectChanged(old_rect, rect); } }
+        core::rectf rect() const { return _rect; }
 
         std::shared_ptr<ui::Control> control() const { return _control.lock(); }
 
         virtual void onVisibleChanged(bool vis) {}
-        virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to) {}
+        virtual void onRectChanged(const core::rectf & from, const core::rectf & to) {}
 
     protected:
         ComponentType _type;
         std::weak_ptr<ui::Control> _control;
-        core::rc32f _rect;
+        core::rectf _rect;
         bool _visible = true;
     };
 }

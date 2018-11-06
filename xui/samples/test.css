@@ -96,3 +96,16 @@
     background-color: #f888;
     transition-duration: 200ms
 }
+
+
+.listview {
+    background-color: #eee;
+    border: 1px;
+    border-color: #ff77;
+}
+
+.listview:hover {
+}
+
+.listview:active {
+}

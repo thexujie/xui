@@ -29,7 +29,7 @@ namespace ui
         Container::addControl(control);
     }
 
-    core::si32f Grid::contentSize() const
+    core::sizef Grid::contentSize() const
     {
         std::vector<float32_t> widths(_col_sizes.size());
         std::vector<float32_t> heights(_row_sizes.size());
@@ -41,7 +41,7 @@ namespace ui
             heights[item.row] = std::max(heights[item.row], psize.cy);
         }
 
-        core::si32f size;
+        core::sizef size;
         for (auto cx : widths)
             size.cx += cx;
         for (auto cy : heights)
@@ -58,7 +58,7 @@ namespace ui
             _splitGrid(true);
 
         auto pbox = paddingBox();
-        core::rc32f box = paddingBox();
+        core::rectf box = paddingBox();
         std::vector<float32_t> widths;
         std::vector<float32_t> heights;
 

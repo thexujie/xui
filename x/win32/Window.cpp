@@ -155,7 +155,7 @@ namespace win32
             _adjustWindow(p, _size());
     }
 
-    void Window::resize(const core::si32f & size)
+    void Window::resize(const core::sizef & size)
     {
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -288,7 +288,7 @@ namespace win32
 			hwndInsert = styles.any(ui::form_style::topmost) ? HWND_TOPMOST : HWND_NOTOPMOST;
         SetWindowPos(hwnd, hwndInsert, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, flags);
 
-        f->invalidate();
+        f->refresh();
     }
 
     void Window::onPosChanged(const core::pt32f & from, const core::pt32f & to)
@@ -302,7 +302,7 @@ namespace win32
             _adjustWindow(pos, _size());
     }
 
-    void Window::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    void Window::onSizeChanged(const core::sizef & from, const core::sizef & to)
     {
         //HWND hwnd = (HWND)_handle;
         //if (!hwnd)
@@ -313,7 +313,7 @@ namespace win32
         //    _adjustWindow(_pos(), size);
     }
 
-    void Window::onSceneInvalidated(const core::rc32i & rect)
+    void Window::onSceneInvalidated(const core::recti & rect)
     {
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -327,7 +327,7 @@ namespace win32
         _render(region);
     }
 
-    void Window::onSceneRendered2(const core::rc32i & rect)
+    void Window::onSceneRendered2(const core::recti & rect)
     {
         _render(rect);
     }
@@ -427,7 +427,7 @@ namespace win32
         return core::error_ok;
     }
 
-    core::error Window::_adjustWindow(const core::pt32i & pos, const core::si32i & size)
+    core::error Window::_adjustWindow(const core::pt32i & pos, const core::sizei & size)
     {
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -458,7 +458,7 @@ namespace win32
             return core::vec2i(winfo.rcClient.left, winfo.rcClient.top);
     }
 
-    core::si32i Window::_size() const
+    core::sizei Window::_size() const
     {
         if (!_handle)
             return {};
@@ -469,7 +469,7 @@ namespace win32
         return core::vec2i(winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
     }
 
-    core::rc32i Window::_rect() const
+    core::recti Window::_rect() const
     {
         if (!_handle)
             return {};
@@ -479,9 +479,9 @@ namespace win32
         ::GetWindowInfo(hwnd, &winfo);
 
         if (_form_styles.any(ui::form_style::frameless))
-            return core::rc32i(winfo.rcWindow.left, winfo.rcWindow.top, winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
+            return core::recti(winfo.rcWindow.left, winfo.rcWindow.top, winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
         else
-            return core::rc32i(winfo.rcClient.left, winfo.rcClient.top, winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
+            return core::recti(winfo.rcClient.left, winfo.rcClient.top, winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
     }
 
     core::vec4i Window::_border() const
@@ -515,7 +515,7 @@ namespace win32
             winfo.rcWindow.bottom - winfo.rcClient.bottom);
     }
 
-    void Window::_render(const core::rc32i & rect)
+    void Window::_render(const core::recti & rect)
     {
 		auto f = form();
 		if(!f)
@@ -564,7 +564,7 @@ namespace win32
 				bmi.bmiHeader.biCompression = BI_RGB;
 				bmi.bmiHeader.biSizeImage = 0;
 
-				auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+				auto rc = rect.intersected(core::recti(core::pt32i(), _size()));
 				SetDIBitsToDevice(hdst,
 					rc.x, rc.y, rc.cx, rc.cy,
 					rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
@@ -618,7 +618,7 @@ namespace win32
                     auto rect = ri.rect();
                     ri.next();
 
-                    auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+                    auto rc = rect.intersected(core::recti(core::pt32i(), _size()));
                     BitBlt(hdst, rc.x, rc.y, rc.cx, rc.cy, hsrc, rc.x, rc.y, SRCCOPY);
                 }
             }
@@ -641,7 +641,7 @@ namespace win32
                     auto rect = ri.rect();
                     ri.next();
 
-                    auto rc = rect.intersected(core::rc32i(core::pt32i(), _size()));
+                    auto rc = rect.intersected(core::recti(core::pt32i(), _size()));
                     SetDIBitsToDevice(hdst,
                         rc.x, rc.y, rc.cx, rc.cy,
                         rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);

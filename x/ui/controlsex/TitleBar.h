@@ -2,6 +2,7 @@
 
 #include "ui/base/Button.h"
 #include "ui/Container.h"
+#include "ui/controls/Text.h"
 
 namespace ui 
 {
@@ -26,7 +27,7 @@ namespace ui::controlsex
 
 		std::string styleName() const override;
 
-		void draw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
+		void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
 	public:
 		void onMouseClick(const ui::input_state & state, ui::mouse_button button) override;
@@ -75,6 +76,7 @@ namespace ui::controlsex
 
 		std::shared_ptr<TitleButton> _close;
 		std::shared_ptr<TitleButton> _maximize;
-		std::shared_ptr<TitleButton> _minimize;
+        std::shared_ptr<TitleButton> _minimize;
+        std::shared_ptr<controls::Text> _title;
     };
 }

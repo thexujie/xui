@@ -51,10 +51,9 @@ namespace ui::controlsex
 			return "titlebutton";
 	}
 
-	void TitleButton::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
+	void TitleButton::draw(drawing::Graphics & graphics, const core::rectf & clip) const
 	{
 		auto b = box();
-		std::lock_guard l(*this);
 		_drawBackground(graphics);
 		if(_path)
 		{
@@ -83,7 +82,7 @@ namespace ui::controlsex
 		if(_shape_color != color)
 		{
 			_shape_color = color;
-			invalidate();
+			refresh();
 		}
 	}
 
@@ -161,6 +160,18 @@ namespace ui::controlsex
 			_minimize->action += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
 			addControl(_minimize);
 		}
+
+        if (!_title)
+        {
+            _title = std::make_shared<controls::Text>();
+            _title->setPlaceAlignment(core::align::leftCenterY);
+            _title->setText(f->title());
+            auto font = _title->font();
+            font.style.weight = drawing::font_weight::bold;
+            _title->setFont(font);
+            addSpacer(100_per);
+            addControl(_title);
+        }
 
 		{
 			auto state = f->formState();

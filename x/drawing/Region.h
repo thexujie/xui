@@ -15,17 +15,17 @@ namespace drawing
 		void clear();
 		bool empty() const;
 
-		void setRect(const core::rc32i & rect);
-		void addRect(const core::rc32i & rect);
+		void setRect(const core::recti & rect);
+		void addRect(const core::recti & rect);
 
-		bool intersects(const core::rc32i & rect) const;
+		bool intersects(const core::recti & rect) const;
 		bool intersects(const Region & region) const;
 
 		bool contains(const core::pt32i & point) const;
-		bool contains(const core::rc32i & rect) const;
+		bool contains(const core::recti & rect) const;
 		bool contains(const Region & region) const;
 
-		core::rc32i bounds() const;
+		core::recti bounds() const;
 
 		Region & operator =(Region && another) noexcept
 		{
@@ -59,7 +59,7 @@ namespace drawing
 		RegionIterator(const Region & region);
 		bool done();
 		void next();
-		core::rc32i rect() const;
+		core::recti rect() const;
 
 		std::shared_ptr<void> _native;
 	};

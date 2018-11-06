@@ -47,21 +47,21 @@ namespace drawing::skia
         }
     }
 
-    inline SkIRect from(const core::rc32i & rect)
+    inline SkIRect from(const core::recti & rect)
     {
         return SkIRect::MakeXYWH(rect.x, rect.y, rect.width, rect.height);
     }
-    inline SkRect from(const core::rc32f & rect)
+    inline SkRect from(const core::rectf & rect)
     {
         return SkRect::MakeXYWH(rect.x, rect.y, rect.width, rect.height);
     }
-    inline core::rc32i to(const SkIRect & rect)
+    inline core::recti to(const SkIRect & rect)
     {
-        return core::rc32i(rect.x(), rect.y(), rect.width(), rect.height());
+        return core::recti(rect.x(), rect.y(), rect.width(), rect.height());
     }
-    inline core::rc32f to(const SkRect & rect)
+    inline core::rectf to(const SkRect & rect)
     {
-        return core::rc32f(rect.x(), rect.y(), rect.width(), rect.height());
+        return core::rectf(rect.x(), rect.y(), rect.width(), rect.height());
     }
 
     inline SkEncodedImageFormat from(image::image_type fmt)
@@ -75,8 +75,8 @@ namespace drawing::skia
         }
     }
 
-    inline core::si32i & to(SkISize & sksize) { return *(core::si32i *)&sksize; }
-    inline const core::si32i & to(const SkISize & sksize) { return *(const core::si32i *)&sksize; }
+    inline core::sizei & to(SkISize & sksize) { return *(core::sizei *)&sksize; }
+    inline const core::sizei & to(const SkISize & sksize) { return *(const core::sizei *)&sksize; }
     inline SkPoint from(const core::pt32f & pos)
     {
         return { pos.x, pos.y };

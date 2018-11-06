@@ -37,18 +37,17 @@ namespace ui::controls
         _text = text;
     }
 
-    core::si32f Button::contentSize() const
+    core::sizef Button::contentSize() const
     {
         _confirmBlob();
-        return _textBlob ? _textBlob->size() : core::si32f();
+        return _textBlob ? _textBlob->size() : core::sizef();
     }
 
-    void Button::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void Button::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        std::lock_guard l(*this);
         _drawBackground(graphics);
         if (_textBlob)
-            graphics.drawTextBlob(*_textBlob, contentBox().leftTop());
+            graphics.drawTextBlob(*_textBlob, contentBox().leftTop(), drawing::StringFormat().color(color()));
         _drawBorder(graphics);
     }
 

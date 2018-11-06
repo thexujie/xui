@@ -170,8 +170,10 @@ namespace drawing
 
     Shaper & Shaper::instance()
     {
-        static Shaper shaper;
-        return shaper;
+        static thread_local std::unique_ptr<Shaper> shaper;
+        if (!shaper)
+            shaper.reset(new Shaper());
+        return *shaper;
     }
 
     uint16_t Shaper::indexFont(const drawing::font & font)
@@ -614,7 +616,7 @@ namespace drawing
         return core::error_ok;
     }
 
-    core::si32f TextClusterizer::bounds() const
+    core::sizef TextClusterizer::bounds() const
     {
         float32_t ascent = 0.0f;
         float32_t descent = 0.0f;
@@ -708,7 +710,7 @@ namespace drawing
         }
     }
 
-    std::tuple<size_t, core::rc32f> TextClusterizer::textRect(size_t toffset, size_t tlength)
+    std::tuple<size_t, core::rectf> TextClusterizer::textRect(size_t toffset, size_t tlength)
     {
         if(!tlength)
             return { core::npos, {} };
@@ -874,12 +876,12 @@ namespace drawing
         return core::error_ok;
     }
 
-    core::si32f TextWraper::bounds() const
+    core::sizef TextWraper::bounds() const
     {
         if (_text.empty())
             return {};
 
-        core::si32f size;
+        core::sizef size;
         for (size_t lindex = 0; lindex < _lines.size(); ++lindex)
         {
             auto & ln = _lines[lindex];

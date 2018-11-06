@@ -1,0 +1,1 @@
+PATH=$(PATH);..\externals\icu\bin\x64;..\externals\skia\bin\x64

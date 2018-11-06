@@ -283,8 +283,8 @@ namespace core
         };
     };
 
-    typedef vec2<int32_t> si32i;
-    typedef vec2<float32_t> si32f;
+    typedef vec2<int32_t> sizei;
+    typedef vec2<float32_t> sizef;
     typedef vec2<int32_t> vec2i;
     typedef vec2<float32_t> vec2f;
     typedef vec2<float64_t> si64f;

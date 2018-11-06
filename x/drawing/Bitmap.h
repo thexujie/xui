@@ -10,7 +10,7 @@ namespace drawing
     public:
         virtual ~GraphicsDevice() {}
         virtual bitmap_buffer buffer() const = 0;
-        virtual core::si32i size() const = 0;
+        virtual core::sizei size() const = 0;
         virtual void * hdc() const = 0;
         virtual core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100) = 0;
     };
@@ -21,11 +21,11 @@ namespace drawing
         Bitmap() = default;
         ~Bitmap() = default;
 
-        Bitmap(const core::si32i & size);
+        Bitmap(const core::sizei & size);
 
         operator bool() const { return !!_native; }
         bitmap_buffer buffer() const override;
-        core::si32i size() const override;
+        core::sizei size() const override;
         void * hdc() const override { return nullptr; }
         core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100);
 
@@ -37,21 +37,21 @@ namespace drawing
     private:
         core::error _state = core::error_ok;
         std::shared_ptr<SkBitmap> _native = nullptr;
-        core::si32i _size;
+        core::sizei _size;
     };
 
     class Surface : public GraphicsDevice
     {
     public:
         Surface() = default;
-        Surface(const core::si32i & size);
+        Surface(const core::sizei & size);
         ~Surface();
 
-        core::error resize(const core::si32i & size);
+        core::error resize(const core::sizei & size);
 
         operator bool() const { return !!_native; }
         bitmap_buffer buffer() const override;
-        core::si32i size() const override;
+        core::sizei size() const override;
         core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100) override;
 
         std::shared_ptr<SkSurface> native_shared() { return _native; }
@@ -62,7 +62,7 @@ namespace drawing
     private:
         core::error _state = core::error_ok;
         std::shared_ptr<SkSurface> _native = nullptr;
-        core::si32i _size;
+        core::sizei _size;
 
 #ifdef _WIN32
         void * _data = nullptr;

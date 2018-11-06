@@ -69,7 +69,7 @@ namespace ui::controls
         reshaper(shaper_flag::shaper);
     }
 
-    core::si32f TextLine::contentSize() const
+    core::sizef TextLine::contentSize() const
     {
         return { 0.0f, drawing::fontmetrics(font()).height };
     }
@@ -84,10 +84,9 @@ namespace ui::controls
             return "textline";
     }
 
-    void TextLine::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void TextLine::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         auto cbox = contentBox();
-        std::lock_guard l(*this);
         _drawBackground(graphics);
         graphics.save();
         graphics.setClipRect(cbox);
@@ -96,7 +95,7 @@ namespace ui::controls
         {
             size_t off = std::min(_cursor_pos, _cursor_pos_selected);
             size_t end = std::max(_cursor_pos, _cursor_pos_selected);
-            core::rc32f rect;
+            core::rectf rect;
             do
             {
                std::tie(off, rect) = _clusterizer->textRect(off, end - off);
@@ -107,7 +106,7 @@ namespace ui::controls
         }
 
         if (_text_blob)
-            graphics.drawTextBlob(*_text_blob, contentBox().leftTop().offseted(_scroll_pos, 0));
+            graphics.drawTextBlob(*_text_blob, contentBox().leftTop().offseted(_scroll_pos, 0), drawing::StringFormat().color(color()));
         graphics.restore();
 
         if (_cursor_shown)
@@ -146,7 +145,7 @@ namespace ui::controls
                 {
                     if(cluster.bidi == drawing::bidirection::rtl)
                         cursor_left = !cursor_left;
-                    core::rc32f rect = cluster.rect;
+                    core::rectf rect = cluster.rect;
                     rect.offset(cbox.leftTop()).offset(_scroll_pos, 0);
                     graphics.drawRectangle(rect, drawing::PathStyle().fill(0x400000ff));
                     if (cursor_left)
@@ -159,7 +158,7 @@ namespace ui::controls
         _drawBorder(graphics);
     }
 
-    void TextLine::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    void TextLine::onSizeChanged(const core::sizef & from, const core::sizef & to)
     {
         reshaper(shaper_flag::caret);
         Control::onSizeChanged(from, to);

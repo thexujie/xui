@@ -10,6 +10,7 @@ namespace ui
     {
         _background_color = core::colors::AliceBlue;
         _mouse_through = false;
+        _color = core::colors::Black;
     }
 
     Form::Form(core::vec2<core::dimensionf> & size, form_styles styles) : _styles(styles)
@@ -17,11 +18,21 @@ namespace ui
         _background_color = core::colors::AliceBlue;
         _size = size;
         _mouse_through = false;
+        _color = core::colors::Black;
     }
 
     Form::~Form()
     {
 
+    }
+
+    void Form::setTitle(const std::string & text)
+    {
+        if(_title != text)
+        {
+            _title = text;
+            titleChanged(_title);
+        }
     }
 
     void Form::setWindowPos(const core::pt32f & pos)
@@ -33,11 +44,11 @@ namespace ui
             if (_window)
                 _window->move(pos);
             windowPosChanged(pos_old, pos);
-            //windowRectChanged(core::rc32f(pos_old, _rect_window.size), core::rc32f(pos, _rect_window.size));
+            //windowRectChanged(core::rectf(pos_old, _rect_window.size), core::rectf(pos, _rect_window.size));
         }
     }
 
-    void Form::setWindowSize(const core::si32f & size)
+    void Form::setWindowSize(const core::sizef & size)
     {
         setShowSize(size);
     }
@@ -77,7 +88,7 @@ namespace ui
                 onEnterScene(s);
 
 				auto form_size = calc(_size);
-				place(core::rc32f(core::pt32f(), form_size), form_size);
+				place(core::rectf(core::pt32f(), form_size), form_size);
             }
 
             if (!_window)
@@ -103,10 +114,10 @@ namespace ui
         setWindowPos(p);
     }
 
-    void Form::invalidate(const core::rc32f & rect)
+    void Form::invalidate(const core::rectf & rect)
     {
         if(_form_scene)
-            _form_scene->invalidate(rect.intersected(core::rc32f(core::pt32f(), realSize())));
+            _form_scene->invalidate(rect.intersected(core::rectf(core::pt32f(), realSize())));
     }
 
     std::shared_ptr<Control> Form::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const
@@ -130,14 +141,14 @@ namespace ui
         Container::onEnteringScene(scene);
     }
 
-    void Form::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    void Form::onSizeChanged(const core::sizef & from, const core::sizef & to)
     {
         if (_window)
             _window->resize(to);
         Container::onSizeChanged(from, to);
     }
 
-    void Form::ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void Form::ondraw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         Container::ondraw(graphics, clip);
     }

@@ -3,7 +3,7 @@
 #include "win32/win32.h"
 
 static drawing::font default_font;
-static std::once_flag flag;
+static std::once_flag default_font_once_flag;
 
 void generate_default_font()
 {
@@ -25,7 +25,7 @@ namespace drawing
 {
     font::font()
     {
-        std::call_once(flag, generate_default_font);
+        std::call_once(default_font_once_flag, generate_default_font);
         *this = default_font;
     }
 
@@ -34,7 +34,7 @@ namespace drawing
     {
         if (!family_ || !family_[0] || size_ <= 0)
         {
-            std::call_once(flag, generate_default_font);
+            std::call_once(default_font_once_flag, generate_default_font);
             family = (family_ && family_[0]) ? family_ : default_font.family;
             size = size_ > 0 ? size_ : default_font.size;
         }

@@ -48,7 +48,7 @@ namespace drawing
                 close();
         }
 
-        core::rc32f  computeTightBounds() const;
+        core::rectf  computeTightBounds() const;
     private:
         void _confirmNative();
 

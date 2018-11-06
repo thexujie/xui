@@ -33,17 +33,17 @@ namespace ui::controls
         _image_size = size;
     }
 
-    core::si32f Image::contentSize() const
+    core::sizef Image::contentSize() const
     {
         if (_image_size.available())
             return calc(_image_size.value);
-        return _image ? _image->size().to<float32_t>() : core::si32f();
+        return _image ? _image->size().to<float32_t>() : core::sizef();
     }
 
-    core::si32f Image::_imageSize() const
+    core::sizef Image::_imageSize() const
     {
         if (!_image_size)
-            return _image ? _image->size().to<float32_t>() : core::si32f();
+            return _image ? _image->size().to<float32_t>() : core::sizef();
         else
         {
             // ×ÔÊÊÓ¦¿í¶È
@@ -62,16 +62,15 @@ namespace ui::controls
         }
     }
 
-    void Image::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void Image::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        std::lock_guard l(*this);
         _drawBackground(graphics);
         graphics.save();
         auto box = contentBox();
         graphics.setClipRect(box);
 
         auto image_size = _imageSize();
-        core::rc32f rect = box;
+        core::rectf rect = box;
         if (_image_fitting.x == image_fitting::scale)
             rect.cx = float32_t(_image->width());
         else
@@ -111,7 +110,7 @@ namespace ui::controls
         _drawBorder(graphics);
     }
 
-    void Image::onRectChanged(const core::rc32f & from, const core::rc32f & to)
+    void Image::onRectChanged(const core::rectf & from, const core::rectf & to)
     {
         Control::onRectChanged(from, to);
     }

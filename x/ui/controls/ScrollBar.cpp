@@ -40,11 +40,10 @@ namespace ui::controls
             return "scrollbar";
     }
 
-    void ScrollBar::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void ScrollBar::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        std::lock_guard l(*this);
         _drawBackground(graphics);
-        core::rc32f bar_rect = barRect();
+        core::rectf bar_rect = barRect();
         graphics.drawRectangle(bar_rect, drawing::PathStyle().fill(_bar_color));
         _drawBorder(graphics);
     }
@@ -102,7 +101,7 @@ namespace ui::controls
             return box.cx * (1.0f - barRate());
     }
 
-    core::rc32f ScrollBar::barRect() const
+    core::rectf ScrollBar::barRect() const
     {
         auto box = controlBox();
         if (rangeValue() <= 0)
@@ -163,7 +162,7 @@ namespace ui::controls
         Control::onMouseWheel(state);
     }
 
-    void ScrollBar::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    void ScrollBar::onSizeChanged(const core::sizef & from, const core::sizef & to)
     {
         Control::onSizeChanged(from, to);
         restyle();
@@ -183,7 +182,7 @@ namespace ui::controls
         }
         else
         {
-            core::rc32f bar_rect = barRect();
+            core::rectf bar_rect = barRect();
             _updateBarState(bar_rect.contains(state.pos()), false);
         }
     }

@@ -92,7 +92,7 @@ namespace win32
             left = (int32_t)x; top = (int32_t)y;
             right = (int32_t)(x + w); bottom = (int32_t)(y + h);
         }
-        winrect_t(const core::rc32i & rect)
+        winrect_t(const core::recti & rect)
         {
             left = (int32_t)rect.x; top = (int32_t)rect.y;
             right = (int32_t)rect.right(); bottom = (int32_t)rect.bottom();

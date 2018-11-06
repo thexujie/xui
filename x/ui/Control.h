@@ -59,8 +59,10 @@ namespace ui
         void setFixedAspect(const core::vec2<float32_t> & maxSize) { _fixed_aspect = maxSize; }
         const core::vec2<float32_t> & fixedAspect() const { return _fixed_aspect; }
 
-        void setAnchorBorders(core::aligns borders) { _anchor_borders = borders; }
-        core::aligns anchorBorders() const { return _anchor_borders; }
+        void setPlaceAnchor(core::aligns borders) { _anchor_borders = borders; }
+        core::aligns placeAnchor() const { return _anchor_borders; }
+        void setPlaceAlignment(core::aligns align) { _place_alignment = align; }
+        core::aligns placeAlignment() const { return _place_alignment; }
         void setAnchor(const core::vec4<core::dimensionf> & anchor) { _anchor = anchor; }
         const core::vec4<core::dimensionf> & anchor() const { return _anchor; }
 
@@ -69,20 +71,21 @@ namespace ui
 
         void setShowPos(const core::vec2f & pos);
         void setShowSize(const core::vec2f & size);
-        void setShowRect(const core::rc32f & size);
+        void setShowRect(const core::rectf & size);
 
         // prefferSize 计算出的期望大小
-        core::si32f prefferSize(const core::vec2<float32_t> & spacing) const;
+        core::sizef prefferSize(const core::vec2<float32_t> & spacing) const;
         // 根据最大最小值调整
-        core::si32f adjustSize(const core::si32f & size) const;
+        core::sizef adjustSize(const core::sizef & size) const;
 
-        virtual core::si32f fittingSize(const core::si32f & spacing) const { return { std::nanf(0) , std::nanf(0) }; }
-        virtual core::si32f contentSize() const { return core::si32f(); }
+        virtual core::sizef fittingSize(const core::sizef & spacing) const { return { std::nanf(0) , std::nanf(0) }; }
+        virtual core::sizef contentSize() const { return core::sizef(); }
 
         std::shared_ptr<Scene> scene() const { return _scene.lock(); }
         void setParent(std::shared_ptr<Container> parent) { _parent = parent; }
         std::shared_ptr<Container> parent() const { return _parent.lock(); }
 
+        void setColor(core::color color) { _color = color; }
         const core::color & color() const;
         void setFont(const drawing::font & font);
         const drawing::font & font() const;
@@ -108,10 +111,10 @@ namespace ui
 		bool aviliable() const { return _aviliable; }
 
         core::pt32f realPos() const { return _rect.pos; }
-        core::si32f realSize() const { return _rect.size; }
+        core::sizef realSize() const { return _rect.size; }
         float32_t realWidth() const { return _rect.cx; }
         float32_t realHeight() const { return _rect.cy; }
-        core::rc32f realRect() const { return _rect; }
+        core::rectf realRect() const { return _rect; }
         float32_t width() const { return _rect.cx; }
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
@@ -135,15 +138,15 @@ namespace ui
             return { calc(value.x, spacing.cx), calc(value.y, spacing.cy), calc(value.cx, spacing.cx), calc(value.cy, spacing.cy) };
         }
 
-        core::rc32f box() const;
-        core::rc32f controlBox() const { return box(); }
-        core::rc32f borderBox() const;
-        core::rc32f paddingBox() const;
-        core::rc32f contentBox() const;
-        core::rc32f box(control_box box) const;
+        core::rectf box() const;
+        core::rectf controlBox() const { return box(); }
+        core::rectf borderBox() const;
+        core::rectf paddingBox() const;
+        core::rectf contentBox() const;
+        core::rectf box(control_box box) const;
 
         void refresh();
-        void refresh(const core::rc32f & rect);
+        void refresh(const core::rectf & rect);
         void rearrange();
         void restyle();
 
@@ -185,6 +188,7 @@ namespace ui
         }
 
         const core::vec4<core::dimensionf> & padding() const { return _padding; }
+        core::vec4f edges() const;
 
         void setBorderColors(const core::vec4<core::color> & boderColors) { _border_colors = boderColors; }
         const core::vec4<core::color> & borderColors() const { return _border_colors; }
@@ -209,40 +213,39 @@ namespace ui
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
-        virtual void place(const core::rc32f & rect, const core::si32f & size);
+        virtual void place(const core::rectf & rect, const core::sizef & size);
         virtual std::string styleName() const { return {}; }
 
         virtual void updateStyle();
-        virtual void update();
-        void invalidate() { invalidate(_rect); }
-		virtual void invalidate(const core::rc32f & rect);
-		virtual bool updateCompleted() const { return !_delay_update; }
+        virtual void invalidate();
+		virtual void invalidate(const core::rectf & rect);
+		virtual bool validCompleted() const { return !_delay_invalidate; }
 
         virtual int32_t animate();
 
-        virtual void ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const;
-        virtual void draw(drawing::Graphics & graphics, const core::rc32f & clip) const;
+        virtual void ondraw(drawing::Graphics & graphics, const core::rectf & clip) const;
+        virtual void draw(drawing::Graphics & graphics, const core::rectf & clip) const;
 
         virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const { return nullptr; }
 
     public:
         virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
-        virtual void onSizeChanged(const core::si32f & from, const core::si32f & to);
-        virtual void onRectChanged(const core::rc32f & from, const core::rc32f & to);
+        virtual void onSizeChanged(const core::sizef & from, const core::sizef & to);
+        virtual void onRectChanged(const core::rectf & from, const core::rectf & to);
 		virtual void onVisibleChanged(bool vis);
 		virtual void onAviliableChanged(bool avi);
 
     public:
         core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
-        core::event<void(const core::si32f & from, const core::si32f & to)> sizeChanged;
-        core::event<void(const core::rc32f & from, const core::rc32f & to)> rectChanged;
+        core::event<void(const core::sizef & from, const core::sizef & to)> sizeChanged;
+        core::event<void(const core::rectf & from, const core::rectf & to)> rectChanged;
         core::event<void(bool vis)> visibleChanged;
 
     protected:
         void _drawBackground(drawing::Graphics & graphics) const;
         void _drawBorder(drawing::Graphics & graphics) const;
-        void _adjustSize(core::si32f & size) const;
-        void _adjustSize(core::si32f & size, const core::vec2<float32_t> & spacing) const;
+        void _adjustSize(core::sizef & size) const;
+        void _adjustSize(core::sizef & size, const core::vec2<float32_t> & spacing) const;
 
     protected:
         mutable std::mutex _mtx;
@@ -266,7 +269,8 @@ namespace ui
         core::attribute<core::vec2<core::dimensionf>> _min_size = core::vec2{ core::auto_value , core::auto_value };
         core::attribute<core::vec2<core::dimensionf>> _max_size = core::vec2{ core::auto_value, core::auto_value };
 
-        core::aligns _anchor_borders = core::align::leftTop;
+        core::attribute<core::aligns> _anchor_borders;
+        core::attribute<core::aligns> _place_alignment;
         core::attribute<core::vec4<core::dimensionf>> _anchor;
 
         core::attribute<drawing::font> _font;
@@ -286,11 +290,9 @@ namespace ui
         bool _style_transition = true;
         // 布局之后
         core::pt32f _location;
-        core::rc32f _rect;
+        core::rectf _rect;
 
-
-        // true if need update
-        bool _delay_update = false;
+        bool _delay_invalidate = false;
         bool _delay_style = false;
         enum class cursor _cursor = cursor::unknown;
         float32_t _alpha = 1.0f;
@@ -303,7 +305,7 @@ namespace ui
         core::float3x2 _transform;
 
         std::map<std::string, std::vector<std::shared_ptr<core::animation>>> _animations;
-        core::rc32f _rect_invalid;
+        core::rectf _rect_invalid;
 
     public:
         void clearAnimations() { _animations.clear(); }

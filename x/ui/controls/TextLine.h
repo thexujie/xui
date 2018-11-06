@@ -24,12 +24,12 @@ namespace ui::controls
         void setText(const std::string & text);
         const std::string & text() const { return _text; }
 
-        core::si32f contentSize() const override;
+        core::sizef contentSize() const override;
         std::string styleName() const override;
 
-        void draw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
+        void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
     public:
-        void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
+        void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
         void onMouseEnter(const input_state & state) override;
         void onMouseMove(const input_state & state) override;
         void onMouseLeave(const input_state & state) override;

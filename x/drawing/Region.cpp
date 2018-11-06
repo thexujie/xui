@@ -30,13 +30,13 @@ namespace drawing
         return _native->isEmpty();
     }
 
-    void Region::setRect(const core::rc32i & rect)
+    void Region::setRect(const core::recti & rect)
     {
         _confirmNative();
         _native->setRect(skia::from(rect));
     }
 
-    void Region::addRect(const core::rc32i & rect)
+    void Region::addRect(const core::recti & rect)
     {
 		if(rect.empty())
 			return;
@@ -45,7 +45,7 @@ namespace drawing
         _native->op(skia::from(rect), SkRegion::Op::kUnion_Op);
     }
 
-    bool Region::intersects(const core::rc32i & rect) const
+    bool Region::intersects(const core::recti & rect) const
     {
         if (!_native)
             return false;
@@ -69,7 +69,7 @@ namespace drawing
         return _native->contains(point.x, point.y);
     }
 
-    bool Region::contains(const core::rc32i & rect) const
+    bool Region::contains(const core::recti & rect) const
     {
         if (!_native)
             return false;
@@ -85,7 +85,7 @@ namespace drawing
         return _native->contains(region.native());
     }
 
-    core::rc32i Region::bounds() const
+    core::recti Region::bounds() const
     {
         if (!_native)
             return {};
@@ -120,7 +120,7 @@ namespace drawing
         sri->next();
     }
 
-    core::rc32i RegionIterator::rect() const
+    core::recti RegionIterator::rect() const
     {
         if (!_native)
             return {};

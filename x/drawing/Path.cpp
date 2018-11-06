@@ -62,7 +62,7 @@ namespace drawing
             _native = std::make_shared<SkPath>();
     }
 
-    core::rc32f Path::computeTightBounds() const
+    core::rectf Path::computeTightBounds() const
     {
         return skia::to(_native->computeTightBounds());
     }

@@ -34,20 +34,18 @@ namespace ui
         void onLeavingScene() override;
         void onLeaveScene() override;
 
-        core::si32f contentSize() const override;
-        void update() override;
-        using Control::invalidate;
-        void invalidate(const core::rc32f & rect) override;
-		bool updateCompleted() const override;
+        core::sizef contentSize() const override;
+        void invalidate(const core::rectf & rect) override;
+		bool validCompleted() const override;
         int32_t animate() override;
 
     public:
         core::aligns wheelFreedom() const override;
-        void ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
+        void ondraw(drawing::Graphics & graphics, const core::rectf & clip) const override;
         std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
 
         void onPosChanged(const core::pt32f & from, const core::pt32f & to) override;
-        void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
+        void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
         void onMouseWheel(const input_state & state) override;
 
     public:
@@ -60,10 +58,10 @@ namespace ui
 
     protected:
         virtual void layout(layout_flags flags);
-        virtual void onLayoutedSizeChaged(const core::si32f & from, const core::si32f & to);
+        virtual void onLayoutedSizeChaged(const core::sizef & from, const core::sizef & to);
 
     protected:
-        void setLayoutedSize(const core::si32f & layouted_size);
+        void setLayoutedSize(const core::sizef & layouted_size);
 
     private:
         void onScrollValueChangedV(float32_t from, float32_t to);
@@ -77,7 +75,7 @@ namespace ui
         void _setScrollPos(core::vec2f scroll_pos);
 
     public:
-        core::event<void(const core::si32f & from, const core::si32f & to)> layoutedSizeChaged;
+        core::event<void(const core::sizef & from, const core::sizef & to)> layoutedSizeChaged;
 
     protected:
         std::vector<std::shared_ptr<Control>> _controls;
@@ -85,7 +83,7 @@ namespace ui
         bool _clip_clild = true;
         bool _compact_layout = true;
 
-        core::si32f _layouted_size;
+        core::sizef _layouted_size;
 
         core::vec2f _scroll_pos;
         scrollbar_vision _scrollbar_vision_v = scrollbar_vision::auto_hide;

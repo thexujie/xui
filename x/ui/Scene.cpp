@@ -21,7 +21,7 @@ namespace ui
         }
     }
 
-    void Scene::invalidate(const core::rc32f & rect)
+    void Scene::invalidate(const core::rectf & rect)
     {
         {
             std::lock_guard<std::mutex> lock(_mtx);
@@ -31,7 +31,7 @@ namespace ui
 
         if (!_th_render.joinable())
             _th_render = std::thread(std::bind(&Scene::renderThread, this));
-		if(control()->updateCompleted())
+		if(control()->validCompleted())
 			_cv_render.notify_all();
     }
 
@@ -234,7 +234,7 @@ namespace ui
         //static core::counter_fps<float64_t, 3> fps(1s);
         while(!_exit)
         {
-            core::rc32i invalid_rect;
+            core::recti invalid_rect;
             drawing::Region invalid_region;
             {
                 std::lock_guard<std::mutex> l(_mtx);
@@ -251,7 +251,7 @@ namespace ui
 
             auto bounds = invalid_region.bounds();
             if (_draw_buffer->size().cx < bounds.right() || _draw_buffer->size().cy < bounds.bottom())
-                _draw_buffer->resize(core::si32i{ bounds.right(), bounds.bottom() });
+                _draw_buffer->resize(core::sizei{ bounds.right(), bounds.bottom() });
 
 			auto boundsf = bounds.to<float32_t>();
             drawing::Graphics graphics(_draw_buffer);
@@ -277,7 +277,7 @@ namespace ui
 
             //invoke([this, region = std::move(invalid_region)]() { rendered(region); });
             rendered(bounds);
-            //rendered(core::rc32i{{}, _draw_buffer ->size()});
+            //rendered(core::recti{{}, _draw_buffer ->size()});
 
             std::unique_lock<std::mutex> lock(_mtx);
             _cv_render.wait(lock, [this]() {return !_invalid_region.empty() || _exit; });

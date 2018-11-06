@@ -7,7 +7,7 @@ namespace ui::component
     {
     }
 
-    Component::Component(ComponentType type, std::shared_ptr<ui::Control> control, const core::rc32f & rect) : _type(type), _control(control), _rect(rect)
+    Component::Component(ComponentType type, std::shared_ptr<ui::Control> control, const core::rectf & rect) : _type(type), _control(control), _rect(rect)
     {
     }
 }

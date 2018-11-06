@@ -14,23 +14,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
-	HMODULE Shcore = GetModuleHandleW(L"Shcore.dll");
-	auto pfn_SetProcessDpiAwareness = reinterpret_cast<decltype(SetProcessDpiAwareness) *>(GetProcAddress(Shcore, "SetProcessDpiAwareness"));
-	if(pfn_SetProcessDpiAwareness)
-		pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+    //https://docs.microsoft.com/en-us/windows/desktop/api/shellscalingapi/nf-shellscalingapi-setprocessdpiawareness
+    // 使用 manifest 而不是直接设置
+	//HMODULE Shcore = GetModuleHandleW(L"Shcore.dll");
+	//auto pfn_SetProcessDpiAwareness = reinterpret_cast<decltype(SetProcessDpiAwareness) *>(GetProcAddress(Shcore, "SetProcessDpiAwareness"));
+	//if(pfn_SetProcessDpiAwareness)
+	//	pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 
 	auto app = std::make_shared<win32::Win32App>();
-	all_main();
+    views_main();
 	return 0;
 }
 
 int main()
 {
-	HMODULE Shcore = GetModuleHandleW(L"Shcore.dll");
-	auto pfn_SetProcessDpiAwareness = reinterpret_cast<decltype(SetProcessDpiAwareness) *>(GetProcAddress(Shcore, "SetProcessDpiAwareness"));
-	if(pfn_SetProcessDpiAwareness)
-		pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
-
     auto app = std::make_shared<win32::Win32App>();
 	views_main();
 	return 0;

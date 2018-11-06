@@ -29,7 +29,7 @@ namespace ui::controls
         void setBarBorderStyle(const drawing::stroke_style & style) { if (_bar_border_style != style) { _bar_border_style = style; refresh(); } }
         const drawing::stroke_style & barBorderStyle() const { return _bar_border_style; }
 
-        void draw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
+        void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
     public:
         float32_t value() const { return _val; }
         float32_t minValue() const { return _min; }
@@ -47,7 +47,7 @@ namespace ui::controls
         float32_t barSize() const;
         float32_t barSpace() const;
         float32_t barPos() const { return barSpace() * scrollRate(); }
-        core::rc32f barRect() const;
+        core::rectf barRect() const;
     public:
         void onMouseEnter(const input_state & state);
         void onMouseMove(const input_state & state);
@@ -57,7 +57,7 @@ namespace ui::controls
         void onMouseWheel(const input_state & state);
 
     public:
-        void onSizeChanged(const core::si32f & from, const core::si32f & to) override;
+        void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
 
     private:
         void _updateMouse(const input_state & state);

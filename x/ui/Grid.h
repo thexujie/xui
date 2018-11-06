@@ -13,7 +13,7 @@ namespace ui
             size_t col = 0;
             size_t row_pan = 1;
             size_t col_pan = 1;
-            core::rc32f rect;
+            core::rectf rect;
             std::vector<std::shared_ptr<Control>> controls;
         };
 
@@ -32,7 +32,7 @@ namespace ui
         void setCols(const std::initializer_list<core::dimensionf> & cols);
         void addControl(size_t row, size_t col, std::shared_ptr<Control> control);
 
-        core::si32f contentSize() const override;
+        core::sizef contentSize() const override;
         void layout(layout_flags flags) override;
         std::string styleName() const override { return "grid"; }
 

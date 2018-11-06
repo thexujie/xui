@@ -24,7 +24,7 @@ namespace win32
         void detach();
 
         void move(const core::pt32f & pos);
-        void resize(const core::si32f & size);
+        void resize(const core::sizef & size);
 
         std::shared_ptr<ui::Form> form() { return _form.lock(); }
         std::shared_ptr<ui::Scene> scene() { if (auto f = _form.lock()) { return f->scene(); } return nullptr; }
@@ -35,24 +35,24 @@ namespace win32
         void onStateChanged(ui::form_state, ui::form_state state);
         void onStylesChanged(ui::form_styles, ui::form_styles styles);
         void onPosChanged(const core::pt32f & from, const core::pt32f & to);
-        void onSizeChanged(const core::si32f & from, const core::si32f & to);
-        void onSceneInvalidated(const core::rc32i & rect);
+        void onSizeChanged(const core::sizef & from, const core::sizef & to);
+        void onSceneInvalidated(const core::recti & rect);
         void onSceneRendered(const drawing::Region & region);
-        void onSceneRendered2(const core::rc32i & rect);
+        void onSceneRendered2(const core::recti & rect);
         void onSceneCaptured(bool capture);
         void onSceneEvented(ui::scene_event evt);
 
     private:
         core::error _createWindow();
-        core::error _adjustWindow(const core::pt32i & pos, const core::si32i & size);
+        core::error _adjustWindow(const core::pt32i & pos, const core::sizei & size);
 
         core::pt32i _pos() const;
-        core::si32i _size() const;
-        core::rc32i _rect() const;
+        core::sizei _size() const;
+        core::recti _rect() const;
         core::vec4i _border() const;
         core::vec4i _padding() const;
 
-        void _render(const core::rc32i & rect);
+        void _render(const core::recti & rect);
         void _render(const drawing::Region & region);
 
     private:

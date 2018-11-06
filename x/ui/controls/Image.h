@@ -15,14 +15,14 @@ namespace ui::controls
         void setImageSize(const core::vec2<core::dimensionf> & size);
         void setImageFitting(const core::vec2<image_fitting> & fitting) { _image_fitting = fitting; }
         const core::vec2<image_fitting> & imageFitting() const { return _image_fitting; }
-        core::si32f contentSize() const override;
-        void draw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
+        core::sizef contentSize() const override;
+        void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
     public:
-        void onRectChanged(const core::rc32f & from, const core::rc32f & to) override;
+        void onRectChanged(const core::rectf & from, const core::rectf & to) override;
 
     private:
-        core::si32f _imageSize() const;
+        core::sizef _imageSize() const;
 
     private:
         std::shared_ptr<drawing::Image> _image;

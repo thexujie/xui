@@ -98,27 +98,20 @@ namespace ui
         Control::onLeaveScene();
     }
 
-    void Container::update()
-    {
-        Control::update();
-        for (auto & control : _controls)
-            control->update();
-    }
-
-    void Container::invalidate(const core::rc32f & rect)
+    void Container::invalidate(const core::rectf & rect)
     {
         if(auto p = parent())
 			p->invalidate(rect);
     }
 
-	bool Container::updateCompleted() const
+	bool Container::validCompleted() const
     {
-		if(_delay_update || _invalid_layout)
+		if(_delay_invalidate || _invalid_layout)
 			return false;
 
 		for(auto & control : _controls)
 		{
-			if(!control->updateCompleted())
+			if(!control->validCompleted())
 				return false;
 		}
 		return true;
@@ -137,7 +130,7 @@ namespace ui
         return (_scrollbar_v || _scrollbar_h) ? core::align::mask : core::align::none;
     }
 
-    void Container::ondraw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void Container::ondraw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
         std::lock_guard lock(*this);
@@ -145,8 +138,7 @@ namespace ui
             graphics.saveLayer(box(), a);
         //else
             //graphics.saveLayer(box(), a);
-        //graphics.setClipRect(_rect);
-        _drawBackground(graphics);
+        draw(graphics, clip);
         for (auto & control : _controls)
         {
 			if(!control->aviliable())
@@ -156,9 +148,8 @@ namespace ui
             if(clip.intersect_with(rect))
                 control->ondraw(graphics, clip);
         }
-        _drawBorder(graphics);
         if (a != 0xff)
-        graphics.restore();
+            graphics.restore();
     }
 
     std::shared_ptr<Control> Container::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const
@@ -166,13 +157,7 @@ namespace ui
         if (_clip_clild && !_rect.contains(pos))
             return nullptr;
 
-        if (_invalid_layout)
-        {
-            Container * pthis = const_cast<Container *>(this);
-            pthis->layout(_invalid_layout_flags);
-            pthis->_invalid_layout = false;
-            pthis->_invalid_layout_flags = nullptr;
-        }
+        const_cast<Container *>(this)->_confirmLayout();
 
         bool found = false;
 
@@ -209,16 +194,28 @@ namespace ui
         return control_found;
     }
 
-    void Container::onLayoutedSizeChaged(const core::si32f & from, const core::si32f & to)
+    void Container::onLayoutedSizeChaged(const core::sizef & from, const core::sizef & to)
     {
         layoutedSizeChaged(from, to);
     }
 
-    void Container::setLayoutedSize(const core::si32f & layouted_size)
+    void Container::setLayoutedSize(const core::sizef & layouted_size)
     {
         if (layouted_size != _layouted_size)
         {
             _layouted_size = layouted_size;
+
+            if (_scrollbar_h)
+            {
+                _scrollbar_h->setPageValue(contentBox().cx);
+                _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
+            }
+
+            if (_scrollbar_v)
+            {
+                _scrollbar_v->setPageValue(contentBox().cy);
+                _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
+            }
         }
     }
 
@@ -229,8 +226,20 @@ namespace ui
         Control::onPosChanged(from, to);
     }
 
-    void Container::onSizeChanged(const core::si32f & from, const core::si32f & to)
+    void Container::onSizeChanged(const core::sizef & from, const core::sizef & to)
     {
+        if (_scrollbar_h)
+        {
+            _scrollbar_h->setPageValue(contentBox().cx);
+            _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
+        }
+
+        if (_scrollbar_v)
+        {
+            _scrollbar_v->setPageValue(contentBox().cy);
+            _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
+        }
+
         layout_flags flags = nullptr;
         if (!core::equal(from.cx, to.cx))
             flags |= layout_flag::resize_cx;
@@ -242,10 +251,11 @@ namespace ui
 
     void Container::onMouseWheel(const input_state & state)
     {
-        if (_layout_direction == core::align::left && _scrollbar_h)
-            _scrollbar_h->onMouseWheel(state);
-        else if (_layout_direction == core::align::top && _scrollbar_v)
+        if (_scrollbar_v)
             _scrollbar_v->onMouseWheel(state);
+        else if (_scrollbar_h)
+            _scrollbar_h->onMouseWheel(state);
+        else {}
         Control::onMouseWheel(state);
     }
 
@@ -286,7 +296,7 @@ namespace ui
                 {
                     _scrollbar_v = std::make_shared<controls::ScrollBar>();
                     _scrollbar_v->setSize({ 0.5_em, 100_per });
-                    _scrollbar_v->setAnchorBorders(core::align::right | core::align::topBottom);
+                    _scrollbar_v->setPlaceAnchor(core::align::right | core::align::topBottom);
                     _scrollbar_v->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_v->setZValue(ZVALUE_SCROLLBAR);
                     _scrollbar_v->valueChagned += std::weak_bind(&Container::onScrollValueChangedV, share_ref<Container>(), std::placeholders::_1, std::placeholders::_2);
@@ -307,7 +317,7 @@ namespace ui
                 {
                     _scrollbar_h = std::make_shared<controls::ScrollBar>();
                     _scrollbar_h->setSize({ 100_per, 0.5_em });
-                    _scrollbar_h->setAnchorBorders(core::align::bottom | core::align::leftRight);
+                    _scrollbar_h->setPlaceAnchor(core::align::bottom | core::align::leftRight);
                     _scrollbar_h->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_h->setZValue(ZVALUE_SCROLLBAR);
                     _scrollbar_h->setDirection(core::align::left);
@@ -355,7 +365,7 @@ namespace ui
             auto interpolator = std::make_shared<core::property_interpolator_default<core::vec2f>>();
             interpolator->set_values(_scroll_pos, scroll_pos);
             _scroll_anim = std::make_shared<core::property_animation>(control_ref(), accessor, interpolator);
-            _scroll_anim->setDuration(300ms);
+            _scroll_anim->setDuration(100ms);
             appendAnimation(CONTROL_ANIMATION_GROUP_CONTROL, _scroll_anim);
         }
         else
@@ -373,10 +383,10 @@ namespace ui
         relayout();
     }
 
-    core::si32f Container::contentSize() const
+    core::sizef Container::contentSize() const
     {
-        core::si32f size;
-        core::rc32f box = paddingBox();
+        core::sizef size;
+        core::rectf box = paddingBox();
         float32_t margin = 0;
         for (auto & control : _controls)
         {
@@ -420,13 +430,11 @@ namespace ui
         if (!scene())
             return;
 
-        scene()->setEvent(scene_event::update_mouse_pos);
-
         float32_t margin = 0;
-        core::rc32f box = paddingBox();
-        core::si32f spacing = box.size;
+        core::rectf box = contentBox();
+        core::sizef spacing = box.size;
         core::pt32f layout_pos = _rect.pos - _scroll_pos;
-        core::si32f layout_size;
+        core::sizef layout_size;
 
         float32_t margin_size = 0;
         float32_t fixed_size = 0;
@@ -589,27 +597,7 @@ namespace ui
         }
         setLayoutedSize(layout_size);
 
-        switch (_layout_direction)
-        {
-        case core::align::left:
-        case core::align::right:
-            if (_scrollbar_h)
-            {
-                _scrollbar_h->setPageValue(contentBox().cx);
-                _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
-            }
-            break;
-        case core::align::top:
-        case core::align::bottom:
-            if (_scrollbar_v)
-            {
-                _scrollbar_v->setPageValue(contentBox().cy);
-                _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
-            }
-            break;
-        default:
-            break;
-        }
+        scene()->setEvent(scene_event::update_mouse_pos);
     }
 }
 

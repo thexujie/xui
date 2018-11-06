@@ -36,10 +36,10 @@ namespace ui::controls
         _text = text;
     }
 
-    core::si32f Radio::contentSize() const
+    core::sizef Radio::contentSize() const
     {
         _confirmBlob();
-        core::si32f size = _textBlob ? _textBlob->size() : core::si32f();
+        core::sizef size = _textBlob ? _textBlob->size() : core::sizef();
         size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
         return size;
     }
@@ -54,14 +54,13 @@ namespace ui::controls
             return "radio";
     }
 
-    void Radio::draw(drawing::Graphics & graphics, const core::rc32f & clip) const
+    void Radio::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         auto box = paddingBox();
         auto fm = drawing::fontmetrics(font());
-        std::lock_guard l(*this);
         _drawBackground(graphics);
 
-        core::rc32f rc_hole(box.leftTop(), { fm.height, fm.height });
+        core::rectf rc_hole(box.leftTop(), { fm.height, fm.height });
         rc_hole.expand(-calc(_hole_border_size) * 0.5f);
         if (_hole_color.visible())
             graphics.drawEllipse(rc_hole, drawing::PathStyle().fill(_hole_color));
@@ -70,7 +69,7 @@ namespace ui::controls
 
         if(_state == check_state::checked)
         {
-            core::rc32f rc_dot = rc_hole.expanded(-fm.height * 0.2f);
+            core::rectf rc_dot = rc_hole.expanded(-fm.height * 0.2f);
             if (_dot_color.visible())
                 graphics.drawEllipse(rc_dot, drawing::PathStyle().fill(_dot_color));
             if (_dot_border_color.visible())
@@ -78,7 +77,7 @@ namespace ui::controls
         }
 
         if (_textBlob)
-            graphics.drawTextBlob(*_textBlob, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0));
+            graphics.drawTextBlob(*_textBlob, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
         _drawBorder(graphics);
     }
 

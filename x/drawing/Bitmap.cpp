@@ -6,7 +6,7 @@
 
 namespace drawing
 {
-    Bitmap::Bitmap(const core::si32i & size)
+    Bitmap::Bitmap(const core::sizei & size)
     {
         auto bitmap = std::make_shared<SkBitmap>();
         bitmap->allocN32Pixels(size.cx, size.cy);
@@ -26,7 +26,7 @@ namespace drawing
         return buffer;
     }
 
-    core::si32i Bitmap::size() const
+    core::sizei Bitmap::size() const
     {
         if (!_native)
             return {};
@@ -45,7 +45,7 @@ namespace drawing
         return SkEncodeImage(&stream, *_native, skia::from(type), quality) ? core::error_ok : core::error_inner;
     }
 
-    Surface::Surface(const core::si32i & size)
+    Surface::Surface(const core::sizei & size)
     {
         resize(size);
     }
@@ -64,7 +64,7 @@ namespace drawing
         }
     }
 
-    core::error Surface::resize(const core::si32i & size)
+    core::error Surface::resize(const core::sizei & size)
     {
         _native.reset();
 
@@ -133,7 +133,7 @@ namespace drawing
         return buffer;
     }
 
-    core::si32i Surface::size() const
+    core::sizei Surface::size() const
     {
         return _size;
     }

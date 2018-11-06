@@ -63,9 +63,10 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;../deps/FreeImage/lib/x64/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/icu/bin/x64d/icuucd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/bin/x64/icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -76,6 +77,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -86,8 +90,11 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/bin/x64/icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -96,6 +103,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main\all.cpp" />
+    <ClCompile Include="main\ListView.cpp" />
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="main\views.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -107,6 +115,7 @@
     <ClCompile Include="win32\Win32App.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="main\ListView.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="win32\Win32App.h" />
   </ItemGroup>

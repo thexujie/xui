@@ -156,7 +156,7 @@ void all_main()
 		//tln->setSize({ auto_value, 10_em });
 		tln->setFont({ "", font.size * 9 });
 		tln->setAnchor({ 0_px, 0_px, 0_px, 0_px });
-		tln->setAnchorBorders(core::align::leftRight);
+		tln->setPlaceAnchor(core::align::leftRight);
 		tln->setImeMode(ui::ime_mode::on);
 		layer->addControl(tln);
 	}

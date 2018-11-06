@@ -77,7 +77,7 @@ namespace drawing
     public:
         Graphics() = default;
 
-        //Graphics(core::si32i size);
+        //Graphics(core::sizei size);
         Graphics(std::shared_ptr<Bitmap> pixmap);
         Graphics(std::shared_ptr<Surface> pixmap);
         ~Graphics();
@@ -85,9 +85,9 @@ namespace drawing
     public:
         void clear(core::color color);
         void save();
-        void saveLayer(const core::rc32f & bounds, uint8_t alpha);
+        void saveLayer(const core::rectf & bounds, uint8_t alpha);
         void restore();
-        void setClipRect(const core::rc32f & rect, bool aa = true);
+        void setClipRect(const core::rectf & rect, bool aa = true);
         void setClipRegion(const drawing::Region & region);
         void setClipPath(const drawing::Path & path, bool aa = true);
         void setMatrix(const core::float3x2 & matrix);
@@ -96,9 +96,9 @@ namespace drawing
 
         void drawLine(core::pt32f start, core::pt32f end, const PathStyle & style);
 
-        void drawEllipse(const core::rc32f & ellipse, const PathStyle & style);
-        void drawRectangle(const core::rc32f & rect, const PathStyle & style);
-        void drawRoundRect(const core::rc32f & rect, float32_t rx, float32_t ry, const PathStyle & style);
+        void drawEllipse(const core::rectf & ellipse, const PathStyle & style);
+        void drawRectangle(const core::rectf & rect, const PathStyle & style);
+        void drawRoundRect(const core::rectf & rect, float32_t rx, float32_t ry, const PathStyle & style);
 
         void drawPoints(const core::pt32f points[], size_t count, point_mode mode, const PathStyle & style);
         void drawPath(const Path & path, const PathStyle & style);
@@ -108,26 +108,26 @@ namespace drawing
 		void drawRegion(const std::shared_ptr<drawing::Region> & region, const PathStyle & style);
 
         void drawString(const std::string & str, const core::pt32f & pos, const StringFormat & format);
-        void drawString(const std::string & str, const core::rc32f & rect, const StringFormat & format);
-        void drawTextBlob(const drawing::TextBlob & blob, core::pt32f point);
+        void drawString(const std::string & str, const core::rectf & rect, const StringFormat & format);
+        void drawTextBlob(const drawing::TextBlob & blob, core::pt32f point, const StringFormat & format);
 
         void drawImage(const Image & image, core::pt32f point, core::aligns align);
-        void drawImage(const Image & image, core::rc32f rect, core::aligns align);
-        void drawImage(const Image & image, core::pt32f point, core::rc32i region, core::aligns align);
-        void drawImage(const Image & image, core::pt32f point, core::rc32f region, core::aligns align);
-        void drawImage(const Image & image, core::rc32f rect, core::rc32i region, core::aligns align);
-        void drawImage(const Image & image, core::rc32f rect, core::rc32f region, core::aligns align);
+        void drawImage(const Image & image, core::rectf rect, core::aligns align);
+        void drawImage(const Image & image, core::pt32f point, core::recti region, core::aligns align);
+        void drawImage(const Image & image, core::pt32f point, core::rectf region, core::aligns align);
+        void drawImage(const Image & image, core::rectf rect, core::recti region, core::aligns align);
+        void drawImage(const Image & image, core::rectf rect, core::rectf region, core::aligns align);
 
         void drawImage(const Image & image, core::pt32f point);
-        void drawImage(const Image & image, core::rc32f rect);
-        void drawImage(const Image & image, core::rc32f rect, core::rc32i region);
-        void drawImage(const Image & image, core::rc32f rect, core::rc32f region);
+        void drawImage(const Image & image, core::rectf rect);
+        void drawImage(const Image & image, core::rectf rect, core::recti region);
+        void drawImage(const Image & image, core::rectf rect, core::rectf region);
 
     public:
         const drawcall_statistics & statistics() const { return _statistics; }
         void fillPath(path_source & path, core::color color);
         fontmetrics GetFontMetrics(font font);
-        core::si32i MeasureString(std::string str, font font);
+        core::sizei MeasureString(std::string str, font font);
 
     public:
         std::shared_ptr<SkCanvas> native_shared() { return _native; }

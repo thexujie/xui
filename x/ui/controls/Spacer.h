@@ -10,6 +10,6 @@ namespace ui::controls
         Spacer(std::string text);
         ~Spacer();
 
-        void draw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
+        void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
     };
 }

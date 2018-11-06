@@ -49,7 +49,7 @@ namespace drawing
         return _native->height();
     }
 
-    core::si32i Image::size() const
+    core::sizei Image::size() const
     {
         if (!_native)
             return {};

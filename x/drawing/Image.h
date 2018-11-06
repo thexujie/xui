@@ -14,7 +14,7 @@ namespace drawing
         operator bool() const { return !!_native; }
         int32_t width() const;
         int32_t height() const;
-        core::si32i size() const;
+        core::sizei size() const;
         // width / height
         float32_t aspect() const;
         //image::format cmode() const { return _image.format.format; }

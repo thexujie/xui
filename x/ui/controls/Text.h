@@ -10,9 +10,13 @@ namespace ui::controls
         Text(std::string text);
         ~Text();
 
-        core::si32f contentSize() const override;
+        core::sizef contentSize() const override;
 
-        void draw(drawing::Graphics & graphics, const core::rc32f & clip) const override;
+        void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
+
+    public:
+        void setText(std::string text);
+        const std::string & text() const { return _text; }
     private:
         void _confirmBlob() const;
 
