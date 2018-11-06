@@ -43,11 +43,11 @@ void views_main()
 		//form->addControl(tln);
 	}
     {
-        auto lv = std::make_shared<ui::controlsex::ListView>();
+        auto lv = std::make_shared<ui::ListView>();
         lv->setSize({ 100_per, 100_per });
         //lv->setImeMode(ui::ime_mode::on);
         for(size_t cnt = 0; cnt < 100; ++cnt)
-            lv->addItem(std::make_shared<ui::controlsex::ListViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+            lv->addItem(std::make_shared<ui::ListViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
         form->addControl(lv);
         lv->setScrollbarVisionV(ui::scrollbar_vision::always);
     }

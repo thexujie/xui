@@ -23,7 +23,7 @@ namespace ui::controls
     void Button::propertyTableCallback(core::property_table & properties)
     {
         Control::propertyTableCallback(properties);
-        properties["text"] = core::make_accessor(&Button::setText, &Button::text, core::parseString, nullptr);
+        properties["text"] = core::make_accessor(&Button::setText, &Button::text);
     }
 
     void Button::propertyTable(core::property_table & properties)

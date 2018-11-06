@@ -28,7 +28,7 @@ namespace ui::controlsex
 	void TitleButton::propertyTableCallback(core::property_table & properties)
 	{
 		Control::propertyTableCallback(properties);
-		properties["shape-color"] = core::make_accessor(&TitleButton::_setShapeColor, &TitleButton::_shape_color, core::parseColor, nullptr);
+		properties["shape-color"] = core::make_accessor(&TitleButton::_setShapeColor, &TitleButton::_shape_color);
 	}
 
 	void TitleButton::propertyTable(core::property_table & properties)

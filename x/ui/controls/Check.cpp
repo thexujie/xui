@@ -19,10 +19,10 @@ namespace ui::controls
     void Check::propertyTableCallback(core::property_table & properties)
     {
         Control::propertyTableCallback(properties);
-        properties["text"] = core::make_accessor(&Check::setText, &Check::text, core::parseString, nullptr);
-        properties["hole-color"] = core::make_accessor(&Check::_setHoleColor, &Check::_hole_color, core::parseColor, nullptr);
-        properties["hole-border-size"] = core::make_accessor(&Check::_setHoleBorderSize, &Check::_hole_border_size, core::parseDimension, nullptr);
-        properties["hole-border-color"] = core::make_accessor(&Check::_setHoleBorderColor, &Check::_hole_border_color, core::parseColor, nullptr);
+        properties["text"] = core::make_accessor(&Check::setText, &Check::text);
+        properties["hole-color"] = core::make_accessor(&Check::_setHoleColor, &Check::_hole_color);
+        properties["hole-border-size"] = core::make_accessor(&Check::_setHoleBorderSize, &Check::_hole_border_size);
+        properties["hole-border-color"] = core::make_accessor(&Check::_setHoleBorderColor, &Check::_hole_border_color);
     }
 
     void Check::propertyTable(core::property_table & properties)

@@ -19,9 +19,9 @@ namespace ui::controls
     void ScrollBar::propertyTableCallback(core::property_table & properties)
     {
         Control::propertyTableCallback(properties);
-        properties["bar-color"] = make_accessor(&ScrollBar::setBarColor, &ScrollBar::barColor, core::parseColor, nullptr);
-        properties["bar-border"] = make_accessor(&ScrollBar::setBarBorder, &ScrollBar::barBorder, core::parseDimension, nullptr);
-        properties["bar-border-color"] = make_accessor(&ScrollBar::setBarBorderColor, &ScrollBar::barBorderColor, core::parseColor, nullptr);
+        properties["bar-color"] = make_accessor(&ScrollBar::setBarColor, &ScrollBar::barColor);
+        properties["bar-border"] = make_accessor(&ScrollBar::setBarBorder, &ScrollBar::barBorder);
+        properties["bar-border-color"] = make_accessor(&ScrollBar::setBarBorderColor, &ScrollBar::barBorderColor);
         properties["bar-border-style"] = make_accessor(&ScrollBar::setBarBorderStyle, &ScrollBar::barBorderStyle, drawing::parseStrokeStyle, nullptr);
     }
 

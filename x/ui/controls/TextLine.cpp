@@ -55,7 +55,7 @@ namespace ui::controls
     void TextLine::propertyTableCallback(core::property_table & properties)
     {
         Control::propertyTableCallback(properties);
-        properties["text"] = core::make_accessor(&TextLine::setText, &TextLine::text, core::parseString, nullptr);
+        properties["text"] = core::make_accessor(&TextLine::setText, &TextLine::text);
     }
 
     void TextLine::propertyTable(core::property_table & properties)
@@ -275,7 +275,7 @@ namespace ui::controls
         _ime_context = imecontext;
         if(!_cursor_anim)
         {
-            auto accessor = make_accessor(&TextLine::_setCursorShown, &TextLine::_cursorShown, core::parseBool, nullptr);
+            auto accessor = make_accessor(&TextLine::_setCursorShown, &TextLine::_cursorShown);
             auto interpolator = std::make_shared<core::property_interpolator_keyframes<bool>>();
             interpolator->set_values({ { 0.0f, true }, { 0.5f, false } });
             _cursor_anim = std::make_shared<core::property_animation>(control_ref(), accessor, interpolator);

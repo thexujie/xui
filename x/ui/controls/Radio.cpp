@@ -19,10 +19,10 @@ namespace ui::controls
     void Radio::propertyTableCallback(core::property_table & properties)
     {
         Control::propertyTableCallback(properties);
-        properties["text"] = core::make_accessor(&Radio::setText, &Radio::text, core::parseString, nullptr);
-        properties["hole-color"] = core::make_accessor(&Radio::_setHoleColor, &Radio::_hole_color, core::parseColor, nullptr);
-        properties["hole-border-size"] = core::make_accessor(&Radio::_setHoleBorderSize, &Radio::_hole_border_size, core::parseDimension, nullptr);
-        properties["hole-border-color"] = core::make_accessor(&Radio::_setHoleBorderColor, &Radio::_hole_border_color, core::parseColor, nullptr);
+        properties["text"] = core::make_accessor(&Radio::setText, &Radio::text);
+        properties["hole-color"] = core::make_accessor(&Radio::_setHoleColor, &Radio::_hole_color);
+        properties["hole-border-size"] = core::make_accessor(&Radio::_setHoleBorderSize, &Radio::_hole_border_size);
+        properties["hole-border-color"] = core::make_accessor(&Radio::_setHoleBorderColor, &Radio::_hole_border_color);
     }
 
     void Radio::propertyTable(core::property_table & properties)

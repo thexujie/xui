@@ -10,15 +10,15 @@ namespace ui
 
     void Control::propertyTableCallback(core::property_table & properties)
     {
-        properties["pos"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimensionf> &) >(&Control::move), &Control::pos, core::parseDimension2D, nullptr);
-        properties["size"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimensionf> &) >(&Control::resize), &Control::size, core::parseDimension2D, nullptr);
+        properties["pos"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimensionf> &) >(&Control::move), &Control::pos);
+        properties["size"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimensionf> &) >(&Control::resize), &Control::size);
 
-        properties["border"] = make_accessor(&Control::setBorder, &Control::border, core::parseDimension4D, nullptr);
-        properties["padding"] = make_accessor(&Control::setPadding, &Control::padding, core::parseDimension4D, nullptr);
-        properties["margin"] = make_accessor(&Control::setMargin, &Control::margin, core::parseDimension4D, nullptr);
+        properties["border"] = make_accessor(&Control::setBorder, &Control::border);
+        properties["padding"] = make_accessor(&Control::setPadding, &Control::padding);
+        properties["margin"] = make_accessor(&Control::setMargin, &Control::margin);
 
-        properties["border-color"] = make_accessor(&Control::setBorderColors, &Control::borderColors, core::parseColor4D, nullptr);
-        properties["background-color"] = make_accessor(&Control::setBackgroundColor, &Control::backgroundColor, core::parseColor, nullptr);
+        properties["border-color"] = make_accessor(&Control::setBorderColors, &Control::borderColors);
+        properties["background-color"] = make_accessor(&Control::setBackgroundColor, &Control::backgroundColor);
     }
 
     void Control::propertyTable(core::property_table & properties)
@@ -482,7 +482,7 @@ namespace ui
         }
         else
         {
-            auto duration = core::parseDuration(iter_transition_duration->second);
+            auto duration = core::property_parser<std::chrono::nanoseconds>(iter_transition_duration->second);
             items.erase(iter_transition_duration);
 
             clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);

@@ -17,6 +17,9 @@
     <ClCompile Include="main\ListView.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="main\View.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -24,6 +27,9 @@
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="main\ListView.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="main\View.h">
       <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>

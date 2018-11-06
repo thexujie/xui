@@ -102,6 +102,9 @@
     background-color: #eee;
     border: 1px;
     border-color: #f777;
+    marked-color: #855f;
+    selected-color: #f55f;
+    item-padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
 .listview:hover {

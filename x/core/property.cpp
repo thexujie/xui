@@ -14,17 +14,47 @@ namespace core
         return 0;
     }
 
-    bool parseBool(const std::string & str)
+    bool property_animation::update()
     {
-        return !core::equal_ic(str, "false");
+        if (_state != animation_state::running)
+            return false;
+
+        auto object = _object.lock();
+        if (!object || !_accessor || !_interpolator)
+            return false;
+
+        auto now = core::datetime::steady();
+        auto cost = now - _time;
+        if (cost > _duration * _loop_index + _duration)
+        {
+            ++_loop_index;
+            if (_loop <= 0 || _loop_index >= _loop)
+            {
+                _interpolator->interpolate(*object, *_accessor, _curve(1.0f));
+                setState(animation_state::waiting);
+                return false;
+            }
+            looped(_loop_index);
+        }
+
+        float32_t proportion = (cost - _duration * _loop_index).count() / (float32_t)_duration.count();
+        proportion = _curve(proportion);
+        _interpolator->interpolate(*object, *_accessor, proportion);
+        return true;
     }
 
-    std::string parseString(const std::string & str)
+    template<> std::string property_parser<std::string>(const std::string & str)
     {
         return std::string(str.data(), str.length());
     }
 
-    core::color parseColor(const std::string & str)
+    template<> bool property_parser<bool>(const std::string & str)
+    {
+        return !core::equal_ic(str, "false");
+    }
+
+    template<>
+    core::color property_parser<core::color>(const std::string & str)
     {
         if (str.empty())
             return colors::Auto;
@@ -94,6 +124,7 @@ namespace core
 
             return colors::Auto;
         }
+
         for (auto & color_name : core::color_names)
         {
             if (core::equal_ic(str, color_name.name, -1))
@@ -102,29 +133,29 @@ namespace core
         return colors::Auto;
     }
 
-    core::vec2<core::color> parseColor2D(const std::string & str)
+    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::string & str)
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return core::vec2<core::color>{ parseColor(strs[0])};
+            return core::vec2<core::color>{ property_parser<core::color>(strs[0])};
         if (strs.size() == 2)
-            return { parseColor(strs[0]), parseColor(strs[1]) };
+            return { property_parser<core::color>(strs[0]), property_parser<core::color>(strs[1]) };
         return {};
     }
 
-    core::vec4<core::color> parseColor4D(const std::string & str)
+    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::string & str)
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return core::vec4<core::color>{ parseColor(strs[0])};
+            return core::vec4<core::color>{ property_parser<core::color>(strs[0])};
         if (strs.size() == 2)
-            return { parseColor(strs[0]), parseColor(strs[1]) };
+            return { property_parser<core::color>(strs[0]), property_parser<core::color>(strs[1]) };
         if (strs.size() == 4)
-            return { parseColor(strs[0]), parseColor(strs[1]), parseColor(strs[2]), parseColor(strs[3]) };
+            return { property_parser<core::color>(strs[0]), property_parser<core::color>(strs[1]), property_parser<core::color>(strs[2]), property_parser<core::color>(strs[3]) };
         return {};
     }
 
-    core::dimensionf parseDimension(const std::string & str)
+    template<> core::dimensionf property_parser<core::dimensionf>(const std::string & str)
     {
         for (auto & uint_name : unit_names)
         {
@@ -136,29 +167,29 @@ namespace core
         return {};
     }
 
-    core::vec2<core::dimensionf> parseDimension2D(const std::string & str)
+    template<> core::vec2<core::dimensionf> property_parser<core::vec2<core::dimensionf>>(const std::string & str)
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return core::vec2<core::dimensionf>{ parseDimension(strs[0]) };
+            return core::vec2<core::dimensionf>{ property_parser<core::dimensionf>(strs[0]) };
         if (strs.size() == 2)
-            return { parseDimension(strs[0]), parseDimension(strs[1]) };
+            return { property_parser<core::dimensionf>(strs[0]), property_parser<core::dimensionf>(strs[1]) };
         return {};
     }
 
-    core::vec4<core::dimensionf> parseDimension4D(const std::string & str)
+    template<> core::vec4<core::dimensionf> property_parser<core::vec4<core::dimensionf>>(const std::string & str)
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return core::vec4<core::dimensionf>{ parseDimension(strs[0]) };
+            return core::vec4<core::dimensionf>{ property_parser<core::dimensionf>(strs[0]) };
         if (strs.size() == 2)
-            return { parseDimension(strs[0]), parseDimension(strs[1]) };
+            return { property_parser<core::dimensionf>(strs[0]), property_parser<core::dimensionf>(strs[1]) };
         if (strs.size() == 4)
-            return { parseDimension(strs[0]), parseDimension(strs[1]), parseDimension(strs[2]), parseDimension(strs[3]) };
+            return { property_parser<core::dimensionf>(strs[0]), property_parser<core::dimensionf>(strs[1]), property_parser<core::dimensionf>(strs[2]), property_parser<core::dimensionf>(strs[3]) };
         return {};
     }
 
-    std::chrono::nanoseconds parseDuration(const std::string & str)
+    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::string & str)
     {
         auto end = str.end();
         char * curr = nullptr;
@@ -169,34 +200,5 @@ namespace core
         if (curr && curr[0] == 's')
             return std::chrono::seconds(val);
         return std::chrono::milliseconds(val);
-    }
-
-    bool property_animation::update()
-    {
-        if (_state != animation_state::running)
-            return false;
-
-        auto object = _object.lock();
-        if (!object || !_accessor || !_interpolator)
-            return false;
-
-        auto now = core::datetime::steady();
-        auto cost = now - _time;
-        if (cost > _duration * _loop_index + _duration)
-        {
-            ++_loop_index;
-            if (_loop <= 0 || _loop_index >= _loop)
-            {
-				_interpolator->interpolate(*object, *_accessor, _curve(1.0f));
-                setState(animation_state::waiting);
-                return false;
-            }
-            looped(_loop_index);
-        }
-
-        float32_t proportion = (cost - _duration * _loop_index).count() / (float32_t)_duration.count();
-        proportion = _curve(proportion);
-        _interpolator->interpolate(*object, *_accessor, proportion);
-        return true;
     }
 }

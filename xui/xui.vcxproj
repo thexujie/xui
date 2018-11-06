@@ -105,6 +105,7 @@
     <ClCompile Include="main\all.cpp" />
     <ClCompile Include="main\ListView.cpp" />
     <ClCompile Include="main\main.cpp" />
+    <ClCompile Include="main\View.cpp" />
     <ClCompile Include="main\views.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -116,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main\ListView.h" />
+    <ClInclude Include="main\View.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="win32\Win32App.h" />
   </ItemGroup>

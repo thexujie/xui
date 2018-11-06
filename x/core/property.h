@@ -257,34 +257,6 @@ namespace core
         return std::make_shared<property_interpolator_type<T>>(inter);
     }
 
-    template<>
-    inline float32_t property_parser<float32_t>(const std::string & str)
-    {
-        return std::atof(str.c_str());
-    }
-
-    template<>
-    inline core::vec2<float32_t> property_parser<core::vec2<float32_t>>(const std::string & str)
-    {
-        std::vector<std::string> strs = core::split(str, ' ');
-        if (strs.size() == 1)
-            return core::vec2<float32_t>{ property_parser<float32_t>(strs[0]) };
-        if (strs.size() == 2)
-            return { property_parser<float32_t>(strs[0]), property_parser<float32_t>(strs[1]) };
-        return {};
-    }
-
-    bool parseBool(const std::string & str);
-    std::string parseString(const std::string & str);
-    core::color parseColor(const std::string & str);
-    core::vec2<core::color> parseColor2D(const std::string & str);
-    core::vec4<core::color> parseColor4D(const std::string & str);
-    core::dimensionf parseDimension(const std::string & str);
-    core::vec2<core::dimensionf> parseDimension2D(const std::string & str);
-    core::vec4<core::dimensionf> parseDimension4D(const std::string & str);
-    std::chrono::nanoseconds parseDuration(const std::string & str);
-
-
     // specifize some 
     template<>
     class property_interpolator_default<std::string> : public property_interpolator
@@ -454,4 +426,35 @@ namespace core
         std::shared_ptr<core::property_accessor> _accessor;
         std::shared_ptr<core::property_interpolator> _interpolator;
     };
+
+
+
+    template<>
+    inline float32_t property_parser<float32_t>(const std::string & str)
+    {
+        return std::atof(str.c_str());
+    }
+
+    template<>
+    inline core::vec2<float32_t> property_parser<core::vec2<float32_t>>(const std::string & str)
+    {
+        std::vector<std::string> strs = core::split(str, ' ');
+        if (strs.size() == 1)
+            return core::vec2<float32_t>{ property_parser<float32_t>(strs[0]) };
+        if (strs.size() == 2)
+            return { property_parser<float32_t>(strs[0]), property_parser<float32_t>(strs[1]) };
+        return {};
+    }
+
+    template<> std::string property_parser<std::string>(const std::string & str);
+    template<> bool property_parser<bool>(const std::string & str);
+    template<> core::color property_parser<core::color>(const std::string & str);
+    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::string & str);
+    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::string & str);
+
+    template<> core::dimensionf property_parser<core::dimensionf>(const std::string & str);
+    template<> core::vec2<core::dimensionf> property_parser<core::vec2<core::dimensionf>>(const std::string & str);
+    template<> core::vec4<core::dimensionf> property_parser<core::vec4<core::dimensionf>>(const std::string & str);
+
+    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::string & str);
 }
