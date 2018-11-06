@@ -117,7 +117,7 @@ namespace drawing
         _colorFilter = colorFilter;
     }
 
-    void Graphics::drawLine(core::pt32f start, core::pt32f end, const PathStyle & style)
+    void Graphics::drawLine(core::pointf start, core::pointf end, const PathStyle & style)
     {
         ++_statistics.drawLine;
         if (!_native)
@@ -165,7 +165,7 @@ namespace drawing
         _native->drawRoundRect(skia::from(rect), rx, ry, paint);
     }
 
-    void Graphics::drawPoints(const core::pt32f points[], size_t count, point_mode mode, const PathStyle & style)
+    void Graphics::drawPoints(const core::pointf points[], size_t count, point_mode mode, const PathStyle & style)
     {
         ++_statistics.drawPoints;
         if (!_native)
@@ -257,7 +257,7 @@ namespace drawing
 		_native->drawRegion(region->native(), paint);
 	}
 
-    void Graphics::drawString(const std::string & str, const core::pt32f & pos, const StringFormat & format)
+    void Graphics::drawString(const std::string & str, const core::pointf & pos, const StringFormat & format)
     {
         ++_statistics.drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref;
         if (!_native)
@@ -272,7 +272,7 @@ namespace drawing
         core::sizef size = shaper.bounds();
         auto blob = shaper.build();
 
-        core::pt32f point = pos;
+        core::pointf point = pos;
         if (format._align & core::align::right)
             point.x -= size.cx;
         else if (format._align & core::align::centerX)
@@ -304,7 +304,7 @@ namespace drawing
         core::sizef size = shaper.bounds();
         auto blob = shaper.build();
 
-        core::pt32f point = rect.leftTop();
+        core::pointf point = rect.leftTop();
         if (format._align & core::align::right)
             point.x = rect.right() - size.cx;
         else if (format._align & core::align::centerX)
@@ -324,7 +324,7 @@ namespace drawing
         //_native->restore();
     }
 
-    void Graphics::drawTextBlob(const drawing::TextBlob & blob, core::pt32f point, const StringFormat & format)
+    void Graphics::drawTextBlob(const drawing::TextBlob & blob, core::pointf point, const StringFormat & format)
     {
         ++_statistics.drawTextBlob;
         if (!_native)
@@ -337,7 +337,7 @@ namespace drawing
         _native->drawTextBlob(blob.native_ptr(), point.x, point.y, paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::pointf point, core::aligns align)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f__core_aligns;
         if (!_native)
@@ -367,7 +367,7 @@ namespace drawing
         if (!_native)
             return;
 
-        core::pt32f point;
+        core::pointf point;
         auto size = image.size();
         if (align & core::align::right)
             point.x = rect.right() - size.cx;
@@ -388,7 +388,7 @@ namespace drawing
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::recti region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::pointf point, core::recti region, core::aligns align)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns;
         if (!_native)
@@ -411,7 +411,7 @@ namespace drawing
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, float32_t(region.x), float32_t(region.y)), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point, core::rectf region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::pointf point, core::rectf region, core::aligns align)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f__core_rc32f_core_aligns;
         if (!_native)
@@ -440,7 +440,7 @@ namespace drawing
         if (!_native)
             return;
 
-        core::pt32f point;
+        core::pointf point;
         if (align & core::align::right)
             point.x = rect.right() - region.cx;
         else if (align & core::align::centerX)
@@ -466,7 +466,7 @@ namespace drawing
         if (!_native)
             return;
 
-        core::pt32f point;
+        core::pointf point;
         if (align & core::align::right)
             point.x = rect.right() - region.cx;
         else if (align & core::align::centerX)
@@ -486,7 +486,7 @@ namespace drawing
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pt32f point)
+    void Graphics::drawImage(const Image & image, core::pointf point)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f;
         if (!_native)

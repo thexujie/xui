@@ -101,10 +101,11 @@
 .listview {
     background-color: #eee;
     border: 1px;
-    border-color: #ff77;
+    border-color: #f777;
 }
 
 .listview:hover {
+    border-color: #ff77;
 }
 
 .listview:active {

@@ -35,7 +35,7 @@ namespace ui
         }
     }
 
-    void Form::setWindowPos(const core::pt32f & pos)
+    void Form::setWindowPos(const core::pointf & pos)
     {
         auto pos_old = _rect_window.pos;
         if (pos_old != pos)
@@ -88,7 +88,7 @@ namespace ui
                 onEnterScene(s);
 
 				auto form_size = calc(_size);
-				place(core::rectf(core::pt32f(), form_size), form_size);
+				place(core::rectf(core::pointf(), form_size), form_size);
             }
 
             if (!_window)
@@ -117,10 +117,10 @@ namespace ui
     void Form::invalidate(const core::rectf & rect)
     {
         if(_form_scene)
-            _form_scene->invalidate(rect.intersected(core::rectf(core::pt32f(), realSize())));
+            _form_scene->invalidate(rect.intersected(core::rectf(core::pointf(), realSize())));
     }
 
-    std::shared_ptr<Control> Form::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const
+    std::shared_ptr<Control> Form::findChild(const core::pointf & pos, std::shared_ptr<Control> last, findchild_flags flags) const
     {
         if (_clip_clild && !_rect.contains(pos))
             return nullptr;
@@ -153,7 +153,7 @@ namespace ui
         Container::ondraw(graphics, clip);
     }
 
-    hittest_form Form::hitTestForm(const core::pt32f & pos) const
+    hittest_form Form::hitTestForm(const core::pointf & pos) const
     {
         if(!_resize_borders)
             return Container::hitTestForm(pos);

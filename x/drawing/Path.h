@@ -21,9 +21,9 @@ namespace drawing
 
         void clear();
         void close();
-        void moveTo(const core::pt32f & pos);
-        void lineTo(const core::pt32f & pos);
-        void arcTo(const core::pt32f & pos0, const core::pt32f & po1, float32_t radius);
+        void moveTo(const core::pointf & pos);
+        void lineTo(const core::pointf & pos);
+        void arcTo(const core::pointf & pos0, const core::pointf & po1, float32_t radius);
 
         void transform(const core::float3x2 & matrix);
         void transform(const core::float3x2 & matrix, Path & output);

@@ -58,7 +58,6 @@ namespace ui::controls
     {
         auto box = paddingBox();
         auto fm = drawing::fontmetrics(font());
-        _drawBackground(graphics);
 
         core::rectf rc_hole(box.leftTop(), { fm.height, fm.height });
         rc_hole.expand(-calc(_hole_border_size) * 0.5f);
@@ -78,7 +77,6 @@ namespace ui::controls
 
         if (_textBlob)
             graphics.drawTextBlob(*_textBlob, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
-        _drawBorder(graphics);
     }
 
     void Radio::onMouseEnter(const input_state & state)

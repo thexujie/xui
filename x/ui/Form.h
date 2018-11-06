@@ -19,10 +19,10 @@ namespace ui
         void setResizeBorders(const core::vec4<core::dimensionf> & borders) { _resize_borders = borders; }
         const core::vec4<core::dimensionf> & resizeBorders() const { return _resize_borders; }
 
-        const core::pt32f & windowPos() const { return _rect_window.pos; }
-        //const core::pt32f & windowSize() const { return _rect_window.size; }
+        const core::pointf & windowPos() const { return _rect_window.pos; }
+        //const core::pointf & windowSize() const { return _rect_window.size; }
         //const core::rectf & windowRect() const { return _rect_window; }
-        void setWindowPos(const core::pt32f & pos);
+        void setWindowPos(const core::pointf & pos);
         void setWindowPos(const core::vec2<core::dimensionf> & pos) { setWindowPos(calc(pos)); }
         void setWindowSize(const core::sizef & size);
         void setWindowSize(const core::vec2<core::dimensionf> & size) { setWindowSize(calc(size)); }
@@ -41,13 +41,13 @@ namespace ui
 
     public:
         void invalidate(const core::rectf & rect) override;
-        std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
+        std::shared_ptr<Control> findChild(const core::pointf & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
         void onEnteringScene(std::shared_ptr<Scene> & scene) override;
         void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
 
         void ondraw(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
-        virtual hittest_form hitTestForm(const core::pt32f & pos) const;
+        virtual hittest_form hitTestForm(const core::pointf & pos) const;
 
 	public:
 		virtual void onFormStylesChanged(form_styles from, form_styles to);
@@ -58,7 +58,7 @@ namespace ui
     public:
         core::event<void(const std::string & title)> titleChanged;
         core::event<void(form_styles from, form_styles to)> stylesChanged;
-        core::event<void(const core::pt32f & from, const core::pt32f & to)> windowPosChanged;
+        core::event<void(const core::pointf & from, const core::pointf & to)> windowPosChanged;
         //core::event<void(const core::sizef & from, const core::sizef & to)> windowSizeChanged;
         //core::event<void(const core::rectf & from, const core::rectf & to)> windowRectChanged;
         core::event<void(form_state from, form_state to)> stateChanged;

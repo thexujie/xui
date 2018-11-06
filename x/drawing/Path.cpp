@@ -25,19 +25,19 @@ namespace drawing
             _native->close();
     }
 
-    void Path::moveTo(const core::pt32f & pos)
+    void Path::moveTo(const core::pointf & pos)
     {
         _confirmNative();
         _native->moveTo(skia::from(pos));
     }
 
-    void Path::lineTo(const core::pt32f & pos)
+    void Path::lineTo(const core::pointf & pos)
     {
         _confirmNative();
         _native->lineTo(skia::from(pos));
     }
 
-    void Path::arcTo(const core::pt32f & pos0, const core::pt32f & po1, float32_t radius)
+    void Path::arcTo(const core::pointf & pos0, const core::pointf & po1, float32_t radius)
     {
         _confirmNative();
         _native->arcTo(skia::from(pos0), skia::from(po1), radius);

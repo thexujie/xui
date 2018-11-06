@@ -110,7 +110,7 @@ namespace ui
 		}
 		bool aviliable() const { return _aviliable; }
 
-        core::pt32f realPos() const { return _rect.pos; }
+        core::pointf realPos() const { return _rect.pos; }
         core::sizef realSize() const { return _rect.size; }
         float32_t realWidth() const { return _rect.cx; }
         float32_t realHeight() const { return _rect.cy; }
@@ -194,8 +194,8 @@ namespace ui
         const core::vec4<core::color> & borderColors() const { return _border_colors; }
         void setBorderStyles(const core::vec4<drawing::stroke_style> & boderStyles) { _border_styles = boderStyles; }
         const core::vec4<core::color> & boderColors() const { return _border_colors; }
-        std::array<core::pt32f, 4> boderPoints(core::align edge) const;
-        std::array<core::pt32f, 2> boderLine(core::align edge) const;
+        std::array<core::pointf, 4> boderPoints(core::align edge) const;
+        std::array<core::pointf, 2> boderLine(core::align edge) const;
 
         void setAlpha(float32_t alpha) { _alpha = alpha; }
         float32_t alpha() const { return _alpha; }
@@ -226,17 +226,17 @@ namespace ui
         virtual void ondraw(drawing::Graphics & graphics, const core::rectf & clip) const;
         virtual void draw(drawing::Graphics & graphics, const core::rectf & clip) const;
 
-        virtual std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const { return nullptr; }
+        virtual std::shared_ptr<Control> findChild(const core::pointf & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const { return nullptr; }
 
     public:
-        virtual void onPosChanged(const core::pt32f & from, const core::pt32f & to);
+        virtual void onPosChanged(const core::pointf & from, const core::pointf & to);
         virtual void onSizeChanged(const core::sizef & from, const core::sizef & to);
         virtual void onRectChanged(const core::rectf & from, const core::rectf & to);
 		virtual void onVisibleChanged(bool vis);
 		virtual void onAviliableChanged(bool avi);
 
     public:
-        core::event<void(const core::pt32f & from, const core::pt32f & to)> posChanged;
+        core::event<void(const core::pointf & from, const core::pointf & to)> posChanged;
         core::event<void(const core::sizef & from, const core::sizef & to)> sizeChanged;
         core::event<void(const core::rectf & from, const core::rectf & to)> rectChanged;
         core::event<void(bool vis)> visibleChanged;
@@ -289,7 +289,7 @@ namespace ui
         std::string _style;
         bool _style_transition = true;
         // 布局之后
-        core::pt32f _location;
+        core::pointf _location;
         core::rectf _rect;
 
         bool _delay_invalidate = false;
@@ -318,7 +318,7 @@ namespace ui
 
         //---------------------------------------------------- interact
     public:
-        virtual hittest_result hitTest(const core::pt32f & pos) const
+        virtual hittest_result hitTest(const core::pointf & pos) const
         {
             if (!_visible || !_rect.contains(pos))
                 return hittest_result::nowhere;
@@ -329,7 +329,7 @@ namespace ui
             return _interactable ? hittest_result::client : hittest_result::stable;
         }
 
-        virtual hittest_form hitTestForm(const core::pt32f & pos) const
+        virtual hittest_form hitTestForm(const core::pointf & pos) const
         {
             return (_mouse_through || !_interactable) ? hittest_form::caption : hittest_form::client;
         }

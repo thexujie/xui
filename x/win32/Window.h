@@ -23,7 +23,7 @@ namespace win32
         core::error attatch(handle_t handle);
         void detach();
 
-        void move(const core::pt32f & pos);
+        void move(const core::pointf & pos);
         void resize(const core::sizef & size);
 
         std::shared_ptr<ui::Form> form() { return _form.lock(); }
@@ -34,7 +34,7 @@ namespace win32
     private:
         void onStateChanged(ui::form_state, ui::form_state state);
         void onStylesChanged(ui::form_styles, ui::form_styles styles);
-        void onPosChanged(const core::pt32f & from, const core::pt32f & to);
+        void onPosChanged(const core::pointf & from, const core::pointf & to);
         void onSizeChanged(const core::sizef & from, const core::sizef & to);
         void onSceneInvalidated(const core::recti & rect);
         void onSceneRendered(const drawing::Region & region);
@@ -44,9 +44,9 @@ namespace win32
 
     private:
         core::error _createWindow();
-        core::error _adjustWindow(const core::pt32i & pos, const core::sizei & size);
+        core::error _adjustWindow(const core::pointi & pos, const core::sizei & size);
 
-        core::pt32i _pos() const;
+        core::pointi _pos() const;
         core::sizei _size() const;
         core::recti _rect() const;
         core::vec4i _border() const;

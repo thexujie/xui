@@ -54,7 +54,6 @@ namespace ui::controlsex
 	void TitleButton::draw(drawing::Graphics & graphics, const core::rectf & clip) const
 	{
 		auto b = box();
-		_drawBackground(graphics);
 		if(_path)
 		{
 			core::float3x2 matrix;
@@ -68,7 +67,6 @@ namespace ui::controlsex
 			//matrix *= core::float3x2::translate(box.x, box.y);
 			graphics.drawPath(path, drawing::PathStyle().stoke(_shape_color, calc(1.5_px)));
 		}
-		_drawBorder(graphics);
 	}
 
 	void TitleButton::onMouseClick(const ui::input_state & state, ui::mouse_button button)

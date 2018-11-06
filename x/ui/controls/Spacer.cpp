@@ -15,7 +15,5 @@ namespace ui::controls
 
     void Spacer::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        _drawBackground(graphics);
-        _drawBorder(graphics);
     }
 }

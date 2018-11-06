@@ -77,7 +77,7 @@ namespace drawing::skia
 
     inline core::sizei & to(SkISize & sksize) { return *(core::sizei *)&sksize; }
     inline const core::sizei & to(const SkISize & sksize) { return *(const core::sizei *)&sksize; }
-    inline SkPoint from(const core::pt32f & pos)
+    inline SkPoint from(const core::pointf & pos)
     {
         return { pos.x, pos.y };
     }

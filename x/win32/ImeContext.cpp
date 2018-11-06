@@ -45,7 +45,7 @@ namespace win32
         }
     }
 
-    void ImeContext::setCompositionPos(core::pt32f pos)
+    void ImeContext::setCompositionPos(core::pointf pos)
     {
         if(!_imc)
             _imc = ImmGetContext(HWND(_hwnd));

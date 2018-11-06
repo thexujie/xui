@@ -401,10 +401,10 @@ namespace ui
     {
     public:
         input_state() = default;
-        input_state(const core::pt32f pos) : _pos(pos) {}
+        input_state(const core::pointf pos) : _pos(pos) {}
 
-        void setPos(const core::pt32f & pos) { _pos = pos; }
-        const core::pt32f & pos() const { return _pos; }
+        void setPos(const core::pointf & pos) { _pos = pos; }
+        const core::pointf & pos() const { return _pos; }
 
         void setButton(mouse_button button, bool active) { _buttons.set(button, active); }
         mouse_buttons buttons() const { return _buttons; }
@@ -421,7 +421,7 @@ namespace ui
         bool key(keycode key) const { return _keys[(uint8_t)key]; }
 
     private:
-        core::pt32f _pos;
+        core::pointf _pos;
         mouse_buttons _buttons = mouse_button::none;
         bool _hoving = false;
         int32_t _wheel_lines = 0;
@@ -447,7 +447,7 @@ namespace ui
     public:
         virtual ~ImeContext() {}
         virtual void setImeMode(ui::ime_mode mode) = 0;
-        virtual void setCompositionPos(core::pt32f pos) = 0;
+        virtual void setCompositionPos(core::pointf pos) = 0;
         virtual void setCompositionFont(const drawing::font & font) = 0;
     };
 

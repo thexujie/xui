@@ -138,7 +138,7 @@ namespace win32
 		_handle = nullptr;
     }
 
-    void Window::move(const core::pt32f & pos)
+    void Window::move(const core::pointf & pos)
     {
         //if (!can_safe_invoke())
         //{
@@ -291,7 +291,7 @@ namespace win32
         f->refresh();
     }
 
-    void Window::onPosChanged(const core::pt32f & from, const core::pt32f & to)
+    void Window::onPosChanged(const core::pointf & from, const core::pointf & to)
     {
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -427,7 +427,7 @@ namespace win32
         return core::error_ok;
     }
 
-    core::error Window::_adjustWindow(const core::pt32i & pos, const core::sizei & size)
+    core::error Window::_adjustWindow(const core::pointi & pos, const core::sizei & size)
     {
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
@@ -443,7 +443,7 @@ namespace win32
         return core::error_ok;
     }
 
-    core::pt32i Window::_pos() const
+    core::pointi Window::_pos() const
     {
         if (!_handle)
             return {};
@@ -564,7 +564,7 @@ namespace win32
 				bmi.bmiHeader.biCompression = BI_RGB;
 				bmi.bmiHeader.biSizeImage = 0;
 
-				auto rc = rect.intersected(core::recti(core::pt32i(), _size()));
+				auto rc = rect.intersected(core::recti(core::pointi(), _size()));
 				SetDIBitsToDevice(hdst,
 					rc.x, rc.y, rc.cx, rc.cy,
 					rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
@@ -618,7 +618,7 @@ namespace win32
                     auto rect = ri.rect();
                     ri.next();
 
-                    auto rc = rect.intersected(core::recti(core::pt32i(), _size()));
+                    auto rc = rect.intersected(core::recti(core::pointi(), _size()));
                     BitBlt(hdst, rc.x, rc.y, rc.cx, rc.cy, hsrc, rc.x, rc.y, SRCCOPY);
                 }
             }
@@ -641,7 +641,7 @@ namespace win32
                     auto rect = ri.rect();
                     ri.next();
 
-                    auto rc = rect.intersected(core::recti(core::pt32i(), _size()));
+                    auto rc = rect.intersected(core::recti(core::pointi(), _size()));
                     SetDIBitsToDevice(hdst,
                         rc.x, rc.y, rc.cx, rc.cy,
                         rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
@@ -847,7 +847,7 @@ namespace win32
         auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
-        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
+        _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         if (!_trackingMouse)
         {
             //OnWmMouseEnter(uiMessage, wParam, lParam);
@@ -880,7 +880,7 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::mask, false);
         _mouse_state.setHoving(false);
-        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
+        _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
         if(_cursor_context)
             _cursor_context->reset();
@@ -896,7 +896,7 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, true);
-        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
+        _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::press);
         return 0;
     }
@@ -910,7 +910,7 @@ namespace win32
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, false);
-        _mouse_state.setPos(core::pt32i(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
+        _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::click);
         s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
         return 0;
@@ -929,10 +929,10 @@ namespace win32
 
         POINT point = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ::ScreenToClient(hwnd, &point);
-        //core::pt32i point = core::pt32i(core::i32li16(lParam), core::i32hi16(lParam));
-        //core::pt32i wheel = core::pt32i(core::u32li16(wParam), core::u32hi16(wParam));
+        //core::pointi point = core::pointi(core::i32li16(lParam), core::i32hi16(lParam));
+        //core::pointi wheel = core::pointi(core::u32li16(wParam), core::u32hi16(wParam));
         _mouse_state.setWheelLines(core::u32hi16((uint32_t)wParam) / WHEEL_DELTA);
-        _mouse_state.setPos(core::pt32i(point.x, point.y).to<float32_t>());
+        _mouse_state.setPos(core::pointi(point.x, point.y).to<float32_t>());
         s->onMouse(_mouse_state, ui::mouse_button::none,  ui::mouse_action::wheel_v);
         return 0;
     }
@@ -988,7 +988,7 @@ namespace win32
 
         POINT posi = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ScreenToClient(hwnd, &posi);
-        auto pos = core::pt32f((float32_t)posi.x, (float32_t)posi.y);
+        auto pos = core::pointf((float32_t)posi.x, (float32_t)posi.y);
         auto child = f->findChild(pos);
         if(!child)
             return HTNOWHERE;

@@ -12,7 +12,7 @@ namespace win32
         ~ImeContext();
 
         void setImeMode(ui::ime_mode mode);
-        void setCompositionPos(core::pt32f pos);
+        void setCompositionPos(core::pointf pos);
         void setCompositionFont(const drawing::font & font);
 
         void release();

@@ -58,7 +58,6 @@ namespace ui::controls
     {
         auto box = paddingBox();
         auto fm = drawing::fontmetrics(font());
-        _drawBackground(graphics);
 
         core::rectf rc_hole(box.leftTop(), { fm.height, fm.height });
         rc_hole.expand(-calc(_hole_border_size) * 0.5f);
@@ -71,7 +70,7 @@ namespace ui::controls
         {
             auto lw = 2_px;
             rc_hole.expand(-calc(lw) * 1.5f);
-            core::pt32f points[3];
+            core::pointf points[3];
             points[0] = rc_hole.leftBorder(0.5f);
             points[1] = rc_hole.bottomBorder(0.4f);
             points[2] = rc_hole.rightBorder(0.1f);
@@ -91,7 +90,6 @@ namespace ui::controls
 
         if (_textBlob)
             graphics.drawTextBlob(*_textBlob, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
-        _drawBorder(graphics);
     }
 
     void Check::onMouseEnter(const input_state & state)

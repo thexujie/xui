@@ -42,9 +42,9 @@ namespace ui
     public:
         core::aligns wheelFreedom() const override;
         void ondraw(drawing::Graphics & graphics, const core::rectf & clip) const override;
-        std::shared_ptr<Control> findChild(const core::pt32f & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
+        std::shared_ptr<Control> findChild(const core::pointf & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
 
-        void onPosChanged(const core::pt32f & from, const core::pt32f & to) override;
+        void onPosChanged(const core::pointf & from, const core::pointf & to) override;
         void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
         void onMouseWheel(const input_state & state) override;
 
@@ -68,7 +68,7 @@ namespace ui
         void onScrollValueChangedH(float32_t from, float32_t to);
 
 	protected:
-		void _confirmLayout();
+		void _confirmLayout() const;
 
 	private:
         void _animScroll(core::vec2f scroll_pos);

@@ -315,7 +315,7 @@ namespace ui
         }
     }
 
-    std::array<core::pt32f, 4> Control::boderPoints(core::align edge) const
+    std::array<core::pointf, 4> Control::boderPoints(core::align edge) const
     {
         auto bbox = box();
         auto border = calc(_border);
@@ -342,24 +342,24 @@ namespace ui
         }
     }
 
-    std::array<core::pt32f, 2> Control::boderLine(core::align edge) const
+    std::array<core::pointf, 2> Control::boderLine(core::align edge) const
     {
         auto bbox = box();
         auto border = calc(_border);
         switch (edge)
         {
         case core::align::left:
-            return {core::pt32f{ bbox.left() + border.bleft * 0.5f, bbox.bottom() },
-                core::pt32f{ bbox.left() + border.bleft * 0.5f, bbox.top() } };
+            return {core::pointf{ bbox.left() + border.bleft * 0.5f, bbox.bottom() },
+                core::pointf{ bbox.left() + border.bleft * 0.5f, bbox.top() } };
         case core::align::top:
-            return { core::pt32f{ bbox.left(), bbox.top() + border.btop * 0.5f },
-                core::pt32f{ bbox.right(), bbox.top() + border.btop * 0.5f } };
+            return { core::pointf{ bbox.left(), bbox.top() + border.btop * 0.5f },
+                core::pointf{ bbox.right(), bbox.top() + border.btop * 0.5f } };
         case core::align::right:
-            return { core::pt32f{ bbox.right() - border.bright * 0.5f, bbox.top() },
-                core::pt32f{ bbox.right() - border.bright * 0.5f, bbox.bottom() } };
+            return { core::pointf{ bbox.right() - border.bright * 0.5f, bbox.top() },
+                core::pointf{ bbox.right() - border.bright * 0.5f, bbox.bottom() } };
         case core::align::bottom:
-            return { core::pt32f{ bbox.right(), bbox.bottom() - border.bbottom * 0.5f },
-                core::pt32f{ bbox.left(), bbox.bottom() - border.bbottom * 0.5f } };
+            return { core::pointf{ bbox.right(), bbox.bottom() - border.bbottom * 0.5f },
+                core::pointf{ bbox.left(), bbox.bottom() - border.bbottom * 0.5f } };
         default:
             return {};
         }
@@ -423,18 +423,18 @@ namespace ui
         assert(!std::isnan(rect.cx) && !std::isnan(rect.cy));
         assert(rect.cx < 1e6 && rect.cy < 1e6);
 
-        core::pt32f pos = rect.leftTop();
+        core::pointf pos = rect.leftTop();
 
         if(_anchor_borders)
         {
             if (_anchor_borders.value.all(core::align::leftTop))
                 pos = rect.leftTop();
             else if (_anchor_borders.value.all(core::align::rightTop))
-                pos = rect.rightTop() - core::pt32f(size.cx, 0);
+                pos = rect.rightTop() - core::pointf(size.cx, 0);
             else if (_anchor_borders.value.all(core::align::rightBottom))
-                pos = rect.rightBottom() - core::pt32f(size.cx, size.cy);
+                pos = rect.rightBottom() - core::pointf(size.cx, size.cy);
             else if (_anchor_borders.value.all(core::align::leftBottom))
-                pos = rect.leftBottom() - core::pt32f(0, size.cy);
+                pos = rect.leftBottom() - core::pointf(0, size.cy);
             else {}
         }
         else if(_place_alignment)
@@ -562,7 +562,9 @@ namespace ui
             graphics.saveLayer(box(), a);
 		{
             std::lock_guard l(*this);
+            _drawBackground(graphics);
             draw(graphics, clip);
+            _drawBorder(graphics);
 		}
         if (a != 0xff)
             graphics.restore();
@@ -570,11 +572,9 @@ namespace ui
 
     void Control::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        _drawBackground(graphics);
-        _drawBorder(graphics);
     }
 
-    void Control::onPosChanged(const core::pt32f & from, const core::pt32f & to)
+    void Control::onPosChanged(const core::pointf & from, const core::pointf & to)
     {
         posChanged(from, to);
     }

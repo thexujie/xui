@@ -19,12 +19,14 @@ namespace ui::controlsex
         auto v = view();
         if (!v)
             return;
-
+        if (_flags.any(item_flag::hoving))
+            graphics.drawRectangle(_rect, drawing::PathStyle().fill(core::colors::IndianRed));
         graphics.drawString(_text, _rect, drawing::StringFormat().font(v->font()).color(v->color()));
     }
 
     ListView::ListView()
 	{
+        //_interactable = true;
 	}
 
     ListView::~ListView()
@@ -60,13 +62,15 @@ namespace ui::controlsex
     void ListView::layout(layout_flags flags)
     {
         auto box = contentBox();
-        float top = -_scroll_pos.y;
+        float32_t top = -_scroll_pos.y;
+        float32_t height = 0;
         for (size_t index = 0; index != _items.size(); ++index)
         {
             auto & item = _items[index];
             auto psize = item->prefferdSize(box.cx);
             item->place({ box.x, box.y + top, psize.cx, psize.cy });
             top += psize.cy;
+            height += psize.cy;
         }
 
         {
@@ -91,7 +95,7 @@ namespace ui::controlsex
             }
         }
 
-        setLayoutedSize({ box.cx, top });
+        setLayoutedSize({ box.cx, height });
         refresh();
     }
 
@@ -113,6 +117,21 @@ namespace ui::controlsex
         }
         graphics.restore();
 	}
+
+    void ListView::onMouseMove(const ui::input_state & state)
+    {
+        auto item = findItem(state.pos());
+        if(item != _current_item)
+        {
+            if(_current_item)
+                _current_item->setFlag(item_flag::hoving, false);
+            _current_item = item;
+            if (_current_item)
+            _current_item->setFlag(item_flag::hoving, true);
+            refresh();
+        }
+        ui::Control::onMouseMove(state);
+    }
 
 	void ListView::onMouseClick(const ui::input_state & state, ui::mouse_button button)
 	{
@@ -141,6 +160,27 @@ namespace ui::controlsex
         item->leaveView();
         relayout();
         return index;
+    }
+
+    std::shared_ptr<ViewItem> ListView::findItem(const core::pointf & pos) const
+    {
+        _confirmLayout();
+        for (size_t index = 0; index != _items.size(); ++index)
+        {
+            auto & item = _items[index];
+            if(_select_mode == select_mode::full_row)
+            {
+                auto & rect = item->rect();
+                if (rect.y <= pos.y && pos.y < rect.bottom())
+                    return item;
+            }
+            else
+            {
+                if (item->rect().contains(pos))
+                    return item;
+            }
+        }
+        return nullptr;
     }
 }
 

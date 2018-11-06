@@ -64,7 +64,6 @@ namespace ui::controls
 
     void Image::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        _drawBackground(graphics);
         graphics.save();
         auto box = contentBox();
         graphics.setClipRect(box);
@@ -107,7 +106,6 @@ namespace ui::controls
                 break;
         }
         graphics.restore();
-        _drawBorder(graphics);
     }
 
     void Image::onRectChanged(const core::rectf & from, const core::rectf & to)

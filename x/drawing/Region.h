@@ -21,7 +21,7 @@ namespace drawing
 		bool intersects(const core::recti & rect) const;
 		bool intersects(const Region & region) const;
 
-		bool contains(const core::pt32i & point) const;
+		bool contains(const core::pointi & point) const;
 		bool contains(const core::recti & rect) const;
 		bool contains(const Region & region) const;
 

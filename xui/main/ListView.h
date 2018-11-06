@@ -12,6 +12,17 @@ namespace ui
 namespace ui::controlsex
 {
     class ListView;
+    enum item_flag
+    {
+        hoving = 0x0001,
+    };
+    typedef core::bitflag<item_flag> item_flags;
+
+    enum select_mode
+    {
+        restrictly = 0,
+        full_row,
+    };
     class ViewItem
     {
     public:
@@ -21,6 +32,8 @@ namespace ui::controlsex
         virtual void leaveView() { _view.reset(); }
         void place(const core::rectf & rect) { _rect = rect; }
         const core::rectf & rect() const { return _rect; }
+        const item_flags & flags() const { return _flags; }
+        void setFlag(item_flag flag, bool set) { _flags.set(flag, set); }
 
     public:
         virtual core::sizef prefferdSize(float32_t width) const = 0;
@@ -29,6 +42,7 @@ namespace ui::controlsex
     protected:
         std::weak_ptr<ListView> _view;
         core::rectf _rect;
+        item_flags _flags;
     };
 
     class ListViewItem : public ViewItem
@@ -59,14 +73,18 @@ namespace ui::controlsex
 		void draw(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
 	public:
-		void onMouseClick(const ui::input_state & state, ui::mouse_button button) override;
+        void onMouseMove(const ui::input_state & state) override;
+        void onMouseClick(const ui::input_state & state, ui::mouse_button button) override;
 
 	public:
         size_t addItem(std::shared_ptr<ViewItem> item);
         size_t insertItem(size_t index, std::shared_ptr<ViewItem> item);
         size_t eraseItem(size_t index);
+        std::shared_ptr<ViewItem> findItem(const core::pointf & pos) const;
 
 	private:
         std::vector<std::shared_ptr<ViewItem>> _items;
+        std::shared_ptr<ViewItem> _current_item;
+        select_mode _select_mode = select_mode::full_row;
 	};
 }

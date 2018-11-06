@@ -94,31 +94,31 @@ namespace drawing
         void resetMatrix();
         void setColorFilter(std::shared_ptr<ColorFilter> colorFilter);
 
-        void drawLine(core::pt32f start, core::pt32f end, const PathStyle & style);
+        void drawLine(core::pointf start, core::pointf end, const PathStyle & style);
 
         void drawEllipse(const core::rectf & ellipse, const PathStyle & style);
         void drawRectangle(const core::rectf & rect, const PathStyle & style);
         void drawRoundRect(const core::rectf & rect, float32_t rx, float32_t ry, const PathStyle & style);
 
-        void drawPoints(const core::pt32f points[], size_t count, point_mode mode, const PathStyle & style);
+        void drawPoints(const core::pointf points[], size_t count, point_mode mode, const PathStyle & style);
         void drawPath(const Path & path, const PathStyle & style);
         void drawPath(const std::shared_ptr<drawing::Path> & path, const PathStyle & style);
 
 		void drawRegion(const Region & region, const PathStyle & style);
 		void drawRegion(const std::shared_ptr<drawing::Region> & region, const PathStyle & style);
 
-        void drawString(const std::string & str, const core::pt32f & pos, const StringFormat & format);
+        void drawString(const std::string & str, const core::pointf & pos, const StringFormat & format);
         void drawString(const std::string & str, const core::rectf & rect, const StringFormat & format);
-        void drawTextBlob(const drawing::TextBlob & blob, core::pt32f point, const StringFormat & format);
+        void drawTextBlob(const drawing::TextBlob & blob, core::pointf point, const StringFormat & format);
 
-        void drawImage(const Image & image, core::pt32f point, core::aligns align);
+        void drawImage(const Image & image, core::pointf point, core::aligns align);
         void drawImage(const Image & image, core::rectf rect, core::aligns align);
-        void drawImage(const Image & image, core::pt32f point, core::recti region, core::aligns align);
-        void drawImage(const Image & image, core::pt32f point, core::rectf region, core::aligns align);
+        void drawImage(const Image & image, core::pointf point, core::recti region, core::aligns align);
+        void drawImage(const Image & image, core::pointf point, core::rectf region, core::aligns align);
         void drawImage(const Image & image, core::rectf rect, core::recti region, core::aligns align);
         void drawImage(const Image & image, core::rectf rect, core::rectf region, core::aligns align);
 
-        void drawImage(const Image & image, core::pt32f point);
+        void drawImage(const Image & image, core::pointf point);
         void drawImage(const Image & image, core::rectf rect);
         void drawImage(const Image & image, core::rectf rect, core::recti region);
         void drawImage(const Image & image, core::rectf rect, core::rectf region);

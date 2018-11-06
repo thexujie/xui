@@ -87,7 +87,6 @@ namespace ui::controls
     void TextLine::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         auto cbox = contentBox();
-        _drawBackground(graphics);
         graphics.save();
         graphics.setClipRect(cbox);
 
@@ -155,7 +154,6 @@ namespace ui::controls
                 }
             }
         }
-        _drawBorder(graphics);
     }
 
     void TextLine::onSizeChanged(const core::sizef & from, const core::sizef & to)

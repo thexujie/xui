@@ -45,10 +45,8 @@ namespace ui::controls
 
     void Button::draw(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        _drawBackground(graphics);
         if (_textBlob)
             graphics.drawTextBlob(*_textBlob, contentBox().leftTop(), drawing::StringFormat().color(color()));
-        _drawBorder(graphics);
     }
 
     void Button::_confirmBlob() const

@@ -82,7 +82,7 @@ namespace ui::controls
         float32_t _page = std::nanf("0");
 
         core::float32_t _bar_drag_start_vallue = 0.0f;
-        core::pt32f _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };
+        core::pointf _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };
 
         bool _bar_hover = false;
         bool _bar_active = false;

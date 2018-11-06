@@ -135,9 +135,10 @@ namespace ui
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
         std::lock_guard lock(*this);
         if (a != 0xff)
-            graphics.saveLayer(box(), a);
-        //else
-            //graphics.saveLayer(box(), a);
+            graphics.saveLayer(box().expanded(1.0f), a);
+        else
+            graphics.save();
+        _drawBackground(graphics);
         draw(graphics, clip);
         for (auto & control : _controls)
         {
@@ -148,11 +149,11 @@ namespace ui
             if(clip.intersect_with(rect))
                 control->ondraw(graphics, clip);
         }
-        if (a != 0xff)
-            graphics.restore();
+        _drawBorder(graphics);
+        graphics.restore();
     }
 
-    std::shared_ptr<Control> Container::findChild(const core::pt32f & pos, std::shared_ptr<Control> last, findchild_flags flags) const
+    std::shared_ptr<Control> Container::findChild(const core::pointf & pos, std::shared_ptr<Control> last, findchild_flags flags) const
     {
         if (_clip_clild && !_rect.contains(pos))
             return nullptr;
@@ -161,7 +162,7 @@ namespace ui
 
         bool found = false;
 
-        core::pt32f scrolled_pos = pos;
+        core::pointf scrolled_pos = pos;
         std::shared_ptr<Control> control_found = nullptr;
         for (auto & control : core::reverse(_controls))
         {
@@ -220,7 +221,7 @@ namespace ui
     }
 
 
-    void Container::onPosChanged(const core::pt32f & from, const core::pt32f & to)
+    void Container::onPosChanged(const core::pointf & from, const core::pointf & to)
     {
         relayout();
         Control::onPosChanged(from, to);
@@ -340,7 +341,7 @@ namespace ui
         relayout();
     }
 
-	void Container::_confirmLayout()
+	void Container::_confirmLayout() const
     {
 		if(_invalid_layout)
 		{
@@ -365,7 +366,9 @@ namespace ui
             auto interpolator = std::make_shared<core::property_interpolator_default<core::vec2f>>();
             interpolator->set_values(_scroll_pos, scroll_pos);
             _scroll_anim = std::make_shared<core::property_animation>(control_ref(), accessor, interpolator);
-            _scroll_anim->setDuration(100ms);
+            _scroll_anim->setCurve(core::easingcurve_out_cubic);
+            //_scroll_anim->setCurve([](float vv) { return 1 - std::pow(1.0f - vv, 8); });
+            _scroll_anim->setDuration(300ms);
             appendAnimation(CONTROL_ANIMATION_GROUP_CONTROL, _scroll_anim);
         }
         else
@@ -433,7 +436,7 @@ namespace ui
         float32_t margin = 0;
         core::rectf box = contentBox();
         core::sizef spacing = box.size;
-        core::pt32f layout_pos = _rect.pos - _scroll_pos;
+        core::pointf layout_pos = box.pos - _scroll_pos;
         core::sizef layout_size;
 
         float32_t margin_size = 0;
@@ -526,7 +529,7 @@ namespace ui
                 {
                 case core::align::left:
                 {
-                    //core::pt32f layout_pos = _rect.pos - _scroll_pos;
+                    //core::pointf layout_pos = _rect.pos - _scroll_pos;
                     bool compact = _compact_layout && si.cx.per();
                     auto preffer_size = control->prefferSize({ compact ? (spacing.cx - compat_size ) / ((total_per - compat_scale) / 100.0f): spacing.cx, spacing.cy - margins.bheight() });
                     margin = std::max(margin, margins.bleft);

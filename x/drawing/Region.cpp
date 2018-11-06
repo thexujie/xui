@@ -61,7 +61,7 @@ namespace drawing
         return _native->intersects(region.native());
     }
 
-    bool Region::contains(const core::pt32i & point) const
+    bool Region::contains(const core::pointi & point) const
     {
         if (!_native)
             return false;
