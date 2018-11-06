@@ -12,6 +12,16 @@ namespace ui
 
 namespace ui
 {
+    class DataTemplate
+    {
+        
+    };
+
+    class ControlTemplate
+    {
+        
+    };
+
     class ListViewItem : public ViewItem
     {
     public:

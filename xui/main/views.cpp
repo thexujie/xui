@@ -1,6 +1,13 @@
 ﻿#include "stdafx.h"
 #include "ListView.h"
 
+struct inputdata
+{
+    int32_t d1;
+    int32_t d2;
+    char d3;
+};
+
 void views_main()
 {
 	auto ss = std::make_shared<ui::component::StyleSheet>();

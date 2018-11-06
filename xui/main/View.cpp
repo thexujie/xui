@@ -110,13 +110,18 @@ namespace ui
         if (item != _marked_item)
         {
             if (_marked_item)
+            {
                 _marked_item->setFlag(item_flag::marked, false);
+                if (_marked_color)
+                    refresh(_marked_item->box());
+            }
             _marked_item = item;
             if (_marked_item)
+            {
                 _marked_item->setFlag(item_flag::marked, true);
-
-            if(_marked_color)
-                refresh();
+                if (_marked_color)
+                    refresh(_marked_item->box());
+            }
         }
     }
 
@@ -125,13 +130,18 @@ namespace ui
         if (item != _selected_item)
         {
             if (_selected_item)
+            {
                 _selected_item->setFlag(item_flag::selected, false);
+                if (_marked_color)
+                    refresh(_marked_item->box());
+            }
             _selected_item = item;
             if (_selected_item)
+            {
                 _selected_item->setFlag(item_flag::selected, true);
-
-            if (_selected_color)
-                refresh();
+                if (_marked_color)
+                    refresh(_marked_item->box());
+            }
         }
     }
 }
