@@ -3,84 +3,10 @@
 #include "ui/base/Button.h"
 #include "ui/Container.h"
 #include "ui/controls/Text.h"
+#include "ViewItem.h"
 
 namespace ui
 {
-    class View;
-    class ViewFrame;
-
-    enum item_flag
-    {
-        marked = 0x0001,
-        activated = 0x0002,
-        selected = 0x0004,
-
-        placed = 0x10000,
-    };
-    typedef core::bitflag<item_flag> item_flags;
-
-    enum select_mode
-    {
-        restrictly = 0,
-        full_row,
-    };
-
-    class ViewItem
-    {
-    public:
-        virtual ~ViewItem() {}
-        std::shared_ptr<View> view() const { return _view.lock(); }
-        std::shared_ptr<ViewFrame> frame() const { return _frame.lock(); }
-
-        virtual void enterView(std::shared_ptr<View> view) { _view = view; }
-        virtual void leaveView() { _view.reset(); }
-        virtual void bind(std::shared_ptr<ViewFrame> frame) { _frame = frame; }
-        virtual void unbind() { _frame.reset(); }
-
-        void setMargin(const core::vec4<core::dimensionf> & margin) { _margin = margin; }
-        const core::vec4<core::dimensionf> & margin() const;
-        void setPadding(const core::vec4<core::dimensionf> & padding) { _padding = padding; }
-        const core::vec4<core::dimensionf> & padding() const;
-
-        virtual void place(const core::rectf & box, const core::sizef & size) { _box = box, _size = size; }
-        const core::rectf & box() const { return _box; }
-        const core::sizef & size() const { return _size; }
-        core::rectf contentBox() const;
-        core::rectf rect() const { return core::rectf{_box.pos, _size}; }
-        const item_flags & flags() const { return _flags; }
-        void setFlag(item_flag flag, bool set) { _flags.set(flag, set); }
-
-    public:
-        virtual core::sizef prefferdSize(float32_t width) const = 0;
-        virtual void draw(drawing::Graphics & graphics, const core::rectf & clip) = 0;
-
-    protected:
-        std::weak_ptr<View> _view;
-        std::weak_ptr<ViewFrame> _frame;
-        core::attribute<core::vec4<core::dimensionf>> _margin;
-        core::attribute<core::vec4<core::dimensionf>> _padding;
-
-        core::rectf _box;
-        core::sizef _size;
-        item_flags _flags;
-    };
-
-    class ViewFrame
-    {
-    public:
-        virtual ~ViewFrame() {}
-
-        void setItem(std::shared_ptr<ViewItem> item) { _item = item; _item ? binded() : unbinded(); }
-        std::shared_ptr<ViewItem> item() const { return _item; }
-
-    public:
-        virtual void binded() {};
-        virtual void unbinded() {};
-
-    private:
-        std::shared_ptr<ViewItem> _item;
-    };
-
 	class View : public ui::Container
 	{
 	public:
@@ -105,16 +31,12 @@ namespace ui
         void setSelectedColor(const core::color & c) { _selected_color = c; }
         core::color selectedColor() const { return _selected_color; }
 
-        std::shared_ptr<Control> fetchControl(uintx_t hash);
-        void returnControl(std::shared_ptr<Control> control);
+    public:
+        void onRectChanged(const core::rectf & from, const core::rectf & to) override;
 
     protected:
-        void _viewItem(std::shared_ptr<ViewItem> item);
-        void _unviewItem(std::shared_ptr<ViewItem> item);
-
         void _setMarkedItem(std::shared_ptr<ViewItem> item);
         void _setSelectedItem(std::shared_ptr<ViewItem> item);
-
 
 	protected:
         std::vector<std::shared_ptr<ViewItem>> _items;

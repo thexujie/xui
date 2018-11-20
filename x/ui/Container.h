@@ -16,6 +16,15 @@ namespace ui
         always,
     };
 
+    struct ControlSorter
+    {
+    public:
+        bool operator()(const std::shared_ptr<Control> & lhs, const std::shared_ptr<Control> & rhs) const
+        {
+            return lhs->ZValue() < rhs->ZValue();
+        }
+    };
+
     class Container : public Control
     {
     public:
@@ -27,7 +36,7 @@ namespace ui
         std::shared_ptr<controls::Spacer> addSpacer(core::dimensionf size);
         void removeControl(std::shared_ptr<Control> control);
 		void clearControls();
-        std::vector<std::shared_ptr<Control>> & children() { return _controls; }
+        std::multiset<std::shared_ptr<Control>, ControlSorter> & children() { return _controls; }
 
         void onEnteringScene(std::shared_ptr<Scene> & scene) override;
         void onEnterScene(std::shared_ptr<Scene> & scene) override;
@@ -79,7 +88,8 @@ namespace ui
         core::event<void(const core::sizef & from, const core::sizef & to)> layoutedSizeChaged;
 
     protected:
-        std::vector<std::shared_ptr<Control>> _controls;
+        //std::vector<std::shared_ptr<Control>> _controls;
+        std::multiset<std::shared_ptr<Control>, ControlSorter> _controls;
         core::align _layout_direction = core::align::left;
         bool _clip_clild = true;
         bool _compact_layout = true;

@@ -27,10 +27,10 @@ namespace ui
         void setWindowSize(const core::sizef & size);
         void setWindowSize(const core::vec2<core::dimensionf> & size) { setWindowSize(calc(size)); }
 
-        std::shared_ptr<Scene> formScene() const;
-
+        void setFormScene(std::shared_ptr<Scene> s);
         void setFormState(form_state fs);
         form_state formState() const { return _form_state; }
+
 
 		void show() { show(form_state::show); }
 		void show(form_state fs);

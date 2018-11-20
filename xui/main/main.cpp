@@ -9,26 +9,32 @@
 void all_main();
 void views_main();
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR    lpCmdLine,
-	_In_ int       nCmdShow)
-{
-    //https://docs.microsoft.com/en-us/windows/desktop/api/shellscalingapi/nf-shellscalingapi-setprocessdpiawareness
-    // 使用 manifest 而不是直接设置
-	//HMODULE Shcore = GetModuleHandleW(L"Shcore.dll");
-	//auto pfn_SetProcessDpiAwareness = reinterpret_cast<decltype(SetProcessDpiAwareness) *>(GetProcAddress(Shcore, "SetProcessDpiAwareness"));
-	//if(pfn_SetProcessDpiAwareness)
-	//	pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
-
-	auto app = std::make_shared<win32::Win32App>();
-    views_main();
-	return 0;
-}
-
+static _CrtMemState gMemState;
 int main()
 {
+#if defined _DEBUG
+    _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    //_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF);
+    //_CrtMemCheckpoint(&gMemState);
+    //atexit([]() { _CrtMemDumpAllObjectsSince(&gMemState); });
+#endif
     auto app = std::make_shared<win32::Win32App>();
 	views_main();
 	return 0;
+}
+
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPWSTR    lpCmdLine,
+    _In_ int       nCmdShow)
+{
+    //https://docs.microsoft.com/en-us/windows/desktop/api/shellscalingapi/nf-shellscalingapi-setprocessdpiawareness
+    // 使用 manifest 而不是直接设置
+    //HMODULE Shcore = GetModuleHandleW(L"Shcore.dll");
+    //auto pfn_SetProcessDpiAwareness = reinterpret_cast<decltype(SetProcessDpiAwareness) *>(GetProcAddress(Shcore, "SetProcessDpiAwareness"));
+    //if(pfn_SetProcessDpiAwareness)
+    //	pfn_SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+
+    main();
+    return 0;
 }

@@ -14,9 +14,6 @@ namespace core
 	static void CALLBACK TimerCallBackSingle(HWND, UINT, UINT_PTR timerId, DWORD);
 
 	const wchar_t _timerHWND_ClassName[] = L"timer.{2A84CC0A-7D4F-42AB-9311-DEA336A1F289}";
-	static const uint64_t _timer_one = 1;
-	static std::atomic_uint64_t __timer_id = 1;
-
 
 	struct timer_context
 	{
@@ -133,23 +130,34 @@ namespace core
 			}
 		}
 	};
-    static thread_local timer_context _timer_context;
+
+    static const uint64_t _timer_one = 1;
+    static std::atomic_uint64_t __timer_id = 1;
+    static thread_local std::unique_ptr<timer_context> _timer_context;
+    static timer_context & __timer_context_get()
+    {
+        if (!_timer_context)
+            _timer_context.reset(new timer_context());
+        return *_timer_context;
+    }
 
 	static void CALLBACK TimerCallBack(HWND, UINT, UINT_PTR timerId, DWORD)
 	{
-		_timer_context.trigger(timerId);
+        if(_timer_context)
+		    _timer_context->trigger(timerId);
 	}
 	static void CALLBACK TimerCallBackSingle(HWND, UINT, UINT_PTR timerId, DWORD)
 	{
-		_timer_context.triggerSingle(timerId);
+        if(_timer_context)
+		    _timer_context->triggerSingle(timerId);
 	}
 
-    timer::timer():_context(_timer_context), _id(__timer_id.fetch_add(_timer_one))
+    timer::timer():_context(__timer_context_get()), _id(__timer_id.fetch_add(_timer_one))
     {
 	    
     }
 
-	timer::timer(std::chrono::milliseconds period): _context(_timer_context), _id(__timer_id.fetch_add(_timer_one)), _period(period)
+	timer::timer(std::chrono::milliseconds period): _context(__timer_context_get()), _id(__timer_id.fetch_add(_timer_one)), _period(period)
 	{
 
 	}
@@ -204,12 +212,13 @@ namespace core
 	uint64_t timer::invoke(std::shared_ptr<core::object> object, std::chrono::milliseconds delay, std::function<void()> callback)
     {
 		uint64_t id = __timer_id.fetch_add(_timer_one);
-		_timer_context.addSingle(id, object, delay, callback);
+        __timer_context_get().addSingle(id, object, delay, callback);
 		return id;
     }
 
 	void timer::cancel(uint64_t id)
     {
-		_timer_context.kill(id);
+        if(_timer_context)
+		    _timer_context->kill(id);
     }
 }

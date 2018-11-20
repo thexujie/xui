@@ -479,6 +479,9 @@ namespace ui
             return;
 
         auto ss = styleSheet();
+        if (!ss)
+            return;
+
         auto s = scene();
         std::map<std::string, std::string> items = ss->generate(style);
         auto iter_transition_duration = items.find("transition-duration");

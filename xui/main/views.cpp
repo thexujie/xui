@@ -29,12 +29,11 @@ public:
 };
 
 
-
 class UserViewItem : public ui::ViewItem
 {
 public:
     UserViewItem(std::string text, drawing::wrap_mode wrap_mode = drawing::wrap_mode::none) : _text(text), _wrap_mode(wrap_mode) {}
-    void draw(drawing::Graphics & graphics, const core::rectf & clip)
+    void paint(drawing::Graphics & graphics, const core::rectf & clip)
     {
         
     }
@@ -48,40 +47,36 @@ public:
         drawing::TextWraper wraper;
         wraper.itermize(_text, v->font(), core::colors::Auto);
         wraper.layout(width, _wrap_mode);
-        return wraper.bounds() + v->calc(_padding).bsize();
+        auto bounds = wraper.bounds();
+        return { bounds.cx + v->calc(_padding).bwidth(), bounds.cy + v->calc(1_em) };
     }
 
     void place(const core::rectf & box, const core::sizef & size)
     {
         ui::ViewItem::place(box, size);
-        if(button)
-            button->setShowRect({ box.topCenter(), { box.cx / 2, box.cy } });
-    }
-
-    virtual void bind(std::shared_ptr<ui::ViewFrame> frame)
-    {
-        ui::ViewItem::bind(frame);
-
-        auto v = view();
-        if(!button)
+        if (!button)
         {
             button = std::make_shared<ui::controls::Button>();
             button->setText(_text);
-            button->setShowRect({ _box.topCenter(), { _box.cx / 2, _box.cy } });
         }
-
-        v->addControl(button);
+        button->setShowRect({ box.topCenter(), { box.cx / 2, box.cy } });
     }
 
-    virtual void unbind()
+    void onFlagChanged(ui::item_flag flag, bool set)
     {
-        if(button)
+        if(flag == ui::item_flag::shown)
         {
-            auto v = view();
-            v->addControl(button);
+            if(auto v = view())
+            {
+                if (set)
+                    v->addControl(button);
+                else
+                    v->removeControl(button);
+            }
+            //button->setVisible(set);
         }
-        _frame.reset();
     }
+
 private:
     std::string _text;
     drawing::wrap_mode _wrap_mode = drawing::wrap_mode::none;
@@ -96,7 +91,9 @@ void views_main()
 	ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
 
 	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em), ui::form_style::frameless);
-	form->formScene()->setStyleSheet(ss);
+    auto scene = std::make_shared<ui::Scene>(form);
+	scene->setStyleSheet(ss);
+    form->setFormScene(scene);
 	form->setBorder({ 1_px, 1_px });
     form->setTitle(u8"Views");
 	form->setBorderColors({ core::colors::Black, core::colors::Black });
@@ -133,7 +130,6 @@ void views_main()
 	}
     {
         auto lv = std::make_shared<ui::ListView>();
-        lv->addCreator(typeid(UserViewItem).hash_code(), []() {return std::make_shared<ui::ViewFrame>(); });
         lv->setSize({ 100_per, 100_per });
         //lv->setImeMode(ui::ime_mode::on);
         for(size_t cnt = 0; cnt < 100; ++cnt)

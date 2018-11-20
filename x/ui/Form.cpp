@@ -53,15 +53,16 @@ namespace ui
         setShowSize(size);
     }
 
-    std::shared_ptr<Scene> Form::formScene() const
+    void Form::setFormScene(std::shared_ptr<Scene> s)
     {
-        auto s = scene();
-        if (s)
-            return s;
+        if(_scene.expired())
+        {
+            onEnteringScene(s);
+            onEnterScene(s);
 
-        if (!_form_scene)
-            const_cast<Form*>(this)->_form_scene = std::make_shared<Scene>(const_cast<Form*>(this)->share_ref<Control>());
-        return _form_scene;
+            auto form_size = calc(_size);
+            place(core::rectf(core::pointf(), form_size), form_size);
+        }
     }
 
 	void Form::setFormState(form_state fs)
@@ -76,20 +77,13 @@ namespace ui
 
     void Form::show(form_state fs)
     {
+        if (!scene())
+            throw core::exception(core::error_state);
+
         if (_form_state != fs)
         {
 			auto old = _form_state;
             _form_state = fs;
-
-            if (!scene())
-            {
-                auto s = formScene();
-                onEnteringScene(s);
-                onEnterScene(s);
-
-				auto form_size = calc(_size);
-				place(core::rectf(core::pointf(), form_size), form_size);
-            }
 
             if (!_window)
             {
@@ -116,8 +110,8 @@ namespace ui
 
     void Form::invalidate(const core::rectf & rect)
     {
-        if(_form_scene)
-            _form_scene->invalidate(rect.intersected(core::rectf(core::pointf(), realSize())));
+        if(auto s = scene())
+          s->invalidate(rect.intersected(core::rectf(core::pointf(), realSize())));
     }
 
     std::shared_ptr<Control> Form::findChild(const core::pointf & pos, std::shared_ptr<Control> last, findchild_flags flags) const

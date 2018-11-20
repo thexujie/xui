@@ -161,6 +161,7 @@ namespace drawing
         return font;
     }
 
+    static thread_local std::unique_ptr<Shaper> shaper;
     Shaper::Shaper()
     {
         UErrorCode status = U_ZERO_ERROR;
@@ -170,7 +171,6 @@ namespace drawing
 
     Shaper & Shaper::instance()
     {
-        static thread_local std::unique_ptr<Shaper> shaper;
         if (!shaper)
             shaper.reset(new Shaper());
         return *shaper;

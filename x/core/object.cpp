@@ -4,7 +4,7 @@
 
 namespace core
 {
-    static thread_local invoke_helper __helper;
+    static thread_local std::unique_ptr<invoke_helper> __helper;
     static std::atomic_uint64_t __object_id = 1;
 
     uint64_t object::create_objectid()
@@ -17,12 +17,15 @@ namespace core
 
     invoke_helper & object::get_invoke_helper()
     {
-        return __helper.ref();
+        if (!__helper)
+            __helper.reset(new invoke_helper());
+        return *__helper;
     }
 
     static void CALLBACK InvokerAPCCallBack(ULONG_PTR dwParam)
     {
-        __helper.trigger();
+        if(__helper)
+            __helper->trigger();
     }
 
     invoke_helper::invoke_helper()

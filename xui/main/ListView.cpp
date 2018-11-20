@@ -15,7 +15,7 @@ namespace ui
         return wraper.bounds() + v->calc(_padding).bsize();
     }
 
-    void ListViewItem::draw(drawing::Graphics & graphics, const core::rectf & clip)
+    void ListViewItem::paint(drawing::Graphics & graphics, const core::rectf & clip)
     {
         auto v = view();
         if (!v)
@@ -74,10 +74,7 @@ namespace ui
             {
                 core::rectf box = { cbox.x + m.bleft, cbox.y + top + m.btop, cbox.cx - m.bwidth(), p.bheight() + s.cy };
                 item->place(box, s);
-                if (box.bottom() >= cbox.y && box.y < cbox.bottom())
-                    _viewItem(item);
-                else
-                    _unviewItem(item);
+                item->setShown(box.bottom() >= cbox.y && box.y < cbox.bottom());
             }
 
 
@@ -110,7 +107,7 @@ namespace ui
             else if (flags.any(item_flag::marked))
                 graphics.drawRectangle(item->box(), drawing::PathStyle().fill(_marked_color));
             else {}
-            item->draw(graphics, clip);
+            item->paint(graphics, clip);
         }
         graphics.restore();
 	}

@@ -33,11 +33,11 @@ namespace ui
         if(s)
         {
             control->onEnteringScene(s);
-            _controls.push_back(control);
+            _controls.insert(control);
             control->onEnterScene(s);
         }
         else
-            _controls.push_back(control);
+            _controls.insert(control);
         relayout();
     }
 
@@ -455,9 +455,8 @@ namespace ui
         float32_t fixed_size = 0;
         float32_t total_per = 0;
 
-        for (size_t cnt = 0; cnt < _controls.size(); ++cnt)
+        for (auto & control : _controls)
         {
-            auto & control = _controls[cnt];
 			if(!control->aviliable())
 				continue;
 

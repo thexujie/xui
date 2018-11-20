@@ -5,6 +5,7 @@ namespace ui::component
     class Style
     {
     public:
+        virtual ~Style() = default;
         std::shared_ptr<Style> get(std::vector<std::string>::iterator iter, std::vector<std::string>::iterator end);
         std::shared_ptr<Style> get(const std::string & name);
         std::shared_ptr<Style> select(std::vector<std::string>::iterator iter, std::vector<std::string>::iterator end);

@@ -3,40 +3,6 @@
 
 namespace ui
 {
-    const core::vec4<core::dimensionf> & ViewItem::margin() const
-    {
-        auto v = view();
-        if (!v)
-            return _margin;
-
-        if (_margin)
-            return _margin;
-        else
-            return v->itemMargin();
-    }
-
-    const core::vec4<core::dimensionf> & ViewItem::padding() const
-    {
-        auto v = view();
-        if (!v)
-            return _padding;
-
-        if (_padding)
-            return _padding;
-        else
-            return v->itemPadding();
-    }
-
-    core::rectf ViewItem::contentBox() const
-    {
-        auto v = view();
-        if (!v)
-            return {};
-
-        auto p = padding();
-        return core::rectf(_box.pos + v->calc(p).bleftTop(), _size - v->calc(p).bsize());
-    }
-
     View::View()
 	{
         _scroll_controls = false;
@@ -107,41 +73,10 @@ namespace ui
         return nullptr;
     }
 
-    void View::_viewItem(std::shared_ptr<ViewItem> item)
+    void View::onRectChanged(const core::rectf & from, const core::rectf & to)
     {
-        if (item->frame())
-            return;
-
-        std::shared_ptr<ViewFrame> frame;
-        size_t hash = typeid(*item).hash_code();
-        auto & cache = _template_caches[hash];
-        if(!cache.empty())
-        {
-            frame = cache.front();
-            cache.pop_front();
-        }
-        else
-        {
-            auto iter = _template_creator.find(hash);
-            if(iter != _template_creator.end())
-                frame = iter->second();
-        }
-
-        if (!frame)
-            return;
-
-        item->bind(frame);
-    }
-
-    void View::_unviewItem(std::shared_ptr<ViewItem> item)
-    {
-        auto frame = item->frame();
-        if (frame)
-            return;
-
-        item->unbind();
-        size_t hash = typeid(item.get()).hash_code();
-        _template_caches[hash].push_back(frame);
+        refresh();
+        ui::Container::onRectChanged(from, to);
     }
 
     void View::_setMarkedItem(std::shared_ptr<ViewItem> item)
@@ -172,27 +107,16 @@ namespace ui
             {
                 _selected_item->setFlag(item_flag::selected, false);
                 if (_marked_color)
-                    repaint(_marked_item->box());
+                    repaint(_selected_item->box());
             }
             _selected_item = item;
             if (_selected_item)
             {
                 _selected_item->setFlag(item_flag::selected, true);
                 if (_marked_color)
-                    repaint(_marked_item->box());
+                    repaint(_selected_item->box());
             }
         }
-    }
-
-
-    std::shared_ptr<Control> View::fetchControl(uintx_t hash)
-    {
-        
-    }
-
-    void View::returnControl(std::shared_ptr<Control> control)
-    {
-        
     }
 }
 

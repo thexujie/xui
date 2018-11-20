@@ -27,7 +27,7 @@ namespace ui
     public:
         ListViewItem(std::string text, drawing::wrap_mode wrap_mode = drawing::wrap_mode::none) : _text(text), _wrap_mode(wrap_mode) {}
         core::sizef prefferdSize(float32_t width) const;
-        void draw(drawing::Graphics & graphics, const core::rectf & clip);
+        void paint(drawing::Graphics & graphics, const core::rectf & clip);
 
     private:
         std::string _text;

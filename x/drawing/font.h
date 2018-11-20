@@ -71,7 +71,8 @@ namespace drawing
     struct font
     {
         font();
-        font(const char * family_, float_t size_= 0, font_style style_ = font_style());
+        font(const char * family_, float_t size_ = 0, font_style style_ = font_style());
+        font(const std::string & family_, float_t size_= 0, font_style style_ = font_style());
         font(const font & another) = default;
 
         font & operator =(const font & another)
@@ -135,7 +136,7 @@ namespace std
     template<>
     struct less<drawing::font>
     {
-        constexpr bool operator()(const drawing::font & lhs, const drawing::font & rhs) const
+        bool operator()(const drawing::font & lhs, const drawing::font & rhs) const
         {
             return lhs.family < rhs.family ||
                 lhs.size < rhs.size ||
