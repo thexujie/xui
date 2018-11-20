@@ -365,7 +365,7 @@ namespace win32
         {
         case ui::scene_event::update_mouse_pos:
             if(_mouse_state.hoving())
-                s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::none);
+                s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
             break;
         default:
             break;

@@ -64,8 +64,9 @@ namespace ui
         void setLayoutedSize(const core::sizef & layouted_size);
 
     private:
-        void onScrollValueChangedV(float32_t from, float32_t to);
-        void onScrollValueChangedH(float32_t from, float32_t to);
+        void onScrollBarValueChangedV(float32_t from, float32_t to);
+        void onScrollBarValueChangedH(float32_t from, float32_t to);
+        void onScrollPosChanged(const core::vec2f & from, const core::vec2f & to);
 
 	protected:
 		void _confirmLayout() const;
@@ -82,6 +83,7 @@ namespace ui
         core::align _layout_direction = core::align::left;
         bool _clip_clild = true;
         bool _compact_layout = true;
+        bool _scroll_controls = true;
 
         core::sizef _layouted_size;
 

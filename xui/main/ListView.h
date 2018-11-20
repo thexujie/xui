@@ -22,7 +22,7 @@ namespace ui
         
     };
 
-    class ListViewItem : public ItemData
+    class ListViewItem : public ViewItem
     {
     public:
         ListViewItem(std::string text, drawing::wrap_mode wrap_mode = drawing::wrap_mode::none) : _text(text), _wrap_mode(wrap_mode) {}

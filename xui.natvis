@@ -129,7 +129,7 @@
 	<Type Name="ui::Grid">
 		<DisplayString>[Grid container]</DisplayString>
 	</Type>
-	<Type Name="ui::controlsex::ListView">
+	<Type Name="ui::ListView">
 		<DisplayString>[ListView container]</DisplayString>
 	</Type>
 

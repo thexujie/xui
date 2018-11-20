@@ -8,6 +8,88 @@ struct inputdata
     char d3;
 };
 
+class method_member
+{
+public:
+    virtual ~method_member() {}
+    virtual std::any call(const std::vector<std::any> & params) = 0;
+};
+
+
+template<typename FunT>
+class method_member_type
+{
+public:
+    std::any call(const std::vector<std::any> & params)
+    {
+        
+    }
+
+
+};
+
+
+
+class UserViewItem : public ui::ViewItem
+{
+public:
+    UserViewItem(std::string text, drawing::wrap_mode wrap_mode = drawing::wrap_mode::none) : _text(text), _wrap_mode(wrap_mode) {}
+    void draw(drawing::Graphics & graphics, const core::rectf & clip)
+    {
+        
+    }
+
+    core::sizef prefferdSize(float32_t width) const
+    {
+        auto v = view();
+        if (!v)
+            return {};
+
+        drawing::TextWraper wraper;
+        wraper.itermize(_text, v->font(), core::colors::Auto);
+        wraper.layout(width, _wrap_mode);
+        return wraper.bounds() + v->calc(_padding).bsize();
+    }
+
+    void place(const core::rectf & box, const core::sizef & size)
+    {
+        ui::ViewItem::place(box, size);
+        if(button)
+            button->setShowRect({ box.topCenter(), { box.cx / 2, box.cy } });
+    }
+
+    virtual void bind(std::shared_ptr<ui::ViewFrame> frame)
+    {
+        ui::ViewItem::bind(frame);
+
+        auto v = view();
+        if(!button)
+        {
+            button = std::make_shared<ui::controls::Button>();
+            button->setText(_text);
+            button->setShowRect({ _box.topCenter(), { _box.cx / 2, _box.cy } });
+        }
+
+        v->addControl(button);
+    }
+
+    virtual void unbind()
+    {
+        if(button)
+        {
+            auto v = view();
+            v->addControl(button);
+        }
+        _frame.reset();
+    }
+private:
+    std::string _text;
+    drawing::wrap_mode _wrap_mode = drawing::wrap_mode::none;
+
+    std::shared_ptr<ui::controls::Button> button;
+
+};
+
 void views_main()
 {
 	auto ss = std::make_shared<ui::component::StyleSheet>();
@@ -51,10 +133,11 @@ void views_main()
 	}
     {
         auto lv = std::make_shared<ui::ListView>();
+        lv->addCreator(typeid(UserViewItem).hash_code(), []() {return std::make_shared<ui::ViewFrame>(); });
         lv->setSize({ 100_per, 100_per });
         //lv->setImeMode(ui::ime_mode::on);
         for(size_t cnt = 0; cnt < 100; ++cnt)
-            lv->addItem(std::make_shared<ui::ListViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+            lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
         form->addControl(lv);
         lv->setScrollbarVisionV(ui::scrollbar_vision::always);
     }

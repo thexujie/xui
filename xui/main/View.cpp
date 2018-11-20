@@ -3,7 +3,7 @@
 
 namespace ui
 {
-    const core::vec4<core::dimensionf> & ItemData::margin() const
+    const core::vec4<core::dimensionf> & ViewItem::margin() const
     {
         auto v = view();
         if (!v)
@@ -15,7 +15,7 @@ namespace ui
             return v->itemMargin();
     }
 
-    const core::vec4<core::dimensionf> & ItemData::padding() const
+    const core::vec4<core::dimensionf> & ViewItem::padding() const
     {
         auto v = view();
         if (!v)
@@ -27,7 +27,7 @@ namespace ui
             return v->itemPadding();
     }
 
-    core::rectf ItemData::contentBox() const
+    core::rectf ViewItem::contentBox() const
     {
         auto v = view();
         if (!v)
@@ -39,6 +39,8 @@ namespace ui
 
     View::View()
 	{
+        _scroll_controls = false;
+        _layout_direction = core::align::none;
 	}
 
     View::~View()
@@ -60,12 +62,12 @@ namespace ui
         View::propertyTableCallback(properties);
 	}
 
-    size_t View::addItem(std::shared_ptr<ItemData> item)
+    size_t View::addItem(std::shared_ptr<ViewItem> item)
     {
         return insertItem(_items.size(), item);
     }
 
-    size_t View::insertItem(size_t index, std::shared_ptr<ItemData> item)
+    size_t View::insertItem(size_t index, std::shared_ptr<ViewItem> item)
     {
         auto iter = _items.begin() + index;
         item->enterView(share_ref<View>());
@@ -84,7 +86,7 @@ namespace ui
         return index;
     }
 
-    std::shared_ptr<ItemData> View::findItem(const core::pointf & pos) const
+    std::shared_ptr<ViewItem> View::findItem(const core::pointf & pos) const
     {
         _confirmLayout();
         for (size_t index = 0; index != _items.size(); ++index)
@@ -105,7 +107,44 @@ namespace ui
         return nullptr;
     }
 
-    void View::_setMarkedItem(std::shared_ptr<ItemData> item)
+    void View::_viewItem(std::shared_ptr<ViewItem> item)
+    {
+        if (item->frame())
+            return;
+
+        std::shared_ptr<ViewFrame> frame;
+        size_t hash = typeid(*item).hash_code();
+        auto & cache = _template_caches[hash];
+        if(!cache.empty())
+        {
+            frame = cache.front();
+            cache.pop_front();
+        }
+        else
+        {
+            auto iter = _template_creator.find(hash);
+            if(iter != _template_creator.end())
+                frame = iter->second();
+        }
+
+        if (!frame)
+            return;
+
+        item->bind(frame);
+    }
+
+    void View::_unviewItem(std::shared_ptr<ViewItem> item)
+    {
+        auto frame = item->frame();
+        if (frame)
+            return;
+
+        item->unbind();
+        size_t hash = typeid(item.get()).hash_code();
+        _template_caches[hash].push_back(frame);
+    }
+
+    void View::_setMarkedItem(std::shared_ptr<ViewItem> item)
     {
         if (item != _marked_item)
         {
@@ -125,7 +164,7 @@ namespace ui
         }
     }
 
-    void View::_setSelectedItem(std::shared_ptr<ItemData> item)
+    void View::_setSelectedItem(std::shared_ptr<ViewItem> item)
     {
         if (item != _selected_item)
         {
@@ -143,6 +182,17 @@ namespace ui
                     repaint(_marked_item->box());
             }
         }
+    }
+
+
+    std::shared_ptr<Control> View::fetchControl(uintx_t hash)
+    {
+        
+    }
+
+    void View::returnControl(std::shared_ptr<Control> control)
+    {
+        
     }
 }
 

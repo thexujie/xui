@@ -140,18 +140,21 @@ namespace ui
             graphics.save();
         _drawBackground(graphics);
         paint(graphics, clip);
+        if (_clip_clild)
+            graphics.setClipRect(_rect);
+        auto clip2 = _clip_clild ? clip.intersected(_rect) : clip;
         for (auto & control : _controls)
         {
 			if(!control->aviliable())
 				continue;
 
             auto rect = control->realRect();
-            if(clip.intersect_with(rect))
-                control->prepaint(graphics, clip);
+            if(clip2.intersect_with(rect))
+                control->prepaint(graphics, clip2);
         }
         _drawBorder(graphics);
         graphics.restore();
-    }
+      }
 
     std::shared_ptr<Control> Container::findChild(const core::pointf & pos, std::shared_ptr<Control> last, findchild_flags flags) const
     {
@@ -300,7 +303,7 @@ namespace ui
                     _scrollbar_v->setPlaceAnchor(core::align::right | core::align::topBottom);
                     _scrollbar_v->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_v->setZValue(ZVALUE_SCROLLBAR);
-                    _scrollbar_v->valueChagned += std::weak_bind(&Container::onScrollValueChangedV, share_ref<Container>(), std::placeholders::_1, std::placeholders::_2);
+                    _scrollbar_v->valueChagned += std::weak_bind(&Container::onScrollBarValueChangedV, share_ref<Container>(), std::placeholders::_1, std::placeholders::_2);
                 }
                 addControl(_scrollbar_v);
             }
@@ -322,23 +325,27 @@ namespace ui
                     _scrollbar_h->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_h->setZValue(ZVALUE_SCROLLBAR);
                     _scrollbar_h->setDirection(core::align::left);
-                    _scrollbar_h->valueChagned += std::weak_bind(&Container::onScrollValueChangedH, share_ref<Container>(), std::placeholders::_1, std::placeholders::_2);
+                    _scrollbar_h->valueChagned += std::weak_bind(&Container::onScrollBarValueChangedH, share_ref<Container>(), std::placeholders::_1, std::placeholders::_2);
                 }
                 addControl(_scrollbar_h);
             }
         }
     }
 
-    void Container::onScrollValueChangedV(float32_t from, float32_t to)
+    void Container::onScrollBarValueChangedV(float32_t from, float32_t to)
     {
         _animScroll({ _scroll_pos.x, to });
         relayout();
     }
 
-    void Container::onScrollValueChangedH(float32_t from, float32_t to)
+    void Container::onScrollBarValueChangedH(float32_t from, float32_t to)
     {
         _animScroll({to, _scroll_pos.y });
         relayout();
+    }
+
+    void Container::onScrollPosChanged(const core::vec2f & from, const core::vec2f & to)
+    {
     }
 
 	void Container::_confirmLayout() const
@@ -382,8 +389,13 @@ namespace ui
 
     void Container::_setScrollPos(core::vec2f scroll_pos)
     {
+        auto old = _scroll_pos;
         _scroll_pos = scroll_pos;
-        relayout();
+        if (_scroll_controls)
+            relayout();
+        else
+            refresh();
+        onScrollPosChanged(old, _scroll_pos);
     }
 
     core::sizef Container::contentSize() const
@@ -598,7 +610,9 @@ namespace ui
         {
             layout_size.cy += margin;
         }
-        setLayoutedSize(layout_size);
+
+        if(_scroll_controls)
+            setLayoutedSize(layout_size);
 
         scene()->setEvent(scene_event::update_mouse_pos);
     }

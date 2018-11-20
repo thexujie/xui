@@ -60,30 +60,32 @@ namespace ui
 
     void ListView::update()
     {
-        auto box = contentBox();
+        auto cbox = contentBox();
         float32_t top = -_scroll_pos.y;
         float32_t height = 0;
         for (size_t index = 0; index != _items.size(); ++index)
         {
             auto & item = _items[index];
-            auto s = item->prefferdSize(box.cx);
+            auto s = item->prefferdSize(cbox.cx);
             auto m = calc(item->margin());
             auto p = calc(item->padding());
 
-            if (item->flags().any(item_flag::placed))
+            //if (!item->flags().any(item_flag::placed))
             {
-                top += s.cy + m.bheight() + p.bheight();
-                height += s.cy + m.bheight() + p.bheight();
-                continue;
+                core::rectf box = { cbox.x + m.bleft, cbox.y + top + m.btop, cbox.cx - m.bwidth(), p.bheight() + s.cy };
+                item->place(box, s);
+                if (box.bottom() >= cbox.y && box.y < cbox.bottom())
+                    _viewItem(item);
+                else
+                    _unviewItem(item);
             }
 
-            core::rectf item_box = {m.bleft, top + m.btop, box.cx - m.bwidth(), p.bheight() + s.cy};
-            item->place(item_box,  s);
+
             top += s.cy + m.bheight() + p.bheight();
             height += s.cy + m.bheight() + p.bheight();
         }
 
-        setLayoutedSize({ box.cx, height });
+        setLayoutedSize({ cbox.cx, height });
         scene()->setEvent(scene_event::update_mouse_pos);
         repaint();
     }
@@ -92,24 +94,23 @@ namespace ui
 	{
         graphics.save();
         graphics.setClipRect(contentBox());
-        for(size_t index = 0; index != _views.size(); ++index)
+        for(size_t index = 0; index != _items.size(); ++index)
         {
-            auto & view = _views[index];
-            auto data = view->data();
-            auto rect = view->box();
+            auto & item = _items[index];
+            auto rect = item->box();
             if (rect.bottom() <= clip.y)
                 continue;
 
             if (rect.y >= clip.bottom())
                 break;
 
-            auto & flags = data->flags();
+            auto & flags = item->flags();
             if (flags.any(item_flag::selected))
-                graphics.drawRectangle(data->box(), drawing::PathStyle().fill(_selected_color));
+                graphics.drawRectangle(item->box(), drawing::PathStyle().fill(_selected_color));
             else if (flags.any(item_flag::marked))
-                graphics.drawRectangle(data->box(), drawing::PathStyle().fill(_marked_color));
+                graphics.drawRectangle(item->box(), drawing::PathStyle().fill(_marked_color));
             else {}
-            data->draw(graphics, clip);
+            item->draw(graphics, clip);
         }
         graphics.restore();
 	}
