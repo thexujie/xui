@@ -33,7 +33,7 @@ namespace ui
         virtual ~Container();
 
 		void addControl(std::shared_ptr<Control> control);
-        std::shared_ptr<controls::Spacer> addSpacer(core::dimensionf size);
+        std::shared_ptr<controls::Spacer> addSpacer(core::dimenf size);
         void removeControl(std::shared_ptr<Control> control);
 		void clearControls();
         std::multiset<std::shared_ptr<Control>, ControlSorter> & children() { return _controls; }

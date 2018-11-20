@@ -13,12 +13,12 @@ namespace ui
 
     }
 
-    void Grid::setRows(const std::initializer_list<core::dimensionf> & rows)
+    void Grid::setRows(const std::initializer_list<core::dimenf> & rows)
     {
         _row_sizes.assign(rows);
     }
 
-    void Grid::setCols(const std::initializer_list<core::dimensionf> & cols)
+    void Grid::setCols(const std::initializer_list<core::dimenf> & cols)
     {
         _col_sizes.assign(cols);
     }

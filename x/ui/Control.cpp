@@ -10,8 +10,8 @@ namespace ui
 
     void Control::propertyTableCallback(core::property_table & properties)
     {
-        properties["pos"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimensionf> &) >(&Control::move), &Control::pos);
-        properties["size"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimensionf> &) >(&Control::resize), &Control::size);
+        properties["pos"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimenf> &) >(&Control::move), &Control::pos);
+        properties["size"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimenf> &) >(&Control::resize), &Control::size);
 
         properties["border"] = make_accessor(&Control::setBorder, &Control::border);
         properties["padding"] = make_accessor(&Control::setPadding, &Control::padding);
@@ -141,7 +141,7 @@ namespace ui
             return _font;
     }
 
-    float32_t Control::calc(const core::dimensionf & value) const
+    float32_t Control::calc(const core::dimenf & value) const
     {
         auto s = scene();
         if (!s)
@@ -166,7 +166,7 @@ namespace ui
         }
     }
 
-    float32_t Control::calc(const core::dimensionf & value, float32_t spacing) const
+    float32_t Control::calc(const core::dimenf & value, float32_t spacing) const
     {
         auto s = scene();
         if (!s)
@@ -189,7 +189,7 @@ namespace ui
         }
     }
 
-    void Control::move(const core::vec2<core::dimensionf> & pos)
+    void Control::move(const core::vec2<core::dimenf> & pos)
     {
         if (_pos != _pos)
         {
@@ -198,7 +198,7 @@ namespace ui
         }
     }
 
-    void Control::resize(const core::vec2<core::dimensionf> & size)
+    void Control::resize(const core::vec2<core::dimenf> & size)
     {
         if(_size != size)
         {
@@ -391,7 +391,7 @@ namespace ui
         return _background_image.value;
     }
 
-    void Control::setMargin(const core::vec4<core::dimensionf> & margin)
+    void Control::setMargin(const core::vec4<core::dimenf> & margin)
     {
         if (_margin != margin)
         {

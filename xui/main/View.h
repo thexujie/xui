@@ -20,12 +20,13 @@ namespace ui
         size_t addItem(std::shared_ptr<ViewItem> item);
         size_t insertItem(size_t index, std::shared_ptr<ViewItem> item);
         size_t eraseItem(size_t index);
+        std::shared_ptr<ViewItem> itemAt(size_t index) const;
         std::shared_ptr<ViewItem> findItem(const core::pointf & pos) const;
 
-        void setItemMargin(const core::vec4<core::dimensionf> & spacing) { _item_margin = spacing; refresh(); }
-        const core::vec4<core::dimensionf> & itemMargin() const { return _item_margin; }
-        void setItemPadding(const core::vec4<core::dimensionf> & spacing) { _item_padding = spacing; refresh(); }
-        const core::vec4<core::dimensionf> & itemPadding() const { return _item_padding; }
+        void setItemMargin(const core::vec4<core::dimenf> & spacing) { _item_margin = spacing; refresh(); }
+        const core::vec4<core::dimenf> & itemMargin() const { return _item_margin; }
+        void setItemPadding(const core::vec4<core::dimenf> & spacing) { _item_padding = spacing; refresh(); }
+        const core::vec4<core::dimenf> & itemPadding() const { return _item_padding; }
         void setMarkedColor(const core::color & c) { _marked_color = c; }
         core::color markedColor() const { return _marked_color; }
         void setSelectedColor(const core::color & c) { _selected_color = c; }
@@ -49,8 +50,8 @@ namespace ui
         std::shared_ptr<ViewItem> _marked_item;
         std::shared_ptr<ViewItem> _selected_item;
         select_mode _select_mode = select_mode::full_row;
-        core::attribute<core::vec4<core::dimensionf>> _item_margin;
-        core::attribute<core::vec4<core::dimensionf>> _item_padding;
+        core::attribute<core::vec4<core::dimenf>> _item_margin;
+        core::attribute<core::vec4<core::dimenf>> _item_padding;
 
        core::color _marked_color = core::colors::Auto;
        core::color _selected_color = core::colors::Auto;

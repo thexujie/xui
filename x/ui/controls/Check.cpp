@@ -142,7 +142,7 @@ namespace ui::controls
         }
     }
 
-    void Check::_setHoleBorderSize(core::dimensionf border_size)
+    void Check::_setHoleBorderSize(core::dimenf border_size)
     {
         if (_hole_border_size != border_size)
         {

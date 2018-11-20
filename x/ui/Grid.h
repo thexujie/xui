@@ -28,8 +28,8 @@ namespace ui
         Grid();
         virtual ~Grid();
 
-        void setRows(const std::initializer_list<core::dimensionf> & rows);
-        void setCols(const std::initializer_list<core::dimensionf> & cols);
+        void setRows(const std::initializer_list<core::dimenf> & rows);
+        void setCols(const std::initializer_list<core::dimenf> & cols);
         void addControl(size_t row, size_t col, std::shared_ptr<Control> control);
 
         core::sizef contentSize() const override;
@@ -40,8 +40,8 @@ namespace ui
         void _splitGrid(bool force = false) const;
 
     protected:
-        std::vector<core::dimensionf> _row_sizes;
-        std::vector<core::dimensionf> _col_sizes;
+        std::vector<core::dimenf> _row_sizes;
+        std::vector<core::dimenf> _col_sizes;
         mutable std::vector<Cell> _cells;
         mutable std::vector<Item> _items;
     };

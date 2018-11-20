@@ -35,6 +35,7 @@
 #include <algorithm> 
 #include <regex>
 #include <random>
+#include <optional>
 
 #include <mutex>
 #include <atomic>
@@ -177,3 +178,9 @@ namespace core
 #include "core/io/filestream.h"
 
 using namespace core::unit_literals;
+
+namespace core
+{
+    typedef core::vec2<core::dimenf> dimen2f;
+    typedef core::vec4<core::dimenf> dimen4f;
+}

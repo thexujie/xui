@@ -20,8 +20,8 @@ namespace ui::controls
         void setBarColor(const core::color & color) { if (_bar_color != color) { _bar_color = color; repaint(); } }
         const core::color & barColor() const { return _bar_color; }
 
-        void setBarBorder(const core::dimensionf & border) { if (_bar_border != border) { _bar_border = border; repaint(); } }
-        const core::dimensionf & barBorder() const { return _bar_border; }
+        void setBarBorder(const core::dimenf & border) { if (_bar_border != border) { _bar_border = border; repaint(); } }
+        const core::dimenf & barBorder() const { return _bar_border; }
 
         void setBarBorderColor(const core::color & color) { if (_bar_border_color != color) { _bar_border_color = color; repaint(); } }
         const core::color & barBorderColor() const { return _bar_border_color; }
@@ -71,7 +71,7 @@ namespace ui::controls
 
         // bar
         core::attribute<core::color> _bar_color;
-        core::attribute<core::dimensionf> _bar_border;
+        core::attribute<core::dimenf> _bar_border;
         core::attribute<core::color> _bar_border_color;
         core::attribute<drawing::stroke_style> _bar_border_style;
 

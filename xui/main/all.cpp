@@ -96,7 +96,7 @@ void all_main()
 	text2->setPadding({ 1_em, 0.5_em });
 #endif
 
-	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em), ui::form_style::normal);
+	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::normal);
 	g_form = form;
     auto scene = std::make_shared<ui::Scene>(form);
     scene->setStyleSheet(ss);
@@ -397,7 +397,7 @@ void all_main()
 		auto & props2 = core::app().properties<ui::Form>();
 
 		auto prop = props2.at("size");
-		auto interpolator = std::make_shared<property_interpolator_default<core::vec2<core::dimensionf>>>();
+		auto interpolator = std::make_shared<property_interpolator_default<core::vec2<core::dimenf>>>();
 		prop->serialize("50em 30em", interpolator->start());
 		prop->serialize("50em 50em", interpolator->end());
 

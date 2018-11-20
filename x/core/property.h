@@ -452,9 +452,9 @@ namespace core
     template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::string & str);
     template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::string & str);
 
-    template<> core::dimensionf property_parser<core::dimensionf>(const std::string & str);
-    template<> core::vec2<core::dimensionf> property_parser<core::vec2<core::dimensionf>>(const std::string & str);
-    template<> core::vec4<core::dimensionf> property_parser<core::vec4<core::dimensionf>>(const std::string & str);
+    template<> core::dimenf property_parser<core::dimenf>(const std::string & str);
+    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::string & str);
+    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::string & str);
 
     template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::string & str);
 }

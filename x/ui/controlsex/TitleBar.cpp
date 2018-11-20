@@ -6,7 +6,7 @@ namespace ui::controlsex
 {
 	TitleButton::TitleButton()
 	{
-		_border = core::vec4<core::dimensionf>{ 1_px };
+		_border = core::vec4<core::dimenf>{ 1_px };
 		_padding = { 1_em, 0.5_em };
 		_size = { 100_per, 100_per };
 		_fixed_aspect = core::vec2{ 1.0f, 1.0f };
@@ -14,7 +14,7 @@ namespace ui::controlsex
 
 	TitleButton::TitleButton(std::string text)
 	{
-		_border = core::vec4<core::dimensionf>{ 1_px };
+		_border = core::vec4<core::dimenf>{ 1_px };
 		_padding = { 1_em, 0.5_em };
 		_size = { 100_per, 100_per };
 		_fixed_aspect = core::vec2{ 1.0f, 1.0f };

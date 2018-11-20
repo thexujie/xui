@@ -5,7 +5,7 @@ namespace ui::base
 {
     Button::Button()
     {
-        _border = core::vec4<core::dimensionf>{ 1_px };
+        _border = core::vec4<core::dimenf>{ 1_px };
         _padding = { 1_em, 0.5_em };
     }
 

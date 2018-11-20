@@ -47,15 +47,15 @@ namespace ui
         void setLayoutOrigin(layout_origin origin) { _layout_origin = origin; }
         layout_origin layoutOrigin() const { return _layout_origin; }
 
-        void setPos(const core::vec2<core::dimensionf> & pos) { _pos = pos; }
-        const core::vec2<core::dimensionf> & pos() const { return _pos; }
+        void setPos(const core::vec2<core::dimenf> & pos) { _pos = pos; }
+        const core::vec2<core::dimenf> & pos() const { return _pos; }
         void 
-        setSize(const core::vec2<core::dimensionf> & size) { _size = size; }
-        const core::vec2<core::dimensionf> & size() const { return _size; }
-        void setMinSize(const core::vec2<core::dimensionf> & minSize) { _min_size = minSize; }
-        const core::vec2<core::dimensionf> & minSize() const { return _min_size; }
-        void setMaxSize(const core::vec2<core::dimensionf> & maxSize) { _max_size = maxSize; }
-        const core::vec2<core::dimensionf> & maxSize() const { return _max_size; }
+        setSize(const core::vec2<core::dimenf> & size) { _size = size; }
+        const core::vec2<core::dimenf> & size() const { return _size; }
+        void setMinSize(const core::vec2<core::dimenf> & minSize) { _min_size = minSize; }
+        const core::vec2<core::dimenf> & minSize() const { return _min_size; }
+        void setMaxSize(const core::vec2<core::dimenf> & maxSize) { _max_size = maxSize; }
+        const core::vec2<core::dimenf> & maxSize() const { return _max_size; }
         void setFixedAspect(const core::vec2<float32_t> & maxSize) { _fixed_aspect = maxSize; }
         const core::vec2<float32_t> & fixedAspect() const { return _fixed_aspect; }
 
@@ -63,11 +63,11 @@ namespace ui
         core::aligns placeAnchor() const { return _anchor_borders; }
         void setPlaceAlignment(core::aligns align) { _place_alignment = align; }
         core::aligns placeAlignment() const { return _place_alignment; }
-        void setAnchor(const core::vec4<core::dimensionf> & anchor) { _anchor = anchor; }
-        const core::vec4<core::dimensionf> & anchor() const { return _anchor; }
+        void setAnchor(const core::vec4<core::dimenf> & anchor) { _anchor = anchor; }
+        const core::vec4<core::dimenf> & anchor() const { return _anchor; }
 
-        void move(const core::vec2<core::dimensionf> & pos);
-        void resize(const core::vec2<core::dimensionf> & size);
+        void move(const core::vec2<core::dimenf> & pos);
+        void resize(const core::vec2<core::dimenf> & size);
 
         void setShowPos(const core::vec2f & pos);
         void setShowSize(const core::vec2f & size);
@@ -119,21 +119,21 @@ namespace ui
         float32_t height() const { return _rect.cy; }
         core::vec4f realMargin() const { return calc(_margin); }
 
-        float32_t calc(const core::dimensionf & value) const;
-        float32_t calc(const core::dimensionf & value, float32_t spacing) const;
-        core::vec2f calc(const core::vec2<core::dimensionf> & value) const
+        float32_t calc(const core::dimenf & value) const;
+        float32_t calc(const core::dimenf & value, float32_t spacing) const;
+        core::vec2f calc(const core::vec2<core::dimenf> & value) const
         {
             return { calc(value.x), calc(value.y) };
         }
-        core::vec2f calc(const core::vec2<core::dimensionf> & value, const core::vec2<float32_t> & spacing) const
+        core::vec2f calc(const core::vec2<core::dimenf> & value, const core::vec2<float32_t> & spacing) const
         {
             return { calc(value.x, spacing.cx), calc(value.y, spacing.cy) };
         }
-        core::vec4f calc(const core::vec4<core::dimensionf> & value) const
+        core::vec4f calc(const core::vec4<core::dimenf> & value) const
         {
             return { calc(value.xy), calc(value.zw) };
         }
-        core::vec4f calc(const core::vec4<core::dimensionf> & value, const core::vec2<float32_t> & spacing) const
+        core::vec4f calc(const core::vec4<core::dimenf> & value, const core::vec2<float32_t> & spacing) const
         {
             return { calc(value.x, spacing.cx), calc(value.y, spacing.cy), calc(value.cx, spacing.cx), calc(value.cy, spacing.cy) };
         }
@@ -165,10 +165,10 @@ namespace ui
         void setBackgroundImage(std::shared_ptr<drawing::Image> image);
         std::shared_ptr<drawing::Image> backgroundImage() const;
 
-        void setMargin(const core::vec4<core::dimensionf> & margin);
-        const core::vec4<core::dimensionf> & margin() const { return _margin; }
+        void setMargin(const core::vec4<core::dimenf> & margin);
+        const core::vec4<core::dimenf> & margin() const { return _margin; }
 
-        void setBorder(const core::vec4<core::dimensionf> & border)
+        void setBorder(const core::vec4<core::dimenf> & border)
         {
             if (!_border.available() || _border != border)
             {
@@ -177,9 +177,9 @@ namespace ui
             }
         }
 
-        const core::vec4<core::dimensionf> & border() const { return _border; }
+        const core::vec4<core::dimenf> & border() const { return _border; }
 
-        void setPadding(const core::vec4<core::dimensionf> & padding)
+        void setPadding(const core::vec4<core::dimenf> & padding)
         {
             if (_padding != padding)
             {
@@ -188,7 +188,7 @@ namespace ui
             }
         }
 
-        const core::vec4<core::dimensionf> & padding() const { return _padding; }
+        const core::vec4<core::dimenf> & padding() const { return _padding; }
         core::vec4f edges() const;
 
         void setBorderColors(const core::vec4<core::color> & boderColors) { _border_colors = boderColors; }
@@ -260,20 +260,20 @@ namespace ui
 
         core::attribute<core::color> _color = core::colors::Auto;
         // 控件大小，包括 padding，不包括 margin。
-        core::attribute<core::vec2<core::dimensionf>> _pos;
-        core::attribute<core::vec2<core::dimensionf>> _size;
+        core::attribute<core::vec2<core::dimenf>> _pos;
+        core::attribute<core::vec2<core::dimenf>> _size;
         core::attribute<core::vec2<float32_t>> _fixed_aspect;
-        core::attribute<core::vec4<core::dimensionf>> _padding;
-        core::attribute<core::vec4<core::dimensionf>> _border;
+        core::attribute<core::vec4<core::dimenf>> _padding;
+        core::attribute<core::vec4<core::dimenf>> _border;
         core::attribute<core::vec4<core::color>> _border_colors;
         core::attribute<core::vec4<drawing::stroke_style>> _border_styles;
-        core::attribute<core::vec4<core::dimensionf>> _margin;
-        core::attribute<core::vec2<core::dimensionf>> _min_size = core::vec2{ core::auto_value , core::auto_value };
-        core::attribute<core::vec2<core::dimensionf>> _max_size = core::vec2{ core::auto_value, core::auto_value };
+        core::attribute<core::vec4<core::dimenf>> _margin;
+        core::attribute<core::vec2<core::dimenf>> _min_size = core::vec2{ core::auto_value , core::auto_value };
+        core::attribute<core::vec2<core::dimenf>> _max_size = core::vec2{ core::auto_value, core::auto_value };
 
         core::attribute<core::aligns> _anchor_borders;
         core::attribute<core::aligns> _place_alignment;
-        core::attribute<core::vec4<core::dimensionf>> _anchor;
+        core::attribute<core::vec4<core::dimenf>> _anchor;
 
         core::attribute<drawing::font> _font;
 
@@ -283,7 +283,7 @@ namespace ui
         core::attribute<std::shared_ptr<drawing::Image>> _background_image;
         core::attribute<core::color> _background_color = core::colors::Auto;
         layout_origin _background_position;
-        core::attribute<core::vec2<core::dimensionf>> _background_size;
+        core::attribute<core::vec2<core::dimenf>> _background_size;
         core::vec2<image_fitting> _background_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
         control_box _background_box = control_box::layout_box;
 

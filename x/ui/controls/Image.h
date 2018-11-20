@@ -12,7 +12,7 @@ namespace ui::controls
 
         void setImage(std::string path);
         void setImage(std::shared_ptr<drawing::Image> image);
-        void setImageSize(const core::vec2<core::dimensionf> & size);
+        void setImageSize(const core::vec2<core::dimenf> & size);
         void setImageFitting(const core::vec2<image_fitting> & fitting) { _image_fitting = fitting; }
         const core::vec2<image_fitting> & imageFitting() const { return _image_fitting; }
         core::sizef contentSize() const override;
@@ -26,7 +26,7 @@ namespace ui::controls
 
     private:
         std::shared_ptr<drawing::Image> _image;
-        core::attribute<core::vec2<core::dimensionf>> _image_size;
+        core::attribute<core::vec2<core::dimenf>> _image_size;
         core::attribute<core::vec4f> _image_clip;
         core::vec2<image_fitting> _image_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
     };

@@ -9,10 +9,13 @@ namespace ui
         if (!v)
             return {};
 
+        core::sizef icon_size = _icon_size.has_value() ? v->calc(_icon_size.value()) : (_icon ? _icon->size().to<float_t>() : core::sizef{});
         drawing::TextWraper wraper;
         wraper.itermize(_text, v->font(), core::colors::Auto);
         wraper.layout(width, _wrap_mode);
-        return wraper.bounds() + v->calc(_padding).bsize();
+        auto bounds = wraper.bounds();
+        auto spacing = v->calc(_icon_text_spacing);
+        return { icon_size.cx + spacing + bounds.cx, bounds.cy };
     }
 
     void ListViewItem::paint(drawing::Graphics & graphics, const core::rectf & clip)
@@ -20,7 +23,15 @@ namespace ui
         auto v = view();
         if (!v)
             return;
-        graphics.drawString(_text, contentBox(), drawing::StringFormat().font(v->font()).color(v->color()));
+
+        auto cbox = contentBox();
+        core::vec2f icon_size = _icon_size.has_value() ? v->calc(_icon_size.value()) : _icon->size().to<float_t>();
+        auto spacing = v->calc(_icon_text_spacing);
+        if (_icon)
+        {
+            graphics.drawImage(*_icon, core::rectf(cbox.x, cbox.y + (cbox.cy - icon_size.cy) / 2, icon_size.cx, icon_size.cy));
+        }
+        graphics.drawString(_text, cbox.offset(icon_size.cx + spacing, 0), drawing::StringFormat().font(v->font()).color(v->color()));
     }
 
     ListView::ListView()

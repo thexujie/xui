@@ -8,7 +8,7 @@ namespace ui
     {
     public:
         Form(form_styles styles = nullptr);
-        Form(core::vec2<core::dimensionf> & size, form_styles styles = nullptr);
+        Form(core::vec2<core::dimenf> & size, form_styles styles = nullptr);
         ~Form();
 
         void setTitle(const std::string & text);
@@ -16,16 +16,16 @@ namespace ui
 
 		void setStyles(form_styles styles) { if(styles != _styles) { auto old = _styles;  _styles = styles; onFormStylesChanged(old, _styles); } }
         form_styles styles() const { return _styles; }
-        void setResizeBorders(const core::vec4<core::dimensionf> & borders) { _resize_borders = borders; }
-        const core::vec4<core::dimensionf> & resizeBorders() const { return _resize_borders; }
+        void setResizeBorders(const core::vec4<core::dimenf> & borders) { _resize_borders = borders; }
+        const core::vec4<core::dimenf> & resizeBorders() const { return _resize_borders; }
 
         const core::pointf & windowPos() const { return _rect_window.pos; }
         //const core::pointf & windowSize() const { return _rect_window.size; }
         //const core::rectf & windowRect() const { return _rect_window; }
         void setWindowPos(const core::pointf & pos);
-        void setWindowPos(const core::vec2<core::dimensionf> & pos) { setWindowPos(calc(pos)); }
+        void setWindowPos(const core::vec2<core::dimenf> & pos) { setWindowPos(calc(pos)); }
         void setWindowSize(const core::sizef & size);
-        void setWindowSize(const core::vec2<core::dimensionf> & size) { setWindowSize(calc(size)); }
+        void setWindowSize(const core::vec2<core::dimenf> & size) { setWindowSize(calc(size)); }
 
         void setFormScene(std::shared_ptr<Scene> s);
         void setFormState(form_state fs);
@@ -68,7 +68,7 @@ namespace ui
         std::shared_ptr<Scene> _form_scene;
         std::shared_ptr<component::Window> _window;
         core::rectf _rect_window;
-        core::attribute<core::vec4<core::dimensionf>> _resize_borders;
+        core::attribute<core::vec4<core::dimenf>> _resize_borders;
 
         form_state _form_state = form_state::hide;
         form_styles _styles = nullptr;

@@ -52,6 +52,11 @@ namespace ui
         return index;
     }
 
+    std::shared_ptr<ViewItem> View::itemAt(size_t index) const
+    {
+        return _items[index];
+    }
+
     std::shared_ptr<ViewItem> View::findItem(const core::pointf & pos) const
     {
         _confirmLayout();

@@ -30,10 +30,10 @@ namespace ui
         virtual void enterView(std::shared_ptr<View> view) { _view = view; }
         virtual void leaveView() { _view.reset(); }
 
-        void setMargin(const core::vec4<core::dimensionf> & margin) { _margin = margin; }
-        const core::vec4<core::dimensionf> & margin() const;
-        void setPadding(const core::vec4<core::dimensionf> & padding) { _padding = padding; }
-        const core::vec4<core::dimensionf> & padding() const;
+        void setMargin(const core::vec4<core::dimenf> & margin) { _margin = margin; }
+        const core::vec4<core::dimenf> & margin() const;
+        void setPadding(const core::vec4<core::dimenf> & padding) { _padding = padding; }
+        const core::vec4<core::dimenf> & padding() const;
 
         virtual void place(const core::rectf & box, const core::sizef & size) { _box = box, _size = size; }
         const core::rectf & box() const { return _box; }
@@ -61,8 +61,8 @@ namespace ui
 
     protected:
         std::weak_ptr<View> _view;
-        core::attribute<core::vec4<core::dimensionf>> _margin;
-        core::attribute<core::vec4<core::dimensionf>> _padding;
+        core::attribute<core::vec4<core::dimenf>> _margin;
+        core::attribute<core::vec4<core::dimenf>> _padding;
 
         core::rectf _box;
         core::sizef _size;

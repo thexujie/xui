@@ -13,7 +13,7 @@ namespace ui
         _color = core::colors::Black;
     }
 
-    Form::Form(core::vec2<core::dimensionf> & size, form_styles styles) : _styles(styles)
+    Form::Form(core::vec2<core::dimenf> & size, form_styles styles) : _styles(styles)
     {
         _background_color = core::colors::AliceBlue;
         _size = size;

@@ -4,7 +4,7 @@
 
 namespace ui
 {
-    const core::vec4<core::dimensionf> & ViewItem::margin() const
+    const core::vec4<core::dimenf> & ViewItem::margin() const
     {
         auto v = view();
         if (!v)
@@ -16,7 +16,7 @@ namespace ui
             return v->itemMargin();
     }
 
-    const core::vec4<core::dimensionf> & ViewItem::padding() const
+    const core::vec4<core::dimenf> & ViewItem::padding() const
     {
         auto v = view();
         if (!v)
@@ -34,8 +34,8 @@ namespace ui
         if (!v)
             return {};
 
-        auto p = padding();
-        return core::rectf(_box.pos + v->calc(p).bleftTop(), _size - v->calc(p).bsize());
+        auto p = v->calc(padding());
+        return core::rectf(_box.pos + p.bleftTop(), _size - p.bsize());
     }
 
     void ViewItem::setFlag(item_flag flag, bool set)

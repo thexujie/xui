@@ -33,7 +33,7 @@ namespace ui::controls
         void _confirmBlob() const;
 
         void _setHoleColor(core::color color);
-        void _setHoleBorderSize(core::dimensionf border_size);
+        void _setHoleBorderSize(core::dimenf border_size);
         void _setHoleBorderColor(core::color color);
         void _setDotColor();
         void _setDotBorderColor();
@@ -43,13 +43,13 @@ namespace ui::controls
 
         mutable std::shared_ptr<drawing::TextBlob> _textBlob;
 
-        core::dimensionf _content_spacing = 0.2_em;
+        core::dimenf _content_spacing = 0.2_em;
 
-        core::dimensionf _hole_border_size = 1_px;
+        core::dimenf _hole_border_size = 1_px;
         core::color _hole_border_color = core::colors::Gray;
         core::color _hole_color = core::colors::Transparent;
 
-        core::dimensionf _dot_border_size = 1_px;
+        core::dimenf _dot_border_size = 1_px;
         core::color _dot_border_color = core::colors::Black;
         core::color _dot_color = core::colors::Gray;
     };

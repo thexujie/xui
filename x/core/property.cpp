@@ -155,37 +155,37 @@ namespace core
         return {};
     }
 
-    template<> core::dimensionf property_parser<core::dimensionf>(const std::string & str)
+    template<> core::dimenf property_parser<core::dimenf>(const std::string & str)
     {
         for (auto & uint_name : unit_names)
         {
             size_t pos = str.rfind(uint_name.name, -1);
             if (pos != std::string::npos)
-                return core::dimensionf(core::texttof32(str.data(), pos), uint_name.unit);
+                return core::dimenf(core::texttof32(str.data(), pos), uint_name.unit);
         }
 
         return {};
     }
 
-    template<> core::vec2<core::dimensionf> property_parser<core::vec2<core::dimensionf>>(const std::string & str)
+    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::string & str)
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return core::vec2<core::dimensionf>{ property_parser<core::dimensionf>(strs[0]) };
+            return core::vec2<core::dimenf>{ property_parser<core::dimenf>(strs[0]) };
         if (strs.size() == 2)
-            return { property_parser<core::dimensionf>(strs[0]), property_parser<core::dimensionf>(strs[1]) };
+            return { property_parser<core::dimenf>(strs[0]), property_parser<core::dimenf>(strs[1]) };
         return {};
     }
 
-    template<> core::vec4<core::dimensionf> property_parser<core::vec4<core::dimensionf>>(const std::string & str)
+    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::string & str)
     {
         std::vector<std::string> strs = core::split(str, ' ');
         if (strs.size() == 1)
-            return core::vec4<core::dimensionf>{ property_parser<core::dimensionf>(strs[0]) };
+            return core::vec4<core::dimenf>{ property_parser<core::dimenf>(strs[0]) };
         if (strs.size() == 2)
-            return { property_parser<core::dimensionf>(strs[0]), property_parser<core::dimensionf>(strs[1]) };
+            return { property_parser<core::dimenf>(strs[0]), property_parser<core::dimenf>(strs[1]) };
         if (strs.size() == 4)
-            return { property_parser<core::dimensionf>(strs[0]), property_parser<core::dimensionf>(strs[1]), property_parser<core::dimensionf>(strs[2]), property_parser<core::dimensionf>(strs[3]) };
+            return { property_parser<core::dimenf>(strs[0]), property_parser<core::dimenf>(strs[1]), property_parser<core::dimenf>(strs[2]), property_parser<core::dimenf>(strs[3]) };
         return {};
     }
 

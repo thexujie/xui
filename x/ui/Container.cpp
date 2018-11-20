@@ -41,7 +41,7 @@ namespace ui
         relayout();
     }
 
-    std::shared_ptr<controls::Spacer> Container::addSpacer(core::dimensionf size)
+    std::shared_ptr<controls::Spacer> Container::addSpacer(core::dimenf size)
     {
         auto spacer = std::make_shared<controls::Spacer>();
         spacer->setSize({ size , size });

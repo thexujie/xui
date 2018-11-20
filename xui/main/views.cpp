@@ -90,7 +90,7 @@ void views_main()
 	auto ss = std::make_shared<ui::component::StyleSheet>();
 	ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
 
-	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimensionf>(50_em, 30_em), ui::form_style::frameless);
+	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::frameless);
     auto scene = std::make_shared<ui::Scene>(form);
 	scene->setStyleSheet(ss);
     form->setFormScene(scene);
@@ -132,8 +132,14 @@ void views_main()
         auto lv = std::make_shared<ui::ListView>();
         lv->setSize({ 100_per, 100_per });
         //lv->setImeMode(ui::ime_mode::on);
-        for(size_t cnt = 0; cnt < 100; ++cnt)
-            lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+        for (size_t cnt = 0; cnt < 100; ++cnt)
+            //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+        {
+            auto index =lv->addItem(std::make_shared<ui::ListViewItem>(core::format("Item ", cnt), std::make_shared <drawing::Image>("icon.png") , drawing::wrap_mode::none));
+            auto item = std::dynamic_pointer_cast<ui::ListViewItem>(lv->itemAt(index));
+            item->setIconSize({ 1_em, 1_em });
+        }
+
         form->addControl(lv);
         lv->setScrollbarVisionV(ui::scrollbar_vision::always);
     }
