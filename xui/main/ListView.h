@@ -48,13 +48,5 @@ namespace ui
         core::sizef contentSize() const override;
         void update() override;
 		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
-
-	public:
-        void onMouseMove(const ui::input_state & state) override;
-        void onMouseLeave(const ui::input_state & state) override;
-        void onMouseDown(const ui::input_state & state, ui::mouse_button button) override;
-        void onMouseClick(const ui::input_state & state, ui::mouse_button button) override;
-
-	private:
 	};
 }

@@ -79,6 +79,30 @@ namespace ui
         ui::Container::onRectChanged(from, to);
     }
 
+    void View::onMouseMove(const ui::input_state & state)
+    {
+        auto item = findItem(state.pos());
+        _setMarkedItem(item);
+        View::onMouseMove(state);
+    }
+
+    void View::onMouseLeave(const ui::input_state & state)
+    {
+        _setMarkedItem(nullptr);
+        View::onMouseLeave(state);
+    }
+
+    void View::onMouseDown(const ui::input_state & state, ui::mouse_button button)
+    {
+        _setSelectedItem(_marked_item);
+        View::onMouseDown(state, button);
+    }
+
+    void View::onMouseClick(const ui::input_state & state, ui::mouse_button button)
+    {
+        View::onMouseClick(state, button);
+    }
+
     void View::_setMarkedItem(std::shared_ptr<ViewItem> item)
     {
         if (item != _marked_item)

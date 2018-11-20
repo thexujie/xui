@@ -111,29 +111,5 @@ namespace ui
         }
         graphics.restore();
 	}
-
-    void ListView::onMouseMove(const ui::input_state & state)
-    {
-        auto item = findItem(state.pos());
-        _setMarkedItem(item);
-        View::onMouseMove(state);
-    }
-
-    void ListView::onMouseLeave(const ui::input_state & state)
-    {
-        _setMarkedItem(nullptr);
-        View::onMouseLeave(state);
-    }
-
-    void ListView::onMouseDown(const ui::input_state & state, ui::mouse_button button)
-    {
-        _setSelectedItem(_marked_item);
-        View::onMouseDown(state, button);
-    }
-
-	void ListView::onMouseClick(const ui::input_state & state, ui::mouse_button button)
-	{
-        View::onMouseClick(state, button);
-	}
 }
 
