@@ -97,7 +97,7 @@ void views_main()
 	form->setBorder({ 1_px, 1_px });
     form->setTitle(u8"Views");
 	form->setBorderColors({ core::colors::Black, core::colors::Black });
-	form->setBackgroundColor(0xfffcfcfc);
+	form->setBackgroundColor(0xffffffff);
 	form->setResizeBorders({ 4_px, 4_px });
 	form->setLayoutDirection(core::align::top);
 	form->show();

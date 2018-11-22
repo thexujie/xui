@@ -12,16 +12,6 @@ namespace ui
 
 namespace ui
 {
-    class DataTemplate
-    {
-        
-    };
-
-    class ControlTemplate
-    {
-        
-    };
-
     class ListViewItem : public ViewItem
     {
     public:
@@ -40,6 +30,12 @@ namespace ui
         core::dimenf _icon_text_spacing = 0.2_em;
     };
 
+    enum listview_mode
+    {
+        details = 0,
+        titled
+    };
+
 	class ListView : public ui::View
 	{
 	public:
@@ -54,5 +50,8 @@ namespace ui
         core::sizef contentSize() const override;
         void update() override;
 		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
+
+	protected:
+        core::dimen2f _icon_size = {1_em, 1_em};
 	};
 }

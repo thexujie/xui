@@ -49,8 +49,7 @@ namespace ui
 
         void setPos(const core::vec2<core::dimenf> & pos) { _pos = pos; }
         const core::vec2<core::dimenf> & pos() const { return _pos; }
-        void 
-        setSize(const core::vec2<core::dimenf> & size) { _size = size; }
+        void setSize(const core::vec2<core::dimenf> & size) { _size = size; }
         const core::vec2<core::dimenf> & size() const { return _size; }
         void setMinSize(const core::vec2<core::dimenf> & minSize) { _min_size = minSize; }
         const core::vec2<core::dimenf> & minSize() const { return _min_size; }
@@ -85,6 +84,7 @@ namespace ui
         void setParent(std::shared_ptr<Container> parent) { _parent = parent; }
         std::shared_ptr<Container> parent() const { return _parent.lock(); }
 
+        virtual float_t ratio() const;
         void setColor(core::color color) { _color = color; }
         const core::color & color() const;
         void setFont(const drawing::font & font);

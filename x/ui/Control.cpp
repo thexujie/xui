@@ -112,6 +112,14 @@ namespace ui
         return asize;
     }
 
+    float_t Control::ratio() const
+    {
+        if (auto p = parent())
+            return p->ratio();
+        else
+            return 1.0f;
+    }
+
     const core::color & Control::color() const
     {
         if (_color.available())
@@ -143,26 +151,22 @@ namespace ui
 
     float32_t Control::calc(const core::dimenf & value) const
     {
-        auto s = scene();
-        if (!s)
-            throw core::error_state;
-
         switch (value.unit)
         {
         case core::unit::px:
-            return value.value * s->ratio();
+            return value.value * ratio();
         case core::unit::em:
-			return value.value * drawing::fontmetrics(drawing::font()).height;
+			return value.value * drawing::default_fontmetrics().height;
 		case core::unit::ft:
             return value.value * drawing::fontmetrics(font()).height;
         case core::unit::pt:
-            return value.value * 72.0f * s->ratio();
+            return value.value * 72.0f * ratio();
         case core::unit::dot:
             return value.value;
         case core::unit::per:
             return 0;
         default:
-            return value.value * s->ratio();
+            return value.value * ratio();
         }
     }
 

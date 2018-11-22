@@ -40,6 +40,7 @@ namespace ui
         void centerScreen(int32_t screenIndex = 0);
 
     public:
+        float_t ratio() const override;
         void invalidate(const core::rectf & rect) override;
         std::shared_ptr<Control> findChild(const core::pointf & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
         void onEnteringScene(std::shared_ptr<Scene> & scene) override;

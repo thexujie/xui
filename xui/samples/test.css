@@ -99,7 +99,6 @@
 
 
 .listview {
-    background-color: #eee;
     border: 1px;
     border-color: #f777;
     marked-color: #855f;
@@ -108,7 +107,6 @@
 }
 
 .listview:hover {
-    border-color: #ff77;
 }
 
 .listview:active {

@@ -3,6 +3,7 @@
 #include "win32/win32.h"
 
 static drawing::font __default_font;
+static drawing::fontmetrics __default_fontmetrics;
 static std::once_flag __default_font_once_flag;
 
 void generate_default_font()
@@ -19,6 +20,7 @@ void generate_default_font()
         __default_font.size = metrics.lfMessageFont.lfHeight * 96.0f / dpiy;
         ReleaseDC(HWND_DESKTOP, hdc);
     }
+    __default_fontmetrics.from(__default_font);
 }
 
 namespace drawing
@@ -66,5 +68,21 @@ namespace drawing
     fontmetrics::fontmetrics(const font & font)
     {
         __fontmetrics(font, *this);
+    }
+
+    void fontmetrics::from(const font & font)
+    {
+        __fontmetrics(font, *this);
+    }
+
+    font & default_font()
+    {
+        std::call_once(__default_font_once_flag, generate_default_font);
+        return __default_font;
+    }
+    fontmetrics & default_fontmetrics()
+    {
+        std::call_once(__default_font_once_flag, generate_default_font);
+        return __default_fontmetrics;
     }
 }

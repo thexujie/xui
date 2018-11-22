@@ -102,9 +102,6 @@ namespace drawing
 
     struct fontmetrics
     {
-        fontmetrics() = default;
-        fontmetrics(const font & font);
-
         float32_t height = 0;
         float32_t top = 0;
         float32_t bottom = 0;
@@ -113,7 +110,14 @@ namespace drawing
         float32_t leading = 0;
         float32_t weight = 0;
         float32_t width = 0;
+
+        fontmetrics() = default;
+        fontmetrics(const font & font);
+        void from(const font & font);
     };
+
+    font & default_font();
+    fontmetrics & default_fontmetrics();
 }
 
 namespace std

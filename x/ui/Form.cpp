@@ -108,6 +108,14 @@ namespace ui
         setWindowPos(p);
     }
 
+    float_t Form::ratio() const
+    {
+        if (auto s = scene())
+            return s->ratio();
+        else
+            return 1.0f;
+    }
+
     void Form::invalidate(const core::rectf & rect)
     {
         if(auto s = scene())
