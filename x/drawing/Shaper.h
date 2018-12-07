@@ -354,7 +354,7 @@ namespace drawing
         core::error layout();
 
         core::sizef bounds() const;
-        std::shared_ptr<SkTextBlob> build();
+        std::shared_ptr<SkTextBlob> build(float32_t width = 0);
 
     public:
         const std::vector<glyph> & glyphs() const { return _glyphs; }
@@ -386,6 +386,7 @@ namespace drawing
         std::vector<segment> _segments;
         std::shared_ptr<class SkTextBlobBuilder> _builder;
 
+        glyph _elid;
         uint16_t _font_default = 0;
         float32_t _ascent = 0.0f;
         float32_t _descent = 0.0f;

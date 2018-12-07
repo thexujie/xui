@@ -60,17 +60,29 @@ namespace ui
     std::shared_ptr<ViewItem> View::findItem(const core::pointf & pos) const
     {
         _confirmLayout();
-        for (size_t index = 0; index != _items.size(); ++index)
+        if (_mode == view_mode::details)
         {
-            auto & item = _items[index];
-            if(_select_mode == select_mode::full_row)
+            for (size_t index = 0; index != _items.size(); ++index)
             {
-                auto & rect = item->box();
-                if (rect.y <= pos.y && pos.y < rect.bottom())
-                    return item;
+                auto & item = _items[index];
+                if (_select_mode == select_mode::full_row)
+                {
+                    auto & rect = item->box();
+                    if (rect.y <= pos.y && pos.y < rect.bottom())
+                        return item;
+                }
+                else
+                {
+                    if (item->rect().contains(pos))
+                        return item;
+                }
             }
-            else
+        }
+        else if (_mode == view_mode::tile)
+        {
+            for (size_t index = 0; index != _items.size(); ++index)
             {
+                auto & item = _items[index];
                 if (item->rect().contains(pos))
                     return item;
             }

@@ -17,6 +17,7 @@ int main()
     //_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF);
     //_CrtMemCheckpoint(&gMemState);
     //atexit([]() { _CrtMemDumpAllObjectsSince(&gMemState); });
+    //_CrtSetBreakAlloc(8560);
 #endif
     auto app = std::make_shared<win32::Win32App>();
 	views_main();

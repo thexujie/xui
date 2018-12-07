@@ -630,10 +630,48 @@ namespace drawing
         return { advance, ascent + descent };
     }
 
-    std::shared_ptr<SkTextBlob> TextClusterizer::build()
+    std::shared_ptr<SkTextBlob> TextClusterizer::build(float32_t width)
     {
         if (_text.empty())
             return nullptr;
+
+        if(width > 0 && !_elid.gid)
+        {
+            char dot[] = ".";
+            uint16_t glyph = 0;
+            if(_shaper.skfont(_font_default)->charsToGlyphs(dot, SkTypeface::kUTF8_Encoding, &glyph, 1))
+            {
+                //_elid.gid = glyph;
+                std::unique_ptr<hb_buffer_t, void(*)(hb_buffer_t *)> _hbbuffer(hb_buffer_create(), hb_buffer_destroy);
+                hb_buffer_clear_contents(_hbbuffer.get());
+                hb_buffer_add_utf8(_hbbuffer.get(), dot, 1, 0, 1);
+                // TODO: features
+                auto & font_cache = _shaper.cache(_font_default);
+                auto & hbfont = _shaper.hbfont(_font_default);
+
+                hb_buffer_set_script(_hbbuffer.get(), HB_SCRIPT_LATIN);
+                hb_buffer_set_direction(_hbbuffer.get(), HB_DIRECTION_LTR);
+                // TODO: language
+                hb_buffer_guess_segment_properties(_hbbuffer.get());
+
+                hb_shape(hbfont.get(), _hbbuffer.get(), nullptr, 0);
+                uint32_t gcount = hb_buffer_get_length(_hbbuffer.get());
+                if (gcount)
+                {
+                    int32_t scaleX = 0, scaleY = 0;
+                    hb_font_get_scale(hbfont.get(), &scaleX, &scaleY);
+                    float32_t coefX = font_cache.font.size *  1.0f / scaleX;
+                    float32_t coefY = font_cache.font.size * 1.0f / scaleY;
+                    hb_glyph_info_t * infos = hb_buffer_get_glyph_infos(_hbbuffer.get(), nullptr);
+                    hb_glyph_position_t * poses = hb_buffer_get_glyph_positions(_hbbuffer.get(), nullptr);
+                    const hb_glyph_info_t & info = infos[0];
+                    const hb_glyph_position_t & pos = poses[0];
+                    _elid.gid = uint16_t(info.codepoint);
+                    _elid.advance = { float32_t(pos.x_advance * coefX), float32_t(pos.y_advance * coefY) };
+                    _elid.offset = { float32_t(pos.x_offset * coefX), float32_t(pos.y_offset * coefY) };
+                }
+            }
+        }
 
         if (!_builder)
             _builder = std::make_shared<SkTextBlobBuilder>();
@@ -656,19 +694,46 @@ namespace drawing
             paint.setAutohinted(true);
             paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
-            //SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(paint, seg.grange.length, seg.trange.length, SkString(), nullptr);
-            SkTextBlobBuilder::RunBuffer runBuffer = _builder->allocRunPos(paint, seg.grange.length, nullptr);
-            //memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
+            SkTextBlobBuilder::RunBuffer runBuffer = _builder->allocRunPos(paint, seg.grange.length + 3, nullptr);
 
+            float32_t offset_x_bk = 0;
+            size_t iglyph_bk = core::npos;
             for (size_t cindex = (ltr ? seg.crange.index : seg.crange.end()), iglyph = 0; cindex != (ltr ? seg.crange.end() : seg.crange.index); ltr ? ++cindex : --cindex)
             {
                 cluster & cl = _clusters[ltr ? cindex : cindex - 1];
+                if (width > 0)
+                {
+                    if (iglyph_bk == core::npos)
+                    {
+                        if (offset_x + cl.advance.cx + _elid.advance.cx * 3 > width)
+                        {
+                            offset_x_bk = offset_x;
+                            iglyph_bk = iglyph;
+                        }
+                    }
+                    else
+                    {
+                        if (offset_x + cl.advance.cx > width)
+                        {
+                            for (size_t ig = iglyph_bk; ig < iglyph_bk + 3; ++ig)
+                            {
+                                runBuffer.glyphs[ig] = _elid.gid;
+                                runBuffer.pos[ig * 2 + 0] = offset_x_bk + _elid.offset.x;
+                                runBuffer.pos[ig * 2 + 1] = offset_y - _elid.offset.y + _ascent; // 基线对齐
+                                offset_y += _elid.advance.cy;
+                                offset_x_bk += _elid.advance.cx;
+                            }
+                            for (size_t ig = iglyph_bk + 3; ig < seg.grange.length + 3; ++ig)
+                                runBuffer.glyphs[ig] = 0;
+                            break;
+                        }
+                    }
+                }
+
                 for (size_t gindex = cl.grange.index; gindex != cl.grange.end(); ++gindex, ++iglyph)
                 {
                     glyph & gl = _glyphs[gindex];
-
                     runBuffer.glyphs[iglyph] = gl.gid;
-                    //runBuffer.clusters[iglyph] = glyph.trange.index;
                     runBuffer.pos[iglyph * 2 + 0] = offset_x + gl.offset.x;
                     runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + _ascent; // 基线对齐
                     //runBuffer.pos[iglyph * 2 + 1] = offset_y - gl.offset.y + font_cache.fmetrics.ascent; // 顶对齐

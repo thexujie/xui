@@ -48,7 +48,7 @@ public:
         wraper.itermize(_text, v->font(), core::colors::Auto);
         wraper.layout(width, _wrap_mode);
         auto bounds = wraper.bounds();
-        return { bounds.cx + v->calc(_padding).bwidth(), bounds.cy + v->calc(1_em) };
+        return { bounds.cx + v->calc(padding()).bwidth(), bounds.cy + v->calc(1_em) };
     }
 
     void place(const core::rectf & box, const core::sizef & size)
@@ -130,6 +130,7 @@ void views_main()
 	}
     {
         auto lv = std::make_shared<ui::ListView>();
+        lv->setViewMode(ui::view_mode::tile);
         lv->setSize({ 100_per, 100_per });
         //lv->setImeMode(ui::ime_mode::on);
         for (size_t cnt = 0; cnt < 100; ++cnt)
@@ -137,6 +138,8 @@ void views_main()
         {
             auto index =lv->addItem(std::make_shared<ui::ListViewItem>(core::format("Item ", cnt), std::make_shared <drawing::Image>("icon.png") , drawing::wrap_mode::none));
             auto item = std::dynamic_pointer_cast<ui::ListViewItem>(lv->itemAt(index));
+            item->addProperty(core::format(u8"属性 ", cnt, u8" 名字不怕长，我就怕你装不下，你感受一下"));
+            item->addProperty(core::format("Property ", cnt));
             item->setIconSize({ 1_em, 1_em });
         }
 

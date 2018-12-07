@@ -302,7 +302,7 @@ namespace drawing
         shaper.itermize(str, format._font, format._color);
         shaper.layout();
         core::sizef size = shaper.bounds();
-        auto blob = shaper.build();
+        auto blob = shaper.build(rect.cx);
 
         core::pointf point = rect.leftTop();
         if (format._align & core::align::right)
@@ -317,11 +317,11 @@ namespace drawing
             point.y = (rect.cy - size.cy) / 2;
         else {}
 
-        //_native->save();
-        //_native->clipRect(skia::from(rect));
+        _native->save();
+        _native->clipRect(skia::from(rect));
         _native->drawTextBlob(blob.get(), point.x, point.y, paint);
-        //_native->clipRect(SkRect());
-        //_native->restore();
+        _native->clipRect(SkRect());
+        _native->restore();
     }
 
     void Graphics::drawTextBlob(const drawing::TextBlob & blob, core::pointf point, const StringFormat & format)

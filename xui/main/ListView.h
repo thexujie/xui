@@ -21,6 +21,7 @@ namespace ui
         core::sizef prefferdSize(float32_t width) const;
         void paint(drawing::Graphics & graphics, const core::rectf & clip);
 
+        void addProperty(std::string p) { _propertiess.push_back(p); }
     private:
         std::shared_ptr<drawing::Image> _icon;
         std::string _text;
@@ -28,12 +29,7 @@ namespace ui
 
         std::optional<core::dimen2f> _icon_size;
         core::dimenf _icon_text_spacing = 0.2_em;
-    };
-
-    enum listview_mode
-    {
-        details = 0,
-        titled
+        std::vector<std::string> _propertiess;
     };
 
 	class ListView : public ui::View
@@ -50,8 +46,5 @@ namespace ui
         core::sizef contentSize() const override;
         void update() override;
 		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
-
-	protected:
-        core::dimen2f _icon_size = {1_em, 1_em};
 	};
 }

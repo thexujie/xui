@@ -7,6 +7,13 @@
 
 namespace ui
 {
+    enum class view_mode
+    {
+        details = 0,
+        tile,
+        icon,
+    };
+
 	class View : public ui::Container
 	{
 	public:
@@ -23,6 +30,8 @@ namespace ui
         std::shared_ptr<ViewItem> itemAt(size_t index) const;
         std::shared_ptr<ViewItem> findItem(const core::pointf & pos) const;
 
+        void setViewMode(view_mode m) { _mode = m; }
+        view_mode viewMode() const { return _mode; }
         void setItemMargin(const core::vec4<core::dimenf> & spacing) { _item_margin = spacing; refresh(); }
         const core::vec4<core::dimenf> & itemMargin() const { return _item_margin; }
         void setItemPadding(const core::vec4<core::dimenf> & spacing) { _item_padding = spacing; refresh(); }
@@ -31,6 +40,8 @@ namespace ui
         core::color markedColor() const { return _marked_color; }
         void setSelectedColor(const core::color & c) { _selected_color = c; }
         core::color selectedColor() const { return _selected_color; }
+        void setTileSize(const core::dimen2f & s) { _tile_size = s; }
+        const core::dimen2f & tileSize() const { return _tile_size; }
 
     public:
         void onRectChanged(const core::rectf & from, const core::rectf & to) override;
@@ -45,15 +56,16 @@ namespace ui
 
 	protected:
         std::vector<std::shared_ptr<ViewItem>> _items;
-        std::map<size_t, std::list<std::shared_ptr<Control>>> _controls;
 
-        std::shared_ptr<ViewItem> _marked_item;
-        std::shared_ptr<ViewItem> _selected_item;
+        view_mode _mode = view_mode::details;
         select_mode _select_mode = select_mode::full_row;
         core::attribute<core::vec4<core::dimenf>> _item_margin;
         core::attribute<core::vec4<core::dimenf>> _item_padding;
-
        core::color _marked_color = core::colors::Auto;
        core::color _selected_color = core::colors::Auto;
+       core::dimen2f _tile_size = { 16_em, 3_em };
+
+        std::shared_ptr<ViewItem> _marked_item;
+        std::shared_ptr<ViewItem> _selected_item;
 	};
 }
