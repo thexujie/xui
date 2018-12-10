@@ -11,7 +11,6 @@ namespace ui
     {
         details = 0,
         tile,
-        icon,
     };
 
 	class View : public ui::Container

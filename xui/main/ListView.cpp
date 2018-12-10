@@ -54,12 +54,13 @@ namespace ui
 
             drawing::fontmetrics fm(v->font());
             float_t pos_y = cbox.y + fm.height;
-            for(auto & p : _propertiess)
+            size_t nprops = (cbox.bottom() - pos_y) / fm.height;
+            for(size_t iprop = 0; iprop < std::min(nprops, _propertiess.size()); ++iprop)
             {
+                auto & prop = _propertiess[iprop];
                 auto color = v->color();
-                color.a /= 2;
-                graphics.drawRectangle(core::rectf(text_x, pos_y, cbox.right() - text_x, fm.height), drawing::PathStyle().fill(0x80ff0000));
-                graphics.drawString(p, core::rectf(text_x, pos_y, cbox.right() - text_x, fm.height), drawing::StringFormat().font(v->font()).color(color));
+                color.a = color.a * 2 / 3;
+                graphics.drawString(prop, core::rectf(text_x, pos_y, cbox.right() - text_x, fm.height), drawing::StringFormat().font(v->font()).color(color));
                 pos_y += fm.height;
             }
         }

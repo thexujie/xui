@@ -136,16 +136,17 @@ void views_main()
 	}
     {
         auto lv = std::make_shared<ui::ListView>();
-        lv->setViewMode(ui::view_mode::tile);
+        //lv->setViewMode(ui::view_mode::tile);
         lv->setSize({ 100_per, 100_per });
         //lv->setImeMode(ui::ime_mode::on);
-        for (size_t cnt = 0; cnt < 100; ++cnt)
+        for (size_t cnt = 0; cnt < 500; ++cnt)
             //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
         {
             auto index =lv->addItem(std::make_shared<ui::ListViewItem>(core::format("Item ", cnt), std::make_shared <drawing::Image>("icon.png") , drawing::wrap_mode::none));
             auto item = std::dynamic_pointer_cast<ui::ListViewItem>(lv->itemAt(index));
             item->addProperty(core::format(u8"属性 ", cnt, u8" 名字不怕长，我就怕你装不ققق قققق下，你感受一下"));
             item->addProperty(core::format("Property ", cnt));
+            item->addProperty(core::format("Attributes", cnt));
             item->setIconSize({ 1_em, 1_em });
         }
 
