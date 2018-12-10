@@ -14,7 +14,6 @@
 #include "SkStream.h"
 #include "SkTextBlob.h"
 #include "SkTypeface.h"
-#include "skia/SkShaper.h"
 
 static inline size_t utf32_to_utf8(const char32_t & ch, char * text)
 {
@@ -685,16 +684,17 @@ namespace drawing
             bool ltr = !(item.level & 1);
 
             auto & font_cache = _shaper.cache(item.font);
-            SkPaint paint;
-            paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
-            paint.setTextSize(font_cache.font.size);
-            paint.setAntiAlias(true);
-            paint.setLCDRenderText(true);
-            paint.setColor(item.color);
-            paint.setAutohinted(true);
-            paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+            //SkPaint paint;
+            //paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
+            //paint.setTextSize(font_cache.font.size);
+            //paint.setAntiAlias(true);
+            //paint.setLCDRenderText(true);
+            //paint.setColor(item.color);
+            //paint.setAutohinted(true);
+            //paint.setTextEncoding(SkTextEncoding::kGlyphID);
 
-            SkTextBlobBuilder::RunBuffer runBuffer = _builder->allocRunPos(paint, seg.grange.length + 3, nullptr);
+            SkFont font(sk_ref_sp(font_cache.skfont.get()), font_cache.font.size);
+            SkTextBlobBuilder::RunBuffer runBuffer = _builder->allocRunPos(font, seg.grange.length + 3, nullptr);
 
             float32_t offset_x_bk = 0;
             size_t iglyph_bk = core::npos;
@@ -986,17 +986,17 @@ namespace drawing
 
                 auto & font_cache = _shaper.cache(item.font);
                 float32_t offset_x = seg.offset;
-                SkPaint paint;
-                paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
-                paint.setTextSize(font_cache.font.size);
-                paint.setAntiAlias(true);
-                paint.setLCDRenderText(true);
-                paint.setColor(item.color);
-                paint.setAutohinted(true);
-                paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+                //SkPaint paint;
+                //paint.setTypeface(sk_ref_sp(font_cache.skfont.get()));
+                //paint.setTextSize(font_cache.font.size);
+                //paint.setAntiAlias(true);
+                //paint.setLCDRenderText(true);
+                //paint.setColor(item.color);
+                //paint.setAutohinted(true);
+                //paint.setTextEncoding(SkTextEncoding::kGlyphID);
 
-                //SkTextBlobBuilder::RunBuffer runBuffer = builder.allocRunTextPos(paint, seg.grange.length, seg.trange.length, SkString(), nullptr);
-                SkTextBlobBuilder::RunBuffer runBuffer = _builder->allocRunPos(paint, seg.grange.length, nullptr);
+                SkFont font(sk_ref_sp(font_cache.skfont.get()), font_cache.font.size);
+                SkTextBlobBuilder::RunBuffer runBuffer = _builder->allocRunPos(font, seg.grange.length, nullptr);
                 //memcpy(runBuffer.utf8text, _text.c_str() + seg.trange.index, seg.trange.length);
 
                 for (size_t cindex = (ltr ? seg.crange.index : seg.crange.end()), iglyph = 0; cindex != (ltr ? seg.crange.end() : seg.crange.index); ltr ? ++cindex : --cindex)

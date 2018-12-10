@@ -934,35 +934,35 @@ namespace core
         return texttoi<CharT, int64_t>(text, length, scale);
     }
 
-    /// 将文本转换为整数
-    template<typename CharT, typename IntT>
-    int32_t texttoiarr(const CharT * text, size_t length, IntT * arr, int32_t count, CharT split = ',', int32_t scale = 0)
-    {
-        if (!text || !length || !arr || count <= 0)
-            return 0;
+    ///// 将文本转换为整数
+    //template<typename CharT, typename IntT>
+    //int32_t texttoiarr(const CharT * text, size_t length, IntT * arr, int32_t count, CharT split = ',', int32_t scale = 0)
+    //{
+    //    if (!text || !length || !arr || count <= 0)
+    //        return 0;
 
-        if (length < 0)
-            length = textlen(text, 64);
+    //    if (length < 0)
+    //        length = textlen(text, 64);
 
-        int32_t index = 0;
-        const CharT * beg = text;
-        const CharT * end = text + length;
-        for (int32_t cnt = 0; cnt < count; ++cnt)
-        {
-            int32_t count = textch<CharT>(beg, end - beg, split);
-            if (count < 0)
-            {
-                if (beg < end)
-                    count = end - beg;
-                else
-                    break;
-            }
+    //    int32_t index = 0;
+    //    const CharT * beg = text;
+    //    const CharT * end = text + length;
+    //    for (int32_t cnt = 0; cnt < count; ++cnt)
+    //    {
+    //        int32_t count = textch<CharT>(beg, end - beg, split);
+    //        if (count < 0)
+    //        {
+    //            if (beg < end)
+    //                count = end - beg;
+    //            else
+    //                break;
+    //        }
 
-            arr[index++] = texttoi<CharT, IntT>(beg, count, scale);
-            beg += count + 1;
-        }
-        return index;
-    }
+    //        arr[index++] = texttoi<CharT, IntT>(beg, count, scale);
+    //        beg += count + 1;
+    //    }
+    //    return index;
+    //}
 
     /// 将文本转换为浮点数
     template<typename CharT, typename FloatT>

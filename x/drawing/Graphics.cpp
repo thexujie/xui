@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Graphics.h"
 #include "skia/skia.h"
-#include "skia/SkShaper.h"
 #include <SkScalar.h>
 #include <SkTextBlob.h>
 #include <SkPathEffect.h>

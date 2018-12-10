@@ -88,7 +88,7 @@ private:
 void views_main()
 {
 	auto ss = std::make_shared<ui::component::StyleSheet>();
-	ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
+	ss->loadFromFile("../xui/samples/test.css");
 
 	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::frameless);
     auto scene = std::make_shared<ui::Scene>(form);

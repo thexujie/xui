@@ -59,9 +59,6 @@
     <ClCompile Include="core\core.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="drawing\skia\SkShaper.cpp">
-      <Filter>drawing\skia</Filter>
-    </ClCompile>
     <ClCompile Include="drawing\Bitmap.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
@@ -298,9 +295,6 @@
     </ClInclude>
     <ClInclude Include="core\counter_fps.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\skia\SkShaper.h">
-      <Filter>drawing\skia</Filter>
     </ClInclude>
     <ClInclude Include="drawing\Bitmap.h">
       <Filter>drawing</Filter>
