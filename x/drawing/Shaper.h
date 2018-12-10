@@ -1,5 +1,6 @@
 #pragma once
 
+class SkFont;
 class SkTypeface;
 class SkTextBlob;
 
@@ -305,7 +306,7 @@ namespace drawing
         struct font_cache
         {
             drawing::font font;
-            std::shared_ptr<SkTypeface> skfont;
+            std::shared_ptr<SkTypeface> sktypeface;
             std::shared_ptr<hb_font_t> hbfont;
             drawing::fontmetrics fmetrics;
         };
@@ -322,7 +323,7 @@ namespace drawing
         const std::vector<font_cache> & fonts(uint16_t index) const { return _fonts; }
         const font_cache & cache(uint16_t index) const { return _fonts[index]; }
         const drawing::font & font(uint16_t index) { return _fonts[index].font; }
-        std::shared_ptr<SkTypeface> & skfont(uint16_t index) { return _fonts[index].skfont; }
+        std::shared_ptr<SkTypeface> & sktypeface(uint16_t index) { return _fonts[index].sktypeface; }
         std::shared_ptr<hb_font_t> & hbfont(uint16_t index) { return _fonts[index].hbfont; }
         const drawing::fontmetrics & fontmetrics(uint16_t index) { return _fonts[index].fmetrics; }
 

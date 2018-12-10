@@ -20,7 +20,7 @@ int main()
     //_CrtSetBreakAlloc(8560);
 #endif
     auto app = std::make_shared<win32::Win32App>();
-	views_main();
+    views_main();
 	return 0;
 }
 

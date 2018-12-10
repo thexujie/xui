@@ -28,11 +28,11 @@ void all_main()
 	std::string rtft = u8"hello لغة عربية‎𪚥𪚥བོད་ཀྱི་སྐད་ཡིག།𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق قققق";
 
 	drawing::TextWraper shaper;
-	shaper.itermize(u8"ยิ้ยิ้ยิ้ ", drawing::font(), colors::Black);
+	shaper.itermize(u8"ยิ้ยิ้ยิ ق قق ققق قققق", drawing::font(), colors::Black);
 	shaper.layout(999999999, drawing::wrap_mode::word);
 
 	auto ss = std::make_shared<ui::component::StyleSheet>();
-	ss->loadFromFile("E:/vsrepo/xui/xui/samples/test.css");
+    ss->loadFromFile("../xui/samples/test.css");
 
 	auto dsize = ui::Desktop::instance().size();
 	auto screen = ui::Desktop::instance().screen(0);

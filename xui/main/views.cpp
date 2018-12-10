@@ -87,6 +87,12 @@ private:
 
 void views_main()
 {
+    //std::string rtft = u8"hello لغة عربية‎𪚥𪚥བོད་ཀྱི་སྐད་ཡིག།𪚥ยิ้ยิ้ยิ😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق قققق";
+    //drawing::TextClusterizer shaper;
+    //shaper.itermize(rtft, drawing::font(), core::colors::Black);
+    //shaper.layout();
+    //shaper.build(300.0f);
+
 	auto ss = std::make_shared<ui::component::StyleSheet>();
 	ss->loadFromFile("../xui/samples/test.css");
 
@@ -138,7 +144,7 @@ void views_main()
         {
             auto index =lv->addItem(std::make_shared<ui::ListViewItem>(core::format("Item ", cnt), std::make_shared <drawing::Image>("icon.png") , drawing::wrap_mode::none));
             auto item = std::dynamic_pointer_cast<ui::ListViewItem>(lv->itemAt(index));
-            item->addProperty(core::format(u8"属性 ", cnt, u8" 名字不怕长，我就怕你装不下，你感受一下"));
+            item->addProperty(core::format(u8"属性 ", cnt, u8" 名字不怕长，我就怕你装不ققق قققق下，你感受一下"));
             item->addProperty(core::format("Property ", cnt));
             item->setIconSize({ 1_em, 1_em });
         }

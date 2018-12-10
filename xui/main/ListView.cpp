@@ -58,6 +58,7 @@ namespace ui
             {
                 auto color = v->color();
                 color.a /= 2;
+                graphics.drawRectangle(core::rectf(text_x, pos_y, cbox.right() - text_x, fm.height), drawing::PathStyle().fill(0x80ff0000));
                 graphics.drawString(p, core::rectf(text_x, pos_y, cbox.right() - text_x, fm.height), drawing::StringFormat().font(v->font()).color(color));
                 pos_y += fm.height;
             }
