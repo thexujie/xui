@@ -526,6 +526,9 @@ namespace win32
 			return;
 
 		auto scene = f->scene();
+        if (!scene)
+            return;
+
 		std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
 		if(!bitmap)
 			return;

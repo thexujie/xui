@@ -54,5 +54,6 @@
     <None Include="samples\test.css">
       <Filter>samples</Filter>
     </None>
+    <None Include="roadmap.md" />
   </ItemGroup>
 </Project>

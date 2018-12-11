@@ -32,7 +32,7 @@ namespace ui
         form_state formState() const { return _form_state; }
 
 
-		void show() { show(form_state::show); }
+ 		void show() { show(form_state::show); }
 		void show(form_state fs);
         bool shown() const { return _form_state != form_state::hide; }
         void close();

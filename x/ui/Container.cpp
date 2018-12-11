@@ -478,6 +478,8 @@ namespace ui
                     else
                         fixed_size += ps.cx;
                 }
+                else
+                    fixed_size += ps.cx;
             }
             else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
             {
@@ -489,6 +491,8 @@ namespace ui
                     else
                         fixed_size += ps.cy;
                 }
+                else
+                    fixed_size += ps.cy;
             }
             else {}
 

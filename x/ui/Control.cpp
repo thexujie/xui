@@ -320,7 +320,11 @@ namespace ui
     void Control::rearrange()
     {
 		if(auto p = parent())
-			p->relayout();
+		{
+            if (!p->size().cx.avi() || p->size().cy.avi())
+                p->rearrange();
+ 			p->relayout();
+		}
     }
 
     void Control::restyle()
@@ -400,8 +404,7 @@ namespace ui
         if (_margin != margin)
         {
             _margin = margin;
-            if (auto p = parent())
-                p->relayout(nullptr);
+            rearrange();
         }
     }
 

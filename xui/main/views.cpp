@@ -139,7 +139,7 @@ void views_main()
         //lv->setViewMode(ui::view_mode::tile);
         lv->setSize({ 100_per, 100_per });
         //lv->setImeMode(ui::ime_mode::on);
-        for (size_t cnt = 0; cnt < 500; ++cnt)
+        for (size_t cnt = 0; cnt < 100; ++cnt)
             //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
         {
             auto index =lv->addItem(std::make_shared<ui::ListViewItem>(core::format("Item ", cnt), std::make_shared <drawing::Image>("icon.png") , drawing::wrap_mode::none));
@@ -153,6 +153,65 @@ void views_main()
         form->addControl(lv);
         lv->setScrollbarVisionV(ui::scrollbar_vision::always);
     }
+	{
+        auto container = std::make_shared<ui::Container>(core::align::left);
+        container->setBackgroundColor(core::colors::LightBlue);
+        container->setCompactLayout(true);
+        container->setSize({ 100_per, core::auto_value });
+
+        auto spacer1 = container->addSpacer(50_per);
+        spacer1->setMaxSize({ 4_em, core::auto_value });
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里确定");
+            rbtn->setCursor(ui::cursor::hand);
+            container->addControl(rbtn);
+        }
+        container->addSpacer(2_em);
+        //container->addSpacer(50_per);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里取消");
+            rbtn->setCursor(ui::cursor::wait);
+            container->addControl(rbtn);
+        }
+        container->addSpacer(50_per);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里再次取消");
+            container->addControl(rbtn);
+        }
+        container->addSpacer(50_per);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里再次取消");
+            container->addControl(rbtn);
+        }
+        container->addSpacer(50_per);
+        {
+            auto rbtn = std::make_shared<ui::controls::Button>();
+            rbtn->setText(u8"点击这里再次取消");
+            container->addControl(rbtn);
+            rbtn->click += [ss]()
+            {
+                static std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::frameless);
+                auto scene = std::make_shared<ui::Scene>(form);
+                scene->setStyleSheet(ss);
+                form->setFormScene(scene);
+                form->setBorder({ 1_px, 1_px });
+                form->setTitle(u8"Popup");
+                form->setBorderColors({ core::colors::Black, core::colors::Black });
+                form->setBackgroundColor(0xffffffff);
+                form->setResizeBorders({ 4_px, 4_px });
+                form->setLayoutDirection(core::align::top);
+                form->show();
+            };
+        }
+        container->addSpacer(50_per);
+        //container->setBorder({ 1_px, 1_px });
+        //container->setBorderColors({ core::colors::Red, core::colors::Red });
+        form->addControl(container);
+	}
 	//form->addControl(layer);
 	win32::runLoop();
 }
