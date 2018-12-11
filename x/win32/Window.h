@@ -1,5 +1,4 @@
 #pragma once
-#include "ui/component/Window.h"
 #include "ui/Form.h"
 #include "win32/win32.h"
 #include "ImeContext.h"
@@ -13,7 +12,7 @@ namespace win32
     };
     typedef core::bitflag<windowmessage_bock> windowmessage_bocks;
 
-    class Window : public ui::component::Window
+    class Window : public core::object, public ui::IWindow
     {
     public:
         Window();
@@ -23,11 +22,12 @@ namespace win32
         core::error attatch(handle_t handle);
         void detach();
 
+        std::shared_ptr<ui::IImeContext> imeContext() const { return _ime_context; }
+        std::shared_ptr<ui::ICursorContext> cursorContext() const { return _cursor_context; }
         void move(const core::pointf & pos);
         void resize(const core::sizef & size);
 
         std::shared_ptr<ui::Form> form() { return _form.lock(); }
-        std::shared_ptr<ui::Scene> scene() { if (auto f = _form.lock()) { return f->scene(); } return nullptr; }
         handle_t handle() const;
         intx_t handleMSG(uint32_t uiMessage, uintx_t wParam, intx_t lParam);
 

@@ -52,8 +52,8 @@ namespace ui::controlsex
             setLayoutDirection(core::align::right);
         }
 
-		void onEnterScene(std::shared_ptr<ui::Scene> & scene);
-		void onLeaveScene();
+		void onEnter(std::shared_ptr<ui::Form> & form);
+		void onLeave();
 		std::shared_ptr< ui::Form> form() { return _form.lock(); }
 
 		void onFormStylesChanged(ui::form_styles, ui::form_styles styles)

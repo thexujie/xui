@@ -270,9 +270,8 @@ namespace ui::controls
         }
     }
 
-    void TextLine::onFocus(std::shared_ptr<ImeContext> imecontext)
+    void TextLine::onFocus()
     {
-        _ime_context = imecontext;
         if(!_cursor_anim)
         {
             auto accessor = make_accessor(&TextLine::_setCursorShown, &TextLine::_cursorShown);
@@ -286,15 +285,13 @@ namespace ui::controls
         _cursor_anim->start();
         restyle();
 
-        if(_ime_context)
-            _ime_context->setImeMode(_ime_mode);
+        if(auto ic = imeContext())
+            ic->setImeMode(_ime_mode);
         _updateIme();
     }
 
     void TextLine::onBlur()
     {
-        _ime_context = nullptr;
-        //std::lock_guard lock(*this);
         _setCursorShown(false);
         _cursor_anim ? _cursor_anim->stop() : nullptr;
         restyle();
@@ -428,27 +425,26 @@ namespace ui::controls
 
     void TextLine::_updateIme()
     {
-        if (!_ime_context)
-            return;
-
         if(_ime_mode != ime_mode::disabled)
         {
             auto cbox = contentBox();
-            if(_text.empty())
-                _ime_context->setCompositionPos(cbox.leftTop().offseted(_scroll_pos, 0));
-            else
+            if (auto ic = imeContext())
             {
-                auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
-                assert(cluster);
-                _ime_context->setCompositionPos(cbox.leftTop().offseted(_cursor_far ? cluster.rect.right() : cluster.rect.left(), 0).offset(_scroll_pos, 0));
+                if (_text.empty())
+                    ic->setCompositionPos(cbox.leftTop().offseted(_scroll_pos, 0));
+                else
+                {
+                    auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+                    assert(cluster);
+                    ic->setCompositionPos(cbox.leftTop().offseted(_cursor_far ? cluster.rect.right() : cluster.rect.left(), 0).offset(_scroll_pos, 0));
+                }
+                ic->setCompositionFont(font());
             }
-            _ime_context->setCompositionFont(font()); 
         }
     }
 
     void TextLine::_doshaper()
     {
-        std::lock_guard l(*this);
         _delay_shaper = false;
 
         if(_delay_shaper_flags.any(shaper_flag::shaper))

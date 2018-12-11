@@ -22,6 +22,7 @@ namespace core
     struct unit_value
     {
         constexpr unit_value() :value() {}
+        constexpr unit_value(const T & value_) : value(value_), unit(core::unit::dot) {}
         constexpr unit_value(const T & value_, core::unit unit_) : value(value_), unit(unit_) {}
 
         unit_value<T> operator + (const unit_value<T> & another) const

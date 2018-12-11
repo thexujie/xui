@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Container.h"
+#include "Form.h"
 #include "controls/ScrollBar.h"
 #include "controls/Spacer.h"
 
@@ -24,20 +25,14 @@ namespace ui
 
     void Container::addControl(std::shared_ptr<Control> control)
     {
-        std::lock_guard lock(*this);
         if (std::find(_controls.begin(), _controls.end(), control) != _controls.end())
             return;
 
-        auto s = scene();
+        auto f = form();
+        control->onEntering(f);
         control->setParent(share_ref<Container>());
-        if(s)
-        {
-            control->onEnteringScene(s);
-            _controls.insert(control);
-            control->onEnterScene(s);
-        }
-        else
-            _controls.insert(control);
+        _controls.insert(control);
+        control->onEnter(f);
         relayout();
     }
 
@@ -51,51 +46,55 @@ namespace ui
 
     void Container::removeControl(std::shared_ptr<Control> control)
     {
-        std::lock_guard lock(*this);
-        control->onLeavingScene();
         auto iter = std::find(_controls.begin(), _controls.end(), control);
         if (iter != _controls.end())
+        {
+            control->onLeaving();
+            control->setParent(nullptr);
             _controls.erase(iter);
-        control->onLeaveScene();
+            control->onLeave();
+        }
     }
 
 	void Container::clearControls()
     {
-		std::lock_guard lock(*this);
 		for(auto & control : _controls)
-			control->onLeavingScene();
+		{
+			control->onLeaving();
+            control->setParent(nullptr);
+		}
 		auto controls = std::move(_controls);
 		for(auto & control : _controls)
-			control->onLeaveScene();
+			control->onLeave();
     }
 
-    void Container::onEnteringScene(std::shared_ptr<Scene> & scene)
+    void Container::onEntering(std::shared_ptr<Form> & form)
     {
-        Control::onEnteringScene(scene);
+        Control::onEntering(form);
         for (auto & control : _controls)
-            control->onEnteringScene(scene);
+            control->onEntering(form);
     }
 
-    void Container::onEnterScene(std::shared_ptr<Scene> & scene)
+    void Container::onEnter(std::shared_ptr<Form> & form)
     {
-        Control::onEnterScene(scene);
+        Control::onEnter(form);
         relayout();
         for (auto & control : _controls)
-            control->onEnterScene(scene);
+            control->onEnter(form);
     }
 
-    void Container::onLeavingScene()
+    void Container::onLeaving()
     {
         for (auto & control : _controls)
-            control->onLeavingScene();
-        Control::onLeavingScene();
+            control->onLeaving();
+        Control::onLeaving();
     }
 
-    void Container::onLeaveScene()
+    void Container::onLeave()
     {
         for (auto & control : _controls)
-            control->onLeaveScene();
-        Control::onLeaveScene();
+            control->onLeave();
+        Control::onLeave();
     }
 
     void Container::invalidate(const core::rectf & rect)
@@ -117,11 +116,11 @@ namespace ui
 		return true;
     }
 
-    int32_t Container::animate()
+    size_t Container::onAnimate()
     {
-        int32_t num = Control::animate();
+        size_t num = Control::onAnimate();
         for (auto & control : _controls)
-            num += control->animate();
+            num += control->onAnimate();
         return num;
     }
 
@@ -130,10 +129,9 @@ namespace ui
         return (_scrollbar_v || _scrollbar_h) ? core::align::mask : core::align::none;
     }
 
-    void Container::prepaint(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Container::onPaint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         uint32_t a = std::clamp< uint32_t>(uint32_t(std::round(_alpha * 0xff)), 0, 0xff);
-        std::lock_guard lock(*this);
         if (a != 0xff)
             graphics.saveLayer(box().expanded(1.0f), a);
         else
@@ -150,7 +148,7 @@ namespace ui
 
             auto rect = control->realRect();
             if(clip2.intersect_with(rect))
-                control->prepaint(graphics, clip2);
+                control->onPaint(graphics, clip2);
         }
         _drawBorder(graphics);
         graphics.restore();
@@ -266,7 +264,7 @@ namespace ui
     void Container::relayout(layout_flags flags)
     {
         _invalid_layout_flags |= flags;
-        if (!_invalid_layout && scene())
+        if (!_invalid_layout && form())
         {
             _invalid_layout = true;
             invoke([this]()
@@ -442,7 +440,7 @@ namespace ui
         if (!_invalid_layout && !flags.any(layout_flag::force))
             return;
 
-        if (!scene())
+        if (!form())
             return;
 
         float32_t margin = 0;
@@ -597,7 +595,7 @@ namespace ui
                     control->place(contentBox(), preffer_size);
                     break;
                 case layout_origin::scene:
-                    control->place(scene()->rect(), preffer_size);
+                    control->place(form()->realRect(), preffer_size);
                     break;
                 default:
                     break;
@@ -617,7 +615,7 @@ namespace ui
         if(_scroll_controls)
             setLayoutedSize(layout_size);
 
-        scene()->setEvent(scene_event::update_mouse_pos);
+        form()->setEvent(scene_event::update_mouse_pos);
     }
 }
 

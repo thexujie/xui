@@ -88,20 +88,17 @@ namespace ui::controlsex
 
 	//---------------------------------------------------
 
-	void TitleBar::onEnterScene(std::shared_ptr<ui::Scene> & scene)
+	void TitleBar::onEnter(std::shared_ptr<ui::Form> & form)
 	{
-		if(auto f = form())
-		{
-			f->stylesChanged += std::weak_bind(&TitleBar::onFormStylesChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
-			f->stateChanged += std::weak_bind(&TitleBar::onFormStateChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
-			_updateButtons();
-		}
-		ui::Container::onEnterScene(scene);
+        form->stylesChanged += std::weak_bind(&TitleBar::onFormStylesChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
+        form->stateChanged += std::weak_bind(&TitleBar::onFormStateChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
+        _updateButtons();
+        ui::Container::onEnter(form);
 	}
 
-	void TitleBar::onLeaveScene()
+	void TitleBar::onLeave()
 	{
-		ui::Container::onLeaveScene();
+		ui::Container::onLeave();
 		if(auto f = form())
 		{
 			f->stylesChanged -= std::weak_bind(&TitleBar::onFormStylesChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);

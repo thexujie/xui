@@ -9,15 +9,22 @@
 void all_main();
 void views_main();
 
-static _CrtMemState gMemState;
+//template<typename R, typename... A>
+//R ret(R(*)(A...));
+//
+//template<typename C, typename R, typename... A>
+//R ret(R(C::*)(A...));
+//
+//template<typename T>
+//void print_name(T f)
+//{
+//    printf("%s\n", typeid(decltype(ret(f))).name());
+//}
+
 int main()
 {
 #if defined _DEBUG
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    //_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF);
-    //_CrtMemCheckpoint(&gMemState);
-    //atexit([]() { _CrtMemDumpAllObjectsSince(&gMemState); });
-    //_CrtSetBreakAlloc(8560);
 #endif
     auto app = std::make_shared<win32::Win32App>();
     views_main();

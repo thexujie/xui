@@ -37,11 +37,8 @@ namespace ui::controls
             return;
 
         _text = text;
-        {
-            std::lock_guard l(*this);
-            _textBlob.reset();
-            rearrange();
-        }
+        _textBlob.reset();
+        rearrange();
     }
 
     void Text::_confirmBlob() const

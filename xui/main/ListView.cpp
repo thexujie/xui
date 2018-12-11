@@ -146,7 +146,7 @@ namespace ui
             lsize = {ncols * (ps.cx + m.bwidth()), nrows * (ps.cy + m.bheight())};
         }
         setLayoutedSize(lsize);
-        scene()->setEvent(scene_event::update_mouse_pos);
+        form()->setEvent(scene_event::update_mouse_pos);
         repaint();
     }
 

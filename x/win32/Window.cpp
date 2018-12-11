@@ -71,16 +71,11 @@ namespace win32
         _form = form;
 		_form_styles = form ? form->styles() : nullptr;
 
-        auto scene = form->scene();
         form->stateChanged += std::weak_bind(&Window::onStateChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
         form->stylesChanged += std::weak_bind(&Window::onStylesChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
-        scene->rendered += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
-        scene->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
-        scene->evented += std::weak_bind(&Window::onSceneEvented, share_ref<Window>(), std::placeholders::_1);
-        if (_ime_context)
-            scene->setImeContext(_ime_context);
-        if (_cursor_context)
-            scene->setCursorContext(_cursor_context);
+        form->rendered += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
+        form->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
+        form->evented += std::weak_bind(&Window::onSceneEvented, share_ref<Window>(), std::placeholders::_1);
         return core::error_ok;
     }
 
@@ -106,14 +101,6 @@ namespace win32
 
         _ime_context = std::make_shared<win32::ImeContext>(handle);
         _cursor_context = std::make_shared<win32::CursorContext>(handle);
-        if (auto f = form())
-        {
-            if(auto s =  f->scene())
-            {
-                s->setImeContext(_ime_context);
-                s->setCursorContext(_cursor_context);
-            }
-        }
 
         return core::error_ok;
     }
@@ -358,14 +345,13 @@ namespace win32
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
-        auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
         switch(evt)
         {
         case ui::scene_event::update_mouse_pos:
             if(_mouse_state.hoving())
-                s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
+                f->notifyMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
             break;
         default:
             break;
@@ -408,7 +394,7 @@ namespace win32
         }
 
         auto pos = f->windowPos().to<int32_t>();
-        auto size = f->realSize().convert(ceilf).to<int32_t>();
+        auto size = f->calc(f->size()).convert(ceilf).to<int32_t>();
 
 		auto[style, styleEx] = formStylesToWinStyles(f->styles());
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
@@ -525,11 +511,7 @@ namespace win32
 		if(!hwnd)
 			return;
 
-		auto scene = f->scene();
-        if (!scene)
-            return;
-
-		std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
+        std::shared_ptr<drawing::GraphicsDevice> bitmap = f->bitmap();
 		if(!bitmap)
 			return;
 
@@ -574,7 +556,6 @@ namespace win32
 			}
             ReleaseDC(hwnd, hdst);
 		}
-		scene->readEnd();
     }
 
     void Window::_render(const drawing::Region & region)
@@ -587,8 +568,7 @@ namespace win32
         if (!hwnd)
             return;
 
-        auto scene = f->scene();
-        std::shared_ptr<drawing::GraphicsDevice> bitmap = scene->readBegin();
+        std::shared_ptr<drawing::GraphicsDevice> bitmap = f->bitmap();
         if (!bitmap)
             return;
 
@@ -652,7 +632,6 @@ namespace win32
             }
             ReleaseDC(hwnd, hdst);
         }
-        scene->readEnd();
     }
 
 #define CASE_MSG(M, F) case M: return F(wParam, lParam)
@@ -724,8 +703,8 @@ namespace win32
 
             CASE_MSG(WM_REFRESH, OnWmRefresh);
         case WM_CLOSE:
-            f->onClose();
-            return 0;
+            return OnDefault(uiMessage, wParam, lParam);
+            break;
         default:
             return OnDefault(uiMessage, wParam, lParam);
         }
@@ -837,7 +816,7 @@ namespace win32
             return OnDefault(WM_NCACTIVATE, wParam, lParam);
 
         if (_form_styles.any(ui::form_style::frameless))
-            return 0;
+            return 1;
         return OnDefault(WM_NCACTIVATE, wParam, lParam);
 
     }
@@ -847,7 +826,6 @@ namespace win32
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
-        auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
@@ -862,10 +840,10 @@ namespace win32
             TrackMouseEvent(&tme);
             _trackingMouse = true;
             _mouse_state.setHoving(true);
-            s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::enter);
+            f->notifyMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::enter);
         }
 
-        s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
+        f->notifyMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
         return 0;
     }
 
@@ -878,13 +856,12 @@ namespace win32
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
-        auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::mask, false);
         _mouse_state.setHoving(false);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
-        s->onMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
+        f->notifyMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
         if(_cursor_context)
             _cursor_context->reset();
         return 0;
@@ -895,12 +872,11 @@ namespace win32
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
-        auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, true);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
-        s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::press);
+        f->notifyMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::press);
         return 0;
     }
 
@@ -909,13 +885,12 @@ namespace win32
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
-        auto s = f->scene();
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, false);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
-        s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::click);
-        s->onMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
+        f->notifyMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::click);
+        f->notifyMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
         return 0;
     }
 
@@ -928,7 +903,6 @@ namespace win32
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
-        auto s = f->scene();
 
         POINT point = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ::ScreenToClient(hwnd, &point);
@@ -936,14 +910,14 @@ namespace win32
         //core::pointi wheel = core::pointi(core::u32li16(wParam), core::u32hi16(wParam));
         _mouse_state.setWheelLines(core::u32hi16((uint32_t)wParam) / WHEEL_DELTA);
         _mouse_state.setPos(core::pointi(point.x, point.y).to<float32_t>());
-        s->onMouse(_mouse_state, ui::mouse_button::none,  ui::mouse_action::wheel_v);
+        f->notifyMouse(_mouse_state, ui::mouse_button::none,  ui::mouse_action::wheel_v);
         return 0;
     }
 
     intx_t Window::OnWmChar(uintx_t wParam, intx_t lParam)
     {
-        if (auto s = scene())
-            s->onChar(char32_t(wParam));
+        if (auto f = form())
+            f->notifyCharInput(char32_t(wParam));
         return 0;
     }
 
@@ -952,11 +926,10 @@ namespace win32
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
-        auto s = f->scene();
 
         ui::keycode key = virtualkey2keycode(wParam);
         _mouse_state.setKey(key, true);
-        s->onKey(_mouse_state, key, ui::key_action::press);
+        f->notifyKey(_mouse_state, key, ui::key_action::press);
         return 0;
     }
 
@@ -965,11 +938,10 @@ namespace win32
         auto f = form();
         if (!f)
             throw core::exception(core::error_nullptr);
-        auto s = f->scene();
 
         ui::keycode key = virtualkey2keycode(wParam);
         _mouse_state.setKey(key, false);
-        s->onKey(_mouse_state, key, ui::key_action::release);
+        f->notifyKey(_mouse_state, key, ui::key_action::release);
         return 0;
     }
 
@@ -984,10 +956,6 @@ namespace win32
             return def;
 
         auto f =form();
-        auto s = scene();
-        auto c = s ? s->control() : nullptr;
-        if (!c)
-            return def;
 
         POINT posi = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ScreenToClient(hwnd, &posi);
@@ -1015,8 +983,8 @@ namespace win32
 
 	intx_t Window::OnWmCaptureChanged(uintx_t wParam, intx_t lParam)
     {
-		if(auto s = scene())
-			s->onCaptured(_handle == GetCapture());
+		if(auto f = form())
+			f->notifyCaptured(_handle == GetCapture());
 		return OnDefault(WM_CAPTURECHANGED, wParam, lParam);
     }
 

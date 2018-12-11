@@ -104,6 +104,14 @@ namespace std
 
 namespace core
 {
+    enum class event_flag
+    {
+        none = 0,
+        rejected = 0x0001,
+    };
+
+    typedef bitflag<event_flag> event_flags;
+
 	template<typename _Fty>
 	class event final
 	{
@@ -158,14 +166,14 @@ namespace core
 		}
 
 		template<typename ...ArgsT>
-		void operator ()(const ArgsT & ...args)
+		void operator ()(ArgsT && ...args)
 		{
 			for(auto & c : _functions)
 			{
 				if(c.flag & flags::expired)
 					continue;
 
-				c.function(args...);
+				c.function(std::forward<ArgsT>(args)...);
 			}
 
 			_functions.erase(std::remove_if(std::begin(_functions), std::end(_functions), [](const auto & c) { return !!(c.flag & flags::expired); }), _functions.end());

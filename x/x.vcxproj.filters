@@ -107,9 +107,6 @@
     <ClCompile Include="drawing\Path.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
-    <ClCompile Include="ui\component\Window.cpp">
-      <Filter>ui\component</Filter>
-    </ClCompile>
     <ClCompile Include="win32\Window.cpp">
       <Filter>win32</Filter>
     </ClCompile>
@@ -151,9 +148,6 @@
     </ClCompile>
     <ClCompile Include="drawing\skia\skia.cpp">
       <Filter>drawing\skia</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\Scene.cpp">
-      <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="win32\ImeContext.cpp">
       <Filter>win32</Filter>
@@ -371,9 +365,6 @@
     <ClInclude Include="core\utils.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="ui\component\Window.h">
-      <Filter>ui\component</Filter>
-    </ClInclude>
     <ClInclude Include="win32\Window.h">
       <Filter>win32</Filter>
     </ClInclude>
@@ -412,9 +403,6 @@
     </ClInclude>
     <ClInclude Include="ui\controls\ScrollBar.h">
       <Filter>ui\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\Scene.h">
-      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="win32\ImeContext.h">
       <Filter>win32</Filter>

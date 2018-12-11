@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Check.h"
-#include "ui/Scene.h"
 
 namespace ui::base
 {
@@ -23,14 +22,14 @@ namespace ui::base
         Check::propertyTableCallback(properties);
     }
 
-    void Check::onEnteringScene(std::shared_ptr<Scene> & scene)
+    void Check::onEntering(std::shared_ptr<Form> & form)
     {
-        Control::onEnteringScene(scene);
+        Control::onEntering(form);
     }
 
-    void Check::onLeavingScene()
+    void Check::onLeaving()
     {
-        Control::onLeavingScene();
+        Control::onLeaving();
     }
 
     void Check::setCheckState(check_state state)

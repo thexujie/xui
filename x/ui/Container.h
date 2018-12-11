@@ -38,19 +38,19 @@ namespace ui
 		void clearControls();
         std::multiset<std::shared_ptr<Control>, ControlSorter> & children() { return _controls; }
 
-        void onEnteringScene(std::shared_ptr<Scene> & scene) override;
-        void onEnterScene(std::shared_ptr<Scene> & scene) override;
-        void onLeavingScene() override;
-        void onLeaveScene() override;
+        void onEntering(std::shared_ptr<Form> & form) override;
+        void onEnter(std::shared_ptr<Form> & form) override;
+        void onLeaving() override;
+        void onLeave() override;
 
         core::sizef contentSize() const override;
         void invalidate(const core::rectf & rect) override;
 		bool validCompleted() const override;
-        int32_t animate() override;
+        size_t onAnimate() override;
 
     public:
         core::aligns wheelFreedom() const override;
-        void prepaint(drawing::Graphics & graphics, const core::rectf & clip) const override;
+        void onPaint(drawing::Graphics & graphics, const core::rectf & clip) const override;
         std::shared_ptr<Control> findChild(const core::pointf & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const override;
 
         void onPosChanged(const core::pointf & from, const core::pointf & to) override;

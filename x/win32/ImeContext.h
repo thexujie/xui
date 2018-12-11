@@ -5,7 +5,7 @@
 
 namespace win32
 {
-    class ImeContext : public ui::ImeContext
+    class ImeContext : public ui::IImeContext
     {
     public:
         ImeContext(handle_t hwnd);
@@ -22,7 +22,7 @@ namespace win32
 		ui::ime_mode _mode = ui::ime_mode::disabled;
     };
 
-    class CursorContext : public ui::CursorContext
+    class CursorContext : public ui::ICursorContext
     {
     public:
         CursorContext(handle_t hwnd);

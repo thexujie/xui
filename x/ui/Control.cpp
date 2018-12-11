@@ -31,26 +31,6 @@ namespace ui
         return core::app().properties(typeid (*this), std::bind(&Control::propertyTable, this, std::placeholders::_1));
     }
 
-    void Control::setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet)
-    {
-        if (_styleSheet == styleSheet)
-            return;
-
-        _styleSheet = styleSheet;
-        restyle();
-    }
-
-    std::shared_ptr<component::StyleSheet> Control::styleSheet() const
-    {
-        if (_styleSheet)
-            return _styleSheet;
-
-        auto s = scene();
-        if (s)
-            return s->styleSheet();
-        return nullptr;
-    }
-
     core::sizef Control::prefferSize(const core::vec2<float32_t> & spacing) const
     {
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
@@ -110,6 +90,38 @@ namespace ui
                 asize.cy = val;
         }
         return asize;
+    }
+
+    std::shared_ptr<Form> Control::form() const
+    {
+        if (auto p = parent())
+            return p->form();
+        else
+            return nullptr;
+    }
+
+    std::shared_ptr<component::StyleSheet> Control::styleSheet() const
+    {
+        if (auto p = parent())
+            return p->styleSheet();
+        else
+            return nullptr;
+    }
+
+    std::shared_ptr<ui::IImeContext> Control::imeContext() const
+    {
+        if (auto p = parent())
+            return p->imeContext();
+        else
+            return nullptr;
+    }
+
+    std::shared_ptr<ICursorContext> Control::cursorContext() const
+    {
+        if (auto p = parent())
+            return p->cursorContext();
+        else
+            return nullptr;
     }
 
     float_t Control::ratio() const
@@ -172,24 +184,20 @@ namespace ui
 
     float32_t Control::calc(const core::dimenf & value, float32_t spacing) const
     {
-        auto s = scene();
-        if (!s)
-            throw core::error_state;
-
         switch (value.unit)
         {
         case core::unit::px:
-            return value.value * s->ratio();
+            return value.value * ratio();
         case core::unit::em:
             return value.value * drawing::fontmetrics(drawing::font()).height;
         case core::unit::pt:
-            return value.value * 72.0f * s->ratio();
+            return value.value * 72.0f * ratio();
         case core::unit::dot:
             return value.value;
         case core::unit::per:
             return value.value / 100.0f * spacing;
         default:
-            return value.value * s->ratio();
+            return value.value * ratio();
         }
     }
 
@@ -418,23 +426,21 @@ namespace ui
             std::max(padding.bbottom, border.bbottom) };
     }
 
-    void Control::onEnteringScene(std::shared_ptr<Scene> & scene)
+    void Control::onEntering(std::shared_ptr<Form> & form)
     {
-        _scene = scene;
         restyle();
     }
 
-    void Control::onEnterScene(std::shared_ptr<Scene> & scene)
+    void Control::onEnter(std::shared_ptr<Form> & form)
     {
         repaint();
     }
 
-    void Control::onLeavingScene()
+    void Control::onLeaving()
     {
-        _scene.reset();
     }
 
-    void Control::onLeaveScene() { }
+    void Control::onLeave() { }
 
     void Control::place(const core::rectf & rect, const core::sizef & size)
     {
@@ -478,6 +484,12 @@ namespace ui
         setShowRect({ pos, size });
     }
 
+    void Control::setEvent(scene_event evt)
+    {
+        if (auto p = parent())
+            p->setEvent(evt);
+    }
+
     void Control::updateStyle()
     {
         _delay_style = false;
@@ -489,10 +501,9 @@ namespace ui
         if (!ss)
             return;
 
-        auto s = scene();
         std::map<std::string, std::string> items = ss->generate(style);
         auto iter_transition_duration = items.find("transition-duration");
-        if (_style.empty() || !_style_transition || !s || iter_transition_duration == items.end())
+        if (_style.empty() || !_style_transition || iter_transition_duration == items.end())
         {
             clearAnimations(CONTROL_ANIMATION_GROUP_STYLE);
             auto & props = properties();
@@ -560,10 +571,15 @@ namespace ui
             p->invalidate(rect);
     }
 
-    int32_t Control::animate()
+    void Control::animate()
     {
-        std::lock_guard lock(*this);
-        int32_t num = 0;
+        if (auto p = parent())
+            p->animate();
+    }
+
+    size_t Control::onAnimate()
+    {
+        size_t num = 0;
         for (auto & animations : _animations)
         {
             for (auto & anim : animations.second)
@@ -575,7 +591,7 @@ namespace ui
         return num;
     }
 
-    void Control::prepaint(drawing::Graphics & graphics, const core::rectf & clip) const
+    void Control::onPaint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
 		if(!_visible)
 			return;
@@ -584,7 +600,6 @@ namespace ui
         if (a != 0xff)
             graphics.saveLayer(box(), a);
 		{
-            std::lock_guard l(*this);
             _drawBackground(graphics);
             paint(graphics, clip);
             _drawBorder(graphics);
@@ -777,39 +792,23 @@ namespace ui
 
     void Control::appendAnimation(std::string group, std::shared_ptr<core::animation> animation)
     {
-        animation->started += std::weak_bind(&Control::_onAnimationStarted, control_ref());
+        animation->started += std::weak_bind(&Control::animate, control_ref());
         _animations[group].push_back(animation);
-        auto s = scene();
-        if (s)
-            s->animate();
-    }
-
-    void Control::_onAnimationStarted()
-    {
-        auto s = scene();
-        if (s)
-            s->animate();
+        animate();
     }
 
     void Control::onMouseEnter(const input_state & state)
     {
-        if (auto s = scene())
-        {
-            s->cursorContext()->setCursor(_cursor);
-        }
+        cursorContext()->setCursor(_cursor);
         _mousein = true;
         mouseEnter(state);
     }
 
     void Control::onMouseLeave(const input_state & state)
     {
-        if (auto s = scene())
-        {
-            s->cursorContext()->resetCursor();
-        }
+        cursorContext()->resetCursor();
         _pressed = false;
         _mousein = false;
         mouseLeave(state);
     }
-
 }

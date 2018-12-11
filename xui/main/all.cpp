@@ -98,9 +98,7 @@ void all_main()
 
 	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::normal);
 	g_form = form;
-    auto scene = std::make_shared<ui::Scene>(form);
-    scene->setStyleSheet(ss);
-    form->setFormScene(scene);
+    form->setStyleSheet(ss);
 	form->setBorder({ 1_px, 1_px });
 	form->setBorderColors({ colors::Black, colors::Black });
 	form->setBackgroundColor(0x80ffffff);

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Radio.h"
-#include "ui/Scene.h"
+#include "ui/Form.h"
 
 namespace ui::base
 {
@@ -23,24 +23,24 @@ namespace ui::base
         Radio::propertyTableCallback(properties);
     }
 
-    void Radio::onEnteringScene(std::shared_ptr<Scene> & scene)
+    void Radio::onEntering(std::shared_ptr<Form> & form)
     {
         if (!_group.empty())
         {
-            _radio_group = scene->radioGroup(_group);
+            _radio_group = form->radioGroup(_group);
             _radio_group->addRadio(share_ref<Radio>());
         }
-        Control::onEnteringScene(scene);
+        Control::onEntering(form);
     }
 
-    void Radio::onLeavingScene()
+    void Radio::onLeaving()
     {
         if (_radio_group)
         {
             _radio_group->removeRadio(share_ref<Radio>());
             _radio_group = nullptr;
         }
-        Control::onLeavingScene();
+        Control::onLeaving();
     }
 
     void Radio::setGroup(std::string group)
@@ -55,8 +55,8 @@ namespace ui::base
             _group = group;
             if (!group.empty())
             {
-                if (auto s = scene())
-                    _radio_group = s->radioGroup(group);
+                if (auto f = form())
+                    _radio_group = f->radioGroup(group);
             }
 
         }

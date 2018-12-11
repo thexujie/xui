@@ -109,7 +109,6 @@
     <ClCompile Include="ui\base\Radio.cpp" />
     <ClCompile Include="ui\component\Component.cpp" />
     <ClCompile Include="ui\component\Style.cpp" />
-    <ClCompile Include="ui\component\Window.cpp" />
     <ClCompile Include="ui\Container.cpp" />
     <ClCompile Include="ui\controlsex\TitleBar.cpp" />
     <ClCompile Include="ui\controls\Button.cpp" />
@@ -171,7 +170,6 @@
     </ClCompile>
     <ClCompile Include="ui\Grid.cpp" />
     <ClCompile Include="ui\RadioGroup.cpp" />
-    <ClCompile Include="ui\Scene.cpp" />
     <ClCompile Include="win32\ImeContext.cpp" />
     <ClCompile Include="win32\Window.cpp" />
     <ClCompile Include="win32\win32.cpp" />
@@ -188,7 +186,6 @@
     <ClInclude Include="ui\base\Radio.h" />
     <ClInclude Include="ui\component\Component.h" />
     <ClInclude Include="ui\component\Style.h" />
-    <ClInclude Include="ui\component\Window.h" />
     <ClInclude Include="ui\Container.h" />
     <ClInclude Include="ui\controlsex\TitleBar.h" />
     <ClInclude Include="ui\controls\Button.h" />
@@ -264,7 +261,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui\Grid.h" />
     <ClInclude Include="ui\RadioGroup.h" />
-    <ClInclude Include="ui\Scene.h" />
     <ClInclude Include="ui\ui.h" />
     <ClInclude Include="ui\UICommon.h" />
     <ClInclude Include="win32\ImeContext.h" />

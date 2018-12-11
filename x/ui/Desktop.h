@@ -23,6 +23,7 @@ namespace ui
         Desktop();
         ~Desktop();
 
+        float32_t scale() const;
         core::vec2i ppi() const;
         core::sizei size() const;
         int32_t numScreens() const;

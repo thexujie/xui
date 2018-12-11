@@ -97,9 +97,7 @@ void views_main()
 	ss->loadFromFile("../xui/samples/test.css");
 
 	std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::frameless);
-    auto scene = std::make_shared<ui::Scene>(form);
-	scene->setStyleSheet(ss);
-    form->setFormScene(scene);
+    form->setStyleSheet(ss);
 	form->setBorder({ 1_px, 1_px });
     form->setTitle(u8"Views");
 	form->setBorderColors({ core::colors::Black, core::colors::Black });
@@ -194,17 +192,29 @@ void views_main()
             container->addControl(rbtn);
             rbtn->click += [ss]()
             {
-                static std::shared_ptr<ui::Form> form = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::frameless);
-                auto scene = std::make_shared<ui::Scene>(form);
-                scene->setStyleSheet(ss);
-                form->setFormScene(scene);
-                form->setBorder({ 1_px, 1_px });
-                form->setTitle(u8"Popup");
-                form->setBorderColors({ core::colors::Black, core::colors::Black });
-                form->setBackgroundColor(0xffffffff);
-                form->setResizeBorders({ 4_px, 4_px });
-                form->setLayoutDirection(core::align::top);
+                static std::shared_ptr<ui::Form> form = nullptr;
+                if(!form)
+                {
+                    form = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::frameless);
+                    form->setStyleSheet(ss);
+                    form->setBorder({ 1_px, 1_px });
+                    form->setTitle(u8"Popup");
+                    form->setBorderColors({ core::colors::Black, core::colors::Black });
+                    form->setBackgroundColor(0xffffffff);
+                    form->setResizeBorders({ 4_px, 4_px });
+                    form->setLayoutDirection(core::align::top);
+
+                    // 标题栏
+                    {
+                        auto title = std::make_shared<ui::controlsex::TitleBar>(form);
+                        title->setSize({ 100_per, 1.8_em });
+                        title->setBackgroundColor(0xfff1f1f0);
+                        form->addControl(title);
+                    }
+                }
+
                 form->show();
+                form->centerScreen();
             };
         }
         container->addSpacer(50_per);

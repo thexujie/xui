@@ -397,6 +397,12 @@ namespace ui
         wheel_v,
     };
 
+    enum class scene_event
+    {
+        none = 0,
+        update_mouse_pos,
+    };
+
     class input_state
     {
     public:
@@ -442,20 +448,31 @@ namespace ui
         off,
     };
 
-    class ImeContext
+    class IImeContext
     {
     public:
-        virtual ~ImeContext() {}
+        virtual ~IImeContext() {}
         virtual void setImeMode(ui::ime_mode mode) = 0;
         virtual void setCompositionPos(core::pointf pos) = 0;
         virtual void setCompositionFont(const drawing::font & font) = 0;
     };
 
-    class CursorContext
+    class ICursorContext
     {
     public:
-        virtual ~CursorContext() {}
+        virtual ~ICursorContext() {}
         virtual void setCursor(cursor c) = 0;
         virtual void resetCursor() = 0;
+    };
+
+    class IWindow
+    {
+    public:
+        virtual ~IWindow() {}
+
+        virtual std::shared_ptr<IImeContext> imeContext() const = 0;
+        virtual std::shared_ptr<ICursorContext> cursorContext() const = 0;
+        virtual void move(const core::pointf & pos) = 0;
+        virtual void resize(const core::sizef & size) = 0;
     };
 }

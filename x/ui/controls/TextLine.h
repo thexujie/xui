@@ -36,7 +36,7 @@ namespace ui::controls
         void onMouseDown(const input_state & state, ui::mouse_button button) override;
         void onMouseUp(const input_state & state, ui::mouse_button button) override;
         void onKeyDown(const input_state & state, keycode key) override;
-        void onFocus(std::shared_ptr<ImeContext> imecontext) override;
+        void onFocus() override;
         void onBlur() override;
         void onChar(char32_t ch) override;
 
@@ -61,8 +61,6 @@ namespace ui::controls
         std::string _text;
         mutable std::shared_ptr<drawing::TextBlob> _text_blob;
         std::shared_ptr<core::property_animation> _cursor_anim;
-
-        std::shared_ptr<ImeContext> _ime_context;
 
         bool _delay_shaper = false;
         shaper_flags _delay_shaper_flags = nullptr;

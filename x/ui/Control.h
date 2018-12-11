@@ -3,11 +3,11 @@
 #include "component/Style.h"
 #include "drawing/Region.h"
 #include "UICommon.h"
-#include "Scene.h"
 
 namespace ui
 {
     class Container;
+    class Form;
 
     const int32_t ZVALUE_BACKGROUND = -100;
     const int32_t ZVALUE_CONTENT = 0;
@@ -34,12 +34,6 @@ namespace ui
         static void propertyTableCallback(core::property_table & properties);
         virtual void propertyTable(core::property_table & properties);
         virtual const core::property_table & properties();
-
-        void lock() const { _mtx.lock(); }
-        void unlock() const { _mtx.unlock(); }
-
-        void setStyleSheet(std::shared_ptr<component::StyleSheet> styleSheet);
-        std::shared_ptr<component::StyleSheet> styleSheet() const;
 
         void setZValue(int32_t zvalue) { _zvalue = zvalue; }
         int32_t ZValue() const { return _zvalue; }
@@ -80,9 +74,13 @@ namespace ui
         virtual core::sizef fittingSize(const core::sizef & spacing) const { return { std::nanf(0) , std::nanf(0) }; }
         virtual core::sizef contentSize() const { return core::sizef(); }
 
-        std::shared_ptr<Scene> scene() const { return _scene.lock(); }
         void setParent(std::shared_ptr<Container> parent) { _parent = parent; }
         std::shared_ptr<Container> parent() const { return _parent.lock(); }
+
+        virtual std::shared_ptr<Form> form() const;
+        virtual std::shared_ptr<component::StyleSheet> styleSheet() const;
+        virtual std::shared_ptr<ui::IImeContext> imeContext() const;
+        virtual std::shared_ptr<ICursorContext> cursorContext() const;
 
         virtual float_t ratio() const;
         void setColor(core::color color) { _color = color; }
@@ -207,25 +205,27 @@ namespace ui
         void setCursor(cursor cs) { _cursor = cs; }
         cursor cursor() const { return _cursor; }
 
-        virtual void onEnteringScene(std::shared_ptr<Scene> & scene);
-        virtual void onEnterScene(std::shared_ptr<Scene> & scene);
-        virtual void onLeavingScene();
-        virtual void onLeaveScene();
+        virtual void onEntering(std::shared_ptr<Form> & form);
+        virtual void onEnter(std::shared_ptr<Form> & form);
+        virtual void onLeaving();
+        virtual void onLeave();
 
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
         virtual void place(const core::rectf & rect, const core::sizef & size);
         virtual std::string styleName() const { return {}; }
 
+        virtual void setEvent(scene_event evt);
         virtual void update() {}
         virtual void updateStyle();
         virtual void invalidate();
 		virtual void invalidate(const core::rectf & rect);
 		virtual bool validCompleted() const { return !_delay_repaint; }
 
-        virtual int32_t animate();
+        virtual void animate();
+        virtual size_t onAnimate();
 
-        virtual void prepaint(drawing::Graphics & graphics, const core::rectf & clip) const;
+        virtual void onPaint(drawing::Graphics & graphics, const core::rectf & clip) const;
         virtual void paint(drawing::Graphics & graphics, const core::rectf & clip) const;
 
         virtual std::shared_ptr<Control> findChild(const core::pointf & pos, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr) const { return nullptr; }
@@ -250,9 +250,6 @@ namespace ui
         void _adjustSize(core::sizef & size, const core::vec2<float32_t> & spacing) const;
 
     protected:
-        mutable std::mutex _mtx;
-
-        std::weak_ptr<Scene> _scene;
         std::weak_ptr<Container> _parent;
 
         int32_t _zvalue = ZVALUE_CONTENT;
@@ -287,7 +284,6 @@ namespace ui
         core::vec2<image_fitting> _background_fitting = core::vec2<image_fitting>(image_fitting::none, image_fitting::none);
         control_box _background_box = control_box::layout_box;
 
-        std::shared_ptr<component::StyleSheet> _styleSheet;
         std::string _style;
         bool _style_transition = true;
         // 布局之后
@@ -315,9 +311,6 @@ namespace ui
         void clearAnimations(std::string group);
         void appendAnimation(std::shared_ptr<core::animation> animation) { appendAnimation(std::string(), animation); }
         void appendAnimation(std::string group, std::shared_ptr<core::animation> animation);
-    private:
-        void _onAnimationStarted();
-
 
         //---------------------------------------------------- interact
     public:
@@ -359,7 +352,7 @@ namespace ui
         virtual void onMouseDBClick(const input_state & state, mouse_button button) { mouseDBClick(state, button); }
         virtual void onMouseWheel(const input_state & state) { mouseWheel(state); }
 
-        virtual void onFocus(std::shared_ptr<ImeContext> imecontext)
+        virtual void onFocus()
         {
             _focused = true;
             focus();

@@ -72,15 +72,15 @@ namespace core
         virtual ~object() = default;
 
         template<typename T>
-        std::shared_ptr<T> share_ref()
+        std::shared_ptr<T> share_ref() const
         {
-            return std::dynamic_pointer_cast<T>(shared_from_this());
+            return std::dynamic_pointer_cast<T>(const_cast<object *>(this)->shared_from_this());
         }
 
         template<typename T>
-        std::weak_ptr<T> weak_ref()
+        std::weak_ptr<T> weak_ref() const
         {
-            return std::dynamic_pointer_cast<T>(shared_from_this());
+            return std::dynamic_pointer_cast<T>(const_cast<object *>(this)->shared_from_this());
         }
 
         uint64_t id() const { return _id; }

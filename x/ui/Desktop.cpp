@@ -61,6 +61,14 @@ namespace ui
         
     }
 
+    float32_t Desktop::scale() const
+    {
+        HDC hdc = GetDC(NULL);
+        float32_t s = GetDeviceCaps(hdc, LOGPIXELSY) / 96.0f;
+        ReleaseDC(NULL, hdc);
+        return s;
+    }
+
     core::vec2i Desktop::ppi() const
     {
         HDC hdc = GetDC(NULL);
