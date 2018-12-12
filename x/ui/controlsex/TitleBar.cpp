@@ -39,6 +39,7 @@ namespace ui::controlsex
 	void TitleButton::setPath(std::shared_ptr<drawing::Path> path)
 	{
 		_path = path;
+        repaint();
 	}
 
 	std::string TitleButton::styleName() const
@@ -92,7 +93,8 @@ namespace ui::controlsex
 	{
         form->stylesChanged += std::weak_bind(&TitleBar::onFormStylesChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
         form->stateChanged += std::weak_bind(&TitleBar::onFormStateChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
-        _updateButtons();
+        form->titleChanged += std::weak_bind(&TitleBar::onFormTitleChanged, share_ref<TitleBar>(), std::placeholders::_1);
+        refresh();
         ui::Container::onEnter(form);
 	}
 
@@ -103,6 +105,7 @@ namespace ui::controlsex
 		{
 			f->stylesChanged -= std::weak_bind(&TitleBar::onFormStylesChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
 			f->stateChanged -= std::weak_bind(&TitleBar::onFormStateChanged, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
+            f->titleChanged += std::weak_bind(&TitleBar::onFormTitleChanged, share_ref<TitleBar>(), std::placeholders::_1);
 		}
 	}
 
@@ -112,7 +115,7 @@ namespace ui::controlsex
 			f->onTitleAction(action);
 	}
 
-	void TitleBar::_updateButtons()
+	void TitleBar::update()
 	{
 		auto f = form();
 		if(!f)
@@ -123,6 +126,8 @@ namespace ui::controlsex
 		if(!_close)
 		{
 			_close = std::make_shared<TitleButton>();
+            _close->setSize({ 1.5_em });
+            _close->setMargin({ 0.2_em });
 			auto path = std::make_shared<drawing::Path>();
 			path->moveTo({ 0.3f, 0.3f });
 			path->lineTo({ 0.7f, 0.7f });
@@ -137,6 +142,8 @@ namespace ui::controlsex
 		if(!_maximize)
 		{
 			_maximize = std::make_shared<TitleButton>();
+            _maximize->setSize({ 1.5_em });
+            _maximize->setMargin({ 0.2_em });
 			_maximize->setTitleAction(ui::title_action::maximize);
 			_maximize->action += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
 			addControl(_maximize);
@@ -145,6 +152,8 @@ namespace ui::controlsex
 		if(!_minimize)
 		{
 			_minimize = std::make_shared<TitleButton>();
+            _minimize->setSize({ 1.5_em });
+            _minimize->setMargin({ 0.2_em });
 			auto path = std::make_shared<drawing::Path>();
 			path->moveTo({ 0.3f, 0.7f });
 			path->lineTo({ 0.7f, 0.7f });
@@ -158,6 +167,7 @@ namespace ui::controlsex
         if (!_title)
         {
             _title = std::make_shared<controls::Lable>();
+            _title->setMargin({ 0.2_em });
             _title->setPlaceAlignment(core::align::leftCenterY);
             _title->setText(f->title());
             auto font = _title->font();

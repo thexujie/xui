@@ -141,6 +141,7 @@ namespace ui
     void Control::setFont(const drawing::font & font)
     {
         _font = font;
+        refresh();
     }
 
     const drawing::font & Control::font() const

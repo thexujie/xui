@@ -123,6 +123,7 @@ void views_main()
 	// 标题栏
 	{
 		auto title = std::make_shared<ui::controlsex::TitleBar>(form);
+        title->setSize({ 100_per, core::auto_value });
 		title->setBackgroundColor(0xfff1f1f0);
 		form->addControl(title);
 	}
@@ -149,7 +150,6 @@ void views_main()
                 //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
             {
                 auto index = mv->addItem(std::make_shared<ui::MenuViewItem>(std::make_shared <drawing::Image>("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
-                auto item = std::dynamic_pointer_cast<ui::MenuViewItem>(mv->itemAt(index));
             }
 
             mv->setScrollbarVisionV(ui::scrollbar_vision::always);
@@ -242,6 +242,7 @@ void views_main()
                     // 标题栏
                     {
                         auto title = std::make_shared<ui::controlsex::TitleBar>(form2);
+                        title->setSize({ 100_per, core::auto_value });
                         title->setBackgroundColor(0xfff1f1f0);
                         form2->addControl(title);
                     }

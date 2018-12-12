@@ -175,5 +175,10 @@ namespace ui
         }
         graphics.restore();
 	}
+
+    void ListView::onScrollPosChanged(const core::vec2f & from, const core::vec2f & to)
+    {
+        refresh();
+    }
 }
 

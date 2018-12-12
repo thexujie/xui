@@ -67,6 +67,7 @@ namespace ui
     protected:
         virtual void layout(layout_flags flags);
         virtual void onLayoutedSizeChaged(const core::sizef & from, const core::sizef & to);
+        virtual void onScrollPosChanged(const core::vec2f & from, const core::vec2f & to);
 
     protected:
         void setLayoutedSize(const core::sizef & layouted_size);
@@ -74,7 +75,6 @@ namespace ui
     private:
         void onScrollBarValueChangedV(float32_t from, float32_t to);
         void onScrollBarValueChangedH(float32_t from, float32_t to);
-        void onScrollPosChanged(const core::vec2f & from, const core::vec2f & to);
 
 	protected:
 		void _confirmLayout() const;

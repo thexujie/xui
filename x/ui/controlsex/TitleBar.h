@@ -49,7 +49,6 @@ namespace ui::controlsex
     public:
         TitleBar(std::shared_ptr< ui::Form> form) : _form(form)
         {
-            _size = { 100_per, core::auto_value };
             setLayoutDirection(core::align::right);
         }
 
@@ -59,18 +58,23 @@ namespace ui::controlsex
 
 		void onFormStylesChanged(ui::form_styles, ui::form_styles styles)
         {
-			_updateButtons();
+            refresh();
         }
 
 		void onFormStateChanged(ui::form_state, ui::form_state state)
 		{
-			_updateButtons();
+			refresh();
 		}
+
+        void onFormTitleChanged(const std::string &)
+        {
+            refresh();
+        }
 
 		void onAction(ui::title_action action);
 
     private:
-		void _updateButtons();
+		void update();
 
 	private:
 		std::weak_ptr< ui::Form> _form;

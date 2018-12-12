@@ -205,6 +205,10 @@ namespace ui
         layoutedSizeChaged(from, to);
     }
 
+    void Container::onScrollPosChanged(const core::vec2f & from, const core::vec2f & to)
+    {
+    }
+
     void Container::setLayoutedSize(const core::sizef & layouted_size)
     {
         if (layouted_size != _layouted_size)
@@ -343,10 +347,6 @@ namespace ui
             relayout();
     }
 
-    void Container::onScrollPosChanged(const core::vec2f & from, const core::vec2f & to)
-    {
-    }
-
 	void Container::_confirmLayout() const
     {
 		if(_invalid_layout)
@@ -392,8 +392,6 @@ namespace ui
         _scroll_pos = scroll_pos;
         if (_scroll_controls)
             relayout();
-        else
-            refresh();
         onScrollPosChanged(old, _scroll_pos);
     }
 
@@ -452,6 +450,7 @@ namespace ui
 
         float32_t margin_last = 0;
         float32_t margin_curr = 0;
+        float32_t margin_next = 0;
 
         for (auto & control : _controls)
         {
@@ -469,6 +468,7 @@ namespace ui
             if (_layout_direction == core::align::left || _layout_direction == core::align::right)
             {
                 margin_curr = _layout_direction == core::align::left ? m.bleft : m.bright;
+                margin_next = _layout_direction == core::align::left ? m.bright : m.bleft;
                 if (s.cx.avi())
                 {
                     if (s.cx.per())
@@ -482,6 +482,7 @@ namespace ui
             else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
             {
                 margin_curr = _layout_direction == core::align::top ? m.btop : m.bbottom;
+                margin_next = _layout_direction == core::align::top ? m.bbottom : m.btop;
                 if (s.cy.avi())
                 {
                     if (s.cy.per())
@@ -494,8 +495,8 @@ namespace ui
             }
             else {}
 
-            margin_size += std::max(margin_curr, margin_last);;
-            margin_last = margin_curr;
+            margin_size += std::max(margin_curr, margin_last);
+            margin_last = margin_next;
         }
         margin_size += margin_last;
 
