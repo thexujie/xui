@@ -15,7 +15,7 @@ namespace ui
     };
     typedef core::bitflag<item_flag> item_flags;
 
-    enum select_mode
+    enum class select_mode
     {
         restrictly = 0,
         full_row,
@@ -38,6 +38,7 @@ namespace ui
         virtual void place(const core::rectf & box, const core::sizef & size) { _box = box, _size = size; }
         const core::rectf & box() const { return _box; }
         const core::sizef & size() const { return _size; }
+        core::rectf marginBox() const;
         core::rectf contentBox() const;
         core::rectf rect() const { return core::rectf{_box.pos, _size}; }
         const item_flags & flags() const { return _flags; }

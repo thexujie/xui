@@ -8,9 +8,12 @@ namespace ui
     class Form : public Container
     {
     public:
-        Form(form_styles styles = nullptr);
-        Form(core::vec2<core::dimenf> & size, form_styles styles = nullptr);
+        Form(form_styles styles = nullptr, std::shared_ptr<Form> parentForm = nullptr);
+        Form(core::vec2<core::dimenf> & size, form_styles styles = nullptr, std::shared_ptr<Form> parentForm = nullptr);
         ~Form();
+
+        void setParentForm(std::shared_ptr<Form> parentForm);
+        std::shared_ptr<Form> parentForm() { return _parentForm; }
 
         void setTitle(const std::string & text);
         const std::string & title() const { return _title; }
@@ -20,6 +23,7 @@ namespace ui
         void setResizeBorders(const core::vec4<core::dimenf> & borders) { _resize_borders = borders; }
         const core::vec4<core::dimenf> & resizeBorders() const { return _resize_borders; }
 
+        std::shared_ptr<ui::IWindow> window() const;
         const core::pointf & windowPos() const { return _window_pos; }
         //const core::pointf & windowSize() const { return _rect_window.size; }
         //const core::rectf & windowRect() const { return _rect_window; }
@@ -31,8 +35,7 @@ namespace ui
         void setFormState(form_state fs);
         form_state formState() const { return _form_state; }
 
-
- 		void show() { show(form_state::show); }
+ 		void show() { show(form_state::normalize); }
 		void show(form_state fs);
         bool shown() const { return _form_state != form_state::hide; }
         void close();
@@ -77,6 +80,8 @@ namespace ui
         void _animationTimerTick(core::timer & t, int64_t tick);
 
     private:
+        std::shared_ptr<Form> _parentForm;
+
         std::shared_ptr<ui::IWindow> _window;
         core::pointf _window_pos;
         core::attribute<core::vec4<core::dimenf>> _resize_borders;

@@ -265,8 +265,8 @@ namespace drawing
         SkPaint paint;
         format.apply(paint);
         apply(paint);
-        TextClusterizer shaper;
-        shaper.itermize(str, format._font, format._color);
+        textobject shaper(str);
+        shaper.itermize(format._font, format._color);
         shaper.layout();
         core::sizef size = shaper.bounds();
         auto blob = shaper.build();
@@ -297,8 +297,8 @@ namespace drawing
         format.apply(paint);
         apply(paint);
 
-        TextClusterizer shaper;
-        shaper.itermize(str, format._font, format._color);
+        textobject shaper(str);
+        shaper.itermize(format._font, format._color);
         shaper.layout();
         core::sizef size = shaper.bounds();
         auto blob = shaper.build(rect.cx);

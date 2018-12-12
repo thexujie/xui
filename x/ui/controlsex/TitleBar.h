@@ -49,6 +49,7 @@ namespace ui::controlsex
     public:
         TitleBar(std::shared_ptr< ui::Form> form) : _form(form)
         {
+            _size = { 100_per, core::auto_value };
             setLayoutDirection(core::align::right);
         }
 

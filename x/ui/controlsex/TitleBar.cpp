@@ -8,7 +8,7 @@ namespace ui::controlsex
 	{
 		_border = core::vec4<core::dimenf>{ 1_px };
 		_padding = { 1_em, 0.5_em };
-		_size = { 100_per, 100_per };
+		_size = { 1.5_em, 1.5_em };
 		_fixed_aspect = core::vec2{ 1.0f, 1.0f };
 	}
 
@@ -16,7 +16,7 @@ namespace ui::controlsex
 	{
 		_border = core::vec4<core::dimenf>{ 1_px };
 		_padding = { 1_em, 0.5_em };
-		_size = { 100_per, 100_per };
+        _size = { 1.5_em, 1.5_em };
 		_fixed_aspect = core::vec2{ 1.0f, 1.0f };
 	}
 
@@ -114,7 +114,6 @@ namespace ui::controlsex
 
 	void TitleBar::_updateButtons()
 	{
-
 		auto f = form();
 		if(!f)
 			return;

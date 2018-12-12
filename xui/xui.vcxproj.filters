@@ -23,6 +23,9 @@
     <ClCompile Include="main\ViewItem.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="main\MenuView.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -36,6 +39,9 @@
       <Filter>main</Filter>
     </ClInclude>
     <ClInclude Include="main\ViewItem.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="main\MenuView.h">
       <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>

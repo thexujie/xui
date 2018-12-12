@@ -52,8 +52,6 @@ namespace ui
         void setFixedAspect(const core::vec2<float32_t> & maxSize) { _fixed_aspect = maxSize; }
         const core::vec2<float32_t> & fixedAspect() const { return _fixed_aspect; }
 
-        void setPlaceAnchor(core::aligns borders) { _anchor_borders = borders; }
-        core::aligns placeAnchor() const { return _anchor_borders; }
         void setPlaceAlignment(core::aligns align) { _place_alignment = align; }
         core::aligns placeAlignment() const { return _place_alignment; }
         void setAnchor(const core::vec4<core::dimenf> & anchor) { _anchor = anchor; }
@@ -67,7 +65,8 @@ namespace ui
         void setShowRect(const core::rectf & size);
 
         // prefferSize 计算出的期望大小
-        core::sizef prefferSize(const core::vec2<float32_t> & spacing) const;
+        core::sizef prefferSize() const;
+        core::sizef anchorSize(const core::sizef & spacing) const;
         // 根据最大最小值调整
         core::sizef adjustSize(const core::sizef & size) const;
 
@@ -268,9 +267,8 @@ namespace ui
         core::attribute<core::vec2<core::dimenf>> _min_size = core::vec2{ core::auto_value , core::auto_value };
         core::attribute<core::vec2<core::dimenf>> _max_size = core::vec2{ core::auto_value, core::auto_value };
 
-        core::attribute<core::aligns> _anchor_borders;
         core::attribute<core::aligns> _place_alignment;
-        core::attribute<core::vec4<core::dimenf>> _anchor;
+        core::vec4<core::dimenf> _anchor = { core::nanf32 };
 
         core::attribute<drawing::font> _font;
 

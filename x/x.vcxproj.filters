@@ -194,6 +194,9 @@
     <ClCompile Include="ui\controlsex\TitleBar.cpp">
       <Filter>ui\controlsex</Filter>
     </ClCompile>
+    <ClCompile Include="ui\UICommon.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

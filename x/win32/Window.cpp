@@ -76,10 +76,11 @@ namespace win32
         form->rendered += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
         form->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
         form->evented += std::weak_bind(&Window::onSceneEvented, share_ref<Window>(), std::placeholders::_1);
+
         return core::error_ok;
     }
 
-    core::error Window::attatch(handle_t handle)
+    core::error Window::attatch(pointer_t handle)
     {
         if (!handle)
             return core::error_args;
@@ -153,7 +154,7 @@ namespace win32
             _adjustWindow(_pos(), s);
     }
 
-    handle_t Window::handle() const
+    pointer_t Window::handle() const
     {
         if (!_handle)
         {
@@ -171,12 +172,6 @@ namespace win32
             HWND hwnd = (HWND)_handle;
             if (hwnd)
                 ::ShowWindow(hwnd, SW_HIDE);
-            break;
-        }
-        case ui::form_state::show:
-        {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOW);
             break;
         }
         case ui::form_state::show_noactive:
@@ -367,6 +362,8 @@ namespace win32
             throw core::exception("createWindow without form");
         }
 
+        auto pf = f->parentForm();
+
         if (_handle)
             return core::error_ok;
 
@@ -400,10 +397,11 @@ namespace win32
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
         ::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
 
+        std::u16string t = core::u8str_u16str(f->title());
         HWND hwnd = CreateWindowExW(
-			styleEx, WINDOW_CLASS_NAME, NULL, style | WS_BORDER | WS_DLGFRAME,
+			styleEx, WINDOW_CLASS_NAME, (const wchar_t *)t.c_str(), style | WS_BORDER | WS_DLGFRAME,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-            NULL, NULL, hInstance, this);
+            pf ? (HWND)pf->window()->handle() : NULL, NULL, hInstance, this);
 		// TRICK: 这样搞一下，可以避免用 SetWindowRgn，见 OnWmSize。
         ::SetWindowLongPtrW(hwnd, GWL_STYLE, style);
 
@@ -756,7 +754,7 @@ namespace win32
         {
         case SIZE_MINIMIZED: f->setFormState(ui::form_state::minimize); break;
         case SIZE_MAXIMIZED: f->setFormState(ui::form_state::maximize); break;
-        case SIZE_RESTORED: f->setFormState(ui::form_state::show); break;
+        case SIZE_RESTORED: f->setFormState(ui::form_state::normalize); break;
         default: break;
         }
         return 0;
@@ -769,10 +767,10 @@ namespace win32
 
     intx_t Window::OnWmShow(uintx_t wParam, intx_t lParam)
     {
-        if(!wParam)
+        if(!lParam)
         {
             if (auto f = form())
-                f->setFormState(ui::form_state::hide);
+                f->setFormState(wParam ? ui::form_state::normalize : ui::form_state::hide);
         }
         return OnDefault(WM_SHOWWINDOW, wParam, lParam);
     }
@@ -1168,7 +1166,7 @@ namespace win32
             /*0x0f*/none,
 
             /*0x10*/ui::keycode::shift,
-            /*0x11*/ui::keycode::control,
+            /*0x11*/ui::keycode::ctrl,
             /*0x12*/ui::keycode::alt,
             /*0x13*/ui::keycode::pausebreak,
             /*0x14*/ui::keycode::caps,
@@ -1219,32 +1217,32 @@ namespace win32
             /*0x3f*/none,
 
             /*0x40*/none,
-            /*0x41*/ui::keycode::a,
-            /*0x42*/ui::keycode::b,
-            /*0x43*/ui::keycode::c,
-            /*0x44*/ui::keycode::d,
-            /*0x45*/ui::keycode::e,
-            /*0x46*/ui::keycode::f,
-            /*0x47*/ui::keycode::g,
-            /*0x48*/ui::keycode::h,
-            /*0x49*/ui::keycode::i,
-            /*0x4a*/ui::keycode::j,
-            /*0x4b*/ui::keycode::k,
-            /*0x4c*/ui::keycode::l,
-            /*0x4d*/ui::keycode::m,
-            /*0x4e*/ui::keycode::n,
-            /*0x4f*/ui::keycode::o,
-            /*0x50*/ui::keycode::p,
-            /*0x51*/ui::keycode::q,
-            /*0x52*/ui::keycode::r,
-            /*0x53*/ui::keycode::s,
-            /*0x54*/ui::keycode::t,
-            /*0x55*/ui::keycode::u,
-            /*0x56*/ui::keycode::v,
-            /*0x57*/ui::keycode::w,
-            /*0x58*/ui::keycode::x,
-            /*0x59*/ui::keycode::y,
-            /*0x5a*/ui::keycode::z,
+            /*0x41*/ui::keycode::A,
+            /*0x42*/ui::keycode::B,
+            /*0x43*/ui::keycode::C,
+            /*0x44*/ui::keycode::D,
+            /*0x45*/ui::keycode::E,
+            /*0x46*/ui::keycode::F,
+            /*0x47*/ui::keycode::G,
+            /*0x48*/ui::keycode::H,
+            /*0x49*/ui::keycode::I,
+            /*0x4a*/ui::keycode::J,
+            /*0x4b*/ui::keycode::K,
+            /*0x4c*/ui::keycode::L,
+            /*0x4d*/ui::keycode::M,
+            /*0x4e*/ui::keycode::N,
+            /*0x4f*/ui::keycode::O,
+            /*0x50*/ui::keycode::P,
+            /*0x51*/ui::keycode::Q,
+            /*0x52*/ui::keycode::R,
+            /*0x53*/ui::keycode::S,
+            /*0x54*/ui::keycode::T,
+            /*0x55*/ui::keycode::U,
+            /*0x56*/ui::keycode::V,
+            /*0x57*/ui::keycode::W,
+            /*0x58*/ui::keycode::X,
+            /*0x59*/ui::keycode::Y,
+            /*0x5a*/ui::keycode::Z,
             /*0x5b*/ui::keycode::winL,
             /*0x5c*/ui::keycode::winR,
             /*0x5d*/ui::keycode::apps,
@@ -1268,30 +1266,30 @@ namespace win32
             /*0x6e*/ui::keycode::numpad_decimal,
             /*0x6f*/ui::keycode::numpad_div,
 
-            /*0x70*/ui::keycode::f1,
-            /*0x71*/ui::keycode::f2,
-            /*0x72*/ui::keycode::f3,
-            /*0x73*/ui::keycode::f4,
-            /*0x74*/ui::keycode::f5,
-            /*0x75*/ui::keycode::f6,
-            /*0x76*/ui::keycode::f7,
-            /*0x77*/ui::keycode::f8,
-            /*0x78*/ui::keycode::f9,
-            /*0x79*/ui::keycode::f10,
-            /*0x7a*/ui::keycode::f11,
-            /*0x7b*/ui::keycode::f12,
-            /*0x7c*/ui::keycode::f13,
-            /*0x7d*/ui::keycode::f14,
-            /*0x7e*/ui::keycode::f15,
-            /*0x7f*/ui::keycode::f16,
-            /*0x80*/ui::keycode::f17,
-            /*0x81*/ui::keycode::f18,
-            /*0x82*/ui::keycode::f19,
-            /*0x83*/ui::keycode::f20,
-            /*0x84*/ui::keycode::f21,
-            /*0x85*/ui::keycode::f22,
-            /*0x86*/ui::keycode::f23,
-            /*0x87*/ui::keycode::f24,
+            /*0x70*/ui::keycode::F1,
+            /*0x71*/ui::keycode::F2,
+            /*0x72*/ui::keycode::F3,
+            /*0x73*/ui::keycode::F4,
+            /*0x74*/ui::keycode::F5,
+            /*0x75*/ui::keycode::F6,
+            /*0x76*/ui::keycode::F7,
+            /*0x77*/ui::keycode::F8,
+            /*0x78*/ui::keycode::F9,
+            /*0x79*/ui::keycode::F10,
+            /*0x7a*/ui::keycode::F11,
+            /*0x7b*/ui::keycode::F12,
+            /*0x7c*/ui::keycode::F13,
+            /*0x7d*/ui::keycode::F14,
+            /*0x7e*/ui::keycode::F15,
+            /*0x7f*/ui::keycode::F16,
+            /*0x80*/ui::keycode::F17,
+            /*0x81*/ui::keycode::F18,
+            /*0x82*/ui::keycode::F19,
+            /*0x83*/ui::keycode::F20,
+            /*0x84*/ui::keycode::F21,
+            /*0x85*/ui::keycode::F22,
+            /*0x86*/ui::keycode::F23,
+            /*0x87*/ui::keycode::F24,
             /*0x88*/none,
             /*0x89*/none,
             /*0x8a*/none,
@@ -1320,8 +1318,8 @@ namespace win32
 
             /*0xa0*/ui::keycode::shiftL,
             /*0xa1*/ui::keycode::shiftR,
-            /*0xa2*/ui::keycode::controlL,
-            /*0xa3*/ui::keycode::controlR,
+            /*0xa2*/ui::keycode::ctrlL,
+            /*0xa3*/ui::keycode::ctrlR,
             /*0xa4*/ui::keycode::altL,
             /*0xa5*/ui::keycode::altR,
             /*0xa6*/ui::keycode::browser_back,

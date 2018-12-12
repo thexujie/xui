@@ -28,6 +28,16 @@ namespace ui
             return v->itemPadding();
     }
 
+    core::rectf ViewItem::marginBox() const
+    {
+        auto v = view();
+        if (!v)
+            return _box;
+
+        auto m = v->calc(margin());
+        return _box.expanded(m);
+    }
+
     core::rectf ViewItem::contentBox() const
     {
         auto v = view();

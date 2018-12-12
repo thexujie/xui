@@ -28,11 +28,15 @@ namespace ui
         if (std::find(_controls.begin(), _controls.end(), control) != _controls.end())
             return;
 
-        auto f = form();
-        control->onEntering(f);
         control->setParent(share_ref<Container>());
-        _controls.insert(control);
-        control->onEnter(f);
+        if(auto f = form())
+        {
+            control->onEntering(f);
+            _controls.insert(control);
+            control->onEnter(f);
+        }
+        else
+            _controls.insert(control);
         relayout();
     }
 
@@ -269,10 +273,10 @@ namespace ui
             _invalid_layout = true;
             invoke([this]()
             {
-                layout(_invalid_layout_flags);
                 _invalid_layout = false;
+                layout(_invalid_layout_flags);
                 _invalid_layout_flags = nullptr;
-				invalidate({});
+                invalidate({});
             });
         }
     }
@@ -280,11 +284,6 @@ namespace ui
     void Container::setLayoutDirection(core::align layout)
     {
         _layout_direction = layout;
-    }
-
-    void Container::setCompactLayout(bool b)
-    {
-        _compact_layout = b;
     }
 
     void Container::setScrollbarVisionV(scrollbar_vision scrollbar_vision)
@@ -298,7 +297,7 @@ namespace ui
                 {
                     _scrollbar_v = std::make_shared<controls::ScrollBar>();
                     _scrollbar_v->setSize({ 0.5_em, 100_per });
-                    _scrollbar_v->setPlaceAnchor(core::align::right | core::align::topBottom);
+                    _scrollbar_v->setAnchor({ core::nanf32, 0.0f, 0.0f, 0.0f });
                     _scrollbar_v->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_v->setZValue(ZVALUE_SCROLLBAR);
                     _scrollbar_v->valueChagned += std::weak_bind(&Container::onScrollBarValueChangedV, share_ref<Container>(), std::placeholders::_1, std::placeholders::_2);
@@ -319,7 +318,7 @@ namespace ui
                 {
                     _scrollbar_h = std::make_shared<controls::ScrollBar>();
                     _scrollbar_h->setSize({ 100_per, 0.5_em });
-                    _scrollbar_h->setPlaceAnchor(core::align::bottom | core::align::leftRight);
+                    _scrollbar_h->setAnchor({0.0f, core::nanf32, 0.0f, 0.0f});
                     _scrollbar_h->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_h->setZValue(ZVALUE_SCROLLBAR);
                     _scrollbar_h->setDirection(core::align::left);
@@ -333,13 +332,15 @@ namespace ui
     void Container::onScrollBarValueChangedV(float32_t from, float32_t to)
     {
         _animScroll({ _scroll_pos.x, to });
-        relayout();
+        if(_layout_direction != core::align::none && !_controls.empty())
+            relayout();
     }
 
     void Container::onScrollBarValueChangedH(float32_t from, float32_t to)
     {
         _animScroll({to, _scroll_pos.y });
-        relayout();
+        if (_layout_direction != core::align::none && !_controls.empty())
+            relayout();
     }
 
     void Container::onScrollPosChanged(const core::vec2f & from, const core::vec2f & to)
@@ -351,8 +352,8 @@ namespace ui
 		if(_invalid_layout)
 		{
 			Container * pthis = const_cast<Container *>(this);
-			pthis->layout(_invalid_layout_flags);
 			pthis->_invalid_layout = false;
+            pthis->layout(_invalid_layout_flags);
 			pthis->_invalid_layout_flags = nullptr;
 		}
     }
@@ -416,7 +417,7 @@ namespace ui
             {
                 margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
                 size.cx += margin;
-                auto perffer_size = control->prefferSize({});
+                auto perffer_size = control->prefferSize();
                 margin = _layout_direction == core::align::left ? m.bright : m.bleft;
                 size.cx = size.cx + perffer_size.cx;
                 size.cy = std::max(size.cy, perffer_size.cy + m.bheight());
@@ -425,7 +426,7 @@ namespace ui
             {
                 margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
                 size.cy += margin;
-                auto perffer_size = control->prefferSize({});
+                auto perffer_size = control->prefferSize();
                 margin = _layout_direction == core::align::top ? m.bbottom : m.btop;
                 size.cy += perffer_size.cy;
                 size.cx = std::max(size.cx, perffer_size.cx + m.bwidth());
@@ -437,9 +438,6 @@ namespace ui
 
     void Container::layout(layout_flags flags)
     {
-        if (!_invalid_layout && !flags.any(layout_flag::force))
-            return;
-
         if (!form())
             return;
 
@@ -464,7 +462,7 @@ namespace ui
 
             auto m = control->realMargin();
             auto s = control->size();
-            auto ps = control->prefferSize({});
+            auto ps = control->prefferSize();
 
             if (_layout_direction == core::align::left || _layout_direction == core::align::right)
             {
@@ -524,7 +522,7 @@ namespace ui
         spacing.cy = std::max(spacing.cy, 0.0f);
 
         margin = 0;
-        float32_t compat_size = 0;
+        float32_t per_size = 0;
         float32_t compat_scale =0;
         std::set<std::string> setes;
         for (auto & control : _controls)
@@ -535,50 +533,84 @@ namespace ui
             auto margins = control->realMargin();
             auto lo = control->layoutOrigin();
             auto & si = control->size();
+            auto ps = control->prefferSize();
+            auto & a = control->anchor();
 
             if (lo == layout_origin::layout || lo == layout_origin::sticky)
             {
                 switch (_layout_direction)
                 {
                 case core::align::left:
-                {
-                    //core::pointf layout_pos = _rect.pos - _scroll_pos;
-                    bool compact = _compact_layout && si.cx.per();
-                    auto preffer_size = control->prefferSize({ compact ? (spacing.cx - compat_size ) / ((total_per - compat_scale) / 100.0f): spacing.cx, spacing.cy - margins.bheight() });
-                    margin = std::max(margin, margins.bleft);
-                    control->place({ layout_pos.x + layout_size.cx + margin, layout_pos.y + margins.btop, preffer_size.cx, box.cy - margins.bheight() }, preffer_size);
-                    layout_size.cx += margin + preffer_size.cx;
-                    margin = margins.bright;
-
-                    if(compact)
-                    {
-                        compat_scale += si.cx.value;
-                        compat_size += preffer_size.cx;
-                    }
-                    break;
-                }
                 case core::align::right:
                 {
-                    bool compact = _compact_layout && si.cx.per();
-                    auto preffer_size = control->prefferSize({ compact ? (spacing.cx - compat_size) / ((total_per - compat_scale) / 100.0f) : spacing.cx, spacing.cy - margins.bheight() });
-                    margin = std::max(margin, margins.bright);
-                    control->place({ (_rect.right() - _scroll_pos.x) - (layout_size.cx + margin) - preffer_size.cx, layout_pos.y + margins.btop, preffer_size.cx, box.cy - margins.bheight() }, preffer_size);
-                    layout_size.cx += margin + preffer_size.cx;
-                    margin = margins.bleft;
-
-                    if (compact)
+                    if (a.btop.avi() && a.bbottom.avi())
                     {
+                        ps.cx = box.cx - calc(a.btop) - calc(a.bbottom);
+                    }
+                    else if (si.cx.per())
+                    {
+                        ps.cx = spacing.cx * si.cx.value / total_per;
                         compat_scale += si.cx.value;
-                        compat_size += preffer_size.cx;
+                        per_size += ps.cx;
+                    }
+                    else {}
+
+                    if (si.cy.per())
+                    {
+                        ps.cy = si.cy.value * spacing.cy / 100.0f;
                     }
                     break;
                 }
                 case core::align::top:
+                case core::align::bottom:
                 {
-                    auto preffer_size = control->prefferSize({ spacing.cx - margins.bwidth(), spacing.cy });
+                    if (a.bleft.avi() && a.bright.avi())
+                    {
+                        ps.cx = box.cx - calc(a.bleft) - calc(a.bright);
+                    }
+                    else if (si.cx.per())
+                    {
+                        ps.cx = spacing.cx * si.cx.value / 100.0f;
+                    }
+                    else {}
+
+                    if (si.cy.per())
+                    {
+                        ps.cy = spacing.cy * si.cy.value / total_per;
+                        compat_scale += si.cy.value;
+                        per_size += ps.cy;
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+
+                switch (_layout_direction)
+                {
+                case core::align::left:
+                {
+                    margin = std::max(margin, margins.bleft);
+                    control->place({ layout_pos.x + layout_size.cx + margin, layout_pos.y + margins.btop, ps.cx, box.cy - margins.bheight() }, ps);
+                    layout_size.cx += margin + ps.cx;
+                    margin = margins.bright;
+
+                    break;
+                }
+                case core::align::right:
+                {
+                    margin = std::max(margin, margins.bright);
+                    control->place({ (_rect.right() - _scroll_pos.x) - (layout_size.cx + margin) - ps.cx, layout_pos.y + margins.btop, ps.cx, box.cy - margins.bheight() }, ps);
+                    layout_size.cx += margin + ps.cx;
+                    margin = margins.bleft;
+
+                    break;
+                }
+                case core::align::top:
+                {
                     margin = std::max(margin, margins.btop);
-                    control->place({ layout_pos.x + margins.bleft, layout_pos.y + layout_size.cy + margin, box.cx - margins.bwidth(), preffer_size.cy }, preffer_size);
-                    layout_size.cy += margin + preffer_size.cy;
+                    control->place({ layout_pos.x + margins.bleft, layout_pos.y + layout_size.cy + margin, box.cx - margins.bwidth(), ps.cy }, ps);
+                    layout_size.cy += margin + ps.cy;
                     margin = margins.bbottom;
                     break;
                 }
@@ -588,14 +620,33 @@ namespace ui
             }
             else
             {
-                auto preffer_size = control->prefferSize(box.size);
+                if (a.bleft.avi() && a.bright.avi())
+                {
+                    ps.cx = box.cx - calc(a.bleft) - calc(a.bright);
+                }
+                else if (si.cx.per())
+                {
+                    ps.cx = si.cx.value * box.cx / 100.0f;
+                }
+                else {}
+
+                if (a.btop.avi() && a.bbottom.avi())
+                {
+                    ps.cy = box.cy - calc(a.btop) - calc(a.bbottom);
+                }
+                else if (si.cy.per())
+                {
+                    ps.cy = si.cy.value * box.cy / 100.0f;
+                }
+                else {}
+
                 switch (lo)
                 {
                 case layout_origin::parent:
-                    control->place(contentBox(), preffer_size);
+                    control->place(box, ps);
                     break;
                 case layout_origin::scene:
-                    control->place(form()->realRect(), preffer_size);
+                    control->place(form()->realRect(), ps);
                     break;
                 default:
                     break;

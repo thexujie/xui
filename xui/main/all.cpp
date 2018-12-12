@@ -27,8 +27,8 @@ void all_main()
 	//std::string rtft = u8"heသွက်ဂွံဗၠးၜးတ်ိတ်llo لغة عربية‎𪚥𪚥𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق ققق";
 	std::string rtft = u8"hello لغة عربية‎𪚥𪚥བོད་ཀྱི་སྐད་ཡིག།𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق قققق";
 
-	drawing::TextWraper shaper;
-	shaper.itermize(u8"ยิ้ยิ้ยิ ق قق ققق قققق", drawing::font(), colors::Black);
+	drawing::TextWraper shaper(u8"ยิ้ยิ้ยิ ق قق ققق قققق");
+	shaper.itermize(drawing::font(), colors::Black);
 	shaper.layout(999999999, drawing::wrap_mode::word);
 
 	auto ss = std::make_shared<ui::component::StyleSheet>();
@@ -132,7 +132,6 @@ void all_main()
 	// 标题栏
 	{
 		auto title = std::make_shared<ui::controlsex::TitleBar>(form);
-		title->setSize({ 100_per, 1.8_em });
 		title->setBackgroundColor(0xfff1f1f0);
 		layer->addControl(title);
 	}
@@ -155,8 +154,7 @@ void all_main()
 		tln->setText(rtft);
 		//tln->setSize({ auto_value, 10_em });
 		tln->setFont({ "", font.size * 9 });
-		tln->setAnchor({ 0_px, 0_px, 0_px, 0_px });
-		tln->setPlaceAnchor(core::align::leftRight);
+        tln->setAnchor({ 0, core::nanf32, 0, core::nanf32 });
 		tln->setImeMode(ui::ime_mode::on);
 		layer->addControl(tln);
 	}
@@ -319,7 +317,6 @@ void all_main()
 	{
 		auto container = std::make_shared<ui::Container>(core::align::left);
 		container->setBackgroundColor(core::colors::LightBlue);
-		container->setCompactLayout(true);
 		container->setSize({ 100_per, auto_value });
 
 		auto spacer1 = container->addSpacer(50_per);

@@ -36,7 +36,7 @@ namespace ui
 
         for (auto & item : _items)
         {
-            auto psize = item.control->prefferSize({});
+            auto psize = item.control->prefferSize();
             widths[item.col] = std::max(widths[item.col], psize.cx);
             heights[item.row] = std::max(heights[item.row], psize.cy);
         }
@@ -51,9 +51,6 @@ namespace ui
 
     void Grid::layout(layout_flags flags)
     {
-        if (!_invalid_layout && !flags.any(layout_flag::force))
-            return;
-
         if(flags.any(layout_flag::resize_cx | layout_flag::resize_cy))
             _splitGrid(true);
 
@@ -70,7 +67,7 @@ namespace ui
                 if (lo != layout_origin::layout && lo != layout_origin::sticky)
                     continue;
 
-                auto expect_size = control->prefferSize({});
+                auto expect_size = control->prefferSize();
                 auto m = control->realMargin();
                 control->place(cell.rect.offseted(pbox.pos), cell.rect.size);
             }
@@ -111,7 +108,7 @@ namespace ui
                 {
                     auto & cell = _cells[row * _col_sizes.size() + col];
                     for(auto & control : cell.controls)
-                        height = std::max(height, control->prefferSize({}).cy);
+                        height = std::max(height, control->prefferSize().cy);
                 }
             }
 
@@ -141,7 +138,7 @@ namespace ui
                 {
                     auto & cell = _cells[row * _col_sizes.size() + col];
                     for (auto & control : cell.controls)
-                        width = std::max(width, control->prefferSize({}).cx);
+                        width = std::max(width, control->prefferSize().cx);
                 }
             }
 

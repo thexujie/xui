@@ -133,12 +133,12 @@ namespace core
 
     static const uint64_t _timer_one = 1;
     static std::atomic_uint64_t __timer_id = 1;
-    static thread_local std::unique_ptr<timer_context> _timer_context;
-    static timer_context & __timer_context_get()
+    static thread_local std::shared_ptr<timer_context> _timer_context;
+    static std::shared_ptr<timer_context> __timer_context_get()
     {
         if (!_timer_context)
             _timer_context.reset(new timer_context());
-        return *_timer_context;
+        return _timer_context;
     }
 
 	static void CALLBACK TimerCallBack(HWND, UINT, UINT_PTR timerId, DWORD)
@@ -166,7 +166,7 @@ namespace core
 	{
         bool _true = true;
 		if(_started.compare_exchange_strong(_true, false))
-			_context.kill(_id);
+			_context->kill(_id);
 	}
 
     bool timer::running() const
@@ -180,7 +180,7 @@ namespace core
 		if(!_started.compare_exchange_strong(_false, true))
 			return;
 
-		_context.add(_id, this, _period);
+		_context->add(_id, this, _period);
 	}
 
 	void timer::start(std::chrono::milliseconds period)
@@ -190,7 +190,7 @@ namespace core
             return;
 
 		_period = period;
-		_context.add(_id, this, _period);
+		_context->add(_id, this, _period);
 	}
 
 	void timer::stop()
@@ -199,7 +199,7 @@ namespace core
         if(!_started.compare_exchange_strong(_true, false))
             return;
 
-		_context.kill(_id);
+		_context->kill(_id);
         _started = false;
         _tick = 0;
 	}
@@ -212,7 +212,7 @@ namespace core
 	uint64_t timer::invoke(std::shared_ptr<core::object> object, std::chrono::milliseconds delay, std::function<void()> callback)
     {
 		uint64_t id = __timer_id.fetch_add(_timer_one);
-        __timer_context_get().addSingle(id, object, delay, callback);
+        __timer_context_get()->addSingle(id, object, delay, callback);
 		return id;
     }
 

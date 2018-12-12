@@ -80,7 +80,6 @@ namespace ui
 	enum class form_state
 	{
 		hide = 0,
-		show,
 		show_noactive,
 		normalize,
 		minimize,
@@ -165,32 +164,32 @@ namespace ui
         num9,
         // ×Ö·û¼ü
         caps,
-        a,
-        b,
-        c,
-        d,
-        e,
-        f,
-        g,
-        h,
-        i,
-        j,
-        k,
-        l,
-        m,
-        n,
-        o,
-        p,
-        q,
-        r,
-        s,
-        t,
-        u,
-        v,
-        w,
-        x,
-        y,
-        z,
+        A,
+        B,
+        C,
+        D,
+        E,
+        F,
+        G,
+        H,
+        I,
+        J,
+        K,
+        L,
+        M,
+        N,
+        O,
+        P,
+        Q,
+        R,
+        S,
+        T,
+        U,
+        V,
+        W,
+        X,
+        Y,
+        Z,
 
         backspace,
         tab,
@@ -220,30 +219,30 @@ namespace ui
         numpad_equal, // equal
 
         // ¹¦ÄÜ¼ü
-        f1,
-        f2,
-        f3,
-        f4,
-        f5,
-        f6,
-        f7,
-        f8,
-        f9,
-        f10,
-        f11,
-        f12,
-        f13,
-        f14,
-        f15,
-        f16,
-        f17,
-        f18,
-        f19,
-        f20,
-        f21,
-        f22,
-        f23,
-        f24,
+        F1,
+        F2,
+        F3,
+        F4,
+        F5,
+        F6,
+        F7,
+        F8,
+        F9,
+        F10,
+        F11,
+        F12,
+        F13,
+        F14,
+        F15,
+        F16,
+        F17,
+        F18,
+        F19,
+        F20,
+        F21,
+        F22,
+        F23,
+        F24,
 
         // --  Sign
         sub, // ¼õºÅ -_
@@ -276,12 +275,13 @@ namespace ui
         pausebreak,
 
         // -- win
+        win,
         winL,
         winR,
         // -- ctrl
-        control,
-        controlL,
-        controlR,
+        ctrl,
+        ctrlL,
+        ctrlR,
         // -- shift
         shift,
         shiftL,
@@ -354,6 +354,8 @@ namespace ui
 
         count,
     };
+
+    const char * keycode_name(keycode k);
 
     template<>
     struct enable_bitmasks<mouse_button>
@@ -448,6 +450,53 @@ namespace ui
         off,
     };
 
+    enum class keybind_mode
+    {
+        // ÍêÈ«°´ÕÕ¼üË³Ðò°ó¶¨
+        exact = 0,
+
+    };
+
+    struct keybind
+    {
+        static constexpr size_t max_keys = 4;
+        std::array<keycode, max_keys> keys = {};
+
+        keybind() = default;
+        keybind(std::initializer_list<keycode> && ks)
+        {
+            size_t index = 0;
+            for(auto & k : ks)
+            {
+                keys[index++] = k;
+                if (index >= max_keys)
+                    break;
+            }
+        }
+        bool empty() const { return keys[0] == keycode::none; }
+        std::string string() const;
+    };
+
+    struct shortcut
+    {
+        static constexpr size_t max_binds = 2;
+        std::array<keybind, max_binds> binds;
+
+        shortcut() = default;
+        shortcut(std::initializer_list<keybind> && bs)
+        {
+            size_t index = 0;
+            for (auto & b : bs)
+            {
+                binds[index++] = b;
+                if (index >= max_binds)
+                    break;
+            }
+        }
+        bool empty() const { return binds[0].empty(); }
+        std::string string() const;
+    };
+
     class IImeContext
     {
     public:
@@ -470,6 +519,7 @@ namespace ui
     public:
         virtual ~IWindow() {}
 
+        virtual pointer_t handle() const = 0;
         virtual std::shared_ptr<IImeContext> imeContext() const = 0;
         virtual std::shared_ptr<ICursorContext> cursorContext() const = 0;
         virtual void move(const core::pointf & pos) = 0;

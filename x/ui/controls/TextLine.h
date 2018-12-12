@@ -22,7 +22,7 @@ namespace ui::controls
         void propertyTable(core::property_table & properties) override;
 
         void setText(const std::string & text);
-        const std::string & text() const { return _text; }
+        const std::string & text() const { return _text.text(); }
 
         core::sizef contentSize() const override;
         std::string styleName() const override;
@@ -58,13 +58,11 @@ namespace ui::controls
         bool _cursorShown() const { return _cursor_shown; }
 
     private:
-        std::string _text;
-        mutable std::shared_ptr<drawing::TextBlob> _text_blob;
+        drawing::textobject _text;
         std::shared_ptr<core::property_animation> _cursor_anim;
 
         bool _delay_shaper = false;
         shaper_flags _delay_shaper_flags = nullptr;
-        std::shared_ptr<drawing::TextClusterizer> _clusterizer;
 
         bool _cursor_shown = false;
         size_t _cursor_gindex = 0;

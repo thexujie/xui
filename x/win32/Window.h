@@ -19,7 +19,7 @@ namespace win32
         ~Window();
 
         core::error attatch(std::shared_ptr<ui::Form> form);
-        core::error attatch(handle_t handle);
+        core::error attatch(pointer_t handle);
         void detach();
 
         std::shared_ptr<ui::IImeContext> imeContext() const { return _ime_context; }
@@ -28,7 +28,7 @@ namespace win32
         void resize(const core::sizef & size);
 
         std::shared_ptr<ui::Form> form() { return _form.lock(); }
-        handle_t handle() const;
+        pointer_t handle() const;
         intx_t handleMSG(uint32_t uiMessage, uintx_t wParam, intx_t lParam);
 
     private:
@@ -124,7 +124,7 @@ namespace win32
     private:
         std::weak_ptr<ui::Form> _form;
         ui::form_styles _form_styles = nullptr;
-        handle_t _handle = nullptr;
+        pointer_t _handle = nullptr;
         windowmessage_bocks _message_blocks = nullptr;
 
         ui::input_state _mouse_state;

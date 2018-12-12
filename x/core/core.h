@@ -68,30 +68,10 @@ typedef char char8_t;
 typedef float float32_t;
 typedef double float64_t;
 
+using pointer_t = void * ;
+
 namespace core
 {
-    using char8_t = ::char8_t;
-
-    using byte_t = ::byte_t;
-
-    using int8_t = ::int8_t;
-    using int16_t = ::int16_t;
-    using int32_t = ::int32_t;
-    using int64_t = ::int64_t;
-
-    using uint8_t = ::uint8_t;
-    using uint16_t = ::uint16_t;
-    using uint32_t = ::uint32_t;
-    using uint64_t = ::uint64_t;
-
-    using float32_t = ::float32_t;
-    using float64_t = ::float64_t;
-
-#ifdef _WIN64
-	using pointer_t = uint64_t;
-#else
-	using pointer_t = uint32_t;
-#endif
 
     template<typename T>
     struct span_type

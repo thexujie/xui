@@ -42,7 +42,6 @@ namespace ui::controls
     {
         _accept_input = true;
         _capture_buttons = mouse_button::left;
-        _clusterizer = std::make_shared<drawing::TextClusterizer>();
         _cursor = cursor::ibeam;
 		_ime_mode = ime_mode::on;
     }
@@ -65,7 +64,7 @@ namespace ui::controls
 
     void TextLine::setText(const std::string & text)
     {
-        _text = text;
+        _text.setText(text);
         reshaper(shaper_flag::shaper);
     }
 
@@ -97,15 +96,16 @@ namespace ui::controls
             core::rectf rect;
             do
             {
-               std::tie(off, rect) = _clusterizer->textRect(off, end - off);
+               std::tie(off, rect) = _text.textRect(off, end - off);
                 if(!rect.empty())
                     graphics.drawRectangle({ (cbox.leftTop() + rect.leftTop()).offset(_scroll_pos, 0.0f), rect.size }, drawing::PathStyle().fill(0x800000ff));
             }
             while (off != core::npos);
         }
 
-        if (_text_blob)
-            graphics.drawTextBlob(*_text_blob, contentBox().leftTop().offseted(_scroll_pos, 0), drawing::StringFormat().color(color()));
+
+        if (!_text.empty())
+            graphics.drawTextBlob(_text.blob(), contentBox().leftTop().offseted(_scroll_pos, 0), drawing::StringFormat().color(color()));
         graphics.restore();
 
         if (_cursor_shown)
@@ -139,7 +139,7 @@ namespace ui::controls
                     cursor_tindex = _cursor_pos;
                     cursor_left = !_cursor_far;
                 }
-                auto & cluster = _clusterizer->findCluster(cursor_tindex);
+                auto & cluster = _text.findCluster(cursor_tindex);
                 if (cluster)
                 {
                     if(cluster.bidi == drawing::bidirection::rtl)
@@ -174,7 +174,7 @@ namespace ui::controls
         {
             auto cbox = contentBox();
             float32_t pos = state.pos().x - cbox.x - _scroll_pos;
-            auto & cluster = _clusterizer->findCluster(pos);
+            auto & cluster = _text.findCluster(pos);
             if (!cluster)
                 break;
 
@@ -209,7 +209,7 @@ namespace ui::controls
         Control::onMouseDown(state, button);
         auto cbox = contentBox();
         float32_t pos = state.pos().x - cbox.x - _scroll_pos;
-        auto & cluster = _clusterizer->findCluster(pos);
+        auto & cluster = _text.findCluster(pos);
         if (!cluster)
             return;
 
@@ -338,7 +338,7 @@ namespace ui::controls
         if (_delay_shaper_flags)
             _doshaper();
 
-        auto & cluster = _clusterizer->findCluster(_cursor_pos - 1);
+        auto & cluster = _text.findCluster(_cursor_pos - 1);
         if(!cluster)
             return;
 
@@ -357,7 +357,7 @@ namespace ui::controls
         if (_delay_shaper_flags)
             _doshaper();
 
-        auto & cluster = _clusterizer->findCluster(_cursor_pos);
+        auto & cluster = _text.findCluster(_cursor_pos);
         if (!cluster)
             return;
 
@@ -375,7 +375,7 @@ namespace ui::controls
         if (_delay_shaper_flags)
             _doshaper();
 
-        auto & cluster = _clusterizer->findCluster(_cursor_pos - 1);
+        auto & cluster = _text.findCluster(_cursor_pos - 1);
         if (!cluster)
             return;
 
@@ -400,7 +400,7 @@ namespace ui::controls
         if (_delay_shaper_flags)
             _doshaper();
 
-        auto & cluster = _clusterizer->findCluster(_cursor_pos);
+        auto & cluster = _text.findCluster(_cursor_pos);
         if (!cluster)
             return;
 
@@ -416,6 +416,7 @@ namespace ui::controls
     void TextLine::insert(const char * text, size_t count)
     {
         _text.insert(_cursor_pos, text, count);
+
         //_cursor_far = _cursor_pos + count + 1 < _text.length();
         _cursor_far = true;
         _cursor_pos += count;
@@ -434,7 +435,7 @@ namespace ui::controls
                     ic->setCompositionPos(cbox.leftTop().offseted(_scroll_pos, 0));
                 else
                 {
-                    auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+                    auto & cluster = _text.findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
                     assert(cluster);
                     ic->setCompositionPos(cbox.leftTop().offseted(_cursor_far ? cluster.rect.right() : cluster.rect.left(), 0).offset(_scroll_pos, 0));
                 }
@@ -448,20 +449,11 @@ namespace ui::controls
         _delay_shaper = false;
 
         if(_delay_shaper_flags.any(shaper_flag::shaper))
-        {
-            if (!_text_blob)
-                _text_blob = std::make_shared<drawing::TextBlob>();
-
-            _clusterizer->itermize(_text, _font, _color);
-            _clusterizer->layout();
-
-            auto native = _clusterizer->build();
-            _text_blob->setNative(native, _clusterizer->bounds());
-        }
+            _text.update(_font, _color);
 
         if (!_text.empty())
         {
-            auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+            auto & cluster = _text.findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
             assert(cluster);
             if (cluster)
             {
@@ -473,7 +465,7 @@ namespace ui::controls
                     scroll_pos = cbox.cx - cluster.rect.right();
                 else {}
 
-                auto size = _clusterizer->bounds();
+                auto size = _text.bounds();
                 if (_scroll_pos + size.cx < cbox.width)
                 {
                     float32_t scroll_max = cbox.width - size.cx;
@@ -493,7 +485,7 @@ namespace ui::controls
     {
         if (!_text.empty())
         {
-            auto & cluster = _clusterizer->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+            auto & cluster = _text.findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
             assert(cluster);
             if (cluster)
             {
@@ -505,7 +497,7 @@ namespace ui::controls
                     scroll_pos = cbox.cx - cluster.rect.right();
                 else {}
 
-                auto size = _clusterizer->bounds();
+                auto size = _text.bounds();
                 if (_scroll_pos + size.cx < cbox.width)
                 {
                     float32_t scroll_max = cbox.width - size.cx;

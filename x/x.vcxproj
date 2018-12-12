@@ -170,6 +170,7 @@
     </ClCompile>
     <ClCompile Include="ui\Grid.cpp" />
     <ClCompile Include="ui\RadioGroup.cpp" />
+    <ClCompile Include="ui\UICommon.cpp" />
     <ClCompile Include="win32\ImeContext.cpp" />
     <ClCompile Include="win32\Window.cpp" />
     <ClCompile Include="win32\win32.cpp" />

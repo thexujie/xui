@@ -15,7 +15,7 @@ namespace win32
         res_count
     };
 
-    typedef void * handle_t;
+    typedef pointer_t handle_t;
 
     constexpr wchar_t WINDOW_CLASS_NAME[] = L"[Default:29a0f390-f5ab-4617-9ac0-c41fe276fb64]";
     constexpr wchar_t WINDOW_PROP_THIS_PTR[] = L"C8C8BD2D-46A7-4DFB-BB5D-EE6A25E83368";

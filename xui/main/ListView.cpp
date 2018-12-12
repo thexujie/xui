@@ -13,8 +13,8 @@ namespace ui
         if (mode == view_mode::details)
         {
             core::sizef icon_size = v->calc(_icon_size.value_or(core::dimen2f(1_em, 1_em)));
-            drawing::TextWraper wraper;
-            wraper.itermize(_text, v->font(), core::colors::Auto);
+            drawing::TextWraper wraper(_text);
+            wraper.itermize(v->font(), core::colors::Auto);
             wraper.layout(width, _wrap_mode);
             auto bounds = wraper.bounds();
             auto spacing = v->calc(_icon_text_spacing);
@@ -146,8 +146,9 @@ namespace ui
             lsize = {ncols * (ps.cx + m.bwidth()), nrows * (ps.cy + m.bheight())};
         }
         setLayoutedSize(lsize);
-        form()->setEvent(scene_event::update_mouse_pos);
         repaint();
+        if (auto f = form())
+            f->setEvent(scene_event::update_mouse_pos);
     }
 
 	void ListView::paint(drawing::Graphics & graphics, const core::rectf & clip) const

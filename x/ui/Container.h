@@ -61,7 +61,6 @@ namespace ui
         void relayout(layout_flags flags = nullptr);
         void setLayoutDirection(core::align layout);
         core::align layoutDirection() const { return _layout_direction; }
-        void setCompactLayout(bool fall);
         void setScrollbarVisionV(scrollbar_vision scrollbar_vision);
         void setScrollbarVisionH(scrollbar_vision scrollbar_vision);
 

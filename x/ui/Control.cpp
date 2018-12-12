@@ -2,6 +2,7 @@
 #include "Control.h"
 #include "Container.h"
 #include <optional>
+#include "Desktop.h"
 
 namespace ui
 {
@@ -31,11 +32,11 @@ namespace ui
         return core::app().properties(typeid (*this), std::bind(&Control::propertyTable, this, std::placeholders::_1));
     }
 
-    core::sizef Control::prefferSize(const core::vec2<float32_t> & spacing) const
+    core::sizef Control::prefferSize() const
     {
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
         {
-            core::sizef size = calc(_size, spacing);
+            core::sizef size = calc(_size);
             _adjustSize(size);
             return size;
         }
@@ -44,19 +45,12 @@ namespace ui
         if (_size.available())
         {
             if (_size.value.cx.avi())
-                size.cx = calc(_size.value.cx, spacing.cx);
+                size.cx = calc(_size.value.cx);
             else if (_size.value.cy.avi())
-                size.cy = calc(_size.value.cy, spacing.cy);
+                size.cy = calc(_size.value.cy);
             else {}
         }
 
-        if(_anchor_borders)
-        {
-            if (_anchor_borders.value.all(core::align::leftRight))
-                size.cx = spacing.cx - calc(_anchor.value.bleft + _anchor.value.bright, spacing.cx);
-            if (_anchor_borders.value.all(core::align::topBottom))
-                size.cy = spacing.cy - calc(_anchor.value.btop + _anchor.value.bbottom, spacing.cy);
-        }
         _adjustSize(size);
         return size;
     }
@@ -129,7 +123,7 @@ namespace ui
         if (auto p = parent())
             return p->ratio();
         else
-            return 1.0f;
+            return Desktop::instance().scale();
     }
 
     const core::color & Control::color() const
@@ -301,8 +295,8 @@ namespace ui
             _delay_update = true;
             invoke([this]()
             {
-                update();
                 _delay_update = false;
+                update();
             });
         }
     }
@@ -317,21 +311,15 @@ namespace ui
 		if(!_aviliable || !_visible)
 			return;
 
-        _rect_repaint.unite(rect);
-        if (!_delay_repaint)
-        {
-            _delay_repaint = true;
-            invoke([this]() { invalidate(); });
-        }
+        invalidate(rect);
     }
 
     void Control::rearrange()
     {
 		if(auto p = parent())
 		{
-            if (!p->size().cx.avi() || p->size().cy.avi())
-                p->rearrange();
- 			p->relayout();
+            p->rearrange();
+            p->relayout();
 		}
     }
 
@@ -450,20 +438,7 @@ namespace ui
         assert(rect.cx < 1e6 && rect.cy < 1e6);
 
         core::pointf pos = rect.leftTop();
-
-        if(_anchor_borders)
-        {
-            if (_anchor_borders.value.all(core::align::leftTop))
-                pos = rect.leftTop();
-            else if (_anchor_borders.value.all(core::align::rightTop))
-                pos = rect.rightTop() - core::pointf(size.cx, 0);
-            else if (_anchor_borders.value.all(core::align::rightBottom))
-                pos = rect.rightBottom() - core::pointf(size.cx, size.cy);
-            else if (_anchor_borders.value.all(core::align::leftBottom))
-                pos = rect.leftBottom() - core::pointf(0, size.cy);
-            else {}
-        }
-        else if(_place_alignment)
+        if(_place_alignment)
         {
             if (_place_alignment.value.any(core::align::right))
                 pos.x = rect.right() - size.cx;
@@ -479,7 +454,13 @@ namespace ui
             else
                 pos.y = rect.y;
         }
-        else{}
+        else
+        {
+            if (_anchor.bright.avi())
+                pos.x = rect.right() - size.cx;
+            if (_anchor.bbottom.avi())
+                pos.y = rect.bottom() - size.cy;
+        }
 
         setShowRect({ pos, size });
     }
@@ -799,14 +780,16 @@ namespace ui
 
     void Control::onMouseEnter(const input_state & state)
     {
-        cursorContext()->setCursor(_cursor);
+        if(auto cc = cursorContext())
+            cc->setCursor(_cursor);
         _mousein = true;
         mouseEnter(state);
     }
 
     void Control::onMouseLeave(const input_state & state)
     {
-        cursorContext()->resetCursor();
+        if (auto cc = cursorContext())
+            cc->resetCursor();
         _pressed = false;
         _mousein = false;
         mouseLeave(state);

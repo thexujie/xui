@@ -67,7 +67,7 @@ namespace ui
                 auto & item = _items[index];
                 if (_select_mode == select_mode::full_row)
                 {
-                    auto & rect = item->box();
+                    auto rect = item->marginBox();
                     if (rect.y <= pos.y && pos.y < rect.bottom())
                         return item;
                 }
@@ -83,7 +83,7 @@ namespace ui
             for (size_t index = 0; index != _items.size(); ++index)
             {
                 auto & item = _items[index];
-                if (item->rect().contains(pos))
+                if (item->marginBox().contains(pos))
                     return item;
             }
         }

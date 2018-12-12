@@ -1,4 +1,5 @@
 #pragma once
+#include "TextBlob.h"
 
 class SkFont;
 class SkTypeface;
@@ -340,18 +341,31 @@ namespace drawing
         static inline cluster empty_cluster = {};
     };
 
-    class TextClusterizer
+    class textobject
     {
     public:
-        TextClusterizer() = default;
-        ~TextClusterizer() = default;
+        textobject() = default;
+        textobject(std::string text) :_text(text) {}
+        ~textobject() = default;
 
     public:
+        const std::string & text() const { return _text; }
+        bool empty() const { return _text.empty(); }
+        size_t length() const { return _text.length(); }
+        const char * c_str() const { return _text.c_str(); }
+        textobject & insert(size_t off, const char * text, size_t count) { _text.insert(off, text, count); invalidate(); return *this; }
+        textobject & erase(size_t off, size_t count) { _text.erase(off, count); invalidate(); return *this; }
+
+    public:
+        void setText(std::string text) { _text = text; invalidate(); }
         void setFont(span32 range, const drawing::font & font);
         void setColor(span32 range, uint32_t color);
 
     public:
-        core::error itermize(std::string text, const drawing::font & font, core::color color);
+        void invalidate() { _blob = {}; }
+        core::error update(const drawing::font & font, core::color color);
+        drawing::TextBlob blob() const { return _blob; }
+        core::error itermize(const drawing::font & font, core::color color);
         core::error layout();
 
         core::sizef bounds() const;
@@ -368,7 +382,7 @@ namespace drawing
         const cluster & findCluster(size_t tindex) const;
         const cluster & findCluster(float32_t pos) const;
 
-        std::tuple<size_t, core::rectf> textRect(size_t toffset, size_t tlength);
+        std::tuple<size_t, core::rectf> textRect(size_t toffset, size_t tlength) const;
 
     protected:
         Shaper & _shaper = Shaper::instance();
@@ -389,17 +403,21 @@ namespace drawing
 
         glyph _elid;
         uint16_t _font_default = 0;
+        core::color _color_default = core::colors::Auto;
         float32_t _ascent = 0.0f;
         float32_t _descent = 0.0f;
+
+        drawing::TextBlob _blob;
     };
 
-    class TextWraper : public TextClusterizer
+    class TextWraper : public textobject
     {
     public:
         TextWraper() = default;
+        TextWraper(std::string text) :textobject(text) {}
         ~TextWraper() = default;
 
-        using TextClusterizer::layout;
+        using textobject::layout;
         core::error layout(float32_t end, wrap_mode mode);
 
     public:
@@ -407,7 +425,7 @@ namespace drawing
         std::shared_ptr<SkTextBlob> build();
 
     public:
-        using TextClusterizer::findCluster;
+        using textobject::findCluster;
         const cluster & findCluster(float32_t pos, size_t lindex) const;
 
     protected:

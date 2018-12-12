@@ -31,7 +31,7 @@ namespace core
 		static void cancel(uint64_t id);
 
 	private:
-		timer_context & _context;
+        std::shared_ptr<timer_context> _context;
 		uint64_t _id = 0;
 		std::atomic<bool> _started = false;
 		std::chrono::milliseconds _period = 1000ms;

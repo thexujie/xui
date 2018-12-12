@@ -132,6 +132,9 @@
 	<Type Name="ui::ListView">
 		<DisplayString>[ListView container]</DisplayString>
 	</Type>
+	<Type Name="ui::Form">
+		<DisplayString>[Form container] {_title}</DisplayString>
+	</Type>
 
 	<Type Name="core::section_type&lt;*&gt;">
 		<DisplayString>[{index},{length}]</DisplayString>
@@ -150,6 +153,9 @@
 	</Type>
 	<Type Name="drawing::row">
 		<DisplayString>{{[{line}], &#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}}}</DisplayString>
+	</Type>
+	<Type Name="drawing::textobject">
+		<DisplayString>{{&#x200E;{_text}}}</DisplayString>
 	</Type>
 
 	<Type Name="std::basic_string&lt;char,*&gt;">

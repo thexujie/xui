@@ -7,14 +7,14 @@
 
 namespace ui
 {
-    Form::Form(form_styles styles) :_styles(styles)
+    Form::Form(form_styles styles, std::shared_ptr<Form> parentForm) :_styles(styles), _parentForm(parentForm)
     {
         _background_color = core::colors::AliceBlue;
         _mouse_through = false;
         _color = core::colors::Black;
     }
 
-    Form::Form(core::vec2<core::dimenf> & size, form_styles styles) : _styles(styles)
+    Form::Form(core::vec2<core::dimenf> & size, form_styles styles, std::shared_ptr<Form> parentForm) : _styles(styles), _parentForm(parentForm)
     {
         _background_color = core::colors::AliceBlue;
         _size = size;
@@ -27,6 +27,13 @@ namespace ui
 
     }
 
+
+    void Form::setParentForm(std::shared_ptr<Form> parentForm)
+    {
+        // TODO...
+        _parentForm = parentForm;
+    }
+
     void Form::setTitle(const std::string & text)
     {
         if(_title != text)
@@ -34,6 +41,17 @@ namespace ui
             _title = text;
             titleChanged(_title);
         }
+    }
+
+    std::shared_ptr<ui::IWindow> Form::window() const
+    {
+        if (!_window)
+        {
+            auto window = std::make_shared<win32::Window>();
+            window->attatch(share_ref<Form>());
+            const_cast<Form *>(this)->_window = window;
+        }
+        return _window;
     }
 
     void Form::setWindowPos(const core::pointf & pos)
@@ -69,13 +87,7 @@ namespace ui
         if (_form_state != fs)
         {
             _form_state = fs;
-
-            if (!_window)
-            {
-                auto window = std::make_shared<win32::Window>();
-                window->attatch(share_ref<Form>());
-                _window = window;
-            }
+            window();
 			stateChanged(_form_state, fs);
             //place(core::rectf(core::pointf(), form_size), form_size);
         }
@@ -412,6 +424,8 @@ namespace ui
             _draw_buffer = std::make_shared<drawing::Surface>();
 
         auto bounds = _invalid_region.bounds();
+        _invalid_region.clear();
+
         if (_draw_buffer->size().cx < bounds.right() || _draw_buffer->size().cy < bounds.bottom())
             _draw_buffer->resize(core::sizei{ bounds.right(), bounds.bottom() });
 

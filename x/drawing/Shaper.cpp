@@ -198,35 +198,38 @@ namespace drawing
     }
 
 
-    void TextClusterizer::setFont(span32 range, const drawing::font & font)
+    void textobject::setFont(span32 range, const drawing::font & font)
     {
         uint16_t index = _shaper.indexFont(font);
         std::fill(_rtf_font_indices.begin() + range.index, _rtf_font_indices.begin() + range.end(), index);
     }
 
-    void TextClusterizer::setColor(span32 range, uint32_t color)
+    void textobject::setColor(span32 range, uint32_t color)
     {
         std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
     }
 
-    core::error TextClusterizer::itermize(std::string text, const drawing::font & font_default, core::color color_default)
+    core::error textobject::update(const drawing::font & font, core::color color)
     {
+        auto font_default = _shaper.indexFont(font);
+        if (_blob.native_ptr() && (_font_default == font_default && _color_default == color))
+            return core::error_ok;
 
-        //SkShaper shaper(SkTypeface::MakeFromName(_font_default.family.c_str(), skia::from(_font_default.style)));
+        itermize(font, color);
+        layout();
+        _blob = drawing::TextBlob(build(), bounds());
+        return core::error_ok;
+    }
 
-        //SkPaint paint;
-        //SkTextBlobBuilder builder;
-        //SkRect rcBlob;
-        //SkPoint end = shaper.shape(builder, paint, text.c_str(), text.length(), true, {}, 999999999, rcBlob);
-
+    core::error textobject::itermize(const drawing::font & font_default, core::color color_default)
+    {
         _items.clear();
 
         _glyphs.clear();
         _clusters.clear();
 
-        _text = text;
-
         _font_default = _shaper.indexFont(font_default);
+
         _rtf_font_indices.assign(_text.length(), _font_default);
         _rtf_colors.assign(_text.length(), color_default);
 
@@ -546,7 +549,7 @@ namespace drawing
         return core::error_ok;
     }
 
-    core::error TextClusterizer::layout()
+    core::error textobject::layout()
     {
         _segments.clear();
         _ascent = 0.0f;
@@ -614,7 +617,7 @@ namespace drawing
         return core::error_ok;
     }
 
-    core::sizef TextClusterizer::bounds() const
+    core::sizef textobject::bounds() const
     {
         float32_t ascent = 0.0f;
         float32_t descent = 0.0f;
@@ -628,7 +631,7 @@ namespace drawing
         return { advance, ascent + descent };
     }
 
-    std::shared_ptr<SkTextBlob> TextClusterizer::build(float32_t width)
+    std::shared_ptr<SkTextBlob> textobject::build(float32_t width)
     {
         if (_text.empty())
             return nullptr;
@@ -763,7 +766,7 @@ namespace drawing
         return { _builder->make().release(), skia::skia_unref<SkTextBlob> };
     }
 
-    const cluster & TextClusterizer::findCluster(size_t tindex) const
+    const cluster & textobject::findCluster(size_t tindex) const
     {
         auto iter = std::upper_bound(_clusters.begin(), _clusters.end(), tindex, [](size_t tindex, const cluster & cl) { return  tindex < cl.trange.end(); });
         if (iter == _clusters.end())
@@ -771,7 +774,7 @@ namespace drawing
         return *iter;
     }
 
-    const cluster & TextClusterizer::findCluster(float32_t pos) const
+    const cluster & textobject::findCluster(float32_t pos) const
     {
         auto iter_seg = std::upper_bound(_segments.begin(), _segments.end(), pos, [](float32_t pos, const segment & seg) { return  pos < seg.offset + seg.advance.cx; });
         if (iter_seg == _segments.end())
@@ -793,7 +796,7 @@ namespace drawing
         }
     }
 
-    std::tuple<size_t, core::rectf> TextClusterizer::textRect(size_t toffset, size_t tlength)
+    std::tuple<size_t, core::rectf> textobject::textRect(size_t toffset, size_t tlength) const
     {
         if(!tlength)
             return { core::npos, {} };
@@ -831,7 +834,7 @@ namespace drawing
         }
     }
 
-    core::error TextWraper::layout(float32_t end, wrap_mode mode)
+    core::error TextWraper::layout(float32_t width, wrap_mode mode)
     {
         _lines.clear();
         _segments.clear();
@@ -860,7 +863,9 @@ namespace drawing
                 flush |= flushflag::item;
             }
 
-            if (curr + cl.advance.cx > end && _segments.back().crange.length > 0)
+            if (core::equal(width, 0.0f) || mode == wrap_mode::none)
+                ;
+            else if (curr + cl.advance.cx > width && _segments.back().crange.length > 0)
                 flush |= flushflag::width;
             else {}
 

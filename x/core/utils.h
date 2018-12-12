@@ -744,6 +744,8 @@ namespace core
     constexpr uint16_t nposu16 = uint16_t(-1);
     constexpr uint32_t nposu32 = uint32_t(-1);
     constexpr uint64_t nposu64 = uint64_t(-1);
+    const float32_t nanf32 = std::nanf("0");
+    const float64_t nanf64 = std::nan("0");
 
     template<typename T>
     inline constexpr bool npos_v = T(-1);
