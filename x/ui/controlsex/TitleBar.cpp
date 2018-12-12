@@ -157,7 +157,7 @@ namespace ui::controlsex
 
         if (!_title)
         {
-            _title = std::make_shared<controls::Text>();
+            _title = std::make_shared<controls::Lable>();
             _title->setPlaceAlignment(core::align::leftCenterY);
             _title->setText(f->title());
             auto font = _title->font();

@@ -265,7 +265,7 @@ namespace drawing
         SkPaint paint;
         format.apply(paint);
         apply(paint);
-        textobject shaper(str);
+        Text shaper(str);
         shaper.itermize(format._font, format._color);
         shaper.layout();
         core::sizef size = shaper.bounds();
@@ -297,7 +297,7 @@ namespace drawing
         format.apply(paint);
         apply(paint);
 
-        textobject shaper(str);
+        Text shaper(str);
         shaper.itermize(format._font, format._color);
         shaper.layout();
         core::sizef size = shaper.bounds();
@@ -323,9 +323,9 @@ namespace drawing
         _native->restore();
     }
 
-    void Graphics::drawTextBlob(const drawing::TextBlob & blob, core::pointf point, const StringFormat & format)
+    void Graphics::drawText(const drawing::Text & text, core::pointf point, const StringFormat & format)
     {
-        ++_statistics.drawTextBlob;
+        ++_statistics.drawText;
         if (!_native)
             return;
 
@@ -333,7 +333,7 @@ namespace drawing
         format.apply(paint);
         apply(paint);
 
-        _native->drawTextBlob(blob.native_ptr(), point.x, point.y, paint);
+        _native->drawTextBlob(text.blob().get(), point.x, point.y, paint);
     }
 
     void Graphics::drawImage(const Image & image, core::pointf point, core::aligns align)

@@ -105,7 +105,7 @@ namespace ui::controls
 
 
         if (!_text.empty())
-            graphics.drawTextBlob(_text.blob(), contentBox().leftTop().offseted(_scroll_pos, 0), drawing::StringFormat().color(color()));
+            graphics.drawText(_text, contentBox().leftTop().offseted(_scroll_pos, 0), drawing::StringFormat().color(color()));
         graphics.restore();
 
         if (_cursor_shown)

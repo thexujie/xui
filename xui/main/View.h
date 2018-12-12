@@ -2,7 +2,7 @@
 
 #include "ui/base/Button.h"
 #include "ui/Container.h"
-#include "ui/controls/Text.h"
+#include "ui/controls/Lable.h"
 #include "ViewItem.h"
 
 namespace ui
@@ -39,8 +39,12 @@ namespace ui
         core::color markedColor() const { return _marked_color; }
         void setSelectedColor(const core::color & c) { _selected_color = c; }
         core::color selectedColor() const { return _selected_color; }
+        void setIconSize(const core::dimen2f & s) { _icon_size = s; }
+        const core::dimen2f & iconSize() const { return _icon_size; }
         void setTileSize(const core::dimen2f & s) { _tile_size = s; }
         const core::dimen2f & tileSize() const { return _tile_size; }
+        void setContentSpacing(const core::dimenf & s) { _content_spacing = s; }
+        const core::dimenf & contentSpacing() const { return _content_spacing; }
 
     public:
         void onRectChanged(const core::rectf & from, const core::rectf & to) override;
@@ -62,7 +66,9 @@ namespace ui
         core::attribute<core::vec4<core::dimenf>> _item_padding;
        core::color _marked_color = core::colors::Auto;
        core::color _selected_color = core::colors::Auto;
+       core::dimen2f _icon_size = { 1_em, 1_em };
        core::dimen2f _tile_size = { 16_em, 3_em };
+       core::dimenf _content_spacing = 0.2_em;
 
         std::shared_ptr<ViewItem> _marked_item;
         std::shared_ptr<ViewItem> _selected_item;

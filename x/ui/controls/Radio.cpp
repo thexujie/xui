@@ -7,10 +7,6 @@ namespace ui::controls
     {
     }
 
-    Radio::Radio(std::string text) : _text(text)
-    {
-    }
-
     Radio::~Radio()
     {
         
@@ -32,14 +28,13 @@ namespace ui::controls
 
     void Radio::setText(const std::string & text)
     {
-        _textBlob = nullptr;
-        _text = text;
+        _text.setText(text);
+        _text.update(font(), color());
     }
 
     core::sizef Radio::contentSize() const
     {
-        _confirmBlob();
-        core::sizef size = _textBlob ? _textBlob->size() : core::sizef();
+        core::sizef size = _text.bounds();
         size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
         return size;
     }
@@ -75,8 +70,7 @@ namespace ui::controls
                 graphics.drawEllipse(rc_dot, drawing::PathStyle().stoke(_dot_border_color, calc(_dot_border_size)));
         }
 
-        if (_textBlob)
-            graphics.drawTextBlob(*_textBlob, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
+        graphics.drawText(_text, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
     }
 
     void Radio::onMouseEnter(const input_state & state)
@@ -109,16 +103,6 @@ namespace ui::controls
         restyle();
         if(_state != check_state::checked)
             setCheckState(check_state::checked);
-    }
-
-    void Radio::_confirmBlob() const
-    {
-        if (!_textBlob)
-        {
-            drawing::StringFormat format(font());
-            format.color(color());
-            _textBlob = std::make_shared<drawing::TextBlob>(_text, format);
-        }
     }
 
     void Radio::_setHoleColor(core::color color)

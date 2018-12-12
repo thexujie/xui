@@ -62,7 +62,8 @@ void all_main()
 		buttons->setSize({ auto_value, 100_per });
 	}
 
-	auto text = std::make_shared<ui::controls::Text>(u8"ABCDEF这是一个很好的内容的G");
+	auto text = std::make_shared<ui::controls::Lable>();
+    text->setText(u8"ABCDEF这是一个很好的内容的G");
 	text->setBorder({ 2_px, 2_px });
 	text->setBorderColors({ colors::DimGray, colors::DimGray });
 
@@ -91,7 +92,8 @@ void all_main()
 	image->setBorder({ 5_px, 5_px });
 	image->setBorderColors({ colors::Azure, colors::Azure });
 
-	auto text2 = std::make_shared<ui::controls::Text>("XYZOPQRST");
+	auto text2 = std::make_shared<ui::controls::Lable>();
+    text2->setText("XYZOPQRST");
 	text2->setBackgroundColor(colors::Green);
 	text2->setPadding({ 1_em, 0.5_em });
 #endif

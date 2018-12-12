@@ -54,8 +54,9 @@ namespace ui
         bool shown() const { return _flags.any(item_flag::shown); }
 
     public:
+        virtual void update() {}
         virtual core::sizef prefferdSize(float32_t width) const = 0;
-        virtual void paint(drawing::Graphics & graphics, const core::rectf & clip) = 0;
+        virtual void paint(drawing::Graphics & graphics, const core::rectf & clip) const = 0;
 
     protected:
         virtual void onFlagChanged(item_flag flag, bool set) {}

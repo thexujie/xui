@@ -33,29 +33,17 @@ namespace ui::controls
 
     void Button::setText(const std::string & text)
     {
-        _textBlob = nullptr;
-        _text = text;
+        _text.setText(text);
+        _text.update(font(), color());
     }
 
     core::sizef Button::contentSize() const
     {
-        _confirmBlob();
-        return _textBlob ? _textBlob->size() : core::sizef();
+        return _text.bounds();
     }
 
     void Button::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        if (_textBlob)
-            graphics.drawTextBlob(*_textBlob, contentBox().leftTop(), drawing::StringFormat().color(color()));
-    }
-
-    void Button::_confirmBlob() const
-    {
-        if (!_textBlob)
-        {
-            drawing::StringFormat format(font());
-            format.color(color());
-            _textBlob = std::make_shared<drawing::TextBlob>(_text, format);
-        }
+            graphics.drawText(_text, contentBox().leftTop(), drawing::StringFormat().color(color()));
     }
 }

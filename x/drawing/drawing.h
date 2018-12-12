@@ -8,8 +8,7 @@
 
 #include "drawing/PathStyle.h"
 #include "drawing/StringFormat.h"
-#include "drawing/Shaper.h"
-#include "drawing/TextBlob.h"
+#include "drawing/Text.h"
 #include "drawing/Bitmap.h"
 #include "drawing/Image.h"
 #include "drawing/Path.h"

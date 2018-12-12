@@ -99,7 +99,7 @@
     <ClCompile Include="core\utils.cpp" />
     <ClCompile Include="drawing\ColorFilter.cpp" />
     <ClCompile Include="drawing\drawing.cpp" />
-    <ClCompile Include="drawing\Shaper.cpp">
+    <ClCompile Include="drawing\Text.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -117,7 +117,7 @@
     <ClCompile Include="ui\controls\Radio.cpp" />
     <ClCompile Include="ui\controls\ScrollBar.cpp" />
     <ClCompile Include="ui\controls\Spacer.cpp" />
-    <ClCompile Include="ui\controls\Text.cpp" />
+    <ClCompile Include="ui\controls\Lable.cpp" />
     <ClCompile Include="ui\controls\TextLine.cpp" />
     <ClCompile Include="ui\Desktop.cpp" />
     <ClCompile Include="ui\Control.cpp" />
@@ -159,9 +159,6 @@
     <ClCompile Include="drawing\PathStyle.cpp" />
     <ClCompile Include="drawing\Region.cpp" />
     <ClCompile Include="drawing\StringFormat.cpp" />
-    <ClCompile Include="drawing\TextBlob.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -181,7 +178,7 @@
     <ClInclude Include="drawing\ColorFilter.h" />
     <ClInclude Include="drawing\draw.h" />
     <ClInclude Include="drawing\drawing.h" />
-    <ClInclude Include="drawing\Shaper.h" />
+    <ClInclude Include="drawing\Text.h" />
     <ClInclude Include="ui\base\Button.h" />
     <ClInclude Include="ui\base\Check.h" />
     <ClInclude Include="ui\base\Radio.h" />
@@ -195,7 +192,7 @@
     <ClInclude Include="ui\controls\Radio.h" />
     <ClInclude Include="ui\controls\ScrollBar.h" />
     <ClInclude Include="ui\controls\Spacer.h" />
-    <ClInclude Include="ui\controls\Text.h" />
+    <ClInclude Include="ui\controls\Lable.h" />
     <ClInclude Include="ui\controls\TextLine.h" />
     <ClInclude Include="ui\Desktop.h" />
     <ClInclude Include="ui\Control.h" />
@@ -258,7 +255,6 @@
     <ClInclude Include="drawing\Region.h" />
     <ClInclude Include="drawing\skia\skia.h" />
     <ClInclude Include="drawing\StringFormat.h" />
-    <ClInclude Include="drawing\TextBlob.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui\Grid.h" />
     <ClInclude Include="ui\RadioGroup.h" />

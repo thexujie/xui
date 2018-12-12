@@ -32,14 +32,13 @@ namespace ui::controls
 
     void Check::setText(const std::string & text)
     {
-        _textBlob = nullptr;
-        _text = text;
+        _text.setText(text);
+        _text.update(font(), color());
     }
 
     core::sizef Check::contentSize() const
     {
-        _confirmBlob();
-        core::sizef size = _textBlob ? _textBlob->size() : core::sizef();
+        core::sizef size = _text.bounds();
         size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
         return size;
     }
@@ -88,8 +87,7 @@ namespace ui::controls
         }
         else {}
 
-        if (_textBlob)
-            graphics.drawTextBlob(*_textBlob, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
+        graphics.drawText(_text, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
     }
 
     void Check::onMouseEnter(const input_state & state)
@@ -121,16 +119,6 @@ namespace ui::controls
         Control::onMouseUp(state, button);
         restyle();
         setCheckState(_state != check_state::checked ? check_state::checked : check_state::unchecked);
-    }
-
-    void Check::_confirmBlob() const
-    {
-        if (!_textBlob)
-        {
-            drawing::StringFormat format(font());
-            format.color(color());
-            _textBlob = std::make_shared<drawing::TextBlob>(_text, format);
-        }
     }
 
     void Check::_setHoleColor(core::color color)

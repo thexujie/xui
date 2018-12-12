@@ -24,7 +24,7 @@ namespace ui
             throw core::exception(core::error_not_supported);
     }
 
-    void ListViewItem::paint(drawing::Graphics & graphics, const core::rectf & clip)
+    void ListViewItem::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         auto v = view();
         if (!v)

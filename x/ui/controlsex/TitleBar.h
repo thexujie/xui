@@ -2,7 +2,7 @@
 
 #include "ui/base/Button.h"
 #include "ui/Container.h"
-#include "ui/controls/Text.h"
+#include "ui/controls/Lable.h"
 
 namespace ui 
 {
@@ -78,6 +78,6 @@ namespace ui::controlsex
 		std::shared_ptr<TitleButton> _close;
 		std::shared_ptr<TitleButton> _maximize;
         std::shared_ptr<TitleButton> _minimize;
-        std::shared_ptr<controls::Text> _title;
+        std::shared_ptr<controls::Lable> _title;
     };
 }

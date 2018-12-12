@@ -91,7 +91,7 @@ void views_main()
     ui::shortcut sk({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A }, ui::keybind{ ui::keycode::ctrl, ui::keycode::K } });
     auto str = sk.string();
     //std::string rtft = u8"hello لغة عربية‎𪚥𪚥བོད་ཀྱི་སྐད་ཡིག།𪚥ยิ้ยิ้ยิ😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق قققق";
-    //drawing::textobject shaper;
+    //drawing::Text shaper;
     //shaper.itermize(rtft, drawing::font(), core::colors::Black);
     //shaper.layout();
     //shaper.build(300.0f);
@@ -150,10 +150,6 @@ void views_main()
             {
                 auto index = mv->addItem(std::make_shared<ui::MenuViewItem>(std::make_shared <drawing::Image>("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
                 auto item = std::dynamic_pointer_cast<ui::MenuViewItem>(mv->itemAt(index));
-                item->addProperty(core::format(u8"属性 ", cnt, u8" 名字不怕长，我就怕你装不ققق قققق下，你感受一下"));
-                item->addProperty(core::format("Property ", cnt));
-                item->addProperty(core::format("Attributes", cnt));
-                item->setIconSize({ 1_em, 1_em });
             }
 
             mv->setScrollbarVisionV(ui::scrollbar_vision::always);

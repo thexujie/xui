@@ -58,7 +58,7 @@ namespace ui::controls
         bool _cursorShown() const { return _cursor_shown; }
 
     private:
-        drawing::textobject _text;
+        drawing::Text _text;
         std::shared_ptr<core::property_animation> _cursor_anim;
 
         bool _delay_shaper = false;

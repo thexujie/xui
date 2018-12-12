@@ -2,7 +2,7 @@
 
 #include "ui/base/Button.h"
 #include "ui/Container.h"
-#include "ui/controls/Text.h"
+#include "ui/controls/Lable.h"
 #include "View.h"
 
 namespace ui 
@@ -19,7 +19,7 @@ namespace ui
 
         void setIconSize(const core::dimen2f & size) { _icon_size = size; }
         core::sizef prefferdSize(float32_t width) const;
-        void paint(drawing::Graphics & graphics, const core::rectf & clip);
+        void paint(drawing::Graphics & graphics, const core::rectf & clip) const;
 
         void addProperty(std::string p) { _propertiess.push_back(p); }
     private:

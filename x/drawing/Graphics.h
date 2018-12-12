@@ -30,6 +30,7 @@ namespace drawing
         uint32_t drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref = 0;
         uint32_t drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref = 0;
         uint32_t drawTextBlob = 0;
+        uint32_t drawText = 0;
         uint32_t drawImage__const_Image_ref__core_pt32f__core_aligns = 0;
         uint32_t drawImage__const_Image_ref__core_rc32f__core_aligns = 0;
         uint32_t drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns = 0;
@@ -57,6 +58,7 @@ namespace drawing
                 drawPath +
                 drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref +
                 drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref +
+                drawText +
                 drawTextBlob +
                 drawImage__const_Image_ref__core_pt32f__core_aligns +
                 drawImage__const_Image_ref__core_rc32f__core_aligns +
@@ -109,7 +111,7 @@ namespace drawing
 
         void drawString(const std::string & str, const core::pointf & pos, const StringFormat & format);
         void drawString(const std::string & str, const core::rectf & rect, const StringFormat & format);
-        void drawTextBlob(const drawing::TextBlob & blob, core::pointf point, const StringFormat & format);
+        void drawText(const drawing::Text & text, core::pointf point, const StringFormat & format);
 
         void drawImage(const Image & image, core::pointf point, core::aligns align);
         void drawImage(const Image & image, core::rectf rect, core::aligns align);

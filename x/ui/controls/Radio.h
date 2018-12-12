@@ -15,7 +15,7 @@ namespace ui::controls
         void propertyTable(core::property_table & properties) override;
 
         void setText(const std::string & text);
-        const std::string & text() const { return _text; }
+        const std::string & text() const { return _text.text(); }
 
         core::sizef contentSize() const override;
         std::string styleName() const override;
@@ -30,8 +30,6 @@ namespace ui::controls
         void onMouseUp(const input_state & state, ui::mouse_button button) override;
 
     private:
-        void _confirmBlob() const;
-
         void _setHoleColor(core::color color);
         void _setHoleBorderSize(core::dimenf border_size);
         void _setHoleBorderColor(core::color color);
@@ -39,9 +37,7 @@ namespace ui::controls
         void _setDotBorderColor();
 
     private:
-        std::string _text;
-
-        mutable std::shared_ptr<drawing::TextBlob> _textBlob;
+        drawing::Text _text;
 
         core::dimenf _content_spacing = 0.2_em;
 
