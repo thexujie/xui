@@ -75,12 +75,13 @@ namespace drawing
         __fontmetrics(font, *this);
     }
 
-    font & default_font()
+    const font & default_font()
     {
         std::call_once(__default_font_once_flag, generate_default_font);
         return __default_font;
     }
-    fontmetrics & default_fontmetrics()
+
+    const fontmetrics & default_fontmetrics()
     {
         std::call_once(__default_font_once_flag, generate_default_font);
         return __default_fontmetrics;

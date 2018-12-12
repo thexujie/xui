@@ -215,6 +215,7 @@ namespace ui
         virtual std::string styleName() const { return {}; }
 
         virtual void setEvent(scene_event evt);
+
         virtual void update() {}
         virtual void updateStyle();
         virtual void invalidate();

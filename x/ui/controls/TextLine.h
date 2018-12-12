@@ -27,6 +27,7 @@ namespace ui::controls
         core::sizef contentSize() const override;
         std::string styleName() const override;
 
+        void update();
         void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
     public:
         void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
@@ -41,28 +42,21 @@ namespace ui::controls
         void onChar(char32_t ch) override;
 
     public:
-        void reshaper(shaper_flags flags = nullptr);
         void caretLeft();
         void caretRight();
         void backSpace();
         void del();
         void insert(const char * text, size_t count);
+        void updateIme();
 
     private:
-        void _updateIme();
-        void _doshaper();
         void _docaret();
-
-    private:
         void _setCursorShown(bool vis);
         bool _cursorShown() const { return _cursor_shown; }
 
     private:
         drawing::Text _text;
         std::shared_ptr<core::property_animation> _cursor_anim;
-
-        bool _delay_shaper = false;
-        shaper_flags _delay_shaper_flags = nullptr;
 
         bool _cursor_shown = false;
         size_t _cursor_gindex = 0;

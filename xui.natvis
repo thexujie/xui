@@ -154,7 +154,7 @@
 	<Type Name="drawing::row">
 		<DisplayString>{{[{line}], &#x200E;{_text}&#x200E;, texts:{trange}, glyphs:{grange}}}</DisplayString>
 	</Type>
-	<Type Name="drawing::textobject">
+	<Type Name="drawing::Text">
 		<DisplayString>{{&#x200E;{_text}}}</DisplayString>
 	</Type>
 

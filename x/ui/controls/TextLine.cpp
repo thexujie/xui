@@ -65,7 +65,7 @@ namespace ui::controls
     void TextLine::setText(const std::string & text)
     {
         _text.setText(text);
-        reshaper(shaper_flag::shaper);
+        _text.update(font(), color());
     }
 
     core::sizef TextLine::contentSize() const
@@ -81,6 +81,51 @@ namespace ui::controls
             return "textline:hover";
         else
             return "textline";
+    }
+
+    void TextLine::update()
+    {
+#ifdef  _DEBUG
+        size_t utf8_pos = 0;
+        size_t nutf8 = 0;
+        char32_t cp_utf8 = 0;
+        do
+        {
+            nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, cp_utf8);
+            utf8_pos += nutf8;
+        }
+        while (nutf8 > 0);
+        assert(utf8_pos <= _text.length());
+#endif
+
+        _text.update(font(), color());
+
+        if (!_text.empty())
+        {
+            auto & cluster = _text.findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+            assert(cluster);
+            if (cluster)
+            {
+                auto cbox = contentBox();
+                float32_t scroll_pos = _scroll_pos;
+                if (_scroll_pos + cluster.rect.x < 0)
+                    scroll_pos = -cluster.rect.x;
+                else if (_scroll_pos + cluster.rect.right() >= cbox.width)
+                    scroll_pos = cbox.cx - cluster.rect.right();
+                else {}
+
+                auto size = _text.bounds();
+                if (_scroll_pos + size.cx < cbox.width)
+                {
+                    float32_t scroll_max = cbox.width - size.cx;
+                    if (scroll_max > 0)
+                        scroll_max = 0;
+                    scroll_pos = std::clamp(scroll_pos, scroll_max, 0.0f);
+                }
+                _scroll_pos = scroll_pos;
+            }
+        }
+        repaint();
     }
 
     void TextLine::paint(drawing::Graphics & graphics, const core::rectf & clip) const
@@ -158,7 +203,8 @@ namespace ui::controls
 
     void TextLine::onSizeChanged(const core::sizef & from, const core::sizef & to)
     {
-        reshaper(shaper_flag::caret);
+        update();
+        updateIme();
         Control::onSizeChanged(from, to);
     }
 
@@ -191,7 +237,8 @@ namespace ui::controls
                 _cursor_far = cursor_far; 
                 _cursor_pos = _cursor_far ? cluster.trange.end() : cluster.trange.index;
                 _cursor_anim ? _cursor_anim->reset() : nullptr;
-                reshaper(shaper_flag::caret);
+                updateIme();
+                repaint();
             }
             break;
         }
@@ -224,8 +271,8 @@ namespace ui::controls
         _cursor_far = (pos >= cluster.rect.centerX()) ^ (cluster.bidi == drawing::bidirection::rtl);
         _cursor_pos = _cursor_far ? cluster.trange.end() : cluster.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
-        reshaper(shaper_flag::caret);
         restyle();
+        updateIme();
     }
 
     void TextLine::onMouseUp(const input_state & state, ui::mouse_button button)
@@ -287,7 +334,7 @@ namespace ui::controls
 
         if(auto ic = imeContext())
             ic->setImeMode(_ime_mode);
-        _updateIme();
+        updateIme();
     }
 
     void TextLine::onBlur()
@@ -307,36 +354,10 @@ namespace ui::controls
         insert(chars, len);
     }
 
-    void TextLine::reshaper(shaper_flags flags)
-    {
-#ifdef  _DEBUG
-        size_t utf8_pos = 0;
-        size_t nutf8 = 0;
-        char32_t cp_utf8 = 0;
-        do
-        {
-            nutf8 = core::utf8_to_utf32(_text.c_str() + utf8_pos, _text.length() - utf8_pos, cp_utf8);
-            utf8_pos += nutf8;
-        }
-        while (nutf8 > 0);
-        assert(utf8_pos <= _text.length());
-#endif
-
-        _delay_shaper_flags |= flags;
-        if(!_delay_shaper)
-        {
-            _delay_shaper = true;
-            invoke([this]() { _doshaper(); _updateIme(); });
-        }
-    }
-
     void TextLine::caretLeft()
     {
         if (_cursor_pos < 1)
             return;
-
-        if (_delay_shaper_flags)
-            _doshaper();
 
         auto & cluster = _text.findCluster(_cursor_pos - 1);
         if(!cluster)
@@ -345,17 +366,15 @@ namespace ui::controls
         _cursor_far = false;
         _cursor_pos = cluster.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
-        reshaper(shaper_flag::caret);
 
+        updateIme();
+        repaint();
     }
 
     void TextLine::caretRight()
     {
         if (_cursor_pos >= _text.length())
             return;
-
-        if (_delay_shaper_flags)
-            _doshaper();
 
         auto & cluster = _text.findCluster(_cursor_pos);
         if (!cluster)
@@ -364,16 +383,15 @@ namespace ui::controls
         _cursor_far = true;
         _cursor_pos = cluster.trange.end();
         _cursor_anim ? _cursor_anim->reset() : nullptr;
-        reshaper(shaper_flag::caret);
+
+        updateIme();
+        repaint();
     }
 
     void TextLine::backSpace()
     {
         if (!_cursor_pos)
             return;
-
-        if (_delay_shaper_flags)
-            _doshaper();
 
         auto & cluster = _text.findCluster(_cursor_pos - 1);
         if (!cluster)
@@ -389,16 +407,15 @@ namespace ui::controls
         _cursor_far = cluster.trange.index > 0;
         _cursor_pos = cluster.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
-        reshaper(shaper_flag::shaper);
+
+        update();
+        updateIme();
     }
 
     void TextLine::del()
     {
         if (_cursor_pos >= _text.length())
             return;
-
-        if (_delay_shaper_flags)
-            _doshaper();
 
         auto & cluster = _text.findCluster(_cursor_pos);
         if (!cluster)
@@ -410,7 +427,8 @@ namespace ui::controls
         _cursor_pos = cluster.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
 
-        reshaper(shaper_flag::shaper);
+        update();
+        updateIme();
     }
 
     void TextLine::insert(const char * text, size_t count)
@@ -421,10 +439,12 @@ namespace ui::controls
         _cursor_far = true;
         _cursor_pos += count;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
-        reshaper(shaper_flag::shaper);
+
+        update();
+        updateIme();
     }
 
-    void TextLine::_updateIme()
+    void TextLine::updateIme()
     {
         if(_ime_mode != ime_mode::disabled)
         {
@@ -442,43 +462,6 @@ namespace ui::controls
                 ic->setCompositionFont(font());
             }
         }
-    }
-
-    void TextLine::_doshaper()
-    {
-        _delay_shaper = false;
-
-        if(_delay_shaper_flags.any(shaper_flag::shaper))
-            _text.update(_font, _color);
-
-        if (!_text.empty())
-        {
-            auto & cluster = _text.findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
-            assert(cluster);
-            if (cluster)
-            {
-                auto cbox = contentBox();
-                float32_t scroll_pos = _scroll_pos;
-                if (_scroll_pos + cluster.rect.x < 0)
-                    scroll_pos = -cluster.rect.x;
-                else if (_scroll_pos + cluster.rect.right() >= cbox.width)
-                    scroll_pos = cbox.cx - cluster.rect.right();
-                else {}
-
-                auto size = _text.bounds();
-                if (_scroll_pos + size.cx < cbox.width)
-                {
-                    float32_t scroll_max = cbox.width - size.cx;
-                    if (scroll_max > 0)
-                        scroll_max = 0;
-                    scroll_pos = std::clamp(scroll_pos, scroll_max, 0.0f);
-                }
-                _scroll_pos = scroll_pos;
-            }
-        }
-
-        repaint();
-        _delay_shaper_flags.clear();
     }
 
     void TextLine::_docaret()

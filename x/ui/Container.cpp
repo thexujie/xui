@@ -441,7 +441,6 @@ namespace ui
         if (!form())
             return;
 
-        float32_t margin = 0;
         core::rectf box = contentBox();
         core::sizef spacing = box.size;
         core::pointf layout_pos = box.pos - _scroll_pos;
@@ -450,6 +449,9 @@ namespace ui
         float32_t margin_size = 0;
         float32_t fixed_size = 0;
         float32_t total_per = 0;
+
+        float32_t margin_last = 0;
+        float32_t margin_curr = 0;
 
         for (auto & control : _controls)
         {
@@ -460,13 +462,13 @@ namespace ui
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
                 continue;
 
-            auto m = control->realMargin();
+            auto m = calc(control->margin());
             auto s = control->size();
             auto ps = control->prefferSize();
 
             if (_layout_direction == core::align::left || _layout_direction == core::align::right)
             {
-                margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
+                margin_curr = _layout_direction == core::align::left ? m.bleft : m.bright;
                 if (s.cx.avi())
                 {
                     if (s.cx.per())
@@ -479,7 +481,7 @@ namespace ui
             }
             else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
             {
-                margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
+                margin_curr = _layout_direction == core::align::top ? m.btop : m.bbottom;
                 if (s.cy.avi())
                 {
                     if (s.cy.per())
@@ -492,19 +494,10 @@ namespace ui
             }
             else {}
 
-            margin_size += margin;
-
-            if (_layout_direction == core::align::left || _layout_direction == core::align::right)
-            {
-                margin = std::max(margin, _layout_direction == core::align::left ? m.bright : m.bleft);
-            }
-            else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
-            {
-                margin = std::max(margin, _layout_direction == core::align::top ? m.bbottom : m.btop);
-            }
-            else {}
+            margin_size += std::max(margin_curr, margin_last);;
+            margin_last = margin_curr;
         }
-        margin_size += margin;
+        margin_size += margin_last;
 
         if (_layout_direction == core::align::left || _layout_direction == core::align::right)
         {
@@ -521,7 +514,7 @@ namespace ui
         spacing.cx = std::max(spacing.cx, 0.0f);
         spacing.cy = std::max(spacing.cy, 0.0f);
 
-        margin = 0;
+        float32_t margin = 0;
         float32_t per_size = 0;
         float32_t compat_scale =0;
         std::set<std::string> setes;
@@ -530,7 +523,7 @@ namespace ui
 			if(!control->aviliable())
 				continue;
 
-            auto margins = control->realMargin();
+            auto m = calc(control->margin());
             auto lo = control->layoutOrigin();
             auto & si = control->size();
             auto ps = control->prefferSize();
@@ -566,11 +559,11 @@ namespace ui
                 {
                     if (a.bleft.avi() && a.bright.avi())
                     {
-                        ps.cx = box.cx - calc(a.bleft) - calc(a.bright);
+                        ps.cx = box.cx - calc(a.bleft) - calc(a.bright) - m.bwidth();
                     }
                     else if (si.cx.per())
                     {
-                        ps.cx = spacing.cx * si.cx.value / 100.0f;
+                        ps.cx = spacing.cx * si.cx.value / 100.0f - m.bwidth();
                     }
                     else {}
 
@@ -590,28 +583,28 @@ namespace ui
                 {
                 case core::align::left:
                 {
-                    margin = std::max(margin, margins.bleft);
-                    control->place({ layout_pos.x + layout_size.cx + margin, layout_pos.y + margins.btop, ps.cx, box.cy - margins.bheight() }, ps);
+                    margin = std::max(margin, m.bleft);
+                    control->place({ layout_pos.x + layout_size.cx + margin, layout_pos.y + m.btop, ps.cx, box.cy - m.bheight() }, ps);
                     layout_size.cx += margin + ps.cx;
-                    margin = margins.bright;
+                    margin = m.bright;
 
                     break;
                 }
                 case core::align::right:
                 {
-                    margin = std::max(margin, margins.bright);
-                    control->place({ (_rect.right() - _scroll_pos.x) - (layout_size.cx + margin) - ps.cx, layout_pos.y + margins.btop, ps.cx, box.cy - margins.bheight() }, ps);
+                    margin = std::max(margin, m.bright);
+                    control->place({ (_rect.right() - _scroll_pos.x) - (layout_size.cx + margin) - ps.cx, layout_pos.y + m.btop, ps.cx, box.cy - m.bheight() }, ps);
                     layout_size.cx += margin + ps.cx;
-                    margin = margins.bleft;
+                    margin = m.bleft;
 
                     break;
                 }
                 case core::align::top:
                 {
-                    margin = std::max(margin, margins.btop);
-                    control->place({ layout_pos.x + margins.bleft, layout_pos.y + layout_size.cy + margin, box.cx - margins.bwidth(), ps.cy }, ps);
+                    margin = std::max(margin, m.btop);
+                    control->place({ layout_pos.x + m.bleft, layout_pos.y + layout_size.cy + margin, box.cx - m.bwidth(), ps.cy }, ps);
                     layout_size.cy += margin + ps.cy;
-                    margin = margins.bbottom;
+                    margin = m.bbottom;
                     break;
                 }
                 default:
@@ -622,11 +615,11 @@ namespace ui
             {
                 if (a.bleft.avi() && a.bright.avi())
                 {
-                    ps.cx = box.cx - calc(a.bleft) - calc(a.bright);
+                    ps.cx = box.cx - calc(a.bleft) - calc(a.bright) - m.bwidth();
                 }
                 else if (si.cx.per())
                 {
-                    ps.cx = si.cx.value * box.cx / 100.0f;
+                    ps.cx = si.cx.value * box.cx / 100.0f - m.bwidth();
                 }
                 else {}
 
