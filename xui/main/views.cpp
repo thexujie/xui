@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "ListView.h"
-#include "MenuView.h"
+#include "Menu.h"
 
 struct inputdata
 {
@@ -141,7 +141,7 @@ void views_main()
         container->setSize({ 100_per, 100_per });
         container->setLayoutDirection(core::align::left);
         {
-            auto mv = std::make_shared<ui::MenuView>();
+            auto mv = std::make_shared<ui::Menu>();
             mv->setBackgroundColor(0x80800080);
             //lv->setViewMode(ui::view_mode::tile);
             mv->setSize({ core::auto_value, 100_per });
