@@ -22,26 +22,17 @@ namespace ui::controlsex
 		void propertyTable(core::property_table & properties) override;
 
 		void setPath(std::shared_ptr<drawing::Path> path);
-		void setTitleAction(ui::title_action a) { _action = a; }
-		ui::title_action titleAction() const { return _action; }
 
 		std::string styleName() const override;
 
 		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
-
-	public:
-		void onMouseClick(const ui::input_state & state, ui::mouse_button button) override;
 
 	private:
 		void _setShapeColor(core::color color);
 
 	private:
 		std::shared_ptr<drawing::Path> _path;
-		ui::title_action _action = ui::title_action::none;
 		core::color _shape_color = core::colors::Black;
-
-	public:
-		core::event<void(ui::title_action)> action;
 	};
 
     class TitleBar : public ui::Container
@@ -71,7 +62,7 @@ namespace ui::controlsex
             refresh();
         }
 
-		void onAction(ui::title_action action);
+		void onAction(const ui::input_state & is, uintx_t action);
 
     private:
 		void update();

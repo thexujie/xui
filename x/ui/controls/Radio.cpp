@@ -41,9 +41,9 @@ namespace ui::controls
 
     std::string Radio::styleName() const
     {
-        if (_pressed)
+        if (_actived)
             return "radio:active";
-        else if (_mousein)
+        else if (_hovered)
             return "radio:hover";
         else
             return "radio";
@@ -73,33 +73,9 @@ namespace ui::controls
         graphics.drawText(_text, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
     }
 
-    void Radio::onMouseEnter(const input_state & state)
+    void Radio::onActiveOut(const input_state & state)
     {
-        Control::onMouseEnter(state);
-        restyle();
-    }
-
-    void Radio::onMouseMove(const input_state & state)
-    {
-        Control::onMouseMove(state);
-    }
-
-    void Radio::onMouseLeave(const input_state & state)
-    {
-        Control::onMouseLeave(state);
-        restyle();
-    }
-
-    
-    void Radio::onMouseDown(const input_state & state, ui::mouse_button RadioButton)
-    {
-        Control::onMouseDown(state, RadioButton);
-        restyle();
-    }
-
-    void Radio::onMouseUp(const input_state & state, ui::mouse_button RadioButton)
-    {
-        Control::onMouseUp(state, RadioButton);
+        Control::onActiveOut(state);
         restyle();
         if(_state != check_state::checked)
             setCheckState(check_state::checked);

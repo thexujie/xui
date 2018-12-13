@@ -31,14 +31,12 @@ namespace ui::controls
         void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
     public:
         void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
-        void onMouseEnter(const input_state & state) override;
-        void onMouseMove(const input_state & state) override;
-        void onMouseLeave(const input_state & state) override;
-        void onMouseDown(const input_state & state, ui::mouse_button button) override;
-        void onMouseUp(const input_state & state, ui::mouse_button button) override;
+        void onHover(const input_state & state) override;
+        void onActiveIn(const input_state & state) override;
+        void onActiveOut(const input_state & state) override;
         void onKeyDown(const input_state & state, keycode key) override;
-        void onFocus() override;
-        void onBlur() override;
+        void onFocusIn() override;
+        void onFocusOut() override;
         void onChar(char32_t ch) override;
 
     public:

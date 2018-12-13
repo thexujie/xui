@@ -160,13 +160,19 @@ namespace ui
             if (_current_control != _current_input)
             {
                 if (_current_input)
-                    _current_input->onBlur();
+                {
+                    _current_input->setFocused(false);
+                    _current_input->onFocusOut();
+                }
 
                 if (_current_control && _current_control->acceptInput())
                 {
                     _current_input = _current_control;
                     if (_current_input)
-                        _current_input->onFocus();
+                    {
+                        _current_input->setFocused(false);
+                        _current_input->onFocusIn();
+                    }
                 }
                 else
                 {

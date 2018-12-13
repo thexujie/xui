@@ -68,7 +68,7 @@ typedef char char8_t;
 typedef float float32_t;
 typedef double float64_t;
 
-using pointer_t = void * ;
+using pointer_t = void *;
 
 namespace core
 {

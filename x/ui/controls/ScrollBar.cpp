@@ -110,27 +110,21 @@ namespace ui::controls
             return { box.x + barPos(), box.y, barSize(), box.cy };
     }
 
-    void ScrollBar::onMouseEnter(const input_state & state)
+    void ScrollBar::onHover(const input_state & state)
     {
         _updateMouse(state);
-        Control::onMouseEnter(state);
+        Control::onHover(state);
     }
 
-    void ScrollBar::onMouseMove(const input_state & state)
-    {
-        _updateMouse(state);
-        Control::onMouseMove(state);
-    }
-
-    void ScrollBar::onMouseLeave(const input_state & state)
+    void ScrollBar::onHoverOut(const input_state & state)
     {
         _bar_drag_start_vallue = 0.0f;
         _bar_drag_mouse_pos = { std::nanf("0"), std::nanf("0") };
         _updateBarState(false, false);
-        Control::onMouseLeave(state);
+        Control::onHoverOut(state);
     }
 
-    void ScrollBar::onMouseDown(const input_state & state, mouse_button button)
+    void ScrollBar::onActiveIn(const input_state & state)
     {
         if(_bar_hover)
         {
@@ -138,10 +132,10 @@ namespace ui::controls
             _bar_drag_mouse_pos = state.pos();
             _updateBarState(true, true);
         }
-        Control::onMouseDown(state, button);
+        Control::onActiveIn(state);
     }
 
-    void ScrollBar::onMouseUp(const input_state & state, mouse_button button)
+    void ScrollBar::onActiveOut(const input_state & state)
     {
         if (_bar_active)
         {
@@ -150,14 +144,14 @@ namespace ui::controls
             _updateBarState(true, false);
             _updateMouse(state);
         }
-        Control::onMouseUp(state, button);
+        Control::onActiveOut(state);
     }
 
-    void ScrollBar::onMouseWheel(const input_state & state)
+    void ScrollBar::onWheel(const input_state & state)
     {
         float32_t val = _val - lineValue() * state.wheelLines();
         setValue(std::clamp(val, _min, _max));
-        Control::onMouseWheel(state);
+        Control::onWheel(state);
     }
 
     void ScrollBar::onSizeChanged(const core::sizef & from, const core::sizef & to)

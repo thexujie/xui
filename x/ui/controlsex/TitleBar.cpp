@@ -44,9 +44,9 @@ namespace ui::controlsex
 
 	std::string TitleButton::styleName() const
 	{
-		if(_pressed)
+		if(_actived)
 			return "titlebutton:active";
-		else if(_mousein)
+		else if(_hovered)
 			return "titlebutton:hover";
 		else
 			return "titlebutton";
@@ -68,12 +68,6 @@ namespace ui::controlsex
 			//matrix *= core::float3x2::translate(box.x, box.y);
 			graphics.drawPath(path, drawing::PathStyle().stoke(_shape_color, calc(1.5_px)));
 		}
-	}
-
-	void TitleButton::onMouseClick(const ui::input_state & state, ui::mouse_button button)
-	{
-		action(_action);
-		ui::base::Button::onMouseClick(state, button);
 	}
 
 	void TitleButton::_setShapeColor(core::color color)
@@ -109,10 +103,10 @@ namespace ui::controlsex
 		}
 	}
 
-	void TitleBar::onAction(ui::title_action action)
+	void TitleBar::onAction(const ui::input_state & is, uintx_t action)
 	{
 		if(auto f = form())
-			f->onTitleAction(action);
+			f->onTitleAction(static_cast<title_action>(action));
 	}
 
 	void TitleBar::update()
@@ -134,8 +128,8 @@ namespace ui::controlsex
 			path->moveTo({ 0.7f, 0.3f });
 			path->lineTo({ 0.3f, 0.7f });
 			_close->setPath(path);
-			_close->setTitleAction(ui::title_action::close);
-			_close->action += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
+			_close->setActionT(ui::title_action::close);
+            _close->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
 			addControl(_close);
 		}
 
@@ -144,8 +138,8 @@ namespace ui::controlsex
 			_maximize = std::make_shared<TitleButton>();
             _maximize->setSize({ 1.5_em });
             _maximize->setMargin({ 0.2_em });
-			_maximize->setTitleAction(ui::title_action::maximize);
-			_maximize->action += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
+			_maximize->setActionT(ui::title_action::maximize);
+            _maximize->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
 			addControl(_maximize);
 		}
 
@@ -159,8 +153,8 @@ namespace ui::controlsex
 			path->lineTo({ 0.7f, 0.7f });
 			path->close();
 			_minimize->setPath(path);
-			_minimize->setTitleAction(ui::title_action::minimize);
-			_minimize->action += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
+			_minimize->setActionT(ui::title_action::minimize);
+			_minimize->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
 			addControl(_minimize);
 		}
 

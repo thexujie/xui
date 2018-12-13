@@ -23,11 +23,7 @@ namespace ui::controls
         void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
     public:
-        void onMouseEnter(const input_state & state) override;
-        void onMouseMove(const input_state & state) override;
-        void onMouseLeave(const input_state & state) override;
-        void onMouseDown(const input_state & state, ui::mouse_button button) override;
-        void onMouseUp(const input_state & state, ui::mouse_button button) override;
+        void onActiveOut(const input_state & state) override;
 
     private:
         void _setHoleColor(core::color color);

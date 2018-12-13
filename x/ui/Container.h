@@ -55,7 +55,7 @@ namespace ui
 
         void onPosChanged(const core::pointf & from, const core::pointf & to) override;
         void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
-        void onMouseWheel(const input_state & state) override;
+        void onWheel(const input_state & state) override;
 
     public:
         void relayout(layout_flags flags = nullptr);

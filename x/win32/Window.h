@@ -72,12 +72,12 @@ namespace win32
         virtual intx_t OnWmMouseMove(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmMouseLeave(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmMouseDownL(uintx_t wParam, intx_t lParam);
+        virtual intx_t OnWmMouseDownR(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmMouseUpL(uintx_t wParam, intx_t lParam);
+        virtual intx_t OnWmMouseUpR(uintx_t wParam, intx_t lParam);
         virtual intx_t OnWmMouseWheelV(uintx_t wParam, intx_t lParam);
 
         virtual intx_t OnWmNcMouseDownL(uintx_t wParam, intx_t lParam) { return 0; }
-        virtual intx_t OnWmMouseDownR(uintx_t wParam, intx_t lParam){ return 0;}
-        virtual intx_t OnWmMouseUpR(uintx_t wParam, intx_t lParam){ return 0;}
         virtual intx_t OnWmMouseDownM(uintx_t wParam, intx_t lParam){ return 0;}
         virtual intx_t OnWmMouseUpM(uintx_t wParam, intx_t lParam){ return 0;}
 

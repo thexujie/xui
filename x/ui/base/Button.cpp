@@ -26,47 +26,11 @@ namespace ui::base
 
     std::string Button::styleName() const
     {
-        if (_pressed)
+        if (_actived)
             return "button:active";
-        else if (_mousein)
+        else if (_hovered)
             return "button:hover";
         else
             return "button";
-    }
-
-    void Button::onMouseEnter(const input_state & state)
-    {
-        Control::onMouseEnter(state);
-        restyle();
-    }
-
-    void Button::onMouseMove(const input_state & state)
-    {
-        Control::onMouseMove(state);
-    }
-
-    void Button::onMouseLeave(const input_state & state)
-    {
-        Control::onMouseLeave(state);
-        restyle();
-    }
-
-
-    void Button::onMouseDown(const input_state & state, ui::mouse_button button)
-    {
-        Control::onMouseDown(state, button);
-        restyle();
-    }
-
-    void Button::onMouseClick(const input_state & state, mouse_button button)
-    {
-        click();
-        Control::onMouseClick(state, button);
-    }
-
-    void Button::onMouseUp(const input_state & state, ui::mouse_button button)
-    {
-        Control::onMouseUp(state, button);
-        restyle();
     }
 }

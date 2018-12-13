@@ -783,16 +783,16 @@ namespace ui
     {
         if(auto cc = cursorContext())
             cc->setCursor(_cursor);
-        _mousein = true;
-        mouseEnter(state);
+        setHovered(true);
+        onHoverIn(state);
     }
 
     void Control::onMouseLeave(const input_state & state)
     {
         if (auto cc = cursorContext())
             cc->resetCursor();
-        _pressed = false;
-        _mousein = false;
-        mouseLeave(state);
+        setActived(false);
+        onHoverOut(state);
+        setHovered(false);
     }
 }

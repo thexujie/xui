@@ -88,9 +88,9 @@ namespace ui
 
 	std::string ListView::styleName() const
 	{
-		if(_pressed)
+		if(_actived)
 			return "listview:active";
-		else if(_mousein)
+		else if(_hovered)
 			return "listview:hover";
 		else
 			return "listview";

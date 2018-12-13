@@ -658,8 +658,8 @@ namespace win32
             CASE_MSG(WM_LBUTTONDOWN, OnWmMouseDownL);
             CASE_MSG(WM_LBUTTONUP, OnWmMouseUpL);
 
-            //CASE_MSG(WM_RBUTTONDOWN, OnWmMouseDownR);
-            //CASE_MSG(WM_RBUTTONUP, OnWmMouseUpR);
+            CASE_MSG(WM_RBUTTONDOWN, OnWmMouseDownR);
+            CASE_MSG(WM_RBUTTONUP, OnWmMouseUpR);
 
             //CASE_MSG(WM_MBUTTONDOWN, OnWmMouseDownM);
             //CASE_MSG(WM_MBUTTONUP, OnWmMouseUpM);
@@ -878,6 +878,19 @@ namespace win32
         return 0;
     }
 
+    intx_t Window::OnWmMouseDownR(uintx_t wParam, intx_t lParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+
+        _mouse_state.setWheelLines(0);
+        _mouse_state.setButton(ui::mouse_button::right, true);
+        _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
+        f->notifyMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::press);
+        return 0;
+    }
+
     intx_t Window::OnWmMouseUpL(uintx_t wParam, intx_t lParam)
     {
         auto f = form();
@@ -889,6 +902,20 @@ namespace win32
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
         f->notifyMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::click);
         f->notifyMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
+        return 0;
+    }
+
+    intx_t Window::OnWmMouseUpR(uintx_t wParam, intx_t lParam)
+    {
+        auto f = form();
+        if (!f)
+            throw core::exception(core::error_nullptr);
+
+        _mouse_state.setWheelLines(0);
+        _mouse_state.setButton(ui::mouse_button::right, false);
+        _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
+        f->notifyMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::click);
+        f->notifyMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::release);
         return 0;
     }
 

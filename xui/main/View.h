@@ -48,10 +48,9 @@ namespace ui
 
     public:
         void onRectChanged(const core::rectf & from, const core::rectf & to) override;
-        void onMouseMove(const ui::input_state & state) override;
-        void onMouseLeave(const ui::input_state & state) override;
-        void onMouseDown(const ui::input_state & state, ui::mouse_button button) override;
-        void onMouseClick(const ui::input_state & state, ui::mouse_button button) override;
+        void onHover(const ui::input_state & state) override;
+        void onHoverOut(const input_state & state) override;
+        void onActiveIn(const ui::input_state & state) override;
 
     protected:
         void _setMarkedItem(std::shared_ptr<ViewItem> item);

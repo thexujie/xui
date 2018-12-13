@@ -330,45 +330,85 @@ namespace ui
         }
 
         virtual void onMouseEnter(const input_state & state);
-        virtual void onMouseMove(const input_state & state) { mouseMove(state); }
+        virtual void onMouseMove(const input_state & state) { onHover(state); }
         virtual void onMouseLeave(const input_state & state);
 
         virtual void onMouseDown(const input_state & state, mouse_button button)
         {
             if (button == mouse_button::left)
-                _pressed = true;
-            mouseDown(state, button);
+            {
+                setActived(true);
+                onActiveIn(state);
+            }
         }
 
         virtual void onMouseUp(const input_state & state, mouse_button button)
         {
             if (button == mouse_button::left)
-                _pressed = false;
-            mouseUp(state, button);
+            {
+                onActiveOut(state);
+                setActived(false);
+            }
         }
 
-        virtual void onMouseClick(const input_state & state, mouse_button button) { mouseClick(state, button); }
-        virtual void onMouseDBClick(const input_state & state, mouse_button button) { mouseDBClick(state, button); }
-        virtual void onMouseWheel(const input_state & state) { mouseWheel(state); }
-
-        virtual void onFocus()
-        {
-            _focused = true;
-            focus();
-        }
-
-        virtual void onBlur()
-        {
-            _focused = false;
-            blur();
-        }
+        virtual void onMouseClick(const input_state & state, mouse_button button) {  active(state, _action); onActive(state, _action); }
+        virtual void onMouseDBClick(const input_state & state, mouse_button button) { }
+        virtual void onMouseWheel(const input_state & state) { onWheel(state); }
 
         virtual void onKeyDown(const input_state & state, keycode key) {}
         virtual void onKeyUp(const input_state & state, keycode key) {}
         virtual void onChar(char32_t ch) {}
 
-        bool mousein() const { return _mousein; }
-        bool pressed() const { return _pressed; }
+        virtual void onHover(const input_state & state)
+        {
+            hover(state);
+        }
+
+        virtual void onWheel(const input_state & state)
+        {
+            wheel(state);
+        }
+
+        virtual void onHoverIn(const input_state & state)
+        {
+        }
+
+        virtual void onHoverOut(const input_state & state)
+        {
+        }
+
+        virtual void onActiveIn(const input_state & state)
+        {
+        }
+
+        virtual void onActive(const input_state & state, uintx_t action)
+        {
+        }
+
+        virtual void onActiveOut(const input_state & state)
+        {
+        }
+
+        virtual void onFocusIn()
+        {
+        }
+
+        virtual void onFocusOut()
+        {
+        }
+
+        void setHovered(bool m) { if (_hovered != m) { _hovered = m; restyle(); hoveredChanged(_hovered); } }
+        bool hovered() const { return _hovered; }
+
+        template<typename T>
+        void setActionT(T action) { setAction(static_cast<uintx_t>(action)); }
+        void setAction(uintx_t action) { _action = action; }
+        uintx_t action() const { return _action; }
+        void setActived(bool a) { if (_actived != a) { _actived = a; restyle(); activeChanged(_actived); } }
+        bool actived() const { return _actived; }
+
+        void setFocused(bool f) { if (_focused != f) { _focused = f; restyle(); focusChanged(_focused); } }
+        bool focused() const { return _focused; }
 
         void setCaptureButtons(mouse_buttons buttons) { _capture_buttons = buttons; }
         mouse_buttons captureButtons() const { return _capture_buttons; }
@@ -381,23 +421,23 @@ namespace ui
         bool acceptInput() const { return _accept_input; }
 
     public:
-        core::event<void(const input_state & state)> mouseEnter;
-        core::event<void(const input_state & state)> mouseMove;
-        core::event<void(const input_state & state)> mouseLeave;
-        core::event<void(const input_state & state, mouse_button button)> mouseDown;
-        core::event<void(const input_state & state, mouse_button button)> mouseUp;
-        core::event<void(const input_state & state, mouse_button button)> mouseClick;
-        core::event<void(const input_state & state, mouse_button button)> mouseDBClick;
-        core::event<void(const input_state & state)> mouseWheel;
-        core::event<void()> focus;
-        core::event<void()> blur;
+        core::event<void(const input_state & state)> hover;
+        core::event<void(const input_state & state)> wheel;
+
+        core::event<void(bool)> hoveredChanged;
+        core::event<void(bool)> activeChanged;
+        core::event<void(bool)> focusChanged;
+
+        core::event<void(const input_state & state, uintx_t action)> active;
 
     protected:
-        bool _mousein = false;
-        bool _pressed = false;
+        bool _hovered = false;
+        bool _actived = false;
         bool _focused = false;
         mouse_buttons _capture_buttons = mouse_button::none;
         bool _accept_wheel_v = false;
         bool _accept_input = false;
+
+        uintx_t _action = 0;
     };
 }

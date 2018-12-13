@@ -259,14 +259,14 @@ namespace ui
         Control::onSizeChanged(from, to);
     }
 
-    void Container::onMouseWheel(const input_state & state)
+    void Container::onWheel(const input_state & state)
     {
         if (_scrollbar_v)
-            _scrollbar_v->onMouseWheel(state);
+            _scrollbar_v->onWheel(state);
         else if (_scrollbar_h)
-            _scrollbar_h->onMouseWheel(state);
+            _scrollbar_h->onWheel(state);
         else {}
-        Control::onMouseWheel(state);
+        Control::onWheel(state);
     }
 
     void Container::relayout(layout_flags flags)

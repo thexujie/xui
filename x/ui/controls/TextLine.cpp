@@ -75,9 +75,9 @@ namespace ui::controls
 
     std::string TextLine::styleName() const
     {
-        if (_pressed)
+        if (_actived)
             return "textline:active";
-        else if (_mousein)
+        else if (_hovered)
             return "textline:hover";
         else
             return "textline";
@@ -208,13 +208,7 @@ namespace ui::controls
         Control::onSizeChanged(from, to);
     }
 
-    void TextLine::onMouseEnter(const input_state & state)
-    {
-        Control::onMouseEnter(state);
-        restyle();
-    }
-
-    void TextLine::onMouseMove(const input_state & state)
+    void TextLine::onHover(const input_state & state)
     {
         while (state.button(mouse_button::left))
         {
@@ -242,18 +236,13 @@ namespace ui::controls
             }
             break;
         }
-        Control::onMouseMove(state);
+        Control::onHover(state);
     }
 
-    void TextLine::onMouseLeave(const input_state & state)
+    void TextLine::onActiveIn(const input_state & state)
     {
-        Control::onMouseLeave(state);
-        restyle();
-    }
+        Control::onActiveIn(state);
 
-    void TextLine::onMouseDown(const input_state & state, ui::mouse_button button)
-    {
-        Control::onMouseDown(state, button);
         auto cbox = contentBox();
         float32_t pos = state.pos().x - cbox.x - _scroll_pos;
         auto & cluster = _text.findCluster(pos);
@@ -271,14 +260,13 @@ namespace ui::controls
         _cursor_far = (pos >= cluster.rect.centerX()) ^ (cluster.bidi == drawing::bidirection::rtl);
         _cursor_pos = _cursor_far ? cluster.trange.end() : cluster.trange.index;
         _cursor_anim ? _cursor_anim->reset() : nullptr;
-        restyle();
+        repaint();
         updateIme();
     }
 
-    void TextLine::onMouseUp(const input_state & state, ui::mouse_button button)
+    void TextLine::onActiveOut(const input_state & state)
     {
-        Control::onMouseUp(state, button);
-        restyle();
+        Control::onActiveOut(state);
     }
 
     void TextLine::onKeyDown(const input_state & state, keycode key)
@@ -317,7 +305,7 @@ namespace ui::controls
         }
     }
 
-    void TextLine::onFocus()
+    void TextLine::onFocusIn()
     {
         if(!_cursor_anim)
         {
@@ -337,7 +325,7 @@ namespace ui::controls
         updateIme();
     }
 
-    void TextLine::onBlur()
+    void TextLine::onFocusOut()
     {
         _setCursorShown(false);
         _cursor_anim ? _cursor_anim->stop() : nullptr;
