@@ -38,17 +38,23 @@ namespace win32
 		return { style, styleEx };
     }
 
-	// 如果不搞一个自定义的函数，会导致一些问题。
-	// 已知的，会导致 imm 相关功能无效，但不知道原因。
+    static thread_local Window * __currentWindow = nullptr;
 	LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		if(message == WM_CREATE)
-		{
-			CREATESTRUCT * cs = reinterpret_cast<CREATESTRUCT *>(lParam);
-			Window * window = static_cast<Window *>(cs->lpCreateParams);
-			if(window)
-				window->attatch(hWnd);
-		}
+        if(__currentWindow)
+        {
+            auto currentWindow = __currentWindow;
+            __currentWindow = nullptr;
+            currentWindow->attatch(hWnd);
+        }
+
+		//if(message == WM_CREATE)
+		//{
+		//	CREATESTRUCT * cs = reinterpret_cast<CREATESTRUCT *>(lParam);
+		//	Window * window = static_cast<Window *>(cs->lpCreateParams);
+		//	if(window)
+		//		window->attatch(hWnd);
+		//}
 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -128,19 +134,13 @@ namespace win32
 
     void Window::move(const core::pointf & pos)
     {
-        //if (!can_safe_invoke())
-        //{
-        //    invoke([this, pos]() { move(pos); });
-        //    return;
-        //}
-
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
             return;
 
         auto p = pos.to<int32_t>();
         if (p != _pos())
-            _adjustWindow(p, _size());
+            _adjustWindowPos(p);
     }
 
     void Window::resize(const core::sizef & size)
@@ -393,10 +393,12 @@ namespace win32
         auto pos = f->windowPos().to<int32_t>();
         auto size = f->calc(f->size()).convert(ceilf).to<int32_t>();
 
+        auto form_style = f->styles();
 		auto[style, styleEx] = formStylesToWinStyles(f->styles());
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
-        ::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
+        //::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
 
+        __currentWindow = this;
         std::u16string t = core::u8str_u16str(f->title());
         HWND hwnd = CreateWindowExW(
 			styleEx, WINDOW_CLASS_NAME, (const wchar_t *)t.c_str(), style | WS_BORDER | WS_DLGFRAME,
@@ -408,6 +410,22 @@ namespace win32
         //attatch(hwnd);
 		assert(hwnd == _handle);
 		//SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE);
+        return core::error_ok;
+    }
+
+    core::error Window::_adjustWindowPos(const core::pointi & pos)
+    {
+        HWND hwnd = (HWND)_handle;
+        if (!hwnd)
+            return core::error_ok;
+
+        uint32_t style = GetWindowLongW(hwnd, GWL_STYLE);
+        uint32_t styleEx = GetWindowLongW(hwnd, GWL_EXSTYLE);
+        RECT rect = { pos.x, pos.y, pos.x, pos.y };
+        if (!_form_styles.any(ui::form_style::frameless))
+            ::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
+        SetWindowPos(hwnd, 0, pos.x, pos.y, rect.right - rect.left, rect.bottom - rect.top,
+            SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
         return core::error_ok;
     }
 
@@ -448,7 +466,7 @@ namespace win32
             return {};
 
         HWND hwnd = (HWND)_handle;
-        WINDOWINFO winfo;
+        WINDOWINFO winfo = { sizeof(WINDOWINFO) };
         ::GetWindowInfo(hwnd, &winfo);
         return core::vec2i(winfo.rcClient.right - winfo.rcClient.left, winfo.rcClient.bottom - winfo.rcClient.top);
     }
@@ -1031,7 +1049,6 @@ namespace win32
         if (!hwnd)
             return OnDefault(WM_NCCALCSIZE, wParam, lParam);
 
-		assert(wParam);
         if(wParam)
         {
             NCCALCSIZE_PARAMS & ncsize = *reinterpret_cast<NCCALCSIZE_PARAMS *>(lParam);
@@ -1046,6 +1063,13 @@ namespace win32
                 //wpos.cy = 0;
                 return 0;
             }
+        }
+        else
+        {
+            // 只需要决定窗口位置
+            RECT & rect = *reinterpret_cast<RECT *>(lParam);
+            if (_form_styles.any(ui::form_style::frameless))
+                return 0;
         }
         return OnDefault(WM_NCCALCSIZE, wParam, lParam);
     }
@@ -1106,7 +1130,7 @@ namespace win32
 
     static LRESULT CALLBACK WindowWndProc(HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam)
     {
-        Window * pWindow = Window::fromHandle(hWnd);
+        Window * pWindow = __currentWindow ? __currentWindow : Window::fromHandle(hWnd);
         LRESULT res = 0;
         switch (uiMessage)
         {

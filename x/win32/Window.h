@@ -44,6 +44,7 @@ namespace win32
 
     private:
         core::error _createWindow();
+        core::error _adjustWindowPos(const core::pointi & pos);
         core::error _adjustWindow(const core::pointi & pos, const core::sizei & size);
 
         core::pointi _pos() const;

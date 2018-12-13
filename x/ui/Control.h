@@ -216,6 +216,7 @@ namespace ui
 
         virtual void setEvent(scene_event evt);
 
+        virtual void valid() const;
         virtual void update() {}
         virtual void updateStyle();
         virtual void invalidate();
@@ -289,7 +290,7 @@ namespace ui
         core::pointf _location;
         core::rectf _rect;
 
-        bool _delay_update = false;
+        bool _delay_update = true;
         bool _delay_repaint = false;
         bool _delay_style = false;
         enum class cursor _cursor = cursor::unknown;

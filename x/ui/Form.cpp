@@ -87,9 +87,20 @@ namespace ui
         if (_form_state != fs)
         {
             _form_state = fs;
+            auto & si = size();
+            auto ps = prefferSize();
+            core::sizef size = calc(si);
+            if(!si.cx.avi() || !si.cy.avi())
+            {
+                if (!si.cx.avi())
+                    size.cx = ps.cx;
+                if (!si.cx.avi())
+                    size.cy = ps.cy;
+                setSize({ size .cx, size .cy});
+            }
+            //place(core::rectf(core::pointf(), size), size);
             window();
 			stateChanged(_form_state, fs);
-            //place(core::rectf(core::pointf(), form_size), form_size);
         }
     }
 
@@ -104,7 +115,7 @@ namespace ui
         auto s = calc(size());
         auto p = rc.leftTop() + (rc.size - s) * 0.5;
         if (_window)
-            _window->move(p);
+             _window->move(p);
         else
             setPos({p.x, p.y});
     }

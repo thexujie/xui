@@ -34,6 +34,7 @@ namespace ui
 
     core::sizef Control::prefferSize() const
     {
+        valid();
         if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
         {
             core::sizef size = calc(_size);
@@ -470,6 +471,15 @@ namespace ui
     {
         if (auto p = parent())
             p->setEvent(evt);
+    }
+
+    void Control::valid() const
+    {
+        if(_delay_update)
+        {
+            const_cast<Control *>(this)->_delay_update = false;
+            const_cast<Control *>(this)->update();
+        }
     }
 
     void Control::updateStyle()

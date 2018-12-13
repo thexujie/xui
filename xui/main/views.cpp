@@ -227,11 +227,12 @@ void views_main()
             container->addControl(rbtn);
             rbtn->active += [ss, &form](auto state, auto action)
             {
-                static std::shared_ptr<ui::Form> form2 = nullptr;
+                static std::shared_ptr<ui::Menu> form2 = nullptr;
                 if(!form2)
                 {
-                    form2 = std::make_shared<ui::Form>(core::vec2<core::dimenf>(50_em, 30_em), ui::form_style::frameless, form);
+                    form2 = std::make_shared<ui::Menu>(ui::form_style::frameless, form);
                     form2->setStyleSheet(ss);
+                    form2->setSize(core::vec2<core::dimenf>(core::auto_value, core::auto_value));
                     form2->setBorder({ 1_px, 1_px });
                     form2->setTitle(u8"Popup");
                     form2->setBorderColors({ core::colors::Black, core::colors::Black });
@@ -239,13 +240,18 @@ void views_main()
                     form2->setResizeBorders({ 4_px, 4_px });
                     form2->setLayoutDirection(core::align::top);
 
-                    // 标题栏
-                    {
-                        auto title = std::make_shared<ui::controlsex::TitleBar>(form2);
-                        title->setSize({ 100_per, core::auto_value });
-                        title->setBackgroundColor(0xfff1f1f0);
-                        form2->addControl(title);
-                    }
+                    //// 标题栏
+                    //{
+                    //    auto title = std::make_shared<ui::controlsex::TitleBar>(form2);
+                    //    title->setSize({ 100_per, core::auto_value });
+                    //    title->setBackgroundColor(0xfff1f1f0);
+                    //    form2->addControl(title);
+                    //}
+                }
+                for (size_t cnt = 0; cnt < 10; ++cnt)
+                    //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+                {
+                    auto index = form2->addItem(std::make_shared<ui::MenuItem>(std::make_shared <drawing::Image>("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
                 }
 
                 form2->show();

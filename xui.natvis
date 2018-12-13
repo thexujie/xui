@@ -23,9 +23,10 @@
 	<Type Name="core::unit_value&lt;*&gt;">
 		<DisplayString Condition="unit==0">{value}px</DisplayString>
 		<DisplayString Condition="unit==1">{value}em</DisplayString>
-		<DisplayString Condition="unit==2">{value}pt</DisplayString>
-		<DisplayString Condition="unit==3">{value}dot</DisplayString>
-		<DisplayString Condition="unit==4">{value}%</DisplayString>
+		<DisplayString Condition="unit==2">{value}ft</DisplayString>
+		<DisplayString Condition="unit==3">{value}pt</DisplayString>
+		<DisplayString Condition="unit==4">{value}dot</DisplayString>
+		<DisplayString Condition="unit==5">{value}%</DisplayString>
 	</Type>
 	<Type Name="core::attribute&lt;*&gt;">
 		<DisplayString Condition="_available==false">not available</DisplayString>
