@@ -149,7 +149,7 @@ void views_main()
             for (size_t cnt = 0; cnt < 100; ++cnt)
                 //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
             {
-                auto index = mv->addItem(std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
+                auto index = mv->appendItem(std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
             }
 
             mv->setScrollbarVisionV(ui::scrollbar_vision::always);
@@ -225,7 +225,7 @@ void views_main()
             auto rbtn = std::make_shared<ui::controls::Button>();
             rbtn->setText(u8"点击这里再次取消");
             container->addControl(rbtn);
-            rbtn->active += [ss, &form](auto state, auto action)
+            rbtn->active += [ss, &form](auto action)
             {
                 static std::shared_ptr<ui::Menu> form2 = nullptr;
                 if(!form2)
@@ -251,7 +251,9 @@ void views_main()
                 for (size_t cnt = 0; cnt < 10; ++cnt)
                     //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
                 {
-                    auto index = form2->addItem(std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
+                    auto item = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } }));
+					form2->appendItem(item);
+					item->active += [](auto action) { std::cout << "aciton=" << action << std::endl; };
                 }
 
                 form2->show();

@@ -65,7 +65,7 @@
     <Link>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/bin/x64/icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>

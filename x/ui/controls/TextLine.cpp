@@ -342,6 +342,17 @@ namespace ui::controls
         insert(chars, len);
     }
 
+	void TextLine::onPopupMenu(const input_state & state, IMenuPresenter & presenter)
+    {
+		auto item_cut = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"ºÙ«–", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::X } }));
+		auto item_copy = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"∏¥÷∆", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::C } }));
+		auto item_paste = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"’≥Ã˘", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::V} }));
+		item_cut->active += [](auto action) { std::cout << "ºÙ«–"; };
+		item_copy->active += [](auto action) { std::cout << "∏¥÷∆"; };
+		item_paste->active += [](auto action) { std::cout << "’≥Ã˘"; };
+		presenter.appendItems({ item_cut, item_copy, item_paste } );
+    }
+
     void TextLine::caretLeft()
     {
         if (_cursor_pos < 1)

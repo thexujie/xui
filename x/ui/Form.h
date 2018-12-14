@@ -48,7 +48,8 @@ namespace ui
         void notifyMouse(const input_state & state, mouse_button button, mouse_action action);
         void notifyKey(const input_state & state, keycode key, key_action action);
         void notifyCharInput(char32_t ch);
-        void notifyCaptured(bool c);
+		void notifyCaptured(bool c);
+		void notifyFocused(const input_state & state, bool f);
 
     public:
         std::shared_ptr<component::StyleSheet> styleSheet() const override { return _style_sheet; }

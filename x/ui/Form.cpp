@@ -213,36 +213,33 @@ namespace ui
                 _current_control->onMouseUp(state, button);
                 if(button == ui::mouse_button::right)
                 {
-                    if (!_menu)
-                    {
-                        _menu = std::make_shared<ui::Menu>(ui::form_style::frameless, form());
-                        _menu->setStyleSheet(form()->styleSheet());
-                        _menu->setSize(core::vec2<core::dimenf>(core::auto_value, core::auto_value));
-                        _menu->setBorder({ 1_px, 1_px });
-                        _menu->setTitle(u8"Popup");
-                        _menu->setBorderColors({ core::colors::Gray, core::colors::Gray });
-                        _menu->setBackgroundColor(0xffffffff);
-                        //_menu->setResizeBorders({ 4_px, 4_px });
-                        //_menu->setLayoutDirection(core::align::top);
+					if (!_menu)
+					{
+						_menu = std::make_shared<ui::Menu>(ui::form_style::frameless, form());
+						_menu->setStyleSheet(form()->styleSheet());
+						_menu->setSize(core::vec2<core::dimenf>(core::auto_value, core::auto_value));
+						_menu->setBorder({ 1_px, 1_px });
+						_menu->setTitle(u8"Menu");
+						_menu->setBorderColors({ core::colors::Gray, core::colors::Gray });
+						//_menu->setResizeBorders({ 4_px, 4_px });
+						//_menu->setLayoutDirection(core::align::top);
 
-                        //// 标题栏
-                        //{
-                        //    auto title = std::make_shared<ui::controlsex::TitleBar>(form2);
-                        //    title->setSize({ 100_per, core::auto_value });
-                        //    title->setBackgroundColor(0xfff1f1f0);
-                        //    form2->addControl(title);
-                        //}
-                        for (size_t cnt = 0; cnt < 10; ++cnt)
-                            //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
-                        {
-							if (cnt == 5)
-								_menu->addItem(std::make_shared<ui::MenuItem>());
-                            auto index = _menu->addItem(std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
-                        }
-                    }
+						//// 标题栏
+						//{
+						//    auto title = std::make_shared<ui::controlsex::TitleBar>(form2);
+						//    title->setSize({ 100_per, core::auto_value });
+						//    title->setBackgroundColor(0xfff1f1f0);
+						//    form2->addControl(title);
+						//}
+					}
 
-                    _menu->show();
-                    _menu->setWindowPos(_window_pos +  state.pos());
+					_menu->clear();
+					_current_control->onPopupMenu(state, *_menu);
+					if(_menu->itemCount())
+					{
+						_menu->show();
+						_menu->setWindowPos(_window_pos + state.pos());
+					}
                 }
             }
 
@@ -293,6 +290,17 @@ namespace ui
             if (_captured_control)
                 _captured_control = nullptr;
         }
+    }
+
+	void Form::notifyFocused(const input_state & state, bool f)
+    {
+		if (_current_input)
+		{
+			if(f)
+				_current_input->onActiveIn(state);
+			else
+				_current_input->onActiveOut(state);
+		}
     }
 
     float_t Form::ratio() const

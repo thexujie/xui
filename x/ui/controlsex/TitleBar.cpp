@@ -103,7 +103,7 @@ namespace ui::controlsex
 		}
 	}
 
-	void TitleBar::onAction(const ui::input_state & is, uintx_t action)
+	void TitleBar::onAction(uintx_t action)
 	{
 		if(auto f = form())
 			f->onTitleAction(static_cast<title_action>(action));
@@ -129,7 +129,7 @@ namespace ui::controlsex
 			path->lineTo({ 0.3f, 0.7f });
 			_close->setPath(path);
 			_close->setActionT(ui::title_action::close);
-            _close->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
+            _close->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
 			addControl(_close);
 		}
 
@@ -139,7 +139,7 @@ namespace ui::controlsex
             _maximize->setSize({ 1.5_em });
             _maximize->setMargin({ 0.2_em });
 			_maximize->setActionT(ui::title_action::maximize);
-            _maximize->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
+            _maximize->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
 			addControl(_maximize);
 		}
 
@@ -154,7 +154,7 @@ namespace ui::controlsex
 			path->close();
 			_minimize->setPath(path);
 			_minimize->setActionT(ui::title_action::minimize);
-			_minimize->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1, std::placeholders::_2);
+			_minimize->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
 			addControl(_minimize);
 		}
 

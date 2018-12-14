@@ -62,7 +62,7 @@ namespace ui::controlsex
             refresh();
         }
 
-		void onAction(const ui::input_state & is, uintx_t action);
+		void onAction(uintx_t action);
 
     private:
 		void update();

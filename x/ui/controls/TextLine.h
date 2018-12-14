@@ -38,6 +38,7 @@ namespace ui::controls
         void onFocusIn() override;
         void onFocusOut() override;
         void onChar(char32_t ch) override;
+		void onPopupMenu(const input_state & state, IMenuPresenter & presenter) override;
 
     public:
         void caretLeft();

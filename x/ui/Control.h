@@ -352,7 +352,7 @@ namespace ui
             }
         }
 
-        virtual void onMouseClick(const input_state & state, mouse_button button) {  active(state, _action); onActive(state, _action); }
+        virtual void onMouseClick(const input_state & state, mouse_button button) {  active(_action); onActive(state); }
         virtual void onMouseDBClick(const input_state & state, mouse_button button) { }
         virtual void onMouseWheel(const input_state & state) { onWheel(state); }
 
@@ -369,11 +369,12 @@ namespace ui
         {
             wheel(state);
         }
+		virtual void onPopupMenu(const input_state & state, IMenuPresenter & presenter) { }
 
         virtual void onHoverIn(const input_state & state){}
         virtual void onHoverOut(const input_state & state){}
         virtual void onActiveIn(const input_state & state){}
-        virtual void onActive(const input_state & state, uintx_t action){}
+        virtual void onActive(const input_state & state){}
         virtual void onActiveOut(const input_state & state){}
         virtual void onFocusIn(){}
         virtual void onFocusOut(){}
@@ -409,7 +410,7 @@ namespace ui
         core::event<void(bool)> activeChanged;
         core::event<void(bool)> focusChanged;
 
-        core::event<void(const input_state & state, uintx_t action)> active;
+        core::event<void(uintx_t action)> active;
 
     protected:
         bool _hovered = false;

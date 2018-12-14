@@ -428,12 +428,16 @@ namespace ui
         void setAllKeys(bool active) { for (size_t index = 0; index < 0xff; ++index) _keys[index] = active; }
         bool key(keycode key) const { return _keys[(uint8_t)key]; }
 
+		void setFocused(bool f) { _focused = f; }
+		bool focused() const { return _focused; }
+
     private:
         core::pointf _pos;
         mouse_buttons _buttons = mouse_button::none;
         bool _hoving = false;
         int32_t _wheel_lines = 0;
         std::bitset<0xff> _keys;
+		bool _focused = false;
     };
 
     enum class key_action
@@ -525,4 +529,49 @@ namespace ui
         virtual void move(const core::pointf & pos) = 0;
         virtual void resize(const core::sizef & size) = 0;
     };
+
+	enum item_flag
+	{
+		marked = 0x0001,
+		activated = 0x0002,
+		selected = 0x0004,
+		shown = 0x0008,
+		container = 0x0010,
+
+		placed = 0x10000,
+	};
+	typedef core::bitflag<item_flag> item_flags;
+
+	class Item
+	{
+	public:
+		virtual ~Item() {}
+	};
+
+	class MenuItem : public Item
+	{
+	public:
+		MenuItem() {}
+		MenuItem(const drawing::Image & i, std::string t, ui::shortcut s, uintx_t a = 0) : icon(i), text(t), shortcut(s.string()), action(a) {}
+
+		drawing::Image icon;
+		drawing::Text text;
+		drawing::Text shortcut;
+		uintx_t action = 0;
+
+		item_flags flags;
+
+		core::event<void(uintx_t action)> active;
+	};
+
+	class IMenuPresenter
+	{
+	public:
+		virtual ~IMenuPresenter() {}
+
+		virtual size_t appendItem(std::shared_ptr<MenuItem> item) = 0;
+		virtual size_t appendItems(std::initializer_list<std::shared_ptr<MenuItem>> && items) = 0;
+		virtual size_t insertItem(size_t index, std::shared_ptr<MenuItem> item) = 0;
+	};
+
 }

@@ -1038,12 +1038,18 @@ namespace win32
 
     intx_t Window::OnWmSetFocus(uintx_t wParam, intx_t lParam)
     {
+		_mouse_state.setFocused(true);
+		if (auto f = form())
+			f->notifyFocused(_mouse_state, true);
 		return OnDefault(WM_SETFOCUS, wParam, lParam);
     }
 
     intx_t Window::OnWmKillFocus(uintx_t wParam, intx_t lParam)
     {
-        _mouse_state.setAllKeys(false);
+		_mouse_state.setFocused(false);
+		_mouse_state.setAllKeys(false);
+		if (auto f = form())
+			f->notifyFocused(_mouse_state, false);
 		return OnDefault(WM_KILLFOCUS, wParam, lParam);
     }
 

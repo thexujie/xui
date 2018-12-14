@@ -12,27 +12,7 @@ namespace ui
 
 namespace ui
 {
-    class Item
-    {
-    public:
-        virtual ~Item() {}
-        
-    };
-
-    class MenuItem : public Item
-    {
-    public:
-		MenuItem() {}
-        MenuItem(const drawing::Image & i, std::string t, ui::shortcut s) : icon(i), text(t), shortcut(s.string()) {}
-
-        drawing::Image icon;
-        drawing::Text text;
-        drawing::Text shortcut;
-
-        item_flags flags;
-    };
-
-	class Menu : public ui::Form
+	class Menu : public ui::Form, public IMenuPresenter
 	{
 	public:
         Menu();
@@ -51,13 +31,17 @@ namespace ui
         void onScrollPosChanged(const core::vec2f & from, const core::vec2f & to);
 
         void onHover(const ui::input_state & state) override;
-        void onHoverOut(const input_state & state) override;
+		void onHoverOut(const input_state & state) override;
+		void onActive(const input_state & state) override;
 
 	public:
-        size_t addItem(std::shared_ptr<MenuItem> item);
-        size_t insertItem(size_t index, std::shared_ptr<MenuItem> item);
+		void clear() { _items.clear(); }
+		size_t appendItem(std::shared_ptr<MenuItem> item);
+		size_t appendItems(std::initializer_list<std::shared_ptr<MenuItem>> && items);
+		size_t insertItem(size_t index, std::shared_ptr<MenuItem> item);
         size_t eraseItem(size_t index);
         std::shared_ptr<MenuItem> findItem(const core::pointf & pos) const;
+		size_t itemCount() const { return _items.size(); }
 
         void setItemMargin(const core::vec4<core::dimenf> & spacing) { _item_margin = spacing; refresh(); }
         const core::vec4<core::dimenf> & itemMargin() const { return _item_margin; }
@@ -86,10 +70,6 @@ namespace ui
 		core::color _spliiter_color = core::colors::Gray;
         core::color _marked_color = core::colors::AliceBlue;
 		core::color _selected_color = core::colors::Blue;
-
-        float32_t _widthA = 0;
-        float32_t _widthB = 0;
-        float32_t _widthC = 0;
 
         std::shared_ptr<MenuItem> _marked_item;
 	};

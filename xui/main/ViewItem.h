@@ -4,18 +4,6 @@ namespace ui
 {
     class View;
 
-    enum item_flag
-    {
-        marked = 0x0001,
-        activated = 0x0002,
-        selected = 0x0004,
-        shown = 0x0008,
-        container = 0x0010,
-
-        placed = 0x10000,
-    };
-    typedef core::bitflag<item_flag> item_flags;
-
     enum class select_mode
     {
         restrictly = 0,

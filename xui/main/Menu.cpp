@@ -215,17 +215,34 @@ namespace ui
         ui::Container::onHoverOut(state);
     }
 
-    size_t Menu::addItem(std::shared_ptr<MenuItem> item)
+	void Menu::onActive(const input_state & state)
+    {
+		ui::Container::onActive(state);
+	    if(_marked_item)
+	    {
+			_marked_item->active(_marked_item->action);
+			hide();
+	    }
+    }
+
+	size_t Menu::appendItem(std::shared_ptr<MenuItem> item)
     {
         return insertItem(_items.size(), item);
     }
 
-    size_t Menu::insertItem(size_t index, std::shared_ptr<MenuItem> item)
+	size_t Menu::appendItems(std::initializer_list<std::shared_ptr<MenuItem>> && items)
+    {
+		for (auto item : items)
+			appendItem(item);
+		return _items.size();
+    }
+
+	size_t Menu::insertItem(size_t index, std::shared_ptr<MenuItem> item)
     {
         auto iter = _items.begin() + index;
         _items.insert(iter, item);
         refresh();
-        return index;
+        return _items.size();
     }
 
     size_t Menu::eraseItem(size_t index)
