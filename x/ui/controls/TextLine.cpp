@@ -55,6 +55,7 @@ namespace ui::controls
     {
         Control::propertyTableCallback(properties);
         properties["text"] = core::make_accessor(&TextLine::setText, &TextLine::text);
+		properties["select-color"] = make_accessor(&TextLine::_setSelectColor, &TextLine::_color_select);
     }
 
     void TextLine::propertyTable(core::property_table & properties)
@@ -75,8 +76,8 @@ namespace ui::controls
 
     std::string TextLine::styleName() const
     {
-        if (_actived)
-            return "textline:active";
+        if (_focused)
+            return "textline:focused";
         else if (_hovered)
             return "textline:hover";
         else
@@ -134,7 +135,7 @@ namespace ui::controls
         graphics.save();
         graphics.setClipRect(cbox);
 
-        if(_cursor_pos_selected != core::npos)
+        if(_cursor_pos_selected != core::npos && _color_select.visible())
         {
             size_t off = std::min(_cursor_pos, _cursor_pos_selected);
             size_t end = std::max(_cursor_pos, _cursor_pos_selected);
@@ -143,7 +144,7 @@ namespace ui::controls
             {
                std::tie(off, rect) = _text.textRect(off, end - off);
                 if(!rect.empty())
-                    graphics.drawRectangle({ (cbox.leftTop() + rect.leftTop()).offset(_scroll_pos, 0.0f), rect.size }, drawing::PathStyle().fill(0x800000ff));
+                    graphics.drawRectangle({ (cbox.leftTop() + rect.leftTop()).offset(_scroll_pos, 0.0f), rect.size }, drawing::PathStyle().fill(_color_select));
             }
             while (off != core::npos);
         }
@@ -305,7 +306,7 @@ namespace ui::controls
         }
     }
 
-    void TextLine::onFocusIn()
+    void TextLine::onFocusIn(const input_state & state)
     {
         if(!_cursor_anim)
         {
@@ -325,7 +326,7 @@ namespace ui::controls
         updateIme();
     }
 
-    void TextLine::onFocusOut()
+    void TextLine::onFocusOut(const input_state & state)
     {
         _setCursorShown(false);
         _cursor_anim ? _cursor_anim->stop() : nullptr;

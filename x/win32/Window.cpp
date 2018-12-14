@@ -346,7 +346,7 @@ namespace win32
         {
         case ui::scene_event::update_mouse_pos:
             if(_mouse_state.hoving())
-                f->notifyMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
+                f->notifyWindowMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
             break;
         default:
             break;
@@ -856,10 +856,10 @@ namespace win32
             TrackMouseEvent(&tme);
             _trackingMouse = true;
             _mouse_state.setHoving(true);
-            f->notifyMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::enter);
+            f->notifyWindowMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::enter);
         }
 
-        f->notifyMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::move);
         return 0;
     }
 
@@ -877,7 +877,7 @@ namespace win32
         _mouse_state.setButton(ui::mouse_button::mask, false);
         _mouse_state.setHoving(false);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
-        f->notifyMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::none, ui::mouse_action::leave);
         if(_cursor_context)
             _cursor_context->reset();
         return 0;
@@ -892,7 +892,7 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, true);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
-        f->notifyMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::press);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::press);
         return 0;
     }
 
@@ -905,7 +905,7 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::right, true);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
-        f->notifyMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::press);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::press);
         return 0;
     }
 
@@ -918,8 +918,8 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, false);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
-        f->notifyMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::click);
-        f->notifyMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::click);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::left, ui::mouse_action::release);
         return 0;
     }
 
@@ -932,8 +932,8 @@ namespace win32
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::right, false);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
-        f->notifyMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::click);
-        f->notifyMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::release);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::click);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::right, ui::mouse_action::release);
         return 0;
     }
 
@@ -953,7 +953,7 @@ namespace win32
         //core::pointi wheel = core::pointi(core::u32li16(wParam), core::u32hi16(wParam));
         _mouse_state.setWheelLines(core::u32hi16((uint32_t)wParam) / WHEEL_DELTA);
         _mouse_state.setPos(core::pointi(point.x, point.y).to<float32_t>());
-        f->notifyMouse(_mouse_state, ui::mouse_button::none,  ui::mouse_action::wheel_v);
+        f->notifyWindowMouse(_mouse_state, ui::mouse_button::none,  ui::mouse_action::wheel_v);
         return 0;
     }
 
@@ -965,7 +965,7 @@ namespace win32
     intx_t Window::OnWmChar(uintx_t wParam, intx_t lParam)
     {
         if (auto f = form())
-            f->notifyCharInput(char32_t(wParam));
+            f->notifyWindowCharInput(char32_t(wParam));
         return 0;
     }
 
@@ -977,7 +977,7 @@ namespace win32
 
         ui::keycode key = virtualkey2keycode(wParam);
         _mouse_state.setKey(key, true);
-        f->notifyKey(_mouse_state, key, ui::key_action::press);
+        f->notifyWindowKey(_mouse_state, key, ui::key_action::press);
         return 0;
     }
 
@@ -989,7 +989,7 @@ namespace win32
 
         ui::keycode key = virtualkey2keycode(wParam);
         _mouse_state.setKey(key, false);
-        f->notifyKey(_mouse_state, key, ui::key_action::release);
+        f->notifyWindowKey(_mouse_state, key, ui::key_action::release);
         return 0;
     }
 
@@ -1032,7 +1032,7 @@ namespace win32
 	intx_t Window::OnWmCaptureChanged(uintx_t wParam, intx_t lParam)
     {
 		if(auto f = form())
-			f->notifyCaptured(_handle == GetCapture());
+			f->notifyWindowCaptured(_handle == GetCapture());
 		return OnDefault(WM_CAPTURECHANGED, wParam, lParam);
     }
 
@@ -1040,7 +1040,7 @@ namespace win32
     {
 		_mouse_state.setFocused(true);
 		if (auto f = form())
-			f->notifyFocused(_mouse_state, true);
+			f->notifyWindowFocused(_mouse_state, true);
 		return OnDefault(WM_SETFOCUS, wParam, lParam);
     }
 
@@ -1049,7 +1049,7 @@ namespace win32
 		_mouse_state.setFocused(false);
 		_mouse_state.setAllKeys(false);
 		if (auto f = form())
-			f->notifyFocused(_mouse_state, false);
+			f->notifyWindowFocused(_mouse_state, false);
 		return OnDefault(WM_KILLFOCUS, wParam, lParam);
     }
 

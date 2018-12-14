@@ -25,6 +25,7 @@
     border-color: #f000;
     padding: 1em 0.5em;
     background-color: #efff;
+    select-color: #a888;
     transition-duration: 500ms
 }
 
@@ -33,9 +34,10 @@
     background-color: #a888;
 }
 
-.textline:active {
+.textline:focused {
     border: 2px;
-    background-color: #f888;
+    background-color: #eee;
+    select-color: #f58f;
     transition-duration: 200ms
 }
 

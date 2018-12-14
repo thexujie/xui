@@ -794,20 +794,29 @@ namespace ui
         animate();
     }
 
-    void Control::onMouseEnter(const input_state & state)
+	void Control::notifyHovered(const input_state & state, bool hovered)
     {
-        if(auto cc = cursorContext())
-            cc->setCursor(_cursor);
-        setHovered(true);
-        onHoverIn(state);
+		if (auto cc = cursorContext())
+			hovered ? cc->setCursor(_cursor) : cc->resetCursor();
+		setHovered(hovered);
+		hovered ? onHoverIn(state) : onHoverOut(state);
+	}
+
+	void Control::notifySelected(const input_state & state, bool selected)
+    {
+		setSelected(selected);
+		selected ? onSelectIn(state) : onSelectOut(state);
     }
 
-    void Control::onMouseLeave(const input_state & state)
+	void Control::notifyActived(const input_state & state, bool actived)
     {
-        if (auto cc = cursorContext())
-            cc->resetCursor();
-        setActived(false);
-        onHoverOut(state);
-        setHovered(false);
+		setActived(actived);
+		actived ? onActiveIn(state) : onActiveOut(state);
+    }
+
+	void Control::notifyFocused(const input_state & state, bool focused)
+    {
+		setFocused(focused);
+		focused ? onFocusIn(state) : onFocusOut(state);
     }
 }

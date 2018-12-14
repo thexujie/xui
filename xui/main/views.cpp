@@ -188,6 +188,16 @@ void views_main()
         form->addControl(tln);
     }
 	{
+		std::string rtft = u8"hello لغة عربية‎𪚥𪚥བོད་ཀྱི་སྐད་ཡིག།𪚥ยิ้ยิ้ยิ้😂🌐🍪🍕🚀ยิ้ยิ้ยิ้㌶㌫ ق قق ققق قققق";
+		auto tln = std::make_shared<ui::controls::TextLine>();
+		tln->setFont(drawing::font("", drawing::default_font().size * 1.5f));
+		tln->setText(rtft);
+		tln->setSize({ 100_per, core::auto_value });
+		tln->setMargin({ 0.2_em });
+		tln->setHoldFocus(true);
+		form->addControl(tln);
+	}
+	{
         auto container = std::make_shared<ui::Container>(core::align::left);
         container->setBackgroundColor(core::colors::LightBlue);
         container->setSize({ 100_per, core::auto_value });

@@ -45,11 +45,11 @@ namespace ui
         void centerScreen(int32_t screenIndex = 0);
 
     public:
-        void notifyMouse(const input_state & state, mouse_button button, mouse_action action);
-        void notifyKey(const input_state & state, keycode key, key_action action);
-        void notifyCharInput(char32_t ch);
-		void notifyCaptured(bool c);
-		void notifyFocused(const input_state & state, bool f);
+        void notifyWindowMouse(const input_state & state, mouse_button button, mouse_action action);
+        void notifyWindowKey(const input_state & state, keycode key, key_action action);
+        void notifyWindowCharInput(char32_t ch);
+		void notifyWindowCaptured(bool c);
+		void notifyWindowFocused(const input_state & state, bool f);
 
     public:
         std::shared_ptr<component::StyleSheet> styleSheet() const override { return _style_sheet; }
@@ -82,6 +82,13 @@ namespace ui
         void _render();
         void _animationTimerTick(core::timer & t, int64_t tick);
 
+		std::shared_ptr<Control> _findChild(const input_state & state, std::shared_ptr<Control> last = nullptr, findchild_flags flags = nullptr);
+		void _setCurrentControl(const input_state & state, std::shared_ptr<Control> control);
+		void _setSelectedControl(const input_state & state, std::shared_ptr<Control> control);
+		void _setActivedControl(const input_state & state, std::shared_ptr<Control> control);
+		void _setFocusedControl(const input_state & state, std::shared_ptr<Control> control);
+		void _setCapturedControl(const input_state & state, std::shared_ptr<Control> control);
+
     private:
         std::shared_ptr<ui::IWindow> _window;
         std::shared_ptr<ui::Menu> _menu;
@@ -104,8 +111,10 @@ namespace ui
 
         std::shared_ptr<drawing::Surface> _draw_buffer;
 
-        std::shared_ptr<Control> _current_control;
-        std::shared_ptr<Control> _current_input;
+		std::shared_ptr<Control> _current_control;
+		std::shared_ptr<Control> _current_select;
+		std::shared_ptr<Control> _current_active;
+        std::shared_ptr<Control> _current_focus;
         std::shared_ptr<Control> _captured_control;
 
     public:

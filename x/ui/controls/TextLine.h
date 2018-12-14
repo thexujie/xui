@@ -35,8 +35,8 @@ namespace ui::controls
         void onActiveIn(const input_state & state) override;
         void onActiveOut(const input_state & state) override;
         void onKeyDown(const input_state & state, keycode key) override;
-        void onFocusIn() override;
-        void onFocusOut() override;
+        void onFocusIn(const input_state & state) override;
+        void onFocusOut(const input_state & state) override;
         void onChar(char32_t ch) override;
 		void onPopupMenu(const input_state & state, IMenuPresenter & presenter) override;
 
@@ -52,9 +52,13 @@ namespace ui::controls
         void _docaret();
         void _setCursorShown(bool vis);
         bool _cursorShown() const { return _cursor_shown; }
+		void _setSelectColor(const core::color & color) { _color_select = color; repaint(); }
 
     private:
         drawing::Text _text;
+
+		core::color _color_select = core::colors::AliceBlue;
+
         std::shared_ptr<core::property_animation> _cursor_anim;
 
         bool _cursor_shown = false;

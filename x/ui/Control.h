@@ -314,6 +314,24 @@ namespace ui
 
         //---------------------------------------------------- interact
     public:
+		template<typename T>
+		void setActionT(T action) { setAction(static_cast<uintx_t>(action)); }
+		void setAction(uintx_t action) { _action = action; }
+		uintx_t action() const { return _action; }
+
+		void setCaptureButtons(mouse_buttons buttons) { _capture_buttons = buttons; }
+		mouse_buttons captureButtons() const { return _capture_buttons; }
+
+		void setAcceptWheelV(bool b) { _accept_wheel_v = b; }
+		bool acceptWheelV() const { return _accept_wheel_v; }
+		virtual core::aligns wheelFreedom() const { return core::align::none; }
+
+		void setAcceptInput(bool b) { _accept_input = b; }
+		bool acceptInput() const { return _accept_input; }
+
+		void setHoldFocus(bool b) { _hold_focus = b; }
+		bool holdFocus() const { return _hold_focus; }
+
         virtual hittest_result hitTest(const core::pointf & pos) const
         {
             if (!_visible || !_rect.contains(pos))
@@ -330,95 +348,75 @@ namespace ui
             return (_mouse_through || !_interactable) ? hittest_form::caption : hittest_form::client;
         }
 
-        virtual void onMouseEnter(const input_state & state);
-        virtual void onMouseMove(const input_state & state) { onHover(state); }
-        virtual void onMouseLeave(const input_state & state);
-
-        virtual void onMouseDown(const input_state & state, mouse_button button)
-        {
-            if (button == mouse_button::left)
-            {
-                setActived(true);
-                onActiveIn(state);
-            }
-        }
-
-        virtual void onMouseUp(const input_state & state, mouse_button button)
-        {
-            if (button == mouse_button::left)
-            {
-                onActiveOut(state);
-                setActived(false);
-            }
-        }
-
-        virtual void onMouseClick(const input_state & state, mouse_button button) {  active(_action); onActive(state); }
-        virtual void onMouseDBClick(const input_state & state, mouse_button button) { }
-        virtual void onMouseWheel(const input_state & state) { onWheel(state); }
-
         virtual void onKeyDown(const input_state & state, keycode key) {}
         virtual void onKeyUp(const input_state & state, keycode key) {}
         virtual void onChar(char32_t ch) {}
 
-        virtual void onHover(const input_state & state)
-        {
-            hover(state);
-        }
-
-        virtual void onWheel(const input_state & state)
-        {
-            wheel(state);
-        }
 		virtual void onPopupMenu(const input_state & state, IMenuPresenter & presenter) { }
 
-        virtual void onHoverIn(const input_state & state){}
-        virtual void onHoverOut(const input_state & state){}
-        virtual void onActiveIn(const input_state & state){}
-        virtual void onActive(const input_state & state){}
-        virtual void onActiveOut(const input_state & state){}
-        virtual void onFocusIn(){}
-        virtual void onFocusOut(){}
+		virtual void notifyHovered(const input_state & state, bool hovered);
+		virtual void notifySelected(const input_state & state, bool selected);
+		virtual void notifyActived(const input_state & state, bool actived);
+		virtual void notifyFocused(const input_state & state, bool focused);
 
-        void setHovered(bool m) { if (_hovered != m) { _hovered = m; restyle(); hoveredChanged(_hovered); } }
+        virtual void onActive(const input_state & state)
+        {
+			active(_action);
+        }
+		virtual void onHover(const input_state & state)
+		{
+			hover(state);
+		}
+
+		virtual void onWheel(const input_state & state)
+		{
+			wheel(state);
+		}
+
+		virtual void onHoverIn(const input_state & state) {}
+		virtual void onHoverOut(const input_state & state) { setHovered(false); }
+
+		virtual void onActiveIn(const input_state & state) {}
+		virtual void onActiveOut(const input_state & state) {}
+
+		virtual void onSelectIn(const input_state & state) {}
+		virtual void onSelectOut(const input_state & state) {}
+
+        virtual void onFocusIn(const input_state & state){}
+        virtual void onFocusOut(const input_state & state){}
+
+        void setHovered(bool hovered) { if (_hovered != hovered) { _hovered = hovered; restyle(); hoveredChanged(_hovered); } }
         bool hovered() const { return _hovered; }
 
-        template<typename T>
-        void setActionT(T action) { setAction(static_cast<uintx_t>(action)); }
-        void setAction(uintx_t action) { _action = action; }
-        uintx_t action() const { return _action; }
-        void setActived(bool a) { if (_actived != a) { _actived = a; restyle(); activeChanged(_actived); } }
-        bool actived() const { return _actived; }
+		void setSelected(bool selected) { if (_selected != selected) { _selected = selected; restyle(); selectedChanged(_hovered); } }
+		bool selected() const { return _selected; }
 
-        void setFocused(bool f) { if (_focused != f) { _focused = f; restyle(); focusChanged(_focused); } }
-        bool focused() const { return _focused; }
+		void setActived(bool a) { if (_actived != a) { _actived = a; restyle(); activeChanged(_actived); } }
+		bool actived() const { return _actived; }
 
-        void setCaptureButtons(mouse_buttons buttons) { _capture_buttons = buttons; }
-        mouse_buttons captureButtons() const { return _capture_buttons; }
-
-        void setAcceptWheelV(bool b) { _accept_wheel_v = b; }
-        bool acceptWheelV() const { return _accept_wheel_v; }
-        virtual core::aligns wheelFreedom() const { return core::align::none; }
-
-        void setAcceptInput(bool b) { _accept_input = b; }
-        bool acceptInput() const { return _accept_input; }
+		void setFocused(bool focused) { if (_focused != focused) { _focused = focused; restyle(); focusChanged(_focused); } }
+		bool focused() const { return _focused; }
 
     public:
         core::event<void(const input_state & state)> hover;
         core::event<void(const input_state & state)> wheel;
 
-        core::event<void(bool)> hoveredChanged;
+		core::event<void(bool)> hoveredChanged;
+		core::event<void(bool)> selectedChanged;
         core::event<void(bool)> activeChanged;
         core::event<void(bool)> focusChanged;
 
         core::event<void(uintx_t action)> active;
 
     protected:
-        bool _hovered = false;
+		bool _hovered = false;
+		bool _selected = false;
         bool _actived = false;
         bool _focused = false;
         mouse_buttons _capture_buttons = mouse_button::none;
         bool _accept_wheel_v = false;
-        bool _accept_input = false;
+		bool _accept_input = false;
+		bool _hold_focus = false;
 
         uintx_t _action = 0;
     };

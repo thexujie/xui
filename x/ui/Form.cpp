@@ -126,91 +126,69 @@ namespace ui
             setPos({p.x, p.y});
     }
 
-    void Form::notifyMouse(const input_state & state, mouse_button button, mouse_action action)
+    void Form::notifyWindowMouse(const input_state & state, mouse_button button, mouse_action action)
     {
         switch (action)
         {
         case mouse_action::enter:
-            _updateMouseArea(state, action);
+			_setCurrentControl(state, findChild(state.pos()));
             break;
         case mouse_action::leave:
-            if (_captured_control)
-            {
-                captured(false);
-                _captured_control = nullptr;
-            }
-            _updateMouseArea(state, action);
+			_setActivedControl(state, nullptr);
+			_setCurrentControl(state, nullptr);
             break;
         case mouse_action::move:
-            _updateMouseArea(state, action);
+			_setCurrentControl(state, _findChild(state.pos()));
+			if(_current_control != _current_active)
+				_setActivedControl(state, nullptr);
+
             if (_current_control)
-                _current_control->onMouseMove(state);
+                _current_control->onHover(state);
             break;
         case mouse_action::wheel_v:
-            if (auto curr = findChild(state.pos()))
+            if (auto curr = _findChild(state.pos()))
             {
                 while (curr)
                 {
                     if (curr->acceptWheelV() && curr->wheelFreedom().any())
                     {
-                        curr->onMouseWheel(state);
+                        curr->onWheel(state);
                         break;
                     }
                     else
                         curr = curr->parent();
                 }
             }
-            _updateMouseArea(state, action);
+			_setCurrentControl(state, _findChild(state.pos()));
             break;
         case mouse_action::press:
             if (_menu)
                 _menu->hide();
 
-            if (_current_control)
-            {
-                if (_current_control->captureButtons())
-                {
-                    _captured_control = _current_control;
-                    captured(true);
-                }
-                _current_control->onMouseDown(state, button);
-            }
-            else {}
+			_setSelectedControl(state, _current_control);
 
-            if (_current_control != _current_input)
-            {
-                if (_current_input)
-                {
-                    _current_input->setFocused(false);
-                    _current_input->onFocusOut();
-                }
+			if(_current_control && _current_control->captureButtons())
+				_setCapturedControl(state, _current_control);
+			if(_current_select)
+			{
+				if(_current_select->acceptInput())
+					_setFocusedControl(state, _current_select);
+				else if(_current_focus && !_current_focus->holdFocus())
+					_setFocusedControl(state, nullptr);
+				else {}
+			}
 
-                if (_current_control && _current_control->acceptInput())
-                {
-                    _current_input = _current_control;
-                    if (_current_input)
-                    {
-                        _current_input->setFocused(false);
-                        _current_input->onFocusIn();
-                    }
-                }
-                else
-                {
-                    _current_input = nullptr;
-                    if (auto ic = imeContext())
-                        ic->setImeMode(ui::ime_mode::disabled);
-                }
-            }
+			if (button == ui::mouse_button::left)
+				_setActivedControl(state, _current_control);
             break;
         case mouse_action::click:
             if (_current_control)
-                _current_control->onMouseClick(state, button);
-            _updateMouseArea(state, action);
+                _current_control->onActive(state);
+			_setCurrentControl(state, _findChild(state.pos()));
             break;
         case mouse_action::release:
             if (_current_control)
             {
-                _current_control->onMouseUp(state, button);
                 if(button == ui::mouse_button::right)
                 {
 					if (!_menu)
@@ -237,39 +215,40 @@ namespace ui
 					_current_control->onPopupMenu(state, *_menu);
 					if(_menu->itemCount())
 					{
-						_menu->show();
+						_menu->show(form_state::show_noactive);
 						_menu->setWindowPos(_window_pos + state.pos());
 					}
                 }
             }
 
-            if (_captured_control && !state.buttons().any())
-            {
-                captured(false);
-                _captured_control = nullptr;
-            }
+			if (button == ui::mouse_button::left)
+				_setActivedControl(state, nullptr);
 
-            _updateMouseArea(state, action);
+			if (!state.buttons().any())
+			{
+				_setCapturedControl(state, nullptr);
+				_setCurrentControl(state, _findChild(state.pos()));
+			}
             break;
         default:
-            _updateMouseArea(state, action);
+			_setCurrentControl(state, _findChild(state.pos()));
             break;
         }
     }
 
-    void Form::notifyKey(const input_state & state, keycode key, key_action action)
+    void Form::notifyWindowKey(const input_state & state, keycode key, key_action action)
     {
-        if (_current_input)
+        if (_current_focus)
         {
             switch (action)
             {
             case ui::key_action::none:
                 break;
             case ui::key_action::press:
-                _current_input->onKeyDown(state, key);
+                _current_focus->onKeyDown(state, key);
                 break;
             case ui::key_action::release:
-                _current_input->onKeyUp(state, key);
+                _current_focus->onKeyUp(state, key);
                 break;
             default:
                 break;
@@ -277,13 +256,13 @@ namespace ui
         }
     }
 
-    void Form::notifyCharInput(char32_t ch)
+    void Form::notifyWindowCharInput(char32_t ch)
     {
-        if (_current_input)
-            _current_input->onChar(ch);
+        if (_current_focus)
+            _current_focus->onChar(ch);
     }
 
-    void Form::notifyCaptured(bool c)
+    void Form::notifyWindowCaptured(bool c)
     {
         if (!c)
         {
@@ -292,15 +271,14 @@ namespace ui
         }
     }
 
-	void Form::notifyFocused(const input_state & state, bool f)
+	void Form::notifyWindowFocused(const input_state & state, bool f)
     {
-		if (_current_input)
-		{
-			if(f)
-				_current_input->onActiveIn(state);
-			else
-				_current_input->onActiveOut(state);
-		}
+		if (!f)
+			_setFocusedControl(state, nullptr);
+		else if(_current_select && _current_select->acceptInput())
+			_setFocusedControl(state, _current_select);
+		else
+			_setFocusedControl(state, nullptr);
     }
 
     float_t Form::ratio() const
@@ -472,13 +450,7 @@ namespace ui
         if (_current_control != ma &&
             (!_current_control || !(_current_control->captureButtons() & state.buttons())))
         {
-            if (_current_control)
-                _current_control->onMouseLeave(state);
-
-            _current_control = ma;
-
-            if (_current_control)
-                _current_control->onMouseEnter(state);
+			_setCurrentControl(state, ma);
         }
     }
 
@@ -524,5 +496,80 @@ namespace ui
         auto num = onAnimate();
         if (!num)
             _animation_timer.stop();
+    }
+
+	std::shared_ptr<Control> Form::_findChild(const input_state & state, std::shared_ptr<Control> last, findchild_flags flags)
+    {
+		if (_captured_control)
+			return _captured_control;
+		return findChild(state.pos(), last, flags);
+    }
+
+	void Form::_setCurrentControl(const input_state & state, std::shared_ptr<Control> control)
+    {
+		if (_current_control != control)
+		{
+			if (_current_control)
+				_current_control->notifyHovered(state, false);
+
+			_current_control = control;
+
+			if (_current_control)
+				_current_control->notifyHovered(state, true);
+		}
+    }
+
+	void Form::_setSelectedControl(const input_state & state, std::shared_ptr<Control> control)
+    {
+		if (_current_select != control)
+		{
+			if (_current_select)
+				_current_select->notifySelected(state, false);
+
+			_current_select = control;
+
+			if (_current_select)
+				_current_select->notifySelected(state, true);
+		}
+    }
+
+	void Form::_setActivedControl(const input_state & state, std::shared_ptr<Control> control)
+    {
+		if (_current_active != control)
+		{
+			if (_current_active)
+				_current_active->notifyActived(state, false);
+
+			_current_active = control;
+
+			if (_current_active)
+				_current_active->notifyActived(state, true);
+		}
+    }
+
+	void Form::_setFocusedControl(const input_state & state, std::shared_ptr<Control> control)
+    {
+		if (_current_focus != control)
+		{
+			if (_current_focus)
+				_current_focus->notifyFocused(state, false);
+
+			_current_focus = control;
+
+			if (_current_focus)
+				_current_focus->notifyFocused(state, true);
+
+			if(!_current_focus)
+			{
+				if (auto ic = imeContext())
+					ic->setImeMode(ui::ime_mode::disabled);
+			}
+		}
+    }
+
+	void Form::_setCapturedControl(const input_state & state, std::shared_ptr<Control> control)
+    {
+		captured(!!control);
+		_captured_control = control;
     }
 }
