@@ -4,6 +4,7 @@
 namespace ui
 {
     class RadioGroup;
+    class Menu;
 
     class Form : public Container
     {
@@ -13,7 +14,7 @@ namespace ui
         ~Form();
 
         void setParentForm(std::shared_ptr<Form> parentForm);
-        std::shared_ptr<Form> parentForm() { return _parentForm; }
+        std::shared_ptr<Form> parentForm() { return _parentForm.lock(); }
 
         void setTitle(const std::string & text);
         const std::string & title() const { return _title; }
@@ -35,7 +36,8 @@ namespace ui
         void setFormState(form_state fs);
         form_state formState() const { return _form_state; }
 
- 		void show() { show(form_state::normalize); }
+        void show() { show(form_state::normalize); }
+        void hide() { show(form_state::hide); }
 		void show(form_state fs);
         bool shown() const { return _form_state != form_state::hide; }
         void close();
@@ -80,9 +82,10 @@ namespace ui
         void _animationTimerTick(core::timer & t, int64_t tick);
 
     private:
-        std::shared_ptr<Form> _parentForm;
-
         std::shared_ptr<ui::IWindow> _window;
+        std::shared_ptr<ui::Menu> _menu;
+        std::weak_ptr<Form> _parentForm;
+
         core::pointf _window_pos;
         core::attribute<core::vec4<core::dimenf>> _resize_borders;
         std::map<std::string, std::weak_ptr<RadioGroup>> _radio_groups;

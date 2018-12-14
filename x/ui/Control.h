@@ -290,9 +290,9 @@ namespace ui
         core::pointf _location;
         core::rectf _rect;
 
+        bool _delay_style = true;
         bool _delay_update = true;
         bool _delay_repaint = false;
-        bool _delay_style = false;
         enum class cursor _cursor = cursor::unknown;
         float32_t _alpha = 1.0f;
 
@@ -370,33 +370,13 @@ namespace ui
             wheel(state);
         }
 
-        virtual void onHoverIn(const input_state & state)
-        {
-        }
-
-        virtual void onHoverOut(const input_state & state)
-        {
-        }
-
-        virtual void onActiveIn(const input_state & state)
-        {
-        }
-
-        virtual void onActive(const input_state & state, uintx_t action)
-        {
-        }
-
-        virtual void onActiveOut(const input_state & state)
-        {
-        }
-
-        virtual void onFocusIn()
-        {
-        }
-
-        virtual void onFocusOut()
-        {
-        }
+        virtual void onHoverIn(const input_state & state){}
+        virtual void onHoverOut(const input_state & state){}
+        virtual void onActiveIn(const input_state & state){}
+        virtual void onActive(const input_state & state, uintx_t action){}
+        virtual void onActiveOut(const input_state & state){}
+        virtual void onFocusIn(){}
+        virtual void onFocusOut(){}
 
         void setHovered(bool m) { if (_hovered != m) { _hovered = m; restyle(); hoveredChanged(_hovered); } }
         bool hovered() const { return _hovered; }

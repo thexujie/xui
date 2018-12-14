@@ -149,7 +149,7 @@ void views_main()
             for (size_t cnt = 0; cnt < 100; ++cnt)
                 //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
             {
-                auto index = mv->addItem(std::make_shared<ui::MenuItem>(std::make_shared <drawing::Image>("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
+                auto index = mv->addItem(std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
             }
 
             mv->setScrollbarVisionV(ui::scrollbar_vision::always);
@@ -251,11 +251,19 @@ void views_main()
                 for (size_t cnt = 0; cnt < 10; ++cnt)
                     //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
                 {
-                    auto index = form2->addItem(std::make_shared<ui::MenuItem>(std::make_shared <drawing::Image>("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
+                    auto index = form2->addItem(std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
                 }
 
                 form2->show();
                 form2->centerScreen();
+
+                class IMenuProvider
+                {
+                public:
+                    virtual ~IMenuProvider() {}
+                    virtual size_t count() const = 0;
+                    virtual std::shared_ptr<ui::MenuItem> at(size_t index) const = 0;
+                };
             };
         }
         container->addSpacer(50_per);

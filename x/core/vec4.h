@@ -78,15 +78,6 @@ namespace core
             return *this;
         }
 
-        vec4 & operator =(const vec2<T> & size)
-        {
-            x = 0;
-            y = 0;
-            cx = size.x;
-            cy = size.y;
-            return *this;
-        }
-
         void set(const vec4 & another)
         {
             x = another.x;

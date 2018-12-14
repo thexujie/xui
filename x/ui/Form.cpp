@@ -4,6 +4,7 @@
 #include "Desktop.h"
 #include "core/app.h"
 #include "RadioGroup.h"
+#include "../../xui/main/Menu.h"
 
 namespace ui
 {
@@ -86,6 +87,11 @@ namespace ui
     {
         if (_form_state != fs)
         {
+			if(fs == form_state::hide || fs == form_state::minimize)
+			{
+				if (_menu)
+					_menu->hide();
+			}
             _form_state = fs;
             auto & si = size();
             auto ps = prefferSize();
@@ -157,6 +163,9 @@ namespace ui
             _updateMouseArea(state, action);
             break;
         case mouse_action::press:
+            if (_menu)
+                _menu->hide();
+
             if (_current_control)
             {
                 if (_current_control->captureButtons())
@@ -200,7 +209,42 @@ namespace ui
             break;
         case mouse_action::release:
             if (_current_control)
+            {
                 _current_control->onMouseUp(state, button);
+                if(button == ui::mouse_button::right)
+                {
+                    if (!_menu)
+                    {
+                        _menu = std::make_shared<ui::Menu>(ui::form_style::frameless, form());
+                        _menu->setStyleSheet(form()->styleSheet());
+                        _menu->setSize(core::vec2<core::dimenf>(core::auto_value, core::auto_value));
+                        _menu->setBorder({ 1_px, 1_px });
+                        _menu->setTitle(u8"Popup");
+                        _menu->setBorderColors({ core::colors::Gray, core::colors::Gray });
+                        _menu->setBackgroundColor(0xffffffff);
+                        //_menu->setResizeBorders({ 4_px, 4_px });
+                        //_menu->setLayoutDirection(core::align::top);
+
+                        //// ±ÍÃ‚¿∏
+                        //{
+                        //    auto title = std::make_shared<ui::controlsex::TitleBar>(form2);
+                        //    title->setSize({ 100_per, core::auto_value });
+                        //    title->setBackgroundColor(0xfff1f1f0);
+                        //    form2->addControl(title);
+                        //}
+                        for (size_t cnt = 0; cnt < 10; ++cnt)
+                            //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+                        {
+							if (cnt == 5)
+								_menu->addItem(std::make_shared<ui::MenuItem>());
+                            auto index = _menu->addItem(std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
+                        }
+                    }
+
+                    _menu->show();
+                    _menu->setWindowPos(_window_pos +  state.pos());
+                }
+            }
 
             if (_captured_control && !state.buttons().any())
             {

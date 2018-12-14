@@ -682,7 +682,7 @@ namespace win32
             //CASE_MSG(WM_MBUTTONDOWN, OnWmMouseDownM);
             //CASE_MSG(WM_MBUTTONUP, OnWmMouseUpM);
 
-            //CASE_MSG(WM_NCLBUTTONDOWN, OnWmNcMouseDownL);
+            CASE_MSG(WM_NCLBUTTONDOWN, OnWmNcMouseDownL);
 
             //CASE_MSG(WM_LBUTTONDBLCLK, OnWmMouseDBClick);
             CASE_MSG(WM_MOUSEWHEEL, OnWmMouseWheelV);
@@ -955,6 +955,11 @@ namespace win32
         _mouse_state.setPos(core::pointi(point.x, point.y).to<float32_t>());
         f->notifyMouse(_mouse_state, ui::mouse_button::none,  ui::mouse_action::wheel_v);
         return 0;
+    }
+
+	intx_t Window::OnWmNcMouseDownL(uintx_t wParam, intx_t lParam)
+    {
+		return OnDefault(WM_NCLBUTTONDOWN, wParam, lParam);
     }
 
     intx_t Window::OnWmChar(uintx_t wParam, intx_t lParam)
@@ -1603,6 +1608,7 @@ namespace win32
             VK_SCROLL,
             VK_PAUSE,
 
+			NONE,
             VK_LWIN,
             VK_RWIN,
 

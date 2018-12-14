@@ -11,6 +11,11 @@ namespace drawing
 {
     using namespace core;
 
+    Image::Image(const Image & another) :_native(another._native)
+    {
+        
+    }
+
     Image::~Image()
     {
     }

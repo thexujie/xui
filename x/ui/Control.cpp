@@ -475,6 +475,11 @@ namespace ui
 
     void Control::valid() const
     {
+        if(_delay_style)
+        {
+            const_cast<Control *>(this)->_delay_style = false;
+            const_cast<Control *>(this)->updateStyle();
+        }
         if(_delay_update)
         {
             const_cast<Control *>(this)->_delay_update = false;

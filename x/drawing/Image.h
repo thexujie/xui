@@ -8,6 +8,7 @@ namespace drawing
     {
     public:
         Image() = default;
+        Image(const Image & another);
         ~Image();
         explicit Image(std::string path);
 
