@@ -34,6 +34,8 @@ namespace ui
             control->onEntering(f);
             _controls.insert(control);
             control->onEnter(f);
+			if (_shown && control->visible() && control->aviliable())
+				control->notifyShown(true);
         }
         else
             _controls.insert(control);
@@ -53,6 +55,8 @@ namespace ui
         auto iter = std::find(_controls.begin(), _controls.end(), control);
         if (iter != _controls.end())
         {
+			if (control->shown())
+				control->notifyShown(false);
             control->onLeaving();
             control->setParent(nullptr);
             _controls.erase(iter);
@@ -64,6 +68,8 @@ namespace ui
     {
 		for(auto & control : _controls)
 		{
+			if (control->shown())
+				control->notifyShown(false);
 			control->onLeaving();
             control->setParent(nullptr);
 		}
@@ -267,6 +273,13 @@ namespace ui
             _scrollbar_h->onWheel(state);
         else {}
         Control::onWheel(state);
+    }
+
+	void Container::notifyShown(bool shown)
+    {
+		Control::notifyShown(shown);
+		for (auto & control : _controls)
+			control->notifyShown(shown);
     }
 
     void Container::relayout(layout_flags flags)

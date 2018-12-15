@@ -24,6 +24,24 @@ namespace drawing
         xor,
         plus,
         overlay,
+
+		darken,
+		lighten,
+
+		dodge,
+		burn,
+
+		hard_light,
+		soft_light,
+
+		difference,
+		exclusion,
+		multiply,
+
+		hue,
+		saturation,
+		color,
+		luminosity,
     };
 
     enum class wrap_mode

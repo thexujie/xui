@@ -97,6 +97,9 @@ namespace ui
         }
 		bool visible() const { return _visible; }
 
+		void setShown(bool shown) { _shown = shown; }
+		bool shown() const { return _shown; }
+
 		void setAviliable(bool avi)
 		{
 			if(_aviliable != avi)
@@ -275,6 +278,7 @@ namespace ui
         core::attribute<drawing::font> _font;
 
 		bool _visible = true;
+		bool _shown = false;
 		bool _aviliable = true;
         // background
         core::attribute<std::shared_ptr<drawing::Image>> _background_image;
@@ -314,10 +318,18 @@ namespace ui
 
         //---------------------------------------------------- interact
     public:
+		virtual void notifyHovered(const input_state & state, bool hovered);
+		virtual void notifySelected(const input_state & state, bool selected);
+		virtual void notifyActived(const input_state & state, bool actived);
+		virtual void notifyFocused(const input_state & state, bool focused);
+		virtual void notifyShown(bool shown);
+
+    public:
+
 		template<typename T>
-		void setActionT(T action) { setAction(static_cast<uintx_t>(action)); }
-		void setAction(uintx_t action) { _action = action; }
-		uintx_t action() const { return _action; }
+		void setActionT(T action) { setAction(static_cast<uint32_t>(action)); }
+		void setAction(action_t action) { _action = action; }
+		action_t action() const { return _action; }
 
 		void setCaptureButtons(mouse_buttons buttons) { _capture_buttons = buttons; }
 		mouse_buttons captureButtons() const { return _capture_buttons; }
@@ -348,16 +360,14 @@ namespace ui
             return (_mouse_through || !_interactable) ? hittest_form::caption : hittest_form::client;
         }
 
+    public:
+		virtual void onShow() {}
+		virtual void onHide() {}
         virtual void onKeyDown(const input_state & state, keycode key) {}
         virtual void onKeyUp(const input_state & state, keycode key) {}
         virtual void onChar(char32_t ch) {}
 
 		virtual void onPopupMenu(const input_state & state, IMenuPresenter & presenter) { }
-
-		virtual void notifyHovered(const input_state & state, bool hovered);
-		virtual void notifySelected(const input_state & state, bool selected);
-		virtual void notifyActived(const input_state & state, bool actived);
-		virtual void notifyFocused(const input_state & state, bool focused);
 
         virtual void onActive(const input_state & state)
         {
@@ -374,7 +384,7 @@ namespace ui
 		}
 
 		virtual void onHoverIn(const input_state & state) {}
-		virtual void onHoverOut(const input_state & state) { setHovered(false); }
+		virtual void onHoverOut(const input_state & state) { }
 
 		virtual void onActiveIn(const input_state & state) {}
 		virtual void onActiveOut(const input_state & state) {}
@@ -397,6 +407,7 @@ namespace ui
 		void setFocused(bool focused) { if (_focused != focused) { _focused = focused; restyle(); focusChanged(_focused); } }
 		bool focused() const { return _focused; }
 
+		virtual void onAction(action_t action) {}
     public:
         core::event<void(const input_state & state)> hover;
         core::event<void(const input_state & state)> wheel;
@@ -406,7 +417,8 @@ namespace ui
         core::event<void(bool)> activeChanged;
         core::event<void(bool)> focusChanged;
 
-        core::event<void(uintx_t action)> active;
+		core::event<void(action_t, core::event_flags & flags)> activing;
+        core::event<void(action_t action)> active;
 
     protected:
 		bool _hovered = false;
@@ -418,6 +430,6 @@ namespace ui
 		bool _accept_input = false;
 		bool _hold_focus = false;
 
-        uintx_t _action = 0;
+		action_t _action = 0;
     };
 }

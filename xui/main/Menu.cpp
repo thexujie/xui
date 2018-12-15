@@ -66,7 +66,7 @@ namespace ui
             {
                 widthA = std::max(widthA, item->text.bounds().cx);
                 widthB = std::max(widthB, item->shortcut.bounds().cx);
-                if(item->flags.any(container))
+                if(item->flags.any(item_flag::marked))
                     widthC = std::max(widthB, is.cx);
                 size.cy += item_height;
             }
@@ -107,7 +107,7 @@ namespace ui
             {
                 widthA = std::max(widthA, item->text.bounds().cx);
                 widthB = std::max(widthB, item->shortcut.bounds().cx);
-                if (item->flags.any(container))
+                if (item->flags.any(item_flag::marked))
                     widthC = std::max(widthB, is.cx);
                 size.cy += item_height;
             }
@@ -144,7 +144,7 @@ namespace ui
             {
                 widthA = std::max(widthA, item->text.bounds().cx);
                 widthB = std::max(widthB, item->shortcut.bounds().cx);
-                if (item->flags.any(container))
+                if (item->flags.any(item_flag::marked))
                     widthC = std::max(widthB, is.cx);
             }
         }
@@ -170,7 +170,7 @@ namespace ui
             if(item->text.empty())
             {
 				core::rectf content_rect = { box.x + item_margin.bleft + item_padding.bleft, box.y + posY + item_margin.btop + item_padding.btop, box.cx - item_margin.bwidth() - item_padding.bwidth(), spliter_size };
-				graphics.drawRectangle(content_rect, drawing::PathStyle().fill(_spliiter_color));
+				graphics.drawRectangle(content_rect, drawing::PathStyle().fill(_spliter_color));
                 posY += spliter_size;
             }
             else
@@ -185,9 +185,16 @@ namespace ui
 				else {}
 
                 if (item->icon)
+                {
+					auto cf = item->flags.any(item_flag::disabled) ? drawing::ColorFilter::createGrayScale(0.8f, 0.5f) : nullptr;
+					graphics.setColorFilter(cf);
                     graphics.drawImage(item->icon, core::rectf(content_rect.x, content_rect.y, is.cx, is.cy));
-                graphics.drawText(item->text, core::pointf(item_rect.x + itspacing, content_rect.y), drawing::StringFormat());
-                graphics.drawText(item->shortcut, core::pointf(item_rect.x + itspacing + widthA + tsspacing, content_rect.y), drawing::StringFormat());
+					graphics.setColorFilter(nullptr);
+                }
+
+				auto color = item->flags.any(item_flag::disabled) ? _item_color_disabled : _item_color;
+				graphics.drawText(item->text, core::pointf(item_rect.x + itspacing, content_rect.y), drawing::StringFormat().color(color));
+				graphics.drawText(item->shortcut, core::pointf(item_rect.x + itspacing + widthA + tsspacing, content_rect.y), drawing::StringFormat().color(color));
                 posY += item_height;
             }
             posY += item_margin.bheight();
@@ -205,7 +212,7 @@ namespace ui
     void Menu::onHover(const ui::input_state & state)
     {
         auto item = findItem(state.pos());
-        _setMarkedItem(item);
+        _setMarkedItem((!item || (item->flags & item_flag::disabled)) ? nullptr : item);
         ui::Container::onHover(state);
     }
 
@@ -221,6 +228,7 @@ namespace ui
 	    if(_marked_item)
 	    {
 			_marked_item->active(_marked_item->action);
+			active(_marked_item->action);
 			hide();
 	    }
     }
@@ -242,6 +250,7 @@ namespace ui
         auto iter = _items.begin() + index;
         _items.insert(iter, item);
         refresh();
+		repaint();
         return _items.size();
     }
 

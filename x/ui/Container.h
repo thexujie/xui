@@ -57,6 +57,7 @@ namespace ui
         void onSizeChanged(const core::sizef & from, const core::sizef & to) override;
         void onWheel(const input_state & state) override;
 
+		void notifyShown(bool shown) override;
     public:
         void relayout(layout_flags flags = nullptr);
         void setLayoutDirection(core::align layout);

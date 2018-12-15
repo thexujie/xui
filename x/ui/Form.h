@@ -39,7 +39,6 @@ namespace ui
         void show() { show(form_state::normalize); }
         void hide() { show(form_state::hide); }
 		void show(form_state fs);
-        bool shown() const { return _form_state != form_state::hide; }
         void close();
 
         void centerScreen(int32_t screenIndex = 0);
@@ -65,10 +64,10 @@ namespace ui
 
         virtual hittest_form hitTestForm(const core::pointf & pos) const;
 
+		void onAction(action_t action) override;
 	public:
 		void onFormStylesChanged(form_styles from, form_styles to);
 		void onFormStateChanged(form_state from, form_state to);
-		void onTitleAction(title_action action);
 
     public:
         std::shared_ptr<RadioGroup> radioGroup(std::string name);
@@ -124,7 +123,7 @@ namespace ui
         //core::event<void(const core::sizef & from, const core::sizef & to)> windowSizeChanged;
         //core::event<void(const core::rectf & from, const core::rectf & to)> windowRectChanged;
         core::event<void(form_state from, form_state to)> stateChanged;
-        core::event<void(title_action, core::event_flags & flags)> titleAction;
+        core::event<void(action_t, core::event_flags & flags)> titleAction;
         core::event<void()> closed;
 
         core::event<void(const core::recti & rect)> invalidated;

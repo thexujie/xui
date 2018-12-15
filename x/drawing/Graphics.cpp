@@ -336,7 +336,7 @@ namespace drawing
         _native->drawTextBlob(text.blob().get(), point.x, point.y, paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pointf point, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::pointf point, core::aligns align, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f__core_aligns;
         if (!_native)
@@ -357,10 +357,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rectf rect, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::aligns align, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_aligns;
         if (!_native)
@@ -384,10 +385,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pointf point, core::recti region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::pointf point, core::recti region, core::aligns align, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f__core_rc32i_core_aligns;
         if (!_native)
@@ -407,10 +409,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, float32_t(region.x), float32_t(region.y)), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pointf point, core::rectf region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::pointf point, core::rectf region, core::aligns align, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f__core_rc32f_core_aligns;
         if (!_native)
@@ -430,10 +433,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImageRect(&image.native(), skia::from(region), SkRect::MakeXYWH(point.x, point.y, region.x, region.y), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rectf rect, core::recti region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::recti region, core::aligns align, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32i_core_aligns;
         if (!_native)
@@ -456,10 +460,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rectf rect, core::rectf region, core::aligns align)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::rectf region, core::aligns align, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32f_core_aligns;
         if (!_native)
@@ -482,10 +487,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::pointf point)
+    void Graphics::drawImage(const Image & image, core::pointf point, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_pt32f;
         if (!_native)
@@ -493,10 +499,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImage(&image.native(), point.x, point.y, &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rectf rect)
+    void Graphics::drawImage(const Image & image, core::rectf rect, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f;
         if (!_native)
@@ -504,10 +511,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImageRect(&image.native(), skia::from(rect), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rectf rect, core::recti region)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::recti region, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32i;
         if (!_native)
@@ -515,10 +523,11 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), &paint);
     }
 
-    void Graphics::drawImage(const Image & image, core::rectf rect, core::rectf region)
+    void Graphics::drawImage(const Image & image, core::rectf rect, core::rectf region, const ImageFormat & format)
     {
         ++_statistics.drawImage__const_Image_ref__core_rc32f__core_rc32f;
         if (!_native)
@@ -526,6 +535,7 @@ namespace drawing
 
         SkPaint paint;
         apply(paint);
+		format.apply(paint);
         _native->drawImageRect(&image.native(), skia::from(region), skia::from(rect), &paint);
     }
 

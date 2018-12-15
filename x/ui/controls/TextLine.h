@@ -38,6 +38,7 @@ namespace ui::controls
         void onFocusIn(const input_state & state) override;
         void onFocusOut(const input_state & state) override;
         void onChar(char32_t ch) override;
+		void onAction(action_t action) override;
 		void onPopupMenu(const input_state & state, IMenuPresenter & presenter) override;
 
     public:

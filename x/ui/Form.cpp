@@ -187,7 +187,7 @@ namespace ui
 			_setCurrentControl(state, _findChild(state.pos()));
             break;
         case mouse_action::release:
-            if (_current_control)
+            if (_current_select)
             {
                 if(button == ui::mouse_button::right)
                 {
@@ -209,13 +209,14 @@ namespace ui
 						//    title->setBackgroundColor(0xfff1f1f0);
 						//    form2->addControl(title);
 						//}
+						_menu->active += [this](auto action) {if (_current_select) _current_select->onAction(action); };
 					}
 
 					_menu->clear();
-					_current_control->onPopupMenu(state, *_menu);
+					_current_select->onPopupMenu(state, *_menu);
 					if(_menu->itemCount())
 					{
-						_menu->show(form_state::show_noactive);
+						_menu->show(form_state::noactive);
 						_menu->setWindowPos(_window_pos + state.pos());
 					}
                 }
@@ -389,28 +390,27 @@ namespace ui
 
 	void Form::onFormStateChanged(form_state from, form_state to)
     {
-		stateChanged(from, to);
     }
 
-	void Form::onTitleAction(title_action action)
+	void Form::onAction(action_t action)
 	{
         core::event_flags flags;
-        titleAction(action, flags);
+		activing(action, flags);
         if (flags.any(core::event_flag::rejected))
             return;
 
 		switch(action)
 		{
-		case title_action::none: 
+		case system_action::none: 
 			break;
-		case title_action::close:
+		case system_action::close:
             show(form_state::hide);
             invoke([this]() { closed(); });
 			break;
-		case title_action::minimize:
+		case system_action::minimize:
 			show(form_state::minimize);
 			break;
-		case title_action::maximize:
+		case system_action::maximize:
 			show(_form_state == form_state::maximize ? form_state::normalize : form_state::maximize);
 			break;
 		default:;

@@ -62,7 +62,7 @@ namespace ui::controlsex
             refresh();
         }
 
-		void onAction(uintx_t action);
+		void onAction(action_t action);
 
     private:
 		void update();

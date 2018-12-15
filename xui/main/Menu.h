@@ -67,10 +67,15 @@ namespace ui
         core::dimenf _shortcut_arrow_spacing = 0.5_em;
         std::vector<std::shared_ptr<MenuItem>> _items;
 
-		core::color _spliiter_color = core::colors::Gray;
+		core::color _item_color = core::colors::Black;
+		core::color _item_color_disabled = core::colors::Gray;
+		core::color _spliter_color = core::colors::Gray;
         core::color _marked_color = core::colors::AliceBlue;
 		core::color _selected_color = core::colors::Blue;
 
         std::shared_ptr<MenuItem> _marked_item;
+
+	public:
+		core::event<void(action_t action)> active;
 	};
 }

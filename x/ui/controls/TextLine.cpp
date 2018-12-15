@@ -343,11 +343,24 @@ namespace ui::controls
         insert(chars, len);
     }
 
+	void TextLine::onAction(action_t action)
+    {
+	    switch(action)
+	    {
+		case system_action::cut:
+			break;
+		case system_action::copy:
+			break;
+		case system_action::paste:
+			break;
+	    }
+    }
+
 	void TextLine::onPopupMenu(const input_state & state, IMenuPresenter & presenter)
     {
-		auto item_cut = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"ºÙ«–", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::X } }));
-		auto item_copy = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"∏¥÷∆", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::C } }));
-		auto item_paste = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"’≥Ã˘", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::V} }));
+		auto item_cut = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"ºÙ«–", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::X } }), system_action::cut, (_cursor_pos_selected != core::npos) ? item_flag::none : item_flag::disabled);
+		auto item_copy = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"∏¥÷∆", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::C } }), system_action::copy, (_cursor_pos_selected != core::npos) ? item_flag::none : item_flag::disabled);
+		auto item_paste = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"’≥Ã˘", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::V} }), system_action::paste);
 		item_cut->active += [](auto action) { std::cout << "ºÙ«–"; };
 		item_copy->active += [](auto action) { std::cout << "∏¥÷∆"; };
 		item_paste->active += [](auto action) { std::cout << "’≥Ã˘"; };

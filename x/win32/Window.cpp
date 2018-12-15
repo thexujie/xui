@@ -174,7 +174,7 @@ namespace win32
                 ::ShowWindow(hwnd, SW_HIDE);
             break;
         }
-        case ui::form_state::show_noactive:
+        case ui::form_state::noactive:
         {
             HWND hwnd = (HWND)handle();
             ShowWindow(hwnd, SW_SHOWNOACTIVATE);
@@ -767,7 +767,8 @@ namespace win32
         if (!f)
             throw core::exception(core::error_nullptr);
 
-        f->setWindowSize(size.to<float32_t>());
+		if(wParam != SIZE_MINIMIZED)
+			f->setWindowSize(size.to<float32_t>());
         switch(wParam)
         {
         case SIZE_MINIMIZED: f->setFormState(ui::form_state::minimize); break;
@@ -787,8 +788,8 @@ namespace win32
     {
         if(!lParam)
         {
-            if (auto f = form())
-                f->setFormState(wParam ? ui::form_state::normalize : ui::form_state::hide);
+			if (auto f = form())
+				f->notifyShown(!!wParam);
         }
         return OnDefault(WM_SHOWWINDOW, wParam, lParam);
     }
@@ -1034,6 +1035,13 @@ namespace win32
 		if(auto f = form())
 			f->notifyWindowCaptured(_handle == GetCapture());
 		return OnDefault(WM_CAPTURECHANGED, wParam, lParam);
+    }
+
+	intx_t Window::OnWmMouseActive(uintx_t wParam, intx_t lParam)
+    {
+		if (auto f = form())
+			f->notifyWindowCaptured(_handle == GetCapture());
+		return OnDefault(WM_MOUSEACTIVATE, wParam, lParam);
     }
 
     intx_t Window::OnWmSetFocus(uintx_t wParam, intx_t lParam)

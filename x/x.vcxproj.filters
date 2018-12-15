@@ -194,6 +194,9 @@
     <ClCompile Include="drawing\Text.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
+    <ClCompile Include="drawing\ImageFormat.cpp">
+      <Filter>drawing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -462,6 +465,9 @@
       <Filter>ui\controls</Filter>
     </ClInclude>
     <ClInclude Include="drawing\Text.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing\ImageFormat.h">
       <Filter>drawing</Filter>
     </ClInclude>
   </ItemGroup>

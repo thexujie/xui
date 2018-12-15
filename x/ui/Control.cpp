@@ -310,10 +310,8 @@ namespace ui
 
     void Control::repaint(const core::rectf & rect)
     {
-		if(!_aviliable || !_visible)
-			return;
-
-        invalidate(rect);
+		if (_aviliable && _shown)
+			invalidate(rect);
     }
 
     void Control::rearrange()
@@ -818,5 +816,13 @@ namespace ui
     {
 		setFocused(focused);
 		focused ? onFocusIn(state) : onFocusOut(state);
+    }
+
+	void Control::notifyShown(bool shown)
+    {
+		setShown(shown);
+		shown ? onShow() : onHide();
+		if (shown) 
+			repaint();
     }
 }

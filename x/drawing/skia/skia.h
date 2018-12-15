@@ -129,10 +129,23 @@ namespace drawing::skia
         case blend_mode::dst_atop: return SkBlendMode::kDstATop;
         case blend_mode::xor: return SkBlendMode::kXor;
         case blend_mode::plus: return SkBlendMode::kPlus;
-        case blend_mode::overlay: return SkBlendMode::kOverlay;
-        default: return SkBlendMode::kSrc;
-        }
-    }
+		case blend_mode::overlay: return SkBlendMode::kOverlay;
+		case blend_mode::darken: return SkBlendMode::kDarken;
+		case blend_mode::lighten: return SkBlendMode::kLighten;
+		case blend_mode::dodge: return SkBlendMode::kColorDodge;
+		case blend_mode::burn: return SkBlendMode::kColorBurn;
+		case blend_mode::hard_light: return SkBlendMode::kHardLight;
+		case blend_mode::soft_light: return SkBlendMode::kSoftLight;
+		case blend_mode::difference: return SkBlendMode::kDifference;
+		case blend_mode::exclusion: return SkBlendMode::kExclusion;
+		case blend_mode::multiply: return SkBlendMode::kMultiply;
+		case blend_mode::hue: return SkBlendMode::kHue;
+		case blend_mode::saturation: return SkBlendMode::kSaturation;
+		case blend_mode::color: return SkBlendMode::kColor;
+		case blend_mode::luminosity: return SkBlendMode::kLuminosity;
+		default: return SkBlendMode::kSrc;
+		}
+	}
 
     inline blend_mode to(SkBlendMode mode)
     {
@@ -151,7 +164,20 @@ namespace drawing::skia
         case SkBlendMode::kDstATop: return blend_mode::dst_atop;
         case SkBlendMode::kXor: return blend_mode::xor;
         case SkBlendMode::kPlus: return blend_mode::plus;
-        case SkBlendMode::kOverlay: return blend_mode::overlay;
+		case SkBlendMode::kOverlay: return blend_mode::overlay;
+		case SkBlendMode::kDarken: return blend_mode::darken;
+		case SkBlendMode::kLighten: return blend_mode::lighten;
+		case SkBlendMode::kColorDodge: return blend_mode::dodge;
+		case SkBlendMode::kColorBurn: return blend_mode::burn;
+		case SkBlendMode::kHardLight: return blend_mode::hard_light;
+		case SkBlendMode::kSoftLight: return blend_mode::soft_light;
+		case SkBlendMode::kDifference: return blend_mode::difference;
+		case SkBlendMode::kExclusion: return blend_mode::exclusion;
+		case SkBlendMode::kMultiply: return blend_mode::multiply;
+		case SkBlendMode::kHue: return blend_mode::hue;
+		case SkBlendMode::kSaturation: return blend_mode::saturation;
+		case SkBlendMode::kColor: return blend_mode::color;
+		case SkBlendMode::kLuminosity: return blend_mode::luminosity;
         default: return blend_mode::src;
         }
     }

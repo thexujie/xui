@@ -99,6 +99,7 @@
     <ClCompile Include="core\utils.cpp" />
     <ClCompile Include="drawing\ColorFilter.cpp" />
     <ClCompile Include="drawing\drawing.cpp" />
+    <ClCompile Include="drawing\ImageFormat.cpp" />
     <ClCompile Include="drawing\Text.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -178,6 +179,7 @@
     <ClInclude Include="drawing\ColorFilter.h" />
     <ClInclude Include="drawing\draw.h" />
     <ClInclude Include="drawing\drawing.h" />
+    <ClInclude Include="drawing\ImageFormat.h" />
     <ClInclude Include="drawing\Text.h" />
     <ClInclude Include="ui\base\Button.h" />
     <ClInclude Include="ui\base\Check.h" />

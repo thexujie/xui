@@ -103,10 +103,10 @@ namespace ui::controlsex
 		}
 	}
 
-	void TitleBar::onAction(uintx_t action)
+	void TitleBar::onAction(action_t action)
 	{
 		if(auto f = form())
-			f->onTitleAction(static_cast<title_action>(action));
+			f->onAction(action);
 	}
 
 	void TitleBar::update()
@@ -128,7 +128,7 @@ namespace ui::controlsex
 			path->moveTo({ 0.7f, 0.3f });
 			path->lineTo({ 0.3f, 0.7f });
 			_close->setPath(path);
-			_close->setActionT(ui::title_action::close);
+			_close->setActionT(ui::system_action::close);
             _close->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
 			addControl(_close);
 		}
@@ -138,7 +138,7 @@ namespace ui::controlsex
 			_maximize = std::make_shared<TitleButton>();
             _maximize->setSize({ 1.5_em });
             _maximize->setMargin({ 0.2_em });
-			_maximize->setActionT(ui::title_action::maximize);
+			_maximize->setActionT(ui::system_action::maximize);
             _maximize->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
 			addControl(_maximize);
 		}
@@ -153,7 +153,7 @@ namespace ui::controlsex
 			path->lineTo({ 0.7f, 0.7f });
 			path->close();
 			_minimize->setPath(path);
-			_minimize->setActionT(ui::title_action::minimize);
+			_minimize->setActionT(ui::system_action::minimize);
 			_minimize->active += std::weak_bind(&TitleBar::onAction, share_ref<TitleBar>(), std::placeholders::_1);
 			addControl(_minimize);
 		}

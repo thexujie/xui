@@ -113,17 +113,17 @@ namespace drawing
         void drawString(const std::string & str, const core::rectf & rect, const StringFormat & format);
         void drawText(const drawing::Text & text, core::pointf point, const StringFormat & format);
 
-        void drawImage(const Image & image, core::pointf point, core::aligns align);
-        void drawImage(const Image & image, core::rectf rect, core::aligns align);
-        void drawImage(const Image & image, core::pointf point, core::recti region, core::aligns align);
-        void drawImage(const Image & image, core::pointf point, core::rectf region, core::aligns align);
-        void drawImage(const Image & image, core::rectf rect, core::recti region, core::aligns align);
-        void drawImage(const Image & image, core::rectf rect, core::rectf region, core::aligns align);
+        void drawImage(const Image & image, core::pointf point, core::aligns align, const ImageFormat & format = {});
+        void drawImage(const Image & image, core::rectf rect, core::aligns align, const ImageFormat & format = {});
+        void drawImage(const Image & image, core::pointf point, core::recti region, core::aligns align, const ImageFormat & format = {});
+        void drawImage(const Image & image, core::pointf point, core::rectf region, core::aligns align, const ImageFormat & format = {});
+        void drawImage(const Image & image, core::rectf rect, core::recti region, core::aligns align, const ImageFormat & format = {});
+        void drawImage(const Image & image, core::rectf rect, core::rectf region, core::aligns align, const ImageFormat & format = {});
 
-        void drawImage(const Image & image, core::pointf point);
-        void drawImage(const Image & image, core::rectf rect);
-        void drawImage(const Image & image, core::rectf rect, core::recti region);
-        void drawImage(const Image & image, core::rectf rect, core::rectf region);
+        void drawImage(const Image & image, core::pointf point, const ImageFormat & format = {});
+        void drawImage(const Image & image, core::rectf rect, const ImageFormat & format = {});
+        void drawImage(const Image & image, core::rectf rect, core::recti region, const ImageFormat & format = {});
+        void drawImage(const Image & image, core::rectf rect, core::rectf region, const ImageFormat & format = {});
 
     public:
         const drawcall_statistics & statistics() const { return _statistics; }

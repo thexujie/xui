@@ -50,14 +50,6 @@ namespace ui
         maximize,
     };
 
-	enum class title_action
-	{
-		none = 0,
-		close,
-		minimize,
-		maximize,
-	};
-
 	enum class form_style
 	{
 		normal = 0,
@@ -80,7 +72,7 @@ namespace ui
 	enum class form_state
 	{
 		hide = 0,
-		show_noactive,
+		noactive,
 		normalize,
 		minimize,
 		maximize,
@@ -357,14 +349,6 @@ namespace ui
 
     const char * keycode_name(keycode k);
 
-    template<>
-    struct enable_bitmasks<mouse_button>
-    {
-        static const bool enable = true;
-    };
-
-    typedef core::bitflag<mouse_button> mouse_buttons;
-
     enum class cursor
     {
         unknown = -1, // δ֪
@@ -404,6 +388,30 @@ namespace ui
         none = 0,
         update_mouse_pos,
     };
+
+	enum class system_action : uint32_t
+	{
+		none = 0,
+		cut,
+		copy,
+		paste,
+
+		close,
+		minimize,
+		maximize,
+	};
+
+	union action_t
+	{
+		action_t() :e(system_action::none) {}
+		action_t(system_action e_) :e(e_) {}
+		action_t(uint32_t ui_) : ui(ui_) {}
+
+		operator uint32_t() const { return ui; }
+
+		system_action e;
+		uint32_t ui;
+	};
 
     class input_state
     {
@@ -530,13 +538,16 @@ namespace ui
         virtual void resize(const core::sizef & size) = 0;
     };
 
-	enum item_flag
+	enum class item_flag
 	{
+		none = 0,
 		marked = 0x0001,
 		activated = 0x0002,
 		selected = 0x0004,
-		shown = 0x0008,
-		container = 0x0010,
+		focused = 0x0008,
+		disabled = 0x0010,
+
+		shown = 0x1000,
 
 		placed = 0x10000,
 	};
@@ -552,16 +563,16 @@ namespace ui
 	{
 	public:
 		MenuItem() {}
-		MenuItem(const drawing::Image & i, std::string t, ui::shortcut s, uintx_t a = 0) : icon(i), text(t), shortcut(s.string()), action(a) {}
+		MenuItem(const drawing::Image & i, std::string t, ui::shortcut s, action_t a = 0, item_flags f = nullptr) : icon(i), text(t), shortcut(s.string()), action(a), flags(f) {}
 
 		drawing::Image icon;
 		drawing::Text text;
 		drawing::Text shortcut;
-		uintx_t action = 0;
+		action_t action = 0;
 
 		item_flags flags;
 
-		core::event<void(uintx_t action)> active;
+		core::event<void(action_t action)> active;
 	};
 
 	class IMenuPresenter
@@ -573,5 +584,4 @@ namespace ui
 		virtual size_t appendItems(std::initializer_list<std::shared_ptr<MenuItem>> && items) = 0;
 		virtual size_t insertItem(size_t index, std::shared_ptr<MenuItem> item) = 0;
 	};
-
 }
