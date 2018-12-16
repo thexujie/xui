@@ -96,14 +96,11 @@ namespace ui
             auto & si = size();
             auto ps = prefferSize();
             core::sizef size = calc(si);
-            if(!si.cx.avi() || !si.cy.avi())
-            {
-                if (!si.cx.avi())
-                    size.cx = ps.cx;
-                if (!si.cx.avi())
-                    size.cy = ps.cy;
-                setSize({ size .cx, size .cy});
-            }
+            if (!si.cx.avi())
+                size.cx = ps.cx;
+            if (!si.cx.avi())
+                size.cy = ps.cy;
+            place(core::rectf(core::pointf(), { size.cx, size.cy }), size);
             //place(core::rectf(core::pointf(), size), size);
             window();
 			stateChanged(_form_state, fs);
@@ -123,7 +120,7 @@ namespace ui
         if (_window)
              _window->move(p);
         else
-            setPos({p.x, p.y});
+            setWindowPos(core::pointf{ p.x, p.y });
     }
 
     void Form::notifyWindowMouse(const input_state & state, mouse_button button, mouse_action action)
@@ -294,7 +291,7 @@ namespace ui
 
     void Form::invalidate(const core::rectf & rect)
     {
-        auto rc = rect.intersected(core::rectf(core::pointf(), realSize())).ceil<int32_t>();
+        auto rc = rect.intersected(core::rectf(core::pointf(), _rect.size)).ceil<int32_t>();
         _invalid_region.addRect(rc);
         if (!_invaliding && validCompleted())
         {

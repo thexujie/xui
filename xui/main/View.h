@@ -29,7 +29,7 @@ namespace ui
         std::shared_ptr<ViewItem> itemAt(size_t index) const;
         std::shared_ptr<ViewItem> findItem(const core::pointf & pos) const;
 
-        void setViewMode(view_mode m) { _mode = m; }
+		void setViewMode(view_mode m);
         view_mode viewMode() const { return _mode; }
         void setItemMargin(const core::vec4<core::dimenf> & spacing) { _item_margin = spacing; refresh(); }
         const core::vec4<core::dimenf> & itemMargin() const { return _item_margin; }

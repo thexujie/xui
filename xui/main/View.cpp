@@ -90,6 +90,17 @@ namespace ui
         return nullptr;
     }
 
+	void View::setViewMode(view_mode m)
+    {
+	    if(_mode != m)
+	    {
+			_mode = m;
+			restyle();
+			refresh();
+			repaint();
+	    }
+    }
+
     void View::onRectChanged(const core::rectf & from, const core::rectf & to)
     {
         refresh();

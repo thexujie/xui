@@ -228,7 +228,7 @@ namespace win32
         if (!hwnd)
             return;
 
-        auto size = f->realSize().to<int32_t>();
+        auto size = f->rect().size.to<int32_t>();
 		RECT rect = {};
 		uint32_t flags = SWP_FRAMECHANGED;
         _form_styles = styles;
@@ -391,9 +391,8 @@ namespace win32
         }
 
         auto pos = f->windowPos().to<int32_t>();
-        auto size = f->calc(f->size()).convert(ceilf).to<int32_t>();
+        auto size = f->rect().size;
 
-        auto form_style = f->styles();
 		auto[style, styleEx] = formStylesToWinStyles(f->styles());
         RECT rect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
         //::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
@@ -1013,7 +1012,7 @@ namespace win32
         if(!child)
             return HTNOWHERE;
 
-        auto htf = child->hitTestForm(pos - child->realPos());
+        auto htf = child->hitTestForm(pos - child->rect().pos);
         switch (htf)
         {
         case ui::hittest_form::client: return HTCLIENT;

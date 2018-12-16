@@ -156,7 +156,7 @@ namespace ui
 			if(!control->aviliable())
 				continue;
 
-            auto rect = control->realRect();
+            auto rect = control->rect();
             if(clip2.intersect_with(rect))
                 control->onPaint(graphics, clip2);
         }
@@ -422,7 +422,7 @@ namespace ui
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
                 continue;
 
-            auto m = control->realMargin();
+            auto m = control->calc(control->margin());
 
             if (_layout_direction == core::align::left || _layout_direction == core::align::right)
             {
@@ -653,7 +653,7 @@ namespace ui
                     control->place(box, ps);
                     break;
                 case layout_origin::scene:
-                    control->place(form()->realRect(), ps);
+                    control->place(form()->rect(), ps);
                     break;
                 default:
                     break;

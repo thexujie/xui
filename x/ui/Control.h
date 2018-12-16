@@ -41,8 +41,6 @@ namespace ui
         void setLayoutOrigin(layout_origin origin) { _layout_origin = origin; }
         layout_origin layoutOrigin() const { return _layout_origin; }
 
-        void setPos(const core::vec2<core::dimenf> & pos) { _pos = pos; }
-        const core::vec2<core::dimenf> & pos() const { return _pos; }
         void setSize(const core::vec2<core::dimenf> & size) { _size = size; }
         const core::vec2<core::dimenf> & size() const { return _size; }
         void setMinSize(const core::vec2<core::dimenf> & minSize) { _min_size = minSize; }
@@ -57,16 +55,13 @@ namespace ui
         void setAnchor(const core::vec4<core::dimenf> & anchor) { _anchor = anchor; }
         const core::vec4<core::dimenf> & anchor() const { return _anchor; }
 
-        void move(const core::vec2<core::dimenf> & pos);
         void resize(const core::vec2<core::dimenf> & size);
 
-        void setShowPos(const core::vec2f & pos);
         void setShowSize(const core::vec2f & size);
         void setShowRect(const core::rectf & size);
 
         // prefferSize 计算出的期望大小
         core::sizef prefferSize() const;
-        core::sizef anchorSize(const core::sizef & spacing) const;
         // 根据最大最小值调整
         core::sizef adjustSize(const core::sizef & size) const;
 
@@ -110,15 +105,6 @@ namespace ui
 		}
 		bool aviliable() const { return _aviliable; }
 
-        core::pointf realPos() const { return _rect.pos; }
-        core::sizef realSize() const { return _rect.size; }
-        float32_t realWidth() const { return _rect.cx; }
-        float32_t realHeight() const { return _rect.cy; }
-        core::rectf realRect() const { return _rect; }
-        float32_t width() const { return _rect.cx; }
-        float32_t height() const { return _rect.cy; }
-        core::vec4f realMargin() const { return calc(_margin); }
-
         float32_t calc(const core::dimenf & value) const;
         float32_t calc(const core::dimenf & value, float32_t spacing) const;
         core::vec2f calc(const core::vec2<core::dimenf> & value) const
@@ -138,6 +124,12 @@ namespace ui
             return { calc(value.x, spacing.cx), calc(value.y, spacing.cy), calc(value.cx, spacing.cx), calc(value.cy, spacing.cy) };
         }
 
+        void move(const core::pointf & pos);
+
+        const core::rectf & rect() const { return _rect; }
+        const core::pointf & pos() const { return _rect.pos; }
+        float32_t width() const { return _rect.cx; }
+        float32_t height() const { return _rect.cy; }
         core::rectf box() const;
         core::rectf controlBox() const { return box(); }
         core::rectf borderBox() const;
@@ -261,7 +253,6 @@ namespace ui
 
         core::attribute<core::color> _color = core::colors::Auto;
         // 控件大小，包括 padding，不包括 margin。
-        core::attribute<core::vec2<core::dimenf>> _pos;
         core::attribute<core::vec2<core::dimenf>> _size;
         core::attribute<core::vec2<float32_t>> _fixed_aspect;
         core::attribute<core::vec4<core::dimenf>> _padding;

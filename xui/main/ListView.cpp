@@ -180,5 +180,25 @@ namespace ui
     {
         refresh();
     }
+
+	void ListView::onAction(action_t action)
+    {
+		switch (action)
+		{
+		case 0x100:
+			setViewMode(view_mode::details);
+			break;
+		case 0x101:
+			setViewMode(view_mode::tile);
+			break;
+		}
+    }
+
+	void ListView::onPopupMenu(const input_state & state, IMenuPresenter & presenter)
+    {
+		auto item_details = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"œÍœ∏–≈œ¢", ui::shortcut(), 0x100, item_flag::none);
+		auto item_tile = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"∆Ω∆Ã", ui::shortcut(), 0x101, item_flag::none);
+		presenter.appendItems({ item_details, item_tile });
+    }
 }
 

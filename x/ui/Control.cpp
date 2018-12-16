@@ -11,7 +11,7 @@ namespace ui
 
     void Control::propertyTableCallback(core::property_table & properties)
     {
-        properties["pos"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimenf> &) >(&Control::move), &Control::pos);
+        properties["pos"] = make_accessor(static_cast<void (Control::*)(const core::pointf &) >(&Control::move), &Control::pos);
         properties["size"] = make_accessor(static_cast<void (Control::*)(const core::vec2<core::dimenf> &) >(&Control::resize), &Control::size);
 
         properties["border"] = make_accessor(&Control::setBorder, &Control::border);
@@ -197,12 +197,14 @@ namespace ui
         }
     }
 
-    void Control::move(const core::vec2<core::dimenf> & pos)
+    void Control::move(const core::pointf & pos)
     {
-        if (_pos != _pos)
+        if (_rect.pos != pos)
         {
-            _pos = _pos;
-            setShowPos(calc(_pos));
+            auto pos_old = _rect.pos;
+            _rect.pos = pos;
+            onPosChanged(pos_old, pos);
+            onRectChanged(core::rectf(pos_old, _rect.size), core::rectf(pos, _rect.size));
         }
     }
 
@@ -212,17 +214,6 @@ namespace ui
         {
             _size = size;
             setShowSize(calc(size));
-        }
-    }
-
-    void Control::setShowPos(const core::vec2f & pos)
-    {
-        auto pos_old = _rect.pos;
-        if (pos_old != pos)
-        {
-            _rect.pos = pos;
-            onPosChanged(pos_old, pos);
-            onRectChanged(core::rectf(pos_old, _rect.size), core::rectf(pos, _rect.size));
         }
     }
 
@@ -626,12 +617,11 @@ namespace ui
 
     void Control::onVisibleChanged(bool vis)
     {
-		repaint(realRect());
+		repaint();
     }
 
 	void Control::onAviliableChanged(bool avi)
     {
-		repaint(realRect());
 		if(auto p = parent())
 		{
 			p->relayout();

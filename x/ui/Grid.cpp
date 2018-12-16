@@ -68,7 +68,7 @@ namespace ui
                     continue;
 
                 auto expect_size = control->prefferSize();
-                auto m = control->realMargin();
+                auto m = control->calc(control->margin());
                 control->place(cell.rect.offseted(pbox.pos), cell.rect.size);
             }
         }
