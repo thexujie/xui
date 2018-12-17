@@ -43,12 +43,14 @@ namespace ui
 
 		std::string styleName() const override;
 
-        core::sizef contentSize() const override;
         void update() override;
 		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
         void onScrollPosChanged(const core::vec2f & from, const core::vec2f & to);
 
 		void onAction(action_t action) override;
 		void onPopupMenu(const input_state & state, IMenuPresenter & presenter) override;
+
+	public:
+        void view() override;
 	};
 }

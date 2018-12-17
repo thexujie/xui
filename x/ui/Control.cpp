@@ -32,10 +32,20 @@ namespace ui
         return core::app().properties(typeid (*this), std::bind(&Control::propertyTable, this, std::placeholders::_1));
     }
 
+    void Control::setContentSize(const core::sizef & size)
+    {
+        if (_content_size != size)
+        {
+            _content_size = size;
+            if(!_size.cx.avi() || !_size.cy.avi())
+                replace();
+        }
+    }
+
     core::sizef Control::prefferSize() const
     {
         valid();
-        if (_size.available() && _size.value.cx.avi() && _size.value.cy.avi())
+        if (_size.cx.avi() && _size.cy.avi())
         {
             core::sizef size = calc(_size);
             _adjustSize(size);
@@ -43,14 +53,11 @@ namespace ui
         }
 
         core::sizef size = contentSize() + edges().bsize();
-        if (_size.available())
-        {
-            if (_size.value.cx.avi())
-                size.cx = calc(_size.value.cx);
-            else if (_size.value.cy.avi())
-                size.cy = calc(_size.value.cy);
-            else {}
-        }
+        if (_size.cx.avi())
+            size.cx = calc(_size.cx);
+        else if (_size.cy.avi())
+            size.cy = calc(_size.cy);
+        else {}
 
         _adjustSize(size);
         return size;
@@ -59,28 +66,28 @@ namespace ui
     core::sizef Control::adjustSize(const core::sizef & size) const
     {
         core::sizef asize = size;
-        if (_min_size.value.cx.avi())
+        if (_min_size.cx.avi())
         {
-            float32_t val = calc(_min_size.value.cx);
+            float32_t val = calc(_min_size.cx);
             if (asize.cx < val)
                 asize.cx = val;
         }
-        if (_min_size.value.cy.avi())
+        if (_min_size.cy.avi())
         {
-            float32_t val = calc(_min_size.value.cy);
+            float32_t val = calc(_min_size.cy);
             if (asize.cy < val)
                 asize.cy = val;
         }
 
-        if (_max_size.value.cx.avi())
+        if (_max_size.cx.avi())
         {
-            float32_t val = calc(_max_size.value.cx);
+            float32_t val = calc(_max_size.cx);
             if (asize.cx > val)
                 asize.cx = val;
         }
-        if (_max_size.value.cy.avi())
+        if (_max_size.cy.avi())
         {
-            float32_t val = calc(_max_size.value.cy);
+            float32_t val = calc(_max_size.cy);
             if (asize.cy > val)
                 asize.cy = val;
         }
@@ -266,7 +273,8 @@ namespace ui
     core::rectf Control::contentBox() const
     {
         core::vec4f e = edges();
-        return core::rectf(_rect.pos + e.bleftTop(), _rect.size - e.bsize());
+        auto box = core::rectf(_rect.pos + e.bleftTop(), _rect.size - e.bsize());
+        return box.empty() ? core::vec4f() : box;
     }
 
     core::rectf Control::box(control_box cbox) const
@@ -283,12 +291,12 @@ namespace ui
 
     void Control::refresh()
     {
-        if (!_delay_update)
+        if (!_delay_refresh)
         {
-            _delay_update = true;
+            _delay_refresh = true;
             invoke([this]()
             {
-                _delay_update = false;
+                _delay_refresh = false;
                 update();
             });
         }
@@ -296,7 +304,18 @@ namespace ui
 
     void Control::repaint()
     {
-        repaint(_rect);
+        check_invoke();
+        if (!_delay_repaint)
+        {
+            _delay_repaint = true;
+            _rect_repaint = _rect;
+            invoke([this]()
+            {
+                invalidate();
+            });
+        }
+        else
+            _rect_repaint.unite(_rect);
     }
 
     void Control::repaint(const core::rectf & rect)
@@ -305,20 +324,17 @@ namespace ui
 			invalidate(rect);
     }
 
-    void Control::rearrange()
+    void Control::replace()
     {
-		if(auto p = parent())
-		{
-            p->rearrange();
+        if (auto p = parent())
             p->relayout();
-		}
     }
 
     void Control::restyle()
     {
-        if (!_delay_style)
+        if (!_delay_restyle)
         {
-            _delay_style = true;
+            _delay_restyle = true;
             invoke([this]() {updateStyle(); });
         }
     }
@@ -391,7 +407,7 @@ namespace ui
         if (_margin != margin)
         {
             _margin = margin;
-            rearrange();
+            replace();
         }
     }
 
@@ -464,21 +480,21 @@ namespace ui
 
     void Control::valid() const
     {
-        if(_delay_style)
+        if(_delay_restyle)
         {
-            const_cast<Control *>(this)->_delay_style = false;
+            const_cast<Control *>(this)->_delay_restyle = false;
             const_cast<Control *>(this)->updateStyle();
         }
-        if(_delay_update)
+        if(_delay_refresh)
         {
-            const_cast<Control *>(this)->_delay_update = false;
+            const_cast<Control *>(this)->_delay_refresh = false;
             const_cast<Control *>(this)->update();
         }
     }
 
     void Control::updateStyle()
     {
-        _delay_style = false;
+        _delay_restyle = false;
         std::string style = styleName();
         if (style == _style)
             return;
@@ -538,17 +554,12 @@ namespace ui
 
     void Control::invalidate()
     {
-        check_invoke();
-		_delay_repaint = false;
-
-		if(!_aviliable || !_visible)
-			return;
-
-        if (!_rect_repaint.empty())
+        if(_delay_repaint && !_delay_relayout)
         {
+            _delay_repaint = false;
             invalidate(_rect_repaint);
+            _rect_repaint.clear();
         }
-        _rect_repaint.clear();
     }
 
     void Control::invalidate(const core::rectf & rect)
@@ -639,13 +650,13 @@ namespace ui
 
     void Control::_drawBorder(drawing::Graphics & graphics) const
     {
-        if (_border && _border_colors)
+        if (_border.x.avi() && _border_colors.x.visible())
         {
-            if (std::equal(_border.value.arr.begin() + 1, _border.value.arr.end(), _border.value.arr.begin()) &&
-                std::equal(_border_colors.value.arr.begin() + 1, _border_colors.value.arr.end(), _border_colors.value.arr.begin()) &&
-                std::equal(_border_styles.value.arr.begin() + 1, _border_styles.value.arr.end(), _border_styles.value.arr.begin()))
+            if (std::equal(_border.arr.begin() + 1, _border.arr.end(), _border.arr.begin()) &&
+                std::equal(_border_colors.arr.begin() + 1, _border_colors.arr.end(), _border_colors.arr.begin()) &&
+                std::equal(_border_styles.arr.begin() + 1, _border_styles.arr.end(), _border_styles.arr.begin()))
             {
-                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathStyle().stoke(_border_colors.value.x, calc(_border.value.x), _border_styles.value[0]));
+                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathStyle().stoke(_border_colors.x, calc(_border.x), _border_styles[0]));
             }
             else
             {
@@ -654,11 +665,11 @@ namespace ui
                 drawing::Path path;
                 for (int32_t cnt = 0; cnt < 4; ++cnt)
                 {
-                    if (border[cnt] > 0 && _border_colors.value[cnt].visible())
+                    if (border[cnt] > 0 && _border_colors[cnt].visible())
                     {
                         auto points = boderPoints(edges[cnt]);
                         auto line = boderLine(edges[cnt]);
-                        auto style = drawing::PathStyle().stoke(_border_colors.value[cnt], border.arr[cnt], _border_styles.value[cnt]);
+                        auto style = drawing::PathStyle().stoke(_border_colors[cnt], border.arr[cnt], _border_styles[cnt]);
 
                         path.clear();
                         path.fromPoints(std::begin(points), std::end(points), true);
@@ -679,92 +690,39 @@ namespace ui
     void Control::_adjustSize(core::sizef & size) const
     {
         auto p = parent();
-        if (p && _fixed_aspect)
+        if (p && !std::isnan(_fixed_aspect.cx))
         {
-            auto layout_direction = p->layoutDirection();
-            if (!std::isnan(_fixed_aspect.value.cx))
-                size.cx = size.cy * _fixed_aspect.value.cx;
-            else if (!std::isnan(_fixed_aspect.value.cy))
-                size.cy = size.cx * _fixed_aspect.value.cy;
+            if (!std::isnan(_fixed_aspect.cx))
+                size.cx = size.cy * _fixed_aspect.cx;
+            else if (!std::isnan(_fixed_aspect.cy))
+                size.cy = size.cx * _fixed_aspect.cy;
             else {}
         }
 
-        if (_min_size.available())
+        if (_min_size.cx.avi())
         {
-            if (_min_size.value.cx.avi())
-            {
-                float32_t val = calc(_min_size.value.cx);
-                if (size.cx < val)
-                    size.cx = val;
-            }
-            if (_min_size.value.cy.avi())
-            {
-                float32_t val = calc(_min_size.value.cy);
-                if (size.cy < val)
-                    size.cy = val;
-            }
+            float32_t val = calc(_min_size.cx);
+            if (size.cx < val)
+                size.cx = val;
+        }
+        if (_min_size.cy.avi())
+        {
+            float32_t val = calc(_min_size.cy);
+            if (size.cy < val)
+                size.cy = val;
         }
 
-        if (_max_size.available())
+        if (_max_size.cx.avi())
         {
-            if (_max_size.value.cx.avi())
-            {
-                float32_t val = calc(_max_size.value.cx);
-                if (size.cx > val)
-                    size.cx = val;
-            }
-            if (_max_size.value.cy.avi())
-            {
-                float32_t val = calc(_max_size.value.cy);
-                if (size.cy > val)
-                    size.cy = val;
-            }
+            float32_t val = calc(_max_size.cx);
+            if (size.cx > val)
+                size.cx = val;
         }
-    }
-
-    void Control::_adjustSize(core::sizef & size, const core::vec2<float32_t> & spacing) const
-    {
-        auto p = parent();
-        if (p && _fixed_aspect)
+        if (_max_size.cy.avi())
         {
-            auto layout_direction = p->layoutDirection();
-            if (!std::isnan(_fixed_aspect.value.cx))
-                size.cx = size.cy * _fixed_aspect.value.cx;
-            else if (!std::isnan(_fixed_aspect.value.cy))
-                size.cy = size.cx * _fixed_aspect.value.cy;
-            else {}
-        }
-
-        if (_min_size.available())
-        {
-            if (_min_size.value.cx.avi())
-            {
-                float32_t val = calc(_min_size.value.cx, spacing.cx);
-                if (size.cx < val)
-                    size.cx = val;
-            }
-            if (_min_size.value.cy.avi())
-            {
-                float32_t val = calc(_min_size.value.cy, spacing.cy);
-                if (size.cy < val)
-                    size.cy = val;
-            }
-        }
-
-        if (_max_size.available())
-        {
-            if (_max_size.value.cx.avi())
-            {
-                float32_t val = calc(_max_size.value.cx, spacing.cx);
-                if (size.cx > val)
-                    size.cx = val;
-            }
-            if (_max_size.value.cy.avi())
-            {
-                float32_t val = calc(_max_size.value.cy, spacing.cy);
-                if (size.cy > val)
-                    size.cy = val;
-            }
+            float32_t val = calc(_max_size.cy);
+            if (size.cy > val)
+                size.cy = val;
         }
     }
 
@@ -810,9 +768,9 @@ namespace ui
 
 	void Control::notifyShown(bool shown)
     {
+        repaint();
 		setShown(shown);
+        repaint();
 		shown ? onShow() : onHide();
-		if (shown) 
-			repaint();
     }
 }

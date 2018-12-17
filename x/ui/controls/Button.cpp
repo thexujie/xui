@@ -34,16 +34,17 @@ namespace ui::controls
     void Button::setText(const std::string & text)
     {
         _text.setText(text);
-        _text.update(font(), color());
+        refresh();
     }
 
-    core::sizef Button::contentSize() const
+    void Button::update()
     {
-        return _text.bounds();
+        _text.update(font(), color());
+        setContentSize(_text.bounds());
     }
 
     void Button::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-            graphics.drawText(_text, contentBox().leftTop(), drawing::StringFormat().color(color()));
+        graphics.drawText(_text, contentBox().leftTop(), drawing::StringFormat().color(color()));
     }
 }

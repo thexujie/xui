@@ -43,8 +43,7 @@ namespace ui
         void onLeaving() override;
         void onLeave() override;
 
-        core::sizef contentSize() const override;
-        void invalidate(const core::rectf & rect) override;
+        //core::sizef contentSize() const override;
 		bool validCompleted() const override;
         size_t onAnimate() override;
 
@@ -59,26 +58,23 @@ namespace ui
 
 		void notifyShown(bool shown) override;
     public:
-        void relayout(layout_flags flags = nullptr);
+        void relayout();
         void setLayoutDirection(core::align layout);
         core::align layoutDirection() const { return _layout_direction; }
         void setScrollbarVisionV(scrollbar_vision scrollbar_vision);
         void setScrollbarVisionH(scrollbar_vision scrollbar_vision);
 
     protected:
-        virtual void layout(layout_flags flags);
+        virtual void layout();
         virtual void onLayoutedSizeChaged(const core::sizef & from, const core::sizef & to);
         virtual void onScrollPosChanged(const core::vec2f & from, const core::vec2f & to);
 
     protected:
-        void setLayoutedSize(const core::sizef & layouted_size);
+        void setScrollSize(const core::sizef & size);
 
     private:
         void onScrollBarValueChangedV(float32_t from, float32_t to);
         void onScrollBarValueChangedH(float32_t from, float32_t to);
-
-	protected:
-		void _confirmLayout() const;
 
 	private:
         void _animScroll(core::vec2f scroll_pos);
@@ -94,16 +90,14 @@ namespace ui
         bool _clip_clild = true;
         bool _compact_layout = true;
         bool _scroll_controls = true;
+        bool _control_content = true;
 
-        core::sizef _layouted_size;
-
+        core::sizef _scroll_size;
         core::vec2f _scroll_pos;
         scrollbar_vision _scrollbar_vision_v = scrollbar_vision::auto_hide;
         scrollbar_vision _scrollbar_vision_h = scrollbar_vision::auto_hide;
         std::shared_ptr<controls::ScrollBar> _scrollbar_v;
         std::shared_ptr<controls::ScrollBar> _scrollbar_h;
-        bool _invalid_layout = false;
-        layout_flags _invalid_layout_flags = nullptr;
 
         std::shared_ptr<core::property_animation> _scroll_anim;
     };

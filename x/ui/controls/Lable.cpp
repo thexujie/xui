@@ -14,16 +14,10 @@ namespace ui::controls
         
     }
 
-    core::sizef Lable::contentSize() const
-    {
-        return _text.bounds();
-    }
-
     void Lable::update()
     {
         _text.update(font(), color());
-        repaint();
-        rearrange();
+        setContentSize(_text.bounds());
     }
 
     void Lable::paint(drawing::Graphics & graphics, const core::rectf & clip) const

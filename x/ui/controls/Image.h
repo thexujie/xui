@@ -15,7 +15,8 @@ namespace ui::controls
         void setImageSize(const core::vec2<core::dimenf> & size);
         void setImageFitting(const core::vec2<image_fitting> & fitting) { _image_fitting = fitting; }
         const core::vec2<image_fitting> & imageFitting() const { return _image_fitting; }
-        core::sizef contentSize() const override;
+
+        void update() override;
         void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
     public:

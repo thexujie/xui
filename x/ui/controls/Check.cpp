@@ -33,14 +33,7 @@ namespace ui::controls
     void Check::setText(const std::string & text)
     {
         _text.setText(text);
-        _text.update(font(), color());
-    }
-
-    core::sizef Check::contentSize() const
-    {
-        core::sizef size = _text.bounds();
-        size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
-        return size;
+        refresh();
     }
 
     std::string Check::styleName() const
@@ -51,6 +44,14 @@ namespace ui::controls
             return "radio:hover";
         else
             return "radio";
+    }
+
+    void Check::update()
+    {
+        _text.update(font(), color());
+        core::sizef size = _text.bounds();
+        size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
+        setContentSize(size);
     }
 
     void Check::paint(drawing::Graphics & graphics, const core::rectf & clip) const

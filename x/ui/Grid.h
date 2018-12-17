@@ -32,8 +32,8 @@ namespace ui
         void setCols(const std::initializer_list<core::dimenf> & cols);
         void addControl(size_t row, size_t col, std::shared_ptr<Control> control);
 
-        core::sizef contentSize() const override;
-        void layout(layout_flags flags) override;
+        void update() override;
+        void layout() override;
         std::string styleName() const override { return "grid"; }
 
     private:

@@ -29,14 +29,7 @@ namespace ui::controls
     void Radio::setText(const std::string & text)
     {
         _text.setText(text);
-        _text.update(font(), color());
-    }
-
-    core::sizef Radio::contentSize() const
-    {
-        core::sizef size = _text.bounds();
-        size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
-        return size;
+        refresh();
     }
 
     std::string Radio::styleName() const
@@ -47,6 +40,14 @@ namespace ui::controls
             return "radio:hover";
         else
             return "radio";
+    }
+
+    void Radio::update()
+    {
+        _text.update(font(), color());
+        core::sizef size = _text.bounds();
+        size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
+        setContentSize(size);
     }
 
     void Radio::paint(drawing::Graphics & graphics, const core::rectf & clip) const

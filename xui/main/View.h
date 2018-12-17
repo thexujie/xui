@@ -31,9 +31,9 @@ namespace ui
 
 		void setViewMode(view_mode m);
         view_mode viewMode() const { return _mode; }
-        void setItemMargin(const core::vec4<core::dimenf> & spacing) { _item_margin = spacing; refresh(); }
+        void setItemMargin(const core::vec4<core::dimenf> & item_margin) { if (_item_margin != item_margin) { _item_margin = item_margin; refresh(); } }
         const core::vec4<core::dimenf> & itemMargin() const { return _item_margin; }
-        void setItemPadding(const core::vec4<core::dimenf> & spacing) { _item_padding = spacing; refresh(); }
+        void setItemPadding(const core::vec4<core::dimenf> & item_padding) { if (_item_padding != item_padding) { _item_padding = item_padding; refresh(); } }
         const core::vec4<core::dimenf> & itemPadding() const { return _item_padding; }
         void setMarkedColor(const core::color & c) { _marked_color = c; }
         core::color markedColor() const { return _marked_color; }
@@ -46,7 +46,10 @@ namespace ui
         void setContentSpacing(const core::dimenf & s) { _content_spacing = s; }
         const core::dimenf & contentSpacing() const { return _content_spacing; }
 
+        void review();
+        virtual void view() {}
     public:
+        void valid() const;
         void onRectChanged(const core::rectf & from, const core::rectf & to) override;
         void onHover(const ui::input_state & state) override;
         void onHoverOut(const input_state & state) override;
@@ -71,5 +74,7 @@ namespace ui
 
         std::shared_ptr<ViewItem> _marked_item;
         std::shared_ptr<ViewItem> _selected_item;
+
+        bool _delay_view = true;
 	};
 }

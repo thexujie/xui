@@ -69,11 +69,6 @@ namespace ui::controls
         _text.update(font(), color());
     }
 
-    core::sizef TextLine::contentSize() const
-    {
-        return { 0.0f, drawing::fontmetrics(font()).height };
-    }
-
     std::string TextLine::styleName() const
     {
         if (_focused)
@@ -127,6 +122,7 @@ namespace ui::controls
             }
         }
         repaint();
+        setContentSize(_text.bounds());
     }
 
     void TextLine::paint(drawing::Graphics & graphics, const core::rectf & clip) const

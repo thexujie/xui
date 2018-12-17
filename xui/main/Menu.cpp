@@ -44,44 +44,6 @@ namespace ui
 			return "menu";
 	}
 
-    core::sizef Menu::contentSize() const
-    {
-        float32_t widthA = 0;
-        float32_t widthB = 0;
-        float32_t widthC = 0;
-        core::sizef size;
-        auto is = calc(_icon_size);
-        auto spliter_size = calc(_spliter_size);
-        auto item_padding = calc(_item_padding);
-        auto item_margin = calc(_item_margin);
-        auto item_height = calc(1_em);
-        for (size_t index = 0; index != _items.size(); ++index)
-        {
-            auto & item = _items[index];
-            if(item->text.empty())
-            {
-                size.cy += spliter_size;
-            }
-            else
-            {
-                widthA = std::max(widthA, item->text.bounds().cx);
-                widthB = std::max(widthB, item->shortcut.bounds().cx);
-                if(item->flags.any(item_flag::marked))
-                    widthC = std::max(widthB, is.cx);
-                size.cy += item_height;
-            }
-            size.cy += item_margin.bheight();
-            size.cy += item_padding.bheight();
-        }
-
-        size.cx = is.cx + 
-            calc(_icon_text_spacing) + widthA + 
-            calc(_text_shortcut_spacing) + widthB +
-            calc(_shortcut_arrow_spacing) + widthC + 
-            item_padding.bwidth() + item_margin.bwidth();
-        return size;
-    }
-
     void Menu::update()
     {
         float32_t widthA = 0;
@@ -121,7 +83,8 @@ namespace ui
             calc(_shortcut_arrow_spacing) + widthC +
             p.bwidth() + m.bwidth();
 
-        setLayoutedSize(size);
+        setScrollSize(size);
+        setContentSize(size);
     }
 
 	void Menu::paint(drawing::Graphics & graphics, const core::rectf & clip) const

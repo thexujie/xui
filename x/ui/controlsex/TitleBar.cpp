@@ -201,6 +201,7 @@ namespace ui::controlsex
 		setAviliable(styles.any(ui::form_style::frameless));
 		_maximize->setAviliable(!styles.any(ui::form_style::nomax));
 		_minimize->setAviliable(!styles.any(ui::form_style::nomin));
+        relayout();
 	}
 }
 

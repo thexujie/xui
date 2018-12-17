@@ -61,12 +61,13 @@ namespace ui
         void setShowRect(const core::rectf & size);
 
         // prefferSize 计算出的期望大小
+        void setContentSize(const core::sizef & size);
+        const core::sizef & contentSize() const { return _content_size; }
         core::sizef prefferSize() const;
         // 根据最大最小值调整
         core::sizef adjustSize(const core::sizef & size) const;
 
         virtual core::sizef fittingSize(const core::sizef & spacing) const { return { std::nanf(0) , std::nanf(0) }; }
-        virtual core::sizef contentSize() const { return core::sizef(); }
 
         void setParent(std::shared_ptr<Container> parent) { _parent = parent; }
         std::shared_ptr<Container> parent() const { return _parent.lock(); }
@@ -140,7 +141,7 @@ namespace ui
         void refresh();
         void repaint();
         void repaint(const core::rectf & rect);
-        void rearrange();
+        void replace();
         void restyle();
 
         void setBackgroundColor(core::color color)
@@ -162,7 +163,7 @@ namespace ui
 
         void setBorder(const core::vec4<core::dimenf> & border)
         {
-            if (!_border.available() || _border != border)
+            if (_border != border)
             {
                 _border = border;
                 repaint();
@@ -176,7 +177,7 @@ namespace ui
             if (_padding != padding)
             {
                 _padding = padding;
-                rearrange();
+                replace();
             }
         }
 
@@ -243,7 +244,6 @@ namespace ui
         void _drawBackground(drawing::Graphics & graphics) const;
         void _drawBorder(drawing::Graphics & graphics) const;
         void _adjustSize(core::sizef & size) const;
-        void _adjustSize(core::sizef & size, const core::vec2<float32_t> & spacing) const;
 
     protected:
         std::weak_ptr<Container> _parent;
@@ -253,18 +253,19 @@ namespace ui
 
         core::attribute<core::color> _color = core::colors::Auto;
         // 控件大小，包括 padding，不包括 margin。
-        core::attribute<core::vec2<core::dimenf>> _size;
-        core::attribute<core::vec2<float32_t>> _fixed_aspect;
-        core::attribute<core::vec4<core::dimenf>> _padding;
-        core::attribute<core::vec4<core::dimenf>> _border;
-        core::attribute<core::vec4<core::color>> _border_colors;
-        core::attribute<core::vec4<drawing::stroke_style>> _border_styles;
-        core::attribute<core::vec4<core::dimenf>> _margin;
-        core::attribute<core::vec2<core::dimenf>> _min_size = core::vec2{ core::auto_value , core::auto_value };
-        core::attribute<core::vec2<core::dimenf>> _max_size = core::vec2{ core::auto_value, core::auto_value };
+        core::dimen2f _size = { core::auto_value };
+        core::dimen2f _min_size = { core::auto_value };
+        core::dimen2f _max_size = { core::auto_value };
+
+        core::vec2f _fixed_aspect = { core::nanf32 };
+        core::dimen4f _padding = { 0 };
+        core::dimen4f _border = { 0 };
+        core::dimen4f _margin = { 0 };
+        core::dimen4f _anchor = { core::nanf32 };
+        core::vec4<core::color> _border_colors = { core::colors::Auto };
+        core::vec4<drawing::stroke_style> _border_styles = { drawing::stroke_style::none };
 
         core::attribute<core::aligns> _place_alignment;
-        core::vec4<core::dimenf> _anchor = { core::nanf32 };
 
         core::attribute<drawing::font> _font;
 
@@ -282,12 +283,13 @@ namespace ui
         std::string _style;
         bool _style_transition = true;
         // 布局之后
-        core::pointf _location;
+        core::sizef _content_size;
         core::rectf _rect;
 
-        bool _delay_style = true;
-        bool _delay_update = true;
+        bool _delay_restyle = true;
+        bool _delay_refresh = true;
         bool _delay_repaint = false;
+        bool _delay_relayout = false;
         enum class cursor _cursor = cursor::unknown;
         float32_t _alpha = 1.0f;
 

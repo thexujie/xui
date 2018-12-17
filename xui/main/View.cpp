@@ -59,7 +59,7 @@ namespace ui
 
     std::shared_ptr<ViewItem> View::findItem(const core::pointf & pos) const
     {
-        _confirmLayout();
+        valid();
         if (_mode == view_mode::details)
         {
             for (size_t index = 0; index != _items.size(); ++index)
@@ -99,6 +99,29 @@ namespace ui
 			refresh();
 			repaint();
 	    }
+    }
+
+    void View::review()
+    {
+        if (!_delay_view)
+        {
+            _delay_view = true;
+            invoke([this]()
+            {
+                _delay_view = false;
+                view();
+            });
+        }
+    }
+
+    void View::valid() const
+    {
+        ui::Container::valid();
+        if (_delay_view)
+        {
+            const_cast<View *>(this)->_delay_view = false;
+            const_cast<View *>(this)->view();
+        }
     }
 
     void View::onRectChanged(const core::rectf & from, const core::rectf & to)

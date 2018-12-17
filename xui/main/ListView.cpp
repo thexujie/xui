@@ -96,11 +96,6 @@ namespace ui
 			return "listview";
 	}
 
-    core::sizef ListView::contentSize() const
-    {
-        return {};
-    }
-
     void ListView::update()
     {
         auto cbox = contentBox();
@@ -145,10 +140,8 @@ namespace ui
             size_t nrows = _items.size() / ncols;
             lsize = {ncols * (ps.cx + m.bwidth()), nrows * (ps.cy + m.bheight())};
         }
-        setLayoutedSize(lsize);
-        repaint();
-        if (auto f = form())
-            f->setEvent(scene_event::update_mouse_pos);
+        setScrollSize(lsize);
+        setContentSize(lsize);
     }
 
 	void ListView::paint(drawing::Graphics & graphics, const core::rectf & clip) const
@@ -178,7 +171,7 @@ namespace ui
 
     void ListView::onScrollPosChanged(const core::vec2f & from, const core::vec2f & to)
     {
-        refresh();
+        review();
     }
 
 	void ListView::onAction(action_t action)
@@ -199,6 +192,50 @@ namespace ui
 		auto item_details = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"œÍœ∏–≈œ¢", ui::shortcut(), 0x100, item_flag::none);
 		auto item_tile = std::make_shared<ui::MenuItem>(drawing::Image("icon.png"), u8"∆Ω∆Ã", ui::shortcut(), 0x101, item_flag::none);
 		presenter.appendItems({ item_details, item_tile });
+    }
+
+    void ListView::view()
+    {
+        auto cbox = contentBox();
+        if (_mode == view_mode::details)
+        {
+            float32_t top = -_scroll_pos.y;
+            for (size_t index = 0; index != _items.size(); ++index)
+            {
+                auto & item = _items[index];
+                auto & b = item->box();
+                auto m = calc(item->margin());
+
+                {
+                    core::rectf box = { cbox.x + m.bleft, cbox.y + top + m.btop, cbox.cx - m.bwidth(), b.cy };
+                    item->place(box, b.size);
+                    item->setShown(box.bottom() >= cbox.y && box.y < cbox.bottom());
+                }
+
+                top += b.cy + m.bheight();
+            }
+        }
+        else if (_mode == view_mode::tile)
+        {
+            auto m = calc(_item_margin);
+            core::sizef ps = calc(_tile_size) + calc(_item_padding).bsize();
+            core::pointf pos = cbox.pos - _scroll_pos;
+            size_t ncols = std::max(1, int(cbox.cx / (ps.cx + m.bwidth())));
+            for (size_t index = 0; index != _items.size(); ++index)
+            {
+                auto & item = _items[index];
+                size_t row = index / ncols;
+                size_t col = index % ncols;
+                {
+                    core::rectf box = { pos.x + m.bleft + (ps.cx + m.bwidth()) * col, pos.y + m.btop + (ps.cy + m.bheight()) * row, ps.cx, ps.cy };
+                    item->place(box, ps);
+                    item->setShown(cbox.intersect_with(box));
+                }
+            }
+        }
+        repaint();
+        if (auto f = form())
+            f->setEvent(scene_event::update_mouse_pos);
     }
 }
 

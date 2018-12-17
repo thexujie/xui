@@ -21,23 +21,19 @@ namespace ui::controls
     void Image::setImage(std::string path)
     {
         _image = std::make_shared<drawing::Image>(path);
+        refresh();
     }
 
     void Image::setImage(std::shared_ptr<drawing::Image> image)
     {
         _image = image;
+        refresh();
     }
 
     void Image::setImageSize(const core::vec2<core::dimenf> & size)
     {
         _image_size = size;
-    }
-
-    core::sizef Image::contentSize() const
-    {
-        if (_image_size.available())
-            return calc(_image_size.value);
-        return _image ? _image->size().to<float32_t>() : core::sizef();
+        refresh();
     }
 
     core::sizef Image::_imageSize() const
@@ -60,6 +56,14 @@ namespace ui::controls
             else {}
             return calc(_size);
         }
+    }
+
+    void Image::update()
+    {
+        if (_image_size.available())
+            setContentSize(calc(_image_size.value));
+        else
+            setContentSize(_image ? _image->size().to<float32_t>() : core::sizef());
     }
 
     void Image::paint(drawing::Graphics & graphics, const core::rectf & clip) const

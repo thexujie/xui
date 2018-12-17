@@ -29,7 +29,7 @@ namespace ui
         Container::addControl(control);
     }
 
-    core::sizef Grid::contentSize() const
+    void Grid::update()
     {
         std::vector<float32_t> widths(_col_sizes.size());
         std::vector<float32_t> heights(_row_sizes.size());
@@ -46,18 +46,15 @@ namespace ui
             size.cx += cx;
         for (auto cy : heights)
             size.cy += cy;
-        return size;
+        setContentSize(size);
     }
 
-    void Grid::layout(layout_flags flags)
+    void Grid::layout()
     {
-        if(flags.any(layout_flag::resize_cx | layout_flag::resize_cy))
-            _splitGrid(true);
+        _splitGrid(true);
 
         auto pbox = paddingBox();
         core::rectf box = paddingBox();
-        std::vector<float32_t> widths;
-        std::vector<float32_t> heights;
 
         for (auto & cell : _cells)
         {
@@ -72,6 +69,23 @@ namespace ui
                 control->place(cell.rect.offseted(pbox.pos), cell.rect.size);
             }
         }
+
+        std::vector<float32_t> widths(_col_sizes.size());
+        std::vector<float32_t> heights(_row_sizes.size());
+
+        for (auto & item : _items)
+        {
+            auto psize = item.control->prefferSize();
+            widths[item.col] = std::max(widths[item.col], psize.cx);
+            heights[item.row] = std::max(heights[item.row], psize.cy);
+        }
+
+        core::sizef size;
+        for (auto cx : widths)
+            size.cx += cx;
+        for (auto cy : heights)
+            size.cy += cy;
+        setContentSize(size);
     }
 
     void Grid::_splitGrid(bool force) const

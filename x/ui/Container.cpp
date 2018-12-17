@@ -107,15 +107,9 @@ namespace ui
         Control::onLeave();
     }
 
-    void Container::invalidate(const core::rectf & rect)
-    {
-        if(auto p = parent())
-			p->invalidate(rect);
-    }
-
 	bool Container::validCompleted() const
     {
-		if(_delay_repaint || _invalid_layout)
+		if(_delay_repaint || _delay_relayout)
 			return false;
 
 		for(auto & control : _controls)
@@ -169,8 +163,7 @@ namespace ui
         if (_clip_clild && !_rect.contains(pos))
             return nullptr;
 
-        const_cast<Container *>(this)->_confirmLayout();
-
+        valid();
         bool found = false;
 
         core::pointf scrolled_pos = pos;
@@ -215,26 +208,24 @@ namespace ui
     {
     }
 
-    void Container::setLayoutedSize(const core::sizef & layouted_size)
+    void Container::setScrollSize(const core::sizef & size)
     {
-        if (layouted_size != _layouted_size)
+        if (_scroll_size != size)
         {
-            _layouted_size = layouted_size;
-
+            _scroll_size = size;
             if (_scrollbar_h)
             {
                 _scrollbar_h->setPageValue(contentBox().cx);
-                _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
+                _scrollbar_h->setValues(_scrollbar_h->value(), 0, _scroll_size.cx - contentBox().cx);
             }
 
             if (_scrollbar_v)
             {
                 _scrollbar_v->setPageValue(contentBox().cy);
-                _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
+                _scrollbar_v->setValues(_scrollbar_v->value(), 0, _scroll_size.cy - contentBox().cy);
             }
         }
     }
-
 
     void Container::onPosChanged(const core::pointf & from, const core::pointf & to)
     {
@@ -247,21 +238,16 @@ namespace ui
         if (_scrollbar_h)
         {
             _scrollbar_h->setPageValue(contentBox().cx);
-            _scrollbar_h->setValues(_scrollbar_h->value(), 0, _layouted_size.cx - contentBox().cx);
+            _scrollbar_h->setValues(_scrollbar_h->value(), 0, _scroll_size.cx - contentBox().cx);
         }
 
         if (_scrollbar_v)
         {
             _scrollbar_v->setPageValue(contentBox().cy);
-            _scrollbar_v->setValues(_scrollbar_v->value(), 0, _layouted_size.cy - contentBox().cy);
+            _scrollbar_v->setValues(_scrollbar_v->value(), 0, _scroll_size.cy - contentBox().cy);
         }
 
-        layout_flags flags = nullptr;
-        if (!core::equal(from.cx, to.cx))
-            flags |= layout_flag::resize_cx;
-        if (!core::equal(from.cy, to.cy))
-            flags |= layout_flag::resize_cy;
-        relayout(flags);
+        relayout();
         Control::onSizeChanged(from, to);
     }
 
@@ -282,18 +268,17 @@ namespace ui
 			control->notifyShown(shown);
     }
 
-    void Container::relayout(layout_flags flags)
+    void Container::relayout()
     {
-        _invalid_layout_flags |= flags;
-        if (!_invalid_layout && form())
+        if (!_delay_relayout && form())
         {
-            _invalid_layout = true;
+            _delay_relayout = true;
             invoke([this]()
             {
-                _invalid_layout = false;
-                layout(_invalid_layout_flags);
-                _invalid_layout_flags = nullptr;
-                invalidate({});
+                _delay_relayout = false;
+                layout();
+                invalidate();
+                //invalidate({});
             });
         }
     }
@@ -360,17 +345,6 @@ namespace ui
             relayout();
     }
 
-	void Container::_confirmLayout() const
-    {
-		if(_invalid_layout)
-		{
-			Container * pthis = const_cast<Container *>(this);
-			pthis->_invalid_layout = false;
-            pthis->layout(_invalid_layout_flags);
-			pthis->_invalid_layout_flags = nullptr;
-		}
-    }
-
     void Container::_animScroll(core::vec2f scroll_pos)
     {
         if(!_style_transition)
@@ -408,46 +382,46 @@ namespace ui
         onScrollPosChanged(old, _scroll_pos);
     }
 
-    core::sizef Container::contentSize() const
-    {
-        core::sizef size;
-        core::rectf box = paddingBox();
-        float32_t margin = 0;
-        for (auto & control : _controls)
-        {
-			if(!control->aviliable())
-				continue;
+   // core::sizef Container::contentSize() const
+   // {
+   //     core::sizef size;
+   //     core::rectf box = paddingBox();
+   //     float32_t margin = 0;
+   //     for (auto & control : _controls)
+   //     {
+			//if(!control->aviliable())
+			//	continue;
 
-            auto lo = control->layoutOrigin();
-            if (lo != layout_origin::layout && lo != layout_origin::sticky)
-                continue;
+   //         auto lo = control->layoutOrigin();
+   //         if (lo != layout_origin::layout && lo != layout_origin::sticky)
+   //             continue;
 
-            auto m = control->calc(control->margin());
+   //         auto m = control->calc(control->margin());
 
-            if (_layout_direction == core::align::left || _layout_direction == core::align::right)
-            {
-                margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
-                size.cx += margin;
-                auto perffer_size = control->prefferSize();
-                margin = _layout_direction == core::align::left ? m.bright : m.bleft;
-                size.cx = size.cx + perffer_size.cx;
-                size.cy = std::max(size.cy, perffer_size.cy + m.bheight());
-            }
-            else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
-            {
-                margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
-                size.cy += margin;
-                auto perffer_size = control->prefferSize();
-                margin = _layout_direction == core::align::top ? m.bbottom : m.btop;
-                size.cy += perffer_size.cy;
-                size.cx = std::max(size.cx, perffer_size.cx + m.bwidth());
-            }
-            else {}
-        }
-        return size;
-    }
+   //         if (_layout_direction == core::align::left || _layout_direction == core::align::right)
+   //         {
+   //             margin = std::max(margin, _layout_direction == core::align::left ? m.bleft : m.bright);
+   //             size.cx += margin;
+   //             auto perffer_size = control->prefferSize();
+   //             margin = _layout_direction == core::align::left ? m.bright : m.bleft;
+   //             size.cx = size.cx + perffer_size.cx;
+   //             size.cy = std::max(size.cy, perffer_size.cy + m.bheight());
+   //         }
+   //         else if (_layout_direction == core::align::top || _layout_direction == core::align::bottom)
+   //         {
+   //             margin = std::max(margin, _layout_direction == core::align::top ? m.btop : m.bbottom);
+   //             size.cy += margin;
+   //             auto perffer_size = control->prefferSize();
+   //             margin = _layout_direction == core::align::top ? m.bbottom : m.btop;
+   //             size.cy += perffer_size.cy;
+   //             size.cx = std::max(size.cx, perffer_size.cx + m.bwidth());
+   //         }
+   //         else {}
+   //     }
+   //     return size;
+   // }
 
-    void Container::layout(layout_flags flags)
+    void Container::layout()
     {
         if (!form())
             return;
@@ -469,6 +443,8 @@ namespace ui
         {
 			if(!control->aviliable())
 				continue;
+
+            control->valid();
 
             auto lo = control->layoutOrigin();
             if (lo != layout_origin::layout && lo != layout_origin::sticky)
@@ -600,6 +576,7 @@ namespace ui
                     margin = std::max(margin, m.bleft);
                     control->place({ layout_pos.x + layout_size.cx + margin, layout_pos.y + m.btop, ps.cx, box.cy - m.bheight() }, ps);
                     layout_size.cx += margin + ps.cx;
+                    layout_size.cy = std::max(layout_size.cy, ps.cy + m.bheight());
                     margin = m.bright;
 
                     break;
@@ -609,6 +586,7 @@ namespace ui
                     margin = std::max(margin, m.bright);
                     control->place({ (_rect.right() - _scroll_pos.x) - (layout_size.cx + margin) - ps.cx, layout_pos.y + m.btop, ps.cx, box.cy - m.bheight() }, ps);
                     layout_size.cx += margin + ps.cx;
+                    layout_size.cy = std::max(layout_size.cy, ps.cy + m.bheight());
                     margin = m.bleft;
 
                     break;
@@ -617,6 +595,7 @@ namespace ui
                 {
                     margin = std::max(margin, m.btop);
                     control->place({ layout_pos.x + m.bleft, layout_pos.y + layout_size.cy + margin, box.cx - m.bwidth(), ps.cy }, ps);
+                    layout_size.cx = std::max(layout_size.cx, ps.cx + m.bwidth());
                     layout_size.cy += margin + ps.cy;
                     margin = m.bbottom;
                     break;
@@ -671,8 +650,10 @@ namespace ui
         }
 
         if(_scroll_controls)
-            setLayoutedSize(layout_size);
+            setScrollSize(layout_size);
 
+        if(_control_content)
+            setContentSize(layout_size);
         form()->setEvent(scene_event::update_mouse_pos);
     }
 }
