@@ -36,9 +36,8 @@ namespace ui
         void setFormState(form_state fs);
         form_state formState() const { return _form_state; }
 
-        void show() { show(form_state::normalize); }
+        void show(form_state fs = form_state::normalize);
         void hide() { show(form_state::hide); }
-		void show(form_state fs);
         void close();
 
         void centerScreen(int32_t screenIndex = 0);
@@ -48,7 +47,8 @@ namespace ui
         void notifyWindowKey(const input_state & state, keycode key, key_action action);
         void notifyWindowCharInput(char32_t ch);
 		void notifyWindowCaptured(bool c);
-		void notifyWindowFocused(const input_state & state, bool f);
+        void notifyWindowFocused(const input_state & state, bool f);
+        void notifyWindowShown(bool s);
 
     public:
         std::shared_ptr<component::StyleSheet> styleSheet() const override { return _style_sheet; }

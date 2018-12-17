@@ -263,6 +263,9 @@ namespace ui
 
 	void Container::notifyShown(bool shown)
     {
+        if (shown == _shown)
+            return;
+
 		Control::notifyShown(shown);
 		for (auto & control : _controls)
 			control->notifyShown(shown);

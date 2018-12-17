@@ -6,12 +6,14 @@ namespace ui
     Menu::Menu()
 	{
         _scroll_controls = false;
+        _control_content = false;
         _interactable = true;
 	}
 
     Menu::Menu(form_styles styles, std::shared_ptr<Form> parentForm) : Form(styles, parentForm)
     {
         _scroll_controls = false;
+        _control_content = false;
         _interactable = true;
     }
 

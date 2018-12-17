@@ -154,6 +154,46 @@ namespace win32
             _adjustWindow(_pos(), s);
     }
 
+    void Window::show(ui::form_state state)
+    {
+        switch (state)
+        {
+        case ui::form_state::hide:
+        {
+            HWND hwnd = (HWND)_handle;
+            if (hwnd)
+                ::ShowWindow(hwnd, SW_HIDE);
+            break;
+        }
+        case ui::form_state::noactive:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+            break;
+        }
+        case ui::form_state::normalize:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOWNORMAL);
+            break;
+        }
+        case ui::form_state::minimize:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOWMINIMIZED);
+            break;
+        }
+        case ui::form_state::maximize:
+        {
+            HWND hwnd = (HWND)handle();
+            ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
     pointer_t Window::handle() const
     {
         if (!_handle)
@@ -788,7 +828,7 @@ namespace win32
         if(!lParam)
         {
 			if (auto f = form())
-				f->notifyShown(!!wParam);
+                f->notifyWindowShown(!!wParam);
         }
         return OnDefault(WM_SHOWWINDOW, wParam, lParam);
     }

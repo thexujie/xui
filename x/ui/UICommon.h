@@ -520,6 +520,7 @@ namespace ui
         virtual std::shared_ptr<ICursorContext> cursorContext() const = 0;
         virtual void move(const core::pointf & pos) = 0;
         virtual void resize(const core::sizef & size) = 0;
+        virtual void show(form_state state) = 0;
     };
 
 	enum class item_flag

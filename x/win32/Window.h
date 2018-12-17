@@ -26,6 +26,7 @@ namespace win32
         std::shared_ptr<ui::ICursorContext> cursorContext() const { return _cursor_context; }
         void move(const core::pointf & pos);
         void resize(const core::sizef & size);
+        void show(ui::form_state fs);
 
         std::shared_ptr<ui::Form> form() { return _form.lock(); }
         pointer_t handle() const;

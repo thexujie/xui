@@ -53,9 +53,9 @@ namespace ui
         }
 
         core::sizef size = contentSize() + edges().bsize();
-        if (_size.cx.avi())
+        if (_size.cx.avi() && !_size.cx.per())
             size.cx = calc(_size.cx);
-        else if (_size.cy.avi())
+        else if (_size.cy.avi() && !_size.cy.per())
             size.cy = calc(_size.cy);
         else {}
 
@@ -768,6 +768,9 @@ namespace ui
 
 	void Control::notifyShown(bool shown)
     {
+        if (shown == _shown)
+            return;
+
         repaint();
 		setShown(shown);
         repaint();

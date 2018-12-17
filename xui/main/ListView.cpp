@@ -137,7 +137,7 @@ namespace ui
                     item->setShown(cbox.intersect_with(box));
                 }
             }
-            size_t nrows = _items.size() / ncols;
+            size_t nrows = ncols > 1 ? (_items.size() + ncols - 1) / ncols : _items.size();
             lsize = {ncols * (ps.cx + m.bwidth()), nrows * (ps.cy + m.bheight())};
         }
         setScrollSize(lsize);

@@ -83,16 +83,23 @@ namespace ui
 		}
 	}
 
-    void Form::show(form_state fs)
+    void Form::show(form_state state)
     {
-        if (_form_state != fs)
+        if (state == form_state::hide)
         {
-			if(fs == form_state::hide || fs == form_state::minimize)
-			{
-				if (_menu)
-					_menu->hide();
-			}
-            _form_state = fs;
+            if (_menu)
+                _menu->hide();
+            if (_window)
+                _window->show(state);
+        }
+        else if (state == form_state::minimize)
+        {
+            if (_menu)
+                _menu->hide();
+            window()->show(state);
+        }
+        else
+        {
             auto & si = size();
             auto ps = prefferSize();
             core::sizef size = calc(si);
@@ -101,9 +108,7 @@ namespace ui
             if (!si.cx.avi())
                 size.cy = ps.cy;
             place(core::rectf(core::pointf(), { size.cx, size.cy }), size);
-            //place(core::rectf(core::pointf(), size), size);
-            window();
-			stateChanged(_form_state, fs);
+            window()->show(state);
         }
     }
 
@@ -115,7 +120,7 @@ namespace ui
     void Form::centerScreen(int32_t screenIndex)
     {
         auto rc = Desktop::instance().screen(screenIndex)->rect().to<float32_t>();
-        auto s = calc(size());
+        auto s = rect().size;
         auto p = rc.leftTop() + (rc.size - s) * 0.5;
         if (_window)
              _window->move(p);
@@ -279,6 +284,11 @@ namespace ui
 			_setFocusedControl(state, nullptr);
     }
 
+    void Form::notifyWindowShown(bool s)
+    {
+        notifyShown(s);
+    }
+
     float_t Form::ratio() const
     {
         return Desktop::instance().scale();
@@ -291,6 +301,7 @@ namespace ui
 
     void Form::invalidate(const core::rectf & rect)
     {
+
         auto rc = rect.intersected(core::rectf(core::pointf(), _rect.size)).ceil<int32_t>();
         _invalid_region.addRect(rc);
         if (!_invaliding && validCompleted())
