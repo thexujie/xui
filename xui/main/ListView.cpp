@@ -54,7 +54,7 @@ namespace ui
 
             drawing::fontmetrics fm(v->font());
             float_t pos_y = cbox.y + fm.height;
-            size_t nprops = (cbox.bottom() - pos_y) / fm.height;
+            size_t nprops = std::ceil(cbox.bottom() - pos_y) / fm.height;
             for(size_t iprop = 0; iprop < std::min(nprops, _propertiess.size()); ++iprop)
             {
                 auto & prop = _propertiess[iprop];
