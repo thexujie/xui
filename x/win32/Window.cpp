@@ -77,7 +77,6 @@ namespace win32
         _form = form;
 		_form_styles = form ? form->styles() : nullptr;
 
-        form->stateChanged += std::weak_bind(&Window::onStateChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
         form->stylesChanged += std::weak_bind(&Window::onStylesChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
         form->rendered += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
         form->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
@@ -201,46 +200,6 @@ namespace win32
             auto err = const_cast<Window *>(this)->_createWindow();
         }
         return _handle;
-    }
-
-    void Window::onStateChanged(ui::form_state, ui::form_state state)
-    {
-        switch(state)
-        {
-        case ui::form_state::hide:
-        {
-            HWND hwnd = (HWND)_handle;
-            if (hwnd)
-                ::ShowWindow(hwnd, SW_HIDE);
-            break;
-        }
-        case ui::form_state::noactive:
-        {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOWNOACTIVATE);
-            break;
-        }
-        case ui::form_state::normalize:
-        {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOWNORMAL);
-            break;
-        }
-        case ui::form_state::minimize:
-        {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOWMINIMIZED);
-            break;
-        }
-        case ui::form_state::maximize:
-        {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOWMAXIMIZED);
-            break;
-        }
-        default:
-            break;
-        }
     }
 
     void Window::onStylesChanged(ui::form_styles styels_old, ui::form_styles styles)

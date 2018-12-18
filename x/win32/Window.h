@@ -33,7 +33,6 @@ namespace win32
         intx_t handleMSG(uint32_t uiMessage, uintx_t wParam, intx_t lParam);
 
     private:
-        void onStateChanged(ui::form_state, ui::form_state state);
         void onStylesChanged(ui::form_styles, ui::form_styles styles);
         void onPosChanged(const core::pointf & from, const core::pointf & to);
         void onSizeChanged(const core::sizef & from, const core::sizef & to);

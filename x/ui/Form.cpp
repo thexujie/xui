@@ -79,6 +79,7 @@ namespace ui
 		{
 			auto old = _form_state;
 			_form_state = fs;
+            stateChanged(old, _form_state);
 			onFormStateChanged(old, _form_state);
 		}
 	}
