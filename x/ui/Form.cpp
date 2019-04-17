@@ -116,6 +116,7 @@ namespace ui
                 size.cy = ps.cy;
             place(core::rectf(core::pointf(), { size.cx, size.cy }), size);
             window()->show(state);
+            repaint();
         }
     }
 

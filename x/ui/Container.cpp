@@ -10,14 +10,12 @@ namespace ui
     {
         _interactable = false;
         _accept_wheel_v = true;
-        _delay_relayout = true;
     }
 
     Container::Container(core::align layout) : _layout_direction(layout)
     {
         _interactable = false;
         _accept_wheel_v = true;
-        _delay_relayout = true;
     }
 
     Container::~Container()
