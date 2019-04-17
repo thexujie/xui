@@ -2,12 +2,13 @@
 
 namespace core
 {
-    class IApp : public core::object
+    class App : public core::object
     {
     public:
-        virtual ~IApp() = default;
-        virtual std::shared_ptr<object> GetService(std::string name) = 0;
-        virtual void quit(int32_t ret) = 0;
+        App();
+        virtual ~App();
+        virtual std::shared_ptr<object> GetService(std::string name);
+        virtual void quit(int32_t ret);
 
         const core::property_table & properties(const std::type_info & ti, std::function<void(core::property_table &)> callback);
         template<typename T>
@@ -21,6 +22,6 @@ namespace core
         std::map<const std::type_info *, std::shared_ptr<core::property_table>> _properties;
     };
 
-    void app(IApp * ptr);
-    IApp & app();
+    void app(App * ptr);
+    App & app();
 }

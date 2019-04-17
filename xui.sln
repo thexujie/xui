@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xui", "xui\xui.vcxproj", "{327EADFF-ED36-413C-89FE-D9DC08BE57BE}"
 EndProject
@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		skia.natvis = skia.natvis
 		xui.natvis = xui.natvis
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dx12", "dx12", "{C3D05D24-D7D2-41D3-834E-A4FFBFD298CC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hello", "dx12\hello\hello.vcxproj", "{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,9 +50,20 @@ Global
 		{0CD56909-021A-4656-BAF7-C1183FD6DFF8}.Release|x64.Build.0 = Release|x64
 		{0CD56909-021A-4656-BAF7-C1183FD6DFF8}.Release|x86.ActiveCfg = Release|Win32
 		{0CD56909-021A-4656-BAF7-C1183FD6DFF8}.Release|x86.Build.0 = Release|Win32
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}.Debug|x64.ActiveCfg = Debug|x64
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}.Debug|x64.Build.0 = Debug|x64
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}.Debug|x86.ActiveCfg = Debug|Win32
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}.Debug|x86.Build.0 = Debug|Win32
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}.Release|x64.ActiveCfg = Release|x64
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}.Release|x64.Build.0 = Release|x64
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}.Release|x86.ActiveCfg = Release|Win32
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4E5A4C3E-9D2D-4F8C-BCAA-33CA9FA0E3A9} = {C3D05D24-D7D2-41D3-834E-A4FFBFD298CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0946FFBE-E9ED-4ACD-9B64-B4E691A0B17F}

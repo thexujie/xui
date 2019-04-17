@@ -9,7 +9,6 @@ namespace ui::controls
         shaper = 0x0001,
         caret = 0x0002,
     };
-    template<> struct enable_bitmasks<shaper_flag> { static const bool enable = true;};
     typedef core::bitflag<shaper_flag> shaper_flags;
 
     class TextLine : public Control

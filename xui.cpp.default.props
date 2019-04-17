@@ -7,7 +7,7 @@
 		<IntDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\$(ProjectName).$(ProjectGuid)\</IntDir>
 	</PropertyGroup>
 	<PropertyGroup Label="Configuration">
-		<PlatformToolset>v141</PlatformToolset>
+		<PlatformToolset>v142</PlatformToolset>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
 		<UseDebugLibraries>true</UseDebugLibraries>

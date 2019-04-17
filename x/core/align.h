@@ -87,6 +87,5 @@ namespace core
         mask = 0xfff
     };
 
-    template<> struct enable_bitmasks<align> { static const bool enable = true; };
     typedef bitflag<align> aligns;
 }

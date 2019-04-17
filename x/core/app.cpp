@@ -1,12 +1,23 @@
 #include "stdafx.h"
 #include "app.h"
 
+#include "win32/win32.h"
+
 namespace core
 {
-    IApp * __app = nullptr;
+    App * __app = nullptr;
 
+    App::App()
+    {
+        __app = this;
+    }
 
-    const core::property_table & IApp::properties(const std::type_info & ti, std::function<void(core::property_table &)> callback)
+    App::~App()
+    {
+        __app = nullptr;
+    }
+
+    const core::property_table & App::properties(const std::type_info & ti, std::function<void(core::property_table &)> callback)
     {
         std::lock_guard < std::mutex > lock(_mtx);
         auto iter = _properties.find(&ti);
@@ -21,12 +32,22 @@ namespace core
             return *(iter->second);
     }
 
-    void app(IApp * ptr)
+    void app(App * ptr)
     {
         __app = ptr;
     }
 
-    IApp & app()
+    std::shared_ptr<object> App::GetService(std::string name)
+    {
+        return nullptr;
+    }
+
+    void App::quit(int32_t ret)
+    {
+        win32::endLoop(ret);
+    }
+
+    App & app()
     {
         return *__app;
     }

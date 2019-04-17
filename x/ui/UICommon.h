@@ -66,7 +66,6 @@ namespace ui
 
 		mask_type = 0x000f,
 	};
-	template<> struct enable_bitmasks<form_style> { static const bool enable = true; };
 	typedef core::bitflag<form_style> form_styles;
 
 	enum class form_state
@@ -111,11 +110,6 @@ namespace ui
     {
         none = 0,
         disalbe_transparent = 0x0001,
-    };
-    template<>
-    struct enable_bitmasks<findchild_flag>
-    {
-        static const bool enable = true;
     };
     typedef core::bitflag<findchild_flag> findchild_flags;
 

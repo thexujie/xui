@@ -45,7 +45,6 @@ namespace core
         stoped = 0x0004,
         canceled = 0x0004,
     };
-    template<> struct enable_bitmasks<flag> { static const bool enable = true; };
     typedef bitflag<flag> flags;
 
     const char * error_str(error err);

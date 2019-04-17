@@ -470,6 +470,9 @@
     <ClInclude Include="drawing\ImageFormat.h">
       <Filter>drawing</Filter>
     </ClInclude>
+    <ClInclude Include="win32\comptr.h">
+      <Filter>win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">

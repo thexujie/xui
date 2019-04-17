@@ -2,6 +2,17 @@
 
 namespace core
 {
+    template <class T, std::size_t = sizeof(T)>
+    std::true_type is_complete_impl(T *);
+
+    std::false_type is_complete_impl(...);
+
+    template <class T>
+    using is_complete = decltype(is_complete_impl(std::declval<T *>()));
+
+    template <class T>
+    constexpr bool is_complete_v = is_complete<T>::value;
+
     template <typename T, typename = void>
     struct bitflag_helper
     {
@@ -37,7 +48,7 @@ namespace core
 
         bitflag & set(Enum e, bool b)
         {
-            if(b)
+            if (b)
                 _e = static_cast<Enum>(static_cast<underlying>(_e) | static_cast<underlying>(e));
             else
                 _e = static_cast<Enum>(static_cast<underlying>(_e) & (~static_cast<underlying>(e)));
@@ -141,52 +152,54 @@ namespace core
     private:
         Enum _e = static_cast<Enum>(0);
     };
+
+    template<typename Enum>
+    struct enable_bitmasks
+    {
+        static const bool enable = is_complete_v<bitflag<Enum>> && std::is_enum_v<Enum> && !std::is_convertible_v<Enum, int>;
+    };
 }
 
-template<typename Enum>
-struct enable_bitmasks
-{
-    static const bool enable = false;
-};
 
 template<typename Enum>
-typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type operator |(const Enum & lhs, const Enum & rhs)
+constexpr typename std::enable_if<core::enable_bitmasks<Enum>::enable, Enum>::type operator |(const Enum & lhs, const Enum & rhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
 }
 
 template<typename Enum>
-typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type operator &(const Enum & lhs, const Enum & rhs)
+constexpr typename std::enable_if<core::enable_bitmasks<Enum>::enable, Enum>::type operator &(const Enum & lhs, const Enum & rhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(static_cast<underlying>(lhs) & static_cast<underlying>(rhs));
 }
 
 template<typename Enum>
-typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type & operator |=(Enum & lhs, const Enum & rhs)
+constexpr typename std::enable_if<core::enable_bitmasks<Enum>::enable, Enum>::type & operator |=(Enum & lhs, const Enum & rhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
     return lhs = static_cast<Enum>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
 }
 
 template<typename Enum>
-typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type & operator &=(Enum & lhs, const Enum & rhs)
+constexpr typename std::enable_if<core::enable_bitmasks<Enum>::enable, Enum>::type & operator &=(Enum & lhs, const Enum & rhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
     return lhs = static_cast<Enum>(static_cast<underlying>(lhs) & static_cast<underlying>(rhs));
 }
 
 template<typename Enum>
-std::enable_if_t<enable_bitmasks<Enum>::enable, bool> operator !(const Enum & lhs)
+std::enable_if_t<core::enable_bitmasks<Enum>::enable, bool> operator !(const Enum & lhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
     return static_cast<underlying>(lhs) == 0;
 }
 
 template<typename Enum>
-typename std::enable_if<enable_bitmasks<Enum>::enable, Enum>::type operator ~(const Enum & lhs)
+constexpr typename std::enable_if<core::enable_bitmasks<Enum>::enable, Enum>::type operator ~(const Enum & lhs)
 {
     using underlying = typename std::underlying_type<Enum>::type;
     return static_cast<Enum>(~static_cast<underlying>(lhs));
 }
+
