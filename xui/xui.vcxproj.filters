@@ -5,9 +5,6 @@
     <ClCompile Include="main\main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="win32\Win32App.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="main\all.cpp">
       <Filter>main</Filter>
     </ClCompile>
@@ -29,9 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="win32\Win32App.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="main\ListView.h">
       <Filter>main</Filter>
     </ClInclude>

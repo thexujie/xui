@@ -77,11 +77,13 @@ namespace win32
         _form = form;
 		_form_styles = form ? form->styles() : nullptr;
 
-        form->stylesChanged += std::weak_bind(&Window::onStylesChanged, share_ref<Window>(), std::placeholders::_1, std::placeholders::_2);
-        form->rendered += std::weak_bind(&Window::onSceneRendered2, share_ref<Window>(), std::placeholders::_1);
-        form->captured += std::weak_bind(&Window::onSceneCaptured, share_ref<Window>(), std::placeholders::_1);
-        form->evented += std::weak_bind(&Window::onSceneEvented, share_ref<Window>(), std::placeholders::_1);
+        form->stylesChanged += std::bind(&Window::onStylesChanged, this, std::placeholders::_1, std::placeholders::_2);
+        form->rendered += std::bind(&Window::onSceneRendered2, this, std::placeholders::_1);
+        form->captured += std::bind(&Window::onSceneCaptured, this, std::placeholders::_1);
+        form->evented += std::bind(&Window::onSceneEvented, this, std::placeholders::_1);
 
+        if (!_handle)
+            _createWindow();
         return core::error_ok;
     }
 
@@ -155,51 +157,39 @@ namespace win32
 
     void Window::show(ui::form_state state)
     {
+        if (!_handle)
+            return;
+
         switch (state)
         {
         case ui::form_state::hide:
         {
-            HWND hwnd = (HWND)_handle;
-            if (hwnd)
-                ::ShowWindow(hwnd, SW_HIDE);
+            ::ShowWindow((HWND)_handle, SW_HIDE);
             break;
         }
         case ui::form_state::noactive:
         {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+            ::ShowWindow((HWND)_handle, SW_SHOWNOACTIVATE);
             break;
         }
         case ui::form_state::normalize:
         {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOWNORMAL);
+            ::ShowWindow((HWND)_handle, SW_SHOWNORMAL);
             break;
         }
         case ui::form_state::minimize:
         {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOWMINIMIZED);
+            ::ShowWindow((HWND)_handle, SW_SHOWMINIMIZED);
             break;
         }
         case ui::form_state::maximize:
         {
-            HWND hwnd = (HWND)handle();
-            ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+            ::ShowWindow((HWND)_handle, SW_SHOWMAXIMIZED);
             break;
         }
         default:
             break;
         }
-    }
-
-    pointer_t Window::handle() const
-    {
-        if (!_handle)
-        {
-            auto err = const_cast<Window *>(this)->_createWindow();
-        }
-        return _handle;
     }
 
     void Window::onStylesChanged(ui::form_styles styels_old, ui::form_styles styles)
@@ -401,7 +391,7 @@ namespace win32
         HWND hwnd = CreateWindowExW(
 			styleEx, WINDOW_CLASS_NAME, (const wchar_t *)t.c_str(), style | WS_BORDER | WS_DLGFRAME,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-            pf ? (HWND)pf->window()->handle() : NULL, NULL, hInstance, this);
+            pf ? (HWND)pf->handle() : NULL, NULL, hInstance, this);
 		// TRICK: 这样搞一下，可以避免用 SetWindowRgn，见 OnWmSize。
         ::SetWindowLongPtrW(hwnd, GWL_STYLE, style);
 
@@ -654,6 +644,7 @@ namespace win32
         if (_message_blocks.any(windowmessage_bock::all))
             return OnDefault(uiMessage, wParam, lParam);
 
+        message(uiMessage, wParam, lParam);
         auto f = form();
         if (!f)
             return OnDefault(uiMessage, wParam, lParam);
@@ -717,7 +708,8 @@ namespace win32
 
             CASE_MSG(WM_REFRESH, OnWmRefresh);
         case WM_CLOSE:
-            return OnDefault(uiMessage, wParam, lParam);
+            //return OnDefault(uiMessage, wParam, lParam);
+            f->onAction(ui::system_action::close);
             break;
         default:
             return OnDefault(uiMessage, wParam, lParam);

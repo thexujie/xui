@@ -215,6 +215,8 @@ namespace ui
         virtual void valid() const;
         virtual void update() {}
         virtual void updateStyle();
+        virtual void layout() {}
+
         virtual void invalidate();
 		virtual void invalidate(const core::rectf & rect);
 		virtual bool validCompleted() const { return !_delay_repaint; }

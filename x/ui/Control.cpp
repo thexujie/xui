@@ -485,6 +485,11 @@ namespace ui
             const_cast<Control *>(this)->_delay_restyle = false;
             const_cast<Control *>(this)->updateStyle();
         }
+        //if (_delay_relayout)
+        //{
+        //    const_cast<Control *>(this)->_delay_relayout = false;
+        //    const_cast<Control *>(this)->layout();
+        //}
         if(_delay_refresh)
         {
             const_cast<Control *>(this)->_delay_refresh = false;
@@ -735,7 +740,7 @@ namespace ui
 
     void Control::appendAnimation(std::string group, std::shared_ptr<core::animation> animation)
     {
-        animation->started += std::weak_bind(&Control::animate, control_ref());
+        animation->started += std::bind(&Control::animate, this);
         _animations[group].push_back(animation);
         animate();
     }

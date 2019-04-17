@@ -29,7 +29,7 @@ namespace win32
         void show(ui::form_state fs);
 
         std::shared_ptr<ui::Form> form() { return _form.lock(); }
-        pointer_t handle() const;
+        pointer_t handle() const { return _handle; }
         intx_t handleMSG(uint32_t uiMessage, uintx_t wParam, intx_t lParam);
 
     private:
@@ -137,6 +137,7 @@ namespace win32
 
     public:
         core::event<void()> closed;
+        core::event<void(uint32_t msg, uintx_t wparam, intx_t lparam)> message;
 
     public:
         static Window * fromHandle(handle_t handle);

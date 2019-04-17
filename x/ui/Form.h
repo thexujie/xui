@@ -4,7 +4,7 @@
 namespace ui
 {
     class RadioGroup;
-    class Menu;
+    ////class Menu;
 
     class Form : public Container
     {
@@ -25,6 +25,7 @@ namespace ui
         const core::vec4<core::dimenf> & resizeBorders() const { return _resize_borders; }
 
         std::shared_ptr<ui::IWindow> window() const;
+        pointer_t handle() const;
         const core::pointf & windowPos() const { return _window_pos; }
         //const core::pointf & windowSize() const { return _rect_window.size; }
         //const core::rectf & windowRect() const { return _rect_window; }
@@ -90,7 +91,7 @@ namespace ui
 
     private:
         std::shared_ptr<ui::IWindow> _window;
-        std::shared_ptr<ui::Menu> _menu;
+        ////std::shared_ptr<ui::Menu> _menu;
         std::weak_ptr<Form> _parentForm;
 
         core::pointf _window_pos;

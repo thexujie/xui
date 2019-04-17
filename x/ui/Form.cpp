@@ -4,7 +4,7 @@
 #include "Desktop.h"
 #include "core/app.h"
 #include "RadioGroup.h"
-#include "../../xui/main/Menu.h"
+////#include "../../xui/main/Menu.h"
 
 namespace ui
 {
@@ -21,6 +21,7 @@ namespace ui
         _size = size;
         _mouse_through = false;
         _color = core::colors::Black;
+        _rect.size = calc(size);
     }
 
     Form::~Form()
@@ -53,6 +54,11 @@ namespace ui
             const_cast<Form *>(this)->_window = window;
         }
         return _window;
+    }
+
+    pointer_t Form::handle() const
+    {
+        return window()->handle();
     }
 
     void Form::setWindowPos(const core::pointf & pos)
@@ -88,15 +94,15 @@ namespace ui
     {
         if (state == form_state::hide)
         {
-            if (_menu)
-                _menu->hide();
+            ////if (_menu)
+            ////    _menu->hide();
             if (_window)
                 _window->show(state);
         }
         else if (state == form_state::minimize)
         {
-            if (_menu)
-                _menu->hide();
+            ////if (_menu)
+            ////    _menu->hide();
             window()->show(state);
         }
         else
@@ -115,7 +121,7 @@ namespace ui
 
     void Form::close()
     {
-        invoke([this]() {closed(); });
+        invoke([this]() { closed(); });
     }
 
     void Form::centerScreen(int32_t screenIndex)
@@ -165,8 +171,8 @@ namespace ui
 			_setCurrentControl(state, _findChild(state.pos()));
             break;
         case mouse_action::press:
-            if (_menu)
-                _menu->hide();
+            ////if (_menu)
+            ////    _menu->hide();
 
 			_setSelectedControl(state, _current_control);
 
@@ -194,34 +200,34 @@ namespace ui
             {
                 if(button == ui::mouse_button::right)
                 {
-					if (!_menu)
-					{
-						_menu = std::make_shared<ui::Menu>(ui::form_style::frameless, form());
-						_menu->setStyleSheet(form()->styleSheet());
-						_menu->setSize(core::vec2<core::dimenf>(core::auto_value, core::auto_value));
-						_menu->setBorder({ 1_px, 1_px });
-						_menu->setTitle(u8"Menu");
-						_menu->setBorderColors({ core::colors::Gray, core::colors::Gray });
-						//_menu->setResizeBorders({ 4_px, 4_px });
-						//_menu->setLayoutDirection(core::align::top);
+					////if (!_menu)
+					////{
+					////	_menu = std::make_shared<ui::Menu>(ui::form_style::frameless, form());
+					////	_menu->setStyleSheet(form()->styleSheet());
+					////	_menu->setSize(core::vec2<core::dimenf>(core::auto_value, core::auto_value));
+					////	_menu->setBorder({ 1_px, 1_px });
+					////	_menu->setTitle(u8"Menu");
+					////	_menu->setBorderColors({ core::colors::Gray, core::colors::Gray });
+					////	//_menu->setResizeBorders({ 4_px, 4_px });
+					////	//_menu->setLayoutDirection(core::align::top);
 
-						//// 标题栏
-						//{
-						//    auto title = std::make_shared<ui::controlsex::TitleBar>(form2);
-						//    title->setSize({ 100_per, core::auto_value });
-						//    title->setBackgroundColor(0xfff1f1f0);
-						//    form2->addControl(title);
-						//}
-						_menu->active += [this](auto action) {if (_current_select) _current_select->onAction(action); };
-					}
+					////	//// 标题栏
+					////	//{
+					////	//    auto title = std::make_shared<ui::controlsex::TitleBar>(form2);
+					////	//    title->setSize({ 100_per, core::auto_value });
+					////	//    title->setBackgroundColor(0xfff1f1f0);
+					////	//    form2->addControl(title);
+					////	//}
+					////	_menu->active += [this](auto action) {if (_current_select) _current_select->onAction(action); };
+					////}
 
-					_menu->clear();
-					_current_select->onPopupMenu(state, *_menu);
-					if(_menu->itemCount())
-					{
-						_menu->show(form_state::noactive);
-						_menu->setWindowPos(_window_pos + state.pos());
-					}
+					////_menu->clear();
+					////_current_select->onPopupMenu(state, *_menu);
+					////if(_menu->itemCount())
+					////{
+					////	_menu->show(form_state::noactive);
+					////	_menu->setWindowPos(_window_pos + state.pos());
+					////}
                 }
             }
 

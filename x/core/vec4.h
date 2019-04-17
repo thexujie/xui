@@ -478,6 +478,12 @@ namespace core
             return vec4<T2>(lt, rb - lt);
         }
 
+        template<typename T2, typename = std::enable_if_t<std::is_floating_point<T>::value>>
+        vec4<T2> round() const
+        {
+            return vec4<T2>(core::round<T2>(x), core::round<T2>(y), core::round<T2>(cx), core::round<T2>(cy));
+        }
+
 
         template<typename = decltype(std::declval<T>() * std::declval<float>())>
         vec2<T> leftBorder(float rate) const { return vec2<T>(x, y + cy * rate); }

@@ -31,6 +31,13 @@ namespace core
         return core::filesystem::path(std::string(temp, nchars));
     }
 
+    core::filesystem::path current_path()
+    {
+        wchar_t temp[512] = {};
+        int32_t nchars = GetCurrentDirectoryW(512, temp);
+        return core::filesystem::path(std::wstring(temp, nchars));
+    }
+
     std::string process_name()
     {
         return process_path().filename().string();

@@ -104,4 +104,31 @@ namespace win32
 
     LOGFONTW MappingFont(const drawing::font & font);
     LOGFONTW MappingFont(HDC hdc, const drawing::font & font);
+
+
+    inline std::string hr_str(HRESULT hr)
+    {
+        char s_str[64] = {};
+        sprintf_s(s_str, "HRESULT of 0x%08X", static_cast<UINT>(hr));
+        return std::string(s_str);
+    }
+
+    class hr_error : public std::runtime_error
+    {
+    public:
+        hr_error(HRESULT hr) : std::runtime_error(hr_str(hr)), _hr(hr) {}
+        HRESULT error() const { return _hr; }
+    private:
+        const HRESULT _hr;
+    };
+
+    inline void throw_if_failed(HRESULT hr)
+    {
+        if (FAILED(hr))
+        {
+            throw hr_error(hr);
+        }
+    }
 }
+
+#include "comptr.h"

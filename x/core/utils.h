@@ -238,6 +238,12 @@ namespace core
     }
 
     template<typename T>
+    constexpr T round(float32_t val)
+    {
+        return static_cast<T>(std::roundf(val));
+    }
+
+    template<typename T>
     constexpr T ceil(float32_t val)
     {
         return static_cast<T>(std::ceilf(val));

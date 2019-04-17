@@ -3,8 +3,7 @@
 #include "core/core.h"
 #include "drawing/drawing.h"
 #include "ui/ui.h"
-
-#include "win32/Win32App.h"
+#include "win32/win32.h"
 
 
 //#ifdef _UNICODE

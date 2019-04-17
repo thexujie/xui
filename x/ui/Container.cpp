@@ -10,12 +10,14 @@ namespace ui
     {
         _interactable = false;
         _accept_wheel_v = true;
+        _delay_relayout = true;
     }
 
     Container::Container(core::align layout) : _layout_direction(layout)
     {
         _interactable = false;
         _accept_wheel_v = true;
+        _delay_relayout = true;
     }
 
     Container::~Container()
@@ -305,7 +307,7 @@ namespace ui
                     _scrollbar_v->setAnchor({ core::nanf32, 0.0f, 0.0f, 0.0f });
                     _scrollbar_v->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_v->setZValue(ZVALUE_SCROLLBAR);
-                    _scrollbar_v->valueChagned += std::weak_bind(&Container::onScrollBarValueChangedV, share_ref<Container>(), std::placeholders::_1, std::placeholders::_2);
+                    _scrollbar_v->valueChagned += std::bind(&Container::onScrollBarValueChangedV, this, std::placeholders::_1, std::placeholders::_2);
                 }
                 addControl(_scrollbar_v);
             }
@@ -327,7 +329,7 @@ namespace ui
                     _scrollbar_h->setLayoutOrigin(layout_origin::parent);
                     _scrollbar_h->setZValue(ZVALUE_SCROLLBAR);
                     _scrollbar_h->setDirection(core::align::left);
-                    _scrollbar_h->valueChagned += std::weak_bind(&Container::onScrollBarValueChangedH, share_ref<Container>(), std::placeholders::_1, std::placeholders::_2);
+                    _scrollbar_h->valueChagned += std::bind(&Container::onScrollBarValueChangedH, this, std::placeholders::_1, std::placeholders::_2);
                 }
                 addControl(_scrollbar_h);
             }

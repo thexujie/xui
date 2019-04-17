@@ -7,6 +7,7 @@ namespace core
     core::filesystem::path temp_path();
     core::filesystem::path appdata_path();
     core::filesystem::path process_path();
+    core::filesystem::path current_path();
     std::string process_name();
     int32_t thread_id();
     int32_t process_id();

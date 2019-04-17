@@ -26,7 +26,7 @@ int main()
 #if defined _DEBUG
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-    auto app = std::make_shared<win32::Win32App>();
+    core::App app;
     views_main();
 	return 0;
 }
