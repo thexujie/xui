@@ -14,6 +14,21 @@ namespace core
 
         vec2(const vec2 & vec) : x(vec.x), y(vec.y) { }
 
+        vec2(const std::initializer_list<T> & eles)
+        {
+            if (eles.size() == 1)
+            {
+               x = eles.begin()[0];
+               y = eles.begin()[0];
+            }
+            else if (eles.size() == 2)
+            {
+                x = eles.begin()[0];
+                y = eles.begin()[1];
+            }
+            else {}
+        }
+
         void set(T _x, T _y)
         {
             x = _x;

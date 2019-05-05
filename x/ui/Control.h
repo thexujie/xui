@@ -118,7 +118,7 @@ namespace ui
         }
         core::vec4f calc(const core::vec4<core::dimenf> & value) const
         {
-            return { calc(value.xy), calc(value.zw) };
+            return { calc(value.pos), calc(value.size) };
         }
         core::vec4f calc(const core::vec4<core::dimenf> & value, const core::vec2<float32_t> & spacing) const
         {

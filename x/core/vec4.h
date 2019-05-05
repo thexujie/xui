@@ -2,6 +2,7 @@
 
 #include "align.h"
 #include "vec2.h"
+
 namespace core
 {
     /************************************************************************/
@@ -12,36 +13,55 @@ namespace core
     class vec4
     {
     public:
-        vec4() : x(), y(), cx(), cy() { }
+        vec4() : pos(), size() { }
 
-        vec4(T _t)
-            : x(_t), y(_t), cx(_t), cy(_t) { }
+        explicit vec4(T _t)
+            : pos(_t, _t), size(_t, _t) { }
 
         vec4(T _x, T _y)
-            : x(_x), y(_y), cx(_x), cy(_y) { }
+            : pos(_x, _y), size(_x, _y) { }
 
         vec4(T _x, T _y, T _w, T _h)
-            : x(_x), y(_y), cx(_w), cy(_h) { }
-
-        vec4(const T (& _arr)[4])
-            : x(_arr[0]), y(_arr[1]), cx(_arr[2]), cy(_arr[3]) { }
-
-        vec4(const std::array<T, 4> & _arr)
-            : x(_arr[0]), y(_arr[1]), cx(_arr[2]), cy(_arr[3]) { }
+            : pos(_x, _y), size(_w, _h) { }
 
         vec4(const vec2<T> & _pos, const vec2<T> & _size)
             : pos(_pos), size(_size) { }
 
         vec4(const vec4 & another)
-            : x(another.x), y(another.y), cx(another.cx), cy(another.cy) { }
+            : pos(another.x, another.y), size(another.cx, another.cy) { }
 
+        vec4(const std::initializer_list<T> & eles)
+        {
+            if (eles.size() == 1)
+            {
+                pos.x = eles.begin()[0];
+                pos.y = eles.begin()[0];
+                size.cx = eles.begin()[0];
+                size.cy = eles.begin()[0];
+            }
+            else if (eles.size() == 2)
+            {
+                pos.x = eles.begin()[0];
+                pos.y = eles.begin()[1];
+                size.cx = eles.begin()[0];
+                size.cy = eles.begin()[1];
+            }
+            else if (eles.size() == 4)
+            {
+                pos.x = eles.begin()[0];
+                pos.y = eles.begin()[1];
+                size.cx = eles.begin()[2];
+                size.cy = eles.begin()[3];
+            }
+            else {}
+        }
         T left() const { return x; }
         T top() const { return y; }
         T right() const { return x + cx; }
         T bottom() const { return y + cy; }
 
-        const T centerX() const { return x + cx / 2; }
-        const T centerY() const { return y + cy / 2; }
+        T centerX() const { return x + cx / 2; }
+        T centerY() const { return y + cy / 2; }
         void setLeft(T val) { x = val; }
         void setTop(T val) { y = val; }
         void setRight(T val) { cx = val - x; }
@@ -118,7 +138,7 @@ namespace core
             if constexpr (!std::is_arithmetic_v<T>)
                 return false;
             else if constexpr (std::is_floating_point_v<T>)
-                return cx <= std::numeric_limits<T>::epsilon() || cy <= std::numeric_limits<T>::epsilon();
+                return std::abs(cx) <= std::numeric_limits<T>::epsilon() || std::abs(cy) <= std::numeric_limits<T>::epsilon();
             else
                 return cx <= 0 || cy <= 0;
         }
@@ -507,13 +527,13 @@ namespace core
                 vec2<T> size;
             };
 
-            struct
-            {
-                //! 矩形的位置。
-                vec2<T> xy;
-                //! 矩形的大小。
-                vec2<T> zw;
-            };
+            //struct
+            //{
+            //    //! 矩形的位置。
+            //    vec2<T> xy;
+            //    //! 矩形的大小。
+            //    vec2<T> zw;
+            //};
 
             struct
             {
