@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2F38136F-B7AF-480A-938D-F3F6B66C876A}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Condition="Exists('$(SolutionDir)\$(SolutionName).cpp.default.props')" Project="$(SolutionDir)\$(SolutionName).cpp.default.props" />
+  <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>./;../x/;../xui/</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;../deps/FreeImage/lib/x64/</AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/bin/x64/icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>./;../x/;../xui/</AdditionalIncludeDirectories>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>./;../x/;../xui/</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>../deps/bin/x64/libjpeg.lib;../deps/bin/x64/libpng.lib;../deps/bin/x64/zlib.lib;../externals/harfbuzz/bin/x64/harfbuzz.lib;../externals/icu/bin/x64/icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>./;../x/;../xui/</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main\all.cpp" />
+    <ClCompile Include="main\ListView.cpp" />
+    <ClCompile Include="main\main.cpp" />
+    <ClCompile Include="main\Menu.cpp" />
+    <ClCompile Include="main\View.cpp" />
+    <ClCompile Include="main\ViewItem.cpp" />
+    <ClCompile Include="main\views.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main\ListView.h" />
+    <ClInclude Include="main\Menu.h" />
+    <ClInclude Include="main\View.h" />
+    <ClInclude Include="main\ViewItem.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="roadmap.md" />
+    <None Include="samples\test.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\xui\xui.vcxproj">
+      <Project>{327eadff-ed36-413c-89fe-d9dc08be57be}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
