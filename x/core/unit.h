@@ -138,17 +138,17 @@ namespace core
     struct unit_name
     {
         core::unit unit;
-        const char * name;
+        const char8_t * name;
     };
 
     const unit_name unit_names[] =
     {
-        { core::unit::px, "px" },
-        { core::unit::em, "em" },
-        { core::unit::ft, "ft" },
-        { core::unit::pt, "pt" },
-        { core::unit::dot, "dot" },
-        { core::unit::per, "per" },
+        { core::unit::px, u8"px" },
+        { core::unit::em, u8"em" },
+        { core::unit::ft, u8"ft" },
+        { core::unit::pt, u8"pt" },
+        { core::unit::dot, u8"dot" },
+        { core::unit::per, u8"per" },
     };
 }
 

@@ -6,7 +6,7 @@
 
 namespace drawing
 {
-    stroke_style parseStrokeStyle(const std::string & str)
+    stroke_style parseStrokeStyle(const std::u8string & str)
     {
         for(const auto & name : stroke_style_names)
         {
@@ -16,9 +16,9 @@ namespace drawing
         return stroke_style::none;
     }
 
-    core::vec2<stroke_style> parseStrokeStyle2D(const std::string & str)
+    core::vec2<stroke_style> parseStrokeStyle2D(const std::u8string & str)
     {
-        std::vector<std::string> strs = core::split(str, ' ');
+        std::vector<std::u8string> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec2<stroke_style>{ parseStrokeStyle(strs[0]) };
         if (strs.size() == 2)
@@ -26,9 +26,9 @@ namespace drawing
         return {};
     }
 
-    core::vec4<stroke_style> parseStrokeStyle4D(const std::string & str)
+    core::vec4<stroke_style> parseStrokeStyle4D(const std::u8string & str)
     {
-        std::vector<std::string> strs = core::split(str, ' ');
+        std::vector<std::u8string> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec4<stroke_style>{ parseStrokeStyle(strs[0]) };
         if (strs.size() == 2)

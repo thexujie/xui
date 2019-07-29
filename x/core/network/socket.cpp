@@ -11,7 +11,7 @@ namespace core::network
 
     socket::socket() { }
 
-    socket::socket(std::string host, port_t port, std::chrono::microseconds timeout)
+    socket::socket(const std::u8string & host, port_t port, std::chrono::microseconds timeout)
     {
         connect(host, port, timeout);
     }
@@ -45,7 +45,7 @@ namespace core::network
         return error_ok;
     }
 
-    error socket::connect(std::string host, port_t port, std::chrono::microseconds timeout)
+    error socket::connect(const std::u8string & host, port_t port, std::chrono::microseconds timeout)
     {
         std::vector<netaddr> addrs = host2addrs(host);
         if (addrs.empty())

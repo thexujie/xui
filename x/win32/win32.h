@@ -23,7 +23,7 @@ namespace win32
     constexpr wchar_t WINDOW_PROP_OLD_WNDPROC[] = L"FCAC0730-350D-4D79-B28E-D137C22648EA";
 
 
-    std::string winerr_str(int32_t err);
+    std::u8string winerr_str(int32_t err);
     int runLoop();
 
     std::tuple<std::shared_ptr<byte_t>, int32_t> load_res(uint32_t id, res_e type = res_file);
@@ -72,8 +72,8 @@ namespace win32
     constexpr winversion_t winversion_xp = { 5, 1, 0, 0 };
     constexpr winversion_t winversion_2000 = { 5, 0, 0, 0 };
     winversion_t version();
-    std::string version_str(const winversion_t & ver);
-    inline std::ostream & operator << (std::ostream & ost, const winversion_t & ver)
+    std::u8string version_str(const winversion_t & ver);
+    inline std::u8ostream & operator << (std::u8ostream & ost, const winversion_t & ver)
     {
         return ost << "Windows " << version_str(ver) << " [" << ver.major << "." << ver.minor << "." << ver.pack << "." << ver.build << "]";
     }
@@ -81,8 +81,8 @@ namespace win32
     handle_t instance();
     void endLoop(int32_t ret);
 
-    std::string GUID2String(const GUID & guid);
-    std::string GUID2String(std::array<uint8_t, 16> data);
+    std::u8string GUID2String(const GUID & guid);
+    std::u8string GUID2String(std::array<uint8_t, 16> data);
 
     struct winrect_t : public RECT
     {
@@ -131,4 +131,3 @@ namespace win32
     }
 }
 
-#include "comptr.h"

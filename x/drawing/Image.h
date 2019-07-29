@@ -9,8 +9,8 @@ namespace drawing
     public:
         Image() = default;
         Image(const Image & another);
+        explicit Image(const std::u8string & path);
         ~Image();
-        explicit Image(std::string path);
 
         operator bool() const { return !!_native; }
         int32_t width() const;

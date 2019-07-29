@@ -173,7 +173,7 @@ namespace drawing::image::formats
         return error_ok;
     }
 
-    core::error tga_save(const image_data_t & data, std::string path)
+    core::error tga_save(const image_data_t & data, const std::u8string & path)
     {
         assert(data.pitch > 0);
         switch (format_bits(data.format.format))

@@ -48,7 +48,7 @@ namespace core
 
     int32_t textformatargs_calc(const char8_t * format, void * args)
     {
-        return _vscprintf(format, (va_list)args) + 1;
+        return _vscprintf((const char *)format, (va_list)args) + 1;
     }
 
     int32_t textformatargs_calc(const char16_t * format, void * args)
@@ -58,7 +58,7 @@ namespace core
 
     int32_t textformat_args(char8_t * buffer, int32_t size, const char8_t * format, void * args)
     {
-        return vsprintf_s(buffer, size, format, (va_list)args);
+        return vsprintf_s((char *)buffer, size, (const char *)format, (va_list)args);
     }
 
     int32_t textformat_args(char16_t * buffer, int32_t size, const char16_t * format, void * args)

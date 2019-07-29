@@ -226,7 +226,7 @@ namespace drawing::image::formats
         return error_ok;
     }
 
-    core::error bmp_save(const image_data_t & data, std::string path)
+    core::error bmp_save(const image_data_t & data, const std::u8string & path)
     {
         color_mask_abgr_t mask = mask_from_format_abgr(data.format.format);
         if (!mask)

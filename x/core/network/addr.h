@@ -9,5 +9,5 @@ namespace core::network
         std::array<uint8_t, 4> v4;
     };
 
-    std::vector<netaddr> host2addrs(const std::string & hostname);
+    std::vector<netaddr> host2addrs(const std::u8string & hostname);
 }

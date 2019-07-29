@@ -18,7 +18,7 @@ namespace drawing::image
     using namespace core;
     using namespace drawing::image::formats;
 
-    error image_load(std::string path, image_data_t & img)
+    error image_load(const std::u8string & path, image_data_t & img)
     {
         std::wstring pathw = core::u8str_wstr(path);
         std::fstream fs;

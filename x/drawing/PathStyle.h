@@ -36,27 +36,27 @@ namespace drawing
     struct stroke_style_name
     {
         stroke_style style;
-        const char * name = nullptr;
+        const char8_t * name = nullptr;
     };
 
     const stroke_style_name stroke_style_names[] =
     {
-        { stroke_style::none, "none" },
-        { stroke_style::hidden, "hidden" },
-        { stroke_style::dotted, "dotted" },
-        { stroke_style::dashed, "dashed" },
-        { stroke_style::solid, "solid" },
-        { stroke_style::double_, "double" },
-        { stroke_style::groove, "groove" },
-        { stroke_style::ridge, "ridge" },
-        { stroke_style::inset, "inset" },
-        { stroke_style::outset, "outset" },
-        { stroke_style::inherit, "inherit" },
+        { stroke_style::none, u8"none" },
+        { stroke_style::hidden, u8"hidden" },
+        { stroke_style::dotted, u8"dotted" },
+        { stroke_style::dashed, u8"dashed" },
+        { stroke_style::solid, u8"solid" },
+        { stroke_style::double_, u8"double" },
+        { stroke_style::groove, u8"groove" },
+        { stroke_style::ridge, u8"ridge" },
+        { stroke_style::inset, u8"inset" },
+        { stroke_style::outset, u8"outset" },
+        { stroke_style::inherit, u8"inherit" },
     };
 
-    stroke_style parseStrokeStyle(const std::string & str);
-    core::vec2<stroke_style> parseStrokeStyle2D(const std::string & str);
-    core::vec4<stroke_style> parseStrokeStyle4D(const std::string & str);
+    stroke_style parseStrokeStyle(const std::u8string & str);
+    core::vec2<stroke_style> parseStrokeStyle2D(const std::u8string & str);
+    core::vec4<stroke_style> parseStrokeStyle4D(const std::u8string & str);
 
     struct PathStyle
     {

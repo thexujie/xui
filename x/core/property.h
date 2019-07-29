@@ -3,7 +3,7 @@
 namespace core
 {
     template<typename T>
-    T property_parser(const std::string & str);
+    T property_parser(const std::u8string & str);
 
     class property_value
     {
@@ -18,13 +18,13 @@ namespace core
         virtual void set(object & self, const property_value & val) = 0;
         virtual void get(object & self, property_value & val) = 0;
 
-        virtual void set(const std::string & str, object & self) = 0;
-        virtual void get(std::string & str, object & self) = 0;
+        virtual void set(const std::u8string & str, object & self) = 0;
+        virtual void get(std::u8string & str, object & self) = 0;
 
-        virtual void serialize(const std::string & str, property_value & value) const = 0;
-        virtual void serialize(property_value & value, std::string & str) const = 0;
+        virtual void serialize(const std::u8string & str, property_value & value) const = 0;
+        virtual void serialize(property_value & value, std::u8string & str) const = 0;
 
-        virtual std::shared_ptr<property_value> serialize(const std::string & str) const = 0;
+        virtual std::shared_ptr<property_value> serialize(const std::u8string & str) const = 0;
         virtual std::shared_ptr<class property_interpolator> create_interpolator() const = 0;
     };
 
@@ -124,12 +124,12 @@ namespace core
     struct property_accessor_impl : public property_accessor_type<T>
     {
         property_accessor_impl(SetterT setter_, GetterT getter_,
-            std::function<T(const std::string &)> store, std::function<std::string(const T &)> fetch) : setter(setter_), getter(getter_), _store(store), _fetch(fetch) {}
+            std::function<T(const std::u8string &)> store, std::function<std::u8string(const T &)> fetch) : setter(setter_), getter(getter_), _store(store), _fetch(fetch) {}
 
         SetterT setter;
         GetterT getter;
-        std::function<T(const std::string &)> _store;
-        std::function<std::string(const T &)> _fetch;
+        std::function<T(const std::u8string &)> _store;
+        std::function<std::u8string(const T &)> _fetch;
 
         void set(object & self, const property_value & val)
         {
@@ -164,29 +164,29 @@ namespace core
         }
 
 
-        void get(std::string & str, object & self)
+        void get(std::u8string & str, object & self)
         {
             str = _fetch(get_value(self));
         }
 
-        void set(const std::string & str, object & self)
+        void set(const std::u8string & str, object & self)
         {
             set_value(self, _store(str));
         }
 
-        void serialize(const std::string & str, property_value & value) const
+        void serialize(const std::u8string & str, property_value & value) const
         {
             auto & v = dynamic_cast<property_value_type<T> &>(value);
             v.set(_store(str));
         }
 
-        void serialize(property_value & value, std::string & str) const
+        void serialize(property_value & value, std::u8string & str) const
         {
             auto & v = dynamic_cast<property_value_type<T> &>(value);
             str = _fetch(v.get());
         }
 
-        std::shared_ptr<property_value> serialize(const std::string & str) const
+        std::shared_ptr<property_value> serialize(const std::u8string & str) const
         {
             auto value = std::make_shared <property_value_type<T>>(_store(str));
             return value;
@@ -200,8 +200,8 @@ namespace core
 
     template<typename SetterT, typename GetterT>
     static auto make_accessor(SetterT setter, GetterT getter,
-        std::function<std::decay_t<typename member_traits<GetterT>::value_type>(const std::string &)> store = property_parser<std::decay_t<typename member_traits<GetterT>::value_type>>,
-        std::function<std::string(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch = nullptr)
+        std::function<std::decay_t<typename member_traits<GetterT>::value_type>(const std::u8string &)> store = property_parser<std::decay_t<typename member_traits<GetterT>::value_type>>,
+        std::function<std::u8string(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch = nullptr)
     {
         static_assert(std::is_member_function_pointer<SetterT>::value);
         static_assert(std::is_member_pointer<GetterT>::value);
@@ -209,7 +209,7 @@ namespace core
         return std::make_shared<property_accessor_impl<typename member_traits<SetterT>::instance_type, std::decay_t<typename member_traits<GetterT>::value_type>, SetterT, GetterT>>(setter, getter, store, fetch);
     }
 
-    typedef std::map<std::string, std::shared_ptr<core::property_accessor>> property_table;
+    typedef std::map<std::u8string, std::shared_ptr<core::property_accessor>> property_table;
 
     //---------------------------------------------------------------- interpolator
 
@@ -259,14 +259,14 @@ namespace core
 
     // specifize some 
     template<>
-    class property_interpolator_default<std::string> : public property_interpolator
+    class property_interpolator_default<std::u8string> : public property_interpolator
     {
     public:
         property_interpolator_default() = default;
         property_value & start() { return _start; }
         property_value & end() { return _end; }
 
-        void set_values(const std::string & start, const std::string & end)
+        void set_values(const std::u8string & start, const std::u8string & end)
         {
             _start.set(start);
             _end.set(end);
@@ -274,19 +274,19 @@ namespace core
 
         void interpolate(object & self, core::property_accessor & accesor, float32_t proportion)
         {
-            auto & a = dynamic_cast<property_accessor_type<std::string> &>(accesor);
+            auto & a = dynamic_cast<property_accessor_type<std::u8string> &>(accesor);
             a.set_value(self, proportion < 0.5f ? _start.get() : _end.get());
         }
 
         void interpolate(core::property_value & value, float32_t proportion)
         {
-            auto & v = dynamic_cast<property_value_type<std::string> &>(value);
+            auto & v = dynamic_cast<property_value_type<std::u8string> &>(value);
             v.set(proportion < 0.5f ? _start.get() : _end.get());
         }
 
     private:
-        property_value_type<std::string> _start;
-        property_value_type<std::string> _end;
+        property_value_type<std::u8string> _start;
+        property_value_type<std::u8string> _end;
     };
 
 
@@ -430,15 +430,15 @@ namespace core
 
 
     template<>
-    inline float32_t property_parser<float32_t>(const std::string & str)
+    inline float32_t property_parser<float32_t>(const std::u8string & str)
     {
-        return std::atof(str.c_str());
+        return std::atof(reinterpret_cast<const char *>(str.c_str()));
     }
 
     template<>
-    inline core::vec2<float32_t> property_parser<core::vec2<float32_t>>(const std::string & str)
+    inline core::vec2<float32_t> property_parser<core::vec2<float32_t>>(const std::u8string & str)
     {
-        std::vector<std::string> strs = core::split(str, ' ');
+        std::vector<std::u8string> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec2<float32_t>{ property_parser<float32_t>(strs[0]) };
         if (strs.size() == 2)
@@ -446,15 +446,15 @@ namespace core
         return {};
     }
 
-    template<> std::string property_parser<std::string>(const std::string & str);
-    template<> bool property_parser<bool>(const std::string & str);
-    template<> core::color property_parser<core::color>(const std::string & str);
-    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::string & str);
-    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::string & str);
+    template<> std::u8string property_parser<std::u8string>(const std::u8string & str);
+    template<> bool property_parser<bool>(const std::u8string & str);
+    template<> core::color property_parser<core::color>(const std::u8string & str);
+    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::u8string & str);
+    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::u8string & str);
 
-    template<> core::dimenf property_parser<core::dimenf>(const std::string & str);
-    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::string & str);
-    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::string & str);
+    template<> core::dimenf property_parser<core::dimenf>(const std::u8string & str);
+    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::u8string & str);
+    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::u8string & str);
 
-    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::string & str);
+    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::u8string & str);
 }

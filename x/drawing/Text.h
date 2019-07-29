@@ -228,7 +228,7 @@ namespace drawing
         uint32_t color = 0;
         core::vec2f advance;
 #ifdef _DEBUG
-        std::string _text;
+        std::u8string _text;
         drawing::font _font;
 #endif
     };
@@ -261,7 +261,7 @@ namespace drawing
 
         operator bool() const { return trange.length > 0; }
 #ifdef _DEBUG
-        std::string _text;
+        std::u8string _text;
 #endif
     };
 
@@ -278,7 +278,7 @@ namespace drawing
         bidirection bidi = bidirection::ltr;
         float32_t offset = 0;
 #ifdef _DEBUG
-        std::string _text;
+        std::u8string _text;
 #endif
     };
 
@@ -292,7 +292,7 @@ namespace drawing
         float32_t ascent = 0;
         float32_t descent = 0;
 #ifdef _DEBUG
-        std::string _text;
+        std::u8string _text;
 #endif
     };
 
@@ -346,19 +346,19 @@ namespace drawing
     {
     public:
         Text() = default;
-        Text(std::string text) :_text(text) {}
+        Text(const std::u8string & text) :_text(text) {}
         ~Text() = default;
 
     public:
-        const std::string & text() const { return _text; }
+        const std::u8string & text() const { return _text; }
         bool empty() const { return _text.empty(); }
         size_t length() const { return _text.length(); }
-        const char * c_str() const { return _text.c_str(); }
-        Text & insert(size_t off, const char * text, size_t count) { _text.insert(off, text, count); invalidate(); return *this; }
+        const char8_t * c_str() const { return _text.c_str(); }
+        Text & insert(size_t off, const char8_t * text, size_t count) { _text.insert(off, text, count); invalidate(); return *this; }
         Text & erase(size_t off, size_t count) { _text.erase(off, count); invalidate(); return *this; }
 
     public:
-        void setText(std::string text) { _text = text; invalidate(); }
+        void setText(const std::u8string & text) { _text = text; invalidate(); }
         void setFont(span32 range, const drawing::font & font);
         void setColor(span32 range, uint32_t color);
 
@@ -388,7 +388,7 @@ namespace drawing
 
     protected:
         Shaper & _shaper = Shaper::instance();
-        std::string _text;
+        std::u8string _text;
         core::sizef _bounds;
         std::shared_ptr<SkTextBlob> _blob;
 
@@ -416,7 +416,7 @@ namespace drawing
     {
     public:
         TextWraper() = default;
-        TextWraper(std::string text) :Text(text) {}
+        TextWraper(std::u8string text) :Text(text) {}
         ~TextWraper() = default;
 
         using Text::layout;

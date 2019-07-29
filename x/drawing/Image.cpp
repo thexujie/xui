@@ -16,14 +16,14 @@ namespace drawing
         
     }
 
+	Image::Image(const std::u8string & path)
+	{
+		sk_sp<SkData> data(SkData::MakeFromFileName(reinterpret_cast<const char *>(path.c_str())));
+		_native.reset(SkImage::MakeFromEncoded(data).release(), [](SkImage * ptr) { if (ptr) SkSafeUnref(ptr); });
+	}
+
     Image::~Image()
     {
-    }
-
-    Image::Image(std::string path)
-    {
-        sk_sp<SkData> data(SkData::MakeFromFileName(path.c_str()));
-        _native.reset(SkImage::MakeFromEncoded(data).release(), [](SkImage * ptr) { if(ptr) SkSafeUnref(ptr); });
     }
 
     core::error Image::Save(std::string path, image::image_type type, int32_t quality) const

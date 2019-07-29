@@ -5,7 +5,7 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 namespace win32
 {
-    std::string winerr_str(int32_t err)
+    std::u8string winerr_str(int32_t err)
     {
         wchar_t buffer[512] = {};
         int nchars = ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, 512, NULL);
@@ -36,25 +36,25 @@ namespace win32
         return (int)msg.wParam;
     }
 
-    std::string GUID2String(const GUID & guid)
+    std::u8string GUID2String(const GUID & guid)
     {
-        std::array<char, 40> output;
-        snprintf(output.data(), output.size(), "{%08X-%04hX-%04hX-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+		std::u8string output(40, 0);
+        snprintf(reinterpret_cast<char *>(output.data()), output.size(), "{%08X-%04hX-%04hX-%02X%02X-%02X%02X%02X%02X%02X%02X}",
             guid.Data1, guid.Data2, guid.Data3,
             guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6],
             guid.Data4[7]);
-        return std::string(output.data());
+        return output;
     }
 
-    std::string GUID2String(std::array<uint8_t, 16> data)
+    std::u8string GUID2String(std::array<uint8_t, 16> data)
     {
         const GUID & guid = *(const GUID *)data.data();
-        std::array<char, 40> output;
-        snprintf(output.data(), output.size(), "{%08X-%04hX-%04hX-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+		std::u8string output(40, 0);
+        snprintf(reinterpret_cast<char *>(output.data()), output.size(), "{%08X-%04hX-%04hX-%02X%02X-%02X%02X%02X%02X%02X%02X}",
             guid.Data1, guid.Data2, guid.Data3,
             guid.Data4[0], guid.Data4[1], guid.Data4[2], guid.Data4[3], guid.Data4[4], guid.Data4[5], guid.Data4[6],
             guid.Data4[7]);
-        return std::string(output.data());
+		return output;
     }
 
 
@@ -133,31 +133,31 @@ namespace win32
         return version;
     }
 
-    std::string version_str(const winversion_t & ver)
+    std::u8string version_str(const winversion_t & ver)
     {
         if (ver >= winversion_10)
-            return "10";
+            return u8"10";
         else if (ver >= winversion_8_1)
-            return "8.1";
+            return u8"8.1";
         if (ver >= winversion_8)
-            return "8";
+            return u8"8";
         if (ver >= winversion_7)
-            return "7";
+            return u8"7";
         if (ver >= winversion_vista)
-            return "Vista";
+            return u8"Vista";
         if (ver >= winversion_server_2003)
-            return "Server 2003";
+            return u8"Server 2003";
         if (ver >= winversion_xp_sp3)
-            return "XP SP3";
+            return u8"XP SP3";
         if (ver >= winversion_xp_sp2)
-            return "XP SP2";
+            return u8"XP SP2";
         if (ver >= winversion_xp_sp1)
-            return "XP SP1";
+            return u8"XP SP1";
         if (ver >= winversion_xp)
-            return "XP";
+            return u8"XP";
         if (ver >= winversion_2000)
-            return "2000";
-        return "Unknown";
+            return u8"2000";
+        return u8"Unknown";
     }
 
     drawing::font defaultFont()

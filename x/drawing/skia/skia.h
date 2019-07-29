@@ -109,7 +109,7 @@ namespace drawing::skia
     {
         SkString family;
         tf.getFamilyName(&family);
-        return drawing::font(family.c_str(), size, to(tf.fontStyle()));
+        return drawing::font(reinterpret_cast<const char8_t *>(family.c_str()), size, to(tf.fontStyle()));
     }
 
     inline SkBlendMode from(blend_mode mode)

@@ -1,41 +1,155 @@
 #pragma once
 #include "utils.h"
 
+namespace std
+{
+	using u8ios           = basic_ios<char8_t, char_traits<char8_t>>;
+	using u8streambuf     = basic_streambuf<char8_t, char_traits<char8_t>>;
+	using u8istream       = basic_istream<char8_t, char_traits<char8_t>>;
+	using u8ostream       = basic_ostream<char8_t, char_traits<char8_t>>;
+	using u8iostream      = basic_iostream<char8_t, char_traits<char8_t>>;
+	using u8stringbuf     = basic_stringbuf<char8_t, char_traits<char8_t>, allocator<char8_t>>;
+	using u8istringstream = basic_istringstream<char8_t, char_traits<char8_t>, allocator<char8_t>>;
+	using u8ostringstream = basic_ostringstream<char8_t, char_traits<char8_t>, allocator<char8_t>>;
+	using u8stringstream  = basic_stringstream<char8_t, char_traits<char8_t>, allocator<char8_t>>;
+	using u8filebuf       = basic_filebuf<char8_t, char_traits<char8_t>>;
+	using u8ifstream      = basic_ifstream<char8_t, char_traits<char8_t>>;
+	using u8ofstream      = basic_ofstream<char8_t, char_traits<char8_t>>;
+	using u8fstream       = basic_fstream<char8_t, char_traits<char8_t>>;
+}
+
 namespace core
 {
-    std::vector<std::string> split(const std::string & src, const char8_t & delimiter);
-    std::vector<std::string_view> split(const std::string_view & src, const char8_t & delimiter);
-    std::string & ltrim(std::string & str, const std::string & chars = "\t\n\v\f\r ");
-    std::string & rtrim(std::string & str, const std::string & chars = "\t\n\v\f\r ");
-    std::string & trim(std::string & str, const std::string & chars = "\t\n\v\f\r ");
-    std::string_view & ltrim(std::string_view & str, const std::string & chars = "\t\n\v\f\r ");
-    std::string_view & rtrim(std::string_view & str, const std::string & chars = "\t\n\v\f\r ");
-    std::string_view & trim(std::string_view & str, const std::string & chars = "\t\n\v\f\r ");
+	template<typename string_t = std::string>
+	std::vector<string_t> split(const string_t & src, const typename string_t::value_type & delimiter)
+	{
+		std::vector<string_t> tokens;
+		string_t token;
+		std::basic_istringstream<typename string_t::value_type, typename string_t::traits_type, typename string_t::allocator_type> sstream(src);
+		while (std::getline(sstream, token, delimiter)) { tokens.push_back(token); }
+		return tokens;
+	}
 
-    std::string astr_u8str(const char8_t * text, size_t length);
-    std::string u8str_astr(const char8_t * text, size_t length);
-    inline std::string astr_u8str(std::string str) { return astr_u8str(str.c_str(), str.length()); }
-    inline std::string u8str_astr(std::string str) { return u8str_astr(str.c_str(), str.length()); }
+	template <class T>
+	const T trim_chars = T();
 
-    std::string wstr_u8str(const wchar_t * text, size_t length);
-    std::wstring u8str_wstr(const char8_t * text, size_t length);
-    inline std::string wstr_u8str(std::wstring str) { return wstr_u8str(str.c_str(), str.length()); }
-    inline std::wstring u8str_wstr(std::string str) { return u8str_wstr(str.c_str(), str.length()); }
+	template <>
+	const std::string trim_chars<std::string> = "\t\n\v\f\r ";
 
-    std::string wstr_astr(const wchar_t * text, size_t length);
-    std::wstring astr_wstr(const char8_t * text, size_t length);
-    inline std::string wstr_astr(std::wstring str) { return wstr_astr(str.c_str(), str.length()); }
-    inline std::wstring astr_wstr(std::string str) { return astr_wstr(str.c_str(), str.length()); }
+	template <>
+	const std::u8string trim_chars<std::u8string> = u8"\t\n\v\f\r ";
 
-    inline std::string u16str_u8str(const char16_t * text, size_t length) { return wstr_u8str(reinterpret_cast<const wchar_t *>(text), length); }
-    inline std::u16string u8str_u16str(const char8_t * text, size_t length) { auto wstr = u8str_wstr(text, length); return std::u16string(wstr.begin(), wstr.end()); }
-    inline std::string u16str_u8str(std::u16string str) { return u16str_u8str(str.c_str(), str.length()); }
-    inline std::u16string u8str_u16str(std::string str) { return u8str_u16str(str.c_str(), str.length()); }
+	template <>
+	const std::wstring trim_chars<std::wstring> = L"\t\n\v\f\r ";
 
-    inline std::string u16str_astr(const char16_t * text, size_t length) { return wstr_astr(reinterpret_cast<const wchar_t *>(text), length); }
-    inline std::u16string astr_u16str(const char8_t * text, size_t length) { auto wstr = astr_wstr(text, length); return std::u16string(wstr.begin(), wstr.end()); }
-    inline std::string u16str_astr(std::u16string str) { return u16str_astr(str.c_str(), str.length()); }
-    inline std::u16string astr_u16str(std::string str) { return astr_u16str(str.c_str(), str.length()); }
+	template<typename string_t = std::string>
+	string_t & ltrim(string_t & str, const string_t & chars = trim_chars<string_t>)
+	{
+		str.erase(0, str.find_first_not_of(chars));
+		return str;
+	}
+
+	template<typename string_t = std::string>
+	string_t & rtrim(string_t & str, const string_t & chars = trim_chars<string_t>)
+	{
+		str.erase(str.find_last_not_of(chars) + 1);
+		return str;
+	}
+
+	template<typename string_t = std::string>
+	string_t & trim(string_t & str, const string_t & chars = trim_chars<string_t>) { return ltrim(rtrim(str, chars), chars); }
+
+
+	template<typename T>
+	inline bool char_equal(const T & c1, const T & c2) { return c1 == c2; }
+	template<typename T>
+	inline bool char_equal_ic(const T & c1, const T & c2) { return std::tolower((int)c1) == std::tolower((int)c2); }
+
+	template<typename string_t = std::string>
+	inline bool equal(const string_t & s1, const typename string_t::value_type * s2, size_t s2_length = string_t::npos)
+	{
+		if (s2_length == string_t::npos)
+			s2_length = core::textlen(s2);
+
+		return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal<typename string_t::value_type>);
+	}
+
+	template<typename T>
+	inline bool equal(const T * s1, size_t s1_length, const T * s2, size_t s2_length = core::npos)
+	{
+		if (s1_length == core::npos)
+			s1_length = core::textlen(s1);
+
+		if (s2_length == core::npos)
+			s2_length = core::textlen(s2);
+
+		if (s1_length != s2_length)
+			return false;
+
+		return std::equal(s1, s1 + s2_length, s2, s2 + s2_length, char_equal<T>);
+	}
+
+	template<typename string_t = std::string>
+	inline bool equal(const string_t & s1, const string_t & s2)
+	{
+		return std::equal(s1.begin(), s1.end(), s2.begin(), s2.end(), char_equal<typename string_t::value_type>);
+	}
+
+	template<typename string_t = std::string>
+	inline bool equal_ic(const string_t & s1, const typename string_t::value_type * s2, size_t s2_length = string_t::npos)
+	{
+		if (s2_length == string_t::npos)
+			s2_length = core::textlen(s2);
+
+		return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal_ic<typename string_t::value_type>);
+	}
+
+	template<typename T>
+	inline bool equal_ic(const T * s1, size_t s1_length, const T * s2, size_t s2_length = core::npos)
+	{
+		if (s1_length == core::npos)
+			s1_length = core::textlen(s1);
+
+		if (s2_length == core::npos)
+			s2_length = core::textlen(s2);
+
+		if (s1_length != s2_length)
+			return false;
+
+		return std::equal(s1, s1 + s2_length, s2, s2 + s2_length, char_equal_ic<T>);
+	}
+
+	template<typename string_t = std::string>
+	inline bool equal_ic(const string_t & s1, const string_t & s2)
+	{
+		return std::equal(s1.begin(), s1.end(), s2.begin(), s2.end(), char_equal_ic<typename string_t::value_type>);
+	}
+
+
+    std::u8string astr_u8str(const char * astr, size_t nchar);
+    std::string u8str_astr(const char8_t * u8str, size_t nu8char);
+    inline std::u8string astr_u8str(const std::string & astr) { return astr_u8str(astr.c_str(), astr.length()); }
+    inline std::string u8str_astr(const std::u8string & astr) { return u8str_astr(astr.c_str(), astr.length()); }
+
+    std::u8string wstr_u8str(const wchar_t * wstr, size_t nwchar);
+    std::wstring u8str_wstr(const char8_t * u8str, size_t nu8char);
+    inline std::u8string wstr_u8str(const std::wstring & wstr) { return wstr_u8str(wstr.c_str(), wstr.length()); }
+    inline std::wstring u8str_wstr(const std::u8string & u8str) { return u8str_wstr(u8str.c_str(), u8str.length()); }
+
+    std::string wstr_astr(const wchar_t * wstr, size_t nwchar);
+    std::wstring astr_wstr(const char * astr, size_t nchar);
+    inline std::string wstr_astr(const std::wstring & wstr) { return wstr_astr(wstr.c_str(), wstr.length()); }
+    inline std::wstring astr_wstr(const std::string & astr) { return astr_wstr(astr.c_str(), astr.length()); }
+
+    inline std::u8string u16str_u8str(const char16_t * u16str, size_t nu16char) { return wstr_u8str(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
+    inline std::u16string u8str_u16str(const char8_t * u8str, size_t nu8char) { auto wstr = u8str_wstr(u8str, nu8char); return std::u16string(wstr.begin(), wstr.end()); }
+    inline std::u8string u16str_u8str(const std::u16string & u16str) { return u16str_u8str(u16str.c_str(), u16str.length()); }
+    inline std::u16string u8str_u16str(const std::u8string & u8str) { return u8str_u16str(u8str.c_str(), u8str.length()); }
+
+    inline std::string u16str_astr(const char16_t * u16str, size_t nu16char) { return wstr_astr(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
+    inline std::u16string astr_u16str(const char * astr, size_t nchar) { auto wstr = astr_wstr(astr, nchar); return std::u16string(wstr.begin(), wstr.end()); }
+    inline std::string u16str_astr(const std::u16string & u16str) { return u16str_astr(u16str.c_str(), u16str.length()); }
+    inline std::u16string astr_u16str(const std::string & astr) { return astr_u16str(astr.c_str(), astr.length()); }
 
     struct less_ic
     {
@@ -58,81 +172,249 @@ namespace core
         }
     };
 
-    inline bool char_equal(const char & c1, const char & c2) { return c1 == c2; }
-    inline bool char_equal_ic(const char & c1, const char & c2) { return std::tolower(c1) == std::tolower(c2); }
-    inline bool equal(const char * s1, size_t s1_length, const char * s2, size_t s2_length = npos)
-    {
-        if (s1_length == npos)
-            s1_length = core::textlen(s1);
-        if (s2_length == npos)
-            s2_length = core::textlen(s2);
-        return std::equal(s1, s1 + s1_length, s2, s2 + s2_length, char_equal);
-    }
-
-    inline bool equal(const std::string & s1, const std::string & s2)
-    {
-        return std::equal(s1.begin(), s1.end(), s2.begin(), s2.end(), char_equal);
-    }
-
-    inline bool equal(const std::string_view & s1, const char * s2, size_t s2_length = npos)
-    {
-        if (s2_length == npos)
-            s2_length = core::textlen(s2);
-        return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal);
-    }
-
-    inline bool equal(const std::string & s1, const char * s2, size_t s2_length = npos)
-    {
-        if (s2_length == npos)
-            s2_length = core::textlen(s2);
-        return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal);
-    }
-
-
-    inline bool equal_ic(const char * s1, size_t s1_length, const char * s2, size_t s2_length = npos)
-    {
-        if (s1_length == npos)
-            s1_length = core::textlen(s1);
-        if (s2_length == npos)
-            s2_length = core::textlen(s2);
-        return std::equal(s1, s1 + s1_length, s2, s2 + s2_length, char_equal_ic);
-    }
-
-    inline bool equal_ic(const std::string & s1, const std::string & s2)
-    {
-        return std::equal(s1.begin(), s1.end(), s2.begin(), s2.end(), char_equal_ic);
-    }
-
-    inline bool equal_ic(const std::string_view & s1, const char * s2, size_t s2_length = npos)
-    {
-        if (s2_length == npos)
-            s2_length = core::textlen(s2);
-        return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal_ic);
-    }
-
-    inline bool equal_ic(const std::string & s1, const char * s2, size_t s2_length = npos)
-    {
-        if (s2_length == npos)
-            s2_length = core::textlen(s2);
-        return std::equal(s1.begin(), s1.end(), s2, s2 + s2_length, char_equal_ic);
-    }
-
-    inline void format_helper(std::ostringstream & stream) {}
+    inline void format_helper(std::u8ostringstream & stream) {}
 
     template<typename Head, typename ...Tail>
-    void format_helper(std::ostringstream & stream, const Head & head, Tail && ...tail)
+    void format_helper(std::u8ostringstream & stream, const Head & head, Tail && ...tail)
     {
         stream << head;
         return format_helper(stream, std::forward<Tail>(tail)...);
     }
 
     template<typename ...Args>
-    std::string format(Args && ...args)
+    std::u8string format(Args && ...args)
     {
-        std::ostringstream stream;
+        std::u8ostringstream stream;
         format_helper(stream, std::forward<Args>(args)...);
         return stream.str();
     }
 
-    std::string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes);
+    std::u8string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes);
+}
+
+namespace std
+{
+	//----------------------------------------  __fixed_op
+	inline std::u8ostream & __fixed_op(std::u8ostream & _Ostr, const char * astr)
+	{
+		return _Ostr << astr;
+	}
+
+	inline std::u8ostream & __fixed_op(std::u8ostream && _Ostr, const char * astr)
+	{
+		return _Ostr << astr;
+	}
+
+	inline std::u8ostream & __fixed_op(std::u8ostream & _Ostr, const char8_t * u8str)
+	{
+		return _Ostr << u8str;
+	}
+
+	inline std::u8ostream & __fixed_op(std::u8ostream && _Ostr, const char8_t * u8str)
+	{
+		return _Ostr << u8str;
+	}
+	//----------------------------------------
+
+	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const char * astr)
+	{
+		if (!astr)
+			//return __fixed_op(_Ostr, "");
+			return _Ostr;
+		else
+			return __fixed_op(_Ostr, astr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const char * astr)
+	{
+		if (!astr)
+			//return __fixed_op(_Ostr, "");
+			return _Ostr;
+		else
+			return __fixed_op(_Ostr, astr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const std::string & astr)
+	{
+		return _Ostr << reinterpret_cast<const std::u8string &>(astr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const std::string & astr)
+	{
+		return _Ostr << reinterpret_cast<const std::u8string &>(astr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const char8_t * u8str)
+	{
+		if (!u8str)
+			//return __fixed_op(_Ostr, u8"");
+			return _Ostr;
+		else
+			return __fixed_op(_Ostr, u8str);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const char8_t * u8str)
+	{
+		if (!u8str)
+			//return __fixed_op(_Ostr, u8"");
+			return _Ostr;
+		else
+			return __fixed_op(_Ostr, u8str);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const wchar_t * wstr)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str(wstr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const wchar_t * wstr)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str(wstr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const std::wstring & wstr)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str(wstr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const std::wstring & wstr)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str(wstr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const std::u16string & u16str)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const std::u16string & u16str)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
+	}
+
+
+	//-------------------------------------
+	//----------------------------
+
+	//----------------------------------------  __fixed_op
+	inline std::ostream & __fixed_op(std::ostream & _Ostr, const char * astr)
+	{
+		return _Ostr << astr;
+	}
+
+	inline std::ostream & __fixed_op(std::ostream && _Ostr, const char * astr)
+	{
+		return _Ostr << astr;
+	}
+
+	inline std::ostream & __fixed_op(std::ostream & _Ostr, const char8_t * u8str)
+	{
+		return _Ostr << reinterpret_cast<const char *>(u8str);
+	}
+
+	inline std::ostream & __fixed_op(std::ostream && _Ostr, const char8_t * u8str)
+	{
+		return _Ostr << reinterpret_cast<const char *>(u8str);
+	}
+	//----------------------------------------
+
+	inline std::ostream & operator<<(std::ostream & _Ostr, const char * astr)
+	{
+		if (!astr)
+			//return __fixed_op(_Ostr, "");
+			return _Ostr;
+		else
+			return __fixed_op(_Ostr, astr);
+	}
+
+	inline std::ostream & operator<<(std::ostream && _Ostr, const char * astr)
+	{
+		if (!astr)
+			//return __fixed_op(_Ostr, "");
+			return _Ostr;
+		else
+			return __fixed_op(_Ostr, astr);
+	}
+
+	inline std::ostream & operator<<(std::ostream & _Ostr, const std::u8string & u8str)
+	{
+		return _Ostr << reinterpret_cast<const std::string &>(u8str);
+	}
+
+	inline std::ostream & operator<<(std::ostream && _Ostr, const std::u8string & u8str)
+	{
+		return _Ostr << reinterpret_cast<const std::string &>(u8str);
+	}
+
+	inline std::ostream & operator<<(std::ostream & _Ostr, const char8_t * u8str)
+	{
+		if (!u8str)
+			//return __fixed_op(_Ostr, u8"");
+			return _Ostr;
+		else
+			return __fixed_op(_Ostr, u8str);
+	}
+
+	inline std::ostream & operator<<(std::ostream && _Ostr, const char8_t * u8str)
+	{
+		if (!u8str)
+			//return __fixed_op(_Ostr, u8"");
+			return _Ostr;
+		else
+			return __fixed_op(_Ostr, u8str);
+	}
+
+	inline std::ostream & operator<<(std::ostream & _Ostr, const wchar_t * wstr)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str(wstr);
+	}
+
+	inline std::ostream & operator<<(std::ostream && _Ostr, const wchar_t * wstr)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str(wstr);
+	}
+
+	inline std::ostream & operator<<(std::ostream & _Ostr, const std::wstring & wstr)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str(wstr);
+	}
+
+	inline std::ostream & operator<<(std::ostream && _Ostr, const std::wstring & wstr)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str(wstr);
+	}
+
+	inline std::ostream & operator<<(std::ostream & _Ostr, const std::u16string & u16str)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
+	}
+
+	inline std::ostream & operator<<(std::ostream && _Ostr, const std::u16string & u16str)
+	{
+		if (!_Ostr.good())
+			return _Ostr;
+		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
+	}
 }

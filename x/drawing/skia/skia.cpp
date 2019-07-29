@@ -26,7 +26,7 @@ namespace drawing::skia
     void fontmetrics(const drawing::font & font, drawing::fontmetrics & metrics)
     {
         sk_sp<SkFontMgr> fontMgr = SkFontMgr::RefDefault();
-        auto tf =fontMgr->matchFamilyStyle(font.family.c_str(), from(font.style));
+        auto tf =fontMgr->matchFamilyStyle(reinterpret_cast<const char *>(font.family.c_str()), from(font.style));
 
         SkPaint paint;
         paint.setTypeface(sk_ref_sp(tf));

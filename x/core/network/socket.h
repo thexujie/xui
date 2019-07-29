@@ -24,13 +24,13 @@ namespace core::network
     {
     public:
         socket();
-        socket(std::string host, port_t port, std::chrono::microseconds timeout);
+        socket(const std::u8string & host, port_t port, std::chrono::microseconds timeout);
         socket(netaddr addr, port_t port, std::chrono::microseconds timeout);
         ~socket();
 
         socket_state state() const;
         core::error set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write);
-        core::error connect(std::string host, port_t port, std::chrono::microseconds timeout);
+        core::error connect(const std::u8string & host, port_t port, std::chrono::microseconds timeout);
         core::error connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
         void close();
 

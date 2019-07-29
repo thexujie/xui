@@ -96,7 +96,7 @@ namespace drawing::image::formats
 
     bool is_tga_data(const byte_t * buffer, size_t length);
     core::error tga_create(image_codec_context & ictx, const byte_t * buffer, size_t length, image_data_t & image);
-    core::error tga_save(const image_data_t & data, std::string path);
+    core::error tga_save(const image_data_t & data, const std::u8string & path);
 
     core::error image_convert_tga_rle8(image_codec_context & icctx, const image_data_t & src, image_data_t & dst);
 

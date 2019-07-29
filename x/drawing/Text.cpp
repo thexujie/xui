@@ -188,7 +188,7 @@ namespace drawing
         auto iter = _font_indices.find(font);
         if (iter == _font_indices.end())
         {
-            auto sktypeface = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(font.family.c_str(), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref<>);
+            auto sktypeface = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(reinterpret_cast<const char *>(font.family.c_str()), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref<>);
             auto hbfont = create_hb_font(sktypeface.get());
             if(!sktypeface || !hbfont)
                 throw core::error_not_supported;
@@ -437,7 +437,7 @@ namespace drawing
         for (auto & item : _items)
         {
             hb_buffer_clear_contents(_hbbuffer.get());
-            hb_buffer_add_utf8(_hbbuffer.get(), _text.c_str(), (int32_t)_text.length(), item.trange.index, item.trange.length);
+            hb_buffer_add_utf8(_hbbuffer.get(), reinterpret_cast<const char *>(_text.c_str()), (int32_t)_text.length(), item.trange.index, item.trange.length);
             // TODO: features
             auto & font_cache = _shaper.cache(item.font);
             auto & hbfont = _shaper.hbfont(item.font);

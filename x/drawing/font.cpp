@@ -31,7 +31,7 @@ namespace drawing
         *this = __default_font;
     }
 
-    font::font(const char * family_, float_t size_, font_style style_)
+    font::font(const char8_t * family_, float_t size_, font_style style_)
         : style(style_)
     {
         if (!family_ || !family_[0] || size_ <= 0)
@@ -47,7 +47,7 @@ namespace drawing
         }
     }
 
-    font::font(const std::string & family_, float_t size_, font_style style_)
+    font::font(const std::u8string & family_, float_t size_, font_style style_)
         : style(style_)
     {
         if (family_.empty() || size_ <= 0)

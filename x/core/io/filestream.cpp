@@ -5,9 +5,9 @@ namespace core::io
 {
     filestream::filestream() { }
 
-    filestream::filestream(std::string path)
+    filestream::filestream(const std::u8string & path)
     {
-        _fs.open(path, std::ios_base::binary | std::ios_base::in);
+        _fs.open(reinterpret_cast<const std::string &>(path), std::ios_base::binary | std::ios_base::in);
     }
 
     filestream::~filestream() { }
@@ -27,7 +27,7 @@ namespace core::io
         return { error_ok, _fs.gcount() };
     }
 
-    std::tuple<std::shared_ptr<byte_t>, int64_t> readFullFile(std::string path)
+    std::tuple<std::shared_ptr<byte_t>, int64_t> readFullFile(const std::u8string & path)
     {
         std::fstream fs;
         fs.open(core::u8str_wstr(path), std::ios::in | std::ios::binary);

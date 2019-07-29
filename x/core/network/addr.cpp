@@ -9,7 +9,7 @@
 
 namespace core::network
 {
-    std::vector<netaddr> host2addrs(const std::string & hostname)
+    std::vector<netaddr> host2addrs(const std::u8string & hostname)
     {
         struct addrinfo hints = {};
         hints.ai_flags = 0/*AI_NUMERICHOST*/;
@@ -17,7 +17,7 @@ namespace core::network
         hints.ai_socktype = 0;
         hints.ai_protocol = 0;
         struct addrinfo * res = nullptr;
-        int err = getaddrinfo(hostname.c_str(), NULL, &hints, &res);
+        int err = getaddrinfo(reinterpret_cast<const char *>(hostname.c_str()), NULL, &hints, &res);
         if (!err && res)
         {
             std::vector<netaddr> vec;

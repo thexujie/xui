@@ -1,59 +1,173 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="main\main.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="main\all.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="main\views.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="main\ListView.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="main\View.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="main\ViewItem.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="main\Menu.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="main\ListView.h">
-      <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="main\View.h">
-      <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="main\ViewItem.h">
-      <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="main\Menu.h">
-      <Filter>main</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
+    <Filter Include="ui">
+      <UniqueIdentifier>{183c2186-89b2-4cd9-b6b0-1477bd3c5f5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\base">
+      <UniqueIdentifier>{4bb9b846-5988-4976-9078-63719884798a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\component">
+      <UniqueIdentifier>{1dbb0cf8-f225-4184-9c72-a484d9a9ce57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\controls">
+      <UniqueIdentifier>{bcd1878d-c979-4a6f-9f37-a996cdce5318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\controlsex">
+      <UniqueIdentifier>{47d25aa0-a594-49bd-9dbd-e61e179d949b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="win32">
-      <UniqueIdentifier>{a88dfbcf-0f88-4960-a408-6112a362b37d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="main">
-      <UniqueIdentifier>{88779072-c8c3-48d8-b1d9-fd7315e9672e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="samples">
-      <UniqueIdentifier>{0f904187-4471-42fa-8f27-bb675c5afac1}</UniqueIdentifier>
+      <UniqueIdentifier>{4c6e2485-f4d6-405f-9e04-fe807e99650a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="samples\test.css">
-      <Filter>samples</Filter>
-    </None>
-    <None Include="roadmap.md" />
+    <ClCompile Include="ui\base\Button.cpp">
+      <Filter>ui\base</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\base\Check.cpp">
+      <Filter>ui\base</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\base\Radio.cpp">
+      <Filter>ui\base</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\component\Component.cpp">
+      <Filter>ui\component</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\component\Style.cpp">
+      <Filter>ui\component</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Button.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Check.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Image.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Lable.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Radio.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\ScrollBar.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\Spacer.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controls\TextLine.cpp">
+      <Filter>ui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controlsex\TitleBar.cpp">
+      <Filter>ui\controlsex</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Container.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Control.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Desktop.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Form.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Grid.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\RadioGroup.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UICommon.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\ImeContext.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\Window.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ui\base\Button.h">
+      <Filter>ui\base</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\base\Check.h">
+      <Filter>ui\base</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\base\Radio.h">
+      <Filter>ui\base</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\component\Component.h">
+      <Filter>ui\component</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\component\Style.h">
+      <Filter>ui\component</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Button.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Check.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Image.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Lable.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Radio.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\ScrollBar.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\Spacer.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controls\TextLine.h">
+      <Filter>ui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controlsex\TitleBar.h">
+      <Filter>ui\controlsex</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Container.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Control.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Desktop.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Form.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Grid.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\RadioGroup.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UICommon.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\comptr.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\ImeContext.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Window.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
 </Project>

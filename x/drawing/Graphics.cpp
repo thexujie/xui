@@ -256,7 +256,7 @@ namespace drawing
 		_native->drawRegion(region->native(), paint);
 	}
 
-    void Graphics::drawString(const std::string & str, const core::pointf & pos, const StringFormat & format)
+    void Graphics::drawString(const std::u8string & str, const core::pointf & pos, const StringFormat & format)
     {
         ++_statistics.drawString___const_std_string_ref__core_pt32f_const_StringFormat_ref;
         if (!_native)
@@ -287,7 +287,7 @@ namespace drawing
         _native->drawTextBlob(blob.get(), point.x, point.y, paint);
     }
 
-    void Graphics::drawString(const std::string & str, const core::rectf & rect, const StringFormat & format)
+    void Graphics::drawString(const std::u8string & str, const core::rectf & rect, const StringFormat & format)
     {
         ++_statistics.drawString___const_std_string_ref__core_rc32f_const_StringFormat_ref;
         if (!_native)
@@ -558,7 +558,7 @@ namespace drawing
         //return _native->GetFontMetrics(font);
     }
 
-    core::sizei Graphics::MeasureString(std::string str, font font)
+    core::sizei Graphics::MeasureString(std::u8string str, font font)
     {
         if (!_native)
             return {};

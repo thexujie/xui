@@ -103,7 +103,7 @@ namespace drawing::image::formats
 
     bool is_bmp_data(const byte_t * buffer, size_t length);
     core::error bmp_create(image_codec_context & ictx, const byte_t * buffer, size_t length, image_data_t & image);
-    core::error bmp_save(const image_data_t & data, std::string path);
+    core::error bmp_save(const image_data_t & data, const std::u8string & path);
     /**
     * Bmp 文件的 rle index4 压缩方式，使用索引色。
     * rle 压缩 src_stride 和 src_pitch 没有意义。

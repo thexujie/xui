@@ -4,7 +4,7 @@
 
 namespace core
 {
-    void dbg_output(std::string str)
+    void dbg_output(std::u8string str)
     {
         auto strw = core::u8str_wstr(str);
         strw.append(L"\r\n");

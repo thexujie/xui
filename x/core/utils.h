@@ -34,7 +34,7 @@ namespace core
             breakpoint();
     }
 
-    void dbg_output(std::string str);
+    void dbg_output(std::u8string str);
 
     /**
     * @} // VenusCore-Base-Fun
@@ -1143,7 +1143,7 @@ namespace core
 
 #pragma endregion
 
-    inline size_t utf32_to_utf8(const char32_t & ch, char * text, size_t size)
+    inline size_t utf32_to_utf8(const char32_t & ch, char8_t * text, size_t size)
     {
         if (ch <= 0x7F && size > 0)
         {
@@ -1174,7 +1174,7 @@ namespace core
         return 0;
     }
 
-    inline size_t utf8_to_utf32(const char * text, size_t size, char32_t & ch)
+    inline size_t utf8_to_utf32(const char8_t * text, size_t size, char32_t & ch)
     {
         if (!size)
         {

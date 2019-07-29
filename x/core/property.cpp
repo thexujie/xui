@@ -43,18 +43,18 @@ namespace core
         return true;
     }
 
-    template<> std::string property_parser<std::string>(const std::string & str)
+    template<> std::u8string property_parser<std::u8string>(const std::u8string & str)
     {
-        return std::string(str.data(), str.length());
+        return std::u8string(str.data(), str.length());
     }
 
-    template<> bool property_parser<bool>(const std::string & str)
+    template<> bool property_parser<bool>(const std::u8string & str)
     {
-        return !core::equal_ic(str, "false");
+        return !core::equal_ic(str, u8"false");
     }
 
     template<>
-    core::color property_parser<core::color>(const std::string & str)
+    core::color property_parser<core::color>(const std::u8string & str)
     {
         if (str.empty())
             return colors::Auto;
@@ -133,9 +133,9 @@ namespace core
         return colors::Auto;
     }
 
-    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::string & str)
+    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::u8string & str)
     {
-        std::vector<std::string> strs = core::split(str, ' ');
+        std::vector<std::u8string> strs = core::split(str, ' ');
         if (strs.size() == 1)
             return core::vec2<core::color>{ property_parser<core::color>(strs[0])};
         if (strs.size() == 2)
@@ -143,9 +143,9 @@ namespace core
         return {};
     }
 
-    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::string & str)
+    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::u8string & str)
     {
-        std::vector<std::string> strs = core::split(str, ' ');
+        std::vector<std::u8string> strs = core::split(str, ' ');
         if (strs.size() == 1)
             return core::vec4<core::color>{ property_parser<core::color>(strs[0])};
         if (strs.size() == 2)
@@ -155,21 +155,21 @@ namespace core
         return {};
     }
 
-    template<> core::dimenf property_parser<core::dimenf>(const std::string & str)
+    template<> core::dimenf property_parser<core::dimenf>(const std::u8string & str)
     {
         for (auto & uint_name : unit_names)
         {
             size_t pos = str.rfind(uint_name.name, -1);
-            if (pos != std::string::npos)
+            if (pos != std::u8string::npos)
                 return core::dimenf(core::texttof32(str.data(), pos), uint_name.unit);
         }
 
         return {};
     }
 
-    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::string & str)
+    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::u8string & str)
     {
-        std::vector<std::string> strs = core::split(str, ' ');
+        std::vector<std::u8string> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec2<core::dimenf>{ property_parser<core::dimenf>(strs[0]) };
         if (strs.size() == 2)
@@ -177,9 +177,9 @@ namespace core
         return {};
     }
 
-    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::string & str)
+    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::u8string & str)
     {
-        std::vector<std::string> strs = core::split(str, ' ');
+        std::vector<std::u8string> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec4<core::dimenf>{ property_parser<core::dimenf>(strs[0]) };
         if (strs.size() == 2)
@@ -189,15 +189,15 @@ namespace core
         return {};
     }
 
-    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::string & str)
+    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::u8string & str)
     {
         auto end = str.end();
         char * curr = nullptr;
-        int64_t val = std::strtoll(str.c_str(), &curr, 10);
+        int64_t val = std::strtoll(reinterpret_cast<const char *>(str.c_str()), &curr, 10);
         if (errno == ERANGE)
             return {};
 
-        if (curr && curr[0] == 's')
+        if (curr && curr[0] == u8's')
             return std::chrono::seconds(val);
         return std::chrono::milliseconds(val);
     }

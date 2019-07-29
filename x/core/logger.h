@@ -28,84 +28,18 @@ namespace core
 // ¿ØÖÆÊä³öÆµÂÊ
 namespace std
 {
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const core::logger_period & fps)
+	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const core::logger_period & fps)
+	{
+		if (_Ostr.good())
+			fps.ok() ? _Ostr.setstate(std::ios_base::goodbit) : _Ostr.setstate(std::ios_base::eofbit);
+		return _Ostr;
+	}
+
+    inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const core::logger_period & fps)
     {
         if (_Ostr.good())
             fps.ok() ? _Ostr.setstate(std::ios_base::goodbit) : _Ostr.setstate(std::ios_base::eofbit);
         return _Ostr;
-    }
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const core::logger_period & fps)
-    {
-        if (_Ostr.good())
-            fps.ok() ? _Ostr.setstate(std::ios_base::goodbit) : _Ostr.setstate(std::ios_base::eofbit);
-        return _Ostr;
-    }
-}
-
-namespace std
-{
-    inline std::basic_ostream<char, std::char_traits<char>> & __fixed_op(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const char * _Val)
-    {
-        return _Ostr << _Val;
-    }
-
-    inline std::basic_ostream<char, std::char_traits<char>> & __fixed_op(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const char * _Val)
-    {
-        return _Ostr << _Val;
-    }
-
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const char * _Val)
-    {
-        if (!_Val)
-            return __fixed_op(_Ostr, "");
-        else
-            return __fixed_op(_Ostr, _Val);
-    }
-
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const char * _Val)
-    {
-        if (!_Val)
-            return __fixed_op(_Ostr, "");
-        else
-            return __fixed_op(_Ostr, _Val);
-    }
-
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const wchar_t * _Val)
-    {
-        if (!_Ostr.good())
-            return _Ostr;
-        return _Ostr << core::wstr_u8str(_Val);
-    }
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const wchar_t * _Val)
-    {
-        if (!_Ostr.good())
-            return _Ostr;
-        return _Ostr << core::wstr_u8str(_Val);
-    }
-
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const std::wstring & _Val)
-    {
-        if (!_Ostr.good())
-            return _Ostr;
-        return _Ostr << core::wstr_u8str(_Val);
-    }
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const std::wstring & _Val)
-    {
-        if (!_Ostr.good())
-            return _Ostr;
-        return _Ostr << core::wstr_u8str(_Val);
-    }
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> && _Ostr, const std::u16string & _Val)
-    {
-        if (!_Ostr.good())
-            return _Ostr;
-        return _Ostr << core::wstr_u8str((const wchar_t *)_Val.c_str(), _Val.length());
-    }
-    inline std::basic_ostream<char, std::char_traits<char>> & operator<<(std::basic_ostream<char, std::char_traits<char>> & _Ostr, const std::u16string & _Val)
-    {
-        if (!_Ostr.good())
-            return _Ostr;
-        return _Ostr << core::wstr_u8str((const wchar_t *)_Val.c_str(), _Val.length());
     }
 }
 
@@ -129,7 +63,7 @@ namespace core
         null_logger_stream & operator << (T && v) { return *this; }
     };
 
-    class logger_stream : public std::ostream, private std::streambuf
+    class logger_stream : public std::u8ostream, private std::u8streambuf
     {
     public:
         logger_stream(class logger & logger, log_e lg);
@@ -139,9 +73,9 @@ namespace core
         void set_lg(log_e lg);
 
         int overflow(int ch);
-        std::streamsize xsputn(const char * s, std::streamsize n);
-        int sync();
-        std::ostream & os() { return *this; }
+        std::streamsize xsputn(const char8_t * s, std::streamsize n) override;
+        int sync() override;
+        std::u8ostream & os() { return *this; }
 
     private:
         log_e _lg_curr = log_e::log_dbg;
@@ -154,23 +88,23 @@ namespace core
     {
     public:
         logger();
-        logger(std::string path, log_e lg);
+        logger(std::u8string path, log_e lg);
         logger(logger && another) = default;
         ~logger();
 
         void set_lg(log_e lg) { _lg = lg; }
         log_e lg() const { return _lg; }
-        void set_proxy(void * opaque, std::function<void(void * opaque, uint32_t level, uint64_t time_ms, uint32_t pid, uint32_t tid, const char * data, uint32_t length)> proxy) { _proxy_opaque = opaque;  _proxy = proxy; }
-        error open(std::string path);
+        void set_proxy(void * opaque, std::function<void(void * opaque, uint32_t level, uint64_t time_ms, uint32_t pid, uint32_t tid, const char8_t * data, uint32_t length)> proxy) { _proxy_opaque = opaque;  _proxy = proxy; }
+        error open(const std::u8string & path);
         void close();
         void flush();
 
-        error log_to_buffer(uint32_t pid, uint32_t tid, log_e lg, std::string text);
+        error log_to_buffer(uint32_t pid, uint32_t tid, log_e lg, const std::u8string & text);
 
-        error write(log_e lg, std::string text);
+        error write(log_e lg, const std::u8string & text);
 
-        error line(log_e lg, std::string text);
-        error line(log_e lg, const char * text, int32_t length = -1);
+        error line(log_e lg, const std::u8string & text);
+        error line(log_e lg, const char8_t * text, int32_t length = -1);
 
         operator std::fstream & () { return _fs; }
 
@@ -204,17 +138,17 @@ namespace core
         std::atomic_bool _debug_output = false;
 
         log_e _lg = log_e::log_dbg;
-        std::string _line_tag = "\r\n";
+        std::u8string _line_tag = u8"\r\n";
         std::fstream _fs;
         void * _proxy_opaque = nullptr;
-        std::function<void(void * opaque, uint32_t level, uint64_t time_ms, uint32_t pid, uint32_t tid, const char * data, uint32_t length)> _proxy;
+        std::function<void(void * opaque, uint32_t level, uint64_t time_ms, uint32_t pid, uint32_t tid, const char8_t * data, uint32_t length)> _proxy;
         struct log_item
         {
             log_e lg;
             uint64_t time_ms;
             uint32_t pid;
             uint32_t tid;
-            std::string text;
+            std::u8string text;
         };
         std::list<log_item> _log_list;
         int64_t _line = 0;
@@ -225,13 +159,13 @@ namespace core
     {
     public:
         global_logger();
-        global_logger(std::string path, log_e lg);
+        global_logger(const std::u8string & path, log_e lg);
         ~global_logger();
 
-        static void start(std::string path, log_e lg);
+        static void start(const std::u8string & path, log_e lg);
         static void stop();
 
-        static void set_proxy(void * opaque, std::function<void(void * opaque, uint32_t level, uint64_t time_ms, uint32_t pid, uint32_t tid, const char * data, uint32_t length)> proxy);
+        static void set_proxy(void * opaque, std::function<void(void * opaque, uint32_t level, uint64_t time_ms, uint32_t pid, uint32_t tid, const char8_t * data, uint32_t length)> proxy);
         static logger & ref();
         static logger & instance();
 

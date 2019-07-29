@@ -23,7 +23,7 @@ namespace core::network
         connect(addr, port, timeout);
     }
 
-    http::http(std::string host, port_t port, std::chrono::microseconds timeout)
+    http::http(const std::u8string & host, port_t port, std::chrono::microseconds timeout)
     {
         connect(host, port, timeout);
     }
@@ -54,7 +54,7 @@ namespace core::network
         return _socket->set_timeout(timeout_read, timeout_write);
     }
 
-    core::error http::connect(std::string host, port_t port, std::chrono::microseconds timeout)
+    core::error http::connect(const std::u8string & host, port_t port, std::chrono::microseconds timeout)
     {
         if (_socket)
         {

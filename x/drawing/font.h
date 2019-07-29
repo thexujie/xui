@@ -71,8 +71,8 @@ namespace drawing
     struct font
     {
         font();
-        font(const char * family_, float_t size_ = 0, font_style style_ = font_style());
-        font(const std::string & family_, float_t size_= 0, font_style style_ = font_style());
+        font(const char8_t * family_, float_t size_ = 0, font_style style_ = font_style());
+        font(const std::u8string & family_, float_t size_= 0, font_style style_ = font_style());
         font(const font & another) = default;
 
         font & operator =(const font & another)
@@ -95,7 +95,7 @@ namespace drawing
             return !operator==(another);
         }
 
-        std::string family;
+        std::u8string family;
         float_t size = 0;
         font_style style;
     };
@@ -128,7 +128,7 @@ namespace std
     public:
         size_t operator()(const drawing::font & font) const
         {
-            size_t h1 = std::hash<std::string>()(font.family);
+            size_t h1 = std::hash<std::u8string>()(font.family);
             size_t h2 = std::hash<float32_t>()(font.size);
             size_t h3 = std::hash<drawing::font_weight>()(font.style.weight);
             size_t h4 = std::hash<drawing::font_width>()(font.style.width);

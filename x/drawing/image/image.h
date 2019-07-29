@@ -447,7 +447,7 @@ namespace drawing::image
         memcpy_s(dst, dst_size, src, length);
     }
 
-    core::error image_load(std::string path, image_data_t & img);
+    core::error image_load(const std::u8string & path, image_data_t & img);
 
     image_type image_get_type_from_ext(const char * ext, size_t length = core::npos);
     image_type image_get_type(const byte_t * buffer, size_t length);

@@ -86,8 +86,7 @@ namespace core
         if (!thread_id)
             thread_id = GetCurrentThreadId();
 
-        std::string namea = core::u8str_astr(name);
-        __thread_set_name(thread_id, namea.c_str());
+        __thread_set_name(thread_id, name.c_str());
     }
 
     void thread_set_priority(thread_priority priority)

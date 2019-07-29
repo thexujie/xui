@@ -109,8 +109,8 @@ namespace drawing
 		void drawRegion(const Region & region, const PathStyle & style);
 		void drawRegion(const std::shared_ptr<drawing::Region> & region, const PathStyle & style);
 
-        void drawString(const std::string & str, const core::pointf & pos, const StringFormat & format);
-        void drawString(const std::string & str, const core::rectf & rect, const StringFormat & format);
+        void drawString(const std::u8string & str, const core::pointf & pos, const StringFormat & format);
+        void drawString(const std::u8string & str, const core::rectf & rect, const StringFormat & format);
         void drawText(const drawing::Text & text, core::pointf point, const StringFormat & format);
 
         void drawImage(const Image & image, core::pointf point, core::aligns align, const ImageFormat & format = {});
@@ -129,7 +129,7 @@ namespace drawing
         const drawcall_statistics & statistics() const { return _statistics; }
         void fillPath(path_source & path, core::color color);
         fontmetrics GetFontMetrics(font font);
-        core::sizei MeasureString(std::string str, font font);
+        core::sizei MeasureString(std::u8string str, font font);
 
     public:
         std::shared_ptr<SkCanvas> native_shared() { return _native; }

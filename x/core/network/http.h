@@ -40,7 +40,7 @@ namespace core::network
     public:
         http();
         http(netaddr addr, port_t port, std::chrono::microseconds timeout);
-        http(std::string host, port_t port, std::chrono::microseconds timeout);
+        http(const std::u8string & host, port_t port, std::chrono::microseconds timeout);
         http(std::shared_ptr<socket> socket);
         ~http();
 
@@ -48,7 +48,7 @@ namespace core::network
         std::shared_ptr<socket> socket() const;
 
         core::error set_timeout(std::chrono::microseconds timeout_read, std::chrono::microseconds timeout_write);
-        core::error connect(std::string host, port_t port, std::chrono::microseconds timeout);
+        core::error connect(const std::u8string & host, port_t port, std::chrono::microseconds timeout);
         core::error connect(netaddr addr, port_t port, std::chrono::microseconds timeout);
         void close();
 

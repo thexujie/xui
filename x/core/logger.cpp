@@ -25,13 +25,13 @@ namespace core
         return true;
     }
 
-    logger_stream::logger_stream(class logger & logger, log_e lg) :std::ostream(this), _logger(logger)
+    logger_stream::logger_stream(class logger & logger, log_e lg) :std::u8ostream(this), _logger(logger)
     {
         if (&_logger != nullptr)
             _lg = _logger.lg();
         set_lg(lg);
     }
-    logger_stream::logger_stream(const logger_stream & another) : std::ostream(this), _logger(another._logger)
+    logger_stream::logger_stream(const logger_stream & another) : std::u8ostream(this), _logger(another._logger)
     {
         if (&_logger != nullptr)
             _lg = _logger.lg();
@@ -43,7 +43,8 @@ namespace core
         {
             if (&_logger != nullptr)
             {
-                _logger.line(_lg, _buffer.str());
+				std::string text = _buffer.str();
+                _logger.line(_lg, (const std::u8string &)text);
                 _logger.flush();
             }
             _buffer.pubseekoff(0, std::ios::beg);
@@ -63,9 +64,9 @@ namespace core
         return &_logger != nullptr ? _buffer.sputc(ch) : 0;
     }
 
-    std::streamsize logger_stream::xsputn(const char * s, std::streamsize n)
+    std::streamsize logger_stream::xsputn(const char8_t * s, std::streamsize n)
     {
-        return &_logger != nullptr ? _buffer.sputn(s, n) : 0;
+        return &_logger != nullptr ? _buffer.sputn((const char *)s, n) : 0;
     }
 
     int logger_stream::logger_stream::sync()
@@ -80,7 +81,7 @@ namespace core
         _thread = std::thread(std::bind(&logger::writeThread, this));
     }
 
-    logger::logger(std::string path, log_e lg) : _lg(lg)
+    logger::logger(std::u8string path, log_e lg) : _lg(lg)
     {
         open(path);
         _thread = std::thread(std::bind(&logger::writeThread, this));
@@ -91,12 +92,12 @@ namespace core
         close();
     }
 
-    error logger::open(std::string path)
+    error logger::open(const std::u8string & path)
     {
         if (path.empty())
             return error_args;
 
-        _fs.open(path, std::fstream::binary | std::fstream::out | std::fstream::app);
+        _fs.open(reinterpret_cast<const std::string &>(path), std::fstream::binary | std::fstream::out | std::fstream::app);
         return _fs.good() ? error_ok : error_io;
     }
 
@@ -122,7 +123,7 @@ namespace core
             _fs.flush();
     }
 
-    error logger::log_to_buffer(uint32_t pid, uint32_t tid, log_e lg, std::string text)
+    error logger::log_to_buffer(uint32_t pid, uint32_t tid, log_e lg, const std::u8string & text)
     {
         if (_line_curr == _line)
             return error_ok;
@@ -149,23 +150,23 @@ namespace core
         return error_ok;
     }
 
-    error logger::write(log_e lg, std::string text)
+    error logger::write(log_e lg, const std::u8string & text)
     {
         error err = log_to_buffer(-1, -1, lg, text);
         ++_line;
         return err;
     }
 
-    error logger::line(log_e lg, std::string text)
+    error logger::line(log_e lg, const std::u8string & text)
     {
         error err = log_to_buffer(-1, -1, lg, text);
         ++_line;
         return err;
     }
 
-    error logger::line(log_e lg, const char * text, int32_t length)
+    error logger::line(log_e lg, const char8_t * text, int32_t length)
     {
-        error err = log_to_buffer(-1, -1, lg, std::string(text, length));
+        error err = log_to_buffer(-1, -1, lg, std::u8string(text, length));
         ++_line;
         return err;
     }
@@ -206,17 +207,17 @@ namespace core
                         item.pid, item.tid,
                         level[std::clamp((int32_t)item.lg, 0, (int32_t)std::size(level))]);
 
-                    std::string log_text(temp, nchars);
+                    std::u8string log_text((const char8_t *)temp, nchars);
                     log_text += item.text;
                     log_text += _line_tag;
 
                     if (_console)
-                        std::cout << item.text;
+                        std::cout << reinterpret_cast<const std::string &>(item.text);
 
                     if (_debug_output)
                         OutputDebugStringW(core::u8str_wstr(log_text).data());
 
-                    _fs.write(log_text.data(), log_text.length());
+                    _fs.write(reinterpret_cast<const char *>(log_text.data()), log_text.length());
                 }
             }
             _fs.flush();
@@ -233,7 +234,7 @@ namespace core
             __global_logger = std::make_shared<logger>();
     }
 
-    global_logger::global_logger(std::string path, log_e lg)
+    global_logger::global_logger(const std::u8string & path, log_e lg)
     {
         std::cout << std::endl << "log file " << path << std::endl;
         std::lock_guard<std::mutex> lock(__mtx_global_logger);
@@ -245,7 +246,7 @@ namespace core
     {
     }
 
-    void global_logger::start(std::string path, log_e lg)
+    void global_logger::start(const std::u8string & path, log_e lg)
     {
         //std::cout << std::endl << "log file " << path << std::endl;
         std::lock_guard<std::mutex> lock(__mtx_global_logger);
@@ -258,7 +259,7 @@ namespace core
         __global_logger.reset();
     }
 
-    void global_logger::set_proxy(void * opaque, std::function<void(void * opaque, uint32_t level, uint64_t time_ms, uint32_t pid, uint32_t tid, const char * data, uint32_t length)> proxy)
+    void global_logger::set_proxy(void * opaque, std::function<void(void * opaque, uint32_t level, uint64_t time_ms, uint32_t pid, uint32_t tid, const char8_t * data, uint32_t length)> proxy)
     {
         if (__global_logger)
             __global_logger->set_proxy(opaque, proxy);
