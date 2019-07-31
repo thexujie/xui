@@ -2,7 +2,7 @@
 
 #include "RHI/RHI.h"
 #include "d3d12/d3d12.h"
-#include "RHI/RHI.h"
+#include "RHID3D12Utils.h"
 
 namespace RHI::RHID3D12
 {
@@ -20,23 +20,6 @@ namespace RHI::RHID3D12
 			return DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		default:
 			return DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
-		}
-	}
-
-	inline D3D12_DESCRIPTOR_HEAP_TYPE FromDescriptorHeapType(DescriptorHeapType type)
-	{
-		switch(type)
-		{
-		case DescriptorHeapType::Resource:
-			return D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		case DescriptorHeapType::Sampler:
-			return D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
-		case DescriptorHeapType::RenderTargetView:
-			return D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-		case DescriptorHeapType::DepthStencialView: 
-			return D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-		default:
-			return D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		}
 	}
 
@@ -72,19 +55,19 @@ namespace RHI::RHID3D12
 		}
 	}
 
-	inline D3D12_RESOURCE_DIMENSION FromBufferDimension(BufferDimension dimension)
+	inline D3D12_RESOURCE_DIMENSION FromResourceDimension(ResourceDimension dimension)
 	{
 		switch (dimension)
 		{
-		case BufferDimension::None:
+		case ResourceDimension::None:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_UNKNOWN;
-		case BufferDimension::Raw:
+		case ResourceDimension::Raw:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_BUFFER;
-		case BufferDimension::Texture1D:
+		case ResourceDimension::Texture1D:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_TEXTURE1D;
-		case BufferDimension::Texture2D:
+		case ResourceDimension::Texture2D:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-		case BufferDimension::Texture3D:
+		case ResourceDimension::Texture3D:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_TEXTURE3D;
 		default:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_UNKNOWN;
@@ -105,10 +88,10 @@ namespace RHI::RHID3D12
 	inline D3D12_HEAP_FLAGS FromHeapFlags(HeapFlags flags)
 	{
 		core::bitflag<D3D12_HEAP_FLAGS> result;
-		result.set(D3D12_HEAP_FLAG_SHARED, flags.any(BufferFlag::Shader));
-		result.set(D3D12_HEAP_FLAG_ALLOW_WRITE_WATCH, flags.any(BufferFlag::WriteWatch));
-		result.set(D3D12_HEAP_FLAG_SHARED_CROSS_ADAPTER, flags.any(BufferFlag::CrossAdapter));
-		result.set(D3D12_HEAP_FLAG_DENY_BUFFERS, flags.any(BufferFlag::DenyBuffers));
+		result.set(D3D12_HEAP_FLAG_SHARED, flags.any(HeapFlag::Shader));
+		result.set(D3D12_HEAP_FLAG_ALLOW_WRITE_WATCH, flags.any(HeapFlag::WriteWatch));
+		result.set(D3D12_HEAP_FLAG_SHARED_CROSS_ADAPTER, flags.any(HeapFlag::CrossAdapter));
+		result.set(D3D12_HEAP_FLAG_DENY_BUFFERS, flags.any(HeapFlag::DenyBuffers));
 		return result.get();
 	}
 
@@ -166,5 +149,59 @@ namespace RHI::RHID3D12
 		result.set(D3D12_RESOURCE_STATE_RESOLVE_DEST, states.any(ResourceState::ResolveDest));
 		result.set(D3D12_RESOURCE_STATE_PRESENT, states.any(ResourceState::Present));
 		return result.get();
+	}
+
+	inline D3D12_SRV_DIMENSION FromResourceViewDimension(ResourceViewDimension dimnesion)
+	{
+		switch(dimnesion)
+		{
+		case ResourceViewDimension::None: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_UNKNOWN;
+		case ResourceViewDimension::Buffer: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_BUFFER;
+		case ResourceViewDimension::Texture1D: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE1D;
+		case ResourceViewDimension::Texture1DArray: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE1DARRAY;
+		case ResourceViewDimension::Texture2D: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2D;
+		case ResourceViewDimension::Texture2DArray: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
+		case ResourceViewDimension::Texture3D: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURE3D;
+		case ResourceViewDimension::TextureCube: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURECUBE;
+		case ResourceViewDimension::TextureCubeArray: 
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURECUBEARRAY;
+		default:
+			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_UNKNOWN;
+		}
+	}
+
+	inline D3D12_DESCRIPTOR_HEAP_TYPE FromDescriptorHeapType(DescriptorHeapType type)
+	{
+		switch (type)
+		{
+		case DescriptorHeapType::None: 
+		case DescriptorHeapType::ConstBuffer:
+		case DescriptorHeapType::ShaderResource:
+		case DescriptorHeapType::UnorderedAccess:
+			return D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		case DescriptorHeapType::Sampler:
+			return D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
+		case DescriptorHeapType::RenderTarget:
+			return D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+		case DescriptorHeapType::DepthStencial:
+			return D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		default:
+			return D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		}
+	}
+
+	inline D3D12_DESCRIPTOR_HEAP_FLAGS FromDescriptorHeapFlags(DescriptorHeapFlags flags)
+	{
+		core::bitflag<D3D12_DESCRIPTOR_HEAP_FLAGS> result;
+		result.set(D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, flags.any(DescriptorHeapFlag::ShaderVisible));
+		return result;
 	}
 }

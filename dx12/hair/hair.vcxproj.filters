@@ -14,9 +14,6 @@
     <ClCompile Include="d3d12\d3d12.cpp">
       <Filter>d3d12</Filter>
     </ClCompile>
-    <ClCompile Include="RHID3D12\RHID3D12.cpp">
-      <Filter>RHID3D12</Filter>
-    </ClCompile>
     <ClCompile Include="RHI\RHI.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
@@ -47,19 +44,37 @@
     <ClCompile Include="RHID3D12\RHID3D12CommandList.cpp">
       <Filter>RHID3D12</Filter>
     </ClCompile>
-    <ClCompile Include="RHID3D12\RHID3D12RenderTarget.cpp">
-      <Filter>RHID3D12</Filter>
-    </ClCompile>
     <ClCompile Include="RHI\RHIRenderTarget.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
     <ClCompile Include="RHID3D12\RHID3D12Core.cpp">
       <Filter>RHID3D12</Filter>
     </ClCompile>
-    <ClCompile Include="RHI\RHIBuffer.cpp">
+    <ClCompile Include="RHI\RHICommandAllocator.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
-    <ClCompile Include="RHID3D12\RHID3D12Buffer.cpp">
+    <ClCompile Include="RHID3D12\RHID3D12CommandAllocator.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12RenderTargetHWND.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12Resource.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="RHI\RHIResource.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12ResourceView.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12Utils.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12Factory.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12.cpp">
       <Filter>RHID3D12</Filter>
     </ClCompile>
   </ItemGroup>
@@ -76,9 +91,6 @@
     </ClInclude>
     <ClInclude Include="d3d12\d3d12.h">
       <Filter>d3d12</Filter>
-    </ClInclude>
-    <ClInclude Include="RHID3D12\RHID3D12.h">
-      <Filter>RHID3D12</Filter>
     </ClInclude>
     <ClInclude Include="RHI\RHI.h">
       <Filter>RHI</Filter>
@@ -110,19 +122,37 @@
     <ClInclude Include="RHID3D12\RHID3D12CommandList.h">
       <Filter>RHID3D12</Filter>
     </ClInclude>
-    <ClInclude Include="RHID3D12\RHID3D12RenderTarget.h">
-      <Filter>RHID3D12</Filter>
-    </ClInclude>
     <ClInclude Include="RHI\RHIRenderTarget.h">
       <Filter>RHI</Filter>
     </ClInclude>
     <ClInclude Include="RHID3D12\RHID3D12Core.h">
       <Filter>RHID3D12</Filter>
     </ClInclude>
-    <ClInclude Include="RHI\RHIBuffer.h">
+    <ClInclude Include="RHI\RHICommandAllocator.h">
       <Filter>RHI</Filter>
     </ClInclude>
-    <ClInclude Include="RHID3D12\RHID3D12Buffer.h">
+    <ClInclude Include="RHID3D12\RHID3D12CommandAllocator.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12RenderTargetHWND.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12Resource.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\RHIResource.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12ResourceView.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12Utils.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12Factory.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12.h">
       <Filter>RHID3D12</Filter>
     </ClInclude>
   </ItemGroup>

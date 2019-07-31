@@ -39,6 +39,63 @@ LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
+std::atomic<bool> rendering = true;
+void RHIThread()
+{
+	RHI::RHID3D12::RHID3D12Factory RHI;
+	RHI.Load();
+	auto adapters = RHI.AdapterDescs();
+	auto device = RHI.CreateDevice(adapters[0].uri);
+	auto queue = device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
+
+	RHI::RenderTargetParams params =
+	{
+		.hwnd = g_hwnd,
+	};
+	auto rt = device->CreateRenderTargetForHWND(params);
+	auto cmdallocator = device->CreateCommandAllocator(RHI::CommandType::Direct);
+	auto cmdlist = device->CreateCommandList(RHI::CommandType::Direct);
+
+	RHI::ResourceParams resourceParams = {};
+	resourceParams.heap.type = RHI::HeapType::Default;
+	resourceParams.size.cx = 1024;
+	resourceParams.dimension = RHI::ResourceDimension::Raw;
+	resourceParams.states = RHI::ResourceState::VertexBuffer;
+	auto vb = device->CreateResource(resourceParams);
+
+	RECT rcClient;
+	GetClientRect(g_hwnd, &rcClient);
+
+	core::recti sccisorrect = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
+	RHI::ViewPort viewport = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
+
+	RHI::PipeParameter pparam;
+
+	core::counter_fps<float, 3> fps;
+	while (rendering)
+	{
+		rt->Begin();
+		cmdallocator->Reset();
+		cmdlist->Reset(cmdallocator.get());
+		cmdlist->SetViewPort(viewport);
+		cmdlist->SetScissorRect(sccisorrect);
+		cmdlist->TransitionBarrier(rt.get(), RHI::ResourceState::RenderTarget);
+		cmdlist->SetRenderTarget(rt->CurrentRTV());
+		cmdlist->ClearRenderTarget(core::colors::Red);
+		cmdlist->TransitionBarrier(rt.get(), RHI::ResourceState::Present);
+		cmdlist->Close();
+		rt->Excute(cmdlist.get());
+		rt->End();
+		rt->Present(0);
+		fps.acc(1);
+
+		core::logger_fps tt(__FILE__, __LINE__, 10);
+		if (tt.ok())
+			printf("\rfps = %.6f", fps.fps());
+	}
+
+}
+
 int main()
 {
 #if defined _DEBUG
@@ -73,55 +130,7 @@ int main()
 	::ShowWindow(g_hwnd, SW_NORMAL);
 	::UpdateWindow(g_hwnd);
 
-
-	RHI::RHID3D12::RHID3D12 RHI;
-	RHI.Load();
-	auto adapters = RHI.AdapterDescs();
-	auto device = RHI.CreateDevice(adapters[0].uri);
-	auto queue = device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
-
-	RHI::RenderTargetParams params =
-	{
-		.hwnd = g_hwnd,
-	};
-	auto rt = device->CreateRenderTargetForHWND(params);
-	auto cmdlist = device->CreateCommandList(RHI::CommandType::Direct);
-
-	RHI::BufferParams bufferParams = {};
-	bufferParams.heap.type = RHI::HeapType::Default;
-	bufferParams.size.cx = 1024;
-	bufferParams.dimension = RHI::BufferDimension::Raw;
-	bufferParams.states = RHI::ResourceState::VertexBuffer;
-	auto vb = device->CreateBuffer(bufferParams);
-
-	RECT rcClient;
-	GetClientRect(g_hwnd, &rcClient);
-
-	core::recti sccisorrect = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
-	RHI::ViewPort viewport = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
-
-
-	core::counter_fps<float, 3> fps;
-	while(true)
-	{
-		rt->Begin();
-		cmdlist->Reset();
-		cmdlist->SetViewPort(viewport);
-		cmdlist->SetScissorRect(sccisorrect);
-		cmdlist->TransitionBarrier(rt.get(), RHI::ResourceState::RenderTarget);
-		cmdlist->SetRenderTarget(rt.get());
-		cmdlist->ClearRenderTarget(core::colors::Red);
-		cmdlist->TransitionBarrier(rt.get(), RHI::ResourceState::Present);
-		cmdlist->Close();
-		rt->Excute(cmdlist.get());
-		rt->End();
-		rt->Present(0);
-		fps.acc(1);
-
-		core::logger_fps tt(__FILE__, __LINE__, 10);
-		if (tt.ok())
-			printf("\rfps = %.6f", fps.fps());
-	}
+	auto f_RHI = std::async(RHIThread);
 
     //LoadPipeLine((HWND)form->handle(), form->rect().round<int32_t>().size);
     //LoadAssets();
@@ -135,7 +144,8 @@ int main()
     //form->closed += []() {core::app().quit(0);};
     //form->show();
 
-    return win32::runLoop();
+    win32::runLoop();
+	rendering = false;
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,

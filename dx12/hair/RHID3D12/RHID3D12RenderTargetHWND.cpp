@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "RHID3D12RenderTarget.h"
+#include "RHID3D12RenderTargetHWND.h"
 #include "RHID3D12CommandList.h"
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12RenderTarget::Init(const RenderTargetParams & params)
+	core::error RHID3D12RenderTargetHWND::Create(const RenderTargetParams & params)
 	{
 		if (!_device)
 			return core::e_state;
@@ -69,33 +69,35 @@ namespace RHI::RHID3D12
 			core::war() << __FUNCTION__ " dxgifactory->MakeWindowAssociation(DXGI_MWA_NO_ALT_ENTER) failed: " << win32::winerr_str(hr & 0xFFFF);
 		}
 
-		win32::comptr<ID3D12DescriptorHeap> rtv_heapdesc;
-		std::vector<win32::comptr<ID3D12Resource>> rendertargets(params.nbuffer);
+		win32::comptr<ID3D12DescriptorHeap> rtv_heap;
+		std::vector<win32::comptr<ID3D12Resource>> buffers(params.nbuffer);
+		std::vector<std::shared_ptr<RHID3D12ResourceView>> views;
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
 			rtvHeapDesc.NumDescriptors = params.nbuffer;
 			rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 			rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-			hr = device->CreateDescriptorHeap(&rtvHeapDesc, __uuidof(ID3D12DescriptorHeap), rtv_heapdesc.getvv());
+			hr = device->CreateDescriptorHeap(&rtvHeapDesc, __uuidof(ID3D12DescriptorHeap), rtv_heap.getvv());
 			if (FAILED(hr))
 			{
 				core::war() << __FUNCTION__ " device->CreateDescriptorHeap failed: " << win32::winerr_str(hr & 0xFFFF);
 				return core::e_inner;
 			}
+			SetD3D12ObjectName(rtv_heap.get(), L"rtv_heap");
 
-			D3D12_CPU_DESCRIPTOR_HANDLE handle(rtv_heapdesc->GetCPUDescriptorHandleForHeapStart());
-
+			D3D12_CPU_DESCRIPTOR_HANDLE handle(rtv_heap->GetCPUDescriptorHandleForHeapStart());
 			uint32_t rtv_desc_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 			for (uint32_t ibuffer = 0; ibuffer < params.nbuffer; ibuffer++)
 			{
-				hr = swapchain1->GetBuffer(ibuffer, __uuidof(ID3D12Resource), rendertargets[ibuffer].getvv());
+				hr = swapchain1->GetBuffer(ibuffer, __uuidof(ID3D12Resource), buffers[ibuffer].getvv());
 				if (FAILED(hr))
 				{
 					core::war() << __FUNCTION__ " swapchain1->GetBuffer failed: " << win32::winerr_str(hr & 0xFFFF);
 					return core::e_inner;
 				}
 
-				device->CreateRenderTargetView(rendertargets[ibuffer].get(), nullptr, handle);
+				views.push_back(std::make_shared<RHID3D12ResourceView>(handle));
+				device->CreateRenderTargetView(buffers[ibuffer].get(), nullptr, handle);
 				handle.ptr += rtv_desc_size;
 			}
 		}
@@ -114,15 +116,17 @@ namespace RHI::RHID3D12
 		_queue = queue;
 		_swapchain = swapchain1.as<IDXGISwapChain3>();
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
-		_rtv_heapdesc = rtv_heapdesc;
-		_rtv_desc_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-		_rendertargets = rendertargets;
+		_rtv_heap = rtv_heap;
+		_rtv_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		_buffers = buffers;
+		_views = views;
 		_fenceValue = 1;
 		_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+
 		return core::ok;
 	}
 
-	void RHID3D12RenderTarget::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
+	void RHID3D12RenderTargetHWND::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
 	{
 		if (!cmdlist)
 			return;
@@ -133,7 +137,7 @@ namespace RHI::RHID3D12
 		D3D12_RESOURCE_BARRIER barrier;
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = _rendertargets[_frameIndex].get();
+		barrier.Transition.pResource = _buffers[_frameIndex].get();
 		barrier.Transition.StateBefore = FromResourceStates(_states);
 		barrier.Transition.StateAfter = FromResourceStates(states);
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
@@ -141,12 +145,12 @@ namespace RHI::RHID3D12
 		_states = states;
 	}
 
-	void RHID3D12RenderTarget::Begin()
+	void RHID3D12RenderTargetHWND::Begin()
 	{
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
 	}
 
-	void RHID3D12RenderTarget::End()
+	void RHID3D12RenderTargetHWND::End()
 	{
 		HRESULT hr = S_OK;
 		const UINT64 fence = _fenceValue;
@@ -162,24 +166,17 @@ namespace RHI::RHID3D12
 		}
 	}
 
-	void RHID3D12RenderTarget::Excute(RHICommandList * cmdlist)
+	void RHID3D12RenderTargetHWND::Excute(RHICommandList * cmdlist)
 	{
 		ID3D12CommandList * cmdlists[] = { reinterpret_cast<RHID3D12CommandList *>(cmdlist)->Ptr() };
 		_queue->ExecuteCommandLists(1, cmdlists);
 	}
 
-	void RHID3D12RenderTarget::Present(uint32_t sync)
+	void RHID3D12RenderTargetHWND::Present(uint32_t sync)
 	{
 		if (!_swapchain)
 			return ;
 
 		_swapchain->Present(sync, 0);
-	}
-
-	D3D12_CPU_DESCRIPTOR_HANDLE RHID3D12RenderTarget::InnerCurrentHeapPointer() const
-	{
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle(_rtv_heapdesc->GetCPUDescriptorHandleForHeapStart());
-		rtvHandle.ptr += _frameIndex * _rtv_desc_size;
-		return rtvHandle;
 	}
 }

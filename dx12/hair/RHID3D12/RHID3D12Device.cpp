@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "RHID3D12Device.h"
 #include "RHID3D12CommandQueue.h"
-#include "RHID3D12RenderTarget.h"
+#include "RHID3D12RenderTargetHWND.h"
 #include "RHID3D12CommandList.h"
-#include "RHID3D12Buffer.h"
+#include "RHID3D12Resource.h"
+#include "RHID3D12CommandAllocator.h"
+#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {
@@ -41,34 +43,52 @@ namespace RHI::RHID3D12
 	std::shared_ptr<RHICommandQueue> RHID3D12Device::CreateCommandQueue(CommandType type, CommandQueueFlags flags) const
 	{
 		auto queue = std::make_shared<RHID3D12CommandQueue>(const_cast<RHID3D12Device *>(this));
-		auto err = queue->Init(type, flags);
+		auto err = queue->Create(type, flags);
 		if (err)
 			return nullptr;
 		return queue;
 	}
 
+	std::shared_ptr<RHICommandAllocator> RHID3D12Device::CreateCommandAllocator(CommandType type) const
+	{
+		auto allocator = std::make_shared<RHID3D12CommandAllocator>(const_cast<RHID3D12Device *>(this));
+		auto err = allocator->Create(type);
+		if (err)
+			return nullptr;
+		return allocator;
+	}
+
 	std::shared_ptr<RHICommandList> RHID3D12Device::CreateCommandList(CommandType type) const
 	{
 		auto list = std::make_shared<RHID3D12CommandList>(const_cast<RHID3D12Device *>(this));
-		auto err = list->Init(type);
+		auto err = list->Create(type);
 		if (err)
 			return nullptr;
 		return list;
 	}
 
-	std::shared_ptr<RHIBuffer> RHID3D12Device::CreateBuffer(const BufferParams & params) const
+	std::shared_ptr<RHIResource> RHID3D12Device::CreateResource(const ResourceParams & params) const
 	{
-		auto buffer = std::make_shared<RHID3D12Buffer>(const_cast<RHID3D12Device *>(this));
-		auto err = buffer->Init(params);
+		auto buffer = std::make_shared<RHID3D12Resource>(const_cast<RHID3D12Device *>(this));
+		auto err = buffer->Create(params);
 		if (err)
 			return nullptr;
 		return buffer;
 	}
 
+	std::shared_ptr<RHIResourceView> RHID3D12Device::CreateResourceView(const RHIResource * resource, const ResourceViewParams & params) const
+	{
+		auto view = std::make_shared<RHID3D12ResourceView2>(const_cast<RHID3D12Device *>(this));
+		auto err = view->Create(static_cast<const RHID3D12Resource *>(resource), params);
+		if (err)
+			return nullptr;
+		return view;
+	}
+
 	std::shared_ptr<RHIRenderTarget> RHID3D12Device::CreateRenderTargetForHWND(const RenderTargetParams & params) const
 	{
-		auto rt = std::make_shared<RHID3D12RenderTarget>(const_cast<RHID3D12Device *>(this));
-		auto err = rt->Init(params);
+		auto rt = std::make_shared<RHID3D12RenderTargetHWND>(const_cast<RHID3D12Device *>(this));
+		auto err = rt->Create(params);
 		if (err)
 			return nullptr;
 

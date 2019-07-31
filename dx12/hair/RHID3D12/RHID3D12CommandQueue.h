@@ -12,11 +12,11 @@ namespace RHI::RHID3D12
 		RHID3D12CommandQueue(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12CommandQueue() = default;
 
-		core::error Init(CommandType type, CommandQueueFlags flags);
+		core::error Create(CommandType type, CommandQueueFlags flags);
 
 	private:
 		RHID3D12Device * _device = nullptr;
-		win32::comptr<ID3D12CommandQueue> _queue;
+		win32::comptr<ID3D12CommandQueue> _cmdqueue;
 
 		CommandType _type = CommandType::Direct;
 		CommandQueueFlags _flags = nullptr;

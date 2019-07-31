@@ -2,6 +2,7 @@
 
 #include "RHI/RHI.h"
 #include "RHID3D12Device.h"
+#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {
@@ -13,16 +14,17 @@ namespace RHI::RHID3D12
 		RHID3D12CommandList(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12CommandList() = default;
 
-		core::error Init(CommandType type);
+		core::error Create(CommandType type);
 
 	public:
-		void Reset();
+		void Reset(RHICommandAllocator * allocator);
 		void Close();
-		void SetRenderTarget(RHIRenderTarget * rendertarget);
+		void SetRenderTarget(RHIResourceView * rendertarget);
 		void ClearRenderTarget(core::color color);
 		void SetViewPort(const ViewPort & viewport);
 		void SetScissorRect(const core::recti & rect);
 		void TransitionBarrier(RHIResource * resource, ResourceStates states);
+		void TransitionBarrier(uint32_t count, RHIResource ** resources, ResourceStates * states);
 
 	public:
 		ID3D12GraphicsCommandList * Ptr() const { return _cmdlist.get(); }
@@ -32,6 +34,6 @@ namespace RHI::RHID3D12
 		win32::comptr<ID3D12CommandAllocator> _cmdallocator;
 		win32::comptr<ID3D12GraphicsCommandList> _cmdlist;
 
-		RHID3D12RenderTarget * _rendertarget = nullptr;
+		RHID3D12ResourceView * _rendertarget = nullptr;
 	};
 }

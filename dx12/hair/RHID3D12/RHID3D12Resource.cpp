@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "RHID3D12Buffer.h"
+#include "RHID3D12Resource.h"
 #include "RHID3D12CommandList.h"
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12Buffer::Init(const BufferParams & params)
+	core::error RHID3D12Resource::Create(const ResourceParams & params)
 	{
 		if (!_device)
 			return core::e_state;
@@ -17,7 +17,7 @@ namespace RHI::RHID3D12
 		assert(adapter);
 
 		D3D12_RESOURCE_DESC resdesc = {};
-		resdesc.Dimension = FromBufferDimension(params.dimension);
+		resdesc.Dimension = FromResourceDimension(params.dimension);
 		resdesc.Alignment = params.alignment;
 		resdesc.Width = params.size.cx;
 		resdesc.Height = params.size.cy;
@@ -45,12 +45,12 @@ namespace RHI::RHID3D12
 		}
 
 		_params = params;
-		_buffer = buffer;
+		_resource = buffer;
 		_states = _params.states;
 		return core::ok;
 	}
 
-	void RHID3D12Buffer::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
+	void RHID3D12Resource::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
 	{
 		if (!cmdlist)
 			return;
@@ -61,7 +61,7 @@ namespace RHI::RHID3D12
 		D3D12_RESOURCE_BARRIER barrier;
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = _buffer.get();
+		barrier.Transition.pResource = _resource.get();
 		barrier.Transition.StateBefore = FromResourceStates(_states);
 		barrier.Transition.StateAfter = FromResourceStates(states);
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;

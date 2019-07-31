@@ -3,7 +3,7 @@
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12CommandQueue::Init(CommandType type, CommandQueueFlags flags)
+	core::error RHID3D12CommandQueue::Create(CommandType type, CommandQueueFlags flags)
 	{
 		if (!_device)
 			return core::e_state;
@@ -33,14 +33,16 @@ namespace RHI::RHID3D12
 
 		auto deviceptr = _device->Inner();
 		assert(deviceptr);
-		win32::comptr<ID3D12CommandQueue> queue;
-		HRESULT hr = deviceptr->CreateCommandQueue(&queueDesc, __uuidof(ID3D12CommandQueue), queue.getvv());
+		win32::comptr<ID3D12CommandQueue> cmdqueue;
+		HRESULT hr = deviceptr->CreateCommandQueue(&queueDesc, __uuidof(ID3D12CommandQueue), cmdqueue.getvv());
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " CreateCommandQueue failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
-		_queue = queue;
+		SetD3D12ObjectName(cmdqueue.get(), L"cmdqueue");
+
+		_cmdqueue = cmdqueue;
 		_type = type;
 		_flags = flags;
 		return core::ok;

@@ -17,8 +17,10 @@ namespace RHI::RHID3D12
 
 	public:
 		std::shared_ptr<RHICommandQueue> CreateCommandQueue(CommandType type, CommandQueueFlags flags) const override;
+		std::shared_ptr<RHICommandAllocator> CreateCommandAllocator(CommandType type) const override;
 		std::shared_ptr<RHICommandList> CreateCommandList(CommandType type) const override;
-		std::shared_ptr<RHIBuffer> CreateBuffer(const BufferParams & params) const override;
+		std::shared_ptr<RHIResource> CreateResource(const ResourceParams & params) const override;
+		std::shared_ptr<RHIResourceView> CreateResourceView(const RHIResource * resource, const ResourceViewParams & params) const override;
 		std::shared_ptr<RHIRenderTarget> CreateRenderTargetForHWND(const RenderTargetParams & params) const override;
 
 	private:

@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "RHID3D12CommandList.h"
-#include "RHID3D12RenderTarget.h"
+#include "RHID3D12CommandAllocator.h"
+#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12CommandList::Init(CommandType type)
+	core::error RHID3D12CommandList::Create(CommandType type)
 	{
 		if (!_device)
 			return core::e_state;
@@ -25,6 +26,7 @@ namespace RHI::RHID3D12
 			core::war() << __FUNCTION__ " device->CreateCommandAllocator failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
+		SetD3D12ObjectName(cmdallocator.get(), L"cmdallocator");
 
 		hr = device->CreateCommandList(0, FromCommandType(type), cmdallocator.get(), nullptr, __uuidof(ID3D12GraphicsCommandList), cmdlist.getvv());
 		if (FAILED(hr))
@@ -32,6 +34,7 @@ namespace RHI::RHID3D12
 			core::war() << __FUNCTION__ " device->CreateCommandList failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
+		SetD3D12ObjectName(cmdlist.get(), L"cmdlist");
 
 		cmdlist->Close();
 		_cmdallocator = cmdallocator;
@@ -39,10 +42,10 @@ namespace RHI::RHID3D12
 		return core::ok;
 	}
 
-	void RHID3D12CommandList::Reset()
+	void RHID3D12CommandList::Reset(RHICommandAllocator * allocator)
 	{
-		_cmdallocator->Reset();
-		_cmdlist->Reset(_cmdallocator.get(), nullptr);
+		auto d3d12allocator = reinterpret_cast<RHID3D12CommandAllocator *>(allocator)->Ptr();
+		_cmdlist->Reset(d3d12allocator, nullptr);
 	}
 
 	void RHID3D12CommandList::Close()
@@ -50,16 +53,16 @@ namespace RHI::RHID3D12
 		_cmdlist->Close();
 	}
 
-	void RHID3D12CommandList::SetRenderTarget(RHIRenderTarget * rendertarget)
+	void RHID3D12CommandList::SetRenderTarget(RHIResourceView * rendertarget)
 	{
-		_rendertarget = static_cast<RHID3D12RenderTarget *>(rendertarget);
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = { _rendertarget->InnerCurrentHeapPointer() };
-		_cmdlist->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+		_rendertarget = static_cast<RHID3D12ResourceView *>(rendertarget);
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = _rendertarget->CPUDescriptorHandle();
+		_cmdlist->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 	}
 
 	void RHID3D12CommandList::ClearRenderTarget(core::color color)
 	{
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = { _rendertarget->InnerCurrentHeapPointer() };
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = { _rendertarget->CPUDescriptorHandle() };
 		const float clearColor[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
 		_cmdlist->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	}
@@ -91,5 +94,11 @@ namespace RHI::RHID3D12
 	void RHID3D12CommandList::TransitionBarrier(RHIResource * resource, ResourceStates states)
 	{
 		resource->TransitionBarrier(this, states);
+	}
+
+	void RHID3D12CommandList::TransitionBarrier(uint32_t count, RHIResource ** resources, ResourceStates * states)
+	{
+		for(uint32_t iresource = 0; iresource < count; ++iresource)
+			resources[iresource]->TransitionBarrier(this, states[iresource]);
 	}
 }

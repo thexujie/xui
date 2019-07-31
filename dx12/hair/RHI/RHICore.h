@@ -29,14 +29,6 @@ namespace RHI
 		FlipDiscard,
 	};
 
-	enum class DescriptorHeapType
-	{
-		Resource = 0,
-		Sampler,
-		RenderTargetView,
-		DepthStencialView,
-	};
-
 	enum class HeapType
 	{
 		Default = 0,
@@ -59,7 +51,7 @@ namespace RHI
 		L1,
 	};
 
-	enum class BufferDimension
+	enum class ResourceDimension
 	{
 		None = 0,
 		Raw,
@@ -79,7 +71,7 @@ namespace RHI
 	};
 	typedef core::bitflag<ResourceFlag> ResourceFlags;
 
-	enum class BufferFlag
+	enum class HeapFlag
 	{
 		None = 0,
 		Shader = 0x1,
@@ -87,7 +79,7 @@ namespace RHI
 		CrossAdapter = 0x4,
 		DenyBuffers = 0x1000,
 	};
-	typedef core::bitflag<BufferFlag> HeapFlags;
+	typedef core::bitflag<HeapFlag> HeapFlags;
 
 
 	struct RHIAdapterDesc
@@ -130,19 +122,7 @@ namespace RHI
 		virtual ~RHIDeviceObject() = default;
 	};
 
-	class RHIResource
-	{
-	public:
-		RHIResource() = default;
-		virtual ~RHIResource() = default;
-
-		virtual void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) = 0;
-		ResourceStates States() const { return _states; }
-	protected:
-		ResourceStates _states = ResourceState::None;
-	};
-
-	struct BufferParams
+	struct ResourceParams
 	{
 		struct
 		{
@@ -152,7 +132,7 @@ namespace RHI
 			MemoryPool memorypool = MemoryPool::None;
 		}heap;
 
-		BufferDimension dimension = BufferDimension::None;
+		ResourceDimension dimension = ResourceDimension::None;
 		ResourceFlags flags = nullptr;
 		// ³õÊ¼×´Ì¬
 		ResourceStates states = ResourceState::None;
@@ -174,7 +154,46 @@ namespace RHI
 				uint8_t stencial;
 			};
 		}clear;
+	};
 
+	enum class ResourceViewDimension
+	{
+		None = 0,
+		Buffer,
+		Texture1D,
+		Texture1DArray,
+		Texture2D,
+		Texture2DArray,
+		Texture3D,
+		TextureCube,
+		TextureCubeArray,
+	};
+
+	enum class DescriptorHeapType
+	{
+		None = 0,
+		ConstBuffer,
+		ShaderResource,
+		UnorderedAccess,
+		Sampler,
+		RenderTarget,
+		DepthStencial,
+	};
+
+	enum class DescriptorHeapFlag
+	{
+		None = 0,
+		ShaderVisible,
+	};
+	typedef core::bitflag<DescriptorHeapFlag> DescriptorHeapFlags;
+
+	struct ResourceViewParams
+	{
+		core::pixelformat format = core::pixelformat::none;
+		ResourceViewDimension dimension = ResourceViewDimension::None;
+		DescriptorHeapType type = DescriptorHeapType::None;
+		DescriptorHeapFlags flags = nullptr;
+		uint32_t miplevels = 1;
 	};
 
 	struct RenderTargetParams
@@ -196,5 +215,50 @@ namespace RHI
 		float height = 0;
 		float nearZ = 0;
 		float farZ = 0;
+	};
+
+	enum Shader
+	{
+		All = 0,
+		Vertex,
+		Hull,
+		Domain,
+		Geoetry,
+		Pixel
+	};
+
+
+	struct PipelineState
+	{
+		
+	};
+
+	enum class PipeParameterType
+	{
+		Table = 0,
+		ConstBuffer,
+		ShaderResource,
+		UnorderedAccess,
+	};
+
+	struct PipeParameter
+	{
+		PipeParameterType type = PipeParameterType::ConstBuffer;
+		Shader shader = Shader::All;
+		union
+		{
+			struct
+			{
+				uint32_t count;
+				const PipeParameter * parameters;
+			}table = {};
+
+			struct
+			{
+				uint32_t regist;
+				uint32_t registspace;
+				
+			}descriptor;
+		};
 	};
 }
