@@ -26,7 +26,7 @@ namespace core
             }
             else
                 _promise.set_value(_fun());
-            return error_ok;
+            return ok;
         }
 
         std::future<T> get_future()

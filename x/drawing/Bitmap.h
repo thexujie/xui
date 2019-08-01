@@ -35,7 +35,7 @@ namespace drawing
         SkBitmap * native_ptr() { return _native.get(); }
         const SkBitmap * native_ptr() const { return _native.get(); }
     private:
-        core::error _state = core::error_ok;
+        core::error _state = core::ok;
         std::shared_ptr<SkBitmap> _native = nullptr;
         core::sizei _size;
     };
@@ -60,7 +60,7 @@ namespace drawing
         SkSurface * native_ptr() { return _native.get(); }
         const SkSurface * native_ptr() const { return _native.get(); }
     private:
-        core::error _state = core::error_ok;
+        core::error _state = core::ok;
         std::shared_ptr<SkSurface> _native = nullptr;
         core::sizei _size;
 

@@ -149,6 +149,9 @@ namespace core
         const Enum & get() const { return _e; }
         Enum & get() { return _e; }
 
+		operator Enum & () { return _e; }
+		operator const Enum & () const { return _e; }
+
     private:
         Enum _e = static_cast<Enum>(0);
     };

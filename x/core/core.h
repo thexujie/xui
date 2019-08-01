@@ -132,6 +132,7 @@ namespace core
 #include "core/utils.h"
 #include "core/datetime.h"
 #include "core/easingcurve.h"
+#include "core/pixelformat.h"
 
 #include "core/align.h"
 #include "core/vec2.h"

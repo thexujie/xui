@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "RHID3D12CommandList.h"
 #include "RHID3D12CommandAllocator.h"
-#include "RHID3D12ResourceView.h"
+#include "RHID3D12View.h"
+#include "RHID3D12Resource.h"
+#include "RHID3D12PipelineState.h"
 
 namespace RHI::RHID3D12
 {
@@ -55,7 +57,7 @@ namespace RHI::RHID3D12
 
 	void RHID3D12CommandList::SetRenderTarget(RHIResourceView * rendertarget)
 	{
-		_rendertarget = static_cast<RHID3D12ResourceView *>(rendertarget);
+		_rendertarget = static_cast<RHID3D12RenderTargetView *>(rendertarget);
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = _rendertarget->CPUDescriptorHandle();
 		_cmdlist->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 	}
@@ -93,12 +95,63 @@ namespace RHI::RHID3D12
 
 	void RHID3D12CommandList::TransitionBarrier(RHIResource * resource, ResourceStates states)
 	{
-		resource->TransitionBarrier(this, states);
+		static_cast<RHID3D12Resource *>(resource)->TransitionBarrier(this, states);
+	}
+	
+	void RHID3D12CommandList::TransitionBarrier(RHIRenderTarget * rendertarget, ResourceStates states)
+	{
+		static_cast<RHIRenderTarget *>(rendertarget)->TransitionBarrier(this, states);
+	}
+	
+	void RHID3D12CommandList::SetPipelineState(RHIPipelineState * pipelinestate)
+	{
+		auto d3d12pipelinestate = static_cast<RHID3D12PipelineState *>(pipelinestate);
+		_cmdlist->SetPipelineState(d3d12pipelinestate->PipelineState());
+		_cmdlist->SetGraphicsRootSignature(d3d12pipelinestate->RootSignature());
+	}
+	
+	void RHID3D12CommandList::SetResourceViews(RHIResourceView ** views, uint32_t nviews)
+	{
+		ID3D12DescriptorHeap * heaps[64] = {};
+		nviews = std::min< uint32_t>(nviews, 64);
+		for (uint32_t iview = 0; iview < nviews; ++iview)
+		{
+			auto dp = static_cast<RHID3D12ResourceView *>(views[iview])->DescriptorHeap();
+			heaps[iview] = static_cast<RHID3D12ResourceView *>(views[iview])->DescriptorHeap();
+		}
+		_cmdlist->SetDescriptorHeaps(nviews, heaps);
 	}
 
-	void RHID3D12CommandList::TransitionBarrier(uint32_t count, RHIResource ** resources, ResourceStates * states)
+	void RHID3D12CommandList::SetGraphicsResourceView(uint32_t index, RHIResourceView * view)
 	{
-		for(uint32_t iresource = 0; iresource < count; ++iresource)
-			resources[iresource]->TransitionBarrier(this, states[iresource]);
+		_cmdlist->SetGraphicsRootDescriptorTable(index, static_cast<RHID3D12ResourceView *>(view)->GPUDescriptorHandle());
+	}
+	
+	void RHID3D12CommandList::IASetVertexBuffer(RHIResource * resource, uint32_t stride, uint32_t size)
+	{
+		D3D12_VERTEX_BUFFER_VIEW vbv = {};
+		vbv.BufferLocation = static_cast<RHID3D12Resource *>(resource)->GPUVirtualAddress();
+		vbv.StrideInBytes = stride;
+		vbv.SizeInBytes = size;
+		_cmdlist->IASetVertexBuffers(0, 1, &vbv);
+	}
+	
+	void RHID3D12CommandList::IASetIndexBuffer(RHIResource * resource, uint32_t stride, uint32_t size)
+	{
+		D3D12_INDEX_BUFFER_VIEW vbv = {};
+		vbv.BufferLocation = static_cast<RHID3D12Resource *>(resource)->GPUVirtualAddress();
+		vbv.Format = stride == 4 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
+		vbv.SizeInBytes = size;
+		_cmdlist->IASetIndexBuffer(&vbv);
+	}
+
+	void RHID3D12CommandList::IASetTopologyType(Topology topology)
+	{
+		_cmdlist->IASetPrimitiveTopology(FromTopology(topology));
+	}
+
+	void RHID3D12CommandList::DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase)
+	{
+		_cmdlist->DrawInstanced(nvertices, ninstance, ivertexbase, iinstancebase);
 	}
 }

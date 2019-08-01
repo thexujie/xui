@@ -15,16 +15,16 @@ namespace core::io
     std::tuple<core::error, int64_t> filestream::read(std::shared_ptr<byte_t> buffer, int64_t nbytes)
     {
         if (!_fs.is_open())
-            return { error_io, 0 };
+            return { e_io, 0 };
 
         if (_fs.eof())
-            return { error_eof, 0 };
+            return { e_eof, 0 };
 
         if (!_fs.good())
-            return { error_io, 0 };
+            return { e_io, 0 };
 
         _fs.read(buffer.get(), static_cast<std::streamsize>(nbytes));
-        return { error_ok, _fs.gcount() };
+        return { ok, _fs.gcount() };
     }
 
     std::tuple<std::shared_ptr<byte_t>, int64_t> readFullFile(const std::u8string & path)

@@ -24,7 +24,7 @@ namespace drawing::image
         std::fstream fs;
         fs.open(pathw.c_str(), std::ios::in | std::ios::binary);
         if (!fs.good())
-            return error_not_found;
+            return e_not_found;
 
         fs.seekg(0, std::ios::end);
         auto length = fs.tellg();
@@ -33,7 +33,7 @@ namespace drawing::image
         std::shared_ptr<byte_t[]> buffer(image_malloc((int32_t)length));
         fs.read(buffer.get(), length);
         if (fs.tellg() != length)
-            return error_io;
+            return e_io;
         fs.close();
 
         return image_create(buffer.get(), (int32_t)length, img);
@@ -113,7 +113,7 @@ namespace drawing::image
         case image_type_dds:
             return dds_create(ictx, buffer, length, img);
         default:
-            return error_bad_format;
+            return e_bad_format;
         }
     }
 
@@ -122,13 +122,13 @@ namespace drawing::image
         if (src.format == dst.format && src.pitch == dst.pitch)
         {
             image_memcpy(dst.data, dst.format.height * std::abs(dst.pitch), src.data, src.format.height * std::abs(src.pitch));
-            return error_ok;
+            return ok;
         }
 
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         assert(pfn_resampler);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
         
         int32_t src_stride = format_bits(src.format.format) / 8;
         int32_t dst_stride = format_bits(dst.format.format) / 8;
@@ -152,18 +152,18 @@ namespace drawing::image
             src_line += src.pitch;
             dst_line += dst.pitch;
         }
-        return error_ok;
+        return ok;
     }
 
     core::error image_convert_copy_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         if (src.pitch != dst.pitch)
-            return error_not_supported;
+            return e_not_supported;
 
         if (src.format == dst.format)
         {
             image_memcpy(dst.data, dst.format.height * std::abs(dst.pitch), src.data, src.format.height * std::abs(src.pitch));
-            return error_ok;
+            return ok;
         }
 
         const byte_t * src_line = src.data;
@@ -178,14 +178,14 @@ namespace drawing::image
             src_line += src.pitch;
             dst_line += dst.pitch;
         }
-        return error_ok;
+        return ok;
     }
 
     core::error image_convert_index1_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         const byte_t * src_pixel = src.data;
         byte_t * dst_line = dst.data;
@@ -262,14 +262,14 @@ namespace drawing::image
             dst_line += dst_pitch;
         }
 
-        return error_ok;
+        return ok;
     }
 
     core::error image_convert_index2_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         const byte_t * src_pixel = src.data;
         byte_t * dst_line = dst.data;
@@ -327,14 +327,14 @@ namespace drawing::image
             }
             dst_line += dst_pitch;
         }
-        return error_ok;
+        return ok;
     }
 
     core::error image_convert_index4_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         const byte_t * src_pixel = src.data;
         byte_t * dst_line = dst.data;
@@ -381,14 +381,14 @@ namespace drawing::image
             }
             dst_line += dst_pitch;
         }
-        return error_ok;
+        return ok;
     }
 
     core::error image_convert_index8_ex(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         byte_t * dst_line = dst.data;
         int32_t dst_pitch = dst.pitch;
@@ -414,7 +414,7 @@ namespace drawing::image
             }
             dst_line += dst_pitch;
         }
-        return error_ok;
+        return ok;
     }
 
 

@@ -5,7 +5,7 @@
 #include "RHID3D12CommandList.h"
 #include "RHID3D12Resource.h"
 #include "RHID3D12CommandAllocator.h"
-#include "RHID3D12ResourceView.h"
+#include "RHID3D12View.h"
 #include "RHID3D12PipelineState.h"
 
 namespace RHI::RHID3D12
@@ -78,9 +78,18 @@ namespace RHI::RHID3D12
 		return buffer;
 	}
 
-	std::shared_ptr<RHIResourceView> RHID3D12Device::CreateResourceView(const RHIResource * resource, const ResourceViewArgs & args) const
+	std::shared_ptr<RHIResourceView> RHID3D12Device::CreateShaderResourceView(const RHIResource * resource, const ShaderResourceViewArgs & args) const
 	{
-		auto view = std::make_shared<RHID3D12ResourceView2>(const_cast<RHID3D12Device *>(this));
+		auto view = std::make_shared<RHID3D12ShaderResourceView>(const_cast<RHID3D12Device *>(this));
+		auto err = view->Create(static_cast<const RHID3D12Resource *>(resource), args);
+		if (err)
+			return nullptr;
+		return view;
+	}
+
+	std::shared_ptr<RHIResourceView> RHID3D12Device::CreateConstBufferView(const RHIResource * resource, const ConstBufferViewArgs & args) const
+	{
+		auto view = std::make_shared<RHID3D12ConstBufferView>(const_cast<RHID3D12Device *>(this));
 		auto err = view->Create(static_cast<const RHID3D12Resource *>(resource), args);
 		if (err)
 			return nullptr;

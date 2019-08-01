@@ -29,7 +29,7 @@ namespace drawing
     core::error Image::Save(std::string path, image::image_type type, int32_t quality) const
     {
         if (!_native)
-            return core::error_nullptr;
+            return core::e_nullptr;
 
         if (type == image::image_type_none)
             type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
@@ -37,7 +37,7 @@ namespace drawing
         SkBitmap bitmap;
         _native->asLegacyBitmap(&bitmap);
         SkFILEWStream stream(path.c_str());
-        return SkEncodeImage(&stream, bitmap, skia::from(type), quality) ? core::error_ok : core::error_inner;
+        return SkEncodeImage(&stream, bitmap, skia::from(type), quality) ? core::ok : core::e_inner;
     }
 
     int32_t Image::width() const

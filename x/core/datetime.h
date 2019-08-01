@@ -61,18 +61,12 @@ namespace core
         static enum dayweek dayweek(int32_t year, int32_t month, int32_t day);
         static 	int32_t dayyear(int32_t year, int32_t month, int32_t day);
 
-        static std::chrono::nanoseconds system();
-        static std::chrono::nanoseconds steady();
-        static std::chrono::nanoseconds high_resolution();
-
-        static float64_t system_s();
-        static float64_t steady_s();
-        static float64_t high_resolution_s();
-
         static datetime now();
-        static std::chrono::seconds now_s();
-        static std::chrono::milliseconds now_ms();
-        static std::chrono::microseconds now_mcs();
-        static std::chrono::nanoseconds now_ns();
+		static float64_t system();
+		static std::chrono::nanoseconds system_ns();
+		static float64_t steady();
+		static std::chrono::nanoseconds steady_ns();
+		static float64_t high_resolution();
+		static std::chrono::nanoseconds high_resolution_ns();
     };
 }

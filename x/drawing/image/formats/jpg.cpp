@@ -152,7 +152,7 @@ namespace drawing::image::formats
             image.pfn_free(image);
             return err;
         }
-        return error_ok;
+        return ok;
     }
 
     bool jpg_rule_default(image_codec_context * rule)

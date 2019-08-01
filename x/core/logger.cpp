@@ -59,7 +59,7 @@ namespace core
         _lg >= _logger.lg() ? setstate(std::ios_base::goodbit) : setstate(std::ios_base::eofbit);
     }
 
-    int logger_stream::overflow(int ch)
+	std::u8streambuf::int_type logger_stream::overflow(std::u8streambuf::int_type ch)
     {
         return &_logger != nullptr ? _buffer.sputc(ch) : 0;
     }
@@ -95,10 +95,10 @@ namespace core
     error logger::open(const std::u8string & path)
     {
         if (path.empty())
-            return error_args;
+            return e_args;
 
         _fs.open(reinterpret_cast<const std::string &>(path), std::fstream::binary | std::fstream::out | std::fstream::app);
-        return _fs.good() ? error_ok : error_io;
+        return _fs.good() ? ok : e_io;
     }
 
     void logger::close()
@@ -126,10 +126,10 @@ namespace core
     error logger::log_to_buffer(uint32_t pid, uint32_t tid, log_e lg, const std::u8string & text)
     {
         if (_line_curr == _line)
-            return error_ok;
+            return ok;
 
         if (!_thread.joinable())
-            return error_ok;
+            return ok;
 
         _line_curr = _line;
         if (pid == -1)
@@ -143,11 +143,20 @@ namespace core
             auto now = std::chrono::system_clock::now();
             auto nowms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 
-            std::lock_guard<std::mutex> lock(_mtx_write);
-            _log_list.push_back({ lg, uint64_t(nowms), pid, tid, text });
-            _cond.notify_all();
+            {
+				std::lock_guard<std::mutex> lock(_mtx_write);
+				_log_list.push_back({ lg, uint64_t(nowms), pid, tid, text });
+				_cond.notify_all();
+            }
+
+#ifdef _DEBUG
+            {
+				std::unique_lock<std::mutex> lock_notify(_mtx_notify);
+				_cond_notify.wait(lock_notify, [this]() { return _log_list.empty(); });
+            }
+#endif
         }
-        return error_ok;
+        return ok;
     }
 
     error logger::write(log_e lg, const std::u8string & text)
@@ -209,7 +218,8 @@ namespace core
 
                     std::u8string log_text((const char8_t *)temp, nchars);
                     log_text += item.text;
-                    log_text += _line_tag;
+                	if (log_text.empty() || log_text[log_text.length() - 1] != u8'\n')
+						log_text += _line_tag;
 
                     if (_console)
                         std::cout << reinterpret_cast<const std::string &>(item.text);
@@ -221,6 +231,7 @@ namespace core
                 }
             }
             _fs.flush();
+			_cond_notify.notify_all();
         }
     }
 

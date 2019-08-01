@@ -41,12 +41,84 @@ LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 }
 
 std::atomic<bool> rendering = true;
+std::shared_ptr<RHI::RHIResource> vetexbuffer;
+std::shared_ptr<RHI::RHIResource> indexbuffer;
+std::shared_ptr<RHI::RHIResource> constbuffer;
+std::shared_ptr<RHI::RHIResourceView> constbuffer_view;
+uint32_t nvertices = 0;
+struct Vertex
+{
+	core::float3 position;
+	core::float2 uv;
+};
+
+struct SceneConstantBuffer
+{
+	core::float4 offset;
+};
+
+void InitAssets(RHI::RHIDevice * device)
+{
+	Vertex vertices[] =
+	{
+		//{ { -1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
+		//{ { 1.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+		//{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+		//{ { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+		//
+		{ { 1.0f, 1.0f, 0.0f }, { 1.0f, 1.0f } },
+		{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+		{ { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f } },
+		//
+		//{ { -25.f, +25.f, 0.0f }, { 0.0f, 0.0f } },
+		//{ { +25.f, +25.f, 0.0f }, { 1.0f, 0.0f } },
+		//{ { +25.f, -25.f, 0.0f }, { 1.0f, 1.0f } },
+		//{ { -25.f, -25.f, 0.0f }, { 1.0f, 1.0f } },
+	};
+	nvertices = std::size(vertices);
+
+	uint16_t indices[] =
+	{
+		0, 1, 2, 1, 2, 3
+	};
+
+	RHI::ResourceArgs verticesParams = {};
+	verticesParams.heap.type = RHI::HeapType::Upload;
+	verticesParams.size.cx = sizeof(vertices);
+	verticesParams.dimension = RHI::ResourceDimension::Raw;
+	verticesParams.states = RHI::ResourceState::GenericRead;
+	vetexbuffer = device->CreateResource(verticesParams);
+	std::memcpy(vetexbuffer->Data(), vertices, sizeof(vertices));
+	
+	RHI::ResourceArgs indicesParams = {};
+	indicesParams.heap.type = RHI::HeapType::Upload;
+	indicesParams.size.cx = sizeof(vertices);
+	indicesParams.dimension = RHI::ResourceDimension::Raw;
+	indicesParams.states = RHI::ResourceState::GenericRead;
+	indexbuffer = device->CreateResource(indicesParams);
+	std::memcpy(indexbuffer->Data(), indices, sizeof(indices));
+
+	RHI::ResourceArgs constParams = {};
+	constParams.heap.type = RHI::HeapType::Upload;
+	constParams.size.cx = (sizeof(SceneConstantBuffer) + 0xff) & ~0xff;
+	constParams.dimension = RHI::ResourceDimension::Raw;
+	constParams.states = RHI::ResourceState::GenericRead;
+	constbuffer = device->CreateResource(constParams);
+
+	RHI::ConstBufferViewArgs viewArgs;
+	viewArgs.flags = RHI::DescriptorHeapFlag::ShaderVisible;
+	constbuffer_view = device->CreateConstBufferView(constbuffer.get(), viewArgs);
+}
+
 void RHIThread()
 {
 	RHI::RHID3D12::RHID3D12Factory RHI;
 	RHI.Load();
 	auto adapters = RHI.AdapterDescs();
 	auto device = RHI.CreateDevice(adapters[0].uri);
+
+	InitAssets(device.get());
+	
 	auto queue = device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
 
 	RHI::RenderTargetArgs rtparams =
@@ -57,13 +129,6 @@ void RHIThread()
 	auto cmdallocator = device->CreateCommandAllocator(RHI::CommandType::Direct);
 	auto cmdlist = device->CreateCommandList(RHI::CommandType::Direct);
 
-	RHI::ResourceArgs resourceParams = {};
-	resourceParams.heap.type = RHI::HeapType::Default;
-	resourceParams.size.cx = 1024;
-	resourceParams.dimension = RHI::ResourceDimension::Raw;
-	resourceParams.states = RHI::ResourceState::VertexBuffer;
-	auto vb = device->CreateResource(resourceParams);
-
 	RHI::PipelineStateArgs psargs;
 
 	RHI::PipelineStateTables table0 =
@@ -73,12 +138,12 @@ void RHIThread()
 		{
 			{
 				.type = RHI::DescripteorRangeType::ConstBuffer,
-				.shaderRegister = 1,
+				.shaderRegister = 0,
 			},
-			{
-				.type = RHI::DescripteorRangeType::ShaderResource,
-				.shaderRegister = 2,
-			}
+			//{
+			//	.type = RHI::DescripteorRangeType::ShaderResource,
+			//	.shaderRegister = 0,
+			//}
 		},
 	};
 
@@ -102,8 +167,19 @@ void RHIThread()
 	RHI::ViewPort viewport = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
 
 	core::counter_fps<float, 3> fps;
+	auto time_last = core::datetime::system();
+	SceneConstantBuffer cbuffer;
 	while (rendering)
 	{
+		auto elapse = core::datetime::system() - time_last;
+		time_last += elapse;
+		
+		float speed = 0.5f;
+		cbuffer.offset.x += speed * elapse;
+		if (cbuffer.offset.x > 1.0f)
+			cbuffer.offset.x = -1.5f;
+		std::memcpy(constbuffer->Data(), &cbuffer, sizeof(cbuffer));
+		
 		rt->Begin();
 		cmdallocator->Reset();
 		cmdlist->Reset(cmdallocator.get());
@@ -111,7 +187,18 @@ void RHIThread()
 		cmdlist->SetScissorRect(sccisorrect);
 		cmdlist->TransitionBarrier(rt.get(), RHI::ResourceState::RenderTarget);
 		cmdlist->SetRenderTarget(rt->CurrentRTV());
-		cmdlist->ClearRenderTarget(core::colors::Red);
+		cmdlist->ClearRenderTarget(0xff555555);
+		cmdlist->SetPipelineState(pso.get());
+
+		RHI::RHIResourceView * views[] = { constbuffer_view.get() };
+		cmdlist->SetResourceViews(views, 1);
+		cmdlist->SetGraphicsResourceView(0, constbuffer_view.get());
+
+		cmdlist->IASetIndexBuffer(indexbuffer.get(), 2, 12);
+		cmdlist->IASetVertexBuffer(vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * nvertices);
+		cmdlist->IASetTopologyType(RHI::Topology::TriangleStrip);
+		cmdlist->DrawInstanced(nvertices, 1, 0, 0);
+		
 		cmdlist->TransitionBarrier(rt.get(), RHI::ResourceState::Present);
 		cmdlist->Close();
 		rt->Excute(cmdlist.get());
@@ -124,6 +211,8 @@ void RHIThread()
 			printf("\rfps = %.6f", fps.fps());
 	}
 
+	vetexbuffer.reset();
+	indexbuffer.reset();
 }
 
 int main()

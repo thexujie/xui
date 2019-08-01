@@ -72,7 +72,7 @@ namespace core
 
         void set_lg(log_e lg);
 
-        int overflow(int ch);
+		std::u8streambuf::int_type overflow(std::u8streambuf::int_type ch) override;
         std::streamsize xsputn(const char8_t * s, std::streamsize n) override;
         int sync() override;
         std::u8ostream & os() { return *this; }
@@ -130,8 +130,12 @@ namespace core
 
     private:
         std::thread _thread;
-        std::mutex _mtx_write;
+		std::mutex _mtx_write;
         std::condition_variable _cond;
+#ifdef _DEBUG
+		std::mutex _mtx_notify;
+		std::condition_variable _cond_notify;
+#endif
 
         std::atomic<bool> _finish = false;
         std::atomic_bool _console = false;

@@ -62,7 +62,7 @@ namespace core::network
                 _socket->close();
 
             if (_socket->state() != socket_state_closed)
-                return error_state;
+                return e_state;
         }
         else
             _socket = std::make_shared<network::socket>();
@@ -79,7 +79,7 @@ namespace core::network
                 _socket->close();
 
             if (_socket->state() != socket_state_closed)
-                return error_state;
+                return e_state;
         }
         else
             _socket = std::make_shared<network::socket>();
@@ -102,7 +102,7 @@ namespace core::network
     std::tuple<error, int64_t> http::send(const std::string & text)
     {
         if (!_socket || _socket->state() != socket_state_connected)
-            return { error_state, 0 };
+            return { e_state, 0 };
 
         auto [error, nb_send] = _socket->send(std::shared_ptr<byte_t>((byte_t *)text.data(), [](byte_t *) {}), text.length());
         return { error, nb_send };
@@ -112,7 +112,7 @@ namespace core::network
     {
         assert(_socket && _socket->state() == socket_state_connected);
         if (!_socket || _socket->state() != socket_state_connected)
-            return { error_state, 0 };
+            return { e_state, 0 };
 
         int64_t nb_write = 0;
         if (_buffer_size > _buffer_pos)
@@ -129,7 +129,7 @@ namespace core::network
                     _buffer_size = 0;
                     _buffer_pos = 0;
                 }
-                return { error_ok, nb_write };
+                return { ok, nb_write };
             }
 
             _nb_recieved += nb_write;
@@ -142,7 +142,7 @@ namespace core::network
                     _buffer_size = 0;
                     _buffer_pos = 0;
                 }
-                return { error_ok, nb_write };
+                return { ok, nb_write };
             }
         }
         else
@@ -156,7 +156,7 @@ namespace core::network
         }
 
         if (_response->content_length >= 0 && _nb_recieved >= _response->content_length)
-            return { error_eof, 0 };
+            return { e_eof, 0 };
 
         //error err_select = _socket->select(50ms);
         //if (err_select < 0)
@@ -169,7 +169,7 @@ namespace core::network
         _nb_recieved += nb_recv;
         nb_write += nb_recv;
 
-        return { error_ok, nb_write };
+        return { ok, nb_write };
     }
 
     std::tuple<core::error, std::shared_ptr<http_response>> http::recieve()
@@ -188,7 +188,7 @@ namespace core::network
     std::tuple<core::error, std::shared_ptr<http_response>, int64_t> http::recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes)
     {
         if (!_socket || _socket->state() != socket_state_connected)
-            return { error_state, nullptr, 0 };
+            return { e_state, nullptr, 0 };
 
         _response = std::make_shared<http_response>();
         std::shared_ptr<http_response> response = _response;
@@ -251,7 +251,7 @@ namespace core::network
             }
         }
 
-        return { error_ok, response, nb_read };
+        return { ok, response, nb_read };
     }
 
     std::tuple<core::error, std::shared_ptr<http_response>> http::recieve(std::function<void(std::shared_ptr<byte_t>, int64_t)> callback)
@@ -301,24 +301,24 @@ namespace core::network
     {
         std::vector<std::string> parts = core::split(line, ' ');
         if (parts.size() != 3)
-            return error_generic;
+            return e_generic;
 
         response.version = core::trim(parts[0]);
         response.code = std::stoi(std::string(parts[1]));
         response.message = core::trim(parts[2]);
-        return error_ok;
+        return ok;
     }
 
     core::error http::parse_line(const std::string line, http_response & response)
     {
         size_t pos_colon = line.find_first_of(": ");
         if (pos_colon == std::string_view::npos)
-            return error_generic;
+            return e_generic;
 
         std::string key = line.substr(0, pos_colon);
         std::string val = line.substr(pos_colon + 2, line.length() - pos_colon - 2);
         response.headers[key] = val;
-        return error_ok;
+        return ok;
     }
 
     core::error http::parse_response(http_response & response)
@@ -342,6 +342,6 @@ namespace core::network
         auto iter_content_length = response.headers.find("content-length");
         if (iter_content_length != response.headers.end())
             response.content_length = std::stoll(iter_content_length->second);
-        return error_ok;
+        return ok;
     }
 }

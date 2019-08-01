@@ -148,6 +148,7 @@ namespace RHI::RHID3D12
 		result.set(D3D12_RESOURCE_STATE_RESOLVE_SOURCE, states.any(ResourceState::ResolveSource));
 		result.set(D3D12_RESOURCE_STATE_RESOLVE_DEST, states.any(ResourceState::ResolveDest));
 		result.set(D3D12_RESOURCE_STATE_PRESENT, states.any(ResourceState::Present));
+		result.set(D3D12_RESOURCE_STATE_GENERIC_READ, states.any(ResourceState::GenericRead));
 		return result.get();
 	}
 
@@ -314,6 +315,68 @@ namespace RHI::RHID3D12
 		}
 	}
 
+	inline D3D12_CULL_MODE FromCullMode(CullMode mode)
+	{
+		switch(mode)
+		{
+		case CullMode::None: 
+			return D3D12_CULL_MODE::D3D12_CULL_MODE_NONE;
+		case CullMode::Front:
+			return D3D12_CULL_MODE::D3D12_CULL_MODE_FRONT;
+		case CullMode::Back:
+			return D3D12_CULL_MODE::D3D12_CULL_MODE_BACK;
+		default:
+			return D3D12_CULL_MODE::D3D12_CULL_MODE_NONE;
+		}
+	}
+
+	inline D3D12_COLOR_WRITE_ENABLE FromWriteMasks(WriteMasks masks)
+	{
+		core::bitflag<D3D12_COLOR_WRITE_ENABLE> result;
+		result.set(D3D12_COLOR_WRITE_ENABLE_RED, masks.any(WriteMask::Red));
+		result.set(D3D12_COLOR_WRITE_ENABLE_GREEN, masks.any(WriteMask::Green));
+		result.set(D3D12_COLOR_WRITE_ENABLE_BLUE, masks.any(WriteMask::Blue));
+		result.set(D3D12_COLOR_WRITE_ENABLE_ALPHA, masks.any(WriteMask::Alpha));
+		return result;
+	}
+
+	inline D3D12_PRIMITIVE_TOPOLOGY FromTopology(Topology topology)
+	{
+		switch(topology)
+		{
+		case Topology::None: 
+			return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+		case Topology::PointList:
+			return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+		case Topology::LineList:
+			return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+		case Topology::LineStrip:
+			return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;
+		case Topology::TriangleList: 
+			return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		case Topology::TriangleStrip:
+			return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+		case Topology::Point1PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_1_CONTROL_POINT_PATCHLIST;
+		case Topology::Point2PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_2_CONTROL_POINT_PATCHLIST;
+		case Topology::Point3PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
+		case Topology::Point4PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST;
+		case Topology::Point5PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_5_CONTROL_POINT_PATCHLIST;
+		case Topology::Point6PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_6_CONTROL_POINT_PATCHLIST;
+		case Topology::Point7PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_7_CONTROL_POINT_PATCHLIST;
+		case Topology::Point8PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_8_CONTROL_POINT_PATCHLIST;
+		case Topology::Point9PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_9_CONTROL_POINT_PATCHLIST;
+		case Topology::Point10PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_10_CONTROL_POINT_PATCHLIST;
+		case Topology::Point11PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_11_CONTROL_POINT_PATCHLIST;
+		case Topology::Point12PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_12_CONTROL_POINT_PATCHLIST;
+		case Topology::Point13PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_13_CONTROL_POINT_PATCHLIST;
+		case Topology::Point14PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_14_CONTROL_POINT_PATCHLIST;
+		case Topology::Point15PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_15_CONTROL_POINT_PATCHLIST;
+		case Topology::Point16PatchList: return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST;
+		default:
+			return D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+		}
+	}
+	
 	inline D3D12_PRIMITIVE_TOPOLOGY_TYPE FromTopologyType(TopologyType type)
 	{
 		switch(type)

@@ -298,10 +298,13 @@ namespace core
         };
     };
 
-    typedef vec2<int32_t> sizei;
+	typedef vec2<int32_t> sizei;
+	typedef vec2<uint32_t> sizeu;
     typedef vec2<float32_t> sizef;
-    typedef vec2<int32_t> pointi;
+	typedef vec2<int32_t> pointi;
+	typedef vec2<uint32_t> pointu;
     typedef vec2<float32_t> pointf;
-    typedef vec2<int32_t> vec2i;
+	typedef vec2<int32_t> vec2i;
+	typedef vec2<uint32_t> vec2u;
     typedef vec2<float32_t> vec2f;
 }

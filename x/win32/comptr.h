@@ -22,6 +22,9 @@ namespace win32
     template<typename UT>
     class comptr
     {
+	public:
+		using value_type = UT;
+
     public:
         comptr() {}
         comptr(std::nullptr_t)
@@ -62,11 +65,6 @@ namespace win32
                 _ptr->Release();
                 _ptr = nullptr;
             }
-        }
-
-        UT ** operator & ()
-        {
-            return &_ptr;
         }
 
         UT * operator ->() const
@@ -133,8 +131,9 @@ namespace win32
         }
 
         UT * get() const { return _ptr; }
-        UT ** getpp() const { if (_ptr) throw 1;  return const_cast<UT **>(&_ptr); }
-        void ** getvv() const { if (_ptr) throw 1;  return (void **)(&_ptr); }
+		UT ** getpp() const { if (_ptr) throw 1;  return const_cast<UT * *>(&_ptr); }
+		UT ** getpp_safe() const { if (_ptr) { const_cast<comptr *>(this)->_ptr->Release(); const_cast<comptr *>(this)->_ptr = nullptr; }  return const_cast<UT * *>(&_ptr); }
+        void ** getvv() const { if (_ptr) throw 1;  return reinterpret_cast<void **>(const_cast<UT **>(&_ptr)); }
         template<typename UT2>
         UT2 ** gettt() const { if (_ptr) throw 1;  return reinterpret_cast<UT2 **>(getvv()); }
 

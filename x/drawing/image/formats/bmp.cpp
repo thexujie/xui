@@ -24,7 +24,7 @@ namespace drawing::image::formats
     {
         const bmp_simple_header_t * header = reinterpret_cast<const bmp_simple_header_t *>(buffer);
         if (header->type != BMP_MAGIC)
-            return error_bad_format;
+            return e_bad_format;
 
         image_format format = {};
         image_convert_fun pfn_convert = nullptr;
@@ -37,9 +37,9 @@ namespace drawing::image::formats
         {
             const bmp_header_os2_t * info = reinterpret_cast<const bmp_header_os2_t *>(buffer);
             if (info->type != BMP_MAGIC)
-                return error_bad_format;
+                return e_bad_format;
             if (info->info_size != sizeof(bmp_info_os2_t))
-                return error_bad_data;
+                return e_bad_data;
 
             buffer += sizeof(bmp_header_os2_t);
 
@@ -89,14 +89,14 @@ namespace drawing::image::formats
             const bmp_header_windows_t * bmp_header = (const bmp_header_windows_t *)buffer;
             buffer += sizeof(bmp_header_windows_t);
             if (header->type != BMP_MAGIC)
-                return error_bad_format;
+                return e_bad_format;
 
             const bmp_info_windows_t * info = (const bmp_info_windows_t *)buffer;
             buffer += sizeof(bmp_info_windows_t);
 
             if (info->size != sizeof(bmp_info_windows_t) && info->size != sizeof(bmp_info_windows_t) + sizeof(
                 color_mask_abgr_t))
-                return error_bad_data;
+                return e_bad_data;
 
             format.width = info->width;
             format.height = std::abs(info->height);
@@ -199,7 +199,7 @@ namespace drawing::image::formats
         }
 
         if (!pfn_convert)
-            return error_not_supported;
+            return e_not_supported;
 
         image.format = format;
         if (ictx.get_format)
@@ -223,19 +223,19 @@ namespace drawing::image::formats
             image.pfn_free(image);
             return err;
         }
-        return error_ok;
+        return ok;
     }
 
     core::error bmp_save(const image_data_t & data, const std::u8string & path)
     {
         color_mask_abgr_t mask = mask_from_format_abgr(data.format.format);
         if (!mask)
-            return error_not_supported;
+            return e_not_supported;
 
         std::fstream fs;
         fs.open(core::u8str_wstr(path), std::ios::out | std::ios::binary | std::ios::trunc);
         if (!fs.good())
-            return error_io;
+            return e_io;
 
         image::formats::bmp_header_windows_t bmfHdr = {};
         bmfHdr.type = 0x4D42;
@@ -261,7 +261,7 @@ namespace drawing::image::formats
         fs.write((const char *)data.data, data.pitch * data.format.height);
 
         fs.close();
-        return error_ok;
+        return ok;
     }
 
     core::error image_convert_bmp_index4_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
@@ -269,7 +269,7 @@ namespace drawing::image::formats
         assert(dst.pitch > 0);
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         byte_t * dst_line = dst.data;
         int32_t dst_pitch = dst.pitch;
@@ -380,7 +380,7 @@ namespace drawing::image::formats
             }
         }
 
-        return error_ok;
+        return ok;
     }
 
     core::error image_convert_bmp_index8_rle(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
@@ -388,7 +388,7 @@ namespace drawing::image::formats
         assert(dst.pitch > 0);
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         byte_t * dst_line = dst.data;
         int32_t dst_pitch = dst.pitch;
@@ -483,6 +483,6 @@ namespace drawing::image::formats
                 }
             }
         }
-        return error_ok;
+        return ok;
     }
 }

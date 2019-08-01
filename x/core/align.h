@@ -26,7 +26,7 @@ namespace core
     *       			|					|                       |                        |
     *       			|					|                       |                        |
     *       			|					|                       |                        |
-    *    Left(L)		|	LeftEdge(LE)	|      Inner(INNER)     |      RightEdge(RE)     |  Right(R)
+    *    Left(L)		|	LeftEdge(LE)	|      Ptr(INNER)     |      RightEdge(RE)     |  Right(R)
     *       			|					|                       |                        |
     *       			|					|                       |                        |
     *       			|					|                       |                        |

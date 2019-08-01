@@ -8,13 +8,14 @@ namespace RHI
 	class RHICommandList;
 	class RHIResourceView;
 
-	class RHIRenderTarget : public RHIResource
+	class RHIRenderTarget : public RHIObject
 	{
 	public:
 		RHIRenderTarget() = default;
 		virtual ~RHIRenderTarget() = default;
-
+		
 	public:
+		virtual void TransitionBarrier(RHICommandList * cmdlist, ResourceStates states) = 0;
 		virtual RHIResourceView * CurrentRTV() const = 0;
 		virtual void Begin() = 0;
 		virtual void End() = 0;

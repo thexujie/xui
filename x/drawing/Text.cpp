@@ -191,11 +191,11 @@ namespace drawing
             auto sktypeface = std::shared_ptr<SkTypeface>(SkTypeface::MakeFromName(reinterpret_cast<const char *>(font.family.c_str()), drawing::skia::from(font.style)).release(), drawing::skia::skia_unref<>);
             auto hbfont = create_hb_font(sktypeface.get());
             if(!sktypeface || !hbfont)
-                throw core::error_not_supported;
+                throw core::e_not_supported;
 
             _fonts.push_back({ font, sktypeface, hbfont, drawing::fontmetrics(font) });
             if (_fonts.size() > 0xfffe)
-                throw core::error_outofbound;
+                throw core::e_outofbound;
             index = uint16_t(_fonts.size() - 1);
             _font_indices[font] = index;
         }
@@ -220,12 +220,12 @@ namespace drawing
     {
         auto font_default = _shaper.indexFont(font);
         if (_blob && (_font_default == font_default && _color_default == color))
-            return core::error_ok;
+            return core::ok;
 
         itermize(font, color);
         layout();
         _blob = build();
-        return core::error_ok;
+        return core::ok;
     }
 
     core::error Text::itermize(const drawing::font & font_default, core::color color_default)
@@ -250,7 +250,7 @@ namespace drawing
         auto & breaker_world = _shaper.breaker_world();
 
         if (_text.empty())
-            return core::error_ok;
+            return core::ok;
 
         std::u16string u16str = core::u8str_u16str(_text);
 
@@ -258,11 +258,11 @@ namespace drawing
         if (U_FAILURE(status))
         {
             core::logger::war() << __FUNCTIONW__ L" ubidi_openSized failed, " << status << ": " << u_errorName(status);
-            return core::error_inner;
+            return core::e_inner;
         }
         assert(ubidi);
         if (!ubidi)
-            return core::error_outofmemory;
+            return core::e_outofmemory;
 
         // The required lifetime of utf16 isn't well documented.
         // It appears it isn't used after ubidi_setPara except through ubidi_getText.
@@ -553,7 +553,7 @@ namespace drawing
 #endif
         }
 
-        return core::error_ok;
+        return core::ok;
     }
 
     core::error Text::layout()
@@ -562,7 +562,7 @@ namespace drawing
         _ascent = 0.0f;
         _descent = 0.0f;
         if (_text.empty())
-            return core::error_ok;
+            return core::ok;
 
         std::vector<UBiDiLevel> _bidis(_items.size());
         std::vector<int32_t> visual_indices(_items.size());
@@ -632,7 +632,7 @@ namespace drawing
             descent = std::max(descent, _shaper.fontmetrics(_items[seg.iindex].font).descent);
         }
         _bounds = { advance, ascent + descent };
-        return core::error_ok;
+        return core::ok;
     }
 
     std::shared_ptr<SkTextBlob> Text::build(float32_t width)
@@ -843,7 +843,7 @@ namespace drawing
         _segments.clear();
 
         if (_text.empty())
-            return core::error_ok;
+            return core::ok;
 
         float32_t curr = 0;
         uint32_t line = 0;
@@ -964,7 +964,7 @@ namespace drawing
             }
         }
 
-        return core::error_ok;
+        return core::ok;
     }
 
     core::sizef TextWraper::bounds() const

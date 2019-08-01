@@ -71,7 +71,7 @@ namespace RHI::RHID3D12
 
 		win32::comptr<ID3D12DescriptorHeap> rtv_heap;
 		std::vector<win32::comptr<ID3D12Resource>> buffers(params.nbuffer);
-		std::vector<std::shared_ptr<RHID3D12ResourceView>> views;
+		std::vector<std::shared_ptr<RHID3D12RenderTargetView>> views;
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
 			rtvHeapDesc.NumDescriptors = params.nbuffer;
@@ -96,7 +96,7 @@ namespace RHI::RHID3D12
 					return core::e_inner;
 				}
 
-				views.push_back(std::make_shared<RHID3D12ResourceView>(handle));
+				views.push_back(std::make_shared<RHID3D12RenderTargetView>(handle));
 				device->CreateRenderTargetView(buffers[ibuffer].get(), nullptr, handle);
 				handle.ptr += rtv_desc_size;
 			}

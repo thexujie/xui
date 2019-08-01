@@ -112,7 +112,9 @@ namespace RHI
 		ResolveDest = 0x80000,
 
 		Present = 0x100000,
+		GenericRead = 0x200000,
 	};
+	
 	typedef core::bitflag<ResourceState> ResourceStates;
 
 	class RHIDeviceObject
@@ -187,13 +189,18 @@ namespace RHI
 	};
 	typedef core::bitflag<DescriptorHeapFlag> DescriptorHeapFlags;
 
-	struct ResourceViewArgs
+	struct ShaderResourceViewArgs
 	{
+		DescriptorHeapType type = DescriptorHeapType::None;
 		core::pixelformat format = core::pixelformat::none;
 		ResourceViewDimension dimension = ResourceViewDimension::None;
-		DescriptorHeapType type = DescriptorHeapType::None;
 		DescriptorHeapFlags flags = nullptr;
 		uint32_t miplevels = 1;
+	};
+
+	struct ConstBufferViewArgs
+	{
+		DescriptorHeapFlags flags = nullptr;
 	};
 
 	struct RenderTargetArgs
@@ -292,6 +299,50 @@ namespace RHI
 		Max,
 	};
 
+	enum class CullMode
+	{
+		None = 0,
+		Front,
+		Back
+	};
+
+	enum class WriteMask
+	{
+		None = 0,
+		Red = 0x1,
+		Green = 0x2,
+		Blue = 0x4,
+		Alpha = 0x8,
+		All = Red | Green | Blue | Alpha,
+	};
+	typedef core::bitflag<WriteMask> WriteMasks;
+	
+	enum class Topology
+	{
+		None = 0,
+		PointList,
+		LineList,
+		LineStrip,
+		TriangleList,
+		TriangleStrip,
+		Point1PatchList,
+		Point2PatchList,
+		Point3PatchList,
+		Point4PatchList,
+		Point5PatchList,
+		Point6PatchList,
+		Point7PatchList,
+		Point8PatchList,
+		Point9PatchList,
+		Point10PatchList,
+		Point11PatchList,
+		Point12PatchList,
+		Point13PatchList,
+		Point14PatchList,
+		Point15PatchList,
+		Point16PatchList,
+	};
+	
 	enum class TopologyType
 	{
 		None = 0,
@@ -358,22 +409,22 @@ namespace RHI
 			struct
 			{
 				bool enable = false;
-				Blend srcColor= Blend::None;
-				Blend destColor= Blend::None;
+				Blend srcColor= Blend::One;
+				Blend destColor= Blend::Zero;
 				BlendOP colorOP = BlendOP::Add;
-				Blend srcAlpha = Blend::None;
-				Blend destAlpha = Blend::None;
+				Blend srcAlpha = Blend::One;
+				Blend destAlpha = Blend::Zero;
 				BlendOP alphaOP = BlendOP::Add;
-				uint32_t writeMask = 0;
+				WriteMasks writeMasks = WriteMask::All;
 			}targets[RenderTargetMax];
 		}blend;
 
 		struct
 		{
 			bool wireframe = false;
-			bool cullback = true;
+			CullMode cullmode = CullMode::None;
 			bool CCW = false;
-			int depthBias = 0.0f;
+			int depthBias = 0;
 			bool depthClip = true;
 			bool MSAA = false;
 		}rasterize;

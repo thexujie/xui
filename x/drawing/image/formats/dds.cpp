@@ -92,7 +92,7 @@ namespace drawing::image::formats
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         int32_t texel_w = src.format.width >> 2;
         int32_t texel_h = src.format.height >> 2;
@@ -123,14 +123,14 @@ namespace drawing::image::formats
             }
             dst_line += dst.pitch * 4; // 每次4行
         }
-        return error_ok;
+        return ok;
     }
 
     core::error dds_convert_bc2(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         int32_t texel_w = src.format.width >> 2;
         int32_t texel_h = src.format.height >> 2;
@@ -167,7 +167,7 @@ namespace drawing::image::formats
             }
             dst_line += dst.pitch * 4; // 每次4行
         }
-        return error_ok;
+        return ok;
     }
 
 
@@ -175,7 +175,7 @@ namespace drawing::image::formats
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         int32_t texel_w = src.format.width >> 2;
         int32_t texel_h = src.format.height >> 2;
@@ -215,7 +215,7 @@ namespace drawing::image::formats
             }
             dst_line += dst.pitch * 4; // 每次4行
         }
-        return error_ok;
+        return ok;
     }
 
     void color_dds_a4r5g6b5_to_r5g5b5(const void * src_pixel, void * dst_pixel)
@@ -258,9 +258,9 @@ namespace drawing::image::formats
     {
         const dds_header_t * header = reinterpret_cast<const dds_header_t *>(buffer);
         if (header->magic != DDS_MAGIC)
-            return error_bad_data;
+            return e_bad_data;
         if (header->size != sizeof(dds_header_t) - sizeof(DDS_MAGIC))
-            return error_bad_data;
+            return e_bad_data;
 
         image_convert_fun pfn_convert = nullptr;
         image_format format = {};
@@ -343,7 +343,7 @@ namespace drawing::image::formats
         else {}
 
         if (!pfn_convert)
-            return error_not_supported;
+            return e_not_supported;
 
         image.format = format;
         if (ictx.get_format)
@@ -364,6 +364,6 @@ namespace drawing::image::formats
             image = {};
             return err;
         }
-        return error_ok;
+        return ok;
     }
 }

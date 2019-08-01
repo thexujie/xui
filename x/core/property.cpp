@@ -23,7 +23,7 @@ namespace core
         if (!object || !_accessor || !_interpolator)
             return false;
 
-        auto now = core::datetime::steady();
+        auto now = core::datetime::steady_ns();
         auto cost = now - _time;
         if (cost > _duration * _loop_index + _duration)
         {

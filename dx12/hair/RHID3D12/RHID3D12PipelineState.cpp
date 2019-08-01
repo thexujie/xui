@@ -31,6 +31,7 @@ namespace RHI::RHID3D12
 				ranges[irangebase + irange].NumDescriptors = args.tables[itable].ranges[irange].numDescriptor;
 				ranges[irangebase + irange].BaseShaderRegister = args.tables[itable].ranges[irange].shaderRegister;
 				ranges[irangebase + irange].RegisterSpace = args.tables[itable].ranges[irange].registerSpace;
+				ranges[irangebase + irange].Flags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
 			}
 			irangebase += args.tables[itable].ranges.size();
 		}
@@ -118,7 +119,8 @@ namespace RHI::RHID3D12
 			desc.BlendState.RenderTarget[itarget].SrcBlendAlpha = FromBlend(args.blend.targets[itarget].srcAlpha);
 			desc.BlendState.RenderTarget[itarget].DestBlendAlpha = FromBlend(args.blend.targets[itarget].destAlpha);
 			desc.BlendState.RenderTarget[itarget].BlendOpAlpha = FromBlendOP(args.blend.targets[itarget].alphaOP);
-			desc.BlendState.RenderTarget[itarget].RenderTargetWriteMask = args.blend.targets[itarget].writeMask;
+			desc.BlendState.RenderTarget[itarget].LogicOp = D3D12_LOGIC_OP_NOOP;
+			desc.BlendState.RenderTarget[itarget].RenderTargetWriteMask = FromWriteMasks(args.blend.targets[itarget].writeMasks);
 		}
 
 		desc.DepthStencilState.DepthEnable = args.depthstencil.depth;
@@ -136,13 +138,12 @@ namespace RHI::RHID3D12
 		desc.SampleDesc.Quality = args.SampleQuality;
 
 		desc.RasterizerState.FillMode = args.rasterize.wireframe ? D3D12_FILL_MODE::D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE::D3D12_FILL_MODE_SOLID;
-		desc.RasterizerState.CullMode = args.rasterize.cullback ? D3D12_CULL_MODE::D3D12_CULL_MODE_BACK : D3D12_CULL_MODE::D3D12_CULL_MODE_FRONT;
+		desc.RasterizerState.CullMode = FromCullMode(args.rasterize.cullmode);
 		desc.RasterizerState.FrontCounterClockwise = args.rasterize.CCW;
 		desc.RasterizerState.DepthBias = args.rasterize.depthBias;
 		desc.RasterizerState.DepthBiasClamp = 0;
 		desc.RasterizerState.DepthClipEnable = args.rasterize.depthClip;
 		desc.RasterizerState.MultisampleEnable = args.rasterize.MSAA;
-
 
 		hr = device->CreateGraphicsPipelineState(&desc, __uuidof(ID3D12PipelineState), _pipelineState.getvv());
 		if (FAILED(hr))

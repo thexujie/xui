@@ -28,7 +28,7 @@ namespace core
         unit_value<T> operator + (const unit_value<T> & another) const
         {
             if (unit != another.unit)
-                throw core::error_bad_format;
+                throw core::e_bad_format;
 
             return unit_value<T>(value + another.value, unit);
         }
@@ -36,7 +36,7 @@ namespace core
         unit_value<T> operator - (const unit_value<T> & another) const
         {
             if (unit != another.unit)
-                throw core::error_bad_format;
+                throw core::e_bad_format;
 
             return unit_value<T>(value - another.value, unit);
         }

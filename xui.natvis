@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-	<Type Name="core::math::xmm::xmt">
+
+  <Type Name="std::basic_string&lt;char8_t,*&gt;">
+    <Intrinsic Name="size" Expression="_Mypair._Myval2._Mysize" />
+    <Intrinsic Name="capacity" Expression="_Mypair._Myval2._Myres" />
+     <!--_BUF_SIZE = 16 / sizeof(char32_t) &lt; 1 ? 1 : 16 / sizeof(char32_t) == 16--> 
+    <Intrinsic Name="bufSize" Expression="16" />
+    <Intrinsic Name="isShortString" Expression="capacity() &lt; bufSize()" />
+    <Intrinsic Name="isLongString" Expression="capacity() &gt;= bufSize()" />
+    <!--<DisplayString Condition="isShortString()">{_Mypair._Myval2._Bx._Alias,s8}</DisplayString>-->
+    <DisplayString Condition="isLongString()">{*(char**)(&amp;(_Mypair._Myval2._Bx._Alias[0])),s8}</DisplayString>
+    <DisplayString Condition="isShortString()">{{isShortString}}</DisplayString>
+    <!--<DisplayString Condition="isLongString()">{{isLongString}}</DisplayString>-->
+  </Type>
+
+  <Type Name="core::math::xmm::xmt">
 		<DisplayString>{{{fx},{fy},{fz},{fw}}}</DisplayString>
 		<Expand>
 			<Item Name="f32">af</Item>

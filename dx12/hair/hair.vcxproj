@@ -117,7 +117,7 @@
     <ClCompile Include="RHID3D12\RHID3D12Device.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12CommandQueue.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12RenderTargetHWND.cpp" />
-    <ClCompile Include="RHID3D12\RHID3D12ResourceView.cpp" />
+    <ClCompile Include="RHID3D12\RHID3D12View.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12Utils.cpp" />
     <ClCompile Include="RHI\RHIPipelineState.cpp" />
     <ClCompile Include="RHI\RHIResource.cpp" />
@@ -152,7 +152,7 @@
     <ClInclude Include="RHID3D12\RHID3D12Device.h" />
     <ClInclude Include="RHID3D12\RHID3D12CommandQueue.h" />
     <ClInclude Include="RHID3D12\RHID3D12RenderTargetHWND.h" />
-    <ClInclude Include="RHID3D12\RHID3D12ResourceView.h" />
+    <ClInclude Include="RHID3D12\RHID3D12View.h" />
     <ClInclude Include="RHID3D12\RHID3D12Utils.h" />
     <ClInclude Include="RHI\RHIPipelineState.h" />
     <ClInclude Include="RHI\RHIResource.h" />

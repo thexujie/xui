@@ -60,7 +60,7 @@ namespace core
     void invoke_helper::check_invoke()
     {
         if (GetCurrentThreadId() != _id)
-            throw core::exception(core::error_invalid_operation);
+            throw core::exception(core::e_invalid_operation);
     }
 
     void * invoke_helper::thread_handle() const
@@ -83,7 +83,7 @@ namespace core
     error invoke_helper::add(std::shared_ptr<object> invoker, std::function<void()> fun)
     {
         if (!_id)
-            return error_state;
+            return e_state;
         std::lock_guard<std::mutex> lock(_mtx);
         if (!_thread)
         {
@@ -94,17 +94,17 @@ namespace core
             }
         }
         if (!_thread)
-            return error_state;
+            return e_state;
 
         _invokers[invoker].push_back(fun);
         ::QueueUserAPC(InvokerAPCCallBack, (HANDLE)_thread, 0);
-        return error_ok;
+        return ok;
     }
 
     error invoke_helper::add(std::shared_ptr<object> invoker, std::shared_ptr<invoke_task> task)
     {
         if (!_id)
-            return error_state;
+            return e_state;
         std::lock_guard<std::mutex> lock(_mtx);
         if (!_thread)
         {
@@ -115,17 +115,17 @@ namespace core
             }
         }
         if (!_thread)
-            return error_state;
+            return e_state;
 
         _tasks[invoker].push_back(task);
         ::QueueUserAPC(InvokerAPCCallBack, (HANDLE)_thread, 0);
-        return error_ok;
+        return ok;
     }
 
     error invoke_helper::trigger()
     {
         if (_id != GetCurrentThreadId())
-            return error_state;
+            return e_state;
 
         invoker_map invokers;
         task_map tasks;
@@ -161,6 +161,6 @@ namespace core
             }
 
         }
-        return error_ok;
+        return ok;
     }
 }

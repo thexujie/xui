@@ -146,7 +146,7 @@ namespace drawing::image::formats
         }
 
         if (!pfn_convert)
-            return error_not_supported;
+            return e_not_supported;
 
         image.format = format;
         if (ictx.get_format)
@@ -170,7 +170,7 @@ namespace drawing::image::formats
             image.pfn_free(image);
             return err;
         }
-        return error_ok;
+        return ok;
     }
 
     core::error tga_save(const image_data_t & data, const std::u8string & path)
@@ -184,13 +184,13 @@ namespace drawing::image::formats
         case 32:
             break;
         default:
-            return error_not_supported;
+            return e_not_supported;
         }
 
         std::fstream fs;
         fs.open(core::u8str_wstr(path), std::ios::out | std::ios::binary | std::ios::trunc);
         if (!fs.good())
-            return error_io;
+            return e_io;
 
         tga_header_t header = {};
         header.color_type = tga_color_type_rgb;
@@ -205,14 +205,14 @@ namespace drawing::image::formats
         for(int32_t row = 0; row < data.format.height; ++row)
             fs.write((const char *)data.data + data.pitch * row, row_pitch);
         fs.write((const char *)TGA_TAIL, sizeof(TGA_TAIL)); // °üÀ¨ null
-        return error_ok;
+        return ok;
     }
 
     core::error image_convert_tga_rle8(image_codec_context & icctx, const image_data_t & src, image_data_t & dst)
     {
         pixel_convert_fun pfn_resampler = icctx.get_sampler ? icctx.get_sampler(src.format.format, dst.format.format) : image_get_samapler(src.format.format, dst.format.format);
         if (!pfn_resampler)
-            return error_not_supported;
+            return e_not_supported;
 
         int32_t src_stride = format_bits(src.format.format) / 8;
         int32_t dst_stride = format_bits(dst.format.format) / 8;
@@ -265,6 +265,6 @@ namespace drawing::image::formats
             }
             dst_line += dst_pitch;
         }
-        return error_ok;
+        return ok;
     }
 }

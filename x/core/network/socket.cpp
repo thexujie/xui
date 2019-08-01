@@ -42,27 +42,27 @@ namespace core::network
             setsockopt(reinterpret_cast<SOCKET>(_fd), SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&to_read), sizeof(timeval));
             setsockopt(reinterpret_cast<SOCKET>(_fd), SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char *>(&to_send), sizeof(timeval));
         }
-        return error_ok;
+        return ok;
     }
 
     error socket::connect(const std::u8string & host, port_t port, std::chrono::microseconds timeout)
     {
         std::vector<netaddr> addrs = host2addrs(host);
         if (addrs.empty())
-            return error_unreachable;
+            return e_unreachable;
         return connect(addrs[std::random_device()() % addrs.size()], port, timeout);
     }
 
     error socket::connect(netaddr addr, port_t port, std::chrono::microseconds timeout)
     {
         if (_state != socket_state_closed)
-            return error_state;
+            return e_state;
 
         if (_fd == invalid_fd)
         {
             _fd = reinterpret_cast<void *>(::socket(AF_INET, _type, 0));
             if (_fd == invalid_fd)
-                return error_generic;
+                return e_generic;
 
             uint32_t to_read = (uint32_t)(_timeout_read.count() / 1000);
             uint32_t to_send = (uint32_t)(_timeout_send.count() / 1000);
@@ -80,10 +80,10 @@ namespace core::network
         if (::connect(reinterpret_cast<SOCKET>(_fd), (sockaddr *)&saddr, sizeof(sockaddr_in)) == -1)
         {
             uint32_t err = WSAGetLastError();
-            return error_generic;
+            return e_generic;
         }
         _state = socket_state_connected;
-        return error_ok;
+        return ok;
     }
 
     void socket::close()
@@ -99,7 +99,7 @@ namespace core::network
     error socket::select(std::chrono::microseconds timeout)
     {
         if (_state != socket_state_connected)
-            return error_state;
+            return e_state;
 
         fd_set readSets = {};
         fd_set writeSets = {};
@@ -110,26 +110,26 @@ namespace core::network
         timeval tv = { static_cast<long>(timeout.count() / 1000000), static_cast<long>(timeout.count() % 1000000) };
         int ret = ::select(0, &readSets, &writeSets, &errorSets, &tv);
         if (ret == 0)
-            return error_timeout;
+            return e_timeout;
 
         if (ret < 0)
         {
             int wserr = WSAGetLastError();
-            return error_generic;
+            return e_generic;
         }
 
         if (FD_ISSET((SOCKET)_fd, &errorSets))
         {
             assert(false);
-            return error_generic;
+            return e_generic;
         }
-        return error_ok;
+        return ok;
     }
 
     std::tuple<error, int64_t> socket::send(std::shared_ptr<byte_t> buffer, int64_t nbytes)
     {
         if (_fd == invalid_fd)
-            return { error_state, 0 };
+            return { e_state, 0 };
 
         int ret = ::send(reinterpret_cast<SOCKET>(_fd), buffer.get(), static_cast<int32_t>(nbytes), 0);
         assert(ret >= 0);
@@ -137,10 +137,10 @@ namespace core::network
         {
             _ws_error = WSAGetLastError();
             logger::err() << __FUNCTION__" send 0x" << std::hex << buffer.get() << " " << nbytes << " bytes, %d" << win32::winerr_str(_ws_error);
-            return { error_io, 0 };
+            return { e_io, 0 };
         }
         else
-            return { error_ok, ret };
+            return { ok, ret };
     }
 
     std::tuple<error, int64_t> socket::send(std::vector<byte_t> & buffer, int64_t nbytes)
@@ -151,7 +151,7 @@ namespace core::network
     std::tuple<error, int64_t> socket::recieve(std::shared_ptr<byte_t> buffer, int64_t nbytes)
     {
         if (_fd == invalid_fd || _state != socket_state_connected)
-            return { error_state, 0 };
+            return { e_state, 0 };
 
         int32_t ret = recv((SOCKET)_fd, buffer.get(), static_cast<int32_t>(nbytes), 0);
         assert(ret >= 0);
@@ -159,12 +159,12 @@ namespace core::network
         {
             _ws_error = WSAGetLastError();
             logger::err() << __FUNCTION__" recv 0x" << std::hex << buffer.get() << " " << nbytes << " bytes, error %d" << win32::winerr_str(_ws_error);
-            return { error_io, 0 };
+            return { e_io, 0 };
         }
         else if (ret == 0)
-            return { error_broken, 0 };
+            return { e_broken, 0 };
         else
-            return { error_ok, ret };
+            return { ok, ret };
     }
 
     std::tuple<error, int64_t> socket::recieve(std::vector<byte_t> & buffer, int64_t nbytes)

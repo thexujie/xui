@@ -65,9 +65,6 @@
     <ClCompile Include="RHI\RHIResource.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
-    <ClCompile Include="RHID3D12\RHID3D12ResourceView.cpp">
-      <Filter>RHID3D12</Filter>
-    </ClCompile>
     <ClCompile Include="RHID3D12\RHID3D12Utils.cpp">
       <Filter>RHID3D12</Filter>
     </ClCompile>
@@ -81,6 +78,9 @@
       <Filter>RHI</Filter>
     </ClCompile>
     <ClCompile Include="RHID3D12\RHID3D12PipelineState.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12View.cpp">
       <Filter>RHID3D12</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,9 +149,6 @@
     <ClInclude Include="RHI\RHIResource.h">
       <Filter>RHI</Filter>
     </ClInclude>
-    <ClInclude Include="RHID3D12\RHID3D12ResourceView.h">
-      <Filter>RHID3D12</Filter>
-    </ClInclude>
     <ClInclude Include="RHID3D12\RHID3D12Utils.h">
       <Filter>RHID3D12</Filter>
     </ClInclude>
@@ -165,6 +162,9 @@
       <Filter>RHI</Filter>
     </ClInclude>
     <ClInclude Include="RHID3D12\RHID3D12PipelineState.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12View.h">
       <Filter>RHID3D12</Filter>
     </ClInclude>
   </ItemGroup>

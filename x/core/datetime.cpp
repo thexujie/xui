@@ -159,70 +159,46 @@ namespace core
         return temp;
     }
 
-    std::chrono::nanoseconds datetime::system()
+	datetime datetime::now()
+	{
+		auto now = std::chrono::system_clock::now();
+		auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+		return datetime(now_ms);
+	}
+	
+    float64_t datetime::system()
     {
-        auto now = std::chrono::system_clock::now();
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
+		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+		return now.time_since_epoch().count() * (float64_t)std::chrono::system_clock::period::num / (float64_t)std::chrono::system_clock::period::den;
     }
 
-    std::chrono::nanoseconds datetime::steady()
+	std::chrono::nanoseconds datetime::system_ns()
     {
-        auto now = std::chrono::steady_clock::now();
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
+		auto now = std::chrono::system_clock::now();
+		return std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
+    }
+	
+	float64_t datetime::steady()
+    {
+		auto now = std::chrono::steady_clock::now();
+		return now.time_since_epoch().count() * (float64_t)std::chrono::steady_clock::period::num / (float64_t)std::chrono::steady_clock::period::den;
+    }
+	
+	std::chrono::nanoseconds datetime::steady_ns()
+    {
+		auto now = std::chrono::steady_clock::now();
+		return std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
     }
 
-    std::chrono::nanoseconds datetime::high_resolution()
+	float64_t datetime::high_resolution()
+	{
+		auto now = std::chrono::high_resolution_clock::now();
+		return now.time_since_epoch().count() * (float64_t)std::chrono::high_resolution_clock::period::num / (float64_t)std::chrono::high_resolution_clock::period::den;
+	}
+	
+	std::chrono::nanoseconds datetime::high_resolution_ns()
     {
-        auto now = std::chrono::high_resolution_clock::now();
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
-    }
-
-    float64_t datetime::system_s()
-    {
-        auto now = std::chrono::system_clock::now();
-        auto msecs = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-        return msecs / 1.0;
-    }
-
-    float64_t datetime::steady_s()
-    {
-        auto now = std::chrono::steady_clock::now();
-        auto msecs = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-        return msecs / 1.0;
-    }
-
-    float64_t datetime::high_resolution_s()
-    {
-        auto now = std::chrono::high_resolution_clock::now();
-        return now.time_since_epoch().count() / static_cast<float64_t>(std::nano::den);
-    }
-
-    std::chrono::seconds datetime::now_s()
-    {
-        auto now = std::chrono::system_clock::now();
-        return std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
-    }
-
-    std::chrono::milliseconds datetime::now_ms()
-    {
-        auto now = std::chrono::system_clock::now();
-        return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
-    }
-
-    std::chrono::microseconds datetime::now_mcs()
-    {
-        auto now = std::chrono::system_clock::now();
-        return std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch());
-    }
-
-    std::chrono::nanoseconds datetime::now_ns()
-    {
-        auto now = std::chrono::system_clock::now();
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
-    }
-
-    datetime datetime::now()
-    {
-        return datetime(now_ms());
+		auto now = std::chrono::high_resolution_clock::now();
+		return std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch());
     }
 }

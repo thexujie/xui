@@ -36,20 +36,60 @@ namespace RHI::RHID3D12
 		heapprop.CreationNodeMask = 1;
 		heapprop.VisibleNodeMask = 1;
 
-		win32::comptr<ID3D12Resource> buffer;
-		hr = device->CreateCommittedResource(&heapprop, FromHeapFlags(params.heap.flags), &resdesc, FromResourceStates(params.states), nullptr, __uuidof(ID3D12Resource), buffer.getvv());
+		win32::comptr<ID3D12Resource> resource;
+		hr = device->CreateCommittedResource(&heapprop, FromHeapFlags(params.heap.flags), &resdesc, FromResourceStates(params.states), nullptr, __uuidof(ID3D12Resource), resource.getvv());
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " device->CreateCommittedResource failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
 
+		void * pointer = nullptr;
+		if (params.heap.type == HeapType::Upload)
+		{
+			D3D12_RANGE range = {};
+			resource->Map(0, &range, &pointer);
+		}
+
+		RHI::RHID3D12::SetD3D12ObjectName(resource.get(), L"resource");
 		_params = params;
-		_resource = buffer;
+		_resource = resource;
 		_states = _params.states;
+		_pointer = pointer;
 		return core::ok;
 	}
 
+	void * RHID3D12Resource::Data()
+	{
+		return _pointer;
+	}
+	
+	const void * RHID3D12Resource::Data() const
+	{
+		return _pointer;
+	}
+	
+	core::sizeu RHID3D12Resource::Size() const
+	{
+		return _params.size;
+	}
+
+	void * RHID3D12Resource::Map()
+	{
+		if (_pointer)
+			return _pointer;
+		
+		D3D12_RANGE range = {};
+		_resource->Map(0, &range, &_pointer);
+		return _pointer;
+	}
+	
+	void RHID3D12Resource::Unmap()
+	{
+		_resource->Unmap(0, nullptr);
+		_pointer = nullptr;
+	}
+	
 	void RHID3D12Resource::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
 	{
 		if (!cmdlist)

@@ -4,37 +4,37 @@ namespace core
 {
     enum error : int32_t
     {
-        error_generic = std::numeric_limits<int32_t>::min(),
-        error_inner,
-        error_eof,
-        error_failed,
-        error_nullptr,
-        error_unreachable,
-        error_outofmemory,
-        error_outofbound,
-        error_args,
-        error_exists,
-        error_access,
-        error_state,
-        error_io,
-        error_broken,
+        e_generic = std::numeric_limits<int32_t>::min(),
+        e_inner,
+        e_eof,
+        e_failed,
+        e_nullptr,
+        e_unreachable,
+        e_outofmemory,
+        e_outofbound,
+        e_args,
+        e_exists,
+        e_access,
+        e_state,
+        e_io,
+        e_broken,
 
-        error_timeout,
-        error_cancel,
+        e_timeout,
+        e_cancel,
 
-        error_bad_data,
-        error_bad_format,
+        e_bad_data,
+        e_bad_format,
 
-        error_not_now,
-        error_not_supported,
-        error_not_found,
+        e_not_now,
+        e_not_supported,
+        e_not_found,
 
-        error_invalid_operation,
+        e_invalid_operation,
 
-        error_ok = 0,
-        error_true,
-        error_false,
-        error_pendding,
+        ok = 0,
+        ok_true,
+        ok_false,
+        ok_pendding,
     };
 
     enum class flag

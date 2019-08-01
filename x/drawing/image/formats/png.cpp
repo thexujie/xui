@@ -60,7 +60,7 @@ namespace drawing::image::formats
         {
             png_free(png, row_ptr);
             png_destroy_read_struct(&png, &pinfo, 0);
-            return error_inner;
+            return e_inner;
         }
 
         png_set_read_fn(png, &buff, user_read_data_fcn);
@@ -144,7 +144,7 @@ namespace drawing::image::formats
         {
             png_free(png, row_ptr);
             png_destroy_read_struct(&png, &pinfo, 0);
-            return error_not_supported;
+            return e_not_supported;
         }
 
         //png_set_bgr(png);
@@ -180,6 +180,6 @@ namespace drawing::image::formats
             image.pfn_free(image);
             return err;
         }
-        return error_ok;
+        return ok;
     }
 }

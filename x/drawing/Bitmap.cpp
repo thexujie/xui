@@ -36,13 +36,13 @@ namespace drawing
     core::error Bitmap::Save(std::string path, image::image_type type, int32_t quality)
     {
         if (!_native)
-            return core::error_nullptr;
+            return core::e_nullptr;
 
         if (type == image::image_type_none)
             type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
 
         SkFILEWStream stream(path.c_str());
-        return SkEncodeImage(&stream, *_native, skia::from(type), quality) ? core::error_ok : core::error_inner;
+        return SkEncodeImage(&stream, *_native, skia::from(type), quality) ? core::ok : core::e_inner;
     }
 
     Surface::Surface(const core::sizei & size)
@@ -92,7 +92,7 @@ namespace drawing
         void * data = nullptr;
         HBITMAP bmp = ::CreateDIBSection((HDC)_hdc, &bmpInfo, DIB_RGB_COLORS, &data, NULL, 0);
         if (!bmp)
-            return core::error_inner;
+            return core::e_inner;
 
         //if(_data)
         //{
@@ -117,7 +117,7 @@ namespace drawing
         _bmp = bmp;
         _native = std::shared_ptr<SkSurface>(SkSurface::MakeRasterDirect(SkImageInfo::MakeN32Premul(size.cx, size.cy), data, pitch).release(), skia::skia_unref<SkSurface>);
 
-        return core::error_ok;
+        return core::ok;
     }
 
     bitmap_buffer Surface::buffer() const
@@ -141,7 +141,7 @@ namespace drawing
     core::error Surface::Save(std::string path, image::image_type type, int32_t quality)
     {
         if (!_native)
-            return core::error_nullptr;
+            return core::e_nullptr;
 
         if (type == image::image_type_none)
             type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
@@ -150,6 +150,6 @@ namespace drawing
         bitmap.allocN32Pixels(_size.cx, _size.cy);
         _native->readPixels(bitmap, 0, 0);
         SkFILEWStream stream(path.c_str());
-        return SkEncodeImage(&stream, bitmap, skia::from(type), quality) ? core::error_ok : core::error_inner;
+        return SkEncodeImage(&stream, bitmap, skia::from(type), quality) ? core::ok : core::e_inner;
     }
 }
