@@ -147,6 +147,7 @@ namespace drawing::image::formats
         src_data.pitch = src_pitch;
 
         error err = image_convert_ex(ictx, src_data, image);
+		image_free(src_buffer);
         if (err < 0)
         {
             image.pfn_free(image);

@@ -74,9 +74,9 @@ void InitAssets(RHI::RHIDevice * device)
 		//{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
 		//{ { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
 		//
-		{ { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
-		{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } },
-		{ { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f } },
+		{ { 1.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+		{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+		{ { 0.0f, 0.0f, 0.0f }, { 0.5f, 0.5f } },
 		//
 		//{ { -25.f, +25.f, 0.0f }, { 0.0f, 0.0f } },
 		//{ { +25.f, +25.f, 0.0f }, { 1.0f, 0.0f } },
@@ -151,7 +151,6 @@ void InitAssets(RHI::RHIDevice * device)
 		imageTempParams.states = RHI::ResourceState::GenericRead;
 		shaderresource_temp = device->CreateResource(imageTempParams);
 		std::memcpy(shaderresource_temp->Data(), image.data, image.pitch * image.format.height);
-
 		
 		RHI::ResourceArgs imageParams = {};
 		imageParams.heap.type = RHI::HeapType::Default;
@@ -161,6 +160,7 @@ void InitAssets(RHI::RHIDevice * device)
 		imageParams.states = RHI::ResourceState::CopyDest;
 		imageParams.format = core::pixelformat::bgra;
 		shaderresource = device->CreateResource(imageParams);
+		image.pfn_free(image);
 		
 		
 		RHI::ResourceViewArgs imageArgs
@@ -316,11 +316,14 @@ void RHIThread()
 			printf("\rfps = %.6f", fps.fps());
 	}
 
+	resourcePacket.reset();
 	vetexbuffer.reset();
 	indexbuffer.reset();
+	constbuffer.reset();
+	constbuffer_view.reset();
 	shaderresource.reset();
 	shaderresource_temp.reset();
-	resourcePacket.reset();
+	shaderresource_view.reset();
 }
 
 int main()
