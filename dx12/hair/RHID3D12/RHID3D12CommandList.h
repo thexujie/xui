@@ -26,13 +26,17 @@ namespace RHI::RHID3D12
 		void TransitionBarrier(RHIResource * resource, ResourceStates states) override;
 		void TransitionBarrier(RHIRenderTarget * rendertarget, ResourceStates states) override;
 
-		void SetPipelineState(RHIPipelineState * pipelinestate);
-		void SetResourceViews(RHIResourceView ** views, uint32_t nviews);
-		void SetGraphicsResourceView(uint32_t index, RHIResourceView * view);
+		void SetPipelineState(RHIPipelineState * pipelinestate) override;
+		void SetResourcePacket(RHIResourcePacket * packet) override;
+		void SetGraphicsResourceView(uint32_t index, RHIResourceView * view) override;
+		
 		void IASetVertexBuffer(RHIResource * resource, uint32_t stride, uint32_t size) override;
 		void IASetIndexBuffer(RHIResource * resource, uint32_t stride, uint32_t size) override;
 		void IASetTopologyType(Topology topology) override;
-		void DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase);
+		void DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase) override;
+
+		void CopyResource(RHIResource * dst, RHIResource * src) override;
+		void CopyBuffer(RHIResource * dst, RHIResource * src) override;
 
 	public:
 		ID3D12GraphicsCommandList * Ptr() const { return _cmdlist.get(); }
@@ -42,6 +46,6 @@ namespace RHI::RHID3D12
 		win32::comptr<ID3D12CommandAllocator> _cmdallocator;
 		win32::comptr<ID3D12GraphicsCommandList> _cmdlist;
 
-		RHID3D12RenderTargetView * _rendertarget = nullptr;
+		RHID3D12ResourceView * _rendertarget = nullptr;
 	};
 }

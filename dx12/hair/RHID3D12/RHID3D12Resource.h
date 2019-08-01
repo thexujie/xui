@@ -15,19 +15,20 @@ namespace RHI::RHID3D12
 		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states);
 
 	public:
-		void * Data();
-		const void * Data() const;
-		core::sizeu Size() const;
+		void * Data() override;
+		const void * Data() const override;
+		core::sizeu Size() const override;
 
-		void * Map();
-		void Unmap();
+		void * Map() override;
+		void Unmap() override;
 	public:
-		ID3D12Resource * Ptr() const { return _resource.get(); }
+		const ResourceArgs & Args() const { return _args; }
+		ID3D12Resource * Resource() const { return _resource.get(); }
 		D3D12_GPU_VIRTUAL_ADDRESS GPUVirtualAddress() const { return _resource->GetGPUVirtualAddress(); }
 		
 	private:
 		RHID3D12Device * _device = nullptr;
-		ResourceArgs _params;
+		ResourceArgs _args;
 		win32::comptr<ID3D12Resource> _resource;
 		void * _pointer = nullptr;
 	};

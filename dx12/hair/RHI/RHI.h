@@ -10,6 +10,7 @@
 #include "RHICommandQueue.h"
 #include "RHIRenderTarget.h"
 #include "RHIPipelineState.h"
+#include "RHIResourcePacket.h"
 
 namespace RHI
 {

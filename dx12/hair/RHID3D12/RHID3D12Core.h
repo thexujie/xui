@@ -199,10 +199,10 @@ namespace RHI::RHID3D12
 		}
 	}
 
-	inline D3D12_DESCRIPTOR_HEAP_FLAGS FromDescriptorHeapFlags(DescriptorHeapFlags flags)
+	inline D3D12_DESCRIPTOR_HEAP_FLAGS FromDescriptorHeapFlags(ResourcePacketFlags flags)
 	{
 		core::bitflag<D3D12_DESCRIPTOR_HEAP_FLAGS> result;
-		result.set(D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, flags.any(DescriptorHeapFlag::ShaderVisible));
+		result.set(D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, flags.any(ResourcePacketFlag::ShaderVisible));
 		return result;
 	}
 

@@ -378,10 +378,10 @@ namespace drawing::image
     {
         image_type type = image_type_none;
 
-        decltype(image_get_format) * get_format = nullptr;
-        decltype(image_get_samapler) * get_sampler = nullptr;
-        decltype(image_buffer_alloc_default) * pfn_alloc = nullptr;
-        decltype(image_buffer_free) * pfn_free = nullptr;
+        decltype(image_get_format) * get_format = image_get_format;
+        decltype(image_get_samapler) * get_sampler = image_get_samapler;
+        decltype(image_buffer_alloc_default) * pfn_alloc = image_buffer_alloc_default;
+        decltype(image_buffer_free) * pfn_free = image_buffer_free;
     };
 
     struct image_converter
@@ -447,7 +447,8 @@ namespace drawing::image
         memcpy_s(dst, dst_size, src, length);
     }
 
-    core::error image_load(const std::u8string & path, image_data_t & img);
+	core::error image_load(const std::u8string & path, image_data_t & img);
+	core::error image_load(image_codec_context & ictx, const std::u8string & path, image_data_t & img);
 
     image_type image_get_type_from_ext(const char * ext, size_t length = core::npos);
     image_type image_get_type(const byte_t * buffer, size_t length);

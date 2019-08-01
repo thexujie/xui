@@ -107,6 +107,7 @@
     <ClCompile Include="dxgi\inc.cpp" />
     <ClCompile Include="hello.cpp" />
     <ClCompile Include="main\main.cpp" />
+    <ClCompile Include="RHID3D12\RHID3D12ResourcePacket.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12Factory.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12PipelineState.cpp" />
@@ -119,6 +120,7 @@
     <ClCompile Include="RHID3D12\RHID3D12RenderTargetHWND.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12View.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12Utils.cpp" />
+    <ClCompile Include="RHI\RHIResourcePacket.cpp" />
     <ClCompile Include="RHI\RHIPipelineState.cpp" />
     <ClCompile Include="RHI\RHIResource.cpp" />
     <ClCompile Include="RHI\RHICommandAllocator.cpp" />
@@ -142,6 +144,7 @@
     <ClInclude Include="dxgi\inc.h" />
     <ClInclude Include="hello.h" />
     <ClInclude Include="main\main.h" />
+    <ClInclude Include="RHID3D12\RHID3D12ResourcePacket.h" />
     <ClInclude Include="RHID3D12\RHID3D12Factory.h" />
     <ClInclude Include="RHID3D12\RHID3D12.h" />
     <ClInclude Include="RHID3D12\RHID3D12PipelineState.h" />
@@ -154,6 +157,7 @@
     <ClInclude Include="RHID3D12\RHID3D12RenderTargetHWND.h" />
     <ClInclude Include="RHID3D12\RHID3D12View.h" />
     <ClInclude Include="RHID3D12\RHID3D12Utils.h" />
+    <ClInclude Include="RHI\RHIResourcePacket.h" />
     <ClInclude Include="RHI\RHIPipelineState.h" />
     <ClInclude Include="RHI\RHIResource.h" />
     <ClInclude Include="RHI\RHICommandAllocator.h" />

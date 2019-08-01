@@ -4,13 +4,6 @@
 
 namespace RHI
 {
-	class RHIObject
-	{
-	public:
-		RHIObject() = default;
-		virtual ~RHIObject() = default;
-	};
-	
 	class RHIResource : public RHIObject
 	{
 	public:

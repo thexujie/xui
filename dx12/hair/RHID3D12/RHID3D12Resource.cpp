@@ -26,7 +26,7 @@ namespace RHI::RHID3D12
 		resdesc.Format = win32::DXGI::FromPixelFormat(params.format);
 		resdesc.SampleDesc.Count = params.MSAA;
 		resdesc.SampleDesc.Quality = params.MSAAQuality;
-		resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		resdesc.Layout = params.dimension == ResourceDimension::Raw? D3D12_TEXTURE_LAYOUT_ROW_MAJOR : D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		resdesc.Flags = FromResourceFlags(params.flags);
 
 		D3D12_HEAP_PROPERTIES heapprop = {};
@@ -52,9 +52,9 @@ namespace RHI::RHID3D12
 		}
 
 		RHI::RHID3D12::SetD3D12ObjectName(resource.get(), L"resource");
-		_params = params;
+		_args = params;
 		_resource = resource;
-		_states = _params.states;
+		_states = _args.states;
 		_pointer = pointer;
 		return core::ok;
 	}
@@ -71,7 +71,7 @@ namespace RHI::RHID3D12
 	
 	core::sizeu RHID3D12Resource::Size() const
 	{
-		return _params.size;
+		return _args.size;
 	}
 
 	void * RHID3D12Resource::Map()

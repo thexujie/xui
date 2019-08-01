@@ -20,7 +20,7 @@ cbuffer SceneConstantBuffer : register(b0)
     float4 offset;
 };
 
-Texture2D g_texture : register(t2);
+Texture2D g_texture : register(t0);
 SamplerState g_sampler : register(s0);
 
 PSInput VSMain(float4 position : POSITION, float4 uv : TEXCOORD)
@@ -35,6 +35,6 @@ PSInput VSMain(float4 position : POSITION, float4 uv : TEXCOORD)
 
 float4 PSMain(PSInput input) : SV_TARGET
 {
-    return float4(1, 1, 1, 1);
-    //return g_texture.Sample(g_sampler, input.uv);
+    //return float4(1, 1, 1, 1);
+    return g_texture.Sample(g_sampler, input.uv);
 }

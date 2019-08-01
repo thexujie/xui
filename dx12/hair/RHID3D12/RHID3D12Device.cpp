@@ -7,6 +7,7 @@
 #include "RHID3D12CommandAllocator.h"
 #include "RHID3D12View.h"
 #include "RHID3D12PipelineState.h"
+#include "RHID3D12ResourcePacket.h"
 
 namespace RHI::RHID3D12
 {
@@ -78,24 +79,15 @@ namespace RHI::RHID3D12
 		return buffer;
 	}
 
-	std::shared_ptr<RHIResourceView> RHID3D12Device::CreateShaderResourceView(const RHIResource * resource, const ShaderResourceViewArgs & args) const
+	std::shared_ptr<RHIResourcePacket> RHID3D12Device::CreateResourcePacket(const ResourcePacketArgs & args) const
 	{
-		auto view = std::make_shared<RHID3D12ShaderResourceView>(const_cast<RHID3D12Device *>(this));
-		auto err = view->Create(static_cast<const RHID3D12Resource *>(resource), args);
+		auto packet = std::make_shared<RHID3D12ResourcePacket>(const_cast<RHID3D12Device *>(this));
+		auto err = packet->Create(args);
 		if (err)
 			return nullptr;
-		return view;
+		return packet;
 	}
-
-	std::shared_ptr<RHIResourceView> RHID3D12Device::CreateConstBufferView(const RHIResource * resource, const ConstBufferViewArgs & args) const
-	{
-		auto view = std::make_shared<RHID3D12ConstBufferView>(const_cast<RHID3D12Device *>(this));
-		auto err = view->Create(static_cast<const RHID3D12Resource *>(resource), args);
-		if (err)
-			return nullptr;
-		return view;
-	}
-
+	
 	std::shared_ptr<RHIRenderTarget> RHID3D12Device::CreateRenderTargetForHWND(const RenderTargetArgs & args) const
 	{
 		auto rt = std::make_shared<RHID3D12RenderTargetHWND>(const_cast<RHID3D12Device *>(this));

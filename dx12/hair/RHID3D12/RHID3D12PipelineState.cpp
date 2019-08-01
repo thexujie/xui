@@ -31,7 +31,7 @@ namespace RHI::RHID3D12
 				ranges[irangebase + irange].NumDescriptors = args.tables[itable].ranges[irange].numDescriptor;
 				ranges[irangebase + irange].BaseShaderRegister = args.tables[itable].ranges[irange].shaderRegister;
 				ranges[irangebase + irange].RegisterSpace = args.tables[itable].ranges[irange].registerSpace;
-				ranges[irangebase + irange].Flags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
+				ranges[irangebase + irange].Flags = args.tables[itable].ranges[irange].type == DescripteorRangeType::Sampler ? D3D12_DESCRIPTOR_RANGE_FLAG_NONE :  D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
 			}
 			irangebase += args.tables[itable].ranges.size();
 		}

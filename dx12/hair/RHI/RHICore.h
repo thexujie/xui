@@ -5,6 +5,13 @@
 
 namespace RHI
 {
+	class RHIObject
+	{
+	public:
+		RHIObject() = default;
+		virtual ~RHIObject() = default;
+	};
+	
 	enum class CommandType
 	{
 		Direct = 0,
@@ -182,25 +189,44 @@ namespace RHI
 		DepthStencial,
 	};
 
-	enum class DescriptorHeapFlag
+	enum class ResourcePacketType
+	{
+		Resource = 0,
+		Sampler,
+		RenderTarget,
+		DepthStencil,
+	};
+	
+	enum class ResourcePacketFlag
 	{
 		None = 0,
 		ShaderVisible,
 	};
-	typedef core::bitflag<DescriptorHeapFlag> DescriptorHeapFlags;
+	typedef core::bitflag<ResourcePacketFlag> ResourcePacketFlags;
 
-	struct ShaderResourceViewArgs
+	enum class ResourceType
 	{
-		DescriptorHeapType type = DescriptorHeapType::None;
-		core::pixelformat format = core::pixelformat::none;
-		ResourceViewDimension dimension = ResourceViewDimension::None;
-		DescriptorHeapFlags flags = nullptr;
-		uint32_t miplevels = 1;
+		ConstBuffer = 0,
+		ShaderResource,
+		UnorderedAccess,
 	};
-
-	struct ConstBufferViewArgs
+	
+	struct ResourceViewArgs
 	{
-		DescriptorHeapFlags flags = nullptr;
+		ResourceType type = ResourceType::ConstBuffer;
+		struct
+		{
+			core::pixelformat format = core::pixelformat::none;
+			ResourceViewDimension dimension = ResourceViewDimension::None;
+			uint32_t miplevels = 1;
+		}shaderresource;
+	};
+	
+	struct ResourcePacketArgs
+	{
+		ResourcePacketType type = ResourcePacketType::Resource;
+		uint32_t capacity = 0;
+		ResourcePacketFlags flags = nullptr;
 	};
 
 	struct RenderTargetArgs

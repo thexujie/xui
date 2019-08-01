@@ -2,7 +2,12 @@
 
 #include "core/core.h"
 
-#include "drawing/image/image.h"
+#include "image/image.h"
+#include "image/formats/bmp.h"
+#include "image/formats/dds.h"
+#include "image/formats/jpg.h"
+#include "image/formats/png.h"
+#include "image/formats/tga.h"
 #include "drawing/font.h"
 #include "drawing/draw.h"
 

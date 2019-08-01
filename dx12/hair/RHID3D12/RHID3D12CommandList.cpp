@@ -4,6 +4,7 @@
 #include "RHID3D12View.h"
 #include "RHID3D12Resource.h"
 #include "RHID3D12PipelineState.h"
+#include "RHID3D12ResourcePacket.h"
 
 namespace RHI::RHID3D12
 {
@@ -57,7 +58,7 @@ namespace RHI::RHID3D12
 
 	void RHID3D12CommandList::SetRenderTarget(RHIResourceView * rendertarget)
 	{
-		_rendertarget = static_cast<RHID3D12RenderTargetView *>(rendertarget);
+		_rendertarget = static_cast<RHID3D12ResourceView *>(rendertarget);
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = _rendertarget->CPUDescriptorHandle();
 		_cmdlist->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 	}
@@ -110,16 +111,10 @@ namespace RHI::RHID3D12
 		_cmdlist->SetGraphicsRootSignature(d3d12pipelinestate->RootSignature());
 	}
 	
-	void RHID3D12CommandList::SetResourceViews(RHIResourceView ** views, uint32_t nviews)
+	void RHID3D12CommandList::SetResourcePacket(RHIResourcePacket * packet)
 	{
-		ID3D12DescriptorHeap * heaps[64] = {};
-		nviews = std::min< uint32_t>(nviews, 64);
-		for (uint32_t iview = 0; iview < nviews; ++iview)
-		{
-			auto dp = static_cast<RHID3D12ResourceView *>(views[iview])->DescriptorHeap();
-			heaps[iview] = static_cast<RHID3D12ResourceView *>(views[iview])->DescriptorHeap();
-		}
-		_cmdlist->SetDescriptorHeaps(nviews, heaps);
+		ID3D12DescriptorHeap * heaps[1] = { static_cast<RHID3D12ResourcePacket *>(packet)->DescriptorHeap()};
+		_cmdlist->SetDescriptorHeaps(1, heaps);
 	}
 
 	void RHID3D12CommandList::SetGraphicsResourceView(uint32_t index, RHIResourceView * view)
@@ -153,5 +148,41 @@ namespace RHI::RHID3D12
 	void RHID3D12CommandList::DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase)
 	{
 		_cmdlist->DrawInstanced(nvertices, ninstance, ivertexbase, iinstancebase);
+	}
+
+	void RHID3D12CommandList::CopyResource(RHIResource * dst, RHIResource * src)
+	{
+		auto device = _device->Inner();
+		auto rhid3d12dst = static_cast<RHID3D12Resource *>(dst);
+		auto rhid3d12src = static_cast<RHID3D12Resource *>(src);
+		if (rhid3d12dst->Args().dimension == ResourceDimension::Texture2D)
+		{
+			D3D12_TEXTURE_COPY_LOCATION destLocation;
+			destLocation.pResource = rhid3d12dst->Resource();
+			destLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+			destLocation.SubresourceIndex = 0;
+			
+			D3D12_RESOURCE_DESC descDest = rhid3d12dst->Resource()->GetDesc();
+			D3D12_PLACED_SUBRESOURCE_FOOTPRINT layout = {};
+			UINT nrows = 0;
+			UINT64 stride = 0;
+			UINT64 nbtotal = 0;
+			device->GetCopyableFootprints(&descDest, 0, 1, 0, &layout, &nrows, &stride, &nbtotal);
+			D3D12_TEXTURE_COPY_LOCATION srcLocation;
+			srcLocation.pResource = rhid3d12src->Resource();
+			srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+			srcLocation.PlacedFootprint = layout;
+			_cmdlist->CopyTextureRegion(&destLocation, 0, 0, 0, &srcLocation, nullptr);
+		}
+		else
+		{
+			_cmdlist->CopyResource(static_cast<RHID3D12Resource *>(dst)->Resource(), static_cast<RHID3D12Resource *>(src)->Resource());
+		}
+	}
+	
+	void RHID3D12CommandList::CopyBuffer(RHIResource * dst, RHIResource * src)
+	{
+		auto size = static_cast<RHID3D12Resource *>(src)->Size().cx * static_cast<RHID3D12Resource *>(src)->Size().cy;
+		_cmdlist->CopyBufferRegion(static_cast<RHID3D12Resource *>(dst)->Resource(), 0, static_cast<RHID3D12Resource *>(src)->Resource(), 0, size);
 	}
 }

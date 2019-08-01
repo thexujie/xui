@@ -41,10 +41,18 @@ LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 }
 
 std::atomic<bool> rendering = true;
+
+std::shared_ptr<RHI::RHIResourcePacket> resourcePacket;
 std::shared_ptr<RHI::RHIResource> vetexbuffer;
 std::shared_ptr<RHI::RHIResource> indexbuffer;
+
 std::shared_ptr<RHI::RHIResource> constbuffer;
 std::shared_ptr<RHI::RHIResourceView> constbuffer_view;
+
+std::shared_ptr<RHI::RHIResource> shaderresource;
+std::shared_ptr<RHI::RHIResource> shaderresource_temp;
+std::shared_ptr<RHI::RHIResourceView> shaderresource_view;
+
 uint32_t nvertices = 0;
 struct Vertex
 {
@@ -66,8 +74,8 @@ void InitAssets(RHI::RHIDevice * device)
 		//{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
 		//{ { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
 		//
-		{ { 1.0f, 1.0f, 0.0f }, { 1.0f, 1.0f } },
-		{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+		{ { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
+		{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } },
 		{ { 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f } },
 		//
 		//{ { -25.f, +25.f, 0.0f }, { 0.0f, 0.0f } },
@@ -76,6 +84,14 @@ void InitAssets(RHI::RHIDevice * device)
 		//{ { -25.f, -25.f, 0.0f }, { 1.0f, 1.0f } },
 	};
 	nvertices = std::size(vertices);
+
+	RHI::ResourcePacketArgs packetArgs =
+	{
+		.type = RHI::ResourcePacketType::Resource,
+		.capacity = 2,
+		.flags = RHI::ResourcePacketFlag::ShaderVisible
+	};
+	resourcePacket = device->CreateResourcePacket(packetArgs);
 
 	uint16_t indices[] =
 	{
@@ -105,9 +121,59 @@ void InitAssets(RHI::RHIDevice * device)
 	constParams.states = RHI::ResourceState::GenericRead;
 	constbuffer = device->CreateResource(constParams);
 
-	RHI::ConstBufferViewArgs viewArgs;
-	viewArgs.flags = RHI::DescriptorHeapFlag::ShaderVisible;
-	constbuffer_view = device->CreateConstBufferView(constbuffer.get(), viewArgs);
+	RHI::ResourceViewArgs viewArgs =
+	{
+		.type = RHI::ResourceType::ConstBuffer,
+	};
+	constbuffer_view = resourcePacket->SetShaderResource(0, constbuffer.get(), viewArgs);
+
+	drawing::image::image_codec_context  icc;
+	icc.get_format = [](drawing::image::image_type type, drawing::image::image_format format)
+	{
+		drawing::image::image_format result = format;
+		switch (format.format)
+		{
+		case drawing::image::format_b8g8r8: result.format = drawing::image::format_b8g8r8a8; break;
+		default: 
+			return drawing::image::image_get_format(type, format);
+		}
+		return result;
+	};
+	
+	drawing::image::image_data_t image;
+	auto err = drawing::image::image_load(icc, u8"test.jpg", image);
+	if (!err)
+	{
+		RHI::ResourceArgs imageTempParams = {};
+		imageTempParams.heap.type = RHI::HeapType::Upload;
+		imageTempParams.size.cx = image.format.width * image.format.height * 4;
+		imageTempParams.dimension = RHI::ResourceDimension::Raw;
+		imageTempParams.states = RHI::ResourceState::GenericRead;
+		shaderresource_temp = device->CreateResource(imageTempParams);
+		std::memcpy(shaderresource_temp->Data(), image.data, image.pitch * image.format.height);
+
+		
+		RHI::ResourceArgs imageParams = {};
+		imageParams.heap.type = RHI::HeapType::Default;
+		imageParams.size.cx = image.format.width;
+		imageParams.size.cy = image.format.height;
+		imageParams.dimension = RHI::ResourceDimension::Texture2D;
+		imageParams.states = RHI::ResourceState::CopyDest;
+		imageParams.format = core::pixelformat::bgra;
+		shaderresource = device->CreateResource(imageParams);
+		
+		
+		RHI::ResourceViewArgs imageArgs
+		{
+			.type = RHI::ResourceType::ShaderResource,
+			.shaderresource =
+			{
+				.format = core::pixelformat::bgra,
+				.dimension = RHI::ResourceViewDimension::Texture2D
+			},
+		};
+		shaderresource_view = resourcePacket->SetShaderResource(1, shaderresource.get(), imageArgs);
+	}
 }
 
 void RHIThread()
@@ -129,7 +195,35 @@ void RHIThread()
 	auto cmdallocator = device->CreateCommandAllocator(RHI::CommandType::Direct);
 	auto cmdlist = device->CreateCommandList(RHI::CommandType::Direct);
 
-	RHI::PipelineStateArgs psargs;
+	RHI::PipelineStateArgs psargs =
+	{
+		.tables =
+		{
+			RHI::PipelineStateTables
+			{
+				.shader = RHI::Shader::All,
+				.ranges =
+				{
+					{
+						.type = RHI::DescripteorRangeType::ConstBuffer,
+						.shaderRegister = 0,
+					},
+				},
+			},
+			
+			RHI::PipelineStateTables
+			{
+				.shader = RHI::Shader::All,
+				.ranges =
+				{
+					{
+						.type = RHI::DescripteorRangeType::ShaderResource,
+						.shaderRegister = 0,
+					}
+				},
+			},
+		}
+	};
 
 	RHI::PipelineStateTables table0 =
 	{
@@ -140,10 +234,10 @@ void RHIThread()
 				.type = RHI::DescripteorRangeType::ConstBuffer,
 				.shaderRegister = 0,
 			},
-			//{
-			//	.type = RHI::DescripteorRangeType::ShaderResource,
-			//	.shaderRegister = 0,
-			//}
+			{
+				.type = RHI::DescripteorRangeType::ShaderResource,
+				.shaderRegister = 0,
+			}
 		},
 	};
 
@@ -151,7 +245,7 @@ void RHIThread()
 	{
 	};
 
-	psargs.tables.push_back(table0);
+	//psargs.tables.push_back(table0);
 	psargs.samplers.push_back(sampler0);
 	psargs.VS = u8"shaders.hlsl";
 	psargs.VSMain = "VSMain";
@@ -183,6 +277,12 @@ void RHIThread()
 		rt->Begin();
 		cmdallocator->Reset();
 		cmdlist->Reset(cmdallocator.get());
+		if (shaderresource_temp)
+		{
+			cmdlist->CopyResource(shaderresource.get(), shaderresource_temp.get());
+			cmdlist->TransitionBarrier(shaderresource.get(), RHI::ResourceState::PixelShaderRerources);
+		}
+		
 		cmdlist->SetViewPort(viewport);
 		cmdlist->SetScissorRect(sccisorrect);
 		cmdlist->TransitionBarrier(rt.get(), RHI::ResourceState::RenderTarget);
@@ -190,9 +290,9 @@ void RHIThread()
 		cmdlist->ClearRenderTarget(0xff555555);
 		cmdlist->SetPipelineState(pso.get());
 
-		RHI::RHIResourceView * views[] = { constbuffer_view.get() };
-		cmdlist->SetResourceViews(views, 1);
+		cmdlist->SetResourcePacket(resourcePacket.get());
 		cmdlist->SetGraphicsResourceView(0, constbuffer_view.get());
+		cmdlist->SetGraphicsResourceView(1, shaderresource_view.get());
 
 		cmdlist->IASetIndexBuffer(indexbuffer.get(), 2, 12);
 		cmdlist->IASetVertexBuffer(vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * nvertices);
@@ -206,6 +306,11 @@ void RHIThread()
 		rt->Present(0);
 		fps.acc(1);
 
+		if (shaderresource_temp)
+		{
+			shaderresource_temp.reset();
+		}
+		
 		core::logger_fps tt(__FILE__, __LINE__, 10);
 		if (tt.ok())
 			printf("\rfps = %.6f", fps.fps());
@@ -213,6 +318,9 @@ void RHIThread()
 
 	vetexbuffer.reset();
 	indexbuffer.reset();
+	shaderresource.reset();
+	shaderresource_temp.reset();
+	resourcePacket.reset();
 }
 
 int main()

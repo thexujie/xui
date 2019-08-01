@@ -16,7 +16,7 @@ namespace RHI::RHID3D12
 		core::error Create(const RenderTargetArgs & params);
 
 	public:
-		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states);
+		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) override;
 		RHIResourceView * CurrentRTV() const override { return _views[_frameIndex].get(); }
 
 	public:
@@ -40,7 +40,7 @@ namespace RHI::RHID3D12
 		win32::comptr<ID3D12DescriptorHeap> _rtv_heap;
 		uint32_t _rtv_size = 0;
 		std::vector<win32::comptr<ID3D12Resource>> _buffers;
-		std::vector<std::shared_ptr<RHID3D12RenderTargetView>> _views;
+		std::vector<std::shared_ptr<RHID3D12ResourceView>> _views;
 
 		win32::comptr<ID3D12Fence> _fence;
 

@@ -39,6 +39,27 @@ namespace drawing::image
         return image_create(buffer.get(), (int32_t)length, img);
     }
 
+	core::error image_load(image_codec_context & ictx, const std::u8string & path, image_data_t & img)
+    {
+		std::wstring pathw = core::u8str_wstr(path);
+		std::fstream fs;
+		fs.open(pathw.c_str(), std::ios::in | std::ios::binary);
+		if (!fs.good())
+			return e_not_found;
+
+		fs.seekg(0, std::ios::end);
+		auto length = fs.tellg();
+		fs.seekg(0, std::ios::beg);
+
+		std::shared_ptr<byte_t[]> buffer(image_malloc((int32_t)length));
+		fs.read(buffer.get(), length);
+		if (fs.tellg() != length)
+			return e_io;
+		fs.close();
+
+		return image_create(ictx, buffer.get(), (int32_t)length, img);
+    }
+
     image_type image_get_type_from_ext(const char * ext, size_t length)
     {
         if (!ext || !ext[0])
@@ -697,7 +718,9 @@ namespace drawing::image
             pfns[format_r8g8b8][format_r8g8b8] = color_24_to_24;
             pfns[format_r8g8b8][format_x8r8g8b8] = color_r8g8b8_to_x8r8g8b8;
             pfns[format_b8g8r8][format_b8g8r8] = color_24_to_24;
-            pfns[format_b8g8r8][format_r8g8b8] = color_r8g8b8_to_b8g8r8;
+			pfns[format_b8g8r8][format_r8g8b8] = color_r8g8b8_to_b8g8r8;
+			pfns[format_b8g8r8][format_b8g8r8x8] = color_r8g8b8_to_r8g8b8a8;
+			pfns[format_b8g8r8][format_b8g8r8a8] = color_r8g8b8_to_r8g8b8a8;
             pfns[format_x1r5g5b5][format_x1r5g5b5] = color_16_to_16;
             pfns[format_x1r5g5b5][format_r8g8b8] = color_x1r5g5b5_to_r8g8b8;
             pfns[format_a4r4g4b4][format_a4r4g4b4] = color_16_to_16;
