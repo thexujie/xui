@@ -4,7 +4,7 @@
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12RenderTargetHWND::Create(const RenderTargetParams & params)
+	core::error RHID3D12RenderTargetHWND::Create(const RenderTargetArgs & params)
 	{
 		if (!_device)
 			return core::e_state;

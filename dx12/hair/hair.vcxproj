@@ -109,6 +109,7 @@
     <ClCompile Include="main\main.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12Factory.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12.cpp" />
+    <ClCompile Include="RHID3D12\RHID3D12PipelineState.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12Resource.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12CommandAllocator.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12CommandList.cpp" />
@@ -118,6 +119,7 @@
     <ClCompile Include="RHID3D12\RHID3D12RenderTargetHWND.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12ResourceView.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12Utils.cpp" />
+    <ClCompile Include="RHI\RHIPipelineState.cpp" />
     <ClCompile Include="RHI\RHIResource.cpp" />
     <ClCompile Include="RHI\RHICommandAllocator.cpp" />
     <ClCompile Include="RHI\RHICore.cpp" />
@@ -142,6 +144,7 @@
     <ClInclude Include="main\main.h" />
     <ClInclude Include="RHID3D12\RHID3D12Factory.h" />
     <ClInclude Include="RHID3D12\RHID3D12.h" />
+    <ClInclude Include="RHID3D12\RHID3D12PipelineState.h" />
     <ClInclude Include="RHID3D12\RHID3D12Resource.h" />
     <ClInclude Include="RHID3D12\RHID3D12CommandAllocator.h" />
     <ClInclude Include="RHID3D12\RHID3D12CommandList.h" />
@@ -151,6 +154,7 @@
     <ClInclude Include="RHID3D12\RHID3D12RenderTargetHWND.h" />
     <ClInclude Include="RHID3D12\RHID3D12ResourceView.h" />
     <ClInclude Include="RHID3D12\RHID3D12Utils.h" />
+    <ClInclude Include="RHI\RHIPipelineState.h" />
     <ClInclude Include="RHI\RHIResource.h" />
     <ClInclude Include="RHI\RHICommandAllocator.h" />
     <ClInclude Include="RHI\RHICore.h" />
@@ -165,6 +169,11 @@
     <ProjectReference Include="..\..\x\x.vcxproj">
       <Project>{0cd56909-021a-4656-baf7-c1183fd6dff8}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

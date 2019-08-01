@@ -13,7 +13,7 @@ namespace RHI::RHID3D12
 		RHID3D12RenderTargetHWND(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12RenderTargetHWND() = default;
 
-		core::error Create(const RenderTargetParams & params);
+		core::error Create(const RenderTargetArgs & params);
 
 	public:
 		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) override;
@@ -27,7 +27,7 @@ namespace RHI::RHID3D12
 
 	private:
 		RHID3D12Device * _device = nullptr;
-		RenderTargetParams _params;
+		RenderTargetArgs _params;
 
 		win32::comptr<ID3D12CommandQueue> _queue;
 		win32::comptr<IDXGISwapChain3> _swapchain;

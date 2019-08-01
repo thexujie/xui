@@ -28,14 +28,14 @@ namespace RHI::RHID3D12
 		RHID3D12ResourceView2(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12ResourceView2() = default;
 
-		core::error Create(const RHID3D12Resource * resource, const ResourceViewParams & params);
+		core::error Create(const RHID3D12Resource * resource, const ResourceViewArgs & params);
 
 	public:
 		D3D12_CPU_DESCRIPTOR_HANDLE CPUDescriptorHandle();
 
 	private:
 		RHID3D12Device * _device = nullptr;
-		ResourceViewParams _params;
+		ResourceViewArgs _params;
 
 		win32::comptr<ID3D12DescriptorHeap> _heap;
 	};

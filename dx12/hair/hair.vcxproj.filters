@@ -77,6 +77,12 @@
     <ClCompile Include="RHID3D12\RHID3D12.cpp">
       <Filter>RHID3D12</Filter>
     </ClCompile>
+    <ClCompile Include="RHI\RHIPipelineState.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12PipelineState.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -155,6 +161,12 @@
     <ClInclude Include="RHID3D12\RHID3D12.h">
       <Filter>RHID3D12</Filter>
     </ClInclude>
+    <ClInclude Include="RHI\RHIPipelineState.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12PipelineState.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="main">
@@ -175,5 +187,8 @@
     <Filter Include="dxgi">
       <UniqueIdentifier>{2b8b6782-0e69-4c95-bcd7-cdfceb589435}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders.hlsl" />
   </ItemGroup>
 </Project>

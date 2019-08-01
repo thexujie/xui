@@ -90,7 +90,7 @@ namespace RHI::RHID3D12
 			return nullptr;
 
 		auto device = std::make_shared<RHID3D12Device>();
-		auto err = device->Init(adapter);
+		auto err = device->Create(adapter);
 		if (err)
 			return nullptr;
 		return device;

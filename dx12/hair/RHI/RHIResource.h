@@ -4,11 +4,17 @@
 
 namespace RHI
 {
-	class RHIResource
+	class RHIObject
+	{
+	public:
+		RHIObject() = default;
+		virtual ~RHIObject() = default;
+	};
+
+	class RHIResource : public RHIObject
 	{
 	public:
 		RHIResource() = default;
-		virtual ~RHIResource() = default;
 
 		virtual void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) = 0;
 		ResourceStates States() const { return _states; }

@@ -9,6 +9,7 @@
 #include "RHICommandList.h"
 #include "RHICommandQueue.h"
 #include "RHIRenderTarget.h"
+#include "RHIPipelineState.h"
 
 namespace RHI
 {

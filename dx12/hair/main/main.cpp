@@ -12,6 +12,7 @@
 
 #include "hello.h"
 #include "RHID3D12/RHID3D12.h"
+#include "RHID3D12/RHID3D12Factory.h"
 
 
 LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -48,28 +49,57 @@ void RHIThread()
 	auto device = RHI.CreateDevice(adapters[0].uri);
 	auto queue = device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
 
-	RHI::RenderTargetParams params =
+	RHI::RenderTargetArgs rtparams =
 	{
 		.hwnd = g_hwnd,
 	};
-	auto rt = device->CreateRenderTargetForHWND(params);
+	auto rt = device->CreateRenderTargetForHWND(rtparams);
 	auto cmdallocator = device->CreateCommandAllocator(RHI::CommandType::Direct);
 	auto cmdlist = device->CreateCommandList(RHI::CommandType::Direct);
 
-	RHI::ResourceParams resourceParams = {};
+	RHI::ResourceArgs resourceParams = {};
 	resourceParams.heap.type = RHI::HeapType::Default;
 	resourceParams.size.cx = 1024;
 	resourceParams.dimension = RHI::ResourceDimension::Raw;
 	resourceParams.states = RHI::ResourceState::VertexBuffer;
 	auto vb = device->CreateResource(resourceParams);
 
+	RHI::PipelineStateArgs psargs;
+
+	RHI::PipelineStateTables table0 =
+	{
+		.shader = RHI::Shader::All,
+		.ranges =
+		{
+			{
+				.type = RHI::DescripteorRangeType::ConstBuffer,
+				.shaderRegister = 1,
+			},
+			{
+				.type = RHI::DescripteorRangeType::ShaderResource,
+				.shaderRegister = 2,
+			}
+		},
+	};
+
+	RHI::SamplerArgs sampler0 =
+	{
+	};
+
+	psargs.tables.push_back(table0);
+	psargs.samplers.push_back(sampler0);
+	psargs.VS = u8"shaders.hlsl";
+	psargs.VSMain = "VSMain";
+	psargs.PS = u8"shaders.hlsl";
+	psargs.PSMain = "PSMain";
+
+	auto pso = device->CreatePipelineState(psargs);
+
 	RECT rcClient;
 	GetClientRect(g_hwnd, &rcClient);
 
 	core::recti sccisorrect = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
 	RHI::ViewPort viewport = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
-
-	RHI::PipeParameter pparam;
 
 	core::counter_fps<float, 3> fps;
 	while (rendering)
@@ -103,6 +133,8 @@ int main()
 #endif
     core::App app;
 
+	core::global_logger::start(u8"log.log", core::log_dbg);
+	
 	HINSTANCE hInstance = (HINSTANCE)win32::instance();
 
 	WNDCLASSEXW wcex = { sizeof(WNDCLASSEXW) };

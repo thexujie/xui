@@ -5,7 +5,7 @@
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12ResourceView2::Create(const RHID3D12Resource * resource, const ResourceViewParams & params)
+	core::error RHID3D12ResourceView2::Create(const RHID3D12Resource * resource, const ResourceViewArgs & params)
 	{
 		if (!_device)
 			return core::e_state;

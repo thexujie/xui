@@ -6,6 +6,7 @@
 #include "RHID3D12Resource.h"
 #include "RHID3D12CommandAllocator.h"
 #include "RHID3D12ResourceView.h"
+#include "RHID3D12PipelineState.h"
 
 namespace RHI::RHID3D12
 {
@@ -21,7 +22,7 @@ namespace RHI::RHID3D12
 		return rhidesc;
 	}
 
-	core::error RHID3D12Device::Init(win32::comptr<IDXGIAdapter1> adapter)
+	core::error RHID3D12Device::Create(win32::comptr<IDXGIAdapter1> adapter)
 	{
 		if (!adapter)
 			return core::e_args;
@@ -37,6 +38,7 @@ namespace RHI::RHID3D12
 		_desc = RHIAdapterDescFromAdapter(adapter);
 		_adapter = adapter;
 		_device = device;
+
 		return core::ok;
 	}
 
@@ -67,28 +69,38 @@ namespace RHI::RHID3D12
 		return list;
 	}
 
-	std::shared_ptr<RHIResource> RHID3D12Device::CreateResource(const ResourceParams & params) const
+	std::shared_ptr<RHIResource> RHID3D12Device::CreateResource(const ResourceArgs & args) const
 	{
 		auto buffer = std::make_shared<RHID3D12Resource>(const_cast<RHID3D12Device *>(this));
-		auto err = buffer->Create(params);
+		auto err = buffer->Create(args);
 		if (err)
 			return nullptr;
 		return buffer;
 	}
 
-	std::shared_ptr<RHIResourceView> RHID3D12Device::CreateResourceView(const RHIResource * resource, const ResourceViewParams & params) const
+	std::shared_ptr<RHIResourceView> RHID3D12Device::CreateResourceView(const RHIResource * resource, const ResourceViewArgs & args) const
 	{
 		auto view = std::make_shared<RHID3D12ResourceView2>(const_cast<RHID3D12Device *>(this));
-		auto err = view->Create(static_cast<const RHID3D12Resource *>(resource), params);
+		auto err = view->Create(static_cast<const RHID3D12Resource *>(resource), args);
 		if (err)
 			return nullptr;
 		return view;
 	}
 
-	std::shared_ptr<RHIRenderTarget> RHID3D12Device::CreateRenderTargetForHWND(const RenderTargetParams & params) const
+	std::shared_ptr<RHIRenderTarget> RHID3D12Device::CreateRenderTargetForHWND(const RenderTargetArgs & args) const
 	{
 		auto rt = std::make_shared<RHID3D12RenderTargetHWND>(const_cast<RHID3D12Device *>(this));
-		auto err = rt->Create(params);
+		auto err = rt->Create(args);
+		if (err)
+			return nullptr;
+
+		return rt;
+	}
+
+	std::shared_ptr<RHIPipelineState> RHID3D12Device::CreatePipelineState(const PipelineStateArgs & args) const
+	{
+		auto rt = std::make_shared<RHID3D12PipelineState>(const_cast<RHID3D12Device *>(this));
+		auto err = rt->Create(args);
 		if (err)
 			return nullptr;
 

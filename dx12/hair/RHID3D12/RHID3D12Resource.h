@@ -11,7 +11,7 @@ namespace RHI::RHID3D12
 		RHID3D12Resource(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12Resource() = default;
 
-		core::error Create(const ResourceParams & params);
+		core::error Create(const ResourceArgs & params);
 
 	public:
 		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) override;
@@ -21,7 +21,7 @@ namespace RHI::RHID3D12
 
 	private:
 		RHID3D12Device * _device = nullptr;
-		ResourceParams _params;
+		ResourceArgs _params;
 		win32::comptr<ID3D12Resource> _resource;
 	};
 }

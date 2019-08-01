@@ -122,7 +122,7 @@ namespace RHI
 		virtual ~RHIDeviceObject() = default;
 	};
 
-	struct ResourceParams
+	struct ResourceArgs
 	{
 		struct
 		{
@@ -187,7 +187,7 @@ namespace RHI
 	};
 	typedef core::bitflag<DescriptorHeapFlag> DescriptorHeapFlags;
 
-	struct ResourceViewParams
+	struct ResourceViewArgs
 	{
 		core::pixelformat format = core::pixelformat::none;
 		ResourceViewDimension dimension = ResourceViewDimension::None;
@@ -196,7 +196,7 @@ namespace RHI
 		uint32_t miplevels = 1;
 	};
 
-	struct RenderTargetParams
+	struct RenderTargetArgs
 	{
 		void * hwnd = nullptr;
 		CommandQueueFlags queueFlags;
@@ -233,32 +233,158 @@ namespace RHI
 		
 	};
 
-	enum class PipeParameterType
+	enum class DescripteorRangeType
 	{
-		Table = 0,
-		ConstBuffer,
+		ConstBuffer = 0,
 		ShaderResource,
 		UnorderedAccess,
+		Sampler,
 	};
 
-	struct PipeParameter
+	enum class Filter
 	{
-		PipeParameterType type = PipeParameterType::ConstBuffer;
+		Point = 0,
+		Liner,
+	};
+
+	enum class AddressMode
+	{
+		Clamp = 0,
+		Wrap,
+		Mirror,
+		Border,
+	};
+
+	enum class Comparison
+	{
+		None = 0,
+		Always,
+		Less,
+		LessEqual,
+		Equal,
+		GreaterEqual,
+		Greater,
+		NotEqual,
+	};
+
+	enum class Blend
+	{
+		None = 0,
+		Zero,
+		One,
+		SrcColor,
+		SrcColorInv,
+		SrcAlpha,
+		SrcAlphaInv,
+		DestColor,
+		DestColorInv,
+		DestAlpha,
+		DestAlphaInv,
+		BlendFactor,
+		BlendFactorInv,
+	};
+
+	enum class BlendOP
+	{
+		Add = 0,
+		Subtract,
+		Min,
+		Max,
+	};
+
+	enum class TopologyType
+	{
+		None = 0,
+		Point,
+		Line,
+		Triangle,
+		Patch,
+	};
+
+	struct SamplerArgs
+	{
+		uint32_t shaderRegister = 0;
+		uint32_t registerSpace = 0;
+
+		Filter filter = Filter::Point;
+		AddressMode addressU = AddressMode::Clamp;
+		AddressMode addressV = AddressMode::Clamp;
+		AddressMode addressW = AddressMode::Clamp;
+		float mipLODBias = 0;
+		uint32_t anisotropy = 0;
+		Comparison comparison = Comparison::None;
+		float minLOD = 0;
+		float maxLOD = 0;
+	};
+
+	struct PipeStateTableRange
+	{
+		DescripteorRangeType type = DescripteorRangeType::ConstBuffer;
+		uint32_t numDescriptor = 1;
+		uint32_t shaderRegister = 0;
+		uint32_t registerSpace = 0;
+	};
+
+	struct PipelineStateTables
+	{
 		Shader shader = Shader::All;
-		union
+		std::vector<PipeStateTableRange> ranges;
+	};
+
+	constexpr uint32_t RenderTargetMax = 8;
+
+	struct PipelineStateArgs
+	{
+		std::vector<PipelineStateTables> tables;
+		std::vector<SamplerArgs> samplers;
+
+		std::u8string VS;
+		std::string VSMain;
+		std::u8string PS;
+		std::string PSMain;
+
+		uint32_t ntargets = 1;
+		core::pixelformat formats[RenderTargetMax] = { core::pixelformat::bgra };
+		TopologyType topology = TopologyType::Triangle;
+
+		uint32_t SampleCount = 1;
+		uint32_t SampleQuality = 0;
+
+		struct
 		{
-			struct
-			{
-				uint32_t count;
-				const PipeParameter * parameters;
-			}table = {};
+			bool alphaToCoverage = false;
+			bool independentBlend = false;
 
 			struct
 			{
-				uint32_t regist;
-				uint32_t registspace;
-				
-			}descriptor;
-		};
+				bool enable = false;
+				Blend srcColor= Blend::None;
+				Blend destColor= Blend::None;
+				BlendOP colorOP = BlendOP::Add;
+				Blend srcAlpha = Blend::None;
+				Blend destAlpha = Blend::None;
+				BlendOP alphaOP = BlendOP::Add;
+				uint32_t writeMask = 0;
+			}targets[RenderTargetMax];
+		}blend;
+
+		struct
+		{
+			bool wireframe = false;
+			bool cullback = true;
+			bool CCW = false;
+			int depthBias = 0.0f;
+			bool depthClip = true;
+			bool MSAA = false;
+		}rasterize;
+
+		struct
+		{
+			bool depth = false;
+			bool stencil = false;
+		}depthstencil;
+
+		uint32_t samplemask = 0xffffffff;
+
 	};
 }

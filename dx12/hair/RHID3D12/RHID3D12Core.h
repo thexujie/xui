@@ -204,4 +204,200 @@ namespace RHI::RHID3D12
 		result.set(D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, flags.any(DescriptorHeapFlag::ShaderVisible));
 		return result;
 	}
+
+	inline D3D12_DESCRIPTOR_RANGE_TYPE FromDescripteorRangeType(DescripteorRangeType type)
+	{
+		switch(type)
+		{
+		//case DescripteorRangeType::Table:
+			//return D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		case DescripteorRangeType::ConstBuffer: 
+			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+		case DescripteorRangeType::ShaderResource:
+			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		case DescripteorRangeType::UnorderedAccess:
+			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
+		case DescripteorRangeType::Sampler:
+			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
+		default:
+			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+		}
+	}
+
+	//inline D3D12_ROOT_PARAMETER_TYPE FromDescripteorRangeType(DescripteorRangeType type)
+	//{
+	//	switch (type)
+	//	{
+	//		//case DescripteorRangeType::Table:
+	//			//return D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	//	case DescripteorRangeType::ConstBuffer:
+	//		return D3D12_ROOT_PARAMETER_TYPE_CBV;
+	//	case DescripteorRangeType::ShaderResource:
+	//		return D3D12_ROOT_PARAMETER_TYPE_SRV;
+	//	case DescripteorRangeType::UnorderedAccess:
+	//		return D3D12_ROOT_PARAMETER_TYPE_UAV;
+	//	default:
+	//		return D3D12_ROOT_PARAMETER_TYPE_CBV;
+	//	}
+	//}
+
+	inline D3D12_SHADER_VISIBILITY FromShader(Shader shader)
+	{
+		switch(shader)
+		{
+		case All: 
+			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_ALL;
+		case Vertex: 
+			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_VERTEX;
+		case Hull: 
+			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_HULL;
+		case Domain: 
+			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_DOMAIN;
+		case Geoetry: 
+			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_GEOMETRY;
+		case Pixel: 
+			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_PIXEL;
+		default:
+			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_ALL;
+		}
+	}
+
+	inline D3D12_BLEND FromBlend(Blend blend)
+	{
+		switch(blend)
+		{
+		case Blend::None:
+			return D3D12_BLEND::D3D12_BLEND_ZERO;
+		case Blend::Zero: 
+			return D3D12_BLEND::D3D12_BLEND_ZERO;
+		case Blend::One: 
+			return D3D12_BLEND::D3D12_BLEND_ONE;
+		case Blend::SrcColor: 
+			return D3D12_BLEND::D3D12_BLEND_SRC_COLOR;
+		case Blend::SrcColorInv: 
+			return D3D12_BLEND::D3D12_BLEND_INV_SRC_COLOR;
+		case Blend::SrcAlpha: 
+			return D3D12_BLEND::D3D12_BLEND_SRC_ALPHA;
+		case Blend::SrcAlphaInv: 
+			return D3D12_BLEND::D3D12_BLEND_INV_SRC_ALPHA;
+		case Blend::DestAlpha:
+			return D3D12_BLEND::D3D12_BLEND_DEST_ALPHA;
+		case Blend::DestAlphaInv:
+			return D3D12_BLEND::D3D12_BLEND_INV_DEST_ALPHA;
+		case Blend::DestColor: 
+			return D3D12_BLEND::D3D12_BLEND_DEST_COLOR;
+		case Blend::DestColorInv: 
+			return D3D12_BLEND::D3D12_BLEND_INV_DEST_COLOR;
+		case Blend::BlendFactor: 
+			return D3D12_BLEND::D3D12_BLEND_BLEND_FACTOR;
+		case Blend::BlendFactorInv: 
+			return D3D12_BLEND::D3D12_BLEND_INV_BLEND_FACTOR;
+		default:
+			return D3D12_BLEND::D3D12_BLEND_ZERO;
+		}
+	}
+
+	inline D3D12_BLEND_OP FromBlendOP(BlendOP op)
+	{
+		switch(op)
+		{
+		case BlendOP::Add: 
+			return D3D12_BLEND_OP::D3D12_BLEND_OP_ADD;
+		case BlendOP::Subtract: 
+			return D3D12_BLEND_OP::D3D12_BLEND_OP_SUBTRACT;
+		case BlendOP::Min: 
+			return D3D12_BLEND_OP::D3D12_BLEND_OP_MIN;
+		case BlendOP::Max: 
+			return D3D12_BLEND_OP::D3D12_BLEND_OP_MAX;
+		default:
+			return D3D12_BLEND_OP::D3D12_BLEND_OP_ADD;
+		}
+	}
+
+	inline D3D12_PRIMITIVE_TOPOLOGY_TYPE FromTopologyType(TopologyType type)
+	{
+		switch(type)
+		{
+		case TopologyType::None:
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
+		case TopologyType::Point:
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+		case TopologyType::Line:
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+		case TopologyType::Triangle:
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		case TopologyType::Patch:
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
+		default:
+			return D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
+		}
+	}
+
+	inline DXGI_FORMAT FromPixelFormat(core::pixelformat pixelformat)
+	{
+		switch (pixelformat)
+		{
+		case core::pixelformat::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
+		case core::pixelformat::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case core::pixelformat::nv12: return DXGI_FORMAT_NV12;
+		case core::pixelformat::yuy2: return DXGI_FORMAT_420_OPAQUE;
+		case core::pixelformat::p010: return DXGI_FORMAT_P010;
+		default: return DXGI_FORMAT_UNKNOWN;
+		}
+	}
+
+	inline D3D12_FILTER FromFilter(Filter filter)
+	{
+		switch (filter)
+		{
+		case Filter::Point: 
+			return D3D12_FILTER::D3D12_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+		case Filter::Liner: 
+			return D3D12_FILTER::D3D12_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+		default:
+			return D3D12_FILTER::D3D12_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+		}
+	}
+
+	inline D3D12_TEXTURE_ADDRESS_MODE FromAddressMode(AddressMode mode)
+	{
+		switch(mode)
+		{
+		case AddressMode::Clamp: 
+			return D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+		case AddressMode::Wrap: 
+			return D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+		case AddressMode::Mirror: 
+			return D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
+		case AddressMode::Border: 
+			return D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+		default:
+			return D3D12_TEXTURE_ADDRESS_MODE::D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+		}
+	}
+
+	inline D3D12_COMPARISON_FUNC FromComparison(Comparison cmp)
+	{
+		switch(cmp)
+		{
+		case Comparison::None: 
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_NEVER;
+		case Comparison::Always: 
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_ALWAYS;
+		case Comparison::Less: 
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_LESS;
+		case Comparison::LessEqual: 
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		case Comparison::Equal: 
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_EQUAL;
+		case Comparison::GreaterEqual: 
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+		case Comparison::Greater: 
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_GREATER;
+		case Comparison::NotEqual: 
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_NOT_EQUAL;
+		default:
+			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_NEVER;
+		}
+	}
 }
