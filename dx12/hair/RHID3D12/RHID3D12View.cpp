@@ -1,7 +1,5 @@
 #include "stdafx.h"
-#include "RHID3D12View.h"
-#include "RHID3D12CommandList.h"
-#include "RHID3D12Resource.h"
+#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {

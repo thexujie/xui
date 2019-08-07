@@ -181,22 +181,22 @@ namespace core
     }
 
 
-    inline float4x4 float4x4_lookat_lh(const float4 & eye, const float4 & at, const float4 & up)
+    inline float4x4 float4x4_lookat_lh(const float3 & eye, const float3 & at, const float3 & up)
     {
         return math::xm::xm_matr_lookat_lh(eye, at, up);
     }
 
-    inline float4x4 float4x4_lookat_rh(const float4 & eye, const float4 & at, const float4 & up)
+    inline float4x4 float4x4_lookat_rh(const float3 & eye, const float3 & at, const float3 & up)
     {
         return math::xm::xm_matr_lookat_rh(eye, at, up);
     }
 
-    inline float4x4 float4x4_lookto_lh(const float4 & eye, const float4 & direction, const float4 & up)
+    inline float4x4 float4x4_lookto_lh(const float3 & eye, const float3 & direction, const float3 & up)
     {
         return math::xm::xm_matr_lookto_lh(eye, direction, up);
     }
 
-    inline float4x4 float4x4_lookto_rh(const float4 & eye, const float4 & direction, const float4 & up)
+    inline float4x4 float4x4_lookto_rh(const float3 & eye, const float3 & direction, const float3 & up)
     {
         return math::xm::xm_matr_lookto_rh(eye, direction, up);
     }
@@ -212,4 +212,24 @@ namespace core
     {
         return math::xm::xm_matr_transform(pos, rot, scl);
     }
+
+	inline float3 operator * (const float3 & pos, const float4x4 & transform)
+    {
+		return math::xm::xm_matr_transform_coord(transform, pos);
+    }
+
+	inline float3 operator * (const float4x4 & transform, const float3 & pos)
+	{
+		return math::xm::xm_matr_transform_coord(transform, pos);
+	}
+
+	inline float3 operator * (const float4 & pos, const float4x4 & transform)
+	{
+		return math::xm::xm_matr_transform_coord(transform, pos);
+	}
+
+	inline float3 operator * (const float4x4 & transform, const float4 & pos)
+	{
+		return math::xm::xm_matr_transform_coord(transform, pos);
+	}
 }

@@ -9,5 +9,21 @@ namespace RHI::RHID3D12
 	{
 		pObject->SetName(name);
 	}
+
+	inline std::string_view D3D12BlobMessage(ID3DBlob * blob)
+	{
+		if (!blob || blob->GetBufferSize() < 2)
+			return std::string_view();
+
+		return blob ? std::string_view(static_cast<const char *>(blob->GetBufferPointer()), blob->GetBufferSize() - 1) : std::string_view();
+	}
+
+	inline std::string_view D3D12BlobMessage(win32::comptr<ID3DBlob> blob)
+	{
+		if (!blob || blob->GetBufferSize() < 2)
+			return std::string_view();
+
+		return blob ? std::string_view(static_cast<const char *>(blob->GetBufferPointer()), blob->GetBufferSize() - 1) : std::string_view();
+	}
 }
 #define RHID3D12_SETNAME(x) RHI::RHID3D12::SetD3D12ObjectName((x).get(), L#x)

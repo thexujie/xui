@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "RHID3D12CommandList.h"
 #include "RHID3D12CommandAllocator.h"
-#include "RHID3D12View.h"
 #include "RHID3D12Resource.h"
+#include "RHID3D12ResourceView.h"
 #include "RHID3D12PipelineState.h"
 #include "RHID3D12ResourcePacket.h"
 
@@ -148,6 +148,11 @@ namespace RHI::RHID3D12
 	void RHID3D12CommandList::DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase)
 	{
 		_cmdlist->DrawInstanced(nvertices, ninstance, ivertexbase, iinstancebase);
+	}
+
+	void RHID3D12CommandList::DrawIndexedInstanced(uint32_t nindices, uint32_t ninstance, uint32_t iindexbase, uint32_t ivertexbase, uint32_t iinstancebase)
+	{
+		_cmdlist->DrawIndexedInstanced(nindices, ninstance, iindexbase, ivertexbase, iinstancebase);
 	}
 
 	void RHID3D12CommandList::CopyResource(RHIResource * dst, RHIResource * src)

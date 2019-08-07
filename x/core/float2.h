@@ -17,7 +17,7 @@ namespace core
         inline float2 & operator=(const float32_t (&arr)[2])
         {
             x = arr[0];
-            y = arr[0];
+            y = arr[1];
             return *this;
         }
 

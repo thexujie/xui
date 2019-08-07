@@ -394,7 +394,7 @@ namespace RHI
 		float maxLOD = 0;
 	};
 
-	struct PipeStateTableRange
+	struct PipelineStateTableRange
 	{
 		DescripteorRangeType type = DescripteorRangeType::ConstBuffer;
 		uint32_t numDescriptor = 1;
@@ -402,21 +402,27 @@ namespace RHI
 		uint32_t registerSpace = 0;
 	};
 
-	struct PipelineStateTables
+	struct PipelineStateTable
 	{
 		Shader shader = Shader::All;
-		std::vector<PipeStateTableRange> ranges;
+		std::vector<PipelineStateTableRange> ranges;
 	};
 
 	constexpr uint32_t RenderTargetMax = 8;
 
 	struct PipelineStateArgs
 	{
-		std::vector<PipelineStateTables> tables;
+		std::vector<PipelineStateTable> tables;
 		std::vector<SamplerArgs> samplers;
 
 		std::u8string VS;
 		std::string VSMain;
+		std::u8string HS;
+		std::string HSMain;
+		std::u8string DS;
+		std::string DSMain;
+		std::u8string GS;
+		std::string GSMain;
 		std::u8string PS;
 		std::string PSMain;
 

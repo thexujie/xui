@@ -6,6 +6,10 @@
 		<OutDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\</OutDir>
 		<IntDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\$(ProjectName).$(ProjectGuid)\</IntDir>
 	</PropertyGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0CD56909-021A-4656-BAF7-C1183FD6DFF8}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
 	<PropertyGroup Label="Configuration">
 		<PlatformToolset>v142</PlatformToolset>
 	</PropertyGroup>

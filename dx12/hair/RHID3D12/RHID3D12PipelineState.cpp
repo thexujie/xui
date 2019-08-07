@@ -81,20 +81,60 @@ namespace RHI::RHID3D12
 		compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 		win32::comptr<ID3DBlob> errorMessage;
+		
 		win32::comptr<ID3DBlob> vertexShader;
-		win32::comptr<ID3DBlob> pixelShader;
-		hr = D3DCompileFromFile(core::u8str_wstr(args.VS).c_str(), nullptr, nullptr, args.VSMain.c_str(), "vs_5_0", compileFlags, 0, vertexShader.getpp(), errorMessage.getpp_safe());
-		if (FAILED(hr))
+		if (!args.VS.empty())
 		{
-			core::war() << __FUNCTION__ " D3DCompileFromFile<VS> failed: " << win32::winerr_str(hr & 0xFFFF);
-			return core::e_inner;
+			hr = D3DCompileFromFile(core::u8str_wstr(args.VS).c_str(), nullptr, nullptr, args.VSMain.c_str(), "vs_5_0", compileFlags, 0, vertexShader.getpp(), errorMessage.getpp_safe());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ " D3DCompileFromFile<VS> failed: " << win32::winerr_str(hr & 0xFFFF) << "-> \n" << D3D12BlobMessage(errorMessage);
+				return core::e_inner;
+			}
 		}
 
-		hr = D3DCompileFromFile(core::u8str_wstr(args.PS).c_str(), nullptr, nullptr, args.PSMain.c_str(), "ps_5_0", compileFlags, 0, pixelShader.getpp(), errorMessage.getpp_safe());
-		if (FAILED(hr))
+		win32::comptr<ID3DBlob> hullShader;
+		if (!args.HS.empty())
 		{
-			core::war() << __FUNCTION__ " D3DCompileFromFile<PS> failed: " << win32::winerr_str(hr & 0xFFFF);
-			return core::e_inner;
+			hr = D3DCompileFromFile(core::u8str_wstr(args.VS).c_str(), nullptr, nullptr, args.HSMain.c_str(), "hs_5_0", compileFlags, 0, hullShader.getpp(), errorMessage.getpp_safe());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ " D3DCompileFromFile<HS> failed: " << win32::winerr_str(hr & 0xFFFF) << "-> \n" << D3D12BlobMessage(errorMessage);
+				return core::e_inner;
+			}
+		}
+
+		win32::comptr<ID3DBlob> domainShader;
+		if (!args.DS.empty())
+		{
+			hr = D3DCompileFromFile(core::u8str_wstr(args.VS).c_str(), nullptr, nullptr, args.DSMain.c_str(), "ds_5_0", compileFlags, 0, domainShader.getpp(), errorMessage.getpp_safe());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ " D3DCompileFromFile<DS> failed: " << win32::winerr_str(hr & 0xFFFF) << "-> \n" << D3D12BlobMessage(errorMessage);
+				return core::e_inner;
+			}
+		}
+
+		win32::comptr<ID3DBlob> geometryShader;
+		if (!args.GS.empty())
+		{
+			hr = D3DCompileFromFile(core::u8str_wstr(args.GS).c_str(), nullptr, nullptr, args.GSMain.c_str(), "gs_5_0", compileFlags, 0, geometryShader.getpp(), errorMessage.getpp_safe());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ " D3DCompileFromFile<GS> failed: " << win32::winerr_str(hr & 0xFFFF) << "-> \n" << D3D12BlobMessage(errorMessage);
+				return core::e_inner;
+			}
+		}
+
+		win32::comptr<ID3DBlob> pixelShader;
+		if (!args.PS.empty())
+		{
+			hr = D3DCompileFromFile(core::u8str_wstr(args.PS).c_str(), nullptr, nullptr, args.PSMain.c_str(), "ps_5_0", compileFlags, 0, pixelShader.getpp(), errorMessage.getpp_safe());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ " D3DCompileFromFile<PS> failed: " << win32::winerr_str(hr & 0xFFFF) << "-> \n" << D3D12BlobMessage(errorMessage);
+				return core::e_inner;
+			}
 		}
 
 		D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
@@ -105,8 +145,11 @@ namespace RHI::RHID3D12
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
 		desc.pRootSignature = rootSignature.get();
-		desc.VS = { vertexShader->GetBufferPointer(), vertexShader->GetBufferSize() };
-		desc.PS = { pixelShader->GetBufferPointer(), pixelShader->GetBufferSize() };
+		desc.VS = vertexShader ? D3D12_SHADER_BYTECODE{ vertexShader->GetBufferPointer(), vertexShader->GetBufferSize() } : D3D12_SHADER_BYTECODE{};
+		desc.HS = hullShader ? D3D12_SHADER_BYTECODE{ hullShader->GetBufferPointer(), hullShader->GetBufferSize() } : D3D12_SHADER_BYTECODE{};
+		desc.DS = domainShader ? D3D12_SHADER_BYTECODE{ domainShader->GetBufferPointer(), domainShader->GetBufferSize() } : D3D12_SHADER_BYTECODE{};
+		desc.GS = geometryShader ? D3D12_SHADER_BYTECODE{ geometryShader->GetBufferPointer(), geometryShader->GetBufferSize() } : D3D12_SHADER_BYTECODE{};
+		desc.PS = vertexShader ? D3D12_SHADER_BYTECODE{ pixelShader->GetBufferPointer(), pixelShader->GetBufferSize() } : D3D12_SHADER_BYTECODE{};
 
 		desc.BlendState.AlphaToCoverageEnable = args.blend.alphaToCoverage;
 		desc.BlendState.AlphaToCoverageEnable = args.blend.independentBlend;
@@ -126,7 +169,7 @@ namespace RHI::RHID3D12
 		desc.DepthStencilState.DepthEnable = args.depthstencil.depth;
 		desc.DepthStencilState.StencilEnable = args.depthstencil.stencil;
 
-		desc.InputLayout = { inputElementDescs, std::size(inputElementDescs) };
+		desc.InputLayout = { inputElementDescs, (uint32_t)std::size(inputElementDescs) };
 		desc.PrimitiveTopologyType = FromTopologyType(args.topology);
 
 		desc.NumRenderTargets = args.ntargets;

@@ -36,7 +36,8 @@ namespace RHI
 		virtual void IASetIndexBuffer(RHIResource * indexbuffer, uint32_t stride, uint32_t size) = 0;
 		virtual void IASetTopologyType(Topology topology) = 0;
 		virtual void DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase) = 0;
-
+		virtual void DrawIndexedInstanced(uint32_t nindices, uint32_t ninstance, uint32_t iindexbase, uint32_t ivertexbase, uint32_t iinstancebase) = 0;
+		
 		virtual void CopyResource(RHIResource * dst, RHIResource * src) = 0;
 		virtual void CopyBuffer(RHIResource * dst, RHIResource * src) = 0;
 	};

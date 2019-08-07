@@ -118,6 +118,16 @@ namespace core
     typedef span_type<uint8_t> span8;
 }
 
+#ifndef __cpp_char8_t
+using char8_t = char;
+namespace std
+{
+	using u8string = std::string;
+	using u8string_view = std::string_view;
+}
+#endif
+
+
 #include "core/member_traits.h"
 #include "core/bitflag.h"
 #include "core/error.h"

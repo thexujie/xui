@@ -8,9 +8,8 @@
     <Intrinsic Name="bufSize" Expression="16" />
     <Intrinsic Name="isShortString" Expression="capacity() &lt; bufSize()" />
     <Intrinsic Name="isLongString" Expression="capacity() &gt;= bufSize()" />
-    <!--<DisplayString Condition="isShortString()">{_Mypair._Myval2._Bx._Alias,s8}</DisplayString>-->
+    <DisplayString Condition="isShortString()">{_Mypair._Myval2._Bx._Alias,s8}</DisplayString>
     <DisplayString Condition="isLongString()">{*(char**)(&amp;(_Mypair._Myval2._Bx._Alias[0])),s8}</DisplayString>
-    <DisplayString Condition="isShortString()">{{isShortString}}</DisplayString>
     <!--<DisplayString Condition="isLongString()">{{isLongString}}</DisplayString>-->
   </Type>
 

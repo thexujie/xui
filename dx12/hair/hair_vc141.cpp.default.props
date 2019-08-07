@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<DepsDir>$(SolutionDir)..\..\externals\</DepsDir>
+		<ExternalsDir>$(SolutionDir)..\..\externals\</ExternalsDir>
+		<OutDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\</OutDir>
+		<IntDir>$(SolutionDir)$(Configuration)_$(PlatformTarget)\$(ProjectName).$(ProjectGuid)\</IntDir>
+	</PropertyGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0CD56909-021A-4656-BAF7-C1183FD6DFF8}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+	<PropertyGroup Label="Configuration">
+		<PlatformToolset>v141</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+		<UseDebugLibraries>true</UseDebugLibraries>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+		<UseDebugLibraries>false</UseDebugLibraries>
+		<WholeProgramOptimization>true</WholeProgramOptimization>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Condition="Exists('$(SolutionDir)\$(SolutionName).cpp.default.user.props')" Project="$(SolutionDir)\$(SolutionName).cpp.default.user.props" />
+</Project>

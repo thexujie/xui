@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="hello.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
     <ClCompile Include="main\main.cpp">
       <Filter>main</Filter>
     </ClCompile>
@@ -25,9 +22,6 @@
     </ClCompile>
     <ClCompile Include="RHI\RHICommandQueue.cpp">
       <Filter>RHI</Filter>
-    </ClCompile>
-    <ClCompile Include="dxgi\inc.cpp">
-      <Filter>dxgi</Filter>
     </ClCompile>
     <ClCompile Include="RHI\RHIDevice.cpp">
       <Filter>RHI</Filter>
@@ -80,21 +74,18 @@
     <ClCompile Include="RHID3D12\RHID3D12PipelineState.cpp">
       <Filter>RHID3D12</Filter>
     </ClCompile>
-    <ClCompile Include="RHID3D12\RHID3D12View.cpp">
-      <Filter>RHID3D12</Filter>
-    </ClCompile>
     <ClCompile Include="RHID3D12\RHID3D12ResourcePacket.cpp">
       <Filter>RHID3D12</Filter>
     </ClCompile>
     <ClCompile Include="RHI\RHIResourcePacket.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12ResourceView.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="hello.h">
-      <Filter>main</Filter>
-    </ClInclude>
     <ClInclude Include="main\main.h">
       <Filter>main</Filter>
     </ClInclude>
@@ -115,9 +106,6 @@
     </ClInclude>
     <ClInclude Include="RHI\RHICommandQueue.h">
       <Filter>RHI</Filter>
-    </ClInclude>
-    <ClInclude Include="dxgi\inc.h">
-      <Filter>dxgi</Filter>
     </ClInclude>
     <ClInclude Include="RHI\RHIDevice.h">
       <Filter>RHI</Filter>
@@ -170,14 +158,14 @@
     <ClInclude Include="RHID3D12\RHID3D12PipelineState.h">
       <Filter>RHID3D12</Filter>
     </ClInclude>
-    <ClInclude Include="RHID3D12\RHID3D12View.h">
-      <Filter>RHID3D12</Filter>
-    </ClInclude>
     <ClInclude Include="RHID3D12\RHID3D12ResourcePacket.h">
       <Filter>RHID3D12</Filter>
     </ClInclude>
     <ClInclude Include="RHI\RHIResourcePacket.h">
       <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12ResourceView.h">
+      <Filter>RHID3D12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -199,8 +187,17 @@
     <Filter Include="dxgi">
       <UniqueIdentifier>{2b8b6782-0e69-4c95-bcd7-cdfceb589435}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{52a58fab-39da-4b19-8ed7-c540caccc511}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders.hlsl" />
+    <None Include="shaders\basic.hlsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\bspline.hlsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 
 #include "RHI/RHI.h"
 #include "RHID3D12Device.h"
-#include "RHID3D12View.h"
+#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {
@@ -34,6 +34,7 @@ namespace RHI::RHID3D12
 		void IASetIndexBuffer(RHIResource * resource, uint32_t stride, uint32_t size) override;
 		void IASetTopologyType(Topology topology) override;
 		void DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase) override;
+		void DrawIndexedInstanced(uint32_t nindices, uint32_t ninstance, uint32_t iindexbase, uint32_t ivertexbase, uint32_t iinstancebase) override;
 
 		void CopyResource(RHIResource * dst, RHIResource * src) override;
 		void CopyBuffer(RHIResource * dst, RHIResource * src) override;

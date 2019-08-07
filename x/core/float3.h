@@ -24,7 +24,7 @@ namespace core
         inline float32_t & operator[](int32_t iIndex) { return ((float32_t *)this)[iIndex]; }
         inline const float32_t & operator[](int32_t iIndex) const { return ((const float32_t *)this)[iIndex]; }
 
-        inline operator math::xm::xmf() const { return math::xm::xmf(x, y, z, 0.0f); }
+        inline operator math::xm::xmf() const { return math::xm::xmf(x, y, z, 1.0f); }
 
         inline float3 & operator =(const math::xm::xmf & v)
         {

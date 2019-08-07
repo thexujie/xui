@@ -2,7 +2,7 @@
 
 #include "RHID3D12Core.h"
 #include "RHID3D12Device.h"
-#include <RHID3D12/RHID3D12View.h>
+#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {

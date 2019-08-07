@@ -36,8 +36,10 @@ namespace core
 	template <>
 	const std::string trim_chars<std::string> = "\t\n\v\f\r ";
 
+#ifdef __cpp_char8_t
 	template <>
 	const std::u8string trim_chars<std::u8string> = u8"\t\n\v\f\r ";
+#endif
 
 	template <>
 	const std::wstring trim_chars<std::wstring> = L"\t\n\v\f\r ";
@@ -172,10 +174,11 @@ namespace core
         }
     };
 
-    inline void format_helper(std::u8ostringstream & stream) {}
+	template<typename stream_t>
+    void format_helper(stream_t & stream) {}
 
-    template<typename Head, typename ...Tail>
-    void format_helper(std::u8ostringstream & stream, const Head & head, Tail && ...tail)
+    template<typename stream_t, typename Head, typename ...Tail>
+    void format_helper(stream_t & stream, const Head & head, Tail && ...tail)
     {
         stream << head;
         return format_helper(stream, std::forward<Tail>(tail)...);
@@ -188,6 +191,22 @@ namespace core
         format_helper(stream, std::forward<Args>(args)...);
         return stream.str();
     }
+
+	template<typename ...Args>
+	std::string aformat(Args && ...args)
+	{
+		std::ostringstream stream;
+		format_helper(stream, std::forward<Args>(args)...);
+		return stream.str();
+	}
+
+	template<typename ...Args>
+	std::wstring wformat(Args && ...args)
+	{
+		std::wostringstream stream;
+		format_helper(stream, std::forward<Args>(args)...);
+		return stream.str();
+	}
 
     std::u8string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes);
 }
@@ -205,6 +224,7 @@ namespace std
 		return _Ostr << astr;
 	}
 
+#ifdef __cpp_char8_t
 	inline std::u8ostream & __fixed_op(std::u8ostream & _Ostr, const char8_t * u8str)
 	{
 		return _Ostr << u8str;
@@ -214,6 +234,7 @@ namespace std
 	{
 		return _Ostr << u8str;
 	}
+#endif
 	//----------------------------------------
 
 	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const char * astr)
@@ -244,6 +265,16 @@ namespace std
 		return _Ostr << reinterpret_cast<const std::u8string &>(astr);
 	}
 
+	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const std::string_view & astr_view)
+	{
+		return _Ostr << reinterpret_cast<const std::u8string_view &>(astr_view);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const std::string_view & astr_view)
+	{
+		return _Ostr << reinterpret_cast<const std::u8string_view &>(astr_view);
+	}
+#ifdef __cpp_char8_t
 	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const char8_t * u8str)
 	{
 		if (!u8str)
@@ -261,7 +292,7 @@ namespace std
 		else
 			return __fixed_op(_Ostr, u8str);
 	}
-
+#endif
 	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const wchar_t * wstr)
 	{
 		if (!_Ostr.good())
@@ -308,6 +339,7 @@ namespace std
 	//-------------------------------------
 	//----------------------------
 
+#ifdef __cpp_char8_t
 	//----------------------------------------  __fixed_op
 	inline std::ostream & __fixed_op(std::ostream & _Ostr, const char * astr)
 	{
@@ -375,7 +407,6 @@ namespace std
 		else
 			return __fixed_op(_Ostr, u8str);
 	}
-
 	inline std::ostream & operator<<(std::ostream & _Ostr, const wchar_t * wstr)
 	{
 		if (!_Ostr.good())
@@ -417,4 +448,5 @@ namespace std
 			return _Ostr;
 		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
 	}
+#endif
 }
