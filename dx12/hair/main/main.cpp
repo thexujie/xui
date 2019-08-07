@@ -84,7 +84,7 @@ public:
 		core::sizei windowSize(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
 
 		core::recti sccisorrect = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
-		RHI::ViewPort viewport = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
+		RHI::ViewPort viewport = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top, 0.0f, 1.0f};
 
 		core::float4x4 matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
 		core::float4x4 matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, -12.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
@@ -112,7 +112,8 @@ public:
 				_rotate += elapse;
 			}
 
-			cbuffer.transform = core::float4x4_rotate({ 0.0f, _rotate * 3.14f * 0.5f, 0.0f }) * matrView;
+			core::float4x4 matrWorld = core::float4x4_rotate({ 0.0f, _rotate * 3.14f * 0.5f, 0.0f });
+			cbuffer.transform = matrView * matrProj;
 			cbuffer.tessFactor = _tessFactor;
 			std::memcpy(_constbuffer->Data(), &cbuffer, sizeof(cbuffer));
 
@@ -127,8 +128,6 @@ public:
 			_cmdlist->ClearRenderTarget(0xffcccccc);
 
 			_cmdlist->SetResourcePacket(_resourcepacket.get());
-
-			_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
 			
 			//_cmdlist->SetPipelineState(_pipelinestate.get());
 			//_cmdlist->IASetIndexBuffer(_indexbuffer.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices);
@@ -138,6 +137,7 @@ public:
 			
 			_cmdlist->SetPipelineState(_pipelinestate_basic.get());
 			_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
+			_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
 			_cmdlist->IASetIndexBuffer(_indexbuffer_lines.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices_lines);
 			_cmdlist->IASetTopologyType(RHI::Topology::LineList);
 			_cmdlist->DrawIndexedInstanced(_nindices_lines, 1, 0, 0, 0);
@@ -184,6 +184,7 @@ public:
 		RHI::PipelineStateArgs psargs = {};
 		psargs.tables.push_back(table);
 		psargs.samplers.push_back(RHI::SamplerArgs());
+		psargs.rasterize.depthClip = false;
 
 		psargs.topology = RHI::TopologyType::Line;
 		std::u8string path_basic = u8"../data/shaders/basic.hlsl";
@@ -205,8 +206,8 @@ public:
 		psargs.PS = path;
 		psargs.PSMain = "PSMain";
 		psargs.topology = RHI::TopologyType::Patch;
-		
 		_pipelinestate = _device->CreatePipelineState(psargs);
+
 		RHI::ResourcePacketArgs packetArgs = {};
 		packetArgs.type = RHI::ResourcePacketType::Resource;
 		packetArgs.capacity = 2;
@@ -257,17 +258,17 @@ public:
 		_cmdlist->CopyResource(_indexbuffer.get(), indexbuffer_UL.get());
 
 		// indices line
-		RHI::ResourceArgs indicesLineParams_UL = {};
-		indicesLineParams_UL.heap.type = RHI::HeapType::Upload;
-		indicesLineParams_UL.size.cx = sizeof(uint16_t) * _indices_lines.size();
-		indicesLineParams_UL.dimension = RHI::ResourceDimension::Raw;
-		indicesLineParams_UL.states = RHI::ResourceState::GenericRead;
-		auto indexLinesbuffer_UL = _device->CreateResource(indicesParams_UL);
+		RHI::ResourceArgs indicesLinesParams_UL = {};
+		indicesLinesParams_UL.heap.type = RHI::HeapType::Upload;
+		indicesLinesParams_UL.size.cx = sizeof(uint16_t) * _indices_lines.size();
+		indicesLinesParams_UL.dimension = RHI::ResourceDimension::Raw;
+		indicesLinesParams_UL.states = RHI::ResourceState::GenericRead;
+		auto indexLinesbuffer_UL = _device->CreateResource(indicesLinesParams_UL);
 		std::memcpy(indexLinesbuffer_UL->Data(), _indices_lines.data(), sizeof(uint16_t) * _indices_lines.size());
 
 		RHI::ResourceArgs indicesLinesParams = {};
 		indicesLinesParams.heap.type = RHI::HeapType::Default;
-		indicesLinesParams.size.cx = sizeof(uint16_t) * _indices.size();
+		indicesLinesParams.size.cx = sizeof(uint16_t) * _indices_lines.size();
 		indicesLinesParams.dimension = RHI::ResourceDimension::Raw;
 		indicesLinesParams.states = RHI::ResourceState::CopyDest;
 		_indexbuffer_lines = _device->CreateResource(indicesLinesParams);
@@ -348,6 +349,30 @@ public:
 			_controlPoints.push_back(vertices);
 		}
 		file.close();
+
+		//-- for test
+		//std::vector<Vertex> vertices =
+		//{
+		//	//{ { -1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
+		//	//{ { 1.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+		//	//{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+		//	//{ { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+		//	//
+		//	{ { 1.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } },
+		//	{ { 1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+		//	{ { 0.0f, 0.0f, 0.0f }, { 0.5f, 0.5f } },
+		//	//
+		//	//{ { -25.f, +25.f, 0.0f }, { 0.0f, 0.0f } },
+		//	//{ { +25.f, +25.f, 0.0f }, { 1.0f, 0.0f } },
+		//	//{ { +25.f, -25.f, 0.0f }, { 1.0f, 1.0f } },
+		//	//{ { -25.f, -25.f, 0.0f }, { 1.0f, 1.0f } },
+		//};
+		//std::vector<uint16_t> indices = { 0, 1, 2};
+		//std::vector<uint16_t> indices_lines = {0, 1, 2};
+		//_vertices = vertices;
+		//_indices = indices;
+		//_indices_lines = indices_lines;
+
 	}
 
 private:

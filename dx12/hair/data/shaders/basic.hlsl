@@ -25,7 +25,6 @@ struct VSOutput
 VSOutput VSMain(float4 position : POSITION, float2 uv : TEXCOORD)
 {
     VSOutput result;
-
     result.position = mul(position, transform);
     result.uv = uv;
 
@@ -36,6 +35,7 @@ VSOutput VSMain(float4 position : POSITION, float2 uv : TEXCOORD)
 float4 PSMain(VSOutput input) : SV_TARGET
 {
     //return g_texture.Sample(g_sampler, input.uv);
+    //return float4(input.position.xyz, 1);
     return float4(0, 0, 0, 1);
 
 }
