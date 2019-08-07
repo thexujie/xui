@@ -27,7 +27,7 @@ namespace RHI
 		virtual std::shared_ptr<RHICommandList> CreateCommandList(CommandType type) const = 0;
 		virtual std::shared_ptr<RHIResource> CreateResource(const ResourceArgs & args) const = 0;
 		virtual std::shared_ptr<RHIResourcePacket> CreateResourcePacket(const ResourcePacketArgs & args) const = 0;
-		virtual std::shared_ptr<RHIRenderTarget> CreateRenderTargetForHWND(const RenderTargetArgs & args) const = 0;
+		virtual std::shared_ptr<RHIRenderTarget> CreateRenderTargetForHWND(RHICommandQueue * cmdqueue, const RenderTargetArgs & args) const = 0;
 		virtual std::shared_ptr<RHIPipelineState> CreatePipelineState(const PipelineStateArgs & args) const = 0;
 
 	protected:

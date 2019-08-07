@@ -86,7 +86,7 @@ public:
 		_cmdqueue = _device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
 		RHI::RenderTargetArgs rtparams = {};
 		rtparams.hwnd = _hwnd;
-		_rendertarget = _device->CreateRenderTargetForHWND(rtparams);
+		_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
 		_cmdallocator = _device->CreateCommandAllocator(RHI::CommandType::Direct);
 		_cmdlist = _device->CreateCommandList(RHI::CommandType::Direct);
 	}
@@ -212,8 +212,8 @@ public:
 		_cmdlist->TransitionBarrier(_indexbuffer.get(), RHI::ResourceState::IndexBuffer);
 		_cmdlist->TransitionBarrier(_indexbuffer_lines.get(), RHI::ResourceState::IndexBuffer);
 		_cmdlist->Close();
-		_rendertarget->Excute(_cmdlist.get());
-		_rendertarget->End();
+		_cmdqueue->Excute(_cmdlist.get());
+		_cmdqueue->Wait();
 	}
 
 	void LoadRawResources()
@@ -327,7 +327,7 @@ public:
 				viewport = { 0, 0, (float)windowSize.cx, (float)windowSize.cy, 0.0f, 1.0f };
 				RHI::RenderTargetArgs rtparams = {};
 				rtparams.hwnd = _hwnd;
-				_rendertarget = _device->CreateRenderTargetForHWND(rtparams);
+				_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
 			}
 
 			core::float4x4 matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, _view_z }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
@@ -373,9 +373,9 @@ public:
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::Present);
 			_cmdlist->SetRenderTarget(nullptr);
 			_cmdlist->Close();
-			_rendertarget->Excute(_cmdlist.get());
+			_cmdqueue->Excute(_cmdlist.get());
 			_rendertarget->Present(0);
-			_rendertarget->End();
+			_cmdqueue->Wait();
 			fps.acc(1);
 
 			core::logger_fps tt(__FILE__, __LINE__, 10);
@@ -392,6 +392,7 @@ private:
 
 	std::shared_ptr<RHI::RHIDevice> _device;
 	std::shared_ptr<RHI::RHICommandQueue> _cmdqueue;
+	
 	std::shared_ptr<RHI::RHIRenderTarget> _rendertarget;
 	std::shared_ptr<RHI::RHICommandAllocator> _cmdallocator;
 	std::shared_ptr<RHI::RHICommandList> _cmdlist;

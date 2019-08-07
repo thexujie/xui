@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "RHID3D12RenderTargetHWND.h"
 #include "RHID3D12CommandList.h"
+#include "RHID3D12CommandQueue.h"
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12RenderTargetHWND::Create(const RenderTargetArgs & params)
+	core::error RHID3D12RenderTargetHWND::Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & params)
 	{
 		if (!_device)
 			return core::e_state;
@@ -24,17 +25,7 @@ namespace RHI::RHID3D12
 			return core::e_inner;
 		}
 
-		D3D12_COMMAND_QUEUE_DESC queueDesc = {};
-		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-		if (params.queueFlags.any(CommandQueueFlag::DisableGPUTimeout))
-			queueDesc.Flags |= D3D12_COMMAND_QUEUE_FLAG_DISABLE_GPU_TIMEOUT;
-		win32::comptr<ID3D12CommandQueue> queue;
-		hr = device->CreateCommandQueue(&queueDesc, __uuidof(ID3D12CommandQueue), queue.getvv());
-		if (FAILED(hr))
-		{
-			core::war() << __FUNCTION__ " CreateCommandQueue failed: " << win32::winerr_str(hr & 0xFFFF);
-			return core::e_inner;
-		}
+		auto d3d12cmdqueue = static_cast<RHID3D12CommandQueue *>(cmdqueue)->CommandQueue();
 
 		RECT rcClient = {};
 		GetClientRect((HWND)params.hwnd, &rcClient);
@@ -51,7 +42,7 @@ namespace RHI::RHID3D12
 
 		win32::comptr<IDXGISwapChain1> swapchain1;
 		hr = dxgifactory->CreateSwapChainForHwnd(
-			queue.get(),
+			d3d12cmdqueue,
 			(HWND)params.hwnd,
 			&swapChainDesc,
 			nullptr,
@@ -102,26 +93,15 @@ namespace RHI::RHID3D12
 			}
 		}
 
-		hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence), _fence.getvv());
-		if (FAILED(hr))
-		{
-			core::war() << __FUNCTION__ " device->CreateFence failed: " << win32::winerr_str(hr & 0xFFFF);
-			return core::e_inner;
-		}
-
-
 		//---------------------------------------------------------------
 		_states = ResourceState::Present;
 		_params = params;
-		_queue = queue;
 		_swapchain = swapchain1.as<IDXGISwapChain3>();
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
 		_rtv_heap = rtv_heap;
 		_rtv_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		_buffers = buffers;
 		_views = views;
-		_fenceValue = 1;
-		_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 
 		return core::ok;
 	}
@@ -148,28 +128,6 @@ namespace RHI::RHID3D12
 	void RHID3D12RenderTargetHWND::Begin()
 	{
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
-	}
-
-	void RHID3D12RenderTargetHWND::End()
-	{
-		HRESULT hr = S_OK;
-		const UINT64 fence = _fenceValue;
-		hr = _queue->Signal(_fence.get(), _fenceValue);
-		win32::throw_if_failed(hr);
-		_fenceValue++;
-
-		if (_fence->GetCompletedValue() < fence)
-		{
-			hr = _fence->SetEventOnCompletion(fence, _fenceEvent);
-			win32::throw_if_failed(hr);
-			WaitForSingleObject(_fenceEvent, INFINITE);
-		}
-	}
-
-	void RHID3D12RenderTargetHWND::Excute(RHICommandList * cmdlist)
-	{
-		ID3D12CommandList * cmdlists[] = { reinterpret_cast<RHID3D12CommandList *>(cmdlist)->Ptr() };
-		_queue->ExecuteCommandLists(1, cmdlists);
 	}
 
 	void RHID3D12RenderTargetHWND::Present(uint32_t sync)

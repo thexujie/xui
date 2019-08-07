@@ -13,7 +13,7 @@ namespace RHI::RHID3D12
 		RHID3D12RenderTargetHWND(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12RenderTargetHWND() = default;
 
-		core::error Create(const RenderTargetArgs & params);
+		core::error Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & params);
 
 	public:
 		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) override;
@@ -21,28 +21,21 @@ namespace RHI::RHID3D12
 
 	public:
 		void Begin() override;
-		void End() override;
-		void Excute(RHICommandList * cmdlist) override;
 		void Present(uint32_t sync) override;
 
 	private:
 		RHID3D12Device * _device = nullptr;
 		RenderTargetArgs _params;
 
-		win32::comptr<ID3D12CommandQueue> _queue;
 		win32::comptr<IDXGISwapChain3> _swapchain;
 
 		ResourceStates _states = ResourceState::None;
 		uint32_t _frameIndex = 0;
-		uint64_t _fenceValue = 0;
-		HANDLE _fenceEvent = NULL;
 
 		win32::comptr<ID3D12DescriptorHeap> _rtv_heap;
 		uint32_t _rtv_size = 0;
 		std::vector<win32::comptr<ID3D12Resource>> _buffers;
 		std::vector<std::shared_ptr<RHID3D12ResourceView>> _views;
-
-		win32::comptr<ID3D12Fence> _fence;
 
 
 	};

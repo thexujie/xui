@@ -14,11 +14,22 @@ namespace RHI::RHID3D12
 
 		core::error Create(CommandType type, CommandQueueFlags flags);
 
+	public:
+		void Excute(RHICommandList * cmdlist);
+		void Wait() override;
+
+	public:
+		ID3D12CommandQueue * CommandQueue() const { return _cmdqueue.get(); }
+		
 	private:
 		RHID3D12Device * _device = nullptr;
 		win32::comptr<ID3D12CommandQueue> _cmdqueue;
+		win32::comptr<ID3D12Fence> _fence;
 
 		CommandType _type = CommandType::Direct;
 		CommandQueueFlags _flags = nullptr;
+
+		uint64_t _fenceValue = 0;
+		HANDLE _fenceEvent = NULL;
 	};
 }

@@ -88,10 +88,10 @@ namespace RHI::RHID3D12
 		return packet;
 	}
 	
-	std::shared_ptr<RHIRenderTarget> RHID3D12Device::CreateRenderTargetForHWND(const RenderTargetArgs & args) const
+	std::shared_ptr<RHIRenderTarget> RHID3D12Device::CreateRenderTargetForHWND(RHICommandQueue * cmdqueue, const RenderTargetArgs & args) const
 	{
 		auto rt = std::make_shared<RHID3D12RenderTargetHWND>(const_cast<RHID3D12Device *>(this));
-		auto err = rt->Create(args);
+		auto err = rt->Create(cmdqueue, args);
 		if (err)
 			return nullptr;
 

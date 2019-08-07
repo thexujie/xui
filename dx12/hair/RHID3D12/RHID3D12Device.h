@@ -21,7 +21,7 @@ namespace RHI::RHID3D12
 		std::shared_ptr<RHICommandList> CreateCommandList(CommandType type) const override;
 		std::shared_ptr<RHIResource> CreateResource(const ResourceArgs & args) const override;
 		std::shared_ptr<RHIResourcePacket> CreateResourcePacket(const ResourcePacketArgs & args) const override;
-		std::shared_ptr<RHIRenderTarget> CreateRenderTargetForHWND(const RenderTargetArgs & args) const override;
+		std::shared_ptr<RHIRenderTarget> CreateRenderTargetForHWND(RHICommandQueue * cmdqueue, const RenderTargetArgs & args) const override;
 		std::shared_ptr<RHIPipelineState> CreatePipelineState(const PipelineStateArgs & args) const override;
 
 	private:
