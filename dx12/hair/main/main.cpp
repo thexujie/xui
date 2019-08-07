@@ -40,6 +40,11 @@ public:
 	~HairRender() = default;
 
 
+	void OnScrollV(int32_t scroll)
+	{
+		_view_z += scroll;
+	}
+	
 	void OnKeyDown(uint32_t vkey, uint32_t modify)
 	{
 		if (vkey == VK_UP)
@@ -73,91 +78,6 @@ public:
 		_future = std::async(&HairRender::RenderThread, this);
 	}
 	
-	void RenderThread()
-	{
-		core::counter_fps<float, 3> fps;
-		_rotate_time_last = core::datetime::system();
-		SceneConstantBuffer cbuffer;
-
-		RECT rcClient;
-		GetClientRect(_hwnd, &rcClient);
-
-		core::sizei windowSize(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
-
-		core::recti sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
-		RHI::ViewPort viewport = { 0, 0, windowSize.cx, windowSize.cy, 0.0f, 1.0f};
-
-		core::float4x4 matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, -14.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-		core::float4x4 matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
-
-		while (rendering)
-		{
-			GetClientRect(_hwnd, &rcClient);
-			core::sizei windowSize2(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
-			if (windowSize2 != windowSize)
-			{
-				windowSize = windowSize2;
-				_rendertarget.reset();
-				matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, -14.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-				matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
-				sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
-				viewport = { 0, 0, (float)windowSize.cx, (float)windowSize.cy, 0.0f, 1.0f };
-				RHI::RenderTargetArgs rtparams = {};
-				rtparams.hwnd = _hwnd;
-				_rendertarget = _device->CreateRenderTargetForHWND(rtparams);
-			}
-
-			if (_rotating)
-			{
-				auto elapse = core::datetime::system() - _rotate_time_last;
-				_rotate_time_last += elapse;
-				_rotate += elapse;
-			}
-
-			core::float4x4 matrWorld = core::float4x4_rotate({ 0.0f, _rotate * 3.14f * 0.5f, 0.0f });
-			cbuffer.transform = matrWorld * matrView * matrProj;
-			cbuffer.tessFactor = _tessFactor;
-			std::memcpy(_constbuffer->Data(), &cbuffer, sizeof(cbuffer));
-
-			_rendertarget->Begin();
-			_cmdallocator->Reset();
-			_cmdlist->Reset(_cmdallocator.get());
-
-			_cmdlist->SetViewPort(viewport);
-			_cmdlist->SetScissorRect(sccisorrect);
-			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::RenderTarget);
-			_cmdlist->SetRenderTarget(_rendertarget->CurrentRTV());
-			_cmdlist->ClearRenderTarget(0xffcccccc);
-
-			_cmdlist->SetResourcePacket(_resourcepacket.get());
-
-			//_cmdlist->SetPipelineState(_pipelinestate.get());
-			//_cmdlist->IASetIndexBuffer(_indexbuffer.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices);
-			//_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
-			//_cmdlist->IASetTopologyType(RHI::Topology::Point4PatchList);
-			//_cmdlist->DrawIndexedInstanced(_nindices, 1, 0, 0, 0);
-			
-			_cmdlist->SetPipelineState(_pipelinestate_basic.get());
-			_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
-			_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
-			_cmdlist->IASetIndexBuffer(_indexbuffer_lines.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices_lines);
-			_cmdlist->IASetTopologyType(RHI::Topology::LineList);
-			_cmdlist->DrawIndexedInstanced(_nindices_lines, 1, 0, 0, 0);
-
-			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::Present);
-			_cmdlist->SetRenderTarget(nullptr);
-			_cmdlist->Close();
-			_rendertarget->Excute(_cmdlist.get());
-			_rendertarget->Present(0);
-			_rendertarget->End();
-			fps.acc(1);
-
-			core::logger_fps tt(__FILE__, __LINE__, 10);
-			if (tt.ok())
-				printf("\rfps = %.6f", fps.fps());
-		}
-	}
-	
 	void LoadPipeline()
 	{
 		RHI.Load();
@@ -187,25 +107,24 @@ public:
 		RHI::PipelineStateArgs psargs = {};
 		psargs.tables.push_back(table);
 		psargs.samplers.push_back(RHI::SamplerArgs());
-		psargs.rasterize.depthClip = false;
 
 		psargs.topology = RHI::TopologyType::Line;
-		std::u8string path_basic = u8"../data/shaders/basic.hlsl";
+		std::u8string path_basic = u8"../data/shaders/hair.hlsl";
 		psargs.VS = path_basic;
 		psargs.VSMain = "VSMain";
 		psargs.PS = path_basic;
 		psargs.PSMain = "PSMain";
 		_pipelinestate_basic = _device->CreatePipelineState(psargs);
 		
-		std::u8string path = u8"../data/shaders/bspline.hlsl";
+		std::u8string path = u8"../data/shaders/hair.hlsl";
 		psargs.VS = path;
 		psargs.VSMain = "VSMain";
 		psargs.HS = path;
 		psargs.HSMain = "HSMain";
 		psargs.DS = path;
 		psargs.DSMain = "DSMain";
-		psargs.GS = path;
-		psargs.GSMain = "GSMain";
+		//psargs.GS = path;
+		//psargs.GSMain = "GSMain";
 		psargs.PS = path;
 		psargs.PSMain = "PSMain";
 		psargs.topology = RHI::TopologyType::Patch;
@@ -378,6 +297,93 @@ public:
 
 	}
 
+
+	void RenderThread()
+	{
+		core::counter_fps<float, 3> fps;
+		_rotate_time_last = core::datetime::system();
+		SceneConstantBuffer cbuffer;
+
+		RECT rcClient;
+		GetClientRect(_hwnd, &rcClient);
+
+		core::sizei windowSize(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
+
+		core::recti sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
+		RHI::ViewPort viewport = { 0, 0, windowSize.cx, windowSize.cy, 0.0f, 1.0f };
+
+		core::float4x4 matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
+
+		while (rendering)
+		{
+			GetClientRect(_hwnd, &rcClient);
+			core::sizei windowSize2(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
+			if (windowSize2 != windowSize)
+			{
+				windowSize = windowSize2;
+				_rendertarget.reset();
+				matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
+				sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
+				viewport = { 0, 0, (float)windowSize.cx, (float)windowSize.cy, 0.0f, 1.0f };
+				RHI::RenderTargetArgs rtparams = {};
+				rtparams.hwnd = _hwnd;
+				_rendertarget = _device->CreateRenderTargetForHWND(rtparams);
+			}
+
+			core::float4x4 matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, _view_z }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
+			if (_rotating)
+			{
+				auto elapse = core::datetime::system() - _rotate_time_last;
+				_rotate_time_last += elapse;
+				_rotate += elapse;
+			}
+
+			core::float4x4 matrWorld = core::float4x4_rotate({ 0.0f, _rotate * 3.14f * 0.5f, 0.0f });
+			cbuffer.transform = matrWorld * matrView * matrProj;
+			cbuffer.tessFactor = _tessFactor;
+			std::memcpy(_constbuffer->Data(), &cbuffer, sizeof(cbuffer));
+
+			_rendertarget->Begin();
+			_cmdallocator->Reset();
+			_cmdlist->Reset(_cmdallocator.get());
+
+			_cmdlist->SetViewPort(viewport);
+			_cmdlist->SetScissorRect(sccisorrect);
+			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::RenderTarget);
+			_cmdlist->SetRenderTarget(_rendertarget->CurrentRTV());
+			_cmdlist->ClearRenderTarget(0xffcccccc);
+
+			_cmdlist->SetResourcePacket(_resourcepacket.get());
+
+			_cmdlist->SetPipelineState(_pipelinestate.get());
+			_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
+			_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
+			_cmdlist->IASetIndexBuffer(_indexbuffer.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices);
+			_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
+			_cmdlist->IASetTopologyType(RHI::Topology::Point4PatchList);
+			_cmdlist->DrawIndexedInstanced(_nindices, 1, 0, 0, 0);
+
+			//_cmdlist->SetPipelineState(_pipelinestate_basic.get());
+			//_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
+			//_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
+			//_cmdlist->IASetIndexBuffer(_indexbuffer_lines.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices_lines);
+			//_cmdlist->IASetTopologyType(RHI::Topology::LineList);
+			//_cmdlist->DrawIndexedInstanced(_nindices_lines, 1, 0, 0, 0);
+
+			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::Present);
+			_cmdlist->SetRenderTarget(nullptr);
+			_cmdlist->Close();
+			_rendertarget->Excute(_cmdlist.get());
+			_rendertarget->Present(0);
+			_rendertarget->End();
+			fps.acc(1);
+
+			core::logger_fps tt(__FILE__, __LINE__, 10);
+			if (tt.ok())
+				printf("\rfps = %.6f", fps.fps());
+		}
+	}
+	
 private:
 	HWND _hwnd = NULL;
 
@@ -413,10 +419,11 @@ private:
 
 
 	// transform
-
 	bool _rotating = true;
 	float _rotate = 0.0f;
 	float64_t _rotate_time_last = 0.0;
+
+	float _view_z = -14.0f;
 };
 
 
@@ -442,6 +449,12 @@ static LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 	{
 		if (Render)
 			Render->OnKeyDown(wParam, lParam);
+	}
+	else if (message == WM_MOUSEWHEEL)
+	{
+		int scroll = core::u32hi16(wParam) / WHEEL_DELTA;
+		if (Render)
+			Render->OnScrollV(scroll);
 	}
 	else if (message == WM_CLOSE)
 	{

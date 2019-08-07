@@ -201,5 +201,8 @@
     <None Include="data\shaders\bspline.hlsl">
       <Filter>data\shaders</Filter>
     </None>
+    <None Include="data\shaders\hair.hlsl">
+      <Filter>data\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
