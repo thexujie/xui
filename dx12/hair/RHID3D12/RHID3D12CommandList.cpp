@@ -59,8 +59,13 @@ namespace RHI::RHID3D12
 	void RHID3D12CommandList::SetRenderTarget(RHIResourceView * rendertarget)
 	{
 		_rendertarget = static_cast<RHID3D12ResourceView *>(rendertarget);
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = _rendertarget->CPUDescriptorHandle();
-		_cmdlist->OMSetRenderTargets(1, &handle, FALSE, nullptr);
+		if (_rendertarget)
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = _rendertarget->CPUDescriptorHandle();
+			_cmdlist->OMSetRenderTargets(1, &handle, FALSE, nullptr);
+		}
+		else
+			_cmdlist->OMSetRenderTargets(0, nullptr, FALSE, nullptr);
 	}
 
 	void RHID3D12CommandList::ClearRenderTarget(core::color color)

@@ -55,6 +55,7 @@ public:
 		{
 		case 'R':
 			_rotating = !_rotating;
+			_rotate_time_last = core::datetime::system();
 			break;
 		default:
 			break;
@@ -75,7 +76,7 @@ public:
 	void RenderThread()
 	{
 		core::counter_fps<float, 3> fps;
-		auto time_last = core::datetime::system();
+		_rotate_time_last = core::datetime::system();
 		SceneConstantBuffer cbuffer;
 
 		RECT rcClient;
@@ -83,37 +84,38 @@ public:
 
 		core::sizei windowSize(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
 
-		core::recti sccisorrect = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top };
-		RHI::ViewPort viewport = { 0, 0, rcClient.right - rcClient.left, rcClient.bottom - rcClient.top, 0.0f, 1.0f};
+		core::recti sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
+		RHI::ViewPort viewport = { 0, 0, windowSize.cx, windowSize.cy, 0.0f, 1.0f};
 
+		core::float4x4 matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, -14.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 		core::float4x4 matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
-		core::float4x4 matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, -12.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 
 		while (rendering)
 		{
-			//GetClientRect(_hwnd, &rcClient);
-			//core::sizei windowSize2(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
-			//if (windowSize2 != windowSize)
-			//{
-			//	windowSize = windowSize2;
-			//	_rendertarget.reset();
-			//	matrPV = core::float4x4_perspective_lh(3.14f / 3.0f, windowSize.cx * 1.0f / windowSize.cy, 0.1f, 5000.0f) * core::float4x4_lookat_lh({ 0.0f, 0.0f, -12.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-			//	RHI::RenderTargetArgs rtparams =
-			//	{
-			//		.hwnd = _hwnd,
-			//	};
-			//	_rendertarget = _device->CreateRenderTargetForHWND(rtparams);
-			//}
+			GetClientRect(_hwnd, &rcClient);
+			core::sizei windowSize2(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
+			if (windowSize2 != windowSize)
+			{
+				windowSize = windowSize2;
+				_rendertarget.reset();
+				matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, -14.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
+				matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
+				sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
+				viewport = { 0, 0, (float)windowSize.cx, (float)windowSize.cy, 0.0f, 1.0f };
+				RHI::RenderTargetArgs rtparams = {};
+				rtparams.hwnd = _hwnd;
+				_rendertarget = _device->CreateRenderTargetForHWND(rtparams);
+			}
 
 			if (_rotating)
 			{
-				auto elapse = core::datetime::system() - time_last;
-				time_last += elapse;
+				auto elapse = core::datetime::system() - _rotate_time_last;
+				_rotate_time_last += elapse;
 				_rotate += elapse;
 			}
 
 			core::float4x4 matrWorld = core::float4x4_rotate({ 0.0f, _rotate * 3.14f * 0.5f, 0.0f });
-			cbuffer.transform = matrView * matrProj;
+			cbuffer.transform = matrWorld * matrView * matrProj;
 			cbuffer.tessFactor = _tessFactor;
 			std::memcpy(_constbuffer->Data(), &cbuffer, sizeof(cbuffer));
 
@@ -128,7 +130,7 @@ public:
 			_cmdlist->ClearRenderTarget(0xffcccccc);
 
 			_cmdlist->SetResourcePacket(_resourcepacket.get());
-			
+
 			//_cmdlist->SetPipelineState(_pipelinestate.get());
 			//_cmdlist->IASetIndexBuffer(_indexbuffer.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices);
 			//_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
@@ -143,10 +145,11 @@ public:
 			_cmdlist->DrawIndexedInstanced(_nindices_lines, 1, 0, 0, 0);
 
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::Present);
+			_cmdlist->SetRenderTarget(nullptr);
 			_cmdlist->Close();
 			_rendertarget->Excute(_cmdlist.get());
-			_rendertarget->End();
 			_rendertarget->Present(0);
+			_rendertarget->End();
 			fps.acc(1);
 
 			core::logger_fps tt(__FILE__, __LINE__, 10);
@@ -179,7 +182,7 @@ public:
 		RHI::PipelineStateTable table;
 		table.shader = RHI::Shader::All;
 		table.ranges.push_back(range0);
-		table.ranges.push_back(range1);
+		//table.ranges.push_back(range1);
 
 		RHI::PipelineStateArgs psargs = {};
 		psargs.tables.push_back(table);
@@ -413,6 +416,7 @@ private:
 
 	bool _rotating = true;
 	float _rotate = 0.0f;
+	float64_t _rotate_time_last = 0.0;
 };
 
 
