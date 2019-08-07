@@ -168,17 +168,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders.hlsl">
+    <None Include="data\shaders\basic.hlsl">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\basic.hlsl">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\bspline.hlsl">
+    <None Include="data\shaders\bspline.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

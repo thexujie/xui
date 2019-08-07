@@ -187,17 +187,19 @@
     <Filter Include="dxgi">
       <UniqueIdentifier>{2b8b6782-0e69-4c95-bcd7-cdfceb589435}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders">
-      <UniqueIdentifier>{52a58fab-39da-4b19-8ed7-c540caccc511}</UniqueIdentifier>
+    <Filter Include="data">
+      <UniqueIdentifier>{bd8895fe-4f13-4bca-823c-c3f67cde0523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\shaders">
+      <UniqueIdentifier>{005b9527-5a47-4dc0-b739-a76afa70f4ea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders.hlsl" />
-    <None Include="shaders\basic.hlsl">
-      <Filter>shaders</Filter>
+    <None Include="data\shaders\basic.hlsl">
+      <Filter>data\shaders</Filter>
     </None>
-    <None Include="shaders\bspline.hlsl">
-      <Filter>shaders</Filter>
+    <None Include="data\shaders\bspline.hlsl">
+      <Filter>data\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

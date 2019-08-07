@@ -186,14 +186,14 @@ public:
 		psargs.samplers.push_back(RHI::SamplerArgs());
 
 		psargs.topology = RHI::TopologyType::Line;
-		std::u8string path_basic = u8"shaders/basic.hlsl";
+		std::u8string path_basic = u8"../data/shaders/basic.hlsl";
 		psargs.VS = path_basic;
 		psargs.VSMain = "VSMain";
 		psargs.PS = path_basic;
 		psargs.PSMain = "PSMain";
 		_pipelinestate_basic = _device->CreatePipelineState(psargs);
 		
-		std::u8string path = u8"shaders/bspline.hlsl";
+		std::u8string path = u8"../data/shaders/bspline.hlsl";
 		psargs.VS = path;
 		psargs.VSMain = "VSMain";
 		psargs.HS = path;
@@ -296,7 +296,7 @@ public:
 	void LoadRawResources()
 	{
 		std::ifstream file;
-		file.open(L"LongHairResources/hair_vertices.txt", std::ios::in | std::ios::binary);
+		file.open(L"../data/LongHairResources/hair_vertices.txt", std::ios::in | std::ios::binary);
 		while (!file.eof())
 		{
 			std::vector<Vertex> vertices;
