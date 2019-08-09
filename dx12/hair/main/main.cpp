@@ -62,6 +62,17 @@ public:
 			_rotating = !_rotating;
 			_rotate_time_last = core::datetime::system();
 			break;
+
+		case VK_PROCESSKEY:
+		case VK_OEM_3:
+			_mode = content_mode::bsline | content_mode::line;
+			break;
+		case '1':
+			_mode = content_mode::bsline;
+			break;
+		case '2':
+			_mode = content_mode::line;
+			break;
 		default:
 			break;
 		}
@@ -72,9 +83,6 @@ public:
 	
 	void Start()
 	{
-		LoadRawResources();
-		LoadPipeline();
-		LoadAssets();
 		_future = std::async(&HairRender::RenderThread, this);
 	}
 	
@@ -109,7 +117,7 @@ public:
 		psargs.samplers.push_back(RHI::SamplerArgs());
 
 		psargs.topology = RHI::TopologyType::Line;
-		std::u8string path_basic = u8"../data/shaders/hair.hlsl";
+		std::u8string path_basic = u8"../data/shaders/basic.hlsl";
 		psargs.VS = path_basic;
 		psargs.VSMain = "VSMain";
 		psargs.PS = path_basic;
@@ -242,6 +250,7 @@ public:
 				ss_texcoord >> tempChar >> vertex.uv.x >> vertex.uv.y;
 				assert(tempChar == 't');
 
+				int indexbase = _vertices.size();
 				for (int ipoint = 0; ipoint < npoints; ipoint++)
 				{
 					std::string line3;
@@ -250,23 +259,33 @@ public:
 					ss_vertex >> vertex.position.x >> vertex.position.y >> vertex.position.z;
 					vertex.position.z = -vertex.position.z;
 
-					const int g_strandPointsMax = 64;
 					vertices.push_back(vertex);
 					_vertices.push_back(vertex);
-					if (ipoint >= 3)
-					{
-						_indices.push_back(_vertices.size() - 4);
-						_indices.push_back(_vertices.size() - 3);
-						_indices.push_back(_vertices.size() - 2);
-						_indices.push_back(_vertices.size() - 1);
-					}
 
-					if (ipoint >= 1)
+					if (ipoint > 0)
 					{
 						_indices_lines.push_back(_vertices.size() - 2);
 						_indices_lines.push_back(_vertices.size() - 1);
 					}
 				}
+
+				_indices.push_back(indexbase + 0);
+				_indices.push_back(indexbase + 0);
+				_indices.push_back(indexbase + 1);
+				_indices.push_back(indexbase + 2);
+				
+				for (int ipoint = 0; ipoint < npoints - 3; ipoint++)
+				{
+					_indices.push_back(indexbase + ipoint + 0);
+					_indices.push_back(indexbase + ipoint + 1);
+					_indices.push_back(indexbase + ipoint + 2);
+					_indices.push_back(indexbase + ipoint + 3);
+				}
+
+				_indices.push_back(indexbase + npoints - 3);
+				_indices.push_back(indexbase + npoints - 2);
+				_indices.push_back(indexbase + npoints - 1);
+				_indices.push_back(indexbase + npoints - 1);
 			}
 			_controlPoints.push_back(vertices);
 		}
@@ -300,6 +319,10 @@ public:
 
 	void RenderThread()
 	{
+		LoadRawResources();
+		LoadPipeline();
+		LoadAssets();
+		
 		core::counter_fps<float, 3> fps;
 		_rotate_time_last = core::datetime::system();
 		SceneConstantBuffer cbuffer;
@@ -355,20 +378,26 @@ public:
 
 			_cmdlist->SetResourcePacket(_resourcepacket.get());
 
-			_cmdlist->SetPipelineState(_pipelinestate.get());
-			_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
-			_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
-			_cmdlist->IASetIndexBuffer(_indexbuffer.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices);
-			_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
-			_cmdlist->IASetTopologyType(RHI::Topology::Point4PatchList);
-			_cmdlist->DrawIndexedInstanced(_nindices, 1, 0, 0, 0);
+			if (_mode.any(content_mode::bsline))
+			{
+				_cmdlist->SetPipelineState(_pipelinestate.get());
+				_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
+				_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
+				_cmdlist->IASetIndexBuffer(_indexbuffer.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices);
+				_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
+				_cmdlist->IASetTopologyType(RHI::Topology::Point4PatchList);
+				_cmdlist->DrawIndexedInstanced(_nindices, 1, 0, 0, 0);
+			}
 
-			//_cmdlist->SetPipelineState(_pipelinestate_basic.get());
-			//_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
-			//_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
-			//_cmdlist->IASetIndexBuffer(_indexbuffer_lines.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices_lines);
-			//_cmdlist->IASetTopologyType(RHI::Topology::LineList);
-			//_cmdlist->DrawIndexedInstanced(_nindices_lines, 1, 0, 0, 0);
+			if (_mode.any(content_mode::line))
+			{
+				_cmdlist->SetPipelineState(_pipelinestate_basic.get());
+				_cmdlist->SetGraphicsResourceView(0, _constbuffer_view.get());
+				_cmdlist->IASetVertexBuffer(_vetexbuffer.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
+				_cmdlist->IASetIndexBuffer(_indexbuffer_lines.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices_lines);
+				_cmdlist->IASetTopologyType(RHI::Topology::LineList);
+				_cmdlist->DrawIndexedInstanced(_nindices_lines, 1, 0, 0, 0);
+			}
 
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::Present);
 			_cmdlist->SetRenderTarget(nullptr);
@@ -425,6 +454,14 @@ private:
 	float64_t _rotate_time_last = 0.0;
 
 	float _view_z = -14.0f;
+
+	enum class content_mode
+	{
+		bsline = 0x1,
+		line = 0x2,
+	};
+	using content_modes = core::bitflag<content_mode>;
+	content_modes _mode = content_mode::bsline;
 };
 
 

@@ -141,6 +141,9 @@ namespace core
             return *this;
         }
 
+		bool operator == (Enum e) const { return _e == e; }
+		bool operator != (Enum e) const { return _e != e; }
+
         operator underlying() const
         {
             return static_cast<underlying>(_e);
