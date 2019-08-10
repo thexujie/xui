@@ -102,11 +102,19 @@ public:
 		std::vector<RHI::RHIAdapterDesc> adapters = RHI.AdapterDescs();
 		_device = RHI.CreateDevice(adapters[0].uri);
 		_cmdqueue = _device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
+		_cmdqueue_compute = _device->CreateCommandQueue(RHI::CommandType::Compute, RHI::CommandQueueFlag::None);
 		RHI::RenderTargetArgs rtparams = {};
 		rtparams.hwnd = _hwnd;
 		_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
 		_cmdallocator = _device->CreateCommandAllocator(RHI::CommandType::Direct);
 		_cmdlist = _device->CreateCommandList(RHI::CommandType::Direct);
+		_cmdallocator_compute = _device->CreateCommandAllocator(RHI::CommandType::Compute);
+		_cmdlist_compute = _device->CreateCommandList(RHI::CommandType::Compute);
+
+		_cmdqueue->SetName(u8"_cmdqueue");
+		_cmdqueue_compute->SetName(u8"_cmdqueue_compute");
+		_cmdlist->SetName(u8"_cmdlist");
+		_cmdlist_compute->SetName(u8"_cmdlist");
 	}
 
 	void LoadAssets()
@@ -129,7 +137,7 @@ public:
 					{
 						RHI::PipelineStateTableRange
 						{
-							.type = RHI::DescripteorRangeType::ConstBuffer,
+							.type = RHI::DescriptorRangeType::ConstBuffer,
 							.shaderRegister = 0
 						},
 					}
@@ -163,7 +171,7 @@ public:
 					{
 						RHI::PipelineStateTableRange
 						{
-							.type = RHI::DescripteorRangeType::ConstBuffer,
+							.type = RHI::DescriptorRangeType::ConstBuffer,
 							.shaderRegister = 0
 						},
 					}
@@ -190,27 +198,27 @@ public:
 					{
 						RHI::PipelineStateTableRange
 						{
-							.type = RHI::DescripteorRangeType::ConstBuffer,
+							.type = RHI::DescriptorRangeType::ConstBuffer,
 							.shaderRegister = 0
 						},
 						RHI::PipelineStateTableRange
 						{
-							.type = RHI::DescripteorRangeType::ShaderResource,
+							.type = RHI::DescriptorRangeType::ShaderResource,
 							.shaderRegister = 0
 						},
 						RHI::PipelineStateTableRange
 						{
-							.type = RHI::DescripteorRangeType::ShaderResource,
+							.type = RHI::DescriptorRangeType::ShaderResource,
 							.shaderRegister = 1
 						},
 						RHI::PipelineStateTableRange
 						{
-							.type = RHI::DescripteorRangeType::UnorderedAccess,
+							.type = RHI::DescriptorRangeType::UnorderedAccess,
 							.shaderRegister = 0
 						},
 						RHI::PipelineStateTableRange
 						{
-							.type = RHI::DescripteorRangeType::UnorderedAccess,
+							.type = RHI::DescriptorRangeType::UnorderedAccess,
 							.shaderRegister = 1
 						},
 					}
@@ -258,7 +266,6 @@ public:
 		verticesParams.states = RHI::ResourceState::CopyDest;
 		verticesParams.flags = RHI::ResourceFlag::AllowUnorderdAccess;
 		_vetexbuffer = _device->CreateResource(verticesParams);
-
 
 		_vetexbuffer_uav = _resourcepacket_simulate->SetShaderResource(SimulateResourceId_Positions, _vetexbuffer.get(),
 			RHI::ResourceViewArgs
@@ -489,13 +496,22 @@ public:
 				},
 			});
 
+		_vetexbuffer->SetName(u8"_vetexbuffer");
+		_vetexbuffer_prev->SetName(u8"_vetexbuffer_prev");
+		_indexbuffer->SetName(u8"_indexbuffer");
+		_indexbuffer_lines->SetName(u8"_indexbuffer_lines");
+		_res_strandoffsets->SetName(u8"_res_strandoffsets");
+		_res_constraints->SetName(u8"_res_constraints");
+		_constbuffer_simulate->SetName(u8"_constbuffer_simulate");
+		
 		_cmdlist->CopyResource(_vetexbuffer.get(), vetexbuffer_UL.get());
 		_cmdlist->CopyResource(_vetexbuffer_prev.get(), vetexbuffer_prev_UL.get());
 		_cmdlist->CopyResource(_indexbuffer.get(), indexbuffer_UL.get());
 		_cmdlist->CopyResource(_indexbuffer_lines.get(), indexLinesbuffer_UL.get());
 		_cmdlist->CopyResource(_res_strandoffsets.get(), strandoffsets_UL.get());
 		_cmdlist->CopyResource(_res_constraints.get(), constraints_UL.get());
-		_cmdlist->TransitionBarrier(_vetexbuffer.get(), RHI::ResourceState::VertexBuffer);
+		_cmdlist->TransitionBarrier(_vetexbuffer.get(), RHI::ResourceState::ComputerShaderRerources);
+		_cmdlist->TransitionBarrier(_vetexbuffer_prev.get(), RHI::ResourceState::ComputerShaderRerources);
 		_cmdlist->TransitionBarrier(_indexbuffer.get(), RHI::ResourceState::IndexBuffer);
 		_cmdlist->TransitionBarrier(_indexbuffer_lines.get(), RHI::ResourceState::IndexBuffer);
 		_cmdlist->TransitionBarrier(_indexbuffer_lines.get(), RHI::ResourceState::IndexBuffer);
@@ -504,7 +520,6 @@ public:
 		
 		_cmdlist->Close();
 		_cmdqueue->Excute(_cmdlist.get());
-
 		_cmdqueue->Wait();
 	}
 
@@ -773,18 +788,18 @@ public:
 
 			// Simulate
 			{
-				_cmdallocator->Reset();
-				_cmdlist->Reset(_cmdallocator.get());
-				_cmdlist->TransitionBarrier(_vetexbuffer.get(), RHI::ResourceState::UnorderedAccess);
-				_cmdlist->SetPipelineState(_pipelinestate_simulate.get());
-				_cmdlist->SetResourcePacket(_resourcepacket_simulate.get());
-				_cmdlist->SetGraphicsResourceView(0, _constbuffer_simulate_view.get());
+				_cmdallocator_compute->Reset();
+				_cmdlist_compute->Reset(_cmdallocator_compute.get());
+				_cmdlist_compute->TransitionBarrier(_vetexbuffer.get(), RHI::ResourceState::UnorderedAccess);
+				_cmdlist_compute->SetPipelineState(_pipelinestate_simulate.get());
+				_cmdlist_compute->SetResourcePacket(_resourcepacket_simulate.get());
+				_cmdlist_compute->SetComputeResourceView(0, _constbuffer_simulate_view.get());
 
-				_cmdlist->Dispatch({ uint32_t(_strandOffsets.size()), 1, 1 });
-
-				_cmdlist->TransitionBarrier(_vetexbuffer.get(), RHI::ResourceState::VertexShaderRerources | RHI::ResourceState::VertexBuffer);
-				_cmdqueue->Excute(_cmdlist.get());
-				_cmdqueue->Wait();
+				_cmdlist_compute->Dispatch({ uint32_t(_strandOffsets.size()), 1, 1 });
+				_cmdlist_compute->TransitionBarrier(_vetexbuffer.get(), RHI::ResourceState::VertexShaderRerources);
+				_cmdlist_compute->Close();
+				_cmdqueue_compute->Excute(_cmdlist_compute.get());
+				_cmdqueue_compute->Wait();
 			}
 
 			_rendertarget->Begin();
@@ -842,10 +857,13 @@ private:
 
 	std::shared_ptr<RHI::RHIDevice> _device;
 	std::shared_ptr<RHI::RHICommandQueue> _cmdqueue;
+	std::shared_ptr<RHI::RHICommandQueue> _cmdqueue_compute;
 	
 	std::shared_ptr<RHI::RHIRenderTarget> _rendertarget;
 	std::shared_ptr<RHI::RHICommandAllocator> _cmdallocator;
 	std::shared_ptr<RHI::RHICommandList> _cmdlist;
+	std::shared_ptr<RHI::RHICommandAllocator> _cmdallocator_compute;
+	std::shared_ptr<RHI::RHICommandList> _cmdlist_compute;
 
 	std::shared_ptr<RHI::RHIPipelineState> _pipelinestate;
 	std::shared_ptr<RHI::RHIPipelineState> _pipelinestate_basic;

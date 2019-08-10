@@ -19,8 +19,10 @@ namespace RHI::RHID3D12
 		core::error _CreateComputePipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature);
 		
 	public:
+		const PipelineStateArgs & Args() const { return _args; }
 		ID3D12RootSignature * RootSignature() const { return _rootSignature.get(); }
 		ID3D12PipelineState * PipelineState() const { return _pipelineState.get(); }
+		
 	private:
 		RHID3D12Device * _device = nullptr;
 

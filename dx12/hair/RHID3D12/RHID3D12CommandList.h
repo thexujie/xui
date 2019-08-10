@@ -15,6 +15,7 @@ namespace RHI::RHID3D12
 		virtual ~RHID3D12CommandList() = default;
 
 		core::error Create(CommandType type);
+		void SetName(const std::u8string & name);
 
 	public:
 		void Reset(RHICommandAllocator * allocator) override;
@@ -28,14 +29,15 @@ namespace RHI::RHID3D12
 
 		void SetPipelineState(RHIPipelineState * pipelinestate) override;
 		void SetResourcePacket(RHIResourcePacket * packet) override;
-		void SetGraphicsResourceView(uint32_t index, RHIResourceView * view) override;
 		
+		void SetGraphicsResourceView(uint32_t index, RHIResourceView * view) override;
 		void IASetVertexBuffer(RHIResource * resource, uint32_t stride, uint32_t size) override;
 		void IASetIndexBuffer(RHIResource * resource, uint32_t stride, uint32_t size) override;
 		void IASetTopologyType(Topology topology) override;
 		void DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase) override;
 		void DrawIndexedInstanced(uint32_t nindices, uint32_t ninstance, uint32_t iindexbase, uint32_t ivertexbase, uint32_t iinstancebase) override;
 
+		void SetComputeResourceView(uint32_t index, RHIResourceView * view) override;
 		void Dispatch(core::uint3 ngroups) override;
 		
 		void CopyResource(RHIResource * dst, RHIResource * src) override;

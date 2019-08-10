@@ -49,8 +49,6 @@ namespace RHI::RHID3D12
 			return core::e_inner;
 		}
 
-		SetD3D12ObjectName(cmdqueue.get(), L"cmdqueue");
-
 		_cmdqueue = cmdqueue;
 		_type = type;
 		_flags = flags;
@@ -59,6 +57,11 @@ namespace RHI::RHID3D12
 		return core::ok;
 	}
 
+	void RHID3D12CommandQueue::SetName(const std::u8string & name)
+	{
+		SetD3D12ObjectName(_cmdqueue.get(), core::u8str_wstr(name).c_str());
+	}
+	
 	void RHID3D12CommandQueue::Excute(RHICommandList * cmdlist)
 	{
 		ID3D12CommandList * cmdlists[] = { reinterpret_cast<RHID3D12CommandList *>(cmdlist)->Ptr() };

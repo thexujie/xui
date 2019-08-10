@@ -12,6 +12,7 @@ namespace RHI::RHID3D12
 		virtual ~RHID3D12Resource() = default;
 
 		core::error Create(const ResourceArgs & params);
+		void SetName(const std::u8string & name);
 		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states);
 
 	public:

@@ -231,36 +231,36 @@ namespace RHI::RHID3D12
 		return result;
 	}
 
-	inline D3D12_DESCRIPTOR_RANGE_TYPE FromDescripteorRangeType(DescripteorRangeType type)
+	inline D3D12_DESCRIPTOR_RANGE_TYPE FromDescripteorRangeType(DescriptorRangeType type)
 	{
 		switch(type)
 		{
-		//case DescripteorRangeType::Table:
+		//case DescriptorRangeType::Table:
 			//return D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		case DescripteorRangeType::ConstBuffer: 
+		case DescriptorRangeType::ConstBuffer: 
 			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-		case DescripteorRangeType::ShaderResource:
+		case DescriptorRangeType::ShaderResource:
 			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-		case DescripteorRangeType::UnorderedAccess:
+		case DescriptorRangeType::UnorderedAccess:
 			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
-		case DescripteorRangeType::Sampler:
+		case DescriptorRangeType::Sampler:
 			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
 		default:
 			return D3D12_DESCRIPTOR_RANGE_TYPE::D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 		}
 	}
 
-	//inline D3D12_ROOT_PARAMETER_TYPE FromDescripteorRangeType(DescripteorRangeType type)
+	//inline D3D12_ROOT_PARAMETER_TYPE FromDescripteorRangeType(DescriptorRangeType type)
 	//{
 	//	switch (type)
 	//	{
-	//		//case DescripteorRangeType::Table:
+	//		//case DescriptorRangeType::Table:
 	//			//return D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	//	case DescripteorRangeType::ConstBuffer:
+	//	case DescriptorRangeType::ConstBuffer:
 	//		return D3D12_ROOT_PARAMETER_TYPE_CBV;
-	//	case DescripteorRangeType::ShaderResource:
+	//	case DescriptorRangeType::ShaderResource:
 	//		return D3D12_ROOT_PARAMETER_TYPE_SRV;
-	//	case DescripteorRangeType::UnorderedAccess:
+	//	case DescriptorRangeType::UnorderedAccess:
 	//		return D3D12_ROOT_PARAMETER_TYPE_UAV;
 	//	default:
 	//		return D3D12_ROOT_PARAMETER_TYPE_CBV;
@@ -487,5 +487,13 @@ namespace RHI::RHID3D12
 		default:
 			return D3D12_COMPARISON_FUNC::D3D12_COMPARISON_FUNC_NEVER;
 		}
+	}
+
+	inline D3D12_DESCRIPTOR_RANGE_FLAGS FromDescriptorFlags(DescriptorFlags flags)
+	{
+		core::bitflag<D3D12_DESCRIPTOR_RANGE_FLAGS> result;
+		result.set(D3D12_DESCRIPTOR_RANGE_FLAG_DATA_VOLATILE, flags.any(DescriptorFlag::Volatile));
+		result.set(D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC, flags.any(DescriptorFlag::Static));
+		return result;
 	}
 }

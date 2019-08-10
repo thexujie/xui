@@ -10,6 +10,7 @@ namespace RHI
 	public:
 		RHIObject() = default;
 		virtual ~RHIObject() = default;
+		virtual void SetName(const std::u8string & name) {}
 	};
 	
 	enum class CommandType
@@ -124,7 +125,7 @@ namespace RHI
 	
 	using ResourceStates = core::bitflag<ResourceState>;
 
-	class RHIDeviceObject
+	class RHIDeviceObject : public RHIObject
 	{
 	public:
 		RHIDeviceObject() = default;
@@ -274,13 +275,21 @@ namespace RHI
 		
 	};
 
-	enum class DescripteorRangeType
+	enum class DescriptorRangeType
 	{
 		ConstBuffer = 0,
 		ShaderResource,
 		UnorderedAccess,
 		Sampler,
 	};
+
+	enum class DescriptorFlag
+	{
+		None = 0,
+		Static,
+		Volatile,
+	};
+	using DescriptorFlags = core::bitflag<DescriptorFlag>;
 
 	enum class Filter
 	{
@@ -404,11 +413,12 @@ namespace RHI
 
 	struct PipelineStateTableRange
 	{
-		DescripteorRangeType type = DescripteorRangeType::ConstBuffer;
+		DescriptorRangeType type = DescriptorRangeType::ConstBuffer;
 		uint32_t numDescriptor = 1;
 		uint32_t shaderRegister = 0;
 		uint32_t registerSpace = 0;
 		uint32_t packetOffset = core::uint32_max;
+		DescriptorFlags flags = DescriptorFlag::None;
 	};
 
 	struct PipelineStateTable

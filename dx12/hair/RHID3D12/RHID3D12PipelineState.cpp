@@ -33,8 +33,12 @@ namespace RHI::RHID3D12
 				ranges[irangebase + irange].NumDescriptors = range.numDescriptor;
 				ranges[irangebase + irange].BaseShaderRegister = range.shaderRegister;
 				ranges[irangebase + irange].RegisterSpace = range.registerSpace;
-				ranges[irangebase + irange].Flags = range.type == DescripteorRangeType::Sampler ? D3D12_DESCRIPTOR_RANGE_FLAG_NONE : D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
+				ranges[irangebase + irange].Flags = FromDescriptorFlags(range.flags);
 				ranges[irangebase + irange].OffsetInDescriptorsFromTableStart = range.packetOffset == core::uint32_max ?  D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND : range.packetOffset;
+
+				// const buffer 本身不会变化的，它的值才会变
+				if (range.type == DescriptorRangeType::ConstBuffer)
+					ranges[irangebase + irange].Flags |= D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
 			}
 			irangebase += table.ranges.size();
 		}

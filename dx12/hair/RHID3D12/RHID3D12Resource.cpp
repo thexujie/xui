@@ -51,7 +51,6 @@ namespace RHI::RHID3D12
 			resource->Map(0, &range, &pointer);
 		}
 
-		RHI::RHID3D12::SetD3D12ObjectName(resource.get(), L"resource");
 		_args = params;
 		_resource = resource;
 		_states = _args.states;
@@ -59,6 +58,12 @@ namespace RHI::RHID3D12
 		return core::ok;
 	}
 
+	void RHID3D12Resource::SetName(const std::u8string & name)
+	{
+		auto wname = core::u8str_wstr(name);
+		SetD3D12ObjectName(_resource.get(), wname.c_str());
+	}
+	
 	void * RHID3D12Resource::Data()
 	{
 		return _pointer;
@@ -104,6 +109,7 @@ namespace RHI::RHID3D12
 		barrier.Transition.pResource = _resource.get();
 		barrier.Transition.StateBefore = FromResourceStates(_states);
 		barrier.Transition.StateAfter = FromResourceStates(states);
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 		if ((barrier.Transition.StateBefore & barrier.Transition.StateAfter) != 0)
 		{
@@ -111,7 +117,6 @@ namespace RHI::RHID3D12
 			return;
 		}
 		
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 		d3d12cmdlist->ResourceBarrier(1, &barrier);
 		_states = states;
 	}

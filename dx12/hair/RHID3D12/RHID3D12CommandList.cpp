@@ -37,12 +37,17 @@ namespace RHI::RHID3D12
 			core::war() << __FUNCTION__ " device->CreateCommandList failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
-		SetD3D12ObjectName(cmdlist.get(), L"cmdlist");
 
 		cmdlist->Close();
 		_cmdallocator = cmdallocator;
 		_cmdlist = cmdlist;
 		return core::ok;
+	}
+
+	void RHID3D12CommandList::SetName(const std::u8string & name)
+	{
+		SetD3D12ObjectName(_cmdlist.get(), core::u8str_wstr(name).c_str());
+		SetD3D12ObjectName(_cmdallocator.get(), core::u8str_wstr(name + u8"._cmdallocator").c_str());
 	}
 
 	void RHID3D12CommandList::Reset(RHICommandAllocator * allocator)
@@ -113,7 +118,10 @@ namespace RHI::RHID3D12
 	{
 		auto d3d12pipelinestate = static_cast<RHID3D12PipelineState *>(pipelinestate);
 		_cmdlist->SetPipelineState(d3d12pipelinestate->PipelineState());
-		_cmdlist->SetGraphicsRootSignature(d3d12pipelinestate->RootSignature());
+		if (d3d12pipelinestate->Args().CS.empty())
+			_cmdlist->SetGraphicsRootSignature(d3d12pipelinestate->RootSignature());
+		else
+			_cmdlist->SetComputeRootSignature(d3d12pipelinestate->RootSignature());
 	}
 	
 	void RHID3D12CommandList::SetResourcePacket(RHIResourcePacket * packet)
@@ -160,6 +168,11 @@ namespace RHI::RHID3D12
 		_cmdlist->DrawIndexedInstanced(nindices, ninstance, iindexbase, ivertexbase, iinstancebase);
 	}
 
+	void RHID3D12CommandList::SetComputeResourceView(uint32_t index, RHIResourceView * view)
+	{
+		_cmdlist->SetComputeRootDescriptorTable(index, static_cast<RHID3D12ResourceView *>(view)->GPUDescriptorHandle());
+	}
+	
 	void RHID3D12CommandList::Dispatch(core::uint3 ngroups)
 	{
 		_cmdlist->Dispatch(ngroups.x, ngroups.y, ngroups.z);
