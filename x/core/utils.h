@@ -752,6 +752,15 @@ namespace core
     constexpr uint64_t nposu64 = uint64_t(-1);
     const float32_t nanf32 = std::nanf("0");
     const float64_t nanf64 = std::nan("0");
+	
+	const int32_t int32_min = std::numeric_limits<int32_t>::min();
+	const int32_t int32_max = std::numeric_limits<int32_t>::max();
+	const uint32_t uint32_min = std::numeric_limits<uint32_t>::min();
+	const uint32_t uint32_max = std::numeric_limits<uint32_t>::max();
+	const int64_t int64_min = std::numeric_limits<int64_t>::min();
+	const int64_t int64_max = std::numeric_limits<int64_t>::max();
+	const uint64_t uint64_min = std::numeric_limits<uint64_t>::min();
+	const uint64_t uint64_max = std::numeric_limits<uint64_t>::max();
 
     template<typename T>
     inline constexpr bool npos_v = T(-1);

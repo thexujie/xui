@@ -94,7 +94,7 @@ namespace RHI::RHID3D12
 	{
 		if (!cmdlist)
 			return;
-
+		
 		auto d3d12cmdlist = reinterpret_cast<RHID3D12CommandList *>(cmdlist)->Ptr();
 		assert(d3d12cmdlist);
 
@@ -104,6 +104,13 @@ namespace RHI::RHID3D12
 		barrier.Transition.pResource = _resource.get();
 		barrier.Transition.StateBefore = FromResourceStates(_states);
 		barrier.Transition.StateAfter = FromResourceStates(states);
+
+		if ((barrier.Transition.StateBefore & barrier.Transition.StateAfter) != 0)
+		{
+			core::war() << __FUNCTION__ " RESOURCE_MANIPULATION";
+			return;
+		}
+		
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 		d3d12cmdlist->ResourceBarrier(1, &barrier);
 		_states = states;

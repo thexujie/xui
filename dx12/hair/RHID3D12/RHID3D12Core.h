@@ -129,6 +129,9 @@ namespace RHI::RHID3D12
 
 	inline D3D12_RESOURCE_STATES FromResourceStates(ResourceStates states)
 	{
+		if (states == ResourceState::GenericRead)
+			return D3D12_RESOURCE_STATE_GENERIC_READ;
+		
 		core::bitflag<D3D12_RESOURCE_STATES> result;
 		result.set(D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, states.any(ResourceState::VertexBuffer | ResourceState::ConstBuffer));
 		result.set(D3D12_RESOURCE_STATE_INDEX_BUFFER, states.any(ResourceState::IndexBuffer));
@@ -148,7 +151,6 @@ namespace RHI::RHID3D12
 		result.set(D3D12_RESOURCE_STATE_RESOLVE_SOURCE, states.any(ResourceState::ResolveSource));
 		result.set(D3D12_RESOURCE_STATE_RESOLVE_DEST, states.any(ResourceState::ResolveDest));
 		result.set(D3D12_RESOURCE_STATE_PRESENT, states.any(ResourceState::Present));
-		result.set(D3D12_RESOURCE_STATE_GENERIC_READ, states.any(ResourceState::GenericRead));
 		return result.get();
 	}
 
@@ -176,6 +178,29 @@ namespace RHI::RHID3D12
 			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_TEXTURECUBEARRAY;
 		default:
 			return D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_UNKNOWN;
+		}
+	}
+
+	inline D3D12_UAV_DIMENSION FromResourceViewDimension_UAV(ResourceViewDimension dimnesion)
+	{
+		switch (dimnesion)
+		{
+		case ResourceViewDimension::None:
+			return D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_UNKNOWN;
+		case ResourceViewDimension::Buffer:
+			return D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_BUFFER;
+		case ResourceViewDimension::Texture1D:
+			return D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_TEXTURE1D;
+		case ResourceViewDimension::Texture1DArray:
+			return D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_TEXTURE1DARRAY;
+		case ResourceViewDimension::Texture2D:
+			return D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_TEXTURE2D;
+		case ResourceViewDimension::Texture2DArray:
+			return D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_TEXTURE2DARRAY;
+		case ResourceViewDimension::Texture3D:
+			return D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_TEXTURE3D;
+		default:
+			return D3D12_UAV_DIMENSION::D3D12_UAV_DIMENSION_UNKNOWN;
 		}
 	}
 

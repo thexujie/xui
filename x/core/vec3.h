@@ -171,6 +171,7 @@ namespace core
         };
     };
 
-    typedef vec3<int32_t> intx4;
+	typedef vec3<int32_t> int3;
+	typedef vec3<uint32_t> uint3;
     //typedef vec3x1<float32_t> float2x1;
 }

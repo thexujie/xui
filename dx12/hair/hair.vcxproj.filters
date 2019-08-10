@@ -205,4 +205,9 @@
       <Filter>data\shaders</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="data\shaders\hair_simulate.hlsl">
+      <Filter>data\shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

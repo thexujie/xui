@@ -80,8 +80,47 @@ namespace RHI::RHID3D12
 			srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 			srvDesc.Format = win32::DXGI::FromPixelFormat(args.shaderresource.format);
 			srvDesc.ViewDimension = FromResourceViewDimension(args.shaderresource.dimension);
-			srvDesc.Texture2D.MipLevels = 1;
+			if (args.shaderresource.dimension == ResourceViewDimension::Buffer)
+			{
+				srvDesc.Buffer.FirstElement = args.shaderresource.buffer.firstElement;
+				srvDesc.Buffer.NumElements = args.shaderresource.buffer.numElements;
+				srvDesc.Buffer.StructureByteStride = args.shaderresource.buffer.stride;
+				srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+			}
+			else if (args.shaderresource.dimension == ResourceViewDimension::Texture2D)
+			{
+				srvDesc.Texture2D.MipLevels = 1;
+			}
+			else
+			{
+				
+			}
 			device->CreateShaderResourceView(static_cast<RHID3D12Resource *>(resource)->Resource(), &srvDesc, CPUHandle);
+		}
+		else if (args.type == ResourceType::UnorderedAccess)
+		{
+			D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+			uavDesc.Format = FromPixelFormat(args.shaderresource.format);
+			uavDesc.ViewDimension = FromResourceViewDimension_UAV(args.shaderresource.dimension);
+			if (args.shaderresource.dimension == ResourceViewDimension::Buffer)
+			{
+				uavDesc.Buffer.FirstElement = args.shaderresource.buffer.firstElement;
+				uavDesc.Buffer.NumElements = args.shaderresource.buffer.numElements;
+				uavDesc.Buffer.StructureByteStride = args.shaderresource.buffer.stride;
+				uavDesc.Buffer.CounterOffsetInBytes = 0;
+				uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
+			}
+			else if (args.shaderresource.dimension == ResourceViewDimension::Texture2D)
+			{
+				uavDesc.Texture2D.MipSlice = 0;
+				uavDesc.Texture2D.PlaneSlice = 0;
+			}
+			else
+			{
+
+			}
+
+			device->CreateUnorderedAccessView(static_cast<RHID3D12Resource *>(resource)->Resource(), nullptr, &uavDesc, CPUHandle);
 		}
 		else
 		{

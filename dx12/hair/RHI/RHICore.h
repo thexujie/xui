@@ -26,7 +26,7 @@ namespace RHI
 		DisableGPUTimeout,
 	};
 
-	typedef core::bitflag<CommandQueueFlag> CommandQueueFlags;
+	using CommandQueueFlags = core::bitflag<CommandQueueFlag>;
 
 	enum class SwapEffect
 	{
@@ -76,7 +76,7 @@ namespace RHI
 		AllowCrossAdapter = 0x8,
 		DenyShaderResource = 0x10,
 	};
-	typedef core::bitflag<ResourceFlag> ResourceFlags;
+	using ResourceFlags = core::bitflag<ResourceFlag>;
 
 	enum class HeapFlag
 	{
@@ -86,7 +86,7 @@ namespace RHI
 		CrossAdapter = 0x4,
 		DenyBuffers = 0x1000,
 	};
-	typedef core::bitflag<HeapFlag> HeapFlags;
+	using HeapFlags = core::bitflag<HeapFlag>;
 
 
 	struct RHIAdapterDesc
@@ -122,7 +122,7 @@ namespace RHI
 		GenericRead = 0x200000,
 	};
 	
-	typedef core::bitflag<ResourceState> ResourceStates;
+	using ResourceStates = core::bitflag<ResourceState>;
 
 	class RHIDeviceObject
 	{
@@ -143,8 +143,6 @@ namespace RHI
 
 		ResourceDimension dimension = ResourceDimension::None;
 		ResourceFlags flags = nullptr;
-		// ³õÊ¼×´Ì¬
-		ResourceStates states = ResourceState::None;
 		core::pixelformat format = core::pixelformat::none;
 
 		uint32_t alignment = 0;
@@ -154,6 +152,9 @@ namespace RHI
 		uint32_t MSAA = 1;
 		uint32_t MSAAQuality = 0;
 
+		// ³õÊ¼×´Ì¬
+		ResourceStates states = ResourceState::None;
+		
 		union
 		{
 			core::color color;
@@ -202,7 +203,7 @@ namespace RHI
 		None = 0,
 		ShaderVisible,
 	};
-	typedef core::bitflag<ResourcePacketFlag> ResourcePacketFlags;
+	using ResourcePacketFlags = core::bitflag<ResourcePacketFlag>;
 
 	enum class ResourceType
 	{
@@ -219,6 +220,12 @@ namespace RHI
 			core::pixelformat format = core::pixelformat::none;
 			ResourceViewDimension dimension = ResourceViewDimension::None;
 			uint32_t miplevels = 1;
+			struct
+			{
+				uint32_t firstElement = 0;
+				uint32_t numElements = 0;
+				uint32_t stride = 0;
+			}buffer;
 		}shaderresource;
 	};
 	
@@ -257,7 +264,8 @@ namespace RHI
 		Hull,
 		Domain,
 		Geoetry,
-		Pixel
+		Pixel,
+		Compute
 	};
 
 
@@ -341,7 +349,7 @@ namespace RHI
 		Alpha = 0x8,
 		All = Red | Green | Blue | Alpha,
 	};
-	typedef core::bitflag<WriteMask> WriteMasks;
+	using WriteMasks = core::bitflag<WriteMask>;
 	
 	enum class Topology
 	{
@@ -400,6 +408,7 @@ namespace RHI
 		uint32_t numDescriptor = 1;
 		uint32_t shaderRegister = 0;
 		uint32_t registerSpace = 0;
+		uint32_t packetOffset = core::uint32_max;
 	};
 
 	struct PipelineStateTable
@@ -412,9 +421,8 @@ namespace RHI
 
 	struct PipelineStateArgs
 	{
-		std::vector<PipelineStateTable> tables;
-		std::vector<SamplerArgs> samplers;
-
+		TopologyType topology = TopologyType::Triangle;
+		
 		std::u8string VS;
 		std::string VSMain;
 		std::u8string HS;
@@ -425,10 +433,14 @@ namespace RHI
 		std::string GSMain;
 		std::u8string PS;
 		std::string PSMain;
+		std::u8string CS;
+		std::string CSMain;
 
+		std::vector<PipelineStateTable> tables;
+		std::vector<SamplerArgs> samplers;
+		
 		uint32_t ntargets = 1;
 		core::pixelformat formats[RenderTargetMax] = { core::pixelformat::bgra };
-		TopologyType topology = TopologyType::Triangle;
 
 		uint32_t SampleCount = 1;
 		uint32_t SampleQuality = 0;

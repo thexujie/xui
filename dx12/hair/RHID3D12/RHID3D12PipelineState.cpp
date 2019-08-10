@@ -13,7 +13,7 @@ namespace RHI::RHID3D12
 		auto device = _device->Inner();
 		assert(device);
 
-		std::vector<D3D12_ROOT_PARAMETER1> params(args.tables.size());
+		std::vector<D3D12_ROOT_PARAMETER1> d3d12params(args.tables.size());
 		size_t nranges = 0;
 		for (size_t itable = 0; itable < args.tables.size(); ++itable)
 			nranges += args.tables[itable].ranges.size();
@@ -21,19 +21,22 @@ namespace RHI::RHID3D12
 		std::vector<D3D12_DESCRIPTOR_RANGE1> ranges(nranges);
 		for(size_t itable = 0, irangebase = 0; itable < args.tables.size(); ++itable)
 		{
-			params[itable].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-			params[itable].ShaderVisibility = FromShader(args.tables[itable].shader);
-			params[itable].DescriptorTable.NumDescriptorRanges = args.tables[itable].ranges.size();
-			params[itable].DescriptorTable.pDescriptorRanges = &(ranges[irangebase]);
-			for (size_t irange = 0; irange < args.tables[itable].ranges.size(); ++irange)
+			const PipelineStateTable & table = args.tables[itable];
+			d3d12params[itable].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+			d3d12params[itable].ShaderVisibility = FromShader(table.shader);
+			d3d12params[itable].DescriptorTable.NumDescriptorRanges = table.ranges.size();
+			d3d12params[itable].DescriptorTable.pDescriptorRanges = &(ranges[irangebase]);
+			for (size_t irange = 0; irange < table.ranges.size(); ++irange)
 			{
-				ranges[irangebase + irange].RangeType = FromDescripteorRangeType(args.tables[itable].ranges[irange].type);
-				ranges[irangebase + irange].NumDescriptors = args.tables[itable].ranges[irange].numDescriptor;
-				ranges[irangebase + irange].BaseShaderRegister = args.tables[itable].ranges[irange].shaderRegister;
-				ranges[irangebase + irange].RegisterSpace = args.tables[itable].ranges[irange].registerSpace;
-				ranges[irangebase + irange].Flags = args.tables[itable].ranges[irange].type == DescripteorRangeType::Sampler ? D3D12_DESCRIPTOR_RANGE_FLAG_NONE :  D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
+				const PipelineStateTableRange & range = table.ranges[irange];
+				ranges[irangebase + irange].RangeType = FromDescripteorRangeType(range.type);
+				ranges[irangebase + irange].NumDescriptors = range.numDescriptor;
+				ranges[irangebase + irange].BaseShaderRegister = range.shaderRegister;
+				ranges[irangebase + irange].RegisterSpace = range.registerSpace;
+				ranges[irangebase + irange].Flags = range.type == DescripteorRangeType::Sampler ? D3D12_DESCRIPTOR_RANGE_FLAG_NONE : D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
+				ranges[irangebase + irange].OffsetInDescriptorsFromTableStart = range.packetOffset == core::uint32_max ?  D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND : range.packetOffset;
 			}
-			irangebase += args.tables[itable].ranges.size();
+			irangebase += table.ranges.size();
 		}
 
 		std::vector<D3D12_STATIC_SAMPLER_DESC> samplers(args.samplers.size());
@@ -53,8 +56,8 @@ namespace RHI::RHID3D12
 
 		D3D12_VERSIONED_ROOT_SIGNATURE_DESC rootSign = {};
 		rootSign.Version = D3D_ROOT_SIGNATURE_VERSION_1_1;
-		rootSign.Desc_1_1.NumParameters = params.size();
-		rootSign.Desc_1_1.pParameters = params.data();
+		rootSign.Desc_1_1.NumParameters = d3d12params.size();
+		rootSign.Desc_1_1.pParameters = d3d12params.data();
 		rootSign.Desc_1_1.NumStaticSamplers = samplers.size();
 		rootSign.Desc_1_1.pStaticSamplers = samplers.data();
 		rootSign.Desc_1_1.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -76,12 +79,26 @@ namespace RHI::RHID3D12
 			return core::e_inner;
 		}
 
+		if (args.CS.empty())
+			return _CreateGraphicsPipelineState(args, rootSignature);
+		else
+			return _CreateComputePipelineState(args, rootSignature);
+	}
+
+
+	core::error RHID3D12PipelineState::_CreateGraphicsPipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature)
+	{
+		HRESULT hr = S_OK;
+
+		auto device = _device->Inner();
+		assert(device);
+		
 		UINT compileFlags = 0;
 #ifdef _DEBUG
 		compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 		win32::comptr<ID3DBlob> errorMessage;
-		
+
 		win32::comptr<ID3DBlob> vertexShader;
 		if (!args.VS.empty())
 		{
@@ -188,14 +205,55 @@ namespace RHI::RHID3D12
 		desc.RasterizerState.DepthClipEnable = args.rasterize.depthClip;
 		desc.RasterizerState.MultisampleEnable = args.rasterize.MSAA;
 
-		hr = device->CreateGraphicsPipelineState(&desc, __uuidof(ID3D12PipelineState), _pipelineState.getvv());
+		win32::comptr<ID3D12PipelineState> pipelineState;
+		hr = device->CreateGraphicsPipelineState(&desc, __uuidof(ID3D12PipelineState), pipelineState.getvv());
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " CreateGraphicsPipelineState failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
 
+		_args = args;
 		_rootSignature = rootSignature;
+		_pipelineState = pipelineState;
+		return core::ok;
+	}
+
+	core::error RHID3D12PipelineState::_CreateComputePipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature)
+	{
+		HRESULT hr = S_OK;
+		auto device = _device->Inner();
+		assert(device);
+		
+		UINT compileFlags = 0;
+#ifdef _DEBUG
+		compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+		win32::comptr<ID3DBlob> errorMessage;
+
+		win32::comptr<ID3DBlob> computerShader;
+		hr = D3DCompileFromFile(core::u8str_wstr(args.CS).c_str(), nullptr, nullptr, args.CSMain.c_str(), "cs_5_0", compileFlags, 0, computerShader.getpp(), errorMessage.getpp_safe());
+		if (FAILED(hr))
+		{
+			core::war() << __FUNCTION__ " D3DCompileFromFile<VS> failed: " << win32::winerr_str(hr & 0xFFFF) << "-> \n" << D3D12BlobMessage(errorMessage);
+			return core::e_inner;
+		}
+
+		D3D12_COMPUTE_PIPELINE_STATE_DESC desc = {};
+		desc.pRootSignature = rootSignature.get();
+		desc.CS = computerShader ? D3D12_SHADER_BYTECODE{ computerShader->GetBufferPointer(), computerShader->GetBufferSize() } : D3D12_SHADER_BYTECODE{};
+
+		win32::comptr<ID3D12PipelineState> pipelineState;
+		hr = device->CreateComputePipelineState(&desc, __uuidof(ID3D12PipelineState), pipelineState.getvv());
+		if (FAILED(hr))
+		{
+			core::war() << __FUNCTION__ " CreateGraphicsPipelineState failed: " << win32::winerr_str(hr & 0xFFFF);
+			return core::e_inner;
+		}
+
+		_args = args;
+		_rootSignature = rootSignature;
+		_pipelineState = pipelineState;
 		return core::ok;
 	}
 }

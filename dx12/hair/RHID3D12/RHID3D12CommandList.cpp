@@ -160,6 +160,11 @@ namespace RHI::RHID3D12
 		_cmdlist->DrawIndexedInstanced(nindices, ninstance, iindexbase, ivertexbase, iinstancebase);
 	}
 
+	void RHID3D12CommandList::Dispatch(core::uint3 ngroups)
+	{
+		_cmdlist->Dispatch(ngroups.x, ngroups.y, ngroups.z);
+	}
+	
 	void RHID3D12CommandList::CopyResource(RHIResource * dst, RHIResource * src)
 	{
 		auto device = _device->Inner();

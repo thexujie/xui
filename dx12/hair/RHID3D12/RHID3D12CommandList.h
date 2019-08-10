@@ -36,6 +36,8 @@ namespace RHI::RHID3D12
 		void DrawInstanced(uint32_t nvertices, uint32_t ninstance, uint32_t ivertexbase, uint32_t iinstancebase) override;
 		void DrawIndexedInstanced(uint32_t nindices, uint32_t ninstance, uint32_t iindexbase, uint32_t ivertexbase, uint32_t iinstancebase) override;
 
+		void Dispatch(core::uint3 ngroups) override;
+		
 		void CopyResource(RHIResource * dst, RHIResource * src) override;
 		void CopyBuffer(RHIResource * dst, RHIResource * src) override;
 
