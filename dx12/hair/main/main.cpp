@@ -59,7 +59,18 @@ public:
 
 	~HairRender() = default;
 
-
+	void OnMouseMove(uint32_t wParam, int32_t lParam)
+	{
+		core::int2 pos = (core::i32li16(lParam), core::i32li16(lParam));
+		static core::int2 pos_last = {core::int32_max, core::int32_max};
+		if (pos_last == core::int2{ core::int32_max, core::int32_max })
+			pos_last = pos;
+		core::int2 offset = pos - pos_last;
+		pos_last = pos;
+		if (wParam & MK_LBUTTON)
+			_rotate += offset.x / 200.0f * 3.14f;
+	}
+	
 	void OnScrollV(int32_t scroll)
 	{
 		_view_z += scroll;
@@ -997,6 +1008,11 @@ static LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 	{
 		if (Render)
 			Render->OnKeyDown(wParam, lParam);
+	}
+	else if (message == WM_MOUSEMOVE)
+	{
+		if (Render)
+			Render->OnMouseMove(wParam, lParam);
 	}
 	else if (message == WM_MOUSEWHEEL)
 	{

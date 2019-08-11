@@ -298,6 +298,8 @@ namespace core
         };
     };
 
+	typedef vec2<int32_t> int2;
+	typedef vec2<uint32_t> uint2;
 	typedef vec2<int32_t> sizei;
 	typedef vec2<uint32_t> sizeu;
     typedef vec2<float32_t> sizef;
