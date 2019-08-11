@@ -32,9 +32,10 @@ groupshared float3 sharedForce[BLOCK_SIZE];
 
 float4 addForcesAndIntegrate(float4 position, float4 oldPosition, float3 force, float stiffness, int globalIndex)
 {
+    float3 transformedPos = mul(float4(initPositions[globalIndex].xyz, 1), transform).xyz;
     // 根控制点保持固定
     if (position.w == 0)
-        return position;
+        return float4(transformedPos, position.w);
 
     float3 velocity = (position.xyz - oldPosition.xyz) * lerp(0.95f, 0.98f, stiffness);
     // 低速时加大刚度
@@ -54,11 +55,10 @@ float4 addForcesAndIntegrate(float4 position, float4 oldPosition, float3 force, 
 
     force += float3(0.0f, -gravityAcceleration * lerp(1.0f, 0.5f, stiffness), 0.0f);
     float3 result = position.xyz + velocity + force * timeElapse * timeElapse / 20.0f * 400.0f;
-    float3 transformedPos = mul(float4(initPositions[globalIndex].xyz, 1), transform).xyz;
     float staticky = stiffness0 * 0.0475;
     if (length(result - transformedPos) < 1.6)
         result = lerp(result, transformedPos, staticky);
-    return float4(transformedPos, position.w);
+    return float4(result, position.w);
 }
 
 bool IsFree(float4 particle)
@@ -123,18 +123,18 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
         orgPosition = currPositions[globalIndex].position;
     }
     GroupMemoryBarrierWithGroupSync();
-    // todo cf
 
     uint _half = floor(count / 2.0f);
     uint _half2 = floor((count - 1) / 2.0f);
     uint _half3 = floor((count - 3) / 2.0f);
-    uint halfAng1 = max(0, _half2 - 3); //being conservative in how many particles we apply the angular constraint to
-    uint halfAng2 = max(0, _half3 - 3); //being conservative in how many particles we apply the angular constraint to
+
+    uint halfAng1 = max(3, _half2) - 3;
+    uint halfAng2 = max(3, _half3) - 3;
 
     if (localIndex < count)
     {
         sharedPos[localIndex] = addForcesAndIntegrate(sharedPos[localIndex], prevPositions[globalIndex], sharedForce[localIndex], constraints[globalIndex].y, globalIndex);
-        sharedPos[localIndex].xyz = mul(float4(initPositions[globalIndex].xyz, 1), transform).xyz;
+        //sharedPos[localIndex].xyz = mul(float4(initPositions[globalIndex].xyz, 1), transform).xyz;
     }
     
     GroupMemoryBarrierWithGroupSync();

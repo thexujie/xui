@@ -106,7 +106,17 @@ namespace core
         };
     };
 
-
+	inline float4x4 float4x4_identity()
+	{
+		return float4x4
+		{
+			{ 1, 0, 0, 0 },
+			{ 0, 1, 0, 0 },
+			{ 0, 0, 1, 0 },
+			{ 0, 0, 0, 1 }
+		};
+	}
+	
     //! ¾ØÕóÏà³Ë
     inline float4x4 float4x4_multiply(const float4x4 & matr1, const float4x4 & matr2)
     {
