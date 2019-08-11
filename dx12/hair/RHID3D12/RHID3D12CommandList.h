@@ -2,7 +2,6 @@
 
 #include "RHI/RHI.h"
 #include "RHID3D12Device.h"
-#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {
@@ -22,7 +21,7 @@ namespace RHI::RHID3D12
 	public:
 		void Reset(RHICommandAllocator * allocator) override;
 		void Close() override;
-		void SetRenderTarget(RHIResourceView * rendertarget) override;
+		void SetRenderTarget(RHIRenderTarget * rendertarget) override;
 		void ClearRenderTarget(core::color color) override;
 		void SetViewPort(const ViewPort & viewport) override;
 		void SetScissorRect(const core::recti & rect) override;
@@ -53,7 +52,7 @@ namespace RHI::RHID3D12
 		win32::comptr<ID3D12CommandAllocator> _cmdallocator;
 		win32::comptr<ID3D12GraphicsCommandList> _cmdlist;
 
-		RHID3D12ResourceView * _rendertarget = nullptr;
+		RHID3D12RenderTarget * _rendertarget = nullptr;
 		RHID3D12ResourcePacket * _resourcepacket = nullptr;
 	};
 }

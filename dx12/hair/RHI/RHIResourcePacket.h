@@ -8,7 +8,7 @@ namespace RHI
 	class RHIResourcePacket : public RHIObject
 	{
 	public:
-		virtual std::shared_ptr<RHIResourceView> SetResource(uint32_t index, RHIResource * resource, const ResourceViewArgs & args) = 0;
+		virtual void SetResource(uint32_t index, RHIResource * resource, const ResourceViewArgs & args) = 0;
 		
 	};
 }

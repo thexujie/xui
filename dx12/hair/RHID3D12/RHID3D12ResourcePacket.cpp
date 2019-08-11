@@ -46,15 +46,14 @@ namespace RHI::RHID3D12
 
 		_heap = heap;
 		_unit = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-		_views.resize(args.capacity);
 		_viewArgs.resize(args.capacity);
 		return core::ok;
 	}
 
-	std::shared_ptr<RHIResourceView> RHID3D12ResourcePacket::SetResource(uint32_t index, RHIResource * resource, const ResourceViewArgs & args)
+	void RHID3D12ResourcePacket::SetResource(uint32_t index, RHIResource * resource, const ResourceViewArgs & args)
 	{
 		if (!_device)
-			return nullptr;
+			return;
 
 		HRESULT hr = S_OK;
 
@@ -125,11 +124,8 @@ namespace RHI::RHID3D12
 		}
 		else
 		{
-			return nullptr;
 		}
 
-		_views[index] = std::make_shared<RHID3D12ResourceView>(CPUHandle, GPUHandle);
 		_viewArgs[index] = args;
-		return _views[index];
 	}
 }

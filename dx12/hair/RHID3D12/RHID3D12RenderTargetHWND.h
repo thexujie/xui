@@ -3,11 +3,17 @@
 #include "RHI/RHI.h"
 #include "RHID3D12Core.h"
 #include "RHID3D12Device.h"
-#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {
-	class RHID3D12RenderTargetHWND : public RHIRenderTarget
+	class RHID3D12RenderTarget : public RHIRenderTarget
+	{
+	public:
+		virtual D3D12_CPU_DESCRIPTOR_HANDLE CPUDescriptorHandle() = 0;
+		virtual D3D12_GPU_DESCRIPTOR_HANDLE GPUDescriptorHandle() = 0;
+	};
+	
+	class RHID3D12RenderTargetHWND : public RHID3D12RenderTarget
 	{
 	public:
 		RHID3D12RenderTargetHWND(RHID3D12Device * device) : _device(device) {}
@@ -17,8 +23,20 @@ namespace RHI::RHID3D12
 
 	public:
 		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) override;
-		RHIResourceView * CurrentRTV() const override { return _views[_frameIndex].get(); }
 
+		D3D12_CPU_DESCRIPTOR_HANDLE CPUDescriptorHandle() override
+		{
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = _heap->GetCPUDescriptorHandleForHeapStart();
+			handle.ptr += _unit * _frameIndex;
+			return handle;
+		}
+		
+		D3D12_GPU_DESCRIPTOR_HANDLE GPUDescriptorHandle() override
+		{
+			D3D12_GPU_DESCRIPTOR_HANDLE handle = _heap->GetGPUDescriptorHandleForHeapStart();
+			handle.ptr += _unit * _frameIndex;
+			return handle;
+		}
 	public:
 		void Begin() override;
 		void Present(uint32_t sync) override;
@@ -32,10 +50,9 @@ namespace RHI::RHID3D12
 		ResourceStates _states = ResourceState::None;
 		uint32_t _frameIndex = 0;
 
-		win32::comptr<ID3D12DescriptorHeap> _rtv_heap;
-		uint32_t _rtv_size = 0;
+		win32::comptr<ID3D12DescriptorHeap> _heap;
+		uint32_t _unit = 0;
 		std::vector<win32::comptr<ID3D12Resource>> _buffers;
-		std::vector<std::shared_ptr<RHID3D12ResourceView>> _views;
 
 
 	};

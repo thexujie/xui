@@ -852,7 +852,7 @@ public:
 			_cmdlist->SetViewPort(viewport);
 			_cmdlist->SetScissorRect(sccisorrect);
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::RenderTarget);
-			_cmdlist->SetRenderTarget(_rendertarget->CurrentRTV());
+			_cmdlist->SetRenderTarget(_rendertarget.get());
 			_cmdlist->ClearRenderTarget(0xffcccccc);
 
 			_cmdlist->SetResourcePacket(_resourcepacket.get());

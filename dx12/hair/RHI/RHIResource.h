@@ -22,11 +22,4 @@ namespace RHI
 	protected:
 		ResourceStates _states = ResourceState::None;
 	};
-
-	class RHIResourceView
-	{
-	public:
-		RHIResourceView() = default;
-		virtual ~RHIResourceView() = default;
-	};
 }

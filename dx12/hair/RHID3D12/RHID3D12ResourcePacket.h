@@ -2,7 +2,6 @@
 
 #include "RHID3D12Core.h"
 #include "RHID3D12Device.h"
-#include "RHID3D12ResourceView.h"
 
 namespace RHI::RHID3D12
 {
@@ -14,7 +13,7 @@ namespace RHI::RHID3D12
 
 		core::error Create(const ResourcePacketArgs & args);
 
-		std::shared_ptr<RHIResourceView> SetResource(uint32_t index, RHIResource * resource, const ResourceViewArgs & args) override;
+		void SetResource(uint32_t index, RHIResource * resource, const ResourceViewArgs & args) override;
 
 	public:
 		ID3D12DescriptorHeap * DescriptorHeap() { return _heap.get(); }
@@ -34,7 +33,6 @@ namespace RHI::RHID3D12
 	private:
 		RHID3D12Device * _device = nullptr;
 		win32::comptr<ID3D12DescriptorHeap> _heap;
-		std::vector<std::shared_ptr<RHID3D12ResourceView>> _views;
 		std::vector<ResourceViewArgs> _viewArgs;
 
 		ResourcePacketArgs _args;

@@ -2,7 +2,7 @@
 #include "RHID3D12CommandList.h"
 #include "RHID3D12CommandAllocator.h"
 #include "RHID3D12Resource.h"
-#include "RHID3D12ResourceView.h"
+#include "RHID3D12RenderTargetHWND.h"
 #include "RHID3D12PipelineState.h"
 #include "RHID3D12ResourcePacket.h"
 
@@ -61,9 +61,9 @@ namespace RHI::RHID3D12
 		_cmdlist->Close();
 	}
 
-	void RHID3D12CommandList::SetRenderTarget(RHIResourceView * rendertarget)
+	void RHID3D12CommandList::SetRenderTarget(RHIRenderTarget * rendertarget)
 	{
-		_rendertarget = static_cast<RHID3D12ResourceView *>(rendertarget);
+		_rendertarget = static_cast<RHID3D12RenderTarget *>(rendertarget);
 		if (_rendertarget)
 		{
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = _rendertarget->CPUDescriptorHandle();
@@ -75,7 +75,7 @@ namespace RHI::RHID3D12
 
 	void RHID3D12CommandList::ClearRenderTarget(core::color color)
 	{
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = { _rendertarget->CPUDescriptorHandle() };
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = _rendertarget->CPUDescriptorHandle();
 		const float clearColor[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
 		_cmdlist->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	}

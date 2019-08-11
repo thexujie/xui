@@ -5,7 +5,6 @@
 #include "RHID3D12CommandList.h"
 #include "RHID3D12Resource.h"
 #include "RHID3D12CommandAllocator.h"
-#include "RHID3D12ResourceView.h"
 #include "RHID3D12PipelineState.h"
 #include "RHID3D12ResourcePacket.h"
 

@@ -62,7 +62,6 @@ namespace RHI::RHID3D12
 
 		win32::comptr<ID3D12DescriptorHeap> rtv_heap;
 		std::vector<win32::comptr<ID3D12Resource>> buffers(params.nbuffer);
-		std::vector<std::shared_ptr<RHID3D12ResourceView>> views;
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
 			rtvHeapDesc.NumDescriptors = params.nbuffer;
@@ -87,7 +86,6 @@ namespace RHI::RHID3D12
 					return core::e_inner;
 				}
 
-				views.push_back(std::make_shared<RHID3D12ResourceView>(handle));
 				device->CreateRenderTargetView(buffers[ibuffer].get(), nullptr, handle);
 				handle.ptr += rtv_desc_size;
 			}
@@ -98,10 +96,9 @@ namespace RHI::RHID3D12
 		_params = params;
 		_swapchain = swapchain1.as<IDXGISwapChain3>();
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
-		_rtv_heap = rtv_heap;
-		_rtv_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		_heap = rtv_heap;
+		_unit = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		_buffers = buffers;
-		_views = views;
 
 		return core::ok;
 	}
