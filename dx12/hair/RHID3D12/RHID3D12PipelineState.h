@@ -13,6 +13,7 @@ namespace RHI::RHID3D12
 		virtual ~RHID3D12PipelineState() = default;
 
 		core::error Create(const PipelineStateArgs & args);
+		void SetName(const std::u8string & name);
 
 	private:
 		core::error _CreateGraphicsPipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature);

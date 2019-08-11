@@ -126,13 +126,18 @@ namespace RHI::RHID3D12
 	
 	void RHID3D12CommandList::SetResourcePacket(RHIResourcePacket * packet)
 	{
-		ID3D12DescriptorHeap * heaps[1] = { static_cast<RHID3D12ResourcePacket *>(packet)->DescriptorHeap()};
+		_resourcepacket = static_cast<RHID3D12ResourcePacket *>(packet);
+		ID3D12DescriptorHeap * heaps[1] = { _resourcepacket->DescriptorHeap()};
 		_cmdlist->SetDescriptorHeaps(1, heaps);
 	}
 
-	void RHID3D12CommandList::SetGraphicsResourceView(uint32_t index, RHIResourceView * view)
+	void RHID3D12CommandList::SetGraphicsResources(uint32_t index, uint32_t packetoffset)
 	{
-		_cmdlist->SetGraphicsRootDescriptorTable(index, static_cast<RHID3D12ResourceView *>(view)->GPUDescriptorHandle());
+		assert(_resourcepacket);
+		if (!_resourcepacket)
+			return;
+		
+		_cmdlist->SetGraphicsRootDescriptorTable(index, _resourcepacket->GPUDescriptorHandle(packetoffset));
 	}
 	
 	void RHID3D12CommandList::IASetVertexBuffer(RHIResource * resource, uint32_t stride, uint32_t size)
@@ -168,9 +173,13 @@ namespace RHI::RHID3D12
 		_cmdlist->DrawIndexedInstanced(nindices, ninstance, iindexbase, ivertexbase, iinstancebase);
 	}
 
-	void RHID3D12CommandList::SetComputeResourceView(uint32_t index, RHIResourceView * view)
+	void RHID3D12CommandList::SetComputeResources(uint32_t index, uint32_t packetoffset)
 	{
-		_cmdlist->SetComputeRootDescriptorTable(index, static_cast<RHID3D12ResourceView *>(view)->GPUDescriptorHandle());
+		assert(_resourcepacket);
+		if (!_resourcepacket)
+			return;
+
+		_cmdlist->SetComputeRootDescriptorTable(index, _resourcepacket->GPUDescriptorHandle(packetoffset));
 	}
 	
 	void RHID3D12CommandList::Dispatch(core::uint3 ngroups)

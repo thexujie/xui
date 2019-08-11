@@ -1,4 +1,8 @@
 
+
+// 
+#define MAX_COLLISION_SPHERES 10
+
 struct Vertex
 {
     float4 position;
@@ -8,27 +12,73 @@ struct Vertex
 cbuffer SceneConstantBuffer : register(b0)
 {
     row_major float4x4 transform;
+
     float gravityAcceleration;
     float gravityStrength;
     float timeElapse;
     float angularStiffness;
 
     // 约束计算的积分次数，越多越精确
-    int numConstraintIterations;
+    uint numConstraintIterations;
+    // 碰撞球数量
+    uint numSphereImplicits;
 };
 
-RWStructuredBuffer<Vertex> currPositions : register(u0);
-RWStructuredBuffer<float4> prevPositions : register(u1);
+cbuffer GlobalConstBuffer : register(b1)
+{
+    row_major float4x4 CollisionSphereTransformations[MAX_COLLISION_SPHERES];
+    row_major float4x4 CollisionSphereInverseTransformations[MAX_COLLISION_SPHERES];
+};
 
 Buffer<uint> strandOffsets : register(t0);
 // liner length / line stiffness / anguar length/ angular stiffnessr
 Buffer<float4> constraints : register(t1);
 Buffer<float4> initPositions : register(t2);
 
+RWStructuredBuffer<Vertex> currPositions : register(u0);
+RWStructuredBuffer<float4> prevPositions : register(u1);
+
 #define BLOCK_SIZE 64
 groupshared float4 sharedPos[BLOCK_SIZE];
 groupshared float4 sharedConstraints[BLOCK_SIZE];
 groupshared float3 sharedForce[BLOCK_SIZE];
+
+float3 SphereConstraint(float4 position, int isphere)
+{
+    if (position.w == 0)
+        return 0;
+
+    //inverse transform the position
+    float3 transformedPosition = (mul(float4(position.xyz, 1), CollisionSphereInverseTransformations[isphere])).xyz;
+    
+    //find the force
+    float3 force = float3(0, 0, 0);
+    float len = length(transformedPosition);
+    
+    if (len < 1)
+    {
+        force = (1 - len) * (transformedPosition / len);
+    
+        row_major float4x4 sphereTransform = CollisionSphereTransformations[isphere];
+        //remove the translation
+        sphereTransform._41 = 0;
+        sphereTransform._42 = 0;
+        sphereTransform._43 = 0;
+        sphereTransform._44 = 1;
+        force = (mul(float4(force, 1), sphereTransform)).xyz;
+    }
+
+    return force;
+}
+
+void addObstacleCollisionResponse(inout float4 position)
+{
+    //spheres
+    for (uint isphere = 0; isphere < numSphereImplicits; isphere++)
+    {
+        position.xyz += SphereConstraint(position, isphere);
+    }
+}
 
 float4 addForcesAndIntegrate(float4 position, float4 oldPosition, float3 force, float stiffness, int globalIndex)
 {
@@ -139,7 +189,7 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
     
     GroupMemoryBarrierWithGroupSync();
     
-    for (int iteration = 0; iteration < numConstraintIterations; iteration++)
+    for (uint iteration = 0; iteration < numConstraintIterations; iteration++)
     {
         //apply distance constraints to first subset
         if (localIndex < _half)
@@ -174,6 +224,9 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
             if (stiffness > 0)
                 DistanceConstraint(sharedPos[id], sharedPos[id + 2], sharedConstraints[id].z, stiffness);
         }
+        GroupMemoryBarrierWithGroupSync();
+
+        addObstacleCollisionResponse(sharedPos[localIndex]);
         GroupMemoryBarrierWithGroupSync();
     }
     

@@ -89,7 +89,12 @@ namespace RHI::RHID3D12
 			return _CreateComputePipelineState(args, rootSignature);
 	}
 
-
+	void RHID3D12PipelineState::SetName(const std::u8string & name)
+	{
+		SetD3D12ObjectName(_pipelineState.get(), core::u8str_wstr(name + u8"._pipelineState").c_str());
+		SetD3D12ObjectName(_rootSignature.get(), core::u8str_wstr(name + u8"._rootSignature").c_str());
+	}
+	
 	core::error RHID3D12PipelineState::_CreateGraphicsPipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature)
 	{
 		HRESULT hr = S_OK;

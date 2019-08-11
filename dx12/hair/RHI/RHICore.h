@@ -208,14 +208,15 @@ namespace RHI
 
 	enum class ResourceType
 	{
-		ConstBuffer = 0,
+		None= 0,
+		ConstBuffer,
 		ShaderResource,
 		UnorderedAccess,
 	};
 	
 	struct ResourceViewArgs
 	{
-		ResourceType type = ResourceType::ConstBuffer;
+		ResourceType type = ResourceType::None;
 		struct
 		{
 			core::pixelformat format = core::pixelformat::none;
@@ -227,7 +228,34 @@ namespace RHI
 				uint32_t numElements = 0;
 				uint32_t stride = 0;
 			}buffer;
-		}shaderresource;
+		}resource;
+
+		static ResourceViewArgs CBuffer()
+		{
+			ResourceViewArgs args = {};
+			args.type = ResourceType::ConstBuffer;
+			return args;
+		}
+		
+		static ResourceViewArgs Unordered(uint32_t stride, uint32_t numElements)
+		{
+			ResourceViewArgs args = {};
+			args.type = ResourceType::UnorderedAccess;
+			args.resource.dimension = ResourceViewDimension::Buffer;
+			args.resource.buffer.numElements = numElements;
+			args.resource.buffer.stride = stride;
+			return args;
+		}
+
+		static ResourceViewArgs Shader(uint32_t stride, uint32_t numElements)
+		{
+			ResourceViewArgs args = {};
+			args.type = ResourceType::ShaderResource;
+			args.resource.dimension = ResourceViewDimension::Buffer;
+			args.resource.buffer.numElements = numElements;
+			args.resource.buffer.stride = stride;
+			return args;
+		}
 	};
 	
 	struct ResourcePacketArgs
