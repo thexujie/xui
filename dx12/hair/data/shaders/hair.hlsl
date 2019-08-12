@@ -22,9 +22,16 @@ cbuffer SceneConstantBuffer : register(b0)
     float1 _unused1;
 };
 
+struct VSInput
+{
+    uint4 pointIndex : PATCH_INDEX;
+    uint strandIndex : STRAND_INDEX;
+};
+
 struct VSOutput
 {
     uint4 pointIndex : PATCH_INDEX;
+    uint strandIndex : STRAND_INDEX;
 };
 
 struct HSOutput
@@ -34,7 +41,8 @@ struct HSOutput
 
 struct HSConstOutput
 {
-    float factors[2]: SV_TessFactor;
+    float factors[2] : SV_TessFactor;
+    uint strandIndex : STRAND_INDEX;
 };
 
 struct DSOutput
@@ -58,19 +66,22 @@ struct HairVertex
 
 Buffer<float4> g_positions : register(t0);
 Buffer<float4> g_tangents: register(t1);
+Buffer<float2> g_coordJitters : register(t2);
 
-VSOutput VSMain(uint4 pointIndex : PATCH_INDEX)
+VSOutput VSMain(VSInput input)
 {
     VSOutput result;
-    result.pointIndex = pointIndex;
+    result.pointIndex = input.pointIndex;
+    result.strandIndex = input.strandIndex;
     return result;
 }
 
-HSConstOutput HSConst()
+HSConstOutput HSConst(InputPatch<VSOutput, 1> input)
 {
     HSConstOutput output;
     output.factors[0] = tessFactor.x;
     output.factors[1] = tessFactor.y;
+    output.strandIndex = input[0].strandIndex;
     return output;
 }
 
@@ -121,7 +132,6 @@ void EvaluateBSpline4(const uint4 pointIndex, float t, out float4 position, out 
     float4 tangentY_org = g_tangents[pointIndex[0]] * positionCoff[0] + g_tangents[pointIndex[1]] * positionCoff[1] + g_tangents[pointIndex[2]] * positionCoff[2] + g_tangents[pointIndex[3]] * positionCoff[3];
     tangentY = normalize(tangentY_org.xyz);
     v = tangentY_org.w;
-
 }
 
 [domain("isoline")]
@@ -132,8 +142,9 @@ DSOutput DSMain(HSConstOutput input, OutputPatch<HSOutput, 1> patchs, float2 uv 
     float v = 0.0f;
     EvaluateBSpline4(patchs[0].pointIndex, uv.x, output.position, output.tangent, tangentY, v);
     float3 tangentZ = cross(tangentY, output.tangent);
-    float radius = 0.5f * lerp(1.0f, 0.005f, v);
-    output.position.xyz += uv.y * radius * tangentY + uv.y * radius * tangentZ;
+    float radius = 1.5f * lerp(1.0f, 0.005f, v);
+    float2 coordJitter = g_coordJitters[(uv.y * 166) % 1024];
+    output.position.xyz += uv.y * radius * tangentY * coordJitter.x + uv.y * radius * tangentZ * coordJitter.y;
 
     float width = 0.01f;
     output.width = lerp(width, width * 0.1f, v);
