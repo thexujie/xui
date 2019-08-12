@@ -143,4 +143,14 @@ namespace core
         *this = xm_vec_div(*this, vec);
         return *this;
     }
+
+	float32_t float3::operator % (const float3 & vec) const
+    {
+		return xmv_x(xm_vec3_dot(*this, vec));
+    }
+	
+	float3 float3::operator ^(const float3 & vec) const
+    {
+		return xm_vec3_cross(*this, vec);
+    }
 }

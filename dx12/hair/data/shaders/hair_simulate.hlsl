@@ -92,18 +92,18 @@ float4 addForcesAndIntegrate(float4 position, float4 oldPosition, float3 force, 
     float3 velocity = (position.xyz - oldPosition.xyz) * lerp(0.95f, 0.98f, stiffness);
     // 低速时加大刚度
     float stiffness0 = stiffness;
-    if (length(velocity) < 0.01)
-    {
-        stiffness = saturate(stiffness * 5.0);
-        if (stiffness - stiffness0 > 0)
-            stiffness0 *= (stiffness - stiffness0) * 6;
-    }
-    else if (length(velocity) > 0.5f)
-    {
-        stiffness *= 0.5f;
-        stiffness0 *= 0.5f;
-    }
-    else {}
+    //if (length(velocity) < 0.01)
+    //{
+    //    stiffness = saturate(stiffness * 5.0);
+    //    if (stiffness - stiffness0 > 0)
+    //        stiffness0 *= (stiffness - stiffness0) * 6;
+    //}
+    //else if (length(velocity) > 0.5f)
+    //{
+    //    stiffness *= 0.5f;
+    //    stiffness0 *= 0.5f;
+    //}
+    //else {}
 
     force += float3(0.0f, -gravityAcceleration * lerp(1.0f, 0.5f, stiffness), 0.0f);
     float3 result = position.xyz + velocity + force * timeElapse * timeElapse / 20.0f * 400.0f;

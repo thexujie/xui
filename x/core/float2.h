@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/xmm.h"
+#include "vec2.h"
 
 namespace core
 {
@@ -12,7 +13,8 @@ namespace core
         constexpr float2(const math::xm::xmf & v) : x(xmv_x(v)), y(xmv_y(v)) { }
         constexpr float2(float32_t _x, float32_t _y) : x(_x), y(_y) { }
         constexpr float2(const float32_t (&arr)[2]) : x(arr[0]), y(arr[1]) { }
-        constexpr float2(const float2 & another) : x(another.x), y(another.y) { }
+		constexpr float2(const float2 & another) : x(another.x), y(another.y) { }
+		constexpr float2(const vec2<float> & another) : x(another.x), y(another.y) { }
 
         inline float2 & operator=(const float32_t (&arr)[2])
         {

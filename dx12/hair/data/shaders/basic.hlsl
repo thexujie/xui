@@ -12,7 +12,8 @@
 
 cbuffer SceneConstantBuffer : register(b0)
 {
-    float4x4 transform;
+    float4x4 worldTransform;
+    float4x4 viewprojTransform;
     float2 tessFactor;
 };
 
@@ -28,7 +29,7 @@ Buffer<float4> g_tangents : register(t1);
 VSOutput VSMain(uint pointIndex : POINT_INDEX)
 {
     VSOutput result;
-    result.position = mul(float4(g_positions[pointIndex].xyz, 1.0f), transform);
+    result.position = mul(float4(g_positions[pointIndex].xyz, 1.0f), viewprojTransform);
 
     return result;
 }

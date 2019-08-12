@@ -61,15 +61,19 @@ namespace core
 
 		p010 = pixelformat_fourcc("p010"),
 
-
-		rgf32 = pixelformat_fourcc("0F16"),
-		rgbf32 = pixelformat_fourcc("0F24"),
-		rgbaf32 = pixelformat_fourcc("0F32"),
-
+    	// packaged
+		half1 = pixelformat_fourcc("00h1"),
+		half2 = pixelformat_fourcc("00h2"),
+		half3 = pixelformat_fourcc("00h3"),
+		half4 = pixelformat_fourcc("00h4"),
 		float1 = pixelformat_fourcc("00f1"),
 		float2 = pixelformat_fourcc("00f2"),
 		float3 = pixelformat_fourcc("00f3"),
 		float4 = pixelformat_fourcc("00f4"),
+		int1 = pixelformat_fourcc("00i1"),
+		int2 = pixelformat_fourcc("00i2"),
+		int3 = pixelformat_fourcc("00i3"),
+		int4 = pixelformat_fourcc("00i4"),
 		uint1 = pixelformat_fourcc("0ui1"),
 		uint2 = pixelformat_fourcc("0ui2"),
 		uint3 = pixelformat_fourcc("0ui3"),

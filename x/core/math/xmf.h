@@ -93,9 +93,4 @@ namespace core::math::xm
 
     const xmf xmf_cos_coefficients0 = { -0.5f, +0.041666638f, -0.0013888378f, +2.4760495e-05f };
     const xmf xmf_cos_coefficients1 = { -2.6051615e-07f, -0.49992746f, +0.041493919f, -0.0012712436f };
-
-#include "xmf_base.inl"
-#include "xmf_vec.inl"
-#include "xmf_quat.inl"
-#include "xmf_matr.inl"
 }

@@ -23,7 +23,8 @@ struct Vertex
 	core::float3 position;
 	core::float1 locate;
 	core::float2 uv;
-	core::float3 tangent;
+	core::float3 tangentX;
+	core::float3 tangentY;
 };
 
 struct SimulateConstantBuffer
@@ -48,10 +49,14 @@ struct SimulateGlobalConstBuffer
 
 struct SceneConstantBuffer
 {
-	core::float4x4 transform;
+	core::float4x4 worldTransform;
+	core::float4x4 viewprojTransform;
 	core::float2 tessFactor;
 	core::float2 __unused;
 	core::float3 eyePosition;
+	core::float1 _unused1;
+	core::float3 lightVector;
+	core::float1 _unused2;
 };
 
 class HairRender
@@ -73,7 +78,9 @@ public:
 		core::int2 offset = pos - pos_last;
 		pos_last = pos;
 		if (wParam & MK_LBUTTON)
-			_rotate += offset.x / 200.0f * 3.14f;
+			_hair_rotate_z += offset.x / 200.0f * 3.14f;
+		else if (wParam & MK_RBUTTON)
+			_hair_translate.xy += core::float2(offset.to<float>() * core::vec2<float>(0, 1) / 10.0f);
 	}
 	
 	void OnScrollV(int32_t scroll)
@@ -196,8 +203,8 @@ public:
 			.HSMain = "HSMain",
 			.DS = path_hair,
 			.DSMain = "DSMain",
-			//.GS = path_hair,
-			//.GSMain = "GSMain",
+			.GS = path_hair,
+			.GSMain = "GSMain",
 			.PS = path_hair,
 			.PSMain = "PSMain",
 
@@ -315,11 +322,11 @@ public:
 		// tangents
 		RHI::ResourceArgs tangentsParams_UL = {};
 		tangentsParams_UL.heap.type = RHI::HeapType::Upload;
-		tangentsParams_UL.size.cx = sizeof(core::float4) * _tangents.size();
+		tangentsParams_UL.size.cx = sizeof(core::float4) * _tangentYs.size();
 		tangentsParams_UL.dimension = RHI::ResourceDimension::Raw;
 		tangentsParams_UL.states = RHI::ResourceState::GenericRead;
 		auto resource_tangents_UL = _device->CreateResource(tangentsParams_UL);
-		std::memcpy(resource_tangents_UL->Data(), _tangents.data(), sizeof(core::float4) * _tangents.size());
+		std::memcpy(resource_tangents_UL->Data(), _tangentYs.data(), sizeof(core::float4) * _tangentYs.size());
 
 		RHI::ResourceArgs tangentsParams = {};
 		tangentsParams.heap.type = RHI::HeapType::Default;
@@ -582,20 +589,44 @@ public:
 			std::vector<Vertex> & strand = _strands[istrand];
 			for (size_t ivertex = 0; ivertex < strand.size(); ++ivertex)
 			{
+				core::float3 tangentX;
 				Vertex & vertex = strand[ivertex];
 				if (ivertex == 0)
-					vertex.tangent = strand[ivertex].position - strand[ivertex + 1].position;
+				{
+					tangentX = strand[ivertex].position - strand[ivertex + 1].position;
+				}
 				else if(ivertex == strand.size() - 1)
-					vertex.tangent = strand[ivertex - 1].position - strand[ivertex].position;
+					tangentX = strand[ivertex - 1].position - strand[ivertex].position;
 				else
 				{
 					core::float3 tangent_before = (strand[ivertex - 1].position - strand[ivertex].position).normalize();
 					core::float3 tangent_after = (strand[ivertex].position - strand[ivertex + 1].position).normalize();
-					vertex.tangent = (tangent_before + tangent_after) / 2;
+					tangentX = (tangent_before + tangent_after) / 2;
 				}
-				vertex.tangent.normalize();
+				tangentX.normalize();
 
-				_tangents.push_back(core::float4(vertex.tangent, 0.0f));
+				core::float3 tangentY;
+				if (ivertex == 0)
+				{
+					core::float3 randVector = core::float3(rand(), rand(), rand()).normalize();
+					tangentY = (tangentX ^ randVector).normalize();
+				}
+				else
+				{
+					core::float3 rtationVector = tangentX ^ strand[ivertex - 1].tangentX;
+					float theta = std::asin(rtationVector.length());
+					rtationVector.normalize();
+					tangentY = strand[ivertex - 1].tangentY * core::float4x4_rotation_axis(rtationVector, theta);
+				}
+				tangentY.normalize();
+
+				//if (tangentX % tangentY >= std::numeric_limits<float>::epsilon())
+				//	assert(std::abs(tangentX % tangentY) < std::numeric_limits<float>::epsilon());
+
+				vertex.tangentX = tangentX;
+				vertex.tangentY = tangentY;
+				_tangentXs.push_back(core::float4(tangentX, 0.0f));
+				_tangentYs.push_back(core::float4(tangentY, float(ivertex) / strand.size()));
 			}
 		}
 
@@ -824,16 +855,15 @@ public:
 
 			core::float4x4 matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, _view_z }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
 			if (_rotating)
-				_rotate += elapse;
+				_hair_rotate_z += elapse;
 
-			core::float4x4 matrWorld = core::float4x4_rotate({ 0.0f, _rotate * 3.14f * 0.5f, 0.0f });
+			core::float4x4 matrWorld = core::float4x4_rotate({ 0.0f, _hair_rotate_z * 3.14f * 0.5f, 0.0f }) * core::float4x4_translate(_hair_translate);
 
 			// Simulate
 			{
 				// SimulateConstantBuffer
 				{
 					SimulateConstantBuffer cbuffer = {};
-					cbuffer.transform = _rotating ? core::float4x4_rotate({ 0.0f, float(elapse) * 3.14f * 0.5f, 0.0f }) : core::float4x4_identity();
 					cbuffer.transform = matrWorld;
 					cbuffer.gravityAcceleration = 10.0f;
 					cbuffer.gravityStrength = 10;
@@ -873,9 +903,11 @@ public:
 			// Render
 			{
 				SceneConstantBuffer cbuffer;
-				cbuffer.transform = matrView * matrProj;
+				cbuffer.worldTransform = matrWorld;
+				cbuffer.viewprojTransform = matrView * matrProj;
 				cbuffer.tessFactor = _tessFactor;
 				cbuffer.eyePosition = { 0.0f, 0.0f, _view_z };
+				cbuffer.lightVector = core::float3(0.0f, 1.0f, 1.0f).normalize();
 				std::memcpy(_res_constbuffer->Data(), &cbuffer, sizeof(cbuffer));
 			}
 
@@ -930,6 +962,7 @@ private:
 	RHI::RHID3D12::RHID3D12Factory RHI;
 
 	std::shared_ptr<RHI::RHIDevice> _device;
+	
 	std::shared_ptr<RHI::RHICommandQueue> _cmdqueue;
 	std::shared_ptr<RHI::RHICommandQueue> _cmdqueue_compute;
 	
@@ -980,7 +1013,8 @@ private:
 	std::vector<std::vector<Vertex>> _strands;
 	std::vector<Vertex> _cpoints;
 	std::vector<core::float4> _positions;
-	std::vector<core::float4> _tangents;
+	std::vector<core::float4> _tangentXs;
+	std::vector<core::float4> _tangentYs;
 	std::vector<core::uint4> _vertices;
 	std::vector<core::uint2> _lines;
 	std::vector<uint32_t> _strandOffsets;
@@ -990,9 +1024,10 @@ private:
 	std::shared_ptr<RHI::RHIResource> _resource_strandoffsets;
 	std::shared_ptr<RHI::RHIResource> _resource_constraints;
 
-	// transform
+	// viewprojTransform
 	bool _rotating = false;
-	float _rotate = 0.0f;
+	float _hair_rotate_z = 0.0f;
+	core::float3 _hair_translate;
 
 	float _view_z = -14.0f;
 
