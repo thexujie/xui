@@ -22,11 +22,13 @@ struct VSOutput
     float2 uv : TEXCOORD;
 };
 
-VSOutput VSMain(float4 position : POSITION, float2 uv : TEXCOORD)
+Buffer<float4> g_positions : register(t0);
+Buffer<float4> g_tangents : register(t1);
+
+VSOutput VSMain(uint pointIndex : POINT_INDEX)
 {
     VSOutput result;
-    result.position = mul(position, transform);
-    result.uv = uv;
+    result.position = mul(float4(g_positions[pointIndex].xyz, 1.0f), transform);
 
     return result;
 }

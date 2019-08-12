@@ -78,11 +78,17 @@ namespace core
 
     logger::logger()
     {
+#ifdef _DEBUG
+		_debug_output = true;
+#endif
         _thread = std::thread(std::bind(&logger::writeThread, this));
     }
 
     logger::logger(std::u8string path, log_e lg) : _lg(lg)
     {
+#ifdef _DEBUG
+		_debug_output = true;
+#endif
         open(path);
         _thread = std::thread(std::bind(&logger::writeThread, this));
     }

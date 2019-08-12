@@ -430,6 +430,14 @@ namespace RHI::RHID3D12
 		case core::pixelformat::nv12: return DXGI_FORMAT_NV12;
 		case core::pixelformat::yuy2: return DXGI_FORMAT_420_OPAQUE;
 		case core::pixelformat::p010: return DXGI_FORMAT_P010;
+		case core::pixelformat::float1: return DXGI_FORMAT_R32_FLOAT;
+		case core::pixelformat::float2: return DXGI_FORMAT_R32G32_FLOAT;
+		case core::pixelformat::float3: return DXGI_FORMAT_R32G32B32_FLOAT;
+		case core::pixelformat::float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case core::pixelformat::uint1: return DXGI_FORMAT_R32_UINT;
+		case core::pixelformat::uint2: return DXGI_FORMAT_R32G32_UINT;
+		case core::pixelformat::uint3: return DXGI_FORMAT_R32G32B32_UINT;
+		case core::pixelformat::uint4: return DXGI_FORMAT_R32G32B32A32_UINT;
 		default: return DXGI_FORMAT_UNKNOWN;
 		}
 	}

@@ -14,18 +14,18 @@ cbuffer SceneConstantBuffer : register(b0)
 {
     float4x4 transform;
     float2 tessFactor;
+    float2 _unused;
+    float3 eyePosition;
 };
 
 struct VSOutput
 {
-    float4 position : SV_POSITION;
-    float2 uv : TEXCOORD;
+    uint4 pointIndex : PATCH_INDEX;
 };
 
 struct HSOutput
 {
-    float4 position : SV_POSITION;
-    float2 uv : TEXCOORD;
+    uint4 pointIndex : PATCH_INDEX;
 };
 
 struct HSConstOutput
@@ -36,26 +36,23 @@ struct HSConstOutput
 struct DSOutput
 {
     float4 position : SV_POSITION;
-    float2 uv : TEXCOORD;
+    float4 tangent : TANGENT;
 };
 
 struct GSOutput
 {
     float4 position : SV_POSITION;
-    float2 uv : TEXCOORD;
+    float4 tangent : TANGENT;
 };
 
 
-Texture2D g_texture : register(t0);
-SamplerState g_sampler : register(s0);
+Buffer<float4> g_positions : register(t0);
+Buffer<float4> g_tangents: register(t1);
 
-VSOutput VSMain(float4 position : POSITION, float2 uv : TEXCOORD)
+VSOutput VSMain(uint4 pointIndex : PATCH_INDEX)
 {
     VSOutput result;
-    
-    result.position = mul(position, transform);
-    result.uv = uv;
-
+    result.pointIndex = pointIndex;
     return result;
 }
 
@@ -70,28 +67,27 @@ HSConstOutput HSConst()
 [domain("isoline")]
 [partitioning("integer")]
 [outputtopology("line")]
-[outputcontrolpoints(4)]
+[outputcontrolpoints(1)]
 [patchconstantfunc("HSConst")]
-HSOutput HSMain(InputPatch<VSOutput, 4> input, uint id : SV_OutputControlPointID)
+HSOutput HSMain(InputPatch<VSOutput, 1> input, uint id : SV_OutputControlPointID)
 {
     HSOutput output;
-    output.position = input[id].position;
-    output.uv = input[id].uv;
+    output.pointIndex = input[id].pointIndex;
     return output;
 }
 
 // B(t) = (1-t)^2 * P0 + 2t*(1-t)*P1 + t*t*P2
-float4 EvaluateBezier2(const OutputPatch<HSOutput, 3> patchs, float t)
-{
-    float coff0 = (1 - t) * (1 - t);
-    float coff1 = 2 * t * (1 - t);
-    float coff2 = t * t;
-    return coff0 * patchs[0].position + coff1 * patchs[1].position + coff2 * patchs[2].position;
-}
+//float4 EvaluateBezier2(const OutputPatch<HSOutput, 1> patchs, float t)
+//{
+//    float coff0 = (1 - t) * (1 - t);
+//    float coff1 = 2 * t * (1 - t);
+//    float coff2 = t * t;
+//    return coff0 * patchs[0] + coff1 * patchs[1]. + coff2 * patchs[2].position;
+//}
 
-float4 EvaluateBSpline4(const OutputPatch<HSOutput, 4> patchs, float t)
+void EvaluateBSpline4(const uint4 pointIndex, float t, out float4 position, out float4 tangent)
 {
-    float4x4 basisMatrix = float4x4
+    row_major float4x4 positionMatrix = float4x4
     (
         -1 / 6.0, 3 / 6.0, -3 / 6.0, 1 / 6.0,
          3 / 6.0, -6 / 6.0, 3 / 6.0, 0,
@@ -99,40 +95,68 @@ float4 EvaluateBSpline4(const OutputPatch<HSOutput, 4> patchs, float t)
          1 / 6.0, 4 / 6.0, 1 / 6.0, 0
     );
     
-    float4 basis = mul(float4(t * t * t, t * t, t, 1), basisMatrix);
-    return patchs[0].position * basis[0] + patchs[1].position * basis[1] + patchs[2].position * basis[2] + patchs[3].position * basis[3];
+    row_major float4x4 tangentMatrix = float4x4
+    (
+        -3 / 6.0, 9 / 6.0, -9 / 6.0, 3 / 6.0,
+         6 / 6.0, -12 / 6.0, 6 / 6.0, 0,
+        -6 / 6.0, 0, 3 / 6.0, 0,
+         0 / 6.0, 0 / 6.0, 0 / 6.0, 0
+    );
+    
+    float4 position0 = g_positions[pointIndex[0]];
+    float4 position1 = g_positions[pointIndex[1]];
+    float4 position2 = g_positions[pointIndex[2]];
+    float4 position3 = g_positions[pointIndex[3]];
+    float4 tangent0 = g_tangents[pointIndex[0]];
+    float4 tangent1 = g_tangents[pointIndex[1]];
+    float4 tangent2 = g_tangents[pointIndex[2]];
+    float4 tangent3 = g_tangents[pointIndex[3]];
+
+    float4 positionCoff = mul(float4(t * t * t, t * t, t, 1), positionMatrix);
+    float4 tangentCoff = mul(float4(t * t * t, t * t, t, 1), tangentMatrix);
+
+    position = position0 * positionCoff[0] + position1 * positionCoff[1] + position2 * positionCoff[2] + position3 * positionCoff[3];
+    tangent = tangent0 * tangentCoff[0] + tangent1 * tangentCoff[1] + tangent2 * tangentCoff[2] + tangent3 * tangentCoff[3];
 }
 
 [domain("isoline")]
-DSOutput DSMain(HSConstOutput input, OutputPatch<HSOutput, 4> patchs, float2 uv : SV_DomainLocation)
+DSOutput DSMain(HSConstOutput input, OutputPatch<HSOutput, 1> patchs, float2 uv : SV_DomainLocation)
 {
     DSOutput output;
-    output.position = EvaluateBSpline4(patchs, uv.x);
+    EvaluateBSpline4(patchs[0].pointIndex, uv.x, output.position, output.tangent);
     output.position.y += uv.y * 0.2;
-    //output.position = lerp(patchs[0].position, patchs[1].position, uv.x);
-    output.uv = float2(0.0f, 0.0f);
+    output.position = mul(float4(output.position.xyz, 1.0f), transform);
     return output;
 }
 
 [maxvertexcount(4)]
 void GSMain(line DSOutput vertices[2], inout TriangleStream<GSOutput> stream)
 {
-    float radius = 0.05f;
-    DSOutput result;
-    result.uv = float2(0.0f, 0.0f);
-    result.position = vertices[0].position + float4(0.0f, +radius, 0.0f, 0.0f);
+    float width = 0.02f;
+    float3 tangent = (vertices[1].position.xyz - vertices[0].position.xyz);
+    float3 cameraVector = eyePosition - vertices[0].position.xyz;
+    float3 sideVector = normalize(cross(cameraVector, tangent));
+    float3 width0 = sideVector * 0.5 * width;
+    float3 width1 = sideVector * 0.5 * width;
+
+    GSOutput result;
+    result.position = mul(float4(vertices[0].position.xyz -width0, 1.0f), transform);
+    result.tangent = vertices[0].tangent;
     stream.Append(result);
-    result.position = vertices[0].position + float4(0.0f, -radius, 0.0f, 0.0f);
+    result.position = mul(float4(vertices[0].position.xyz + width0, 1.0f), transform);
+    result.tangent = vertices[0].tangent;
     stream.Append(result);
-    result.position = vertices[0].position + float4( +radius, 0.0f, 0.0f, 0.0f);
+    result.position = mul(float4(vertices[1].position.xyz - width1, 1.0f), transform);
+    result.tangent = vertices[1].tangent;
     stream.Append(result);
-    result.position = vertices[0].position + float4( -radius, 0.0f, 0.0f, 0.0f);
+    result.position = mul(float4(vertices[1].position.xyz + width1, 1.0f), transform);
+    result.tangent = vertices[1].tangent;
     stream.Append(result);
 
     stream.RestartStrip();
 }
 
-float4 PSMain(DSOutput input) : SV_TARGET
+float4 PSMain() : SV_TARGET
 {
     //return g_texture.Sample(g_sampler, input.uv);
     return float4(1, 0, 0, 1);

@@ -594,6 +594,9 @@ namespace core
         };
     };
 
+	typedef vec4<int32_t> int4;
+	typedef vec4<uint32_t> uint4;
+	
     typedef vec4<int32_t> recti;
     typedef vec4<float32_t> rectf;
     typedef vec4<int32_t> vec4i;

@@ -457,6 +457,13 @@ namespace RHI
 
 	constexpr uint32_t RenderTargetMax = 8;
 
+	struct InputElement
+	{
+		std::string name;
+		core::pixelformat format = core::pixelformat::abgr;
+		uint32_t offset = 0;
+	};
+	
 	struct PipelineStateArgs
 	{
 		TopologyType topology = TopologyType::Triangle;
@@ -474,6 +481,7 @@ namespace RHI
 		std::u8string CS;
 		std::string CSMain;
 
+		std::vector<InputElement> elements;
 		std::vector<PipelineStateTable> tables;
 		std::vector<SamplerArgs> samplers;
 		

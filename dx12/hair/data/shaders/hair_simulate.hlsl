@@ -20,6 +20,8 @@ cbuffer SceneConstantBuffer : register(b0)
 
     // 约束计算的积分次数，越多越精确
     uint numConstraintIterations;
+    float3 eyePos;
+
     // 碰撞球数量
     uint numSphereImplicits;
 };
@@ -35,7 +37,7 @@ Buffer<uint> strandOffsets : register(t0);
 Buffer<float4> constraints : register(t1);
 Buffer<float4> initPositions : register(t2);
 
-RWStructuredBuffer<Vertex> currPositions : register(u0);
+RWStructuredBuffer<float4> currPositions : register(u0);
 RWStructuredBuffer<float4> prevPositions : register(u1);
 
 #define BLOCK_SIZE 64
@@ -167,10 +169,10 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
     float4 orgPosition = float4(0, 0, 0, 0);
     if (localIndex < count)
     {
-        sharedPos[localIndex] = currPositions[globalIndex].position;
+        sharedPos[localIndex] = currPositions[globalIndex];
         sharedConstraints[localIndex] = constraints[globalIndex];
         sharedForce[localIndex] = float3(0, 0, 0);
-        orgPosition = currPositions[globalIndex].position;
+        orgPosition = currPositions[globalIndex];
     }
     GroupMemoryBarrierWithGroupSync();
 
@@ -232,7 +234,7 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
     
     if (localIndex < count)
     {
-        currPositions[globalIndex].position = sharedPos[localIndex];
+        currPositions[globalIndex] = sharedPos[localIndex];
         prevPositions[globalIndex] = orgPosition;
     }
 }

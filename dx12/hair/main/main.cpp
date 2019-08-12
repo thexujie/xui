@@ -20,8 +20,10 @@ static std::atomic<bool> rendering = true;
 
 struct Vertex
 {
-	core::float4 position;
+	core::float3 position;
+	core::float1 locate;
 	core::float2 uv;
+	core::float3 tangent;
 };
 
 struct SimulateConstantBuffer
@@ -33,6 +35,7 @@ struct SimulateConstantBuffer
 	float angularStiffness;
 	// 约束计算的积分次数，越多越精确
 	int numConstraintIterations;
+	core::float3 eyePosition;
 	uint32_t numSphereImplicits;
 };
 
@@ -47,6 +50,8 @@ struct SceneConstantBuffer
 {
 	core::float4x4 transform;
 	core::float2 tessFactor;
+	core::float2 __unused;
+	core::float3 eyePosition;
 };
 
 class HairRender
@@ -148,6 +153,10 @@ public:
 			.PS = path_basic,
 			.PSMain = "PSMain",
 			
+			.elements =
+			{
+				RHI::InputElement{ "POINT_INDEX", core::pixelformat::uint1, 0 },
+			},
 			.tables =
 			{
 				RHI::PipelineStateTable
@@ -159,6 +168,16 @@ public:
 						{
 							.type = RHI::DescriptorRangeType::ConstBuffer,
 							.shaderRegister = 0
+						},
+						RHI::PipelineStateTableRange
+						{
+							.type = RHI::DescriptorRangeType::ShaderResource,
+							.shaderRegister = 0
+						},
+						RHI::PipelineStateTableRange
+						{
+							.type = RHI::DescriptorRangeType::ShaderResource,
+							.shaderRegister = 1
 						},
 					}
 				},
@@ -177,11 +196,15 @@ public:
 			.HSMain = "HSMain",
 			.DS = path_hair,
 			.DSMain = "DSMain",
-			//.GS = path,
+			//.GS = path_hair,
 			//.GSMain = "GSMain",
 			.PS = path_hair,
 			.PSMain = "PSMain",
-			
+
+			.elements =
+			{
+				RHI::InputElement{ "PATCH_INDEX", core::pixelformat::uint4, 0 },
+			},
 			.tables =
 			{
 				RHI::PipelineStateTable
@@ -193,6 +216,16 @@ public:
 						{
 							.type = RHI::DescriptorRangeType::ConstBuffer,
 							.shaderRegister = 0
+						},
+						RHI::PipelineStateTableRange
+						{
+							.type = RHI::DescriptorRangeType::ShaderResource,
+							.shaderRegister = 0
+						},
+						RHI::PipelineStateTableRange
+						{
+							.type = RHI::DescriptorRangeType::ShaderResource,
+							.shaderRegister = 1
 						},
 					}
 				},
@@ -260,7 +293,7 @@ public:
 		RHI::ResourcePacketArgs packetArgs_hair = 
 		{
 			.type = RHI::ResourcePacketType::Resource,
-			.capacity = 2,
+			.capacity = 3,
 			.flags = RHI::ResourcePacketFlag::ShaderVisible,
 		};
 		_resourcepacket = _device->CreateResourcePacket(packetArgs_hair);
@@ -273,106 +306,84 @@ public:
 		};
 		_resourcepacket_simulate = _device->CreateResourcePacket(packetArgs_hair_simulate);
 
-		_nvertices = _vertices.size();
-		_nindices = _indices.size();
-		_nindices_lines = _indices_lines.size();
+		_nvertices = _positions.size();
+		_nlines = _lines.size();
 
 		_cmdallocator->Reset();
 		_cmdlist->Reset(_cmdallocator.get());
 
+		// tangents
+		RHI::ResourceArgs tangentsParams_UL = {};
+		tangentsParams_UL.heap.type = RHI::HeapType::Upload;
+		tangentsParams_UL.size.cx = sizeof(core::float4) * _tangents.size();
+		tangentsParams_UL.dimension = RHI::ResourceDimension::Raw;
+		tangentsParams_UL.states = RHI::ResourceState::GenericRead;
+		auto resource_tangents_UL = _device->CreateResource(tangentsParams_UL);
+		std::memcpy(resource_tangents_UL->Data(), _tangents.data(), sizeof(core::float4) * _tangents.size());
+
+		RHI::ResourceArgs tangentsParams = {};
+		tangentsParams.heap.type = RHI::HeapType::Default;
+		tangentsParams.size.cx = sizeof(core::float4) * _positions.size();
+		tangentsParams.dimension = RHI::ResourceDimension::Raw;
+		tangentsParams.states = RHI::ResourceState::CopyDest;
+		tangentsParams.flags = RHI::ResourceFlag::AllowUnorderdAccess;
+		_resource_tangents = _device->CreateResource(tangentsParams);
+		
 		// vertices
-		RHI::ResourceArgs verticesParams_UL = {};
-		verticesParams_UL.heap.type = RHI::HeapType::Upload;
-		verticesParams_UL.size.cx = sizeof(Vertex) * _vertices.size();
-		verticesParams_UL.dimension = RHI::ResourceDimension::Raw;
-		verticesParams_UL.states = RHI::ResourceState::GenericRead;
-		auto vetexbuffer_UL = _device->CreateResource(verticesParams_UL);
-		std::memcpy(vetexbuffer_UL->Data(), _vertices.data(), sizeof(Vertex) * _vertices.size());
+		RHI::ResourceArgs pointsParam_UL = {};
+		pointsParam_UL.heap.type = RHI::HeapType::Upload;
+		pointsParam_UL.size.cx = sizeof(core::float4) * _positions.size();
+		pointsParam_UL.dimension = RHI::ResourceDimension::Raw;
+		pointsParam_UL.states = RHI::ResourceState::GenericRead;
+		auto resource_positions_UL = _device->CreateResource(pointsParam_UL);
+		std::memcpy(resource_positions_UL->Data(), _positions.data(), sizeof(core::float4) * _positions.size());
 
-		RHI::ResourceArgs verticesParams = {};
-		verticesParams.heap.type = RHI::HeapType::Default;
-		verticesParams.size.cx = sizeof(Vertex) * _vertices.size();
-		verticesParams.dimension = RHI::ResourceDimension::Raw;
-		verticesParams.states = RHI::ResourceState::CopyDest;
-		verticesParams.flags = RHI::ResourceFlag::AllowUnorderdAccess;
-		_resouce_vertices = _device->CreateResource(verticesParams);
-		
-		// vetexbuffer prev
-		auto vetexbuffer_prev_UL = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Upload,
-				},
-				.dimension = RHI::ResourceDimension::Raw,
-				.size = { uint32_t(sizeof(core::float4) * _vertices.size()), 1 },
-				.states = RHI::ResourceState::GenericRead,
-			}
-		);
+		RHI::ResourceArgs pointsParams = {};
+		pointsParams.heap.type = RHI::HeapType::Default;
+		pointsParams.size.cx = sizeof(core::float4) * _positions.size();
+		pointsParams.dimension = RHI::ResourceDimension::Raw;
+		pointsParams.states = RHI::ResourceState::CopyDest;
+		pointsParams.flags = RHI::ResourceFlag::AllowUnorderdAccess;
+		_resource_positions = _device->CreateResource(pointsParams);
+		_resource_prev_positions = _device->CreateResource(pointsParams);
+		_resource_curr_positions = _device->CreateResource(pointsParams);
 
-		_resource_prev_positions = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Default,
-				},
-				.dimension = RHI::ResourceDimension::Raw,
-				.flags = RHI::ResourceFlag::AllowUnorderdAccess,
-				.size = { uint32_t(sizeof(core::float4) * _vertices.size()), 1 },
-				.states = RHI::ResourceState::CopyDest,
-			}
-		);
-		_resource_init_positions = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Default,
-				},
-				.dimension = RHI::ResourceDimension::Raw,
-				.flags = RHI::ResourceFlag::AllowUnorderdAccess,
-				.size = { uint32_t(sizeof(core::float4) * _vertices.size()), 1 },
-				.states = RHI::ResourceState::CopyDest,
-			}
-		);
 		
-		core::float4 * vetexbuffer_prev_UL_ptr = static_cast<core::float4 *>(vetexbuffer_prev_UL->Data());
-		for (size_t ivertex = 0; ivertex < _vertices.size(); ++ivertex)
-			vetexbuffer_prev_UL_ptr[ivertex] = _vertices[ivertex].position;
+		core::float4 * vetexbuffer_prev_UL_ptr = static_cast<core::float4 *>(resource_positions_UL->Data());
+		for (size_t ivertex = 0; ivertex < _positions.size(); ++ivertex)
+			vetexbuffer_prev_UL_ptr[ivertex] = _positions[ivertex];
 
 		// indices
-		RHI::ResourceArgs indicesParams_UL = {};
-		indicesParams_UL.heap.type = RHI::HeapType::Upload;
-		indicesParams_UL.size.cx = sizeof(uint16_t) * _indices.size();
-		indicesParams_UL.dimension = RHI::ResourceDimension::Raw;
-		indicesParams_UL.states = RHI::ResourceState::GenericRead;
-		auto indexbuffer_UL = _device->CreateResource(indicesParams_UL);
-		std::memcpy(indexbuffer_UL->Data(), _indices.data(), sizeof(uint16_t) * _indices.size());
+		RHI::ResourceArgs vertexbufferParams_UL = {};
+		vertexbufferParams_UL.heap.type = RHI::HeapType::Upload;
+		vertexbufferParams_UL.size.cx = sizeof(core::uint4) * _vertices.size();
+		vertexbufferParams_UL.dimension = RHI::ResourceDimension::Raw;
+		vertexbufferParams_UL.states = RHI::ResourceState::GenericRead;
+		auto resource_vertices_UL = _device->CreateResource(vertexbufferParams_UL);
+		std::memcpy(resource_vertices_UL->Data(), _vertices.data(), sizeof(core::uint4) * _vertices.size());
 
-		RHI::ResourceArgs indicesParams = {};
-		indicesParams.heap.type = RHI::HeapType::Default;
-		indicesParams.size.cx = sizeof(uint16_t) * _indices.size();
-		indicesParams.dimension = RHI::ResourceDimension::Raw;
-		indicesParams.states = RHI::ResourceState::CopyDest;
-		_indexbuffer = _device->CreateResource(indicesParams);
+		RHI::ResourceArgs vertexbufferParams = {};
+		vertexbufferParams.heap.type = RHI::HeapType::Default;
+		vertexbufferParams.size.cx = sizeof(core::uint4) * _vertices.size();
+		vertexbufferParams.dimension = RHI::ResourceDimension::Raw;
+		vertexbufferParams.states = RHI::ResourceState::CopyDest;
+		_resource_vertexbuffer = _device->CreateResource(vertexbufferParams);
 
-		// indices line
+		// line
 		RHI::ResourceArgs indicesLinesParams_UL = {};
 		indicesLinesParams_UL.heap.type = RHI::HeapType::Upload;
-		indicesLinesParams_UL.size.cx = sizeof(uint16_t) * _indices_lines.size();
+		indicesLinesParams_UL.size.cx = sizeof(core::uint2) * _lines.size();
 		indicesLinesParams_UL.dimension = RHI::ResourceDimension::Raw;
 		indicesLinesParams_UL.states = RHI::ResourceState::GenericRead;
 		auto indexLinesbuffer_UL = _device->CreateResource(indicesLinesParams_UL);
-		std::memcpy(indexLinesbuffer_UL->Data(), _indices_lines.data(), sizeof(uint16_t) * _indices_lines.size());
+		std::memcpy(indexLinesbuffer_UL->Data(), _lines.data(), sizeof(core::uint2) * _lines.size());
 
 		RHI::ResourceArgs indicesLinesParams = {};
 		indicesLinesParams.heap.type = RHI::HeapType::Default;
-		indicesLinesParams.size.cx = sizeof(uint16_t) * _indices_lines.size();
+		indicesLinesParams.size.cx = sizeof(core::uint2) * _lines.size();
 		indicesLinesParams.dimension = RHI::ResourceDimension::Raw;
 		indicesLinesParams.states = RHI::ResourceState::CopyDest;
-		_indexbuffer_lines = _device->CreateResource(indicesLinesParams);
+		_resource_indexbuffer_lines = _device->CreateResource(indicesLinesParams);
 		
 		RHI::ResourceArgs constParams = {};
 		constParams.heap.type = RHI::HeapType::Upload;
@@ -463,43 +474,46 @@ public:
 
 		//--------------------------------------------------------
 		_resourcepacket->SetResource(0, _res_constbuffer.get(), RHI::ResourceViewArgs::CBuffer());
+		_resourcepacket->SetResource(1, _resource_curr_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size()));
+		_resourcepacket->SetResource(2, _resource_tangents.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size()));
 		
 		_resourcepacket_simulate->SetResource(SimulateResourceId_ConstBuffer, _cbuffer_simulate.get(), RHI::ResourceViewArgs::CBuffer());
 		_resourcepacket_simulate->SetResource(SimulateResourceId_ConstBufferGlobal, _cbuffer_simulate_global.get(), RHI::ResourceViewArgs::CBuffer());
 
 		_resourcepacket_simulate->SetResource(SimulateResourceId_StrandOffsets, _resource_strandoffsets.get(), RHI::ResourceViewArgs::Shader(sizeof(uint32_t), (uint32_t)_strandOffsets.size()));
 		_resourcepacket_simulate->SetResource(SimulateResourceId_Constrains, _resource_constraints.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_constraints.size()));
-		_resourcepacket_simulate->SetResource(SimulateResourceId_PositionsInit, _resource_init_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_vertices.size()));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_PositionsInit, _resource_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size()));
 		
-		_resourcepacket_simulate->SetResource(SimulateResourceId_Positions, _resouce_vertices.get(), RHI::ResourceViewArgs::Unordered(sizeof(Vertex), (uint32_t)_vertices.size()));
-		_resourcepacket_simulate->SetResource(SimulateResourceId_PositionsPrev, _resource_prev_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_vertices.size()));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_Positions, _resource_curr_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_positions.size()));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_PositionsPrev, _resource_prev_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_positions.size()));
 
 
 		_pipelinestate->SetName(u8"_pipelinestate");
 		_pipelinestate_basic->SetName(u8"_pipelinestate_basic");
 		_pipelinestate_simulate->SetName(u8"_pipelinestate_simulate");
 		
-		_resouce_vertices->SetName(u8"_resouce_vertices");
+		_resource_curr_positions->SetName(u8"_resource_curr_positions");
 		_resource_prev_positions->SetName(u8"_resource_prev_positions");
-		_indexbuffer->SetName(u8"_indexbuffer");
-		_indexbuffer_lines->SetName(u8"_indexbuffer_lines");
+		_resource_vertexbuffer->SetName(u8"_resource_vertexbuffer");
+		_resource_indexbuffer_lines->SetName(u8"_resource_indexbuffer_lines");
 		_resource_strandoffsets->SetName(u8"_resource_strandoffsets");
 		_resource_constraints->SetName(u8"_resource_constraints");
 		_cbuffer_simulate->SetName(u8"_cbuffer_simulate");
 		
-		_cmdlist->CopyResource(_resouce_vertices.get(), vetexbuffer_UL.get());
-		_cmdlist->CopyResource(_resource_prev_positions.get(), vetexbuffer_prev_UL.get());
-		_cmdlist->CopyResource(_resource_init_positions.get(), vetexbuffer_prev_UL.get());
-		_cmdlist->CopyResource(_indexbuffer.get(), indexbuffer_UL.get());
-		_cmdlist->CopyResource(_indexbuffer_lines.get(), indexLinesbuffer_UL.get());
+		_cmdlist->CopyResource(_resource_tangents.get(), resource_tangents_UL.get());
+		_cmdlist->CopyResource(_resource_positions.get(), resource_positions_UL.get());
+		_cmdlist->CopyResource(_resource_prev_positions.get(), resource_positions_UL.get());
+		_cmdlist->CopyResource(_resource_curr_positions.get(), resource_positions_UL.get());
+		_cmdlist->CopyResource(_resource_vertexbuffer.get(), resource_vertices_UL.get());
+		_cmdlist->CopyResource(_resource_indexbuffer_lines.get(), indexLinesbuffer_UL.get());
 		_cmdlist->CopyResource(_resource_strandoffsets.get(), strandoffsets_UL.get());
 		_cmdlist->CopyResource(_resource_constraints.get(), constraints_UL.get());
-		_cmdlist->TransitionBarrier(_resouce_vertices.get(), RHI::ResourceState::ComputerShaderRerources);
+		_cmdlist->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::ComputerShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_prev_positions.get(), RHI::ResourceState::ComputerShaderRerources);
-		_cmdlist->TransitionBarrier(_resource_init_positions.get(), RHI::ResourceState::ComputerShaderRerources);
-		_cmdlist->TransitionBarrier(_indexbuffer.get(), RHI::ResourceState::IndexBuffer);
-		_cmdlist->TransitionBarrier(_indexbuffer_lines.get(), RHI::ResourceState::IndexBuffer);
-		_cmdlist->TransitionBarrier(_indexbuffer_lines.get(), RHI::ResourceState::IndexBuffer);
+		_cmdlist->TransitionBarrier(_resource_positions.get(), RHI::ResourceState::ComputerShaderRerources);
+		_cmdlist->TransitionBarrier(_resource_tangents.get(), RHI::ResourceState::VertexShaderRerources);
+		_cmdlist->TransitionBarrier(_resource_vertexbuffer.get(), RHI::ResourceState::VertexBuffer);
+		_cmdlist->TransitionBarrier(_resource_indexbuffer_lines.get(), RHI::ResourceState::VertexBuffer);
 		_cmdlist->TransitionBarrier(_resource_strandoffsets.get(), RHI::ResourceState::ComputerShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_constraints.get(), RHI::ResourceState::ComputerShaderRerources);
 		
@@ -534,7 +548,7 @@ public:
 				ss_texcoord >> tempChar >> vertex.uv.x >> vertex.uv.y;
 				assert(tempChar == 't');
 
-				int indexbase = _vertices.size();
+				uint32_t indexbase = _positions.size();
 				for (int ipoint = 0; ipoint < npoints; ipoint++)
 				{
 					std::string line3;
@@ -542,41 +556,48 @@ public:
 					std::istringstream ss_vertex(line3);
 					ss_vertex >> vertex.position.x >> vertex.position.y >> vertex.position.z;
 					vertex.position.z = -vertex.position.z;
-					vertex.position.w = static_cast<float>(ipoint) / npoints;
+					vertex.locate = static_cast<float>(ipoint) / npoints;
+					_cpoints.push_back(vertex);
 					vertices.push_back(vertex);
-					_vertices.push_back(vertex);
+					_positions.push_back(core::float4(vertex.position, vertex.locate));
 
 					if (ipoint > 0)
-					{
-						_indices_lines.push_back(_vertices.size() - 2);
-						_indices_lines.push_back(_vertices.size() - 1);
-					}
+						_lines.push_back(core::uint2(_positions.size() - 2, _positions.size() - 1));
 				}
-				_strandOffsets.push_back(_vertices.size());
+				_strandOffsets.push_back(_positions.size());
 
-				_indices.push_back(indexbase + 0);
-				_indices.push_back(indexbase + 0);
-				_indices.push_back(indexbase + 1);
-				_indices.push_back(indexbase + 2);
+				_vertices.push_back({ indexbase, indexbase, indexbase + 1, indexbase + 2 });
 				
 				for (int ipoint = 0; ipoint < npoints - 3; ipoint++)
-				{
-					_indices.push_back(indexbase + ipoint + 0);
-					_indices.push_back(indexbase + ipoint + 1);
-					_indices.push_back(indexbase + ipoint + 2);
-					_indices.push_back(indexbase + ipoint + 3);
-				}
+					_vertices.push_back({ indexbase + ipoint, indexbase + ipoint + 1, indexbase + ipoint + 2, indexbase + ipoint + 3 });
 
-				_indices.push_back(indexbase + npoints - 3);
-				_indices.push_back(indexbase + npoints - 2);
-				_indices.push_back(indexbase + npoints - 1);
-				_indices.push_back(indexbase + npoints - 1);
-
-				_controlPoints.push_back(vertices);
+				_vertices.push_back({ indexbase + npoints - 3, indexbase + npoints - 2, indexbase + npoints - 1, indexbase + npoints - 1 });
+				_strands.push_back(vertices);
 			}
 		}
 		hair_vertices_file.close();
 
+		for (size_t istrand = 0; istrand < _strands.size(); ++istrand)
+		{
+			std::vector<Vertex> & strand = _strands[istrand];
+			for (size_t ivertex = 0; ivertex < strand.size(); ++ivertex)
+			{
+				Vertex & vertex = strand[ivertex];
+				if (ivertex == 0)
+					vertex.tangent = strand[ivertex].position - strand[ivertex + 1].position;
+				else if(ivertex == strand.size() - 1)
+					vertex.tangent = strand[ivertex - 1].position - strand[ivertex].position;
+				else
+				{
+					core::float3 tangent_before = (strand[ivertex - 1].position - strand[ivertex].position).normalize();
+					core::float3 tangent_after = (strand[ivertex].position - strand[ivertex + 1].position).normalize();
+					vertex.tangent = (tangent_before + tangent_after) / 2;
+				}
+				vertex.tangent.normalize();
+
+				_tangents.push_back(core::float4(vertex.tangent, 0.0f));
+			}
+		}
 
 		drawing::image::image_codec_context  icc;
 		icc.get_format = [](drawing::image::image_type type, drawing::image::image_format format)
@@ -614,7 +635,7 @@ public:
 		int blendBegin = stiffRegion - blendRegion / 2.0;
 		int blendEnd = stiffRegion + blendRegion / 2.0;
 		
-		_constraints.resize(_vertices.size());
+		_constraints.resize(_positions.size());
 		for(size_t istrand = 0; istrand < _strandOffsets.size(); ++istrand)
 		{
 			uint32_t ipointfirst = istrand > 0 ? _strandOffsets[istrand - 1] : 0;
@@ -623,13 +644,13 @@ public:
 
 			// linear length
 			for (size_t ipoint = 0; ipoint < npoints - 1; ++ipoint)
-				_constraints[ipointfirst + ipoint].x = (_vertices[ipointfirst + ipoint + 1].position - _vertices[ipointfirst + ipoint].position).xyz.length();
+				_constraints[ipointfirst + ipoint].x = (_positions[ipointfirst + ipoint + 1] - _positions[ipointfirst + ipoint]).xyz.length();
 
 			// linear stiffness
 			for (size_t ipoint = 0; ipoint < npoints; ++ipoint)
 			{
-				uint32_t row = std::clamp<uint32_t>(uint32_t(_vertices[ipointfirst + ipoint].uv.y * linear_stiffness_map.format.height), 0, linear_stiffness_map.format.height - 1);
-				uint32_t col = std::clamp<uint32_t>(uint32_t(_vertices[ipointfirst + ipoint].uv.x * linear_stiffness_map.format.width), 0, linear_stiffness_map.format.width - 1);
+				uint32_t row = std::clamp<uint32_t>(uint32_t(_cpoints[ipointfirst + ipoint].uv.y * linear_stiffness_map.format.height), 0, linear_stiffness_map.format.height - 1);
+				uint32_t col = std::clamp<uint32_t>(uint32_t(_cpoints[ipointfirst + ipoint].uv.x * linear_stiffness_map.format.width), 0, linear_stiffness_map.format.width - 1);
 
 				float hairTexStiffness = uint8_t(linear_stiffness_map.data[row * linear_stiffness_map.pitch + col * 4]) / 255.0f * hairStiffnessMultiplier;
 				if (npoints < shortStiffHairLength && hairTexStiffness > 0.1)
@@ -660,7 +681,7 @@ public:
 
 			// angular length
 			for (size_t ipoint = 0; ipoint < npoints - 2; ++ipoint)
-				_constraints[ipointfirst + ipoint].z = (_vertices[ipointfirst + ipoint + 2].position - _vertices[ipointfirst + ipoint].position).xyz.length();
+				_constraints[ipointfirst + ipoint].z = (_positions[ipointfirst + ipoint + 2] - _positions[ipointfirst + ipoint]).xyz.length();
 
 			// angular stiffness
 			float rootPos = 0.25f;
@@ -705,9 +726,9 @@ public:
 		//};
 		//std::vector<uint16_t> indices = { 0, 1, 2};
 		//std::vector<uint16_t> indices_lines = {0, 1, 2};
-		//_vertices = vertices;
+		//_positions = vertices;
 		//_indices = indices;
-		//_indices_lines = indices_lines;
+		//_lines = indices_lines;
 
 
 		// colli
@@ -819,6 +840,7 @@ public:
 					cbuffer.timeElapse = std::min(float(elapse), 0.1f);
 					cbuffer.angularStiffness = 1;
 					cbuffer.numConstraintIterations = 20;
+					cbuffer.eyePosition = { 0.0f, 0.0f, _view_z };
 					cbuffer.numSphereImplicits = _num_collisionSpheres;
 					std::memcpy(_cbuffer_simulate->Data(), &cbuffer, sizeof(cbuffer));
 				}
@@ -834,13 +856,13 @@ public:
 				
 				_cmdallocator_compute->Reset();
 				_cmdlist_compute->Reset(_cmdallocator_compute.get());
-				_cmdlist_compute->TransitionBarrier(_resouce_vertices.get(), RHI::ResourceState::UnorderedAccess);
+				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::UnorderedAccess);
 				_cmdlist_compute->SetPipelineState(_pipelinestate_simulate.get());
 				_cmdlist_compute->SetResourcePacket(_resourcepacket_simulate.get());
 				_cmdlist_compute->SetComputeResources(0, 0);
 
 				_cmdlist_compute->Dispatch({ uint32_t(_strandOffsets.size()), 1, 1 });
-				_cmdlist_compute->TransitionBarrier(_resouce_vertices.get(), RHI::ResourceState::VertexShaderRerources);
+				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderRerources);
 				_cmdlist_compute->Close();
 				_cmdqueue_compute->Excute(_cmdlist_compute.get());
 				_cmdqueue_compute->Wait();
@@ -853,6 +875,7 @@ public:
 				SceneConstantBuffer cbuffer;
 				cbuffer.transform = matrView * matrProj;
 				cbuffer.tessFactor = _tessFactor;
+				cbuffer.eyePosition = { 0.0f, 0.0f, _view_z };
 				std::memcpy(_res_constbuffer->Data(), &cbuffer, sizeof(cbuffer));
 			}
 
@@ -872,21 +895,18 @@ public:
 			{
 				_cmdlist->SetPipelineState(_pipelinestate.get());
 				_cmdlist->SetGraphicsResources(0, 0);
-				_cmdlist->IASetVertexBuffer(_resouce_vertices.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
-				_cmdlist->IASetIndexBuffer(_indexbuffer.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices);
-				_cmdlist->SetGraphicsResources(0, 0);
-				_cmdlist->IASetTopologyType(RHI::Topology::Point4PatchList);
-				_cmdlist->DrawIndexedInstanced(_nindices, 1, 0, 0, 0);
+				_cmdlist->IASetVertexBuffer(_resource_vertexbuffer.get(), sizeof(core::uint4), sizeof(core::uint4) * _vertices.size());
+				_cmdlist->IASetTopologyType(RHI::Topology::Point1PatchList);
+				_cmdlist->DrawInstanced(_vertices.size(), 1, 0, 0);
 			}
 
 			if (_mode.any(content_mode::line))
 			{
 				_cmdlist->SetPipelineState(_pipelinestate_basic.get());
 				_cmdlist->SetGraphicsResources(0, 0);
-				_cmdlist->IASetVertexBuffer(_resouce_vertices.get(), sizeof(Vertex), sizeof(Vertex) * _nvertices);
-				_cmdlist->IASetIndexBuffer(_indexbuffer_lines.get(), sizeof(uint16_t), sizeof(uint16_t) * _nindices_lines);
+				_cmdlist->IASetVertexBuffer(_resource_indexbuffer_lines.get(), sizeof(uint32_t), sizeof(core::uint2) * _lines.size());
 				_cmdlist->IASetTopologyType(RHI::Topology::LineList);
-				_cmdlist->DrawIndexedInstanced(_nindices_lines, 1, 0, 0, 0);
+				_cmdlist->DrawInstanced(_lines.size() * 2, 1, 0, 0);
 			}
 
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::Present);
@@ -938,15 +958,16 @@ private:
 	
 	std::shared_ptr<RHI::RHIResourcePacket> _resourcepacket_simulate;
 	
-	std::shared_ptr<RHI::RHIResource> _resouce_vertices;
+	std::shared_ptr<RHI::RHIResource> _resource_tangents;
+	std::shared_ptr<RHI::RHIResource> _resource_positions;
 	std::shared_ptr<RHI::RHIResource> _resource_prev_positions;
-	std::shared_ptr<RHI::RHIResource> _resource_init_positions;
-	std::shared_ptr<RHI::RHIResource> _indexbuffer;
-	std::shared_ptr<RHI::RHIResource> _indexbuffer_lines;
+	std::shared_ptr<RHI::RHIResource> _resource_curr_positions;
+	
+	std::shared_ptr<RHI::RHIResource> _resource_vertexbuffer;
+	std::shared_ptr<RHI::RHIResource> _resource_indexbuffer_lines;
 	
 	size_t _nvertices = 0;
-	size_t _nindices = 0;
-	size_t _nindices_lines = 0;
+	size_t _nlines = 0;
 	std::shared_ptr<RHI::RHIResource> _res_constbuffer;
 	std::shared_ptr<RHI::RHIResource> _cbuffer_simulate;
 	std::shared_ptr<RHI::RHIResource> _cbuffer_simulate_global;
@@ -956,10 +977,12 @@ private:
 
 
 	bool _shortHair = false;
-	std::vector<std::vector<Vertex>> _controlPoints;
-	std::vector<Vertex> _vertices;
-	std::vector<uint16_t> _indices;
-	std::vector<uint16_t> _indices_lines;
+	std::vector<std::vector<Vertex>> _strands;
+	std::vector<Vertex> _cpoints;
+	std::vector<core::float4> _positions;
+	std::vector<core::float4> _tangents;
+	std::vector<core::uint4> _vertices;
+	std::vector<core::uint2> _lines;
 	std::vector<uint32_t> _strandOffsets;
 	std::vector<core::float4> _constraints;
 	float angularStiffness = 0.025f;

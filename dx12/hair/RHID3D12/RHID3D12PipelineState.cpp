@@ -163,11 +163,14 @@ namespace RHI::RHID3D12
 			}
 		}
 
-		D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
+		std::vector<D3D12_INPUT_ELEMENT_DESC> elements(args.elements.size());
+		for (size_t ielement = 0; ielement < args.elements.size(); ++ielement)
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-		};
+			elements[ielement].SemanticName = args.elements[ielement].name.c_str();
+			elements[ielement].Format = FromPixelFormat(args.elements[ielement].format);
+			elements[ielement].AlignedByteOffset = args.elements[ielement].offset;
+			elements[ielement].InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
+		}
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
 		desc.pRootSignature = rootSignature.get();
@@ -195,7 +198,7 @@ namespace RHI::RHID3D12
 		desc.DepthStencilState.DepthEnable = args.depthstencil.depth;
 		desc.DepthStencilState.StencilEnable = args.depthstencil.stencil;
 
-		desc.InputLayout = { inputElementDescs, (uint32_t)std::size(inputElementDescs) };
+		desc.InputLayout = { elements.data(), (uint32_t)elements.size() };
 		desc.PrimitiveTopologyType = FromTopologyType(args.topology);
 
 		desc.NumRenderTargets = args.ntargets;
