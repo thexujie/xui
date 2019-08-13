@@ -102,6 +102,7 @@
     <ClCompile Include="d3d\d3d.cpp" />
     <ClCompile Include="dxgi\dxgi.cpp" />
     <ClCompile Include="main\main.cpp" />
+    <ClCompile Include="RHID3D12\RHID3D12RenderTarget.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12ResourcePacket.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12Factory.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="d3d\d3d.h" />
     <ClInclude Include="dxgi\dxgi.h" />
     <ClInclude Include="main\main.h" />
+    <ClInclude Include="RHID3D12\RHID3D12RenderTarget.h" />
     <ClInclude Include="RHID3D12\RHID3D12ResourcePacket.h" />
     <ClInclude Include="RHID3D12\RHID3D12Factory.h" />
     <ClInclude Include="RHID3D12\RHID3D12.h" />

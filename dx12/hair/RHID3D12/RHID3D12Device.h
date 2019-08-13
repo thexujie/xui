@@ -10,10 +10,10 @@ namespace RHI::RHID3D12
 		RHID3D12Device() = default;
 		virtual ~RHID3D12Device() = default;
 
-		core::error Create(win32::comptr<IDXGIAdapter1> adapter);
+		core::error Create(core::comptr<IDXGIAdapter1> adapter);
 
-		win32::comptr<ID3D12Device> Inner() const { return _device; }
-		win32::comptr<IDXGIAdapter1> InnerAdapter() const { return _adapter; }
+		core::comptr<ID3D12Device> Inner() const { return _device; }
+		core::comptr<IDXGIAdapter1> InnerAdapter() const { return _adapter; }
 
 	public:
 		std::shared_ptr<RHICommandQueue> CreateCommandQueue(CommandType type, CommandQueueFlags flags) const override;
@@ -25,7 +25,7 @@ namespace RHI::RHID3D12
 		std::shared_ptr<RHIPipelineState> CreatePipelineState(const PipelineStateArgs & args) const override;
 
 	private:
-		win32::comptr<IDXGIAdapter1> _adapter;
-		win32::comptr<ID3D12Device> _device;
+		core::comptr<IDXGIAdapter1> _adapter;
+		core::comptr<ID3D12Device> _device;
 	};
 }

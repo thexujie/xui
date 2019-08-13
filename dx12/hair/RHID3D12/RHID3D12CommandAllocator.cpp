@@ -15,8 +15,8 @@ namespace RHI::RHID3D12
 		assert(device);
 		assert(adapter);
 
-		win32::comptr<ID3D12CommandAllocator> cmdallocator;
-		win32::comptr<ID3D12GraphicsCommandList> cmdlist;
+		core::comptr<ID3D12CommandAllocator> cmdallocator;
+		core::comptr<ID3D12GraphicsCommandList> cmdlist;
 
 		hr = device->CreateCommandAllocator(FromCommandType(type), __uuidof(ID3D12CommandAllocator), cmdallocator.getvv());
 		if (FAILED(hr))

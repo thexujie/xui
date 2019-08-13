@@ -9,9 +9,6 @@
 //#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
 #pragma comment(lib, "../../externals/skia/bin/x64/skia.dll.lib")
 #include "main.h"
-
-#include "main.h"
-#include "RHID3D12/RHID3D12.h"
 #include "RHID3D12/RHID3D12Factory.h"
 
 #pragma comment(lib, "imm32.lib")

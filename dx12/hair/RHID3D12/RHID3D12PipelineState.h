@@ -16,8 +16,8 @@ namespace RHI::RHID3D12
 		void SetName(const std::u8string & name);
 
 	private:
-		core::error _CreateGraphicsPipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature);
-		core::error _CreateComputePipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature);
+		core::error _CreateGraphicsPipelineState(const PipelineStateArgs & args, core::comptr<ID3D12RootSignature> rootSignature);
+		core::error _CreateComputePipelineState(const PipelineStateArgs & args, core::comptr<ID3D12RootSignature> rootSignature);
 		
 	public:
 		const PipelineStateArgs & Args() const { return _args; }
@@ -28,8 +28,8 @@ namespace RHI::RHID3D12
 		RHID3D12Device * _device = nullptr;
 
 		PipelineStateArgs _args;
-		win32::comptr<ID3D12RootSignature> _rootSignature;
-		win32::comptr<ID3D12PipelineState> _pipelineState;
+		core::comptr<ID3D12RootSignature> _rootSignature;
+		core::comptr<ID3D12PipelineState> _pipelineState;
 
 		CommandType _type = CommandType::Direct;
 		CommandQueueFlags _flags = nullptr;

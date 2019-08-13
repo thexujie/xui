@@ -138,5 +138,3 @@ namespace win32
 		uint8_t  Data4[8];
 	};
 }
-
-#include "comptr.h"

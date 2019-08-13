@@ -80,6 +80,9 @@
     <ClCompile Include="RHI\RHIResourcePacket.cpp">
       <Filter>RHI</Filter>
     </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12RenderTarget.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -160,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="RHI\RHIResourcePacket.h">
       <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12RenderTarget.h">
+      <Filter>RHID3D12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

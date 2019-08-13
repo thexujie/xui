@@ -23,6 +23,6 @@ namespace RHI::RHID3D12
 
 	private:
 		RHID3D12Device * _device = nullptr;
-		win32::comptr<ID3D12CommandAllocator> _cmdallocator;
+		core::comptr<ID3D12CommandAllocator> _cmdallocator;
 	};
 }

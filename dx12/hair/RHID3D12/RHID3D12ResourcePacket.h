@@ -32,7 +32,7 @@ namespace RHI::RHID3D12
 		
 	private:
 		RHID3D12Device * _device = nullptr;
-		win32::comptr<ID3D12DescriptorHeap> _heap;
+		core::comptr<ID3D12DescriptorHeap> _heap;
 		std::vector<ResourceViewArgs> _viewArgs;
 
 		ResourcePacketArgs _args;

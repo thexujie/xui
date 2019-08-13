@@ -13,7 +13,7 @@ namespace RHI::RHID3D12
 		auto device = _device->Inner();
 		assert(device);
 
-		win32::comptr<ID3D12DescriptorHeap> heap;
+		core::comptr<ID3D12DescriptorHeap> heap;
 
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 		heapDesc.NumDescriptors = 1;
@@ -68,7 +68,7 @@ namespace RHI::RHID3D12
 		auto device = _device->Inner();
 		assert(device);
 
-		win32::comptr<ID3D12DescriptorHeap> heap;
+		core::comptr<ID3D12DescriptorHeap> heap;
 
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 		heapDesc.NumDescriptors = 1;

@@ -17,7 +17,7 @@ namespace RHI::RHID3D12
 		assert(device);
 		assert(adapter);
 
-		win32::comptr<IDXGIFactory3> dxgifactory;
+		core::comptr<IDXGIFactory3> dxgifactory;
 		hr = adapter->GetParent(__uuidof(IDXGIFactory3), dxgifactory.getvv());
 		if (FAILED(hr))
 		{
@@ -40,7 +40,7 @@ namespace RHI::RHID3D12
 		swapChainDesc.SampleDesc.Count = params.MSAA;
 		swapChainDesc.SampleDesc.Quality = params.MSAAQuality;
 
-		win32::comptr<IDXGISwapChain1> swapchain1;
+		core::comptr<IDXGISwapChain1> swapchain1;
 		hr = dxgifactory->CreateSwapChainForHwnd(
 			d3d12cmdqueue,
 			(HWND)params.hwnd,
@@ -60,8 +60,8 @@ namespace RHI::RHID3D12
 			core::war() << __FUNCTION__ " dxgifactory->MakeWindowAssociation(DXGI_MWA_NO_ALT_ENTER) failed: " << win32::winerr_str(hr & 0xFFFF);
 		}
 
-		win32::comptr<ID3D12DescriptorHeap> rtv_heap;
-		std::vector<win32::comptr<ID3D12Resource>> buffers(params.nbuffer);
+		core::comptr<ID3D12DescriptorHeap> rtv_heap;
+		std::vector<core::comptr<ID3D12Resource>> buffers(params.nbuffer);
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
 			rtvHeapDesc.NumDescriptors = params.nbuffer;

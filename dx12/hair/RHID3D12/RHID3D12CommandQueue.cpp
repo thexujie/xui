@@ -34,7 +34,7 @@ namespace RHI::RHID3D12
 
 		auto device = _device->Inner();
 		assert(device);
-		win32::comptr<ID3D12CommandQueue> cmdqueue;
+		core::comptr<ID3D12CommandQueue> cmdqueue;
 		HRESULT hr = device->CreateCommandQueue(&queueDesc, __uuidof(ID3D12CommandQueue), cmdqueue.getvv());
 		if (FAILED(hr))
 		{

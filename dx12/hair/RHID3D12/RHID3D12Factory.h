@@ -17,6 +17,6 @@ namespace RHI::RHID3D12
 
 	private:
 		utils::dll _dll;
-		win32::comptr<IDXGIFactory3> _dxgi;
+		core::comptr<IDXGIFactory3> _dxgi;
 	};
 }

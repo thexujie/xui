@@ -49,8 +49,8 @@ namespace RHI::RHID3D12
 
 	private:
 		RHID3D12Device * _device = nullptr;
-		win32::comptr<ID3D12CommandAllocator> _cmdallocator;
-		win32::comptr<ID3D12GraphicsCommandList> _cmdlist;
+		core::comptr<ID3D12CommandAllocator> _cmdallocator;
+		core::comptr<ID3D12GraphicsCommandList> _cmdlist;
 
 		RHID3D12RenderTarget * _rendertarget = nullptr;
 		RHID3D12ResourcePacket * _resourcepacket = nullptr;

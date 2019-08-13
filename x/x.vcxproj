@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\block_ptr.h" />
+    <ClInclude Include="core\comptr.h" />
     <ClInclude Include="core\easingcurve.h" />
     <ClInclude Include="core\pixelformat.h" />
     <ClInclude Include="drawing\ColorFilter.h" />
@@ -219,7 +220,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="utils\dll.h" />
     <ClInclude Include="utils\utils.h" />
-    <ClInclude Include="win32\comptr.h" />
     <ClInclude Include="win32\win32.h" />
     <ClInclude Include="x.h" />
   </ItemGroup>

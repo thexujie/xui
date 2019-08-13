@@ -167,6 +167,8 @@ namespace std
 #include "core/io/stream.h"
 #include "core/io/filestream.h"
 
+#include "core/comptr.h"
+
 using namespace core::unit_literals;
 
 namespace core

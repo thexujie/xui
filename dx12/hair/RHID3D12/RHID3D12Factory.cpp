@@ -18,7 +18,7 @@ namespace RHI::RHID3D12
 
 		HRESULT hr = S_OK;
 #ifdef _DEBUG
-		win32::comptr<ID3D12Debug> debugInterface;
+		core::comptr<ID3D12Debug> debugInterface;
 		hr = D3D12GetDebugInterface(IID_PPV_ARGS(debugInterface.getpp()));
 		if (SUCCEEDED(hr))
 			debugInterface->EnableDebugLayer();
@@ -48,7 +48,7 @@ namespace RHI::RHID3D12
 
 		std::vector<RHIAdapterDesc> rhidescs;
 		UINT adapterIndex = 0;
-		win32::comptr<IDXGIAdapter1> adapter;
+		core::comptr<IDXGIAdapter1> adapter;
 		while(_dxgi->EnumAdapters1(adapterIndex++, adapter.getpp()) != DXGI_ERROR_NOT_FOUND)
 		{
 			DXGI_ADAPTER_DESC1 dxgidesc = {};
@@ -70,7 +70,7 @@ namespace RHI::RHID3D12
 
 		std::vector<RHIAdapterDesc> rhidescs;
 		UINT adapterIndex = 0;
-		win32::comptr<IDXGIAdapter1> adapter;
+		core::comptr<IDXGIAdapter1> adapter;
 
 		UINT deviceId = std::atol(reinterpret_cast<const char *>(uri.data()) + 14);
 		if (!deviceId)

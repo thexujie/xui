@@ -10,7 +10,7 @@
 
 namespace RHI::RHID3D12
 {
-	static RHIAdapterDesc RHIAdapterDescFromAdapter(win32::comptr<IDXGIAdapter1> adapter)
+	static RHIAdapterDesc RHIAdapterDescFromAdapter(core::comptr<IDXGIAdapter1> adapter)
 	{
 		DXGI_ADAPTER_DESC1 dxgidesc = {};
 		adapter->GetDesc1(&dxgidesc);
@@ -22,12 +22,12 @@ namespace RHI::RHID3D12
 		return rhidesc;
 	}
 
-	core::error RHID3D12Device::Create(win32::comptr<IDXGIAdapter1> adapter)
+	core::error RHID3D12Device::Create(core::comptr<IDXGIAdapter1> adapter)
 	{
 		if (!adapter)
 			return core::e_args;
 
-		win32::comptr<ID3D12Device> device;
+		core::comptr<ID3D12Device> device;
 		HRESULT hr = D3D12CreateDevice(adapter.get(), D3D_FEATURE_LEVEL_12_0, __uuidof(ID3D12Device), device.getvv());
 		if (FAILED(hr))
 		{

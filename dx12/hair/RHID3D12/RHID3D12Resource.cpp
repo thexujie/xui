@@ -36,7 +36,7 @@ namespace RHI::RHID3D12
 		heapprop.CreationNodeMask = 1;
 		heapprop.VisibleNodeMask = 1;
 
-		win32::comptr<ID3D12Resource> resource;
+		core::comptr<ID3D12Resource> resource;
 		hr = device->CreateCommittedResource(&heapprop, FromHeapFlags(params.heap.flags), &resdesc, FromResourceStates(params.states), nullptr, __uuidof(ID3D12Resource), resource.getvv());
 		if (FAILED(hr))
 		{

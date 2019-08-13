@@ -1,6 +1,6 @@
 #pragma once
 
-namespace win32
+namespace core
 {
     template<typename UT>
     UT * com_ref(UT * ptr)

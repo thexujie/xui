@@ -30,7 +30,7 @@ namespace RHI::RHID3D12
 	private:
 		RHID3D12Device * _device = nullptr;
 		ResourceArgs _args;
-		win32::comptr<ID3D12Resource> _resource;
+		core::comptr<ID3D12Resource> _resource;
 		void * _pointer = nullptr;
 	};
 }

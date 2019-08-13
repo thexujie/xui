@@ -2,7 +2,7 @@
 #include "RHID3D12CommandList.h"
 #include "RHID3D12CommandAllocator.h"
 #include "RHID3D12Resource.h"
-#include "RHID3D12RenderTargetHWND.h"
+#include "RHID3D12RenderTarget.h"
 #include "RHID3D12PipelineState.h"
 #include "RHID3D12ResourcePacket.h"
 
@@ -20,8 +20,8 @@ namespace RHI::RHID3D12
 		assert(device);
 		assert(adapter);
 
-		win32::comptr<ID3D12CommandAllocator> cmdallocator;
-		win32::comptr<ID3D12GraphicsCommandList> cmdlist;
+		core::comptr<ID3D12CommandAllocator> cmdallocator;
+		core::comptr<ID3D12GraphicsCommandList> cmdlist;
 
 		hr = device->CreateCommandAllocator(FromCommandType(type), __uuidof(ID3D12CommandAllocator), cmdallocator.getvv());
 		if (FAILED(hr))

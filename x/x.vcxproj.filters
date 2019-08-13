@@ -336,9 +336,6 @@
     <ClInclude Include="win32\win32.h">
       <Filter>win32</Filter>
     </ClInclude>
-    <ClInclude Include="win32\comptr.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="core\pixelformat.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -348,6 +345,9 @@
     <ClInclude Include="x.h" />
     <ClInclude Include="utils\utils.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="core\comptr.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

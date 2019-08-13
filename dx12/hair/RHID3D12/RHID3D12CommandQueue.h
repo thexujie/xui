@@ -24,8 +24,8 @@ namespace RHI::RHID3D12
 		
 	private:
 		RHID3D12Device * _device = nullptr;
-		win32::comptr<ID3D12CommandQueue> _cmdqueue;
-		win32::comptr<ID3D12Fence> _fence;
+		core::comptr<ID3D12CommandQueue> _cmdqueue;
+		core::comptr<ID3D12Fence> _fence;
 
 		CommandType _type = CommandType::Direct;
 		CommandQueueFlags _flags = nullptr;

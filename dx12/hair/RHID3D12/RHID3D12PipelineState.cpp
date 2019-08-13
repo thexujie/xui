@@ -66,8 +66,8 @@ namespace RHI::RHID3D12
 		rootSign.Desc_1_1.pStaticSamplers = samplers.data();
 		rootSign.Desc_1_1.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-		win32::comptr<ID3DBlob> signatureBlob;
-		win32::comptr<ID3DBlob> signatureBlog_error;
+		core::comptr<ID3DBlob> signatureBlob;
+		core::comptr<ID3DBlob> signatureBlog_error;
 		hr = D3D12SerializeVersionedRootSignature(&rootSign, signatureBlob.getpp(), signatureBlog_error.getpp());
 		if (FAILED(hr))
 		{
@@ -75,7 +75,7 @@ namespace RHI::RHID3D12
 			return core::e_inner;
 		}
 
-		win32::comptr<ID3D12RootSignature> rootSignature;
+		core::comptr<ID3D12RootSignature> rootSignature;
 		hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), __uuidof(ID3D12RootSignature), rootSignature.getvv());
 		if (FAILED(hr))
 		{
@@ -95,7 +95,7 @@ namespace RHI::RHID3D12
 		SetD3D12ObjectName(_rootSignature.get(), core::u8str_wstr(name + u8"._rootSignature").c_str());
 	}
 	
-	core::error RHID3D12PipelineState::_CreateGraphicsPipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature)
+	core::error RHID3D12PipelineState::_CreateGraphicsPipelineState(const PipelineStateArgs & args, core::comptr<ID3D12RootSignature> rootSignature)
 	{
 		HRESULT hr = S_OK;
 
@@ -106,9 +106,9 @@ namespace RHI::RHID3D12
 #ifdef _DEBUG
 		compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
-		win32::comptr<ID3DBlob> errorMessage;
+		core::comptr<ID3DBlob> errorMessage;
 
-		win32::comptr<ID3DBlob> vertexShader;
+		core::comptr<ID3DBlob> vertexShader;
 		if (!args.VS.empty())
 		{
 			hr = D3DCompileFromFile(core::u8str_wstr(args.VS).c_str(), nullptr, nullptr, args.VSMain.c_str(), "vs_5_0", compileFlags, 0, vertexShader.getpp(), errorMessage.getpp_safe());
@@ -119,7 +119,7 @@ namespace RHI::RHID3D12
 			}
 		}
 
-		win32::comptr<ID3DBlob> hullShader;
+		core::comptr<ID3DBlob> hullShader;
 		if (!args.HS.empty())
 		{
 			hr = D3DCompileFromFile(core::u8str_wstr(args.VS).c_str(), nullptr, nullptr, args.HSMain.c_str(), "hs_5_0", compileFlags, 0, hullShader.getpp(), errorMessage.getpp_safe());
@@ -130,7 +130,7 @@ namespace RHI::RHID3D12
 			}
 		}
 
-		win32::comptr<ID3DBlob> domainShader;
+		core::comptr<ID3DBlob> domainShader;
 		if (!args.DS.empty())
 		{
 			hr = D3DCompileFromFile(core::u8str_wstr(args.VS).c_str(), nullptr, nullptr, args.DSMain.c_str(), "ds_5_0", compileFlags, 0, domainShader.getpp(), errorMessage.getpp_safe());
@@ -141,7 +141,7 @@ namespace RHI::RHID3D12
 			}
 		}
 
-		win32::comptr<ID3DBlob> geometryShader;
+		core::comptr<ID3DBlob> geometryShader;
 		if (!args.GS.empty())
 		{
 			hr = D3DCompileFromFile(core::u8str_wstr(args.GS).c_str(), nullptr, nullptr, args.GSMain.c_str(), "gs_5_0", compileFlags, 0, geometryShader.getpp(), errorMessage.getpp_safe());
@@ -152,7 +152,7 @@ namespace RHI::RHID3D12
 			}
 		}
 
-		win32::comptr<ID3DBlob> pixelShader;
+		core::comptr<ID3DBlob> pixelShader;
 		if (!args.PS.empty())
 		{
 			hr = D3DCompileFromFile(core::u8str_wstr(args.PS).c_str(), nullptr, nullptr, args.PSMain.c_str(), "ps_5_0", compileFlags, 0, pixelShader.getpp(), errorMessage.getpp_safe());
@@ -217,7 +217,7 @@ namespace RHI::RHID3D12
 		desc.RasterizerState.DepthClipEnable = args.rasterize.depthClip;
 		desc.RasterizerState.MultisampleEnable = args.rasterize.MSAA;
 
-		win32::comptr<ID3D12PipelineState> pipelineState;
+		core::comptr<ID3D12PipelineState> pipelineState;
 		hr = device->CreateGraphicsPipelineState(&desc, __uuidof(ID3D12PipelineState), pipelineState.getvv());
 		if (FAILED(hr))
 		{
@@ -231,7 +231,7 @@ namespace RHI::RHID3D12
 		return core::ok;
 	}
 
-	core::error RHID3D12PipelineState::_CreateComputePipelineState(const PipelineStateArgs & args, win32::comptr<ID3D12RootSignature> rootSignature)
+	core::error RHID3D12PipelineState::_CreateComputePipelineState(const PipelineStateArgs & args, core::comptr<ID3D12RootSignature> rootSignature)
 	{
 		HRESULT hr = S_OK;
 		auto device = _device->Inner();
@@ -241,9 +241,9 @@ namespace RHI::RHID3D12
 #ifdef _DEBUG
 		compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
-		win32::comptr<ID3DBlob> errorMessage;
+		core::comptr<ID3DBlob> errorMessage;
 
-		win32::comptr<ID3DBlob> computerShader;
+		core::comptr<ID3DBlob> computerShader;
 		hr = D3DCompileFromFile(core::u8str_wstr(args.CS).c_str(), nullptr, nullptr, args.CSMain.c_str(), "cs_5_0", compileFlags, 0, computerShader.getpp(), errorMessage.getpp_safe());
 		if (FAILED(hr))
 		{
@@ -255,7 +255,7 @@ namespace RHI::RHID3D12
 		desc.pRootSignature = rootSignature.get();
 		desc.CS = computerShader ? D3D12_SHADER_BYTECODE{ computerShader->GetBufferPointer(), computerShader->GetBufferSize() } : D3D12_SHADER_BYTECODE{};
 
-		win32::comptr<ID3D12PipelineState> pipelineState;
+		core::comptr<ID3D12PipelineState> pipelineState;
 		hr = device->CreateComputePipelineState(&desc, __uuidof(ID3D12PipelineState), pipelineState.getvv());
 		if (FAILED(hr))
 		{
