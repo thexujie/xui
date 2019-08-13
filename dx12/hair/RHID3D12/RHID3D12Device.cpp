@@ -17,7 +17,7 @@ namespace RHI::RHID3D12
 		adapter.reset();
 
 		RHIAdapterDesc rhidesc;
-		rhidesc.uri = core::format("DXGI\\DEVICEID_", dxgidesc.DeviceId);
+		rhidesc.uri = core::fmt("DXGI\\DEVICEID_", dxgidesc.DeviceId);
 		rhidesc.name = core::wstr_u8str(dxgidesc.Description);
 		return rhidesc;
 	}

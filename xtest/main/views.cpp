@@ -147,9 +147,9 @@ void views_main()
             mv->setSize({ core::auto_value, 100_per });
             //lv->setImeMode(ui::ime_mode::on);
             for (size_t cnt = 0; cnt < 100; ++cnt)
-                //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+                //lv->addItem(std::make_shared<UserViewItem>(core::fmt("Item ", cnt), drawing::wrap_mode::none));
             {
-                auto index = mv->appendItem(std::make_shared<ui::MenuItem>(drawing::Image(u8"icon.png"), core::format("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
+                auto index = mv->appendItem(std::make_shared<ui::MenuItem>(drawing::Image(u8"icon.png"), core::fmt("Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } })));
             }
 
             mv->setScrollbarVisionV(ui::scrollbar_vision::always);
@@ -162,13 +162,13 @@ void views_main()
             lv->setSize({ 100_per, 100_per });
             //lv->setImeMode(ui::ime_mode::on);
             for (size_t cnt = 0; cnt < 100; ++cnt)
-                //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+                //lv->addItem(std::make_shared<UserViewItem>(core::fmt("Item ", cnt), drawing::wrap_mode::none));
             {
-                auto index = lv->addItem(std::make_shared<ui::ListViewItem>(core::format(u8"Item ", cnt), std::make_shared <drawing::Image>(u8"icon.png"), drawing::wrap_mode::none));
+                auto index = lv->addItem(std::make_shared<ui::ListViewItem>(core::fmt(u8"Item ", cnt), std::make_shared <drawing::Image>(u8"icon.png"), drawing::wrap_mode::none));
                 auto item = std::dynamic_pointer_cast<ui::ListViewItem>(lv->itemAt(index));
-                item->addProperty(core::format(u8"属性 ", cnt, u8" 名字不怕长，我就怕你装不ققق قققق下，你感受一下"));
-                item->addProperty(core::format(u8"Property ", cnt));
-                item->addProperty(core::format(u8"Attributes", cnt));
+                item->addProperty(core::fmt(u8"属性 ", cnt, u8" 名字不怕长，我就怕你装不ققق قققق下，你感受一下"));
+                item->addProperty(core::fmt(u8"Property ", cnt));
+                item->addProperty(core::fmt(u8"Attributes", cnt));
                 item->setIconSize({ 1_em, 1_em });
             }
 
@@ -259,9 +259,9 @@ void views_main()
                     //}
                 }
                 for (size_t cnt = 0; cnt < 10; ++cnt)
-                    //lv->addItem(std::make_shared<UserViewItem>(core::format("Item ", cnt), drawing::wrap_mode::none));
+                    //lv->addItem(std::make_shared<UserViewItem>(core::fmt("Item ", cnt), drawing::wrap_mode::none));
                 {
-                    auto item = std::make_shared<ui::MenuItem>(drawing::Image(u8"icon.png"), core::format(u8"Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } }));
+                    auto item = std::make_shared<ui::MenuItem>(drawing::Image(u8"icon.png"), core::fmt(u8"Item ", cnt), ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::alt, ui::keycode::A } }));
 					form2->appendItem(item);
 					item->active += [](auto action) { std::cout << "aciton=" << action << std::endl; };
                 }

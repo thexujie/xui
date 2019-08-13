@@ -4,67 +4,67 @@
 
 namespace win32::d3d
 {
-	core::pixelformat D3DFormat2PixelFormat(D3DFORMAT d3dformat)
+	core::format D3DFormat2PixelFormat(D3DFORMAT d3dformat)
 	{
 		switch (d3dformat)
 		{
-		case D3DFMT_A8R8G8B8: return core::pixelformat::argb;
-		case D3DFMT_A8B8G8R8: return core::pixelformat::abgr;
-		case D3DFMT_X8R8G8B8: return core::pixelformat::xrgb;
-		case D3DFMT_X8B8G8R8: return core::pixelformat::xbgr;
-		case D3DFMT_YUY2: return core::pixelformat::yuy2;
-		case D3DFMT_UYVY: return core::pixelformat::uyvy;
+		case D3DFMT_A8R8G8B8: return core::format::argb;
+		case D3DFMT_A8B8G8R8: return core::format::abgr;
+		case D3DFMT_X8R8G8B8: return core::format::xrgb;
+		case D3DFMT_X8B8G8R8: return core::format::xbgr;
+		case D3DFMT_YUY2: return core::format::yuy2;
+		case D3DFMT_UYVY: return core::format::uyvy;
 
-		case D3DFormatExNV12: return core::pixelformat::nv12;
-		case D3DFormatExYV12: return core::pixelformat::yv12;
-		case D3DFormatEx411P: return core::pixelformat::yuv2;
-		case D3DFormatExP010: return core::pixelformat::p010;
-		case D3DFormatExRGBP: return core::pixelformat::rgb;
-		case D3DFormatExBGRP: return core::pixelformat::bgr;
-		default: return core::pixelformat::none;
+		case D3DFormatExNV12: return core::format::nv12;
+		case D3DFormatExYV12: return core::format::yv12;
+		case D3DFormatEx411P: return core::format::yuv2;
+		case D3DFormatExP010: return core::format::p010;
+		case D3DFormatExRGBP: return core::format::rgb;
+		case D3DFormatExBGRP: return core::format::bgr;
+		default: return core::format::none;
 		}
 	}
 
-	D3DFORMAT PixelFormat2D3DFormat(core::pixelformat pixelformat)
+	D3DFORMAT PixelFormat2D3DFormat(core::format pixelformat)
 	{
 		switch (pixelformat)
 		{
-		case core::pixelformat::argb: return D3DFMT_A8R8G8B8;
-		case core::pixelformat::abgr: return D3DFMT_A8B8G8R8;
-		case core::pixelformat::xrgb: return D3DFMT_X8R8G8B8;
-		case core::pixelformat::xbgr: return D3DFMT_X8B8G8R8;
-		case core::pixelformat::nv12: return (D3DFORMAT)D3DFormatExNV12;
-		case core::pixelformat::p010: return (D3DFORMAT)D3DFormatExP010;
-		case core::pixelformat::yv12: return (D3DFORMAT)D3DFormatExYV12;
+		case core::format::argb: return D3DFMT_A8R8G8B8;
+		case core::format::abgr: return D3DFMT_A8B8G8R8;
+		case core::format::xrgb: return D3DFMT_X8R8G8B8;
+		case core::format::xbgr: return D3DFMT_X8B8G8R8;
+		case core::format::nv12: return (D3DFORMAT)D3DFormatExNV12;
+		case core::format::p010: return (D3DFORMAT)D3DFormatExP010;
+		case core::format::yv12: return (D3DFORMAT)D3DFormatExYV12;
 		default: return D3DFMT_UNKNOWN;
 		}
 	}
 
-	core::pixelformat DXGIFormat2PixelFormat(DXGI_FORMAT dxgiformat)
+	core::format DXGIFormat2PixelFormat(DXGI_FORMAT dxgiformat)
 	{
 		switch (dxgiformat)
 		{
-		case DXGI_FORMAT_B8G8R8X8_UNORM: return core::pixelformat::bgrx;
-		case DXGI_FORMAT_B8G8R8A8_UNORM: return core::pixelformat::bgra;
-		case DXGI_FORMAT_NV12: return core::pixelformat::nv12;
-		case DXGI_FORMAT_YUY2: return core::pixelformat::yuy2;
-		case DXGI_FORMAT_P010: return core::pixelformat::p010;
-		case D3DFormatExRGBP: return core::pixelformat::rgb;
-		case D3DFormatExBGRP: return core::pixelformat::bgr;
-		case DXGI_FORMAT_420_OPAQUE: return core::pixelformat::yuy2;
-		default: return core::pixelformat::none;
+		case DXGI_FORMAT_B8G8R8X8_UNORM: return core::format::bgrx;
+		case DXGI_FORMAT_B8G8R8A8_UNORM: return core::format::bgra;
+		case DXGI_FORMAT_NV12: return core::format::nv12;
+		case DXGI_FORMAT_YUY2: return core::format::yuy2;
+		case DXGI_FORMAT_P010: return core::format::p010;
+		case D3DFormatExRGBP: return core::format::rgb;
+		case D3DFormatExBGRP: return core::format::bgr;
+		case DXGI_FORMAT_420_OPAQUE: return core::format::yuy2;
+		default: return core::format::none;
 		}
 	}
 
-	DXGI_FORMAT PixelFormat2DXGIFormat(core::pixelformat pixelformat)
+	DXGI_FORMAT PixelFormat2DXGIFormat(core::format pixelformat)
 	{
 		switch (pixelformat)
 		{
-		case core::pixelformat::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
-		case core::pixelformat::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
-		case core::pixelformat::nv12: return DXGI_FORMAT_NV12;
-		case core::pixelformat::yuy2: return DXGI_FORMAT_420_OPAQUE;
-		case core::pixelformat::p010: return DXGI_FORMAT_P010;
+		case core::format::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
+		case core::format::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case core::format::nv12: return DXGI_FORMAT_NV12;
+		case core::format::yuy2: return DXGI_FORMAT_420_OPAQUE;
+		case core::format::p010: return DXGI_FORMAT_P010;
 		default: return DXGI_FORMAT_UNKNOWN;
 		}
 	}

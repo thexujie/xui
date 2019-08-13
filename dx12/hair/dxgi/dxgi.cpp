@@ -132,29 +132,29 @@ namespace win32::DXGI
 		}
 	}
 
-	core::pixelformat ToPixelFormat(DXGI_FORMAT dxgiformat)
+	core::format ToPixelFormat(DXGI_FORMAT dxgiformat)
 	{
 		switch (dxgiformat)
 		{
-		case DXGI_FORMAT_B8G8R8X8_UNORM: return core::pixelformat::bgrx;
-		case DXGI_FORMAT_B8G8R8A8_UNORM: return core::pixelformat::bgra;
-		case DXGI_FORMAT_NV12: return core::pixelformat::nv12;
-		case DXGI_FORMAT_YUY2: return core::pixelformat::yuy2;
-		case DXGI_FORMAT_P010: return core::pixelformat::p010;
-		case DXGI_FORMAT_420_OPAQUE: return core::pixelformat::yuy2;
-		default: return core::pixelformat::none;
+		case DXGI_FORMAT_B8G8R8X8_UNORM: return core::format::bgrx;
+		case DXGI_FORMAT_B8G8R8A8_UNORM: return core::format::bgra;
+		case DXGI_FORMAT_NV12: return core::format::nv12;
+		case DXGI_FORMAT_YUY2: return core::format::yuy2;
+		case DXGI_FORMAT_P010: return core::format::p010;
+		case DXGI_FORMAT_420_OPAQUE: return core::format::yuy2;
+		default: return core::format::none;
 		}
 	}
 
-	DXGI_FORMAT FromPixelFormat(core::pixelformat pixelformat)
+	DXGI_FORMAT FromPixelFormat(core::format pixelformat)
 	{
 		switch (pixelformat)
 		{
-		case core::pixelformat::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
-		case core::pixelformat::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
-		case core::pixelformat::nv12: return DXGI_FORMAT_NV12;
-		case core::pixelformat::yuy2: return DXGI_FORMAT_420_OPAQUE;
-		case core::pixelformat::p010: return DXGI_FORMAT_P010;
+		case core::format::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
+		case core::format::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case core::format::nv12: return DXGI_FORMAT_NV12;
+		case core::format::yuy2: return DXGI_FORMAT_420_OPAQUE;
+		case core::format::p010: return DXGI_FORMAT_P010;
 		default: return DXGI_FORMAT_UNKNOWN;
 		}
 	}

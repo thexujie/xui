@@ -421,27 +421,27 @@ namespace RHI::RHID3D12
 		}
 	}
 
-	inline DXGI_FORMAT FromPixelFormat(core::pixelformat pixelformat)
+	inline DXGI_FORMAT FromPixelFormat(core::format pixelformat)
 	{
 		switch (pixelformat)
 		{
-		case core::pixelformat::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
-		case core::pixelformat::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
-		case core::pixelformat::nv12: return DXGI_FORMAT_NV12;
-		case core::pixelformat::yuy2: return DXGI_FORMAT_420_OPAQUE;
-		case core::pixelformat::p010: return DXGI_FORMAT_P010;
-		case core::pixelformat::float1: return DXGI_FORMAT_R32_FLOAT;
-		case core::pixelformat::float2: return DXGI_FORMAT_R32G32_FLOAT;
-		case core::pixelformat::float3: return DXGI_FORMAT_R32G32B32_FLOAT;
-		case core::pixelformat::float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case core::pixelformat::int1: return DXGI_FORMAT_R32_SINT;
-		case core::pixelformat::int2: return DXGI_FORMAT_R32G32_SINT;
-		case core::pixelformat::int3: return DXGI_FORMAT_R32G32B32_SINT;
-		case core::pixelformat::int4: return DXGI_FORMAT_R32G32B32A32_SINT;
-		case core::pixelformat::uint1: return DXGI_FORMAT_R32_UINT;
-		case core::pixelformat::uint2: return DXGI_FORMAT_R32G32_UINT;
-		case core::pixelformat::uint3: return DXGI_FORMAT_R32G32B32_UINT;
-		case core::pixelformat::uint4: return DXGI_FORMAT_R32G32B32A32_UINT;
+		case core::format::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
+		case core::format::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case core::format::nv12: return DXGI_FORMAT_NV12;
+		case core::format::yuy2: return DXGI_FORMAT_420_OPAQUE;
+		case core::format::p010: return DXGI_FORMAT_P010;
+		case core::format::float1: return DXGI_FORMAT_R32_FLOAT;
+		case core::format::float2: return DXGI_FORMAT_R32G32_FLOAT;
+		case core::format::float3: return DXGI_FORMAT_R32G32B32_FLOAT;
+		case core::format::float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case core::format::int1: return DXGI_FORMAT_R32_SINT;
+		case core::format::int2: return DXGI_FORMAT_R32G32_SINT;
+		case core::format::int3: return DXGI_FORMAT_R32G32B32_SINT;
+		case core::format::int4: return DXGI_FORMAT_R32G32B32A32_SINT;
+		case core::format::uint1: return DXGI_FORMAT_R32_UINT;
+		case core::format::uint2: return DXGI_FORMAT_R32G32_UINT;
+		case core::format::uint3: return DXGI_FORMAT_R32G32B32_UINT;
+		case core::format::uint4: return DXGI_FORMAT_R32G32B32A32_UINT;
 		default: return DXGI_FORMAT_UNKNOWN;
 		}
 	}

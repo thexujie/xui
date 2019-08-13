@@ -33,13 +33,13 @@ namespace drawing
         return skia::to(_native->dimensions());
     }
 
-    core::error Bitmap::Save(std::string path, image::image_type type, int32_t quality)
+    core::error Bitmap::Save(std::string path, core::image_type type, int32_t quality)
     {
         if (!_native)
             return core::e_nullptr;
 
-        if (type == image::image_type_none)
-            type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
+        if (type == core::image_type_none)
+            type = core::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
 
         SkFILEWStream stream(path.c_str());
         return SkEncodeImage(&stream, *_native, skia::from(type), quality) ? core::ok : core::e_inner;
@@ -138,13 +138,13 @@ namespace drawing
         return _size;
     }
 
-    core::error Surface::Save(std::string path, image::image_type type, int32_t quality)
+    core::error Surface::Save(std::string path, core::image_type type, int32_t quality)
     {
         if (!_native)
             return core::e_nullptr;
 
-        if (type == image::image_type_none)
-            type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
+        if (type == core::image_type_none)
+            type = core::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
 
         SkBitmap bitmap;
         bitmap.allocN32Pixels(_size.cx, _size.cy);

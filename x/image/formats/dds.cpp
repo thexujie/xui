@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "dds.h"
 
-namespace drawing::image::formats
+namespace core::image::formats
 {
     using namespace core;
 
@@ -269,7 +269,7 @@ namespace drawing::image::formats
 
         if (header->pixel_format.flags & DDSPF_ALPHA_ONLY)
         {
-            format.format = format_gray8;
+            format.format = format::gray8;
         }
         // ËÄ×Ö·û±àÂë
         else if (header->pixel_format.flags & DDSPF_FOURCC)
@@ -284,16 +284,16 @@ namespace drawing::image::formats
                 switch (header->pixel_format.dxt_format)
                 {
                 case dxt_format_dxt1:
-                    format.format = format_r5g6b5;
+                    format.format = format::r5g6b5;
                     pfn_convert = dds_convert_bc1;
                     break;
                 case dxt_format_dxt2:
                 case dxt_format_dxt3:
-                    format.format = format_a4r5g6b5;
+                    format.format = format::a4r5g6b5;
                     pfn_convert = dds_convert_bc2;
                     break;
                 case dxt_format_dxt4:
-                    format.format = format_a8r5g6b5;
+                    format.format = format::a8r5g6b5;
                     pfn_convert = dds_convert_bc3;
                     break;
                 case dxt_format_ati1:
@@ -301,31 +301,31 @@ namespace drawing::image::formats
                 case dxt_format_ati2:
                     break;
                 case dxt_format_a16b16g16r16:
-                    format.format = format_a16b16g16r16;
+                    format.format = format::a16b16g16r16;
                     pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_r16f:
-                    format.format = format_r16f;
+                    format.format = format::r16f;
                     pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_g16r16f:
-                    format.format = format_g16r16f;
+                    format.format = format::g16r16f;
                     pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_a16b16g16r16f:
-                    format.format = format_a16b16g16r16f;
+                    format.format = format::a16b16g16r16f;
                     pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_r32f:
-                    format.format = format_r32f;
+                    format.format = format::r32f;
                     pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_g32r32f:
-                    format.format = format_g32r32f;
+                    format.format = format::g32r32f;
                     pfn_convert = image_convert_ex;
                     break;
                 case dxt_format_a32b32g32r32f:
-                    format.format = format_a32b32g32r32f;
+                    format.format = format::a32b32g32r32f;
                     pfn_convert = image_convert_ex;
                     break;
                 default:

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "drawing/image/image.h"
+#include "image/format.h"
 
-namespace drawing::image::formats
+namespace core::image::formats
 {
     struct jpeg_image_info
     {

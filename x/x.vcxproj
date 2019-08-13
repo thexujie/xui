@@ -125,12 +125,6 @@
     <ClCompile Include="drawing\font.cpp" />
     <ClCompile Include="drawing\Graphics.cpp" />
     <ClCompile Include="drawing\Image.cpp" />
-    <ClCompile Include="drawing\image\formats\bmp.cpp" />
-    <ClCompile Include="drawing\image\formats\dds.cpp" />
-    <ClCompile Include="drawing\image\formats\jpg.cpp" />
-    <ClCompile Include="drawing\image\formats\png.cpp" />
-    <ClCompile Include="drawing\image\formats\tga.cpp" />
-    <ClCompile Include="drawing\image\image.cpp" />
     <ClCompile Include="drawing\Bitmap.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -138,6 +132,15 @@
     <ClCompile Include="drawing\PathStyle.cpp" />
     <ClCompile Include="drawing\Region.cpp" />
     <ClCompile Include="drawing\StringFormat.cpp" />
+    <ClCompile Include="image\converter.cpp" />
+    <ClCompile Include="image\formats\bmp.cpp" />
+    <ClCompile Include="image\formats\dds.cpp" />
+    <ClCompile Include="image\formats\ico.cpp" />
+    <ClCompile Include="image\formats\jpg.cpp" />
+    <ClCompile Include="image\formats\png.cpp" />
+    <ClCompile Include="image\formats\tga.cpp" />
+    <ClCompile Include="image\format.cpp" />
+    <ClCompile Include="image\image.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -153,7 +156,7 @@
     <ClInclude Include="core\block_ptr.h" />
     <ClInclude Include="core\comptr.h" />
     <ClInclude Include="core\easingcurve.h" />
-    <ClInclude Include="core\pixelformat.h" />
+    <ClInclude Include="core\format.h" />
     <ClInclude Include="drawing\ColorFilter.h" />
     <ClInclude Include="drawing\draw.h" />
     <ClInclude Include="drawing\drawing.h" />
@@ -204,12 +207,6 @@
     <ClInclude Include="core\vec4.h" />
     <ClInclude Include="drawing\font.h" />
     <ClInclude Include="drawing\Image.h" />
-    <ClInclude Include="drawing\image\formats\bmp.h" />
-    <ClInclude Include="drawing\image\formats\dds.h" />
-    <ClInclude Include="drawing\image\formats\jpg.h" />
-    <ClInclude Include="drawing\image\formats\png.h" />
-    <ClInclude Include="drawing\image\formats\tga.h" />
-    <ClInclude Include="drawing\image\image.h" />
     <ClInclude Include="drawing\Graphics.h" />
     <ClInclude Include="drawing\Bitmap.h" />
     <ClInclude Include="drawing\Path.h" />
@@ -217,6 +214,15 @@
     <ClInclude Include="drawing\Region.h" />
     <ClInclude Include="drawing\skia\skia.h" />
     <ClInclude Include="drawing\StringFormat.h" />
+    <ClInclude Include="image\converter.h" />
+    <ClInclude Include="image\formats\bmp.h" />
+    <ClInclude Include="image\formats\dds.h" />
+    <ClInclude Include="image\formats\ico.h" />
+    <ClInclude Include="image\formats\jpg.h" />
+    <ClInclude Include="image\formats\png.h" />
+    <ClInclude Include="image\formats\tga.h" />
+    <ClInclude Include="image\format.h" />
+    <ClInclude Include="image\image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="utils\dll.h" />
     <ClInclude Include="utils\utils.h" />

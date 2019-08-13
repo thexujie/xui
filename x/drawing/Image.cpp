@@ -26,13 +26,13 @@ namespace drawing
     {
     }
 
-    core::error Image::Save(std::string path, image::image_type type, int32_t quality) const
+    core::error Image::Save(std::string path, core::image_type type, int32_t quality) const
     {
         if (!_native)
             return core::e_nullptr;
 
-        if (type == image::image_type_none)
-            type = image::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
+        if (type == core::image_type_none)
+            type = core::image_get_type_from_ext(std::filesystem::path(path).extension().string().c_str());
 
         SkBitmap bitmap;
         _native->asLegacyBitmap(&bitmap);

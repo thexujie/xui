@@ -1,8 +1,8 @@
 #pragma once
 
-#include "drawing/image/image.h"
+#include "image/format.h"
 
-namespace drawing::image::formats
+namespace core::image::formats
 {
     //////////////////////////////////////////////////////////////////////////
     // Bitmap 文件(压缩)格式

@@ -26,9 +26,6 @@
     <ClCompile Include="core\io\filestream.cpp">
       <Filter>core\io</Filter>
     </ClCompile>
-    <ClCompile Include="drawing\image\image.cpp">
-      <Filter>drawing\image</Filter>
-    </ClCompile>
     <ClCompile Include="drawing\Graphics.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
@@ -37,21 +34,6 @@
     </ClCompile>
     <ClCompile Include="drawing\Image.cpp">
       <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\image\formats\bmp.cpp">
-      <Filter>drawing\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\image\formats\dds.cpp">
-      <Filter>drawing\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\image\formats\jpg.cpp">
-      <Filter>drawing\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\image\formats\png.cpp">
-      <Filter>drawing\image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\image\formats\tga.cpp">
-      <Filter>drawing\image\formats</Filter>
     </ClCompile>
     <ClCompile Include="core\math.cpp">
       <Filter>core</Filter>
@@ -135,6 +117,33 @@
     <ClCompile Include="utils\utils.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="image\formats\bmp.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\dds.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\ico.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\jpg.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\png.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\tga.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\format.cpp">
+      <Filter>image</Filter>
+    </ClCompile>
+    <ClCompile Include="image\image.cpp">
+      <Filter>image</Filter>
+    </ClCompile>
+    <ClCompile Include="image\converter.cpp">
+      <Filter>image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -174,9 +183,6 @@
     <ClInclude Include="core\io\stream.h">
       <Filter>core\io</Filter>
     </ClInclude>
-    <ClInclude Include="drawing\image\image.h">
-      <Filter>drawing\image</Filter>
-    </ClInclude>
     <ClInclude Include="drawing\Graphics.h">
       <Filter>drawing</Filter>
     </ClInclude>
@@ -188,21 +194,6 @@
     </ClInclude>
     <ClInclude Include="drawing\Image.h">
       <Filter>drawing</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\image\formats\bmp.h">
-      <Filter>drawing\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\image\formats\dds.h">
-      <Filter>drawing\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\image\formats\jpg.h">
-      <Filter>drawing\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\image\formats\png.h">
-      <Filter>drawing\image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\image\formats\tga.h">
-      <Filter>drawing\image\formats</Filter>
     </ClInclude>
     <ClInclude Include="core\align.h">
       <Filter>core</Filter>
@@ -336,9 +327,6 @@
     <ClInclude Include="win32\win32.h">
       <Filter>win32</Filter>
     </ClInclude>
-    <ClInclude Include="core\pixelformat.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="utils\dll.h">
       <Filter>utils</Filter>
     </ClInclude>
@@ -347,6 +335,36 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="core\comptr.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\bmp.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\dds.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\ico.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\jpg.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\png.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\tga.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\format.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="image\image.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="image\converter.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="core\format.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
@@ -363,14 +381,8 @@
     <Filter Include="drawing">
       <UniqueIdentifier>{749c32a9-4ad8-41c4-ac68-4c8f72da806d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="drawing\image">
-      <UniqueIdentifier>{7c7dde39-a045-4635-a52c-0af3676d3882}</UniqueIdentifier>
-    </Filter>
     <Filter Include="core\math">
       <UniqueIdentifier>{cb6c943e-d954-4c9b-9492-3fdf01283f00}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="drawing\image\formats">
-      <UniqueIdentifier>{1212c281-62d5-4205-a647-d12b274a2777}</UniqueIdentifier>
     </Filter>
     <Filter Include="drawing\skia">
       <UniqueIdentifier>{24e94b74-1226-4644-ae9c-e92ef487af0b}</UniqueIdentifier>
@@ -380,6 +392,12 @@
     </Filter>
     <Filter Include="utils">
       <UniqueIdentifier>{0102ed16-7da0-45f9-9fb8-2e34b7e0c72e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image">
+      <UniqueIdentifier>{7f518882-ff59-4a06-8b90-d25e03adc4a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image\formats">
+      <UniqueIdentifier>{aa8018da-8785-4d44-8e28-43f9eff85e83}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

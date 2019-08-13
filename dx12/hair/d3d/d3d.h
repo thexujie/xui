@@ -40,8 +40,8 @@ namespace win32::d3d
         uint32_t revision = 0;
     };
 
-    core::pixelformat D3DFormat2PixelFormat(D3DFORMAT d3dformat);
-    D3DFORMAT PixelFormat2D3DFormat(core::pixelformat pixelformat);
+    core::format D3DFormat2PixelFormat(D3DFORMAT d3dformat);
+    D3DFORMAT PixelFormat2D3DFormat(core::format pixelformat);
     const char * D3DFormatName(_D3DFORMAT d3dformat);
 
     const guid GUID_D3DDebugObjectName = { 0x429b8c22, 0x9188, 0x4b0c, 0x87, 0x42, 0xac, 0xb0, 0xbf, 0x85, 0xc2, 0x00 };

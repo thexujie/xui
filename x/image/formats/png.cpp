@@ -4,7 +4,7 @@
 #include "../deps/libpng/pngstruct.h"
 #include "dds.h"
 
-namespace drawing::image::formats
+namespace core::image::formats
 {
     using namespace core;
 
@@ -89,7 +89,7 @@ namespace drawing::image::formats
         {
         case png_color_type_index_rgb:
             png_set_palette_to_rgb(png);
-            format.format = format_b8g8r8;
+            format.format = format::b8g8r8;
             src_bits = 24;
             pfn_convert = image_convert_ex;
             break;
@@ -97,19 +97,19 @@ namespace drawing::image::formats
             switch (bit_depth)
             {
             case 1:
-                format.format = format_gray1;
+                format.format = format::gray1;
                 pfn_convert = nullptr;
                 break;
             case 2:
-                format.format = format_gray2;
+                format.format = format::gray2;
                 pfn_convert = nullptr;
                 break;
             case 4:
-                format.format = format_gray4;
+                format.format = format::gray4;
                 pfn_convert = nullptr;
                 break;
             case 8:
-                format.format = format_gray8;
+                format.format = format::gray8;
                 pfn_convert = image_convert_ex;
                 break;
             default:
@@ -121,17 +121,17 @@ namespace drawing::image::formats
             break;
         case png_color_type_gray_alpha:
             png_set_gray_to_rgb(png);
-            format.format = format_b8g8r8;
+            format.format = format::b8g8r8;
             pfn_convert = image_convert_ex;
             src_bits = 24;
             break;
         case png_color_type_rgb:
-            format.format = format_b8g8r8;
+            format.format = format::b8g8r8;
             pfn_convert = image_convert_ex;
             src_bits = 24;
             break;
         case png_color_type_argb:
-            format.format = format_a8b8g8r8;
+            format.format = format::a8b8g8r8;
             pfn_convert = image_convert_ex;
             src_bits = 32;
             break;

@@ -11,7 +11,7 @@
 #include <SkString.h>
 #include <SkTypeface.h>
 #include <SkPaint.h>
-#include "drawing/image/image.h"
+#include "image/image.h"
 #include "drawing/PathStyle.h"
 #include "drawing/font.h"
 
@@ -36,14 +36,14 @@ namespace drawing::skia
 
     // from : normal struct convert to Skia struct
     // to : Skia struct convert to normal struct
-    inline image::image_type to(SkEncodedImageFormat fmt)
+    inline core::image_type to(SkEncodedImageFormat fmt)
     {
         switch(fmt)
         {
-        case SkEncodedImageFormat::kBMP: return image::image_type_bmp;
-        case SkEncodedImageFormat::kPNG: return image::image_type_png;
-        case SkEncodedImageFormat::kJPEG: return image::image_type_jpeg;
-        default: return image::image_type_none;
+        case SkEncodedImageFormat::kBMP: return core::image_type_bmp;
+        case SkEncodedImageFormat::kPNG: return core::image_type_png;
+        case SkEncodedImageFormat::kJPEG: return core::image_type_jpeg;
+        default: return core::image_type_none;
         }
     }
 
@@ -64,13 +64,13 @@ namespace drawing::skia
         return core::rectf(rect.x(), rect.y(), rect.width(), rect.height());
     }
 
-    inline SkEncodedImageFormat from(image::image_type fmt)
+    inline SkEncodedImageFormat from(core::image_type type)
     {
-        switch (fmt)
+        switch (type)
         {
-        case image::image_type_bmp: return SkEncodedImageFormat::kBMP;
-        case image::image_type_png: return SkEncodedImageFormat::kPNG;
-        case image::image_type_jpeg: return SkEncodedImageFormat::kJPEG;
+        case core::image_type_bmp: return SkEncodedImageFormat::kBMP;
+        case core::image_type_png: return SkEncodedImageFormat::kPNG;
+        case core::image_type_jpeg: return SkEncodedImageFormat::kJPEG;
         default: return SkEncodedImageFormat::kBMP;
         }
     }

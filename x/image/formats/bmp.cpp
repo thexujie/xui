@@ -2,7 +2,7 @@
 #include "bmp.h"
 
 //namespace graphics { namespace image { namespace formats
-namespace drawing::image::formats
+namespace core::image::formats
 {
     using namespace core;
 
@@ -57,21 +57,21 @@ namespace drawing::image::formats
             {
             case 4:
                 encode = bmp_encode_os2_index4;
-                format.format = format_r8g8b8;
+                format.format = format::r8g8b8;
                 pfn_convert = image_convert_index4_ex;
                 conv_palette = buffer;
                 conv_buffer = buffer + 16 * 3;
                 break;
             case 8:
                 encode = bmp_encode_os2_index8;
-                format.format = format_r8g8b8;
+                format.format = format::r8g8b8;
                 pfn_convert = image_convert_index8_ex;
                 conv_palette = buffer;
                 conv_buffer = buffer + 256 * 3;
                 break;
             case 24:
                 encode = bmp_encode_os2_24;
-                format.format = format_r8g8b8;
+                format.format = format::r8g8b8;
                 pfn_convert = image_convert_ex;
                 conv_palette = nullptr;
                 conv_buffer = buffer;
@@ -120,7 +120,7 @@ namespace drawing::image::formats
                 // rle8 ±àÂë
             else if (info->encode == bmp_encode_rle8)
             {
-                format.format = format_x8r8g8b8;
+                format.format = format::x8r8g8b8;
                 pfn_convert = image_convert_bmp_index8_rle;
                 conv_buffer = buffer + extern_size;
                 conv_palette = buffer;
@@ -128,7 +128,7 @@ namespace drawing::image::formats
                 // rle4 ±àÂë
             else if (info->encode == bmp_encode_rle4)
             {
-                format.format = format_x8r8g8b8;
+                format.format = format::x8r8g8b8;
                 pfn_convert = image_convert_bmp_index4_rle;
                 conv_buffer = buffer + extern_size;
                 conv_palette = buffer;
@@ -139,19 +139,19 @@ namespace drawing::image::formats
                 switch (info->bit_count)
                 {
                 case 1:
-                    format.format = format_x8r8g8b8;
+                    format.format = format::x8r8g8b8;
                     pfn_convert = image_convert_index1_ex;
                     break;
                 case 2:
-                    format.format = format_x8r8g8b8;
+                    format.format = format::x8r8g8b8;
                     pfn_convert = image_convert_index2_ex;
                     break;
                 case 4:
-                    format.format = format_x8r8g8b8;
+                    format.format = format::x8r8g8b8;
                     pfn_convert = image_convert_index4_ex;
                     break;
                 case 8:
-                    format.format = format_x8r8g8b8;
+                    format.format = format::x8r8g8b8;
                     pfn_convert = image_convert_index8_ex;
                     break;
                 default:
@@ -166,27 +166,27 @@ namespace drawing::image::formats
                 switch (info->bit_count)
                 {
                 case 2:
-                    format.format = format_gray2;
+                    format.format = format::gray2;
                     pfn_convert = image_convert_ex;
                     break;
                 case 4:
-                    format.format = format_gray4;
+                    format.format = format::gray4;
                     pfn_convert = image_convert_ex;
                     break;
                 case 8:
-                    format.format = format_gray8;
+                    format.format = format::gray8;
                     pfn_convert = image_convert_ex;
                     break;
                 case 16:
-                    format.format = format_x1r5g5b5;
+                    format.format = format::x1r5g5b5;
                     pfn_convert = image_convert_ex;
                     break;
                 case 24:
-                    format.format = format_r8g8b8;
+                    format.format = format::r8g8b8;
                     pfn_convert = image_convert_ex;
                     break;
                 case 32:
-                    format.format = format_a8r8g8b8;
+                    format.format = format::a8r8g8b8;
                     pfn_convert = image_convert_ex;
                     break;
                 default:
@@ -247,7 +247,7 @@ namespace drawing::image::formats
         bi.width = data.format.width;
         bi.height = -data.format.height;
         bi.plane_count = 1;
-        bi.bit_count = image::format_bits(data.format.format);
+        bi.bit_count = format_bits(data.format.format);
         bi.encode = image::formats::bmp_encode_mask;
         bi.image_size = 0;
         bi.ppm_x = 0;

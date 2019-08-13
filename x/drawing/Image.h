@@ -19,7 +19,7 @@ namespace drawing
         // width / height
         float32_t aspect() const;
         //image::format cmode() const { return _image.format.format; }
-        core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100) const;
+        core::error Save(std::string path, core::image_type type = core::image_type_none, int32_t quality = 100) const;
 
         std::shared_ptr<SkImage> native_shared() { return _native; }
         SkImage & native() { return *_native; }

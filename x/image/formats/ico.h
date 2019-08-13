@@ -1,8 +1,8 @@
 #pragma once
 
-#include "graphics/image/image.h"
+#include "image/format.h"
 
-namespace graphics::image::formats
+namespace core::image::formats
 {
 #pragma pack(push, 1)
     struct icon_plane_header_t
@@ -33,5 +33,5 @@ namespace graphics::image::formats
     //	byte            icand[1];      // dib bits for and mask
     //} iconimage, *lpiconimage;
 
-    int32_t ico_create(byte_t * buffer, int32_t length, image_data_t * img, int32_t iIndex);
+    int32_t ico_create(image_codec_context & ictx, byte_t * buffer, int32_t length, image_data_t & image, int32_t iIndex);
 }

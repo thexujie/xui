@@ -1,8 +1,8 @@
 #pragma once
 
-#include "drawing/image/image.h"
+#include "image/format.h"
 
-namespace drawing::image::formats
+namespace core::image::formats
 {
 #define DDS_MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
 	((uint32_t)(uint8_t)(ch0) | ((uint32_t)(uint8_t)(ch1) << 8) | \

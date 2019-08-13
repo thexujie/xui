@@ -12,7 +12,7 @@ namespace drawing
         virtual bitmap_buffer buffer() const = 0;
         virtual core::sizei size() const = 0;
         virtual void * hdc() const = 0;
-        virtual core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100) = 0;
+        virtual core::error Save(std::string path, core::image_type type = core::image_type_none, int32_t quality = 100) = 0;
     };
 
     class Bitmap : public GraphicsDevice
@@ -27,7 +27,7 @@ namespace drawing
         bitmap_buffer buffer() const override;
         core::sizei size() const override;
         void * hdc() const override { return nullptr; }
-        core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100);
+        core::error Save(std::string path, core::image_type type = core::image_type_none, int32_t quality = 100);
 
         std::shared_ptr<SkBitmap> native_shared() { return _native; }
         SkBitmap & native() { return *_native; }
@@ -52,7 +52,7 @@ namespace drawing
         operator bool() const { return !!_native; }
         bitmap_buffer buffer() const override;
         core::sizei size() const override;
-        core::error Save(std::string path, image::image_type type = image::image_type_none, int32_t quality = 100) override;
+        core::error Save(std::string path, core::image_type type = core::image_type_none, int32_t quality = 100) override;
 
         std::shared_ptr<SkSurface> native_shared() { return _native; }
         SkSurface & native() { return *_native; }

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "tga.h"
 
-namespace drawing::image::formats
+namespace core::image::formats
 {
     using namespace core;
 
@@ -56,19 +56,19 @@ namespace drawing::image::formats
             switch (header->bit_count)
             {
             case 8:
-                format.format = format_gray8;
+                format.format = format::gray8;
                 pfn_convert = image_convert_ex;
                 break;
             case 16:
-                format.format = format_x1r5g5b5;
+                format.format = format::x1r5g5b5;
                 pfn_convert = image_convert_ex;
                 break;
             case 24:
-                format.format = format_r8g8b8;
+                format.format = format::r8g8b8;
                 pfn_convert = image_convert_ex;
                 break;
             case 32:
-                format.format = format_a8r8g8b8;
+                format.format = format::a8r8g8b8;
                 pfn_convert = image_convert_ex;
                 break;
             default:
@@ -77,7 +77,7 @@ namespace drawing::image::formats
             }
             break;
         case tga_format_gray:
-            format.format = format_gray8;
+            format.format = format::gray8;
             pfn_convert = image_convert_ex;
             break;
         case tga_format_index:
@@ -85,22 +85,22 @@ namespace drawing::image::formats
             switch (header->color_bit)
             {
             case 8:
-                format.format = format_gray8;
+                format.format = format::gray8;
                 pfn_convert = image_convert_index8_ex;
                 conv_buffer = buffer + header->color_count * 1;
                 break;
             case 16:
-                format.format = format_x1r5g5b5;
+                format.format = format::x1r5g5b5;
                 pfn_convert = image_convert_index8_ex;
                 conv_buffer = buffer + header->color_count * 2;
                 break;
             case 24:
-                format.format = format_r8g8b8;
+                format.format = format::r8g8b8;
                 pfn_convert = image_convert_index8_ex;
                 conv_buffer = buffer + header->color_count * 3;
                 break;
             case 32:
-                format.format = format_a8r8g8b8;
+                format.format = format::a8r8g8b8;
                 pfn_convert = image_convert_index8_ex;
                 conv_buffer = buffer + header->color_count * 4;
                 break;
@@ -117,19 +117,19 @@ namespace drawing::image::formats
             switch (header->bit_count)
             {
             case 8:
-                format.format = format_gray8;
+                format.format = format::gray8;
                 pfn_convert = image_convert_tga_rle8;
                 break;
             case 16:
-                format.format = format_x1r5g5b5;
+                format.format = format::x1r5g5b5;
                 pfn_convert = image_convert_tga_rle8;
                 break;
             case 24:
-                format.format = format_r8g8b8;
+                format.format = format::r8g8b8;
                 pfn_convert = image_convert_tga_rle8;
                 break;
             case 32:
-                format.format = format_a8r8g8b8;
+                format.format = format::a8r8g8b8;
                 pfn_convert = image_convert_tga_rle8;
                 break;
             default:
@@ -194,7 +194,7 @@ namespace drawing::image::formats
 
         tga_header_t header = {};
         header.color_type = tga_color_type_rgb;
-        header.commpress = data.format.format == format_gray8 ? tga_format_gray : tga_format_rgb;
+        header.commpress = data.format.format == format::gray8 ? tga_format_gray : tga_format_rgb;
         header.width = (uint16_t)data.format.width;
         header.height = (uint16_t)data.format.height;
         header.bit_count = (uint8_t)format_bits(data.format.format);

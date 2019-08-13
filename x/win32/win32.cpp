@@ -10,7 +10,7 @@ namespace win32
         wchar_t buffer[512] = {};
         int nchars = ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, 512, NULL);
 		if (!nchars)
-			return core::format(u8"error ", err);
+			return core::fmt(u8"error ", err);
     	
         std::wstring str(buffer, nchars - 2);
         return core::wstr_u8str(str);

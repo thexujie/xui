@@ -147,7 +147,7 @@ public:
 			break;
 		}
 
-		std::wstring title = core::wformat("TessFactor=[", std::setprecision(4), _tessFactor.x, L",", _tessFactor.y, L"]");
+		std::wstring title = core::wfmt("TessFactor=[", std::setprecision(4), _tessFactor.x, L",", _tessFactor.y, L"]");
 		::SetWindowTextW(_hwnd, title.c_str());
 	}
 	
@@ -196,7 +196,7 @@ public:
 			
 			.elements =
 			{
-				RHI::InputElement{ "POINT_INDEX", core::pixelformat::uint1, 0 },
+				RHI::InputElement{ "POINT_INDEX", core::format::uint1, 0 },
 			},
 			.tables =
 			{
@@ -244,8 +244,8 @@ public:
 
 			.elements =
 			{
-				RHI::InputElement{ "PATCH_INDEX", core::pixelformat::uint4, 0 },
-				RHI::InputElement{ "STRAND_INDEX", core::pixelformat::uint1, 16 },
+				RHI::InputElement{ "PATCH_INDEX", core::format::uint4, 0 },
+				RHI::InputElement{ "STRAND_INDEX", core::format::uint1, 16 },
 			},
 			.tables =
 			{
@@ -728,21 +728,21 @@ public:
 			}
 		}
 
-		drawing::image::image_codec_context icc;
-		icc.get_format = [](drawing::image::image_type type, drawing::image::image_format format)
+		core::image_codec_context icc;
+		icc.get_format = [](core::image_type type, core::image_format format)
 		{
-			drawing::image::image_format result = format;
+			core::image_format result = format;
 			switch (format.format)
 			{
-			case drawing::image::format_b8g8r8: result.format = drawing::image::format_b8g8r8a8; break;
+			case core::format::b8g8r8: result.format = core::format::b8g8r8a8; break;
 			default:
-				return drawing::image::image_get_format(type, format);
+				return core::image_get_format(type, format);
 			}
 			return result;
 		};
 
-		drawing::image::image_data_t linear_stiffness_map;
-		auto err = drawing::image::image_load(icc, u8"../data/LongHairResources/stiffnessMap.dds", linear_stiffness_map);
+		core::image_data_t linear_stiffness_map;
+		auto err = core::image_load(icc, u8"../data/LongHairResources/stiffnessMap.dds", linear_stiffness_map);
 		if (err)
 		{
 			core::war() << __FUNCTION__ << " image_load(stiffnessMap.dds) failed!";

@@ -144,7 +144,7 @@ namespace RHI
 
 		ResourceDimension dimension = ResourceDimension::None;
 		ResourceFlags flags = nullptr;
-		core::pixelformat format = core::pixelformat::none;
+		core::format format = core::format::none;
 
 		uint32_t alignment = 0;
 		core::sizeu size = {0, 1};
@@ -219,7 +219,7 @@ namespace RHI
 		ResourceType type = ResourceType::None;
 		struct
 		{
-			core::pixelformat format = core::pixelformat::none;
+			core::format format = core::format::none;
 			ResourceViewDimension dimension = ResourceViewDimension::None;
 			uint32_t miplevels = 1;
 			struct
@@ -269,7 +269,7 @@ namespace RHI
 	{
 		void * hwnd = nullptr;
 		CommandQueueFlags queueFlags;
-		core::pixelformat format = core::pixelformat::bgra;
+		core::format format = core::format::bgra;
 		uint32_t nbuffer = 2;
 		SwapEffect swapeffect = SwapEffect::FlipDiscard;
 		uint32_t MSAA = 1;
@@ -460,7 +460,7 @@ namespace RHI
 	struct InputElement
 	{
 		std::string name;
-		core::pixelformat format = core::pixelformat::abgr;
+		core::format format = core::format::abgr;
 		uint32_t offset = 0;
 	};
 	
@@ -486,7 +486,7 @@ namespace RHI
 		std::vector<SamplerArgs> samplers;
 		
 		uint32_t ntargets = 1;
-		core::pixelformat formats[RenderTargetMax] = { core::pixelformat::bgra };
+		core::format formats[RenderTargetMax] = { core::format::bgra };
 
 		uint32_t SampleCount = 1;
 		uint32_t SampleQuality = 0;

@@ -10,6 +10,6 @@
 namespace win32::DXGI
 {
 	const char8_t * DXGIFormatName(DXGI_FORMAT dxgiformat);
-	core::pixelformat ToPixelFormat(DXGI_FORMAT dxgiformat);
-	DXGI_FORMAT FromPixelFormat(core::pixelformat pixelformat);
+	core::format ToPixelFormat(DXGI_FORMAT dxgiformat);
+	DXGI_FORMAT FromPixelFormat(core::format pixelformat);
 }

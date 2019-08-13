@@ -1,8 +1,8 @@
 #pragma once
 
-#include "drawing/image/image.h"
+#include "image/format.h"
 
-namespace drawing::image::formats
+namespace core::image::formats
 {
     //	数据块符号	数据块名称			多数据块	可选否	位置限制
     //	IHDR		文件头数据块			否		否		第一块

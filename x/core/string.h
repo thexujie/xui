@@ -175,36 +175,36 @@ namespace core
     };
 
 	template<typename stream_t>
-    void format_helper(stream_t & stream) {}
+    void fmt_helper(stream_t & stream) {}
 
     template<typename stream_t, typename Head, typename ...Tail>
-    void format_helper(stream_t & stream, const Head & head, Tail && ...tail)
+    void fmt_helper(stream_t & stream, const Head & head, Tail && ...tail)
     {
         stream << head;
-        return format_helper(stream, std::forward<Tail>(tail)...);
+        return fmt_helper(stream, std::forward<Tail>(tail)...);
     }
 
     template<typename ...Args>
-    std::u8string format(Args && ...args)
+    std::u8string fmt(Args && ...args)
     {
         std::u8ostringstream stream;
-        format_helper(stream, std::forward<Args>(args)...);
+        fmt_helper(stream, std::forward<Args>(args)...);
         return stream.str();
     }
 
 	template<typename ...Args>
-	std::string aformat(Args && ...args)
+	std::string afmt(Args && ...args)
 	{
 		std::ostringstream stream;
-		format_helper(stream, std::forward<Args>(args)...);
+		fmt_helper(stream, std::forward<Args>(args)...);
 		return stream.str();
 	}
 
 	template<typename ...Args>
-	std::wstring wformat(Args && ...args)
+	std::wstring wfmt(Args && ...args)
 	{
 		std::wostringstream stream;
-		format_helper(stream, std::forward<Args>(args)...);
+		fmt_helper(stream, std::forward<Args>(args)...);
 		return stream.str();
 	}
 

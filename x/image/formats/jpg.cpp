@@ -6,7 +6,7 @@
 #include "../deps/libjpeg/jpeglib.h"
 #pragma comment(lib, "libjpeg.lib")
 
-namespace drawing::image::formats
+namespace core::image::formats
 {
     using namespace core;
 
@@ -114,7 +114,7 @@ namespace drawing::image::formats
         jpeg_start_decompress(&cinfo);
 
         image_format format = {};
-        format.format = format_b8g8r8;
+        format.format = format::b8g8r8;
         format.width = (int32_t)cinfo.image_width;
         format.height = (int32_t)cinfo.image_height;
 
