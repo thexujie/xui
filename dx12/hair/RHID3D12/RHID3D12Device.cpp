@@ -60,10 +60,10 @@ namespace RHI::RHID3D12
 		return allocator;
 	}
 
-	std::shared_ptr<RHICommandList> RHID3D12Device::CreateCommandList(CommandType type) const
+	std::shared_ptr<RHICommandList> RHID3D12Device::CreateCommandList(CommandType type, RHICommandAllocator * allocator) const
 	{
 		auto list = std::make_shared<RHID3D12CommandList>(const_cast<RHID3D12Device *>(this));
-		auto err = list->Create(type);
+		auto err = list->Create(type, allocator);
 		if (err)
 			return nullptr;
 		return list;

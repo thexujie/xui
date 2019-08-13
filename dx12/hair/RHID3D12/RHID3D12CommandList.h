@@ -15,7 +15,7 @@ namespace RHI::RHID3D12
 		RHID3D12CommandList(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12CommandList() = default;
 
-		core::error Create(CommandType type);
+		core::error Create(CommandType type, RHICommandAllocator * allocator);
 		void SetName(const std::u8string & name);
 
 	public:
@@ -49,7 +49,6 @@ namespace RHI::RHID3D12
 
 	private:
 		RHID3D12Device * _device = nullptr;
-		core::comptr<ID3D12CommandAllocator> _cmdallocator;
 		core::comptr<ID3D12GraphicsCommandList> _cmdlist;
 
 		RHID3D12RenderTarget * _rendertarget = nullptr;

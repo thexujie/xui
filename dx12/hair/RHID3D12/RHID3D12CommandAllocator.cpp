@@ -16,8 +16,6 @@ namespace RHI::RHID3D12
 		assert(adapter);
 
 		core::comptr<ID3D12CommandAllocator> cmdallocator;
-		core::comptr<ID3D12GraphicsCommandList> cmdlist;
-
 		hr = device->CreateCommandAllocator(FromCommandType(type), __uuidof(ID3D12CommandAllocator), cmdallocator.getvv());
 		if (FAILED(hr))
 		{

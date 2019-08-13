@@ -8,7 +8,7 @@
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12CommandList::Create(CommandType type)
+	core::error RHID3D12CommandList::Create(CommandType type, RHICommandAllocator * allocator)
 	{
 		if (!_device)
 			return core::e_state;
@@ -17,21 +17,12 @@ namespace RHI::RHID3D12
 
 		auto device = _device->Inner();
 		auto adapter = _device->InnerAdapter();
+		auto d3d12allocator = static_cast<RHID3D12CommandAllocator *>(allocator);
 		assert(device);
 		assert(adapter);
 
-		core::comptr<ID3D12CommandAllocator> cmdallocator;
 		core::comptr<ID3D12GraphicsCommandList> cmdlist;
-
-		hr = device->CreateCommandAllocator(FromCommandType(type), __uuidof(ID3D12CommandAllocator), cmdallocator.getvv());
-		if (FAILED(hr))
-		{
-			core::war() << __FUNCTION__ " device->CreateCommandAllocator failed: " << win32::winerr_str(hr & 0xFFFF);
-			return core::e_inner;
-		}
-		SetD3D12ObjectName(cmdallocator.get(), L"cmdallocator");
-
-		hr = device->CreateCommandList(0, FromCommandType(type), cmdallocator.get(), nullptr, __uuidof(ID3D12GraphicsCommandList), cmdlist.getvv());
+		hr = device->CreateCommandList(0, FromCommandType(type), d3d12allocator->CommandAllocator(), nullptr, __uuidof(ID3D12GraphicsCommandList), cmdlist.getvv());
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " device->CreateCommandList failed: " << win32::winerr_str(hr & 0xFFFF);
@@ -39,7 +30,6 @@ namespace RHI::RHID3D12
 		}
 
 		cmdlist->Close();
-		_cmdallocator = cmdallocator;
 		_cmdlist = cmdlist;
 		return core::ok;
 	}
@@ -47,12 +37,11 @@ namespace RHI::RHID3D12
 	void RHID3D12CommandList::SetName(const std::u8string & name)
 	{
 		SetD3D12ObjectName(_cmdlist.get(), core::u8str_wstr(name).c_str());
-		SetD3D12ObjectName(_cmdallocator.get(), core::u8str_wstr(name + u8"._cmdallocator").c_str());
 	}
 
 	void RHID3D12CommandList::Reset(RHICommandAllocator * allocator)
 	{
-		auto d3d12allocator = reinterpret_cast<RHID3D12CommandAllocator *>(allocator)->Ptr();
+		auto d3d12allocator = reinterpret_cast<RHID3D12CommandAllocator *>(allocator)->CommandAllocator();
 		_cmdlist->Reset(d3d12allocator, nullptr);
 	}
 

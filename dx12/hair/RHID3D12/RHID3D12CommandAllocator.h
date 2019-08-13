@@ -19,7 +19,7 @@ namespace RHI::RHID3D12
 		void Reset() override;
 
 	public:
-		ID3D12CommandAllocator * Ptr() const { return _cmdallocator.get(); }
+		ID3D12CommandAllocator * CommandAllocator() const { return _cmdallocator.get(); }
 
 	private:
 		RHID3D12Device * _device = nullptr;

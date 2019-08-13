@@ -173,9 +173,9 @@ public:
 		rtparams.hwnd = _hwnd;
 		_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
 		_cmdallocator = _device->CreateCommandAllocator(RHI::CommandType::Direct);
-		_cmdlist = _device->CreateCommandList(RHI::CommandType::Direct);
+		_cmdlist = _device->CreateCommandList(RHI::CommandType::Direct, _cmdallocator.get());
 		_cmdallocator_compute = _device->CreateCommandAllocator(RHI::CommandType::Compute);
-		_cmdlist_compute = _device->CreateCommandList(RHI::CommandType::Compute);
+		_cmdlist_compute = _device->CreateCommandList(RHI::CommandType::Compute, _cmdallocator_compute.get());
 
 		_cmdqueue->SetName(u8"_cmdqueue");
 		_cmdqueue_compute->SetName(u8"_cmdqueue_compute");
