@@ -18,8 +18,8 @@
 #include <DirectXMath.h>
 static std::atomic<bool> rendering = true;
 
-const int COORD_JITTER_COUNT_U = 16;
-const int COORD_JITTER_COUNT_V = 64;
+const int COORD_JITTER_COUNT_U = 64;
+const int COORD_JITTER_COUNT_V = 16;
 
 struct Vertex
 {
@@ -81,7 +81,7 @@ public:
 	core::float3 _hair_translate_last;
 	core::int2 _hair_translate_mousepos;
 	bool _hair_trandlate_draging = false;
-	void OnMouseDown(uint32_t wParam, int32_t lParam)
+	void OnMButtonDown(uint32_t wParam, int32_t lParam)
 	{
 		_hair_translate_last = _hair_translate;
 		_hair_translate_mousepos = core::int2(core::i32li16(lParam), core::i32hi16(lParam));
@@ -99,9 +99,9 @@ public:
 		if (wParam & MK_LBUTTON)
 		{
 			core::int2 offset = pos - pos_last;
-			_hair_rotate_z += offset.x / 200.0f * 3.14f;
+			_hair_rotate_z -= offset.x / 200.0f * 3.14f;
 		}
-		else if (wParam & MK_RBUTTON)
+		else if (wParam & MK_MBUTTON)
 		{
 			core::int2 offset = pos - _hair_translate_mousepos;
 			_hair_translate.xy = _hair_translate_last.xy + core::float2(offset.to<float>() * core::vec2<float>(1, -1) / 100.0f);
@@ -707,20 +707,21 @@ public:
 			{
 				core::float2 jitter = { random() , random() };
 				pfnBoxMullerTransform(jitter.x, jitter.y);
-				float randomChoice = random();
+				//float randomChoice = random();
 				if (ijitterv < 5)
-					jitter *= 0.12f;
-				else if (ijitterv + 5 < ijitterv)
-					jitter *= 1.0f;
-				else
-					jitter *= 0.3f;
+					jitter *= 1.0f / (ijitterv + 1.0f);
+				//	jitter = {};
+				//else if (ijitterv + 5 < ijitterv)
+				//	jitter *= 0.4f;
+				//else
+				//	jitter *= 0.3f;
 	/*			else if (randomChoice > 0.95f)
 					jitter *= 1.2f;
 				else if (randomChoice > 0.8f)
 					jitter *= 0.8f;
 				else
 					jitter *= 0.12f;*/
-
+				
 				_coordJitters.push_back(jitter);
 			}
 		}
@@ -940,7 +941,7 @@ public:
 			{
 				windowSize = windowSize2;
 				_rendertarget.reset();
-				matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
+				matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, float(windowSize.cx) / windowSize.cy, 0.1f, 5000.0f);
 				sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
 				viewport = { 0, 0, (float)windowSize.cx, (float)windowSize.cy, 0.0f, 1.0f };
 				RHI::RenderTargetArgs rtparams = {};
@@ -1015,8 +1016,7 @@ public:
 			_cmdlist->SetScissorRect(sccisorrect);
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::RenderTarget);
 			_cmdlist->SetRenderTarget(_rendertarget.get());
-			//_cmdlist->ClearRenderTarget(0xffcccccc);
-			_cmdlist->ClearRenderTarget(0xffffffff);
+			_cmdlist->ClearRenderTarget(0xffdddddd);
 
 			_cmdlist->SetResourcePacket(_resourcepacket.get());
 
@@ -1113,7 +1113,7 @@ private:
 	std::shared_ptr<RHI::RHIResource> _cbuffer_simulate_global;
 
 	std::future<void> _future;
-	core::float2 _tessFactor = { 1.0f, 4.0f };
+	core::float2 _tessFactor = { 32.0f, 4.0f };
 
 
 	bool _shortHair = false;
@@ -1146,7 +1146,7 @@ private:
 		line = 0x2,
 	};
 	using content_modes = core::bitflag<content_mode>;
-	content_modes _mode = content_mode::line;
+	content_modes _mode = content_mode::bsline;
 
 	uint32_t _num_collisionSpheres = 0;
 	core::float4x4 _collisionSphereTransforms[MAX_COLLISION_SPHERES];
@@ -1181,10 +1181,10 @@ static LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 		if (Render)
 			Render->OnMouseMove(wParam, lParam);
 	}
-	else if (message == WM_RBUTTONDOWN)
+	else if (message == WM_MBUTTONDOWN)
 	{
 		if (Render)
-			Render->OnMouseDown(wParam, lParam);
+			Render->OnMButtonDown(wParam, lParam);
 	}
 	else if (message == WM_MOUSEWHEEL)
 	{
