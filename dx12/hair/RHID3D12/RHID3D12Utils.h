@@ -9,6 +9,16 @@ namespace RHI::RHID3D12
 	{
 		pObject->SetName(name);
 	}
+	
+	inline void SetD3D12ObjectName(ID3D12Object * pObject, const std::wstring & name)
+	{
+		pObject->SetName(name.c_str());
+	}
+
+	inline void SetD3D12ObjectName(ID3D12Object * pObject, const std::u8string & u8name)
+	{
+		pObject->SetName(core::u8str_wstr(u8name).c_str());
+	}
 
 	inline std::string_view D3D12BlobMessage(ID3DBlob * blob)
 	{

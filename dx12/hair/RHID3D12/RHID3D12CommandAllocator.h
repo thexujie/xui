@@ -14,6 +14,7 @@ namespace RHI::RHID3D12
 		virtual ~RHID3D12CommandAllocator() = default;
 
 		core::error Create(CommandType type);
+		void SetName(const std::u8string & name);
 
 	public:
 		void Reset() override;

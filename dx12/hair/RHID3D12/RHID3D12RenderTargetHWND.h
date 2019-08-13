@@ -14,6 +14,7 @@ namespace RHI::RHID3D12
 		virtual ~RHID3D12RenderTargetHWND() = default;
 
 		core::error Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & params);
+		void SetName(const std::u8string & name);
 
 	public:
 		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) override;

@@ -60,8 +60,7 @@ namespace RHI::RHID3D12
 
 	void RHID3D12Resource::SetName(const std::u8string & name)
 	{
-		auto wname = core::u8str_wstr(name);
-		SetD3D12ObjectName(_resource.get(), wname.c_str());
+		SetD3D12ObjectName(_resource.get(), name);
 	}
 	
 	void * RHID3D12Resource::Data()

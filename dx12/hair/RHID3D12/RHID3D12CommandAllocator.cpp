@@ -31,5 +31,9 @@ namespace RHI::RHID3D12
 	{
 		_cmdallocator->Reset();
 	}
-
+	
+	void RHID3D12CommandAllocator::SetName(const std::u8string & name)
+	{
+		SetD3D12ObjectName(_cmdallocator.get(), name);
+	}
 }

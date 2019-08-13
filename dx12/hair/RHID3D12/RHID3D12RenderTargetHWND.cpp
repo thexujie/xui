@@ -103,6 +103,11 @@ namespace RHI::RHID3D12
 		return core::ok;
 	}
 
+	void RHID3D12RenderTargetHWND::SetName(const std::u8string & name)
+	{
+		SetD3D12ObjectName(_heap.get(), name + u8"._heap");
+	}
+
 	void RHID3D12RenderTargetHWND::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
 	{
 		if (!cmdlist)

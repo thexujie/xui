@@ -153,6 +153,11 @@ namespace core
     inline std::string u16str_astr(const std::u16string & u16str) { return u16str_astr(u16str.c_str(), u16str.length()); }
     inline std::u16string astr_u16str(const std::string & astr) { return astr_u16str(astr.c_str(), astr.length()); }
 
+	inline std::wstring u16str_wstr(const char16_t * u16str, size_t nu16char) { if (nu16char == npos) nu16char = core::textlen(u16str);  return std::wstring(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
+	inline std::u16string wstr_u16str(const wchar_t * wstr, size_t nwchar) { if (nwchar == npos) nwchar = core::textlen(wstr); return std::u16string(reinterpret_cast<const char16_t *>(wstr), nwchar); }
+	inline std::wstring u16str_wstr(const std::u16string & u16str) { return std::wstring(reinterpret_cast<const wchar_t *>(u16str.c_str()), u16str.length()); }
+	inline std::u16string wstr_u16str(const std::wstring & wstr) { return std::u16string(reinterpret_cast<const char16_t *>(wstr.c_str()), wstr.length()); }
+
     struct less_ic
     {
         bool operator()(const std::string & s1, const std::string & s2) const
@@ -213,240 +218,445 @@ namespace core
 
 namespace std
 {
-	//----------------------------------------  __fixed_op
-	inline std::u8ostream & __fixed_op(std::u8ostream & _Ostr, const char * astr)
+	// std::u8string
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const char * astr)
 	{
-		return _Ostr << astr;
+		if (!ost.good())
+			return ost;
+		if (!astr)
+			return ost;
+		else
+			return std::operator <<(ost, astr);
 	}
 
-	inline std::u8ostream & __fixed_op(std::u8ostream && _Ostr, const char * astr)
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const char * astr)
 	{
-		return _Ostr << astr;
+		if (!ost.good())
+			return ost;
+		if (!astr)
+			return ost;
+		else
+			return std::operator <<(ost, astr);
 	}
 
 #ifdef __cpp_char8_t
-	inline std::u8ostream & __fixed_op(std::u8ostream & _Ostr, const char8_t * u8str)
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const char8_t * u8str)
 	{
-		return _Ostr << u8str;
+		if (!ost.good())
+			return ost;
+		if (!u8str)
+			return ost;
+		else
+			return std::operator <<(ost, u8str);
 	}
 
-	inline std::u8ostream & __fixed_op(std::u8ostream && _Ostr, const char8_t * u8str)
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const char8_t * u8str)
 	{
-		return _Ostr << u8str;
+		if (!ost.good())
+			return ost;
+		if (!u8str)
+			return ost;
+		else
+			return std::operator <<(ost, u8str);
 	}
 #endif
-	//----------------------------------------
-
-	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const char * astr)
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const wchar_t * wstr)
 	{
-		if (!astr)
-			//return __fixed_op(_Ostr, "");
-			return _Ostr;
+		if (!ost.good())
+			return ost;
+		if (!wstr)
+			return ost;
 		else
-			return __fixed_op(_Ostr, astr);
+			return ost << core::wstr_u8str(wstr);
 	}
 
-	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const char * astr)
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const wchar_t * wstr)
 	{
-		if (!astr)
-			//return __fixed_op(_Ostr, "");
-			return _Ostr;
+		if (!ost.good())
+			return ost;
+		if (!wstr)
+			return ost;
 		else
-			return __fixed_op(_Ostr, astr);
+			return ost << core::wstr_u8str(wstr);
 	}
-
-	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const std::string & astr)
-	{
-		return _Ostr << reinterpret_cast<const std::u8string &>(astr);
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const std::string & astr)
-	{
-		return _Ostr << reinterpret_cast<const std::u8string &>(astr);
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const std::string_view & astr_view)
-	{
-		return _Ostr << reinterpret_cast<const std::u8string_view &>(astr_view);
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const std::string_view & astr_view)
-	{
-		return _Ostr << reinterpret_cast<const std::u8string_view &>(astr_view);
-	}
-#ifdef __cpp_char8_t
-	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const char8_t * u8str)
-	{
-		if (!u8str)
-			//return __fixed_op(_Ostr, u8"");
-			return _Ostr;
-		else
-			return __fixed_op(_Ostr, u8str);
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const char8_t * u8str)
-	{
-		if (!u8str)
-			//return __fixed_op(_Ostr, u8"");
-			return _Ostr;
-		else
-			return __fixed_op(_Ostr, u8str);
-	}
-#endif
-	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const wchar_t * wstr)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str(wstr);
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const wchar_t * wstr)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str(wstr);
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const std::wstring & wstr)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str(wstr);
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const std::wstring & wstr)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str(wstr);
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream & _Ostr, const std::u16string & u16str)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
-	}
-
-	inline std::u8ostream & operator<<(std::u8ostream && _Ostr, const std::u16string & u16str)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
-	}
-
-
-	//-------------------------------------
-	//----------------------------
 
 #ifdef __cpp_char8_t
-	//----------------------------------------  __fixed_op
-	inline std::ostream & __fixed_op(std::ostream & _Ostr, const char * astr)
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const std::string & astr)
 	{
-		return _Ostr << astr;
+		if (!ost.good())
+			return ost;
+		return ost << reinterpret_cast<const std::u8string &>(astr);
 	}
 
-	inline std::ostream & __fixed_op(std::ostream && _Ostr, const char * astr)
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const std::string & astr)
 	{
-		return _Ostr << astr;
+		if (!ost.good())
+			return ost;
+		return ost << reinterpret_cast<const std::u8string &>(astr);
 	}
 
-	inline std::ostream & __fixed_op(std::ostream & _Ostr, const char8_t * u8str)
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const std::string_view & astr_view)
 	{
-		return _Ostr << reinterpret_cast<const char *>(u8str);
+		if (!ost.good())
+			return ost;
+		return ost << reinterpret_cast<const std::u8string_view &>(astr_view);
 	}
 
-	inline std::ostream & __fixed_op(std::ostream && _Ostr, const char8_t * u8str)
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const std::string_view & astr_view)
 	{
-		return _Ostr << reinterpret_cast<const char *>(u8str);
-	}
-	//----------------------------------------
-
-	inline std::ostream & operator<<(std::ostream & _Ostr, const char * astr)
-	{
-		if (!astr)
-			//return __fixed_op(_Ostr, "");
-			return _Ostr;
-		else
-			return __fixed_op(_Ostr, astr);
-	}
-
-	inline std::ostream & operator<<(std::ostream && _Ostr, const char * astr)
-	{
-		if (!astr)
-			//return __fixed_op(_Ostr, "");
-			return _Ostr;
-		else
-			return __fixed_op(_Ostr, astr);
-	}
-
-	inline std::ostream & operator<<(std::ostream & _Ostr, const std::u8string & u8str)
-	{
-		return _Ostr << reinterpret_cast<const std::string &>(u8str);
-	}
-
-	inline std::ostream & operator<<(std::ostream && _Ostr, const std::u8string & u8str)
-	{
-		return _Ostr << reinterpret_cast<const std::string &>(u8str);
-	}
-
-	inline std::ostream & operator<<(std::ostream & _Ostr, const char8_t * u8str)
-	{
-		if (!u8str)
-			//return __fixed_op(_Ostr, u8"");
-			return _Ostr;
-		else
-			return __fixed_op(_Ostr, u8str);
-	}
-
-	inline std::ostream & operator<<(std::ostream && _Ostr, const char8_t * u8str)
-	{
-		if (!u8str)
-			//return __fixed_op(_Ostr, u8"");
-			return _Ostr;
-		else
-			return __fixed_op(_Ostr, u8str);
-	}
-	inline std::ostream & operator<<(std::ostream & _Ostr, const wchar_t * wstr)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str(wstr);
-	}
-
-	inline std::ostream & operator<<(std::ostream && _Ostr, const wchar_t * wstr)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str(wstr);
-	}
-
-	inline std::ostream & operator<<(std::ostream & _Ostr, const std::wstring & wstr)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str(wstr);
-	}
-
-	inline std::ostream & operator<<(std::ostream && _Ostr, const std::wstring & wstr)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str(wstr);
-	}
-
-	inline std::ostream & operator<<(std::ostream & _Ostr, const std::u16string & u16str)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
-	}
-
-	inline std::ostream & operator<<(std::ostream && _Ostr, const std::u16string & u16str)
-	{
-		if (!_Ostr.good())
-			return _Ostr;
-		return _Ostr << core::wstr_u8str((const wchar_t *)u16str.c_str(), u16str.length());
+		if (!ost.good())
+			return ost;
+		return ost << reinterpret_cast<const std::u8string_view &>(astr_view);
 	}
 #endif
+
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const std::wstring & wstr)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::wstr_u8str(wstr);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const std::wstring & wstr)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::wstr_u8str(wstr);
+	}
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const std::wstring_view & wstrview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::wstr_u8str(wstrview.data(), wstrview.length());
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const std::wstring_view & wstrview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::wstr_u8str(wstrview.data(), wstrview.length());
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const std::u16string & u16str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_u8str(u16str);
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const std::u16string & u16str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_u8str(u16str);
+	}
+
+
+	inline std::u8ostream & operator<<(std::u8ostream & ost, const std::u16string_view & u16strview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_u8str(u16strview.data(), u16strview.length());
+	}
+
+	inline std::u8ostream & operator<<(std::u8ostream && ost, const std::u16string_view & u16strview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_u8str(u16strview.data(), u16strview.length());
+	}
+
+
+	//---------------------------- std::string
+
+#ifdef __cpp_char8_t
+	inline std::ostream & operator<<(std::ostream & ost, const char * astr)
+	{
+		if (!ost.good())
+			return ost;
+		if (!astr)
+			return ost;
+		else
+			return std::operator <<(ost, astr);
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const char * astr)
+	{
+		if (!ost.good())
+			return ost;
+		if (!astr)
+			return ost;
+		else
+			return std::operator <<(ost, astr);
+	}
+
+	inline std::ostream & operator<<(std::ostream & ost, const char8_t * u8str)
+	{
+		if (!ost.good())
+			return ost;
+		if (!u8str)
+			return ost;
+		else
+			return std::operator <<(ost, reinterpret_cast<const char *>(u8str));
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const char8_t * u8str)
+	{
+		if (!ost.good())
+			return ost;
+		if (!u8str)
+			return ost;
+		else
+			return std::operator <<(ost, reinterpret_cast<const char *>(u8str));
+	}
+	inline std::ostream & operator<<(std::ostream & ost, const wchar_t * wstr)
+	{
+		if (!ost.good())
+			return ost;
+		if (!wstr)
+			return ost;
+		else
+			return ost << core::wstr_astr(wstr);
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const wchar_t * wstr)
+	{
+		if (!ost.good())
+			return ost;
+		if (!wstr)
+			return ost;
+		else
+			return ost << core::wstr_astr(wstr);
+	}
+
+	inline std::ostream & operator<<(std::ostream & ost, const std::u8string & u8str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << reinterpret_cast<const std::string &>(u8str);
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const std::u8string & u8str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << reinterpret_cast<const std::string &>(u8str);
+	}
+
+	inline std::ostream & operator<<(std::ostream & ost, const std::u8string_view & u8str_view)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << reinterpret_cast<const std::string_view &>(u8str_view);
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const std::u8string_view & u8str_view)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << reinterpret_cast<const std::string_view &>(u8str_view);
+	}
+
+	inline std::ostream & operator<<(std::ostream & ost, const std::wstring & wstr)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::wstr_astr(wstr);
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const std::wstring & wstr)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::wstr_astr(wstr);
+	}
+	inline std::ostream & operator<<(std::ostream & ost, const std::wstring_view & wstrview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::wstr_astr(wstrview.data(), wstrview.length());
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const std::wstring_view & wstrview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::wstr_astr(wstrview.data(), wstrview.length());
+	}
+
+	inline std::ostream & operator<<(std::ostream & ost, const std::u16string & u16str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_wstr(u16str);
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const std::u16string & u16str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_wstr(u16str);
+	}
+
+
+	inline std::ostream & operator<<(std::ostream & ost, const std::u16string_view & u16strview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_wstr(u16strview.data(), u16strview.length());
+	}
+
+	inline std::ostream & operator<<(std::ostream && ost, const std::u16string_view & u16strview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_wstr(u16strview.data(), u16strview.length());
+	}
+#endif
+
+	//--------------------- wstring
+
+	inline std::wostream & operator<<(std::wostream & ost, const char * astr)
+	{
+		if (!ost.good())
+			return ost;
+		if (!astr)
+			return ost;
+		else
+			return ost << core::astr_wstr(astr);
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const char * astr)
+	{
+		if (!ost.good())
+			return ost;
+		if (!astr)
+			return ost;
+		else
+			return ost << core::astr_wstr(astr);
+	}
+#ifdef __cpp_char8_t
+	inline std::wostream & operator<<(std::wostream & ost, const char8_t * u8str)
+	{
+		if (!ost.good())
+			return ost;
+		if (!u8str)
+			return ost;
+		else
+			return ost << core::u8str_wstr(u8str);
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const char8_t * u8str)
+	{
+		if (!ost.good())
+			return ost;
+		if (!u8str)
+			return ost;
+		else
+			return ost << core::u8str_wstr(u8str);
+	}
+#endif
+	inline std::wostream & operator<<(std::wostream & ost, const wchar_t * wstr)
+	{
+		if (!ost.good())
+			return ost;
+		if (!wstr)
+			return ost;
+		else
+			return std::operator <<(ost, wstr);
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const wchar_t * wstr)
+	{
+		if (!ost.good())
+			return ost;
+		if (!wstr)
+			return ost;
+		else
+			return std::operator <<(ost, wstr);
+	}
+
+	inline std::wostream & operator<<(std::wostream & ost, const std::string & astr)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::astr_wstr(astr);
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const std::string & astr)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::astr_wstr(astr);
+	}
+	inline std::wostream & operator<<(std::wostream & ost, const std::string_view & a8str_view)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::astr_wstr(a8str_view.data(), a8str_view.length());
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const std::string_view & a8str_view)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::astr_wstr(a8str_view.data(), a8str_view.length());
+	}
+	
+	inline std::wostream & operator<<(std::wostream & ost, const std::u8string & u8str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u8str_wstr(u8str);
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const std::u8string & u8str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u8str_wstr(u8str);
+	}
+
+	inline std::wostream & operator<<(std::wostream & ost, const std::u8string_view & u8str_view)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u8str_wstr(u8str_view.data(), u8str_view.length());
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const std::u8string_view & u8str_view)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u8str_wstr(u8str_view.data(), u8str_view.length());
+	}
+
+	inline std::wostream & operator<<(std::wostream & ost, const std::u16string & u16str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_wstr(u16str);
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const std::u16string & u16str)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_wstr(u16str);
+	}
+
+
+	inline std::wostream & operator<<(std::wostream & ost, const std::u16string_view & u16strview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_wstr(u16strview.data(), u16strview.length());
+	}
+
+	inline std::wostream & operator<<(std::wostream && ost, const std::u16string_view & u16strview)
+	{
+		if (!ost.good())
+			return ost;
+		return ost << core::u16str_wstr(u16strview.data(), u16strview.length());
+	}
 }

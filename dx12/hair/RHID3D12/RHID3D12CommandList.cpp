@@ -36,7 +36,7 @@ namespace RHI::RHID3D12
 
 	void RHID3D12CommandList::SetName(const std::u8string & name)
 	{
-		SetD3D12ObjectName(_cmdlist.get(), core::u8str_wstr(name).c_str());
+		SetD3D12ObjectName(_cmdlist.get(), name);
 	}
 
 	void RHID3D12CommandList::Reset(RHICommandAllocator * allocator)

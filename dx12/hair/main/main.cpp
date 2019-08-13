@@ -179,8 +179,10 @@ public:
 
 		_cmdqueue->SetName(u8"_cmdqueue");
 		_cmdqueue_compute->SetName(u8"_cmdqueue_compute");
+		_cmdallocator->SetName(u8"_cmdallocator");
 		_cmdlist->SetName(u8"_cmdlist");
-		_cmdlist_compute->SetName(u8"_cmdlist");
+		_cmdallocator_compute->SetName(u8"_cmdallocator_compute");
+		_cmdlist_compute->SetName(u8"_cmdlist_compute");
 	}
 
 	void LoadAssets()
