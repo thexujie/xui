@@ -18,6 +18,9 @@
 #include <DirectXMath.h>
 static std::atomic<bool> rendering = true;
 
+const int COORD_JITTER_COUNT_U = 16;
+const int COORD_JITTER_COUNT_V = 64;
+
 struct Vertex
 {
 	core::float3 position;
@@ -75,18 +78,38 @@ public:
 
 	~HairRender() = default;
 
+	core::float3 _hair_translate_last;
+	core::int2 _hair_translate_mousepos;
+	bool _hair_trandlate_draging = false;
+	void OnMouseDown(uint32_t wParam, int32_t lParam)
+	{
+		_hair_translate_last = _hair_translate;
+		_hair_translate_mousepos = core::int2(core::i32li16(lParam), core::i32hi16(lParam));
+		
+	}
+	void OnMouseUp(uint32_t wParam, int32_t lParam)
+	{
+	}
 	void OnMouseMove(uint32_t wParam, int32_t lParam)
 	{
-		core::int2 pos = (core::i32li16(lParam), core::i32li16(lParam));
+		core::int2 pos(core::i32li16(lParam), core::i32hi16(lParam));
 		static core::int2 pos_last = {core::int32_max, core::int32_max};
 		if (pos_last == core::int2{ core::int32_max, core::int32_max })
 			pos_last = pos;
-		core::int2 offset = pos - pos_last;
-		pos_last = pos;
 		if (wParam & MK_LBUTTON)
+		{
+			core::int2 offset = pos - pos_last;
 			_hair_rotate_z += offset.x / 200.0f * 3.14f;
+		}
 		else if (wParam & MK_RBUTTON)
-			_hair_translate.xy += core::float2(offset.to<float>() * core::vec2<float>(0, 1) / 10.0f);
+		{
+			core::int2 offset = pos - _hair_translate_mousepos;
+			_hair_translate.xy = _hair_translate_last.xy + core::float2(offset.to<float>() * core::vec2<float>(1, -1) / 100.0f);
+			//_hair_translate.y = _hair_translate_last.y + offset.y / 100.0f;
+		}
+		else {}
+
+		pos_last = pos;
 	}
 	
 	void OnScrollV(int32_t scroll)
@@ -678,18 +701,28 @@ public:
 			var1 = temp * std::cos(2 * D3DX_PI * unifVar2);
 			var2 = temp * std::sin(2 * D3DX_PI * unifVar2);
 		};
-		for (size_t ijitter = 0; ijitter < 1024; ++ijitter)
+		for (size_t ijitteru = 0; ijitteru < COORD_JITTER_COUNT_U; ++ijitteru)
 		{
-			core::float2 jitter;
-			pfnBoxMullerTransform(jitter.x, jitter.y);
-			float randomChoice = random();
-			if (randomChoice > 0.95f)
-				jitter *= 1.2f;
-			else if (randomChoice > 0.8f)
-				jitter *= 0.8f;
-			else
-				jitter *= 0.12f;
-			_coordJitters.push_back(jitter);
+			for (size_t ijitterv = 0; ijitterv < COORD_JITTER_COUNT_V; ++ijitterv)
+			{
+				core::float2 jitter = { random() , random() };
+				pfnBoxMullerTransform(jitter.x, jitter.y);
+				float randomChoice = random();
+				if (ijitterv < 5)
+					jitter *= 0.12f;
+				else if (ijitterv + 5 < ijitterv)
+					jitter *= 1.0f;
+				else
+					jitter *= 0.3f;
+	/*			else if (randomChoice > 0.95f)
+					jitter *= 1.2f;
+				else if (randomChoice > 0.8f)
+					jitter *= 0.8f;
+				else
+					jitter *= 0.12f;*/
+
+				_coordJitters.push_back(jitter);
+			}
 		}
 
 		drawing::image::image_codec_context icc;
@@ -982,7 +1015,8 @@ public:
 			_cmdlist->SetScissorRect(sccisorrect);
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::RenderTarget);
 			_cmdlist->SetRenderTarget(_rendertarget.get());
-			_cmdlist->ClearRenderTarget(0xffcccccc);
+			//_cmdlist->ClearRenderTarget(0xffcccccc);
+			_cmdlist->ClearRenderTarget(0xffffffff);
 
 			_cmdlist->SetResourcePacket(_resourcepacket.get());
 
@@ -1146,6 +1180,11 @@ static LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 	{
 		if (Render)
 			Render->OnMouseMove(wParam, lParam);
+	}
+	else if (message == WM_RBUTTONDOWN)
+	{
+		if (Render)
+			Render->OnMouseDown(wParam, lParam);
 	}
 	else if (message == WM_MOUSEWHEEL)
 	{

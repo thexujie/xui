@@ -143,7 +143,7 @@ DSOutput DSMain(HSConstOutput input, OutputPatch<HSOutput, 1> patchs, float2 uv 
     EvaluateBSpline4(patchs[0].pointIndex, uv.x, output.position, output.tangent, tangentY, v);
     float3 tangentZ = cross(tangentY, output.tangent);
     float radius = 1.5f * lerp(1.0f, 0.005f, v);
-    float2 coordJitter = g_coordJitters[(uv.y * 166) % 1024];
+    float2 coordJitter = g_coordJitters[((input.strandIndex % 16)  * 64 + uv.y * 64) % 1024];
     output.position.xyz += uv.y * radius * tangentY * coordJitter.x + uv.y * radius * tangentZ * coordJitter.y;
 
     float width = 0.01f;
