@@ -13,7 +13,6 @@
 
 #pragma comment(lib, "imm32.lib")
 #include <DirectXMath.h>
-static std::atomic<bool> rendering = true;
 
 const int COORD_JITTER_COUNT_U = 64;
 const int COORD_JITTER_COUNT_V = 16;
@@ -155,6 +154,12 @@ public:
 	void Start()
 	{
 		_future = std::async(&HairRender::RenderThread, this);
+	}
+
+	void Stop()
+	{
+		_rendering = false;
+		_future.wait();
 	}
 	
 	void LoadPipeline()
@@ -927,7 +932,7 @@ public:
 
 		core::float4x4 matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
 
-		while (rendering)
+		while (_rendering)
 		{
 			auto elapse = core::datetime::system() - time_last;
 			time_last += elapse;
@@ -1191,6 +1196,8 @@ static LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 	}
 	else if (message == WM_CLOSE)
 	{
+		if (Render)
+			Render->Stop();
 		win32::endLoop(0);
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
@@ -1238,7 +1245,6 @@ int main()
 	
 	Render = &hr;
     win32::runLoop();
-	rendering = false;
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
