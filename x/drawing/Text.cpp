@@ -272,13 +272,6 @@ namespace drawing
             //SkDebugf("Bidi error: %s", u_errorName(status));
         }
 
-        struct bidilevel
-        {
-            span32 range;
-            UBiDiLevel level;
-        };
-        std::vector<bidilevel> levels;
-
         hb_buffer_clear_contents(_hbbuffer.get());
         hb_buffer_set_content_type(_hbbuffer.get(), HB_BUFFER_CONTENT_TYPE_UNICODE);
         //hb_buffer_set_cluster_level(_hbbuffer.get(), HB_BUFFER_CLUSTER_LEVEL_MONOTONE_CHARACTERS);
