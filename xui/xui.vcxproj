@@ -18,6 +18,7 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <Import Condition="Exists('$(SolutionDir)\$(SolutionName).cpp.default.props')" Project="$(SolutionDir)\$(SolutionName).cpp.default.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{327EADFF-ED36-413C-89FE-D9DC08BE57BE}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -41,7 +42,7 @@
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Condition="Exists('$(SolutionDir)\$(SolutionName).cpp.default.props')" Project="$(SolutionDir)\$(SolutionName).cpp.default.props" />
+  <Import Condition="Exists('$(SolutionDir)\$(SolutionName).cpp.derived.props')" Project="$(SolutionDir)\$(SolutionName).cpp.derived.props" />
   <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
@@ -161,7 +162,6 @@
     <ClInclude Include="ui\RadioGroup.h" />
     <ClInclude Include="ui\ui.h" />
     <ClInclude Include="ui\UICommon.h" />
-    <ClInclude Include="win32\comptr.h" />
     <ClInclude Include="win32\ImeContext.h" />
     <ClInclude Include="win32\Window.h" />
   </ItemGroup>

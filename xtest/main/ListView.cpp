@@ -21,7 +21,7 @@ namespace ui
             return core::sizef(icon_size.cx + spacing + bounds.cx, bounds.cy) + v->calc(padding()).bsize();
         }
         else
-            throw core::exception(core::error_not_supported);
+            throw core::exception(core::e_not_supported);
     }
 
     void ListViewItem::paint(drawing::Graphics & graphics, const core::rectf & clip) const

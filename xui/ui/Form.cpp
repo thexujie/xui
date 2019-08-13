@@ -476,7 +476,7 @@ namespace ui
         if (_invalid_region.empty())
             return;
 
-        auto tms = core::datetime::high_resolution_s();
+        auto tms = core::datetime::high_resolution();
         if (!_draw_buffer)
             _draw_buffer = std::make_shared<drawing::Surface>();
 
@@ -498,7 +498,7 @@ namespace ui
             _draw_buffer->Save("scene.png");
 
         //fps.acc(1);
-        //auto cost = core::datetime::high_resolution_s() - tms;
+        //auto cost = core::datetime::high_resolution() - tms;
         //core::dbg_output(core::string::format(graphics.statistics().total(), " drawcalls, ", cost, " s, fps=", fps.fps()));
         //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
 

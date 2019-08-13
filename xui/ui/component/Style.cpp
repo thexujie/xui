@@ -148,7 +148,7 @@ namespace ui::component
         if (fs)
             return loadFromData(std::u8string(std::istreambuf_iterator<char>(fs), std::istreambuf_iterator<char>()));
         else
-            return core::error_io;
+            return core::e_io;
     }
 
     core::error StyleSheet::loadFromData(const std::u8string & data)
@@ -210,6 +210,6 @@ namespace ui::component
                 }
             }
         }
-        return core::error_ok;
+        return core::ok;
     }
 }

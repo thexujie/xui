@@ -84,22 +84,22 @@ namespace win32
 
         if (!_handle)
             _createWindow();
-        return core::error_ok;
+        return core::ok;
     }
 
     core::error Window::attatch(pointer_t handle)
     {
         if (!handle)
-            return core::error_args;
+            return core::e_args;
 
         HWND hwnd = (HWND)handle;
 
         if (GetPropW(hwnd, WINDOW_PROP_THIS_PTR))
-            return core::error_state;
+            return core::e_state;
 
         WNDPROC pfnWndProcOld = (WNDPROC)GetWindowLongPtrW(hwnd, GWLP_WNDPROC);
         if (pfnWndProcOld == WindowWndProc)
-            return core::error_state;
+            return core::e_state;
 
         SetPropW(hwnd, WINDOW_PROP_THIS_PTR, (HANDLE)(void *)this);
         SetPropW(hwnd, WINDOW_PROP_DLG_RESULT, (HANDLE)0);
@@ -110,7 +110,7 @@ namespace win32
         _ime_context = std::make_shared<win32::ImeContext>(handle);
         _cursor_context = std::make_shared<win32::CursorContext>(handle);
 
-        return core::error_ok;
+        return core::ok;
     }
 
     void Window::detach()
@@ -328,7 +328,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         _mouse_state.setWheelLines(0);
         switch(evt)
@@ -354,7 +354,7 @@ namespace win32
         auto pf = f->parentForm();
 
         if (_handle)
-            return core::error_ok;
+            return core::ok;
 
         HINSTANCE hInstance = (HINSTANCE)win32::instance();
         WNDCLASSEXW wcex = { sizeof(WNDCLASSEXW) };
@@ -398,14 +398,14 @@ namespace win32
         //attatch(hwnd);
 		assert(hwnd == _handle);
 		//SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE);
-        return core::error_ok;
+        return core::ok;
     }
 
     core::error Window::_adjustWindowPos(const core::pointi & pos)
     {
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
-            return core::error_ok;
+            return core::ok;
 
         uint32_t style = GetWindowLongW(hwnd, GWL_STYLE);
         uint32_t styleEx = GetWindowLongW(hwnd, GWL_EXSTYLE);
@@ -414,14 +414,14 @@ namespace win32
             ::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
         SetWindowPos(hwnd, 0, pos.x, pos.y, rect.right - rect.left, rect.bottom - rect.top,
             SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
-        return core::error_ok;
+        return core::ok;
     }
 
     core::error Window::_adjustWindow(const core::pointi & pos, const core::sizei & size)
     {
         HWND hwnd = (HWND)_handle;
         if (!hwnd)
-            return core::error_ok;
+            return core::ok;
 
 		uint32_t style = GetWindowLongW(hwnd, GWL_STYLE);
 		uint32_t styleEx = GetWindowLongW(hwnd, GWL_EXSTYLE);
@@ -430,7 +430,7 @@ namespace win32
             ::AdjustWindowRectEx(&rect, style, FALSE, styleEx);
         SetWindowPos(hwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
-        return core::error_ok;
+        return core::ok;
     }
 
     core::pointi Window::_pos() const
@@ -730,7 +730,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         f->setWindowPos(_pos().to<float32_t>());
         return 0;
@@ -755,7 +755,7 @@ namespace win32
 
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
 		if(wParam != SIZE_MINIMIZED)
 			f->setWindowSize(size.to<float32_t>());
@@ -807,7 +807,7 @@ namespace win32
         //return OnDefault(WM_NCPAINT, wParam, lParam);
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
         auto styles = f->styles();
         if(styles.any(ui::form_style::frameless))
             return 0;
@@ -832,7 +832,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setPos(core::pointi(core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam)).to<float32_t>());
@@ -862,7 +862,7 @@ namespace win32
 
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::mask, false);
@@ -878,7 +878,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, true);
@@ -891,7 +891,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::right, true);
@@ -904,7 +904,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::left, false);
@@ -918,7 +918,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         _mouse_state.setWheelLines(0);
         _mouse_state.setButton(ui::mouse_button::right, false);
@@ -936,7 +936,7 @@ namespace win32
 
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         POINT point = { core::i32li16((int32_t)lParam), core::i32hi16((int32_t)lParam) };
         ::ScreenToClient(hwnd, &point);
@@ -964,7 +964,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         ui::keycode key = virtualkey2keycode(wParam);
         _mouse_state.setKey(key, true);
@@ -976,7 +976,7 @@ namespace win32
     {
         auto f = form();
         if (!f)
-            throw core::exception(core::error_nullptr);
+            throw core::exception(core::e_nullptr);
 
         ui::keycode key = virtualkey2keycode(wParam);
         _mouse_state.setKey(key, false);

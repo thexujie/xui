@@ -159,9 +159,6 @@
     <ClInclude Include="ui\UICommon.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="win32\comptr.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="win32\ImeContext.h">
       <Filter>win32</Filter>
     </ClInclude>
