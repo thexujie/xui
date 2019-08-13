@@ -32,7 +32,7 @@ void all_main()
 	shaper.layout(999999999, drawing::wrap_mode::word);
 
 	auto ss = std::make_shared<ui::component::StyleSheet>();
-    ss->loadFromFile(u8"../xui/samples/test.css");
+    ss->loadFromFile(u8"../xtest/samples/test.css");
 
 	auto dsize = ui::Desktop::instance().size();
 	auto screen = ui::Desktop::instance().screen(0);
@@ -138,6 +138,7 @@ void all_main()
 	// 标题栏
 	{
 		auto title = std::make_shared<ui::controlsex::TitleBar>(form);
+		title->setSize({ 100_per, core::auto_value });
 		title->setBackgroundColor(0xfff1f1f0);
 		layer->addControl(title);
 	}

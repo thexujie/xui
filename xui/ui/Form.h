@@ -127,7 +127,6 @@ namespace ui
         core::event<void(action_t, core::event_flags & flags)> titleAction;
         core::event<void()> closed;
 
-        core::event<void(const core::recti & rect)> invalidated;
         core::event<void(const core::recti & rect)> rendered;
         core::event<void(bool capture)> captured;
         core::event<void(scene_event evt)> evented;

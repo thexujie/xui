@@ -40,9 +40,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="win32">
-      <UniqueIdentifier>{a88dfbcf-0f88-4960-a408-6112a362b37d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="main">
       <UniqueIdentifier>{88779072-c8c3-48d8-b1d9-fd7315e9672e}</UniqueIdentifier>
     </Filter>

@@ -415,7 +415,7 @@ namespace ui
         if (flags.any(core::event_flag::rejected))
             return;
 
-		switch(action)
+		switch(action.e)
 		{
 		case system_action::none: 
 			break;

@@ -27,7 +27,8 @@ int main()
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
     core::App app;
-    views_main();
+	//views_main();
+	all_main();
 	return 0;
 }
 

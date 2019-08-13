@@ -144,7 +144,7 @@ namespace ui::component
     core::error StyleSheet::loadFromFile(const std::u8string & path)
     {
         std::fstream fs;
-        fs.open(reinterpret_cast<const std::string &>(path), std::ios::in);
+        fs.open(core::u8str_wstr(path), std::ios::in);
         if (fs)
             return loadFromData(std::u8string(std::istreambuf_iterator<char>(fs), std::istreambuf_iterator<char>()));
         else
