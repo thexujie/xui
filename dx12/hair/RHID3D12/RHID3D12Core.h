@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RHI/RHI.h"
-#include "d3d12/d3d12.h"
+#include "win32/d3d12.h"
 #include "RHID3D12Utils.h"
 
 namespace RHI::RHID3D12
@@ -23,7 +23,32 @@ namespace RHI::RHID3D12
 		}
 	}
 
-	inline D3D12_HEAP_TYPE FromBufferType(HeapType type)
+	inline DXGI_FORMAT FromFormat(core::format pixelformat)
+	{
+		switch (pixelformat)
+		{
+		case core::format::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
+		case core::format::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
+		case core::format::nv12: return DXGI_FORMAT_NV12;
+		case core::format::yuy2: return DXGI_FORMAT_420_OPAQUE;
+		case core::format::p010: return DXGI_FORMAT_P010;
+		case core::format::float1: return DXGI_FORMAT_R32_FLOAT;
+		case core::format::float2: return DXGI_FORMAT_R32G32_FLOAT;
+		case core::format::float3: return DXGI_FORMAT_R32G32B32_FLOAT;
+		case core::format::float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case core::format::int1: return DXGI_FORMAT_R32_SINT;
+		case core::format::int2: return DXGI_FORMAT_R32G32_SINT;
+		case core::format::int3: return DXGI_FORMAT_R32G32B32_SINT;
+		case core::format::int4: return DXGI_FORMAT_R32G32B32A32_SINT;
+		case core::format::uint1: return DXGI_FORMAT_R32_UINT;
+		case core::format::uint2: return DXGI_FORMAT_R32G32_UINT;
+		case core::format::uint3: return DXGI_FORMAT_R32G32B32_UINT;
+		case core::format::uint4: return DXGI_FORMAT_R32G32B32A32_UINT;
+		default: return DXGI_FORMAT_UNKNOWN;
+		}
+	}
+
+	inline D3D12_HEAP_TYPE FromHeapType(HeapType type)
 	{
 		switch (type)
 		{
@@ -418,31 +443,6 @@ namespace RHI::RHID3D12
 			return D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 		default:
 			return D3D12_PRIMITIVE_TOPOLOGY_TYPE::D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
-		}
-	}
-
-	inline DXGI_FORMAT FromPixelFormat(core::format pixelformat)
-	{
-		switch (pixelformat)
-		{
-		case core::format::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
-		case core::format::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
-		case core::format::nv12: return DXGI_FORMAT_NV12;
-		case core::format::yuy2: return DXGI_FORMAT_420_OPAQUE;
-		case core::format::p010: return DXGI_FORMAT_P010;
-		case core::format::float1: return DXGI_FORMAT_R32_FLOAT;
-		case core::format::float2: return DXGI_FORMAT_R32G32_FLOAT;
-		case core::format::float3: return DXGI_FORMAT_R32G32B32_FLOAT;
-		case core::format::float4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case core::format::int1: return DXGI_FORMAT_R32_SINT;
-		case core::format::int2: return DXGI_FORMAT_R32G32_SINT;
-		case core::format::int3: return DXGI_FORMAT_R32G32B32_SINT;
-		case core::format::int4: return DXGI_FORMAT_R32G32B32A32_SINT;
-		case core::format::uint1: return DXGI_FORMAT_R32_UINT;
-		case core::format::uint2: return DXGI_FORMAT_R32G32_UINT;
-		case core::format::uint3: return DXGI_FORMAT_R32G32B32_UINT;
-		case core::format::uint4: return DXGI_FORMAT_R32G32B32A32_UINT;
-		default: return DXGI_FORMAT_UNKNOWN;
 		}
 	}
 

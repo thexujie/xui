@@ -52,19 +52,20 @@ namespace RHI::RHID3D12
 
 	void RHID3D12CommandList::SetRenderTarget(RHIRenderTarget * rendertarget)
 	{
-		_rendertarget = static_cast<RHID3D12RenderTarget *>(rendertarget);
-		if (_rendertarget)
+		auto d3d12rendertarget = static_cast<RHID3D12RenderTarget *>(rendertarget);
+		if (d3d12rendertarget)
 		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = _rendertarget->CPUDescriptorHandle();
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = d3d12rendertarget->CPUDescriptorHandle();
 			_cmdlist->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 		}
 		else
 			_cmdlist->OMSetRenderTargets(0, nullptr, FALSE, nullptr);
 	}
 
-	void RHID3D12CommandList::ClearRenderTarget(core::color color)
+	void RHID3D12CommandList::ClearRenderTarget(RHIRenderTarget * rendertarget, core::color color)
 	{
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = _rendertarget->CPUDescriptorHandle();
+		RHID3D12RenderTarget * d3d12rendertarget = static_cast<RHID3D12RenderTarget *>(rendertarget);
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = d3d12rendertarget->CPUDescriptorHandle();
 		const float clearColor[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
 		_cmdlist->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	}

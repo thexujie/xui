@@ -98,10 +98,19 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="d3d12\d3d12.cpp" />
-    <ClCompile Include="d3d\d3d.cpp" />
-    <ClCompile Include="dxgi\dxgi.cpp" />
     <ClCompile Include="main\main.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11CommandAllocator.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11CommandList.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11CommandQueue.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11Device.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11Factory.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11PipelineState.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11RenderTarget.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11RenderTargetHWND.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11Resource.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11ResourcePacket.cpp" />
+    <ClCompile Include="RHID3D11\RHID3D11Utils.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12RenderTarget.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12ResourcePacket.cpp" />
     <ClCompile Include="RHID3D12\RHID3D12Factory.cpp" />
@@ -131,12 +140,26 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="win32\d3d11.cpp" />
+    <ClCompile Include="win32\d3d9.cpp" />
+    <ClCompile Include="win32\d3d12.cpp" />
+    <ClCompile Include="win32\dxgi.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="d3d12\d3d12.h" />
-    <ClInclude Include="d3d\d3d.h" />
-    <ClInclude Include="dxgi\dxgi.h" />
     <ClInclude Include="main\main.h" />
+    <ClInclude Include="RHID3D11\RHID3D11.h" />
+    <ClInclude Include="RHID3D11\RHID3D11CommandAllocator.h" />
+    <ClInclude Include="RHID3D11\RHID3D11CommandList.h" />
+    <ClInclude Include="RHID3D11\RHID3D11CommandQueue.h" />
+    <ClInclude Include="RHID3D11\RHID3D11Core.h" />
+    <ClInclude Include="RHID3D11\RHID3D11Device.h" />
+    <ClInclude Include="RHID3D11\RHID3D11Factory.h" />
+    <ClInclude Include="RHID3D11\RHID3D11PipelineState.h" />
+    <ClInclude Include="RHID3D11\RHID3D11RenderTarget.h" />
+    <ClInclude Include="RHID3D11\RHID3D11RenderTargetHWND.h" />
+    <ClInclude Include="RHID3D11\RHID3D11Resource.h" />
+    <ClInclude Include="RHID3D11\RHID3D11ResourcePacket.h" />
+    <ClInclude Include="RHID3D11\RHID3D11Utils.h" />
     <ClInclude Include="RHID3D12\RHID3D12RenderTarget.h" />
     <ClInclude Include="RHID3D12\RHID3D12ResourcePacket.h" />
     <ClInclude Include="RHID3D12\RHID3D12Factory.h" />
@@ -161,6 +184,10 @@
     <ClInclude Include="RHI\RHICommandQueue.h" />
     <ClInclude Include="RHI\RHIRenderTarget.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="win32\d3d11.h" />
+    <ClInclude Include="win32\d3d9.h" />
+    <ClInclude Include="win32\d3d12.h" />
+    <ClInclude Include="win32\dxgi.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\x\x.vcxproj">

@@ -1,19 +1,19 @@
 #pragma once
 
 #include "RHI/RHI.h"
-#include "RHID3D12Device.h"
+#include "RHID3D11Device.h"
 
-namespace RHI::RHID3D12
+namespace RHI::RHID3D11
 {
-	class RHID3D12RenderTarget;
-	class RHID3D12ResourcePacket;
-	class RHID3D12ResourceView;
+	class RHID3D11RenderTarget;
+	class RHID3D11ResourcePacket;
+	class RHID3D11ResourceView;
 
-	class RHID3D12CommandList : public RHICommandList
+	class RHID3D11CommandList : public RHICommandList
 	{
 	public:
-		RHID3D12CommandList(RHID3D12Device * device) : _device(device) {}
-		virtual ~RHID3D12CommandList() = default;
+		RHID3D11CommandList(RHID3D11Device * device) : _device(device) {}
+		virtual ~RHID3D11CommandList() = default;
 
 		core::error Create(CommandType type, RHICommandAllocator * allocator);
 		void SetName(const std::u8string & name);
@@ -45,12 +45,13 @@ namespace RHI::RHID3D12
 		void CopyBuffer(RHIResource * dst, RHIResource * src) override;
 
 	public:
-		ID3D12GraphicsCommandList * Ptr() const { return _cmdlist.get(); }
+		ID3D11DeviceContext * DeviceContext() const { return _deferredContext.get(); }
+		ID3D11CommandList * CommandList() const { return _commandList.get(); }
 
 	private:
-		RHID3D12Device * _device = nullptr;
-		core::comptr<ID3D12GraphicsCommandList> _cmdlist;
-
-		RHID3D12ResourcePacket * _resourcepacket = nullptr;
+		RHID3D11Device * _device = nullptr;
+		core::comptr<ID3D11DeviceContext> _deferredContext;
+		core::comptr<ID3D11CommandList> _commandList;
+		RHID3D11ResourcePacket * _resourcepacket = nullptr;
 	};
 }

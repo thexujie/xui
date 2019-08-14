@@ -1,182 +1,11 @@
 #include "stdafx.h"
-#include "d3d.h"
+#include "dxgi.h"
 
+#define DXGI_FORMAT_RETURN_NAME(fmt) case fmt: return u8" ## fmt"
 
-namespace win32::d3d
+namespace win32::DXGI
 {
-	core::format D3DFormat2PixelFormat(D3DFORMAT d3dformat)
-	{
-		switch (d3dformat)
-		{
-		case D3DFMT_A8R8G8B8: return core::format::argb;
-		case D3DFMT_A8B8G8R8: return core::format::abgr;
-		case D3DFMT_X8R8G8B8: return core::format::xrgb;
-		case D3DFMT_X8B8G8R8: return core::format::xbgr;
-		case D3DFMT_YUY2: return core::format::yuy2;
-		case D3DFMT_UYVY: return core::format::uyvy;
-
-		case D3DFormatExNV12: return core::format::nv12;
-		case D3DFormatExYV12: return core::format::yv12;
-		case D3DFormatEx411P: return core::format::yuv2;
-		case D3DFormatExP010: return core::format::p010;
-		case D3DFormatExRGBP: return core::format::rgb;
-		case D3DFormatExBGRP: return core::format::bgr;
-		default: return core::format::none;
-		}
-	}
-
-	D3DFORMAT PixelFormat2D3DFormat(core::format pixelformat)
-	{
-		switch (pixelformat)
-		{
-		case core::format::argb: return D3DFMT_A8R8G8B8;
-		case core::format::abgr: return D3DFMT_A8B8G8R8;
-		case core::format::xrgb: return D3DFMT_X8R8G8B8;
-		case core::format::xbgr: return D3DFMT_X8B8G8R8;
-		case core::format::nv12: return (D3DFORMAT)D3DFormatExNV12;
-		case core::format::p010: return (D3DFORMAT)D3DFormatExP010;
-		case core::format::yv12: return (D3DFORMAT)D3DFormatExYV12;
-		default: return D3DFMT_UNKNOWN;
-		}
-	}
-
-	core::format DXGIFormat2PixelFormat(DXGI_FORMAT dxgiformat)
-	{
-		switch (dxgiformat)
-		{
-		case DXGI_FORMAT_B8G8R8X8_UNORM: return core::format::bgrx;
-		case DXGI_FORMAT_B8G8R8A8_UNORM: return core::format::bgra;
-		case DXGI_FORMAT_NV12: return core::format::nv12;
-		case DXGI_FORMAT_YUY2: return core::format::yuy2;
-		case DXGI_FORMAT_P010: return core::format::p010;
-		case D3DFormatExRGBP: return core::format::rgb;
-		case D3DFormatExBGRP: return core::format::bgr;
-		case DXGI_FORMAT_420_OPAQUE: return core::format::yuy2;
-		default: return core::format::none;
-		}
-	}
-
-	DXGI_FORMAT PixelFormat2DXGIFormat(core::format pixelformat)
-	{
-		switch (pixelformat)
-		{
-		case core::format::bgrx: return DXGI_FORMAT_B8G8R8X8_UNORM;
-		case core::format::bgra: return DXGI_FORMAT_B8G8R8A8_UNORM;
-		case core::format::nv12: return DXGI_FORMAT_NV12;
-		case core::format::yuy2: return DXGI_FORMAT_420_OPAQUE;
-		case core::format::p010: return DXGI_FORMAT_P010;
-		default: return DXGI_FORMAT_UNKNOWN;
-		}
-	}
-
-#define DXGI_FORMAT_RETURN_NAME(fmt) case fmt: return #fmt
-
-	const char * D3DFormatName(_D3DFORMAT d3dformat)
-	{
-		switch (d3dformat)
-		{
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_UNKNOWN);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_R8G8B8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A8R8G8B8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_X8R8G8B8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_R5G6B5);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_X1R5G5B5);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A1R5G5B5);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A4R4G4B4);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_R3G3B2);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A8R3G3B2);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_X4R4G4B4);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A2B10G10R10);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A8B8G8R8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_X8B8G8R8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_G16R16);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A2R10G10B10);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A16B16G16R16);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A8P8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_P8);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_L8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A8L8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A4L4);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_V8U8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_L6V5U5);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_X8L8V8U8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_Q8W8V8U8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_V16U16);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A2W10V10U10);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_UYVY);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_R8G8_B8G8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_YUY2);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_G8R8_G8B8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_DXT1);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_DXT2);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_DXT3);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_DXT4);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_DXT5);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D16_LOCKABLE);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D32);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D15S1);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D24S8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D24X8);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D24X4S4);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D16);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D32F_LOCKABLE);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D24FS8);
-
-#if !defined(D3D_DISABLE_9EX)
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_D32_LOCKABLE);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_S8_LOCKABLE);
-#endif
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_L16);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_VERTEXDATA);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_INDEX16);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_INDEX32);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_Q16W16V16U16);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_MULTI2_ARGB8);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_R16F);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_G16R16F);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A16B16G16R16F);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_R32F);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_G32R32F);
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A32B32G32R32F);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_CxV8U8);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A1);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_A2B10G10R10_XR_BIAS);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFMT_BINARYBUFFER);
-
-			DXGI_FORMAT_RETURN_NAME(D3DFormatExNV12);
-			DXGI_FORMAT_RETURN_NAME(D3DFormatExYV12);
-			DXGI_FORMAT_RETURN_NAME(D3DFormatExP010);
-			DXGI_FORMAT_RETURN_NAME(D3DFormatExIYUV);
-			DXGI_FORMAT_RETURN_NAME(D3DFormatEx411P);
-			DXGI_FORMAT_RETURN_NAME(D3DFormatEx444P);
-			DXGI_FORMAT_RETURN_NAME(D3DFormatExRGBP);
-			DXGI_FORMAT_RETURN_NAME(D3DFormatExBGRP);
-
-
-		default: return "Invalid D3D Format";
-		}
-
-	}
-
-	const char * DXGIFormatName(DXGI_FORMAT dxgiformat)
+	const char8_t * DXGIFormatName(DXGI_FORMAT dxgiformat)
 	{
 		switch (dxgiformat)
 		{
@@ -299,9 +128,7 @@ namespace win32::d3d
 			DXGI_FORMAT_RETURN_NAME(DXGI_FORMAT_P208);
 			DXGI_FORMAT_RETURN_NAME(DXGI_FORMAT_V208);
 			DXGI_FORMAT_RETURN_NAME(DXGI_FORMAT_V408);
-		default: return "Invalid DXGI Format";
+		default: return u8"Invalid DXGI Format";
 		}
-
 	}
 }
-

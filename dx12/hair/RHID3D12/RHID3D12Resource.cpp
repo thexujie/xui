@@ -4,7 +4,7 @@
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12Resource::Create(const ResourceArgs & params)
+	core::error RHID3D12Resource::Create(const ResourceArgs & args)
 	{
 		if (!_device)
 			return core::e_state;
@@ -17,27 +17,27 @@ namespace RHI::RHID3D12
 		assert(adapter);
 
 		D3D12_RESOURCE_DESC resdesc = {};
-		resdesc.Dimension = FromResourceDimension(params.dimension);
-		resdesc.Alignment = params.alignment;
-		resdesc.Width = params.size.cx;
-		resdesc.Height = params.size.cy;
-		resdesc.DepthOrArraySize = params.depth;
-		resdesc.MipLevels = params.miplevels;
-		resdesc.Format = win32::DXGI::FromPixelFormat(params.format);
-		resdesc.SampleDesc.Count = params.MSAA;
-		resdesc.SampleDesc.Quality = params.MSAAQuality;
-		resdesc.Layout = params.dimension == ResourceDimension::Raw? D3D12_TEXTURE_LAYOUT_ROW_MAJOR : D3D12_TEXTURE_LAYOUT_UNKNOWN;
-		resdesc.Flags = FromResourceFlags(params.flags);
+		resdesc.Dimension = FromResourceDimension(args.dimension);
+		resdesc.Alignment = args.alignment;
+		resdesc.Width = args.size.cx;
+		resdesc.Height = args.size.cy;
+		resdesc.DepthOrArraySize = args.depth;
+		resdesc.MipLevels = args.miplevels;
+		resdesc.Format = FromFormat(args.format);
+		resdesc.SampleDesc.Count = args.MSAA;
+		resdesc.SampleDesc.Quality = args.MSAAQuality;
+		resdesc.Layout = args.dimension == ResourceDimension::Raw? D3D12_TEXTURE_LAYOUT_ROW_MAJOR : D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		resdesc.Flags = FromResourceFlags(args.flags);
 
 		D3D12_HEAP_PROPERTIES heapprop = {};
-		heapprop.Type = FromBufferType(params.heap.type);
-		heapprop.CPUPageProperty = FromCPUPageProperty(params.heap.cpupageproperty);
-		heapprop.MemoryPoolPreference = FromMemoryPool(params.heap.memorypool);
+		heapprop.Type = FromHeapType(args.heap.type);
+		heapprop.CPUPageProperty = FromCPUPageProperty(args.heap.cpupageproperty);
+		heapprop.MemoryPoolPreference = FromMemoryPool(args.heap.memorypool);
 		heapprop.CreationNodeMask = 1;
 		heapprop.VisibleNodeMask = 1;
 
 		core::comptr<ID3D12Resource> resource;
-		hr = device->CreateCommittedResource(&heapprop, FromHeapFlags(params.heap.flags), &resdesc, FromResourceStates(params.states), nullptr, __uuidof(ID3D12Resource), resource.getvv());
+		hr = device->CreateCommittedResource(&heapprop, FromHeapFlags(args.heap.flags), &resdesc, FromResourceStates(args.states), nullptr, __uuidof(ID3D12Resource), resource.getvv());
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " device->CreateCommittedResource failed: " << win32::winerr_str(hr & 0xFFFF);
@@ -45,13 +45,13 @@ namespace RHI::RHID3D12
 		}
 
 		void * pointer = nullptr;
-		if (params.heap.type == HeapType::Upload)
+		if (args.heap.type == HeapType::Upload)
 		{
 			D3D12_RANGE range = {};
 			resource->Map(0, &range, &pointer);
 		}
 
-		_args = params;
+		_args = args;
 		_resource = resource;
 		_states = _args.states;
 		_pointer = pointer;

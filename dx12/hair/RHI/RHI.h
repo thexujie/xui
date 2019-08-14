@@ -20,6 +20,7 @@ namespace RHI
 		RHIFactory() = default;
 		virtual ~RHIFactory() = default;
 
+		virtual core::error Load() = 0;
 		virtual std::vector<RHIAdapterDesc> AdapterDescs() const = 0;
 		virtual std::shared_ptr<RHIDevice> CreateDevice(const std::u8string & uri) const = 0;
 	};

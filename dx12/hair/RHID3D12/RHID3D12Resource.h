@@ -11,7 +11,7 @@ namespace RHI::RHID3D12
 		RHID3D12Resource(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12Resource() = default;
 
-		core::error Create(const ResourceArgs & params);
+		core::error Create(const ResourceArgs & args);
 		void SetName(const std::u8string & name);
 		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states);
 

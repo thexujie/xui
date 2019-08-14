@@ -78,7 +78,7 @@ namespace RHI::RHID3D12
 		{
 			D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 			srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-			srvDesc.Format = win32::DXGI::FromPixelFormat(args.resource.format);
+			srvDesc.Format = FromFormat(args.resource.format);
 			srvDesc.ViewDimension = FromResourceViewDimension(args.resource.dimension);
 			if (args.resource.dimension == ResourceViewDimension::Buffer)
 			{
@@ -100,7 +100,7 @@ namespace RHI::RHID3D12
 		else if (args.type == ResourceType::UnorderedAccess)
 		{
 			D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-			uavDesc.Format = FromPixelFormat(args.resource.format);
+			uavDesc.Format = FromFormat(args.resource.format);
 			uavDesc.ViewDimension = FromResourceViewDimension_UAV(args.resource.dimension);
 			if (args.resource.dimension == ResourceViewDimension::Buffer)
 			{

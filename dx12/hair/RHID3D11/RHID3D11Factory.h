@@ -1,15 +1,14 @@
 #pragma once
 
-#include "RHI/RHI.h"
-#include "win32/dxgi.h"
+#include "RHID3D11Core.h"
 
-namespace RHI::RHID3D12
+namespace RHI::RHID3D11
 {
-	class RHID3D12Factory : public RHIFactory
+	class RHID3D11Factory : public RHIFactory
 	{
 	public:
-		RHID3D12Factory() = default;
-		virtual ~RHID3D12Factory() = default;
+		RHID3D11Factory() = default;
+		virtual ~RHID3D11Factory() = default;
 
 		core::error Load();
 		std::vector<RHIAdapterDesc> AdapterDescs() const override;

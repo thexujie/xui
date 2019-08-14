@@ -1,8 +1,7 @@
 #pragma once
 #include "win32/win32.h"
-
-#include <d3d9types.h>
-#include <dxgi.h>
+#include "win32/dxgi.h"
+#include <d3d9.h>
 
 namespace win32::d3d
 {

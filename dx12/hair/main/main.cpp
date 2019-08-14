@@ -3,6 +3,7 @@
 //#include <ShellScalingAPI.h>
 //#pragma comment(lib, "Shcore.lib")
 
+#pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -10,6 +11,7 @@
 #pragma comment(lib, "../../externals/skia/bin/x64/skia.dll.lib")
 #include "main.h"
 #include "RHID3D12/RHID3D12Factory.h"
+#include "RHID3D11/RHID3D11Factory.h"
 
 #pragma comment(lib, "imm32.lib")
 #include <DirectXMath.h>
@@ -164,9 +166,12 @@ public:
 	
 	void LoadPipeline()
 	{
-		RHI.Load();
-		std::vector<RHI::RHIAdapterDesc> adapters = RHI.AdapterDescs();
-		_device = RHI.CreateDevice(adapters[0].uri);
+		//_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
+		_factory = std::make_shared<RHI::RHID3D11::RHID3D11Factory>();
+		_factory->Load();
+		
+		std::vector<RHI::RHIAdapterDesc> adapters = _factory->AdapterDescs();
+		_device = _factory->CreateDevice(adapters[0].uri);
 		_cmdqueue = _device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
 		_cmdqueue_compute = _device->CreateCommandQueue(RHI::CommandType::Compute, RHI::CommandQueueFlag::None);
 		RHI::RenderTargetArgs rtparams = {};
@@ -1020,7 +1025,7 @@ public:
 			_cmdlist->SetScissorRect(sccisorrect);
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::RenderTarget);
 			_cmdlist->SetRenderTarget(_rendertarget.get());
-			_cmdlist->ClearRenderTarget(0xffdddddd);
+			_cmdlist->ClearRenderTarget(_rendertarget.get(), 0xffdddddd);
 
 			_cmdlist->SetResourcePacket(_resourcepacket.get());
 
@@ -1060,8 +1065,8 @@ private:
 	HWND _hwnd = NULL;
 
 	std::atomic<bool> _rendering = true;
-	RHI::RHID3D12::RHID3D12Factory RHI;
 
+	std::shared_ptr<RHI::RHIFactory> _factory;
 	std::shared_ptr<RHI::RHIDevice> _device;
 	
 	std::shared_ptr<RHI::RHICommandQueue> _cmdqueue;

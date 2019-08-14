@@ -36,7 +36,7 @@ namespace RHI::RHID3D12
 				ranges[irangebase + irange].Flags = FromDescriptorFlags(range.flags);
 				ranges[irangebase + irange].OffsetInDescriptorsFromTableStart = range.packetOffset == core::uint32_max ?  D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND : range.packetOffset;
 
-				// const buffer ±¾Éí²»»á±ä»¯µÄ£¬ËüµÄÖµ²Å»á±ä
+				// const buffer ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä»¯ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½Å»ï¿½ï¿½
 				if (range.type == DescriptorRangeType::ConstBuffer)
 					ranges[irangebase + irange].Flags |= D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
 			}
@@ -167,7 +167,7 @@ namespace RHI::RHID3D12
 		for (size_t ielement = 0; ielement < args.elements.size(); ++ielement)
 		{
 			elements[ielement].SemanticName = args.elements[ielement].name.c_str();
-			elements[ielement].Format = FromPixelFormat(args.elements[ielement].format);
+			elements[ielement].Format = FromFormat(args.elements[ielement].format);
 			elements[ielement].AlignedByteOffset = args.elements[ielement].offset;
 			elements[ielement].InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
 		}
@@ -181,7 +181,7 @@ namespace RHI::RHID3D12
 		desc.PS = vertexShader ? D3D12_SHADER_BYTECODE{ pixelShader->GetBufferPointer(), pixelShader->GetBufferSize() } : D3D12_SHADER_BYTECODE{};
 
 		desc.BlendState.AlphaToCoverageEnable = args.blend.alphaToCoverage;
-		desc.BlendState.AlphaToCoverageEnable = args.blend.independentBlend;
+		desc.BlendState.IndependentBlendEnable = args.blend.independentBlend;
 		for (uint32_t itarget = 0; itarget < args.ntargets; ++itarget)
 		{
 			desc.BlendState.RenderTarget[itarget].BlendEnable = args.blend.targets[itarget].enable;
@@ -203,7 +203,7 @@ namespace RHI::RHID3D12
 
 		desc.NumRenderTargets = args.ntargets;
 		for (uint32_t itarget = 0; itarget < args.ntargets; ++itarget)
-			desc.RTVFormats[itarget] = FromPixelFormat(args.formats[itarget]);
+			desc.RTVFormats[itarget] = FromFormat(args.formats[itarget]);
 
 		desc.SampleMask = args.samplemask;
 		desc.SampleDesc.Count = args.SampleCount;

@@ -50,7 +50,7 @@ namespace core
                     _ptr->Release();
 
                 if (another.get())
-                    another.get()->QueryInterface(__uuidof(UT), static_cast<void **>(& _ptr));
+                    another.get()->QueryInterface(__uuidof(UT), reinterpret_cast<void **>(& _ptr));
             }
         }
 

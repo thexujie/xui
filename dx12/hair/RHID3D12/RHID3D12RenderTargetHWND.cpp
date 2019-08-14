@@ -34,7 +34,7 @@ namespace RHI::RHID3D12
 		swapChainDesc.BufferCount = params.nbuffer;
 		swapChainDesc.Width = rcClient.right - rcClient.left;
 		swapChainDesc.Height = rcClient.bottom - rcClient.top;
-		swapChainDesc.Format = win32::DXGI::FromPixelFormat(params.format);
+		swapChainDesc.Format = FromFormat(params.format);
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		swapChainDesc.SwapEffect = FromSwapEffect(params.swapeffect);
 		swapChainDesc.SampleDesc.Count = params.MSAA;

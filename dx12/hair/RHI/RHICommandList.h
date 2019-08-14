@@ -21,7 +21,7 @@ namespace RHI
 		virtual void Reset(RHICommandAllocator * allocator) = 0;
 		virtual void Close() = 0;
 		virtual void SetRenderTarget(RHIRenderTarget * rendertarget) = 0;
-		virtual void ClearRenderTarget(core::color color) = 0;
+		virtual void ClearRenderTarget(RHIRenderTarget * rendertarget, core::color color) = 0;
 		
 		virtual void SetViewPort(const ViewPort & viewport) = 0;
 		virtual void SetScissorRect(const core::recti & rect) = 0;
