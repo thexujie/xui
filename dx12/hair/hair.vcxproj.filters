@@ -193,6 +193,9 @@
     <Filter Include="data\shaders">
       <UniqueIdentifier>{005b9527-5a47-4dc0-b739-a76afa70f4ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RHID3D11">
+      <UniqueIdentifier>{51c1a566-c02c-4137-a013-905dc1d2b16b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\shaders\basic.hlsl">

@@ -603,6 +603,15 @@ namespace core
         return val;
     }
 
+	inline int32_t asint(float32_t fval)
+    {
+		return *reinterpret_cast<uint32_t *>(&fval);
+    }
+
+	inline uint32_t asuint(float32_t fval)
+	{
+		return *reinterpret_cast<uint32_t *>(&fval);
+	}
 
 #pragma endregion
 

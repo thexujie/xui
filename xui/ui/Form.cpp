@@ -309,9 +309,8 @@ namespace ui
 
     void Form::invalidate(const core::rectf & rect)
     {
-
-        auto rc = rect.intersected(core::rectf(core::pointf(), _rect.size)).ceil<int32_t>();
-        _invalid_region.addRect(rc);
+        auto rc = rect.intersected(core::rectf(core::pointf(), _rect.size));
+        _invalid_region.unite(rc);
         if (!_invaliding && validCompleted())
         {
             _invaliding = true;
@@ -480,7 +479,7 @@ namespace ui
         if (!_draw_buffer)
             _draw_buffer = std::make_shared<drawing::Surface>();
 
-        auto bounds = _invalid_region.bounds();
+        auto bounds = _invalid_region.ceil<int32_t>();
         _invalid_region.clear();
 
         if (_draw_buffer->size().cx < bounds.right() || _draw_buffer->size().cy < bounds.bottom())

@@ -149,6 +149,8 @@ namespace std
 #include "core/vec3.h"
 #include "core/vec4.h"
 #include "core/edge.h"
+#include "core/vec.h"
+#include "core/matrix.h"
 
 #include "core/float2.h"
 #include "core/float3.h"

@@ -157,6 +157,8 @@
     <ClInclude Include="core\comptr.h" />
     <ClInclude Include="core\easingcurve.h" />
     <ClInclude Include="core\format.h" />
+    <ClInclude Include="core\matrix.h" />
+    <ClInclude Include="core\vec.h" />
     <ClInclude Include="drawing\ColorFilter.h" />
     <ClInclude Include="drawing\draw.h" />
     <ClInclude Include="drawing\drawing.h" />

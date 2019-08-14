@@ -106,7 +106,7 @@ namespace ui
         std::u8string _title;
 
         bool _invaliding = false;
-        drawing::Region _invalid_region;
+        core::rectf _invalid_region;
         core::color _color_default = core::colors::AliceBlue;
 
         std::shared_ptr<drawing::Surface> _draw_buffer;

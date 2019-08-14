@@ -179,44 +179,10 @@ namespace core
         }
     };
 
-	template<typename stream_t>
-    void fmt_helper(stream_t & stream) {}
-
-    template<typename stream_t, typename Head, typename ...Tail>
-    void fmt_helper(stream_t & stream, const Head & head, Tail && ...tail)
-    {
-        stream << head;
-        return fmt_helper(stream, std::forward<Tail>(tail)...);
-    }
-
-    template<typename ...Args>
-    std::u8string fmt(Args && ...args)
-    {
-        std::u8ostringstream stream;
-        fmt_helper(stream, std::forward<Args>(args)...);
-        return stream.str();
-    }
-
-	template<typename ...Args>
-	std::string afmt(Args && ...args)
-	{
-		std::ostringstream stream;
-		fmt_helper(stream, std::forward<Args>(args)...);
-		return stream.str();
-	}
-
-	template<typename ...Args>
-	std::wstring wfmt(Args && ...args)
-	{
-		std::wostringstream stream;
-		fmt_helper(stream, std::forward<Args>(args)...);
-		return stream.str();
-	}
-
     std::u8string from_bytes(std::shared_ptr<byte_t> bytes, int32_t nbytes);
 }
 
-namespace std
+namespace core
 {
 	// std::u8string
 	inline std::u8ostream & operator<<(std::u8ostream & ost, const char * astr)
@@ -658,5 +624,40 @@ namespace std
 		if (!ost.good())
 			return ost;
 		return ost << core::u16str_wstr(u16strview.data(), u16strview.length());
+	}
+
+
+	template<typename stream_t>
+	void fmt_helper(stream_t & stream) {}
+
+	template<typename stream_t, typename Head, typename ...Tail>
+	void fmt_helper(stream_t & stream, const Head & head, Tail && ...tail)
+	{
+		stream << head;
+		return fmt_helper(stream, std::forward<Tail>(tail)...);
+	}
+
+	template<typename ...Args>
+	std::u8string fmt(Args && ...args)
+	{
+		std::u8ostringstream stream;
+		fmt_helper(stream, std::forward<Args>(args)...);
+		return stream.str();
+	}
+
+	template<typename ...Args>
+	std::string afmt(Args && ...args)
+	{
+		std::ostringstream stream;
+		fmt_helper(stream, std::forward<Args>(args)...);
+		return stream.str();
+	}
+
+	template<typename ...Args>
+	std::wstring wfmt(Args && ...args)
+	{
+		std::wostringstream stream;
+		fmt_helper(stream, std::forward<Args>(args)...);
+		return stream.str();
 	}
 }

@@ -367,6 +367,15 @@
     <ClInclude Include="core\format.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="drawing\GraphicsResource.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="core\matrix.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\vec.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">

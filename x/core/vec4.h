@@ -490,6 +490,14 @@ namespace core
             return vec4(convert(x), convert(y), convert(cx), convert(cy));
         }
 
+		template<typename T2, typename = std::enable_if_t<std::is_floating_point<T>::value>>
+		vec4<T2> floor() const
+		{
+			core::vec2<T2> lt = { core::ceil<T2>(x), core::ceil<T2>(y) };
+			core::vec2<T2> rb = { core::floor<T2>(right()), core::floor<T2>(bottom()) };
+			return vec4<T2>(lt, rb - lt);
+		}
+    	
         template<typename T2, typename = std::enable_if_t<std::is_floating_point<T>::value>>
         vec4<T2> ceil() const
         {
@@ -504,6 +512,11 @@ namespace core
             return vec4<T2>(core::round<T2>(x), core::round<T2>(y), core::round<T2>(cx), core::round<T2>(cy));
         }
 
+		template<typename = std::enable_if_t<std::is_floating_point<T>::value>>
+		bool nan() const
+		{
+			return std::isnan(x) || std::isnan(y) || std::isnan(z) || std::isnan(w);
+		}
 
         template<typename = decltype(std::declval<T>() * std::declval<float>())>
         vec2<T> leftBorder(float rate) const { return vec2<T>(x, y + cy * rate); }
