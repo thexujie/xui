@@ -5,7 +5,7 @@
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12RenderTargetHWND::Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & params)
+	core::error RHID3D12RenderTargetHWND::Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & args)
 	{
 		if (!_device)
 			return core::e_state;
@@ -28,22 +28,22 @@ namespace RHI::RHID3D12
 		auto d3d12cmdqueue = static_cast<RHID3D12CommandQueue *>(cmdqueue)->CommandQueue();
 
 		RECT rcClient = {};
-		GetClientRect((HWND)params.hwnd, &rcClient);
+		GetClientRect((HWND)args.hwnd, &rcClient);
 
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-		swapChainDesc.BufferCount = params.nbuffer;
+		swapChainDesc.BufferCount = args.nbuffer;
 		swapChainDesc.Width = rcClient.right - rcClient.left;
 		swapChainDesc.Height = rcClient.bottom - rcClient.top;
-		swapChainDesc.Format = FromFormat(params.format);
+		swapChainDesc.Format = FromFormat(args.format);
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapChainDesc.SwapEffect = FromSwapEffect(params.swapeffect);
-		swapChainDesc.SampleDesc.Count = params.MSAA;
-		swapChainDesc.SampleDesc.Quality = params.MSAAQuality;
+		swapChainDesc.SwapEffect = FromSwapEffect(args.swapeffect);
+		swapChainDesc.SampleDesc.Count = args.MSAA;
+		swapChainDesc.SampleDesc.Quality = args.MSAAQuality;
 
 		core::comptr<IDXGISwapChain1> swapchain1;
 		hr = dxgifactory->CreateSwapChainForHwnd(
 			d3d12cmdqueue,
-			(HWND)params.hwnd,
+			(HWND)args.hwnd,
 			&swapChainDesc,
 			nullptr,
 			nullptr,
@@ -54,17 +54,17 @@ namespace RHI::RHID3D12
 			core::war() << __FUNCTION__ " dxgifactory->CreateSwapChainForHwnd failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
-		hr = dxgifactory->MakeWindowAssociation((HWND)params.hwnd, DXGI_MWA_NO_ALT_ENTER);
+		hr = dxgifactory->MakeWindowAssociation((HWND)args.hwnd, DXGI_MWA_NO_ALT_ENTER);
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " dxgifactory->MakeWindowAssociation(DXGI_MWA_NO_ALT_ENTER) failed: " << win32::winerr_str(hr & 0xFFFF);
 		}
 
 		core::comptr<ID3D12DescriptorHeap> rtv_heap;
-		std::vector<core::comptr<ID3D12Resource>> buffers(params.nbuffer);
+		std::vector<core::comptr<ID3D12Resource>> buffers(args.nbuffer);
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-			rtvHeapDesc.NumDescriptors = params.nbuffer;
+			rtvHeapDesc.NumDescriptors = args.nbuffer;
 			rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 			rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 			hr = device->CreateDescriptorHeap(&rtvHeapDesc, __uuidof(ID3D12DescriptorHeap), rtv_heap.getvv());
@@ -77,7 +77,7 @@ namespace RHI::RHID3D12
 
 			D3D12_CPU_DESCRIPTOR_HANDLE handle(rtv_heap->GetCPUDescriptorHandleForHeapStart());
 			uint32_t rtv_desc_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-			for (uint32_t ibuffer = 0; ibuffer < params.nbuffer; ibuffer++)
+			for (uint32_t ibuffer = 0; ibuffer < args.nbuffer; ibuffer++)
 			{
 				hr = swapchain1->GetBuffer(ibuffer, __uuidof(ID3D12Resource), buffers[ibuffer].getvv());
 				if (FAILED(hr))
@@ -92,8 +92,8 @@ namespace RHI::RHID3D12
 		}
 
 		//---------------------------------------------------------------
-		_states = ResourceState::Present;
-		_params = params;
+		_states.resize(args.nbuffer, ResourceState::Present);
+		_args = args;
 		_swapchain = swapchain1.as<IDXGISwapChain3>();
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
 		_heap = rtv_heap;
@@ -108,25 +108,6 @@ namespace RHI::RHID3D12
 		SetD3D12ObjectName(_heap.get(), name + u8"._heap");
 	}
 
-	void RHID3D12RenderTargetHWND::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
-	{
-		if (!cmdlist)
-			return;
-
-		auto d3d12cmdlist = reinterpret_cast<RHID3D12CommandList *>(cmdlist)->Ptr();
-		assert(d3d12cmdlist);
-
-		D3D12_RESOURCE_BARRIER barrier;
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = _buffers[_frameIndex].get();
-		barrier.Transition.StateBefore = FromResourceStates(_states);
-		barrier.Transition.StateAfter = FromResourceStates(states);
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		d3d12cmdlist->ResourceBarrier(1, &barrier);
-		_states = states;
-	}
-
 	void RHID3D12RenderTargetHWND::Begin()
 	{
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
@@ -138,5 +119,10 @@ namespace RHI::RHID3D12
 			return ;
 
 		_swapchain->Present(sync, 0);
+	}
+
+	uint32_t RHID3D12RenderTargetHWND::FrameIndex() const
+	{
+		return _swapchain->GetCurrentBackBufferIndex();
 	}
 }

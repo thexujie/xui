@@ -53,7 +53,7 @@ namespace RHI::RHID3D12
 
 		_args = args;
 		_resource = resource;
-		_states = _args.states;
+		_state = _args.states;
 		_pointer = pointer;
 		return core::ok;
 	}
@@ -76,34 +76,5 @@ namespace RHI::RHID3D12
 	core::sizeu RHID3D12Resource::Size() const
 	{
 		return _args.size;
-	}
-
-	void RHID3D12Resource::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
-	{
-		if (!cmdlist)
-			return;
-
-		if (_states == states)
-			return;
-		
-		auto d3d12cmdlist = reinterpret_cast<RHID3D12CommandList *>(cmdlist)->Ptr();
-		assert(d3d12cmdlist);
-
-		D3D12_RESOURCE_BARRIER barrier;
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = _resource.get();
-		barrier.Transition.StateBefore = FromResourceStates(_states);
-		barrier.Transition.StateAfter = FromResourceStates(states);
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-		if ((barrier.Transition.StateBefore & barrier.Transition.StateAfter) != 0)
-		{
-			core::war() << __FUNCTION__ " RESOURCE_MANIPULATION";
-			return;
-		}
-		
-		d3d12cmdlist->ResourceBarrier(1, &barrier);
-		_states = states;
 	}
 }

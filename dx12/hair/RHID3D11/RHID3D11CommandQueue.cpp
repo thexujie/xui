@@ -55,19 +55,7 @@ namespace RHI::RHID3D11
 		_immediateContext->ExecuteCommandList(reinterpret_cast<RHID3D11CommandList *>(cmdlist)->CommandList(), false);
 	}
 	
-	void RHID3D11CommandQueue::Wait()
+	void RHID3D11CommandQueue::Fence(uint64_t signal, uint64_t fence)
 	{
-		//HRESULT hr = S_OK;
-		//const UINT64 fence = _fenceValue;
-		//hr = _cmdqueue->Signal(_fence.get(), _fenceValue);
-		//win32::throw_if_failed(hr);
-		//_fenceValue++;
-
-		//if (_fence->GetCompletedValue() < fence)
-		//{
-		//	hr = _fence->SetEventOnCompletion(fence, _fenceEvent);
-		//	win32::throw_if_failed(hr);
-		//	WaitForSingleObject(_fenceEvent, INFINITE);
-		//}
 	}
 }

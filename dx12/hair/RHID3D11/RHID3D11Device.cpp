@@ -59,10 +59,10 @@ namespace RHI::RHID3D11
 		return queue;
 	}
 
-	std::shared_ptr<RHICommandAllocator> RHID3D11Device::CreateCommandAllocator(CommandType type) const
+	std::shared_ptr<RHICommandAllocator> RHID3D11Device::CreateCommandAllocator(CommandType type, uint32_t count) const
 	{
 		auto allocator = std::make_shared<RHID3D11CommandAllocator>(const_cast<RHID3D11Device *>(this));
-		auto err = allocator->Create(type);
+		auto err = allocator->Create(type, count);
 		if (err)
 			return nullptr;
 		return allocator;

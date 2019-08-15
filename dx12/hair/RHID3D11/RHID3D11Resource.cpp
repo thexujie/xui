@@ -79,7 +79,6 @@ namespace RHI::RHID3D11
 
 		_args = args;
 		_resource = resource;
-		_states = _args.states;
 		_pointer = pointer;
 		return core::ok;
 	}
@@ -87,32 +86,5 @@ namespace RHI::RHID3D11
 	void RHID3D11Resource::SetName(const std::u8string & name)
 	{
 		SetD3D11ObjectName(_resource.get(), name);
-	}
-	
-	
-	void RHID3D11Resource::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
-	{
-		if (!cmdlist)
-			return;
-		
-		auto d3d12cmdlist = reinterpret_cast<RHID3D11CommandList *>(cmdlist)->CommandList();
-		assert(d3d12cmdlist);
-
-		//D3D12_RESOURCE_BARRIER barrier;
-		//barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		//barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		//barrier.Transition.pResource = _resource.get();
-		//barrier.Transition.StateBefore = FromResourceStates(_states);
-		//barrier.Transition.StateAfter = FromResourceStates(states);
-		//barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-
-		//if ((barrier.Transition.StateBefore & barrier.Transition.StateAfter) != 0)
-		//{
-		//	core::war() << __FUNCTION__ " RESOURCE_MANIPULATION";
-		//	return;
-		//}
-		
-		//d3d12cmdlist->ResourceBarrier(1, &barrier);
-		_states = states;
 	}
 }

@@ -9,11 +9,11 @@ namespace RHI::RHID3D12
 	{
 	public:
 		RHID3D12Resource(RHID3D12Device * device) : _device(device) {}
+		RHID3D12Resource(RHID3D12Device * device, core::comptr<ID3D12Resource> resource) : _device(device), _resource(resource){}
 		virtual ~RHID3D12Resource() = default;
 
 		core::error Create(const ResourceArgs & args);
-		void SetName(const std::u8string & name);
-		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states);
+		void SetName(const std::u8string & name) override;
 
 	public:
 		void * Data() override;
@@ -23,6 +23,8 @@ namespace RHI::RHID3D12
 	public:
 		const ResourceArgs & Args() const { return _args; }
 		ID3D12Resource * Resource() const { return _resource.get(); }
+		ResourceStates State() const { return _state; }
+		void SetState(ResourceStates state) { _state = state; }
 		D3D12_GPU_VIRTUAL_ADDRESS GPUVirtualAddress() const { return _resource->GetGPUVirtualAddress(); }
 		
 	private:
@@ -30,5 +32,6 @@ namespace RHI::RHID3D12
 		ResourceArgs _args;
 		core::comptr<ID3D12Resource> _resource;
 		void * _pointer = nullptr;
+		ResourceStates _state = ResourceState::None;
 	};
 }

@@ -15,8 +15,8 @@ namespace RHI
 		virtual ~RHIRenderTarget() = default;
 		
 	public:
-		virtual void TransitionBarrier(RHICommandList * cmdlist, ResourceStates states) = 0;
 		virtual void Begin() = 0;
 		virtual void Present(uint32_t sync) = 0;
+		virtual uint32_t FrameIndex() const = 0;
 	};
 }

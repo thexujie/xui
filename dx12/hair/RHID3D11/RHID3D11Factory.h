@@ -10,7 +10,7 @@ namespace RHI::RHID3D11
 		RHID3D11Factory() = default;
 		virtual ~RHID3D11Factory() = default;
 
-		core::error Load();
+		core::error Load() override;
 		std::vector<RHIAdapterDesc> AdapterDescs() const override;
 		std::shared_ptr<RHIDevice> CreateDevice(const std::u8string & uri) const override;
 

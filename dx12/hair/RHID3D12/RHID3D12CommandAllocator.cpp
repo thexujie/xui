@@ -3,7 +3,7 @@
 
 namespace RHI::RHID3D12
 {
-	core::error RHID3D12CommandAllocator::Create(CommandType type)
+	core::error RHID3D12CommandAllocator::Create(CommandType type, uint32_t count)
 	{
 		if (!_device)
 			return core::e_state;
@@ -15,25 +15,28 @@ namespace RHI::RHID3D12
 		assert(device);
 		assert(adapter);
 
-		core::comptr<ID3D12CommandAllocator> cmdallocator;
-		hr = device->CreateCommandAllocator(FromCommandType(type), __uuidof(ID3D12CommandAllocator), cmdallocator.getvv());
-		if (FAILED(hr))
+		std::vector<core::comptr<ID3D12CommandAllocator>> cmdallocators(count);
+		for (uint32_t icmdallocator = 0; icmdallocator < count; ++icmdallocator)
 		{
-			core::war() << __FUNCTION__ " device->CreateCommandAllocator failed: " << win32::winerr_str(hr & 0xFFFF);
-			return core::e_inner;
+			hr = device->CreateCommandAllocator(FromCommandType(type), __uuidof(ID3D12CommandAllocator), cmdallocators[icmdallocator].getvv());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ " device->CreateCommandAllocator failed: " << win32::winerr_str(hr & 0xFFFF);
+				return core::e_inner;
+			}
 		}
-
-		_cmdallocator = cmdallocator;
+		_cmdallocators = cmdallocators;
 		return core::ok;
 	}
 
-	void RHID3D12CommandAllocator::Reset()
+	void RHID3D12CommandAllocator::Reset(uint32_t index)
 	{
-		_cmdallocator->Reset();
+		_cmdallocators[index]->Reset();
 	}
 	
 	void RHID3D12CommandAllocator::SetName(const std::u8string & name)
 	{
-		SetD3D12ObjectName(_cmdallocator.get(), name);
+		for (auto & cmdallocator : _cmdallocators)
+			SetD3D12ObjectName(cmdallocator.get(), name);
 	}
 }

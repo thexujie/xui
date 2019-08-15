@@ -68,13 +68,11 @@ namespace RHI::RHID3D12
 		_cmdqueue->ExecuteCommandLists(1, cmdlists);
 	}
 	
-	void RHID3D12CommandQueue::Wait()
+	void RHID3D12CommandQueue::Fence(uint64_t signal, uint64_t fence)
 	{
 		HRESULT hr = S_OK;
-		const UINT64 fence = _fenceValue;
-		hr = _cmdqueue->Signal(_fence.get(), _fenceValue);
+		hr = _cmdqueue->Signal(_fence.get(), signal);
 		win32::throw_if_failed(hr);
-		_fenceValue++;
 
 		if (_fence->GetCompletedValue() < fence)
 		{

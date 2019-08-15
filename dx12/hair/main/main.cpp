@@ -162,7 +162,7 @@ public:
 	
 	void Start()
 	{
-		_future = std::async(&HairRender::RenderThread, this);
+		_future = std::async(&HairRender::RenderThreadBase, this);
 	}
 
 	void Stop()
@@ -170,37 +170,6 @@ public:
 		_rendering = false;
 		_future.wait();
 	}
-	
-	void LoadPipeline()
-	{
-		//_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
-		if (_rhi == RHIType::D3D11)
-			_factory = std::make_shared<RHI::RHID3D11::RHID3D11Factory>();
-		else
-			_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
-		
-		_factory->Load();
-		
-		std::vector<RHI::RHIAdapterDesc> adapters = _factory->AdapterDescs();
-		_device = _factory->CreateDevice(adapters[0].uri);
-		_cmdqueue = _device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
-		_cmdqueue_compute = _device->CreateCommandQueue(RHI::CommandType::Compute, RHI::CommandQueueFlag::None);
-		RHI::RenderTargetArgs rtparams = {};
-		rtparams.hwnd = _hwnd;
-		_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
-		_cmdallocator = _device->CreateCommandAllocator(RHI::CommandType::Direct);
-		_cmdlist = _device->CreateCommandList(RHI::CommandType::Direct, _cmdallocator.get());
-		_cmdallocator_compute = _device->CreateCommandAllocator(RHI::CommandType::Compute);
-		_cmdlist_compute = _device->CreateCommandList(RHI::CommandType::Compute, _cmdallocator_compute.get());
-
-		_cmdqueue->SetName(u8"_cmdqueue");
-		_cmdqueue_compute->SetName(u8"_cmdqueue_compute");
-		_cmdallocator->SetName(u8"_cmdallocator");
-		_cmdlist->SetName(u8"_cmdlist");
-		_cmdallocator_compute->SetName(u8"_cmdallocator_compute");
-		_cmdlist_compute->SetName(u8"_cmdlist_compute");
-	}
-
 	void LoadAssets()
 	{
 		std::u8string path_basic = u8"../data/shaders/basic.hlsl";
@@ -369,8 +338,8 @@ public:
 		_nvertices = _positions.size();
 		_nlines = _lines.size();
 
-		_cmdallocator->Reset();
-		_cmdlist->Reset(_cmdallocator.get());
+		_cmdallocator->Reset(_frameIndex);
+		_cmdlist->Reset(_cmdallocator.get(), _frameIndex);
 
 		// tangents
 		RHI::ResourceArgs tangentsParams_UL = {};
@@ -613,7 +582,9 @@ public:
 		
 		_cmdlist->Close();
 		_cmdqueue->Excute(_cmdlist.get());
-		_cmdqueue->Wait();
+
+		uint64_t fence = _fenceValues[_frameIndex]++;
+		_cmdqueue->Fence(fence, fence);
 	}
 
 	void LoadRawResources()
@@ -939,22 +910,52 @@ public:
 		}
 	}
 
-	void RenderThread()
+	void RenderThreadBase()
 	{
 		LoadRawResources();
 		while(_rendering)
 		{
 			_rhi = _rhi_next;
-			RenderThread_Impl();
+			RenderThread();
 			Reset();
 		}
 	}
 
 
-	void RenderThread_Impl()
+	void RenderThread()
 	{
-		LoadPipeline();
+		if (_rhi == RHIType::D3D11)
+			_factory = std::make_shared<RHI::RHID3D11::RHID3D11Factory>();
+		else
+			_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
+		
+		_factory->Load();
+
+		std::vector<RHI::RHIAdapterDesc> adapters = _factory->AdapterDescs();
+		_device = _factory->CreateDevice(adapters[0].uri);
+		_cmdqueue = _device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
+		_cmdqueue_compute = _device->CreateCommandQueue(RHI::CommandType::Compute, RHI::CommandQueueFlag::None);
+		RHI::RenderTargetArgs rtparams = {};
+		rtparams.hwnd = _hwnd;
+		rtparams.nbuffer = _backBufferCount;
+		_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
+		_cmdallocator = _device->CreateCommandAllocator(RHI::CommandType::Direct, rtparams.nbuffer);
+		_cmdlist = _device->CreateCommandList(RHI::CommandType::Direct, _cmdallocator.get());
+		_cmdallocator_compute = _device->CreateCommandAllocator(RHI::CommandType::Compute, rtparams.nbuffer);
+		_cmdlist_compute = _device->CreateCommandList(RHI::CommandType::Compute, _cmdallocator_compute.get());
+
+		_cmdqueue->SetName(u8"_cmdqueue");
+		_cmdqueue_compute->SetName(u8"_cmdqueue_compute");
+		_cmdallocator->SetName(u8"_cmdallocator");
+		_cmdlist->SetName(u8"_cmdlist");
+		_cmdallocator_compute->SetName(u8"_cmdallocator_compute");
+		_cmdlist_compute->SetName(u8"_cmdlist_compute");
+
+		_fenceValues.resize(rtparams.nbuffer, 0);
+		_frameIndex = 0;
+		
 		LoadAssets();
+
 
 		core::counter_fps<float, 3> fps;
 		float64_t time_last = core::datetime::system();
@@ -986,6 +987,9 @@ public:
 				RHI::RenderTargetArgs rtparams = {};
 				rtparams.hwnd = _hwnd;
 				_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
+
+				_fenceValues.resize(rtparams.nbuffer, 0);
+				_frameIndex = 0;
 			}
 
 			core::float4x4 matrView = core::float4x4_lookat_lh({ 0.0f, 0.0f, _view_z }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
@@ -1018,8 +1022,8 @@ public:
 					std::memcpy((byte_t *)_cbuffer_staging->Data() + sizeof(SceneConstantBuffer), &cbuffer, sizeof(cbuffer));
 				}
 
-				_cmdallocator_compute->Reset();
-				_cmdlist_compute->Reset(_cmdallocator_compute.get());
+				_cmdallocator_compute->Reset(_frameIndex);
+				_cmdlist_compute->Reset(_cmdallocator_compute.get(), _frameIndex);
 
 				_cmdlist_compute->TransitionBarrier(_cbuffer_simulate.get(), RHI::ResourceState::CopyDest);
 				_cmdlist_compute->CopyResource(_cbuffer_simulate.get(), _cbuffer_staging.get(), sizeof(SceneConstantBuffer), sizeof(SimulateConstantBuffer));
@@ -1034,61 +1038,67 @@ public:
 				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderRerources);
 				_cmdlist_compute->Close();
 				_cmdqueue_compute->Excute(_cmdlist_compute.get());
-				_cmdqueue_compute->Wait();
+				//_cmdqueue_compute->Wait(_fenceValues[_frameIndex]);
 			}
 
 
 			// Render
+			if(true)
 			{
-				SceneConstantBuffer cbuffer;
-				cbuffer.worldTransform = matrWorld;
-				cbuffer.viewprojTransform = _simulate ? (matrView * matrProj) : (matrWorld * matrView * matrProj);
-				cbuffer.tessFactor = _tessFactor;
-				cbuffer.eyePosition = { 0.0f, 0.0f, _view_z };
-				cbuffer.lightVector = core::float3(0.0f, 1.0f, 1.0f).normalize();
-				std::memcpy((byte_t *)_cbuffer_staging->Data(), &cbuffer, sizeof(cbuffer));
+				{
+					SceneConstantBuffer cbuffer;
+					cbuffer.worldTransform = matrWorld;
+					cbuffer.viewprojTransform = _simulate ? (matrView * matrProj) : (matrWorld * matrView * matrProj);
+					cbuffer.tessFactor = _tessFactor;
+					cbuffer.eyePosition = { 0.0f, 0.0f, _view_z };
+					cbuffer.lightVector = core::float3(0.0f, 1.0f, 1.0f).normalize();
+					std::memcpy((byte_t *)_cbuffer_staging->Data(), &cbuffer, sizeof(cbuffer));
+				}
+
+				_rendertarget->Begin();
+				_cmdallocator->Reset(_frameIndex);
+				_cmdlist->Reset(_cmdallocator.get(), _frameIndex);
+
+				_cmdlist->SetViewPort(viewport);
+				_cmdlist->SetScissorRect(sccisorrect);
+				_cmdlist->TransitionBarrier(_rendertarget.get(), _frameIndex, RHI::ResourceState::RenderTarget);
+				_cmdlist->SetResourcePacket(_resourcepacket.get());
+				_cmdlist->SetRenderTarget(_rendertarget.get(), _frameIndex);
+				_cmdlist->ClearRenderTarget(_rendertarget.get(), _frameIndex, 0xffdddddd);
+
+				_cmdlist->TransitionBarrier(_cbuffer_render.get(), RHI::ResourceState::CopyDest);
+				_cmdlist->CopyResource(_cbuffer_render.get(), _cbuffer_staging.get(), 0, sizeof(SceneConstantBuffer));
+				_cmdlist->TransitionBarrier(_cbuffer_render.get(), RHI::ResourceState::ConstBuffer);
+				if (_mode.any(content_mode::bsline))
+				{
+					_cmdlist->SetPipelineState(_pipelinestate.get());
+					_cmdlist->SetGraphicsResources(0, 0);
+					_cmdlist->IASetVertexBuffer(_resource_vertexbuffer.get(), sizeof(HairVertex), sizeof(HairVertex) * _vertices.size());
+					_cmdlist->IASetTopologyType(RHI::Topology::Point1PatchList);
+					_cmdlist->DrawInstanced(_vertices.size(), 1, 0, 0);
+				}
+
+				if (_mode.any(content_mode::line))
+				{
+					_cmdlist->SetPipelineState(_pipelinestate_basic.get());
+					_cmdlist->SetGraphicsResources(0, 0);
+					_cmdlist->IASetVertexBuffer(_resource_vertexbuffer_lines.get(), sizeof(uint32_t), sizeof(core::uint2) * _lines.size());
+					_cmdlist->IASetTopologyType(RHI::Topology::LineList);
+					_cmdlist->DrawInstanced(_lines.size() * 2, 1, 0, 0);
+				}
+
+				_cmdlist->TransitionBarrier(_rendertarget.get(), _frameIndex, RHI::ResourceState::Present);
+				_cmdlist->SetRenderTarget(nullptr, 0);
+				_cmdlist->Close();
+				_cmdqueue->Excute(_cmdlist.get());
+				_rendertarget->Present(0);
+				uint64_t signal = _fenceValues[_frameIndex];
+				_frameIndex = _rendertarget->FrameIndex();
+				uint64_t fence = _fenceValues[_frameIndex];
+				_cmdqueue->Fence(signal, fence);
+				_fenceValues[_frameIndex] = signal + 1;
 			}
 
-
-
-			_rendertarget->Begin();
-			_cmdallocator->Reset();
-			_cmdlist->Reset(_cmdallocator.get());
-
-			_cmdlist->SetViewPort(viewport);
-			_cmdlist->SetScissorRect(sccisorrect);
-			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::RenderTarget);
-			_cmdlist->SetResourcePacket(_resourcepacket.get());
-			_cmdlist->SetRenderTarget(_rendertarget.get());
-			_cmdlist->ClearRenderTarget(_rendertarget.get(), 0xffdddddd);
-
-			_cmdlist->TransitionBarrier(_cbuffer_render.get(), RHI::ResourceState::CopyDest);
-			_cmdlist->CopyResource(_cbuffer_render.get(), _cbuffer_staging.get(), 0, sizeof(SceneConstantBuffer));
-			_cmdlist->TransitionBarrier(_cbuffer_render.get(), RHI::ResourceState::ConstBuffer);
-			if (_mode.any(content_mode::bsline))
-			{
-				_cmdlist->SetPipelineState(_pipelinestate.get());
-				_cmdlist->SetGraphicsResources(0, 0);
-				_cmdlist->IASetVertexBuffer(_resource_vertexbuffer.get(), sizeof(HairVertex), sizeof(HairVertex) * _vertices.size());
-				_cmdlist->IASetTopologyType(RHI::Topology::Point1PatchList);
-				_cmdlist->DrawInstanced(_vertices.size(), 1, 0, 0);
-			}
-
-			if (_mode.any(content_mode::line))
-			{
-				_cmdlist->SetPipelineState(_pipelinestate_basic.get());
-				_cmdlist->SetGraphicsResources(0, 0);
-				_cmdlist->IASetVertexBuffer(_resource_vertexbuffer_lines.get(), sizeof(uint32_t), sizeof(core::uint2) * _lines.size());
-				_cmdlist->IASetTopologyType(RHI::Topology::LineList);
-				_cmdlist->DrawInstanced(_lines.size() * 2, 1, 0, 0);
-			}
-
-			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::Present);
-			_cmdlist->SetRenderTarget(nullptr);
-			_cmdlist->Close();
-			_cmdqueue->Excute(_cmdlist.get());
-			_rendertarget->Present(0);
-			_cmdqueue->Wait();
 			fps.acc(1);
 
 			core::logger_fps tt(__FILE__, __LINE__, 10);
@@ -1150,7 +1160,7 @@ private:
 
 	uint32_t _num_collisionSpheres = 0;
 	core::float4x4 _collisionSphereTransforms[MAX_COLLISION_SPHERES];
-
+	uint32_t _backBufferCount = 3;
 
 	//-------------------------
 	std::shared_ptr<RHI::RHIFactory> _factory;
@@ -1164,6 +1174,8 @@ private:
 	std::shared_ptr<RHI::RHICommandList> _cmdlist;
 	std::shared_ptr<RHI::RHICommandAllocator> _cmdallocator_compute;
 	std::shared_ptr<RHI::RHICommandList> _cmdlist_compute;
+	std::vector<uint32_t> _fenceValues;
+	uint32_t _frameIndex = 0;
 
 	std::shared_ptr<RHI::RHIPipelineState> _pipelinestate;
 	std::shared_ptr<RHI::RHIPipelineState> _pipelinestate_basic;

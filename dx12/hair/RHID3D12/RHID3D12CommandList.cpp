@@ -22,7 +22,7 @@ namespace RHI::RHID3D12
 		assert(adapter);
 
 		core::comptr<ID3D12GraphicsCommandList> cmdlist;
-		hr = device->CreateCommandList(0, FromCommandType(type), d3d12allocator->CommandAllocator(), nullptr, __uuidof(ID3D12GraphicsCommandList), cmdlist.getvv());
+		hr = device->CreateCommandList(0, FromCommandType(type), d3d12allocator->CommandAllocator(0), nullptr, __uuidof(ID3D12GraphicsCommandList), cmdlist.getvv());
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " device->CreateCommandList failed: " << win32::winerr_str(hr & 0xFFFF);
@@ -39,9 +39,9 @@ namespace RHI::RHID3D12
 		SetD3D12ObjectName(_cmdlist.get(), name);
 	}
 
-	void RHID3D12CommandList::Reset(RHICommandAllocator * allocator)
+	void RHID3D12CommandList::Reset(RHICommandAllocator * allocator, uint32_t index)
 	{
-		auto d3d12allocator = reinterpret_cast<RHID3D12CommandAllocator *>(allocator)->CommandAllocator();
+		auto d3d12allocator = reinterpret_cast<RHID3D12CommandAllocator *>(allocator)->CommandAllocator(index);
 		_cmdlist->Reset(d3d12allocator, nullptr);
 	}
 
@@ -50,22 +50,22 @@ namespace RHI::RHID3D12
 		_cmdlist->Close();
 	}
 
-	void RHID3D12CommandList::SetRenderTarget(RHIRenderTarget * rendertarget)
+	void RHID3D12CommandList::SetRenderTarget(RHIRenderTarget * rendertarget, uint32_t index)
 	{
 		auto d3d12rendertarget = static_cast<RHID3D12RenderTarget *>(rendertarget);
 		if (d3d12rendertarget)
 		{
-			D3D12_CPU_DESCRIPTOR_HANDLE handle = d3d12rendertarget->CPUDescriptorHandle();
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = d3d12rendertarget->CPUDescriptorHandle(index);
 			_cmdlist->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 		}
 		else
 			_cmdlist->OMSetRenderTargets(0, nullptr, FALSE, nullptr);
 	}
 
-	void RHID3D12CommandList::ClearRenderTarget(RHIRenderTarget * rendertarget, core::color color)
+	void RHID3D12CommandList::ClearRenderTarget(RHIRenderTarget * rendertarget, uint32_t index, core::color color)
 	{
 		RHID3D12RenderTarget * d3d12rendertarget = static_cast<RHID3D12RenderTarget *>(rendertarget);
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = d3d12rendertarget->CPUDescriptorHandle();
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = d3d12rendertarget->CPUDescriptorHandle(index);
 		const float clearColor[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
 		_cmdlist->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	}
@@ -94,14 +94,40 @@ namespace RHI::RHID3D12
 		_cmdlist->RSSetScissorRects(1, &d3d12rect);
 	}
 
-	void RHID3D12CommandList::TransitionBarrier(RHIResource * resource, ResourceStates states)
+	void RHID3D12CommandList::TransitionBarrier(RHIResource * resource, ResourceStates state)
 	{
-		static_cast<RHID3D12Resource *>(resource)->TransitionBarrier(this, states);
+		auto d3d12resource = static_cast<RHID3D12Resource *>(resource);
+
+		D3D12_RESOURCE_BARRIER barrier;
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.pResource = d3d12resource->Resource();
+		barrier.Transition.StateBefore = FromResourceStates(d3d12resource->State());
+		barrier.Transition.StateAfter = FromResourceStates(state);
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+		if ((barrier.Transition.StateBefore & barrier.Transition.StateAfter) != 0)
+		{
+			core::war() << __FUNCTION__ " RESOURCE_MANIPULATION";
+			return;
+		}
+		d3d12resource->SetState(state);
+		_cmdlist->ResourceBarrier(1, &barrier);
 	}
 	
-	void RHID3D12CommandList::TransitionBarrier(RHIRenderTarget * rendertarget, ResourceStates states)
+	void RHID3D12CommandList::TransitionBarrier(RHIRenderTarget * rendertarget, uint32_t index, ResourceStates state)
 	{
-		static_cast<RHIRenderTarget *>(rendertarget)->TransitionBarrier(this, states);
+		RHID3D12RenderTarget * d3d12rendertarget = static_cast<RHID3D12RenderTarget *>(rendertarget);
+
+		D3D12_RESOURCE_BARRIER barrier;
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.pResource = d3d12rendertarget->Buffer(index);
+		barrier.Transition.StateBefore = FromResourceStates(d3d12rendertarget->State(index));
+		barrier.Transition.StateAfter = FromResourceStates(state);
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		_cmdlist->ResourceBarrier(1, &barrier);
+		d3d12rendertarget->SetState(index, state);
 	}
 	
 	void RHID3D12CommandList::SetPipelineState(RHIPipelineState * pipelinestate)

@@ -12,8 +12,7 @@ namespace RHI::RHID3D11
 		virtual ~RHID3D11Resource() = default;
 
 		core::error Create(const ResourceArgs & args);
-		void SetName(const std::u8string & name);
-		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states);
+		void SetName(const std::u8string & name) override;
 
 	public:
 		void * Data() override { return _pointer; }

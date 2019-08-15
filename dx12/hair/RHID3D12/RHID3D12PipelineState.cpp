@@ -36,9 +36,8 @@ namespace RHI::RHID3D12
 				ranges[irangebase + irange].Flags = FromDescriptorFlags(range.flags);
 				ranges[irangebase + irange].OffsetInDescriptorsFromTableStart = range.packetOffset == core::uint32_max ?  D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND : range.packetOffset;
 
-				// const buffer �������仯�ģ�����ֵ�Ż��
-				if (range.type == DescriptorRangeType::ConstBuffer)
-					ranges[irangebase + irange].Flags |= D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
+				//if (range.type == DescriptorRangeType::ConstBuffer)
+				//	ranges[irangebase + irange].Flags |= D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
 			}
 			irangebase += table.ranges.size();
 		}

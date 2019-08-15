@@ -38,7 +38,7 @@ namespace RHI::RHID3D11
 	{
 	}
 
-	void RHID3D11CommandList::Reset(RHICommandAllocator * allocator)
+	void RHID3D11CommandList::Reset(RHICommandAllocator * allocator, uint32_t index)
 	{
 		_commandList.reset();
 		_deferredContext->ClearState();
@@ -49,7 +49,7 @@ namespace RHI::RHID3D11
 		_deferredContext->FinishCommandList(true, _commandList.getpp());
 	}
 
-	void RHID3D11CommandList::SetRenderTarget(RHIRenderTarget * rendertarget)
+	void RHID3D11CommandList::SetRenderTarget(RHIRenderTarget * rendertarget, uint32_t index)
 	{
 		if (!rendertarget)
 		{
@@ -89,7 +89,7 @@ namespace RHI::RHID3D11
 		}
 	}
 
-	void RHID3D11CommandList::ClearRenderTarget(RHIRenderTarget * rendertarget, core::color color)
+	void RHID3D11CommandList::ClearRenderTarget(RHIRenderTarget * rendertarget, uint32_t index, core::color color)
 	{
 		auto d3d11rendertarget = static_cast<RHID3D11RenderTarget *>(rendertarget);
 		const float clearColor[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
@@ -125,9 +125,9 @@ namespace RHI::RHID3D11
 		//static_cast<RHID3D12Resource *>(resource)->TransitionBarrier(this, states);
 	}
 	
-	void RHID3D11CommandList::TransitionBarrier(RHIRenderTarget * rendertarget, ResourceStates states)
+	void RHID3D11CommandList::TransitionBarrier(RHIRenderTarget * rendertarget, uint32_t index, ResourceStates states)
 	{
-		static_cast<RHIRenderTarget *>(rendertarget)->TransitionBarrier(this, states);
+		//static_cast<RHIRenderTarget *>(rendertarget)->TransitionBarrier(this, states);
 	}
 	
 	void RHID3D11CommandList::SetPipelineState(RHIPipelineState * pipelinestate)

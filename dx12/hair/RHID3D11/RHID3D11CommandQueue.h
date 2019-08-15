@@ -14,11 +14,11 @@ namespace RHI::RHID3D11
 		virtual ~RHID3D11CommandQueue() = default;
 
 		core::error Create(CommandType type, CommandQueueFlags flags);
-		void SetName(const std::u8string & name);
+		void SetName(const std::u8string & name) override;
 
 	public:
-		void Excute(RHICommandList * cmdlist);
-		void Wait() override;
+		void Excute(RHICommandList * cmdlist) override;
+		void Fence(uint64_t signal, uint64_t fence) override;
 
 	public:
 		ID3D11DeviceContext * DeviceContext() const { return _immediateContext.get(); }

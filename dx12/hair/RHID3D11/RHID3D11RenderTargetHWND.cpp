@@ -81,7 +81,6 @@ namespace RHI::RHID3D11
 		}
 
 		//---------------------------------------------------------------
-		_states = ResourceState::Present;
 		_params = params;
 		_swapchain = swapchain1.as<IDXGISwapChain3>();
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
@@ -96,25 +95,6 @@ namespace RHI::RHID3D11
 		SetD3D11ObjectName(_backBuffer.get(), name + u8"._backBuffer");
 	}
 
-	void RHID3D11RenderTargetHWND::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
-	{
-		if (!cmdlist)
-			return;
-
-		//auto d3d12cmdlist = reinterpret_cast<RHID3D12CommandList *>(cmdlist)->Ptr();
-		//assert(d3d12cmdlist);
-
-		//D3D12_RESOURCE_BARRIER barrier;
-		//barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		//barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		//barrier.Transition.pResource = _buffers[_frameIndex].get();
-		//barrier.Transition.StateBefore = FromResourceStates(_states);
-		//barrier.Transition.StateAfter = FromResourceStates(states);
-		//barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		//d3d12cmdlist->ResourceBarrier(1, &barrier);
-		_states = states;
-	}
-
 	void RHID3D11RenderTargetHWND::Begin()
 	{
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
@@ -126,5 +106,10 @@ namespace RHI::RHID3D11
 			return ;
 
 		_swapchain->Present(sync, 0);
+	}
+	
+	uint32_t RHID3D11RenderTargetHWND::FrameIndex() const
+	{
+		return _swapchain->GetCurrentBackBufferIndex();
 	}
 }

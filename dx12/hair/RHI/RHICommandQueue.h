@@ -14,7 +14,7 @@ namespace RHI
 
 	public:
 		virtual void Excute(RHICommandList * cmdlist) = 0;
-		virtual void Wait() = 0;
+		virtual void Fence(uint64_t signal, uint64_t fence) = 0;
 	};
 }
 

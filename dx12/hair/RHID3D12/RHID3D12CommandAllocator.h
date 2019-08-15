@@ -13,17 +13,17 @@ namespace RHI::RHID3D12
 		RHID3D12CommandAllocator(RHID3D12Device * device) : _device(device) {}
 		virtual ~RHID3D12CommandAllocator() = default;
 
-		core::error Create(CommandType type);
-		void SetName(const std::u8string & name);
+		core::error Create(CommandType type, uint32_t count);
+		void SetName(const std::u8string & name) override;
 
 	public:
-		void Reset() override;
+		void Reset(uint32_t index) override;
 
 	public:
-		ID3D12CommandAllocator * CommandAllocator() const { return _cmdallocator.get(); }
+		ID3D12CommandAllocator * CommandAllocator(uint32_t index) const { return _cmdallocators[index].get(); }
 
 	private:
 		RHID3D12Device * _device = nullptr;
-		core::comptr<ID3D12CommandAllocator> _cmdallocator;
+		std::vector<core::comptr<ID3D12CommandAllocator>> _cmdallocators;
 	};
 }

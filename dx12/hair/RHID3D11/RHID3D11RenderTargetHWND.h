@@ -14,14 +14,13 @@ namespace RHI::RHID3D11
 		virtual ~RHID3D11RenderTargetHWND() = default;
 
 		core::error Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & params);
-		void SetName(const std::u8string & name);
+		void SetName(const std::u8string & name) override;
 
-	public:
-		void TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states) override;
 	public:
 		void Begin() override;
 		void Present(uint32_t sync) override;
-
+		uint32_t FrameIndex() const override;
+		
 	public:
 		ID3D11RenderTargetView * RenderTargetView() const override { return _rendertargetView.get(); }
 		
@@ -31,7 +30,6 @@ namespace RHI::RHID3D11
 
 		core::comptr<IDXGISwapChain3> _swapchain;
 
-		ResourceStates _states = ResourceState::None;
 		uint32_t _frameIndex = 0;
 
 		core::comptr<ID3D11Resource> _backBuffer;

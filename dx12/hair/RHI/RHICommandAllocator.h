@@ -11,6 +11,6 @@ namespace RHI
 		virtual ~RHICommandAllocator() = default;
 
 	public:
-		virtual void Reset() = 0;
+		virtual void Reset(uint32_t index) = 0;
 	};
 }

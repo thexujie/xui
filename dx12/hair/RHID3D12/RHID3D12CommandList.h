@@ -16,17 +16,17 @@ namespace RHI::RHID3D12
 		virtual ~RHID3D12CommandList() = default;
 
 		core::error Create(CommandType type, RHICommandAllocator * allocator);
-		void SetName(const std::u8string & name);
+		void SetName(const std::u8string & name) override;
 
 	public:
-		void Reset(RHICommandAllocator * allocator) override;
+		void Reset(RHICommandAllocator * allocator, uint32_t index) override;
 		void Close() override;
-		void SetRenderTarget(RHIRenderTarget * rendertarget) override;
-		void ClearRenderTarget(RHIRenderTarget * rendertarget, core::color color) override;
+		void SetRenderTarget(RHIRenderTarget * rendertarget, uint32_t index) override;
+		void ClearRenderTarget(RHIRenderTarget * rendertarget, uint32_t index, core::color color) override;
 		void SetViewPort(const ViewPort & viewport) override;
 		void SetScissorRect(const core::recti & rect) override;
-		void TransitionBarrier(RHIResource * resource, ResourceStates states) override;
-		void TransitionBarrier(RHIRenderTarget * rendertarget, ResourceStates states) override;
+		void TransitionBarrier(RHIResource * resource, ResourceStates state) override;
+		void TransitionBarrier(RHIRenderTarget * rendertarget, uint32_t index, ResourceStates state) override;
 
 		void SetPipelineState(RHIPipelineState * pipelinestate) override;
 		void SetResourcePacket(RHIResourcePacket * packet) override;

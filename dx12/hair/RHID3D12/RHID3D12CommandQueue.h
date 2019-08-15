@@ -13,11 +13,11 @@ namespace RHI::RHID3D12
 		virtual ~RHID3D12CommandQueue() = default;
 
 		core::error Create(CommandType type, CommandQueueFlags flags);
-		void SetName(const std::u8string & name);
+		void SetName(const std::u8string & name) override;
 
 	public:
-		void Excute(RHICommandList * cmdlist);
-		void Wait() override;
+		void Excute(RHICommandList * cmdlist) override;
+		void Fence(uint64_t signal, uint64_t fence) override;
 
 	public:
 		ID3D12CommandQueue * CommandQueue() const { return _cmdqueue.get(); }

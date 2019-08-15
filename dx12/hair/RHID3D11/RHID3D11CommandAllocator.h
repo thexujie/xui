@@ -11,11 +11,11 @@ namespace RHI::RHID3D11
 		RHID3D11CommandAllocator(RHID3D11Device * device) : _device(device) {}
 		virtual ~RHID3D11CommandAllocator() = default;
 
-		core::error Create(CommandType type);
-		void SetName(const std::u8string & name);
+		core::error Create(CommandType type, uint32_t count);
+		void SetName(const std::u8string & name) override;
 
 	public:
-		void Reset() override;
+		void Reset(uint32_t index) override;
 
 	private:
 		RHID3D11Device * _device = nullptr;

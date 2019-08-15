@@ -18,15 +18,15 @@ namespace RHI
 		virtual ~RHICommandList() = default;
 
 	public:
-		virtual void Reset(RHICommandAllocator * allocator) = 0;
+		virtual void Reset(RHICommandAllocator * allocator, uint32_t index) = 0;
 		virtual void Close() = 0;
-		virtual void SetRenderTarget(RHIRenderTarget * rendertarget) = 0;
-		virtual void ClearRenderTarget(RHIRenderTarget * rendertarget, core::color color) = 0;
+		virtual void SetRenderTarget(RHIRenderTarget * rendertarget, uint32_t index) = 0;
+		virtual void ClearRenderTarget(RHIRenderTarget * rendertarget, uint32_t index, core::color color) = 0;
 		
 		virtual void SetViewPort(const ViewPort & viewport) = 0;
 		virtual void SetScissorRect(const core::recti & rect) = 0;
 		virtual void TransitionBarrier(RHIResource * resource, ResourceStates states) = 0;
-		virtual void TransitionBarrier(RHIRenderTarget * rendertarget, ResourceStates states) = 0;
+		virtual void TransitionBarrier(RHIRenderTarget * rendertarget, uint32_t index, ResourceStates states) = 0;
 
 		virtual void SetPipelineState(RHIPipelineState * pipelinestate) = 0;
 		virtual void SetResourcePacket(RHIResourcePacket * packet) = 0;

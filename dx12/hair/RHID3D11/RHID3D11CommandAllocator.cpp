@@ -3,7 +3,7 @@
 
 namespace RHI::RHID3D11
 {
-	core::error RHID3D11CommandAllocator::Create(CommandType type)
+	core::error RHID3D11CommandAllocator::Create(CommandType type, uint32_t count)
 	{
 		if (!_device)
 			return core::e_state;
@@ -11,7 +11,7 @@ namespace RHI::RHID3D11
 		return core::ok;
 	}
 
-	void RHID3D11CommandAllocator::Reset()
+	void RHID3D11CommandAllocator::Reset(uint32_t index)
 	{
 	}
 	
