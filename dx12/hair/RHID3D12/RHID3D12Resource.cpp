@@ -78,25 +78,12 @@ namespace RHI::RHID3D12
 		return _args.size;
 	}
 
-	void * RHID3D12Resource::Map()
-	{
-		if (_pointer)
-			return _pointer;
-		
-		D3D12_RANGE range = {};
-		_resource->Map(0, &range, &_pointer);
-		return _pointer;
-	}
-	
-	void RHID3D12Resource::Unmap()
-	{
-		_resource->Unmap(0, nullptr);
-		_pointer = nullptr;
-	}
-	
 	void RHID3D12Resource::TransitionBarrier(class RHICommandList * cmdlist, ResourceStates states)
 	{
 		if (!cmdlist)
+			return;
+
+		if (_states == states)
 			return;
 		
 		auto d3d12cmdlist = reinterpret_cast<RHID3D12CommandList *>(cmdlist)->Ptr();

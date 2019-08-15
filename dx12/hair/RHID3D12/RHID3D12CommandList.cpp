@@ -206,6 +206,11 @@ namespace RHI::RHID3D12
 			_cmdlist->CopyResource(static_cast<RHID3D12Resource *>(dst)->Resource(), static_cast<RHID3D12Resource *>(src)->Resource());
 		}
 	}
+
+	void RHID3D12CommandList::CopyResource(RHIResource * dst, RHIResource * src, uint32_t offset, uint32_t size)
+	{
+		_cmdlist->CopyBufferRegion(static_cast<RHID3D12Resource *>(dst)->Resource(), 0, static_cast<RHID3D12Resource *>(src)->Resource(), offset, size);
+	}
 	
 	void RHID3D12CommandList::CopyBuffer(RHIResource * dst, RHIResource * src)
 	{

@@ -42,6 +42,7 @@ namespace RHI::RHID3D12
 		void Dispatch(core::uint3 ngroups) override;
 		
 		void CopyResource(RHIResource * dst, RHIResource * src) override;
+		void CopyResource(RHIResource * dst, RHIResource * src, uint32_t offset, uint32_t size) override;
 		void CopyBuffer(RHIResource * dst, RHIResource * src) override;
 
 	public:

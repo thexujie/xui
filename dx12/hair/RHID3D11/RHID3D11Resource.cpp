@@ -17,13 +17,13 @@ namespace RHI::RHID3D11
 		assert(adapter);
 
 		core::comptr<ID3D11Resource> resource;
-		if (args.dimension == ResourceDimension::Buffer || args.dimension == ResourceDimension::Structure)
+		if (args.dimension == ResourceDimension::Buffer)
 		{
 			D3D11_BUFFER_DESC desc = {};
 			desc.ByteWidth = args.size.cx;
 			desc.Usage = FromHeapType(args.heap.type);
 			desc.MiscFlags = 0;
-			desc.BindFlags = args.heap.type == HeapType::Upload ? 0 : FromResourceFlags(args.flags);
+			desc.BindFlags = FromResourceFlags(args.flags);
 			desc.CPUAccessFlags = args.heap.type == HeapType::Upload ? D3D11_CPU_ACCESS_WRITE : 0;
 			desc.StructureByteStride = 0;
 			core::comptr<ID3D11Buffer> buffer;

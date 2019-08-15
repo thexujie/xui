@@ -20,8 +20,6 @@ namespace RHI::RHID3D12
 		const void * Data() const override;
 		core::sizeu Size() const override;
 
-		void * Map() override;
-		void Unmap() override;
 	public:
 		const ResourceArgs & Args() const { return _args; }
 		ID3D12Resource * Resource() const { return _resource.get(); }

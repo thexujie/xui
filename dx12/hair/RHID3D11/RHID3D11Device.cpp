@@ -33,7 +33,7 @@ namespace RHI::RHID3D11
 #ifdef _DEBUG
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-		D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+		D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1 };
 		D3D_FEATURE_LEVEL featureLevel = static_cast<D3D_FEATURE_LEVEL>(0);
 		HRESULT hr = D3D11CreateDevice(adapter.get(), D3D_DRIVER_TYPE_UNKNOWN, NULL,
 			flags, featureLevels, std::size(featureLevels), D3D11_SDK_VERSION, device.getpp(), &featureLevel, immediateContext.getpp());

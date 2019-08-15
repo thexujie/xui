@@ -34,9 +34,10 @@ struct HairVertex
 	uint32_t strandIndex;
 };
 
+const int MAX_COLLISION_SPHERES = 10;
 struct SimulateConstantBuffer
 {
-	core::float4x4 transform;
+	core::float4x4 matrWorld;
 	float gravityAcceleration;
 	float gravityStrength;
 	float timeElapse;
@@ -44,12 +45,10 @@ struct SimulateConstantBuffer
 	// 约束计算的积分次数，越多越精确
 	int numConstraintIterations;
 	core::float3 eyePosition;
+	
 	uint32_t numSphereImplicits;
-};
+	core::uint3 _unused;
 
-const int MAX_COLLISION_SPHERES = 10;
-struct SimulateGlobalConstBuffer
-{
 	core::float4x4 CollisionSphereTransformations[MAX_COLLISION_SPHERES];
 	core::float4x4 CollisionSphereInverseTransformations[MAX_COLLISION_SPHERES];
 };
@@ -128,6 +127,9 @@ public:
 
 		switch (vkey)
 		{
+		case 'L':
+			_rhi_next = _rhi == RHIType::D3D11 ? RHIType::D3D12 : RHIType::D3D11;
+			break;
 		case 'R':
 			_rotating = !_rotating;
 			break;
@@ -149,7 +151,12 @@ public:
 			break;
 		}
 
-		std::wstring title = core::wfmt("TessFactor=[", std::setprecision(4), _tessFactor.x, L",", _tessFactor.y, L"]");
+		UpdateTitle();
+	}
+
+	void UpdateTitle()
+	{
+		std::wstring title = core::wfmt("TessFactor=[", std::setprecision(4), _tessFactor.x, L",", _tessFactor.y, L"] - ", _rhi_next == RHIType::D3D11 ? "D3D11" : "D3D12");
 		::SetWindowTextW(_hwnd, title.c_str());
 	}
 	
@@ -166,8 +173,12 @@ public:
 	
 	void LoadPipeline()
 	{
-		_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
-		//_factory = std::make_shared<RHI::RHID3D11::RHID3D11Factory>();
+		//_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
+		if (_rhi == RHIType::D3D11)
+			_factory = std::make_shared<RHI::RHID3D11::RHID3D11Factory>();
+		else
+			_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
+		
 		_factory->Load();
 		
 		std::vector<RHI::RHIAdapterDesc> adapters = _factory->AdapterDescs();
@@ -310,11 +321,6 @@ public:
 						},
 						RHI::PipelineStateTableRange
 						{
-							.type = RHI::DescriptorRangeType::ConstBuffer,
-							.shaderRegister = 1
-						},
-						RHI::PipelineStateTableRange
-						{
 							.type = RHI::DescriptorRangeType::ShaderResource,
 							.shaderRegister = 0
 						},
@@ -398,7 +404,7 @@ public:
 		pointsParams.dimension = RHI::ResourceDimension::Buffer;
 		pointsParams.states = RHI::ResourceState::CopyDest;
 		pointsParams.flags = RHI::ResourceFlag::ShaderResource;
-		_resource_positions = _device->CreateResource(pointsParams);
+		_resource_init_positions = _device->CreateResource(pointsParams);
 		pointsParams.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource;
 		_resource_prev_positions = _device->CreateResource(pointsParams);
 		_resource_curr_positions = _device->CreateResource(pointsParams);
@@ -421,7 +427,7 @@ public:
 		vertexbufferParams.size.cx = sizeof(HairVertex) * _vertices.size();
 		vertexbufferParams.dimension = RHI::ResourceDimension::Buffer;
 		vertexbufferParams.states = RHI::ResourceState::CopyDest;
-		vertexbufferParams.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::VertexBuffer;
+		vertexbufferParams.flags = RHI::ResourceFlag::VertexBuffer;
 		_resource_vertexbuffer = _device->CreateResource(vertexbufferParams);
 
 		// line
@@ -459,17 +465,17 @@ public:
 		_resource_coord_jitters = _device->CreateResource(coordJittersArgs);
 		
 		// const
-		_res_constbuffer = _device->CreateResource(
+		_cbuffer_render = _device->CreateResource(
 			RHI::ResourceArgs
 			{
 				.heap =
 				{
-					.type = RHI::HeapType::Upload
+					.type = RHI::HeapType::Default
 				},
 				.dimension = RHI::ResourceDimension::Buffer,
-				.flags = RHI::ResourceFlag::ShaderResource,
+				.flags = RHI::ResourceFlag::ConstBuffer,
 				.size = { uint32_t((sizeof(SceneConstantBuffer) + 0xff) & ~0xff), 1 },
-				.states = RHI::ResourceState::GenericRead,
+				.states = RHI::ResourceState::CopyDest,
 			}
 		);
 		
@@ -478,15 +484,16 @@ public:
 			{
 				.heap =
 				{
-					.type = RHI::HeapType::Upload
+					.type = RHI::HeapType::Default
 				},
 				.dimension = RHI::ResourceDimension::Buffer,
-				.flags = RHI::ResourceFlag::ShaderResource,
+				.flags = RHI::ResourceFlag::ConstBuffer,
 				.size = { uint32_t((sizeof(SimulateConstantBuffer) + 0xff) & ~0xff), 1 },
-				.states = RHI::ResourceState::GenericRead,
+				.states = RHI::ResourceState::CopyDest,
 			}
 		);
-		_cbuffer_simulate_global = _device->CreateResource(
+		
+		_cbuffer_staging = _device->CreateResource(
 			RHI::ResourceArgs
 			{
 				.heap =
@@ -494,8 +501,7 @@ public:
 					.type = RHI::HeapType::Upload
 				},
 				.dimension = RHI::ResourceDimension::Buffer,
-				.flags = RHI::ResourceFlag::ShaderResource,
-				.size = { uint32_t((sizeof(SimulateGlobalConstBuffer) + 0xff) & ~0xff), 1 },
+				.size = { uint32_t((sizeof(SceneConstantBuffer) + sizeof(SimulateConstantBuffer) + 0xff) & ~0xff), 1 },
 				.states = RHI::ResourceState::GenericRead,
 			}
 		);
@@ -557,17 +563,16 @@ public:
 		std::memcpy(constraints_UL->Data(), _constraints.data(), sizeof(core::float4) * _constraints.size());
 
 		//--------------------------------------------------------
-		_resourcepacket->SetResource(RenderResourceId_CBV_ConstBuffer, _res_constbuffer.get(), RHI::ResourceViewArgs::CBuffer());
+		_resourcepacket->SetResource(RenderResourceId_CBV_ConstBuffer, _cbuffer_render.get(), RHI::ResourceViewArgs::CBuffer());
 		_resourcepacket->SetResource(RenderResourceId_SRV_Positions, _resource_curr_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
 		_resourcepacket->SetResource(RenderResourceId_SRV_Tangents, _resource_tangents.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
-		_resourcepacket->SetResource(RenderResourceId_SRV_CoordJitters, _resource_coord_jitters.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float2), (uint32_t)_coordJitters.size(), core::format::float4));
+		_resourcepacket->SetResource(RenderResourceId_SRV_CoordJitters, _resource_coord_jitters.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float2), (uint32_t)_coordJitters.size(), core::format::float2));
 		
 		_resourcepacket_simulate->SetResource(SimulateResourceId_CBV_ConstBuffer, _cbuffer_simulate.get(), RHI::ResourceViewArgs::CBuffer());
-		_resourcepacket_simulate->SetResource(SimulateResourceId_CBV_ConstBufferGlobal, _cbuffer_simulate_global.get(), RHI::ResourceViewArgs::CBuffer());
 
 		_resourcepacket_simulate->SetResource(SimulateResourceId_SRV_StrandOffsets, _resource_strandoffsets.get(), RHI::ResourceViewArgs::Shader(sizeof(uint32_t), (uint32_t)_strandOffsets.size(), core::format::uint1));
 		_resourcepacket_simulate->SetResource(SimulateResourceId_SRV_Constrains, _resource_constraints.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_constraints.size(), core::format::float4));
-		_resourcepacket_simulate->SetResource(SimulateResourceId_SRV_PositionsInit, _resource_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_SRV_PositionsInit, _resource_init_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
 		
 		_resourcepacket_simulate->SetResource(SimulateResourceId_UAV_Positions, _resource_curr_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
 		_resourcepacket_simulate->SetResource(SimulateResourceId_UAV_PositionsPrev, _resource_prev_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
@@ -577,7 +582,7 @@ public:
 		_pipelinestate_basic->SetName(u8"_pipelinestate_basic");
 		_pipelinestate_simulate->SetName(u8"_pipelinestate_simulate");
 
-		_res_constbuffer->SetName(u8"_res_constbuffer");
+		_cbuffer_render->SetName(u8"_cbuffer_render");
 		_resource_curr_positions->SetName(u8"_resource_curr_positions");
 		_resource_tangents->SetName(u8"_resource_tangents");
 		_resource_coord_jitters->SetName(u8"_resource_coord_jitters");
@@ -588,7 +593,7 @@ public:
 		_cbuffer_simulate->SetName(u8"_cbuffer_simulate");
 		
 		_cmdlist->CopyResource(_resource_tangents.get(), resource_tangents_UL.get());
-		_cmdlist->CopyResource(_resource_positions.get(), resource_positions_UL.get());
+		_cmdlist->CopyResource(_resource_init_positions.get(), resource_positions_UL.get());
 		_cmdlist->CopyResource(_resource_prev_positions.get(), resource_positions_UL.get());
 		_cmdlist->CopyResource(_resource_curr_positions.get(), resource_positions_UL.get());
 		_cmdlist->CopyResource(_resource_coord_jitters.get(), resource_coordJitters_UL.get());
@@ -598,7 +603,7 @@ public:
 		_cmdlist->CopyResource(_resource_constraints.get(), constraints_UL.get());
 		_cmdlist->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::ComputerShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_prev_positions.get(), RHI::ResourceState::ComputerShaderRerources);
-		_cmdlist->TransitionBarrier(_resource_positions.get(), RHI::ResourceState::ComputerShaderRerources);
+		_cmdlist->TransitionBarrier(_resource_init_positions.get(), RHI::ResourceState::ComputerShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_tangents.get(), RHI::ResourceState::VertexShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_coord_jitters.get(), RHI::ResourceState::VertexShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_vertexbuffer.get(), RHI::ResourceState::VertexBuffer);
@@ -937,9 +942,20 @@ public:
 	void RenderThread()
 	{
 		LoadRawResources();
+		while(_rendering)
+		{
+			_rhi = _rhi_next;
+			RenderThread_Impl();
+			Reset();
+		}
+	}
+
+
+	void RenderThread_Impl()
+	{
 		LoadPipeline();
 		LoadAssets();
-		
+
 		core::counter_fps<float, 3> fps;
 		float64_t time_last = core::datetime::system();
 
@@ -953,11 +969,11 @@ public:
 
 		core::float4x4 matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
 
-		while (_rendering)
+		while (_rendering && _rhi_next == _rhi)
 		{
 			auto elapse = core::datetime::system() - time_last;
 			time_last += elapse;
-			
+
 			GetClientRect(_hwnd, &rcClient);
 			core::sizei windowSize2(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
 			if (windowSize2 != windowSize)
@@ -984,7 +1000,7 @@ public:
 				// SimulateConstantBuffer
 				{
 					SimulateConstantBuffer cbuffer = {};
-					cbuffer.transform = matrWorld;
+					cbuffer.matrWorld = matrWorld;
 					cbuffer.gravityAcceleration = 10.0f;
 					cbuffer.gravityStrength = 10;
 					cbuffer.timeElapse = std::min(float(elapse), 0.1f);
@@ -992,20 +1008,23 @@ public:
 					cbuffer.numConstraintIterations = 20;
 					cbuffer.eyePosition = { 0.0f, 0.0f, _view_z };
 					cbuffer.numSphereImplicits = _num_collisionSpheres;
-					std::memcpy(_cbuffer_simulate->Data(), &cbuffer, sizeof(cbuffer));
-				}
-				{
-					SimulateGlobalConstBuffer cbuffer = {};
 					for (uint32_t isphere = 0; isphere < _num_collisionSpheres; ++isphere)
 					{
 						cbuffer.CollisionSphereTransformations[isphere] = _collisionSphereTransforms[isphere] * matrWorld;
 						cbuffer.CollisionSphereInverseTransformations[isphere] = core::float4x4_invert(cbuffer.CollisionSphereTransformations[isphere], nullptr);
 					}
-					std::memcpy(_cbuffer_simulate_global->Data(), &cbuffer, sizeof(cbuffer));
+					//std::memcpy(_cbuffer_simulate->Data(), &cbuffer, sizeof(cbuffer));
+					//.size = { uint32_t((sizeof(SceneConstantBuffer) + sizeof(SimulateConstantBuffer) + sizeof(SimulateGlobalConstBuffer) + 0xff) & ~0xff), 1 },
+					std::memcpy((byte_t *)_cbuffer_staging->Data() + sizeof(SceneConstantBuffer), &cbuffer, sizeof(cbuffer));
 				}
-				
+
 				_cmdallocator_compute->Reset();
 				_cmdlist_compute->Reset(_cmdallocator_compute.get());
+
+				_cmdlist_compute->TransitionBarrier(_cbuffer_simulate.get(), RHI::ResourceState::CopyDest);
+				_cmdlist_compute->CopyResource(_cbuffer_simulate.get(), _cbuffer_staging.get(), sizeof(SceneConstantBuffer), sizeof(SimulateConstantBuffer));
+				_cmdlist_compute->TransitionBarrier(_cbuffer_simulate.get(), RHI::ResourceState::ConstBuffer);
+
 				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::UnorderedAccess);
 				_cmdlist_compute->SetPipelineState(_pipelinestate_simulate.get());
 				_cmdlist_compute->SetResourcePacket(_resourcepacket_simulate.get());
@@ -1019,7 +1038,6 @@ public:
 			}
 
 
-
 			// Render
 			{
 				SceneConstantBuffer cbuffer;
@@ -1028,8 +1046,10 @@ public:
 				cbuffer.tessFactor = _tessFactor;
 				cbuffer.eyePosition = { 0.0f, 0.0f, _view_z };
 				cbuffer.lightVector = core::float3(0.0f, 1.0f, 1.0f).normalize();
-				std::memcpy(_res_constbuffer->Data(), &cbuffer, sizeof(cbuffer));
+				std::memcpy((byte_t *)_cbuffer_staging->Data(), &cbuffer, sizeof(cbuffer));
 			}
+
+
 
 			_rendertarget->Begin();
 			_cmdallocator->Reset();
@@ -1042,7 +1062,9 @@ public:
 			_cmdlist->SetRenderTarget(_rendertarget.get());
 			_cmdlist->ClearRenderTarget(_rendertarget.get(), 0xffdddddd);
 
-
+			_cmdlist->TransitionBarrier(_cbuffer_render.get(), RHI::ResourceState::CopyDest);
+			_cmdlist->CopyResource(_cbuffer_render.get(), _cbuffer_staging.get(), 0, sizeof(SceneConstantBuffer));
+			_cmdlist->TransitionBarrier(_cbuffer_render.get(), RHI::ResourceState::ConstBuffer);
 			if (_mode.any(content_mode::bsline))
 			{
 				_cmdlist->SetPipelineState(_pipelinestate.get());
@@ -1074,12 +1096,63 @@ public:
 				printf("\rfps = %.6f", fps.fps());
 		}
 	}
-	
 private:
 	HWND _hwnd = NULL;
 
 	std::atomic<bool> _rendering = true;
 
+	enum class RHIType
+	{
+		D3D11 = 0,
+		D3D12
+	};
+	RHIType _rhi = RHIType::D3D12;
+	RHIType _rhi_next = RHIType::D3D12;
+
+	// raw data
+	size_t _nvertices = 0;
+	size_t _nlines = 0;
+	std::shared_ptr<RHI::RHIResource> _cbuffer_staging;
+	std::shared_ptr<RHI::RHIResource> _cbuffer_render;
+	std::shared_ptr<RHI::RHIResource> _cbuffer_simulate;
+
+	std::future<void> _future;
+	core::float2 _tessFactor = { 32.0f, 4.0f };
+
+
+	bool _shortHair = false;
+	std::vector<std::vector<Vertex>> _strands;
+	std::vector<Vertex> _cpoints;
+	std::vector<core::float4> _positions;
+	std::vector<core::float4> _tangentXs;
+	std::vector<core::float4> _tangentYs;
+	std::vector<core::float2> _coordJitters;
+	std::vector<HairVertex> _vertices;
+	std::vector<core::uint2> _lines;
+	std::vector<uint32_t> _strandOffsets;
+	std::vector<core::float4> _constraints;
+	float angularStiffness = 0.025f;
+	// viewprojTransform
+	bool _rotating = false;
+	bool _simulate = false;
+	float _hair_rotate_z = 0.0f;
+	core::float3 _hair_translate;
+
+	float _view_z = -14.0f;
+
+	enum class content_mode
+	{
+		bsline = 0x1,
+		line = 0x2,
+	};
+	using content_modes = core::bitflag<content_mode>;
+	content_modes _mode = content_mode::bsline;
+
+	uint32_t _num_collisionSpheres = 0;
+	core::float4x4 _collisionSphereTransforms[MAX_COLLISION_SPHERES];
+
+
+	//-------------------------
 	std::shared_ptr<RHI::RHIFactory> _factory;
 	std::shared_ptr<RHI::RHIDevice> _device;
 	
@@ -1110,7 +1183,6 @@ private:
 	enum SimulateResourceId
 	{
 		SimulateResourceId_CBV_ConstBuffer = 0,
-		SimulateResourceId_CBV_ConstBufferGlobal,
 		SimulateResourceId_SRV_StrandOffsets,
 		SimulateResourceId_SRV_Constrains,
 		SimulateResourceId_SRV_PositionsInit,
@@ -1121,7 +1193,7 @@ private:
 	std::shared_ptr<RHI::RHIResourcePacket> _resourcepacket_simulate;
 	
 	std::shared_ptr<RHI::RHIResource> _resource_tangents;
-	std::shared_ptr<RHI::RHIResource> _resource_positions;
+	std::shared_ptr<RHI::RHIResource> _resource_init_positions;
 	std::shared_ptr<RHI::RHIResource> _resource_prev_positions;
 	std::shared_ptr<RHI::RHIResource> _resource_curr_positions;
 	std::shared_ptr<RHI::RHIResource> _resource_coord_jitters;
@@ -1129,50 +1201,36 @@ private:
 	std::shared_ptr<RHI::RHIResource> _resource_vertexbuffer;
 	std::shared_ptr<RHI::RHIResource> _resource_vertexbuffer_lines;
 	
-	size_t _nvertices = 0;
-	size_t _nlines = 0;
-	std::shared_ptr<RHI::RHIResource> _res_constbuffer;
-	std::shared_ptr<RHI::RHIResource> _cbuffer_simulate;
-	std::shared_ptr<RHI::RHIResource> _cbuffer_simulate_global;
-
-	std::future<void> _future;
-	core::float2 _tessFactor = { 32.0f, 4.0f };
-
-
-	bool _shortHair = false;
-	std::vector<std::vector<Vertex>> _strands;
-	std::vector<Vertex> _cpoints;
-	std::vector<core::float4> _positions;
-	std::vector<core::float4> _tangentXs;
-	std::vector<core::float4> _tangentYs;
-	std::vector<core::float2> _coordJitters;
-	std::vector<HairVertex> _vertices;
-	std::vector<core::uint2> _lines;
-	std::vector<uint32_t> _strandOffsets;
-	std::vector<core::float4> _constraints;
-	float angularStiffness = 0.025f;
 
 	std::shared_ptr<RHI::RHIResource> _resource_strandoffsets;
 	std::shared_ptr<RHI::RHIResource> _resource_constraints;
 
-	// viewprojTransform
-	bool _rotating = false;
-	bool _simulate = false;
-	float _hair_rotate_z = 0.0f;
-	core::float3 _hair_translate;
-
-	float _view_z = -14.0f;
-
-	enum class content_mode
+	void Reset()
 	{
-		bsline = 0x1,
-		line = 0x2,
-	};
-	using content_modes = core::bitflag<content_mode>;
-	content_modes _mode = content_mode::bsline;
-
-	uint32_t _num_collisionSpheres = 0;
-	core::float4x4 _collisionSphereTransforms[MAX_COLLISION_SPHERES];
+		_resource_constraints.reset();
+		_resource_strandoffsets.reset();
+		_resource_vertexbuffer_lines.reset();
+		_resource_vertexbuffer.reset();
+		_resource_coord_jitters.reset();
+		_resource_curr_positions.reset();
+		_resource_prev_positions.reset();
+		_resource_init_positions.reset();
+		_resource_tangents.reset();
+		_resourcepacket_simulate.reset();
+		_resourcepacket.reset();
+		_pipelinestate_simulate.reset();
+		_pipelinestate_basic.reset();
+		_pipelinestate.reset();
+		_cmdlist_compute.reset();
+		_cmdallocator_compute.reset();
+		_cmdlist.reset();
+		_cmdallocator.reset();
+		_rendertarget.reset();
+		_cmdqueue_compute.reset();
+		_cmdqueue.reset();
+		_device.reset();
+		_factory.reset();
+	}
 };
 
 

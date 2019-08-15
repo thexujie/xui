@@ -1,6 +1,5 @@
 
 
-// 
 #define MAX_COLLISION_SPHERES 10
 
 struct Vertex
@@ -9,9 +8,9 @@ struct Vertex
     float2 uv;
 };
 
-cbuffer SceneConstantBuffer : register(b0)
+cbuffer SimulateConstantBuffer : register(b0)
 {
-    row_major float4x4 transform;
+    row_major float4x4 matrWorld;
 
     float gravityAcceleration;
     float gravityStrength;
@@ -24,10 +23,8 @@ cbuffer SceneConstantBuffer : register(b0)
 
     // 碰撞球数量
     uint numSphereImplicits;
-};
-
-cbuffer GlobalConstBuffer : register(b1)
-{
+    uint3 _unused;
+    
     row_major float4x4 CollisionSphereTransformations[MAX_COLLISION_SPHERES];
     row_major float4x4 CollisionSphereInverseTransformations[MAX_COLLISION_SPHERES];
 };
@@ -37,8 +34,8 @@ Buffer<uint> strandOffsets : register(t0);
 Buffer<float4> constraints : register(t1);
 Buffer<float4> initPositions : register(t2);
 
-RWStructuredBuffer<float4> currPositions : register(u0);
-RWStructuredBuffer<float4> prevPositions : register(u1);
+RWBuffer<float4> currPositions : register(u0);
+RWBuffer<float4> prevPositions : register(u1);
 
 #define BLOCK_SIZE 64
 groupshared float4 sharedPos[BLOCK_SIZE];
@@ -84,7 +81,7 @@ void addObstacleCollisionResponse(inout float4 position)
 
 float4 addForcesAndIntegrate(float4 position, float4 oldPosition, float3 force, float stiffness, int globalIndex)
 {
-    float3 transformedPos = mul(float4(initPositions[globalIndex].xyz, 1), transform).xyz;
+    float3 transformedPos = mul(float4(initPositions[globalIndex].xyz, 1), matrWorld).xyz;
     // 根控制点保持固定
     if (position.w == 0)
         return float4(transformedPos, position.w);
@@ -165,7 +162,7 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
     uint indexBase = groupId.x > 0 ? strandOffsets[groupId.x - 1] : 0;
     uint globalIndex = indexBase + localIndex;
     uint count = strandOffsets[groupId.x] - indexBase;
-
+    
     float4 orgPosition = float4(0, 0, 0, 0);
     if (localIndex < count)
     {

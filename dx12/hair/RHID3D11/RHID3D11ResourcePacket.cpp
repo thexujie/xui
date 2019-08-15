@@ -77,9 +77,8 @@ namespace RHI::RHID3D11
 			srvDesc.Format = FromFormat(args.resource.format);
 			if (args.resource.dimension == ResourceViewDimension::Buffer)
 			{
-				srvDesc.Buffer.FirstElement = args.resource.buffer.firstElement;
+				srvDesc.Buffer.ElementOffset = args.resource.buffer.firstElement;
 				srvDesc.Buffer.NumElements = args.resource.buffer.numElements;
-				srvDesc.Buffer.ElementWidth = args.resource.buffer.stride;
 			}
 			else if (args.resource.dimension == ResourceViewDimension::Texture2D)
 			{

@@ -63,7 +63,6 @@ namespace RHI
 	{
 		None = 0,
 		Buffer,
-		Structure,
 		Texture1D,
 		Texture2D,
 		Texture3D,
@@ -76,8 +75,9 @@ namespace RHI
 		DepthStencial = 0x2,
 		CrossAdapter = 0x8,
 		
-		ShaderResource = 0x10,
-		UnorderdResource = 0x20,
+		ConstBuffer = 0x10,
+		ShaderResource = 0x20,
+		UnorderdResource = 0x40,
 		
 		VertexBuffer = 0x100,
 		IndexBuffer = 0x200,
@@ -118,6 +118,8 @@ namespace RHI
 		GeometryShaderRerources = 0x800,
 		PixelShaderRerources = 0x1000,
 		ComputerShaderRerources = 0x2000,
+
+		NonePixelShaderRerources = VertexShaderRerources | HullShaderRerources | DomainShaderRerources | GeometryShaderRerources | ComputerShaderRerources,
 
 		CopySource = 0x10000,
 		CopyDest = 0x20000,

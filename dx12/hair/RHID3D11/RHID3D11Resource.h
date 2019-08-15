@@ -20,9 +20,7 @@ namespace RHI::RHID3D11
 		const void * Data() const override { return _pointer; }
 		core::sizeu Size() const override { return _args.size; }
 
-		void * Map() override { return _pointer; }
-		void Unmap() override {}
-	public:
+public:
 		const ResourceArgs & Args() const { return _args; }
 		ID3D11Resource * Resource() const { return _resource.get(); }
 		

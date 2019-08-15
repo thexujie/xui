@@ -87,7 +87,6 @@ namespace RHI::RHID3D12
 		case ResourceDimension::None:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_UNKNOWN;
 		case ResourceDimension::Buffer:
-		case ResourceDimension::Structure:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_BUFFER;
 		case ResourceDimension::Texture1D:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_TEXTURE1D;
@@ -107,7 +106,7 @@ namespace RHI::RHID3D12
 		result.set(D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, flags.any(ResourceFlag::DepthStencial));
 		result.set(D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS, flags.any(ResourceFlag::UnorderdResource));
 		result.set(D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER, flags.any(ResourceFlag::CrossAdapter));
-		result.set(D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE, !flags.any(ResourceFlag::ShaderResource));
+		result.set(D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE, !flags.any(ResourceFlag::ConstBuffer | ResourceFlag::ShaderResource));
 		return result.get();
 	}
 

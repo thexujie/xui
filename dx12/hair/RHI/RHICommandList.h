@@ -42,6 +42,7 @@ namespace RHI
 		virtual void Dispatch(core::uint3 ngroups) = 0;
 		
 		virtual void CopyResource(RHIResource * dst, RHIResource * src) = 0;
+		virtual void CopyResource(RHIResource * dst, RHIResource * src, uint32_t offset, uint32_t size) = 0;
 		virtual void CopyBuffer(RHIResource * dst, RHIResource * src) = 0;
 	};
 }

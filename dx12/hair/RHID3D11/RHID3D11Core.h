@@ -232,8 +232,11 @@ namespace RHI::RHID3D11
 		core::bitflag<D3D11_BIND_FLAG> result;
 		result.set(D3D11_BIND_RENDER_TARGET, flags.any(ResourceFlag::RenderTarget));
 		result.set(D3D11_BIND_DEPTH_STENCIL, flags.any(ResourceFlag::DepthStencial));
-		result.set(D3D11_BIND_UNORDERED_ACCESS, flags.any(ResourceFlag::UnorderdResource));
+		result.set(D3D11_BIND_CONSTANT_BUFFER, flags.any(ResourceFlag::ConstBuffer));
 		result.set(D3D11_BIND_SHADER_RESOURCE, flags.any(ResourceFlag::ShaderResource));
+		result.set(D3D11_BIND_UNORDERED_ACCESS, flags.any(ResourceFlag::UnorderdResource));
+		result.set(D3D11_BIND_VERTEX_BUFFER, flags.any(ResourceFlag::VertexBuffer));
+		result.set(D3D11_BIND_INDEX_BUFFER, flags.any(ResourceFlag::IndexBuffer));
 		return result.get();
 	}
 }
