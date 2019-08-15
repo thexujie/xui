@@ -86,7 +86,8 @@ namespace RHI::RHID3D12
 		{
 		case ResourceDimension::None:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_UNKNOWN;
-		case ResourceDimension::Raw:
+		case ResourceDimension::Buffer:
+		case ResourceDimension::Structure:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_BUFFER;
 		case ResourceDimension::Texture1D:
 			return D3D12_RESOURCE_DIMENSION::D3D12_RESOURCE_DIMENSION_TEXTURE1D;
@@ -102,11 +103,11 @@ namespace RHI::RHID3D12
 	inline D3D12_RESOURCE_FLAGS FromResourceFlags(ResourceFlags flags)
 	{
 		core::bitflag<D3D12_RESOURCE_FLAGS> result;
-		result.set(D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, flags.any(ResourceFlag::AllowRenderTarget));
-		result.set(D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, flags.any(ResourceFlag::AllowDepthStencial));
-		result.set(D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS, flags.any(ResourceFlag::AllowUnorderdAccess));
-		result.set(D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER, flags.any(ResourceFlag::AllowCrossAdapter));
-		result.set(D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE, flags.any(ResourceFlag::DenyShaderResource));
+		result.set(D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, flags.any(ResourceFlag::RenderTarget));
+		result.set(D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, flags.any(ResourceFlag::DepthStencial));
+		result.set(D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS, flags.any(ResourceFlag::UnorderdResource));
+		result.set(D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER, flags.any(ResourceFlag::CrossAdapter));
+		result.set(D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE, !flags.any(ResourceFlag::ShaderResource));
 		return result.get();
 	}
 
@@ -296,17 +297,17 @@ namespace RHI::RHID3D12
 	{
 		switch(shader)
 		{
-		case All: 
+		case Shader::All:
 			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_ALL;
-		case Vertex: 
+		case Shader::Vertex: 
 			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_VERTEX;
-		case Hull: 
+		case Shader::Hull: 
 			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_HULL;
-		case Domain: 
+		case Shader::Domain:
 			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_DOMAIN;
-		case Geoetry: 
+		case Shader::Geoetry:
 			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_GEOMETRY;
-		case Pixel: 
+		case Shader::Pixel:
 			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_PIXEL;
 		default:
 			return D3D12_SHADER_VISIBILITY::D3D12_SHADER_VISIBILITY_ALL;

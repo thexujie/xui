@@ -166,8 +166,8 @@ public:
 	
 	void LoadPipeline()
 	{
-		//_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
-		_factory = std::make_shared<RHI::RHID3D11::RHID3D11Factory>();
+		_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
+		//_factory = std::make_shared<RHI::RHID3D11::RHID3D11Factory>();
 		_factory->Load();
 		
 		std::vector<RHI::RHIAdapterDesc> adapters = _factory->AdapterDescs();
@@ -370,7 +370,7 @@ public:
 		RHI::ResourceArgs tangentsParams_UL = {};
 		tangentsParams_UL.heap.type = RHI::HeapType::Upload;
 		tangentsParams_UL.size.cx = sizeof(core::float4) * _tangentYs.size();
-		tangentsParams_UL.dimension = RHI::ResourceDimension::Raw;
+		tangentsParams_UL.dimension = RHI::ResourceDimension::Buffer;
 		tangentsParams_UL.states = RHI::ResourceState::GenericRead;
 		auto resource_tangents_UL = _device->CreateResource(tangentsParams_UL);
 		std::memcpy(resource_tangents_UL->Data(), _tangentYs.data(), sizeof(core::float4) * _tangentYs.size());
@@ -378,16 +378,16 @@ public:
 		RHI::ResourceArgs tangentsParams = {};
 		tangentsParams.heap.type = RHI::HeapType::Default;
 		tangentsParams.size.cx = sizeof(core::float4) * _positions.size();
-		tangentsParams.dimension = RHI::ResourceDimension::Raw;
+		tangentsParams.dimension = RHI::ResourceDimension::Buffer;
 		tangentsParams.states = RHI::ResourceState::CopyDest;
-		tangentsParams.flags = RHI::ResourceFlag::AllowUnorderdAccess;
+		tangentsParams.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource;
 		_resource_tangents = _device->CreateResource(tangentsParams);
 		
 		// vertices
 		RHI::ResourceArgs pointsParam_UL = {};
 		pointsParam_UL.heap.type = RHI::HeapType::Upload;
 		pointsParam_UL.size.cx = sizeof(core::float4) * _positions.size();
-		pointsParam_UL.dimension = RHI::ResourceDimension::Raw;
+		pointsParam_UL.dimension = RHI::ResourceDimension::Buffer;
 		pointsParam_UL.states = RHI::ResourceState::GenericRead;
 		auto resource_positions_UL = _device->CreateResource(pointsParam_UL);
 		std::memcpy(resource_positions_UL->Data(), _positions.data(), sizeof(core::float4) * _positions.size());
@@ -395,10 +395,11 @@ public:
 		RHI::ResourceArgs pointsParams = {};
 		pointsParams.heap.type = RHI::HeapType::Default;
 		pointsParams.size.cx = sizeof(core::float4) * _positions.size();
-		pointsParams.dimension = RHI::ResourceDimension::Raw;
+		pointsParams.dimension = RHI::ResourceDimension::Buffer;
 		pointsParams.states = RHI::ResourceState::CopyDest;
-		pointsParams.flags = RHI::ResourceFlag::AllowUnorderdAccess;
+		pointsParams.flags = RHI::ResourceFlag::ShaderResource;
 		_resource_positions = _device->CreateResource(pointsParams);
+		pointsParams.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource;
 		_resource_prev_positions = _device->CreateResource(pointsParams);
 		_resource_curr_positions = _device->CreateResource(pointsParams);
 		
@@ -410,7 +411,7 @@ public:
 		RHI::ResourceArgs vertexbufferParams_UL = {};
 		vertexbufferParams_UL.heap.type = RHI::HeapType::Upload;
 		vertexbufferParams_UL.size.cx = sizeof(HairVertex) * _vertices.size();
-		vertexbufferParams_UL.dimension = RHI::ResourceDimension::Raw;
+		vertexbufferParams_UL.dimension = RHI::ResourceDimension::Buffer;
 		vertexbufferParams_UL.states = RHI::ResourceState::GenericRead;
 		auto resource_vertices_UL = _device->CreateResource(vertexbufferParams_UL);
 		std::memcpy(resource_vertices_UL->Data(), _vertices.data(), sizeof(HairVertex) * _vertices.size());
@@ -418,15 +419,16 @@ public:
 		RHI::ResourceArgs vertexbufferParams = {};
 		vertexbufferParams.heap.type = RHI::HeapType::Default;
 		vertexbufferParams.size.cx = sizeof(HairVertex) * _vertices.size();
-		vertexbufferParams.dimension = RHI::ResourceDimension::Raw;
+		vertexbufferParams.dimension = RHI::ResourceDimension::Buffer;
 		vertexbufferParams.states = RHI::ResourceState::CopyDest;
+		vertexbufferParams.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::VertexBuffer;
 		_resource_vertexbuffer = _device->CreateResource(vertexbufferParams);
 
 		// line
 		RHI::ResourceArgs indicesLinesParams_UL = {};
 		indicesLinesParams_UL.heap.type = RHI::HeapType::Upload;
 		indicesLinesParams_UL.size.cx = sizeof(core::uint2) * _lines.size();
-		indicesLinesParams_UL.dimension = RHI::ResourceDimension::Raw;
+		indicesLinesParams_UL.dimension = RHI::ResourceDimension::Buffer;
 		indicesLinesParams_UL.states = RHI::ResourceState::GenericRead;
 		auto indexLinesbuffer_UL = _device->CreateResource(indicesLinesParams_UL);
 		std::memcpy(indexLinesbuffer_UL->Data(), _lines.data(), sizeof(core::uint2) * _lines.size());
@@ -434,15 +436,16 @@ public:
 		RHI::ResourceArgs indicesLinesParams = {};
 		indicesLinesParams.heap.type = RHI::HeapType::Default;
 		indicesLinesParams.size.cx = sizeof(core::uint2) * _lines.size();
-		indicesLinesParams.dimension = RHI::ResourceDimension::Raw;
+		indicesLinesParams.dimension = RHI::ResourceDimension::Buffer;
 		indicesLinesParams.states = RHI::ResourceState::CopyDest;
-		_resource_indexbuffer_lines = _device->CreateResource(indicesLinesParams);
+		indicesLinesParams.flags = RHI::ResourceFlag::VertexBuffer;
+		_resource_vertexbuffer_lines = _device->CreateResource(indicesLinesParams);
 
 		// coordJitters
 		RHI::ResourceArgs coordJittersArgs_UL = {};
 		coordJittersArgs_UL.heap.type = RHI::HeapType::Upload;
 		coordJittersArgs_UL.size.cx = sizeof(core::float2) * _coordJitters.size();
-		coordJittersArgs_UL.dimension = RHI::ResourceDimension::Raw;
+		coordJittersArgs_UL.dimension = RHI::ResourceDimension::Buffer;
 		coordJittersArgs_UL.states = RHI::ResourceState::GenericRead;
 		auto resource_coordJitters_UL = _device->CreateResource(coordJittersArgs_UL);
 		std::memcpy(resource_coordJitters_UL->Data(), _coordJitters.data(), sizeof(core::float2) * _coordJitters.size());
@@ -450,19 +453,26 @@ public:
 		RHI::ResourceArgs coordJittersArgs = {};
 		coordJittersArgs.heap.type = RHI::HeapType::Default;
 		coordJittersArgs.size.cx = sizeof(core::float2) * _coordJitters.size();
-		coordJittersArgs.dimension = RHI::ResourceDimension::Raw;
+		coordJittersArgs.dimension = RHI::ResourceDimension::Buffer;
 		coordJittersArgs.states = RHI::ResourceState::CopyDest;
-		coordJittersArgs.flags = RHI::ResourceFlag::AllowUnorderdAccess;
+		coordJittersArgs.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource;
 		_resource_coord_jitters = _device->CreateResource(coordJittersArgs);
 		
 		// const
-		RHI::ResourceArgs constParams = {};
-		constParams.heap.type = RHI::HeapType::Upload;
-		constParams.size.cx = (sizeof(SceneConstantBuffer) + 0xff) & ~0xff;
-		constParams.dimension = RHI::ResourceDimension::Raw;
-		constParams.states = RHI::ResourceState::GenericRead;
-		_res_constbuffer = _device->CreateResource(constParams);
-
+		_res_constbuffer = _device->CreateResource(
+			RHI::ResourceArgs
+			{
+				.heap =
+				{
+					.type = RHI::HeapType::Upload
+				},
+				.dimension = RHI::ResourceDimension::Buffer,
+				.flags = RHI::ResourceFlag::ShaderResource,
+				.size = { uint32_t((sizeof(SceneConstantBuffer) + 0xff) & ~0xff), 1 },
+				.states = RHI::ResourceState::GenericRead,
+			}
+		);
+		
 		_cbuffer_simulate = _device->CreateResource(
 			RHI::ResourceArgs
 			{
@@ -470,7 +480,8 @@ public:
 				{
 					.type = RHI::HeapType::Upload
 				},
-				.dimension = RHI::ResourceDimension::Raw,
+				.dimension = RHI::ResourceDimension::Buffer,
+				.flags = RHI::ResourceFlag::ShaderResource,
 				.size = { uint32_t((sizeof(SimulateConstantBuffer) + 0xff) & ~0xff), 1 },
 				.states = RHI::ResourceState::GenericRead,
 			}
@@ -482,7 +493,8 @@ public:
 				{
 					.type = RHI::HeapType::Upload
 				},
-				.dimension = RHI::ResourceDimension::Raw,
+				.dimension = RHI::ResourceDimension::Buffer,
+				.flags = RHI::ResourceFlag::ShaderResource,
 				.size = { uint32_t((sizeof(SimulateGlobalConstBuffer) + 0xff) & ~0xff), 1 },
 				.states = RHI::ResourceState::GenericRead,
 			}
@@ -496,7 +508,7 @@ public:
 				{
 					.type = RHI::HeapType::Upload,
 				},
-				.dimension = RHI::ResourceDimension::Raw,
+				.dimension = RHI::ResourceDimension::Buffer,
 				.size = { uint32_t(sizeof(uint32_t) * _strandOffsets.size()), 1},
 				.states = RHI::ResourceState::GenericRead
 			}
@@ -508,7 +520,8 @@ public:
 				{
 					.type = RHI::HeapType::Default,
 				},
-				.dimension = RHI::ResourceDimension::Raw,
+				.dimension = RHI::ResourceDimension::Buffer,
+				.flags = RHI::ResourceFlag::ShaderResource,
 				.size = { uint32_t(sizeof(uint32_t) * _strandOffsets.size()), 1},
 				.states = RHI::ResourceState::CopyDest
 			}
@@ -520,43 +533,44 @@ public:
 			RHI::ResourceArgs
 			{
 				.heap =
-			{
-				.type = RHI::HeapType::Upload,
-			},
-			.dimension = RHI::ResourceDimension::Raw,
-			.size = { uint32_t(sizeof(core::float4) * _constraints.size()), 1 },
-			.states = RHI::ResourceState::GenericRead
+				{
+					.type = RHI::HeapType::Upload,
+				},
+				.dimension = RHI::ResourceDimension::Buffer,
+				.size = { uint32_t(sizeof(core::float4) * _constraints.size()), 1 },
+				.states = RHI::ResourceState::GenericRead
 			}
 		);
 		_resource_constraints = _device->CreateResource(
 			RHI::ResourceArgs
 			{
 				.heap =
-			{
-				.type = RHI::HeapType::Default,
-			},
-			.dimension = RHI::ResourceDimension::Raw,
-			.size = { uint32_t(sizeof(core::float4) * _constraints.size()), 1 },
-			.states = RHI::ResourceState::CopyDest
+				{
+					.type = RHI::HeapType::Default,
+				},
+				.dimension = RHI::ResourceDimension::Buffer,
+				.flags = RHI::ResourceFlag::ShaderResource,
+				.size = { uint32_t(sizeof(core::float4) * _constraints.size()), 1 },
+				.states = RHI::ResourceState::CopyDest
 			}
 		);
 		std::memcpy(constraints_UL->Data(), _constraints.data(), sizeof(core::float4) * _constraints.size());
 
 		//--------------------------------------------------------
 		_resourcepacket->SetResource(RenderResourceId_CBV_ConstBuffer, _res_constbuffer.get(), RHI::ResourceViewArgs::CBuffer());
-		_resourcepacket->SetResource(RenderResourceId_SRV_Positions, _resource_curr_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size()));
-		_resourcepacket->SetResource(RenderResourceId_SRV_Tangents, _resource_tangents.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size()));
-		_resourcepacket->SetResource(RenderResourceId_SRV_CoordJitters, _resource_coord_jitters.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float2), (uint32_t)_coordJitters.size()));
+		_resourcepacket->SetResource(RenderResourceId_SRV_Positions, _resource_curr_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
+		_resourcepacket->SetResource(RenderResourceId_SRV_Tangents, _resource_tangents.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
+		_resourcepacket->SetResource(RenderResourceId_SRV_CoordJitters, _resource_coord_jitters.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float2), (uint32_t)_coordJitters.size(), core::format::float4));
 		
-		_resourcepacket_simulate->SetResource(SimulateResourceId_ConstBuffer, _cbuffer_simulate.get(), RHI::ResourceViewArgs::CBuffer());
-		_resourcepacket_simulate->SetResource(SimulateResourceId_ConstBufferGlobal, _cbuffer_simulate_global.get(), RHI::ResourceViewArgs::CBuffer());
+		_resourcepacket_simulate->SetResource(SimulateResourceId_CBV_ConstBuffer, _cbuffer_simulate.get(), RHI::ResourceViewArgs::CBuffer());
+		_resourcepacket_simulate->SetResource(SimulateResourceId_CBV_ConstBufferGlobal, _cbuffer_simulate_global.get(), RHI::ResourceViewArgs::CBuffer());
 
-		_resourcepacket_simulate->SetResource(SimulateResourceId_StrandOffsets, _resource_strandoffsets.get(), RHI::ResourceViewArgs::Shader(sizeof(uint32_t), (uint32_t)_strandOffsets.size()));
-		_resourcepacket_simulate->SetResource(SimulateResourceId_Constrains, _resource_constraints.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_constraints.size()));
-		_resourcepacket_simulate->SetResource(SimulateResourceId_PositionsInit, _resource_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size()));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_SRV_StrandOffsets, _resource_strandoffsets.get(), RHI::ResourceViewArgs::Shader(sizeof(uint32_t), (uint32_t)_strandOffsets.size(), core::format::uint1));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_SRV_Constrains, _resource_constraints.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_constraints.size(), core::format::float4));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_SRV_PositionsInit, _resource_positions.get(), RHI::ResourceViewArgs::Shader(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
 		
-		_resourcepacket_simulate->SetResource(SimulateResourceId_Positions, _resource_curr_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_positions.size()));
-		_resourcepacket_simulate->SetResource(SimulateResourceId_PositionsPrev, _resource_prev_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_positions.size()));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_UAV_Positions, _resource_curr_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
+		_resourcepacket_simulate->SetResource(SimulateResourceId_UAV_PositionsPrev, _resource_prev_positions.get(), RHI::ResourceViewArgs::Unordered(sizeof(core::float4), (uint32_t)_positions.size(), core::format::float4));
 
 
 		_pipelinestate->SetName(u8"_pipelinestate");
@@ -569,7 +583,7 @@ public:
 		_resource_coord_jitters->SetName(u8"_resource_coord_jitters");
 		_resource_prev_positions->SetName(u8"_resource_prev_positions");
 		_resource_vertexbuffer->SetName(u8"_resource_vertexbuffer");
-		_resource_indexbuffer_lines->SetName(u8"_resource_indexbuffer_lines");
+		_resource_vertexbuffer_lines->SetName(u8"_resource_indexbuffer_lines");
 		_resource_strandoffsets->SetName(u8"_resource_strandoffsets");
 		_cbuffer_simulate->SetName(u8"_cbuffer_simulate");
 		
@@ -579,7 +593,7 @@ public:
 		_cmdlist->CopyResource(_resource_curr_positions.get(), resource_positions_UL.get());
 		_cmdlist->CopyResource(_resource_coord_jitters.get(), resource_coordJitters_UL.get());
 		_cmdlist->CopyResource(_resource_vertexbuffer.get(), resource_vertices_UL.get());
-		_cmdlist->CopyResource(_resource_indexbuffer_lines.get(), indexLinesbuffer_UL.get());
+		_cmdlist->CopyResource(_resource_vertexbuffer_lines.get(), indexLinesbuffer_UL.get());
 		_cmdlist->CopyResource(_resource_strandoffsets.get(), strandoffsets_UL.get());
 		_cmdlist->CopyResource(_resource_constraints.get(), constraints_UL.get());
 		_cmdlist->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::ComputerShaderRerources);
@@ -588,7 +602,7 @@ public:
 		_cmdlist->TransitionBarrier(_resource_tangents.get(), RHI::ResourceState::VertexShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_coord_jitters.get(), RHI::ResourceState::VertexShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_vertexbuffer.get(), RHI::ResourceState::VertexBuffer);
-		_cmdlist->TransitionBarrier(_resource_indexbuffer_lines.get(), RHI::ResourceState::VertexBuffer);
+		_cmdlist->TransitionBarrier(_resource_vertexbuffer_lines.get(), RHI::ResourceState::VertexBuffer);
 		_cmdlist->TransitionBarrier(_resource_strandoffsets.get(), RHI::ResourceState::ComputerShaderRerources);
 		_cmdlist->TransitionBarrier(_resource_constraints.get(), RHI::ResourceState::ComputerShaderRerources);
 		
@@ -1024,10 +1038,10 @@ public:
 			_cmdlist->SetViewPort(viewport);
 			_cmdlist->SetScissorRect(sccisorrect);
 			_cmdlist->TransitionBarrier(_rendertarget.get(), RHI::ResourceState::RenderTarget);
+			_cmdlist->SetResourcePacket(_resourcepacket.get());
 			_cmdlist->SetRenderTarget(_rendertarget.get());
 			_cmdlist->ClearRenderTarget(_rendertarget.get(), 0xffdddddd);
 
-			_cmdlist->SetResourcePacket(_resourcepacket.get());
 
 			if (_mode.any(content_mode::bsline))
 			{
@@ -1042,7 +1056,7 @@ public:
 			{
 				_cmdlist->SetPipelineState(_pipelinestate_basic.get());
 				_cmdlist->SetGraphicsResources(0, 0);
-				_cmdlist->IASetVertexBuffer(_resource_indexbuffer_lines.get(), sizeof(uint32_t), sizeof(core::uint2) * _lines.size());
+				_cmdlist->IASetVertexBuffer(_resource_vertexbuffer_lines.get(), sizeof(uint32_t), sizeof(core::uint2) * _lines.size());
 				_cmdlist->IASetTopologyType(RHI::Topology::LineList);
 				_cmdlist->DrawInstanced(_lines.size() * 2, 1, 0, 0);
 			}
@@ -1095,13 +1109,13 @@ private:
 
 	enum SimulateResourceId
 	{
-		SimulateResourceId_ConstBuffer = 0,
-		SimulateResourceId_ConstBufferGlobal,
-		SimulateResourceId_StrandOffsets,
-		SimulateResourceId_Constrains,
-		SimulateResourceId_PositionsInit,
-		SimulateResourceId_Positions,
-		SimulateResourceId_PositionsPrev,
+		SimulateResourceId_CBV_ConstBuffer = 0,
+		SimulateResourceId_CBV_ConstBufferGlobal,
+		SimulateResourceId_SRV_StrandOffsets,
+		SimulateResourceId_SRV_Constrains,
+		SimulateResourceId_SRV_PositionsInit,
+		SimulateResourceId_UAV_Positions,
+		SimulateResourceId_UAV_PositionsPrev,
 		SimulateResourceId_Count,
 	};
 	std::shared_ptr<RHI::RHIResourcePacket> _resourcepacket_simulate;
@@ -1113,7 +1127,7 @@ private:
 	std::shared_ptr<RHI::RHIResource> _resource_coord_jitters;
 	
 	std::shared_ptr<RHI::RHIResource> _resource_vertexbuffer;
-	std::shared_ptr<RHI::RHIResource> _resource_indexbuffer_lines;
+	std::shared_ptr<RHI::RHIResource> _resource_vertexbuffer_lines;
 	
 	size_t _nvertices = 0;
 	size_t _nlines = 0;

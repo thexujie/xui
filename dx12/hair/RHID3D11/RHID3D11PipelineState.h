@@ -21,7 +21,19 @@ namespace RHI::RHID3D11
 		
 	public:
 		const PipelineStateArgs & Args() const { return _args; }
-		
+		const PipelineStateTable & Table(size_t index) const { return _args.tables[index]; }
+
+		ID3D11InputLayout * InputLayout() const { return _inputLayout.get(); }
+		ID3D11VertexShader * VertexShader() const { return _vertexShader.get(); }
+		ID3D11HullShader * HullShader() const { return _hullShader.get(); }
+		ID3D11DomainShader * DomainShader() const { return _domainShader.get(); }
+		ID3D11GeometryShader * GeometryShader() const { return _geometryShader.get(); }
+		ID3D11PixelShader * PixelShader() const { return _pixelShader.get(); }
+		ID3D11ComputeShader * ComputeShader() const { return _computeShader.get(); }
+		ID3D11BlendState * BlendState() const { return _blendState.get(); }
+		ID3D11DepthStencilState * DepthStencilState() const { return _depthstencilState.get(); }
+		ID3D11RasterizerState * RasterizerState() const { return _rasterizerState.get(); }
+
 	private:
 		RHID3D11Device * _device = nullptr;
 

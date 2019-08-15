@@ -176,4 +176,64 @@ namespace RHI::RHID3D11
 			return D3D11_USAGE_DEFAULT;
 		}
 	}
+
+	inline D3D11_SRV_DIMENSION FromResourceViewDimension(ResourceViewDimension dimnesion)
+	{
+		switch (dimnesion)
+		{
+		case ResourceViewDimension::None:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_UNKNOWN;
+		case ResourceViewDimension::Buffer:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_BUFFER;
+		case ResourceViewDimension::Texture1D:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE1D;
+		case ResourceViewDimension::Texture1DArray:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE1DARRAY;
+		case ResourceViewDimension::Texture2D:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE2D;
+		case ResourceViewDimension::Texture2DArray:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+		case ResourceViewDimension::Texture3D:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE3D;
+		case ResourceViewDimension::TextureCube:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURECUBE;
+		case ResourceViewDimension::TextureCubeArray:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURECUBEARRAY;
+		default:
+			return D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_UNKNOWN;
+		}
+	}
+
+	inline D3D11_UAV_DIMENSION FromResourceViewDimension_UAV(ResourceViewDimension dimnesion)
+	{
+		switch (dimnesion)
+		{
+		case ResourceViewDimension::None:
+			return D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_UNKNOWN;
+		case ResourceViewDimension::Buffer:
+			return D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_BUFFER;
+		case ResourceViewDimension::Texture1D:
+			return D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_TEXTURE1D;
+		case ResourceViewDimension::Texture1DArray:
+			return D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_TEXTURE1DARRAY;
+		case ResourceViewDimension::Texture2D:
+			return D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_TEXTURE2D;
+		case ResourceViewDimension::Texture2DArray:
+			return D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
+		case ResourceViewDimension::Texture3D:
+			return D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_TEXTURE3D;
+		default:
+			return D3D11_UAV_DIMENSION::D3D11_UAV_DIMENSION_UNKNOWN;
+		}
+	}
+
+	inline D3D11_BIND_FLAG FromResourceFlags(ResourceFlags flags)
+	{
+		core::bitflag<D3D11_BIND_FLAG> result;
+		result.set(D3D11_BIND_RENDER_TARGET, flags.any(ResourceFlag::RenderTarget));
+		result.set(D3D11_BIND_DEPTH_STENCIL, flags.any(ResourceFlag::DepthStencial));
+		result.set(D3D11_BIND_UNORDERED_ACCESS, flags.any(ResourceFlag::UnorderdResource));
+		result.set(D3D11_BIND_SHADER_RESOURCE, flags.any(ResourceFlag::ShaderResource));
+		return result.get();
+	}
 }

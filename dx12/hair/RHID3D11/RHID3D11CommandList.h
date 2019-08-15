@@ -7,7 +7,7 @@ namespace RHI::RHID3D11
 {
 	class RHID3D11RenderTarget;
 	class RHID3D11ResourcePacket;
-	class RHID3D11ResourceView;
+	class RHID3D11PipelineState;
 
 	class RHID3D11CommandList : public RHICommandList
 	{
@@ -52,6 +52,8 @@ namespace RHI::RHID3D11
 		RHID3D11Device * _device = nullptr;
 		core::comptr<ID3D11DeviceContext> _deferredContext;
 		core::comptr<ID3D11CommandList> _commandList;
-		RHID3D11ResourcePacket * _resourcepacket = nullptr;
+
+		RHID3D11PipelineState * _pipelineState = nullptr;
+		RHID3D11ResourcePacket * _resourcePacket = nullptr;
 	};
 }

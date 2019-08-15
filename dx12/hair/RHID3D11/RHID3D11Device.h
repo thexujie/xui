@@ -12,8 +12,8 @@ namespace RHI::RHID3D11
 
 		core::error Create(core::comptr<IDXGIAdapter1> adapter);
 
-		ID3D11Device *Inner() const { return _device.get(); }
-		IDXGIAdapter1 * InnerAdapter() const { return _adapter.get(); }
+		ID3D11Device * Device() const { return _device.get(); }
+		IDXGIAdapter1 * Adapter() const { return _adapter.get(); }
 
 	public:
 		std::shared_ptr<RHICommandQueue> CreateCommandQueue(CommandType type, CommandQueueFlags flags) const override;

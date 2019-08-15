@@ -11,7 +11,7 @@ namespace RHI::RHID3D11
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 
 		//core::comptr<ID3D12DescriptorHeap> heap;
@@ -46,7 +46,9 @@ namespace RHI::RHID3D11
 
 		//_heap = heap;
 		//_unit = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		_resources.resize(args.capacity);
 		_viewArgs.resize(args.capacity);
+		_views.resize(args.capacity);
 		return core::ok;
 	}
 
@@ -57,75 +59,82 @@ namespace RHI::RHID3D11
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 
-		//D3D12_CPU_DESCRIPTOR_HANDLE CPUHandle = _heap->GetCPUDescriptorHandleForHeapStart();
-		//D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle = _heap->GetGPUDescriptorHandleForHeapStart();
-		//CPUHandle.ptr += index * _unit;
-		//GPUHandle.ptr += index * _unit;
-		//
-		//if (args.type == ResourceType::ConstBuffer)
-		//{
-		//	D3D12_CONSTANT_BUFFER_VIEW_DESC viewDesc = {};
-		//	viewDesc.BufferLocation = static_cast<RHID3D12Resource *>(resource)->GPUVirtualAddress();
-		//	viewDesc.SizeInBytes = (resource->Size().cx + 255) & ~255;
-		//	//viewDesc.SizeInBytes = resource->Size().cx;
+		if (args.type == ResourceType::ConstBuffer)
+		{
+			//viewDesc.BufferLocation = static_cast<RHID3D12Resource *>(resource)->GPUVirtualAddress();
+			//viewDesc.SizeInBytes = (resource->Size().cx + 255) & ~255;
+			////viewDesc.SizeInBytes = resource->Size().cx;
 
-		//	device->CreateConstantBufferView(&viewDesc, CPUHandle);
-		//}
-		//else if(args.type == ResourceType::ShaderResource)
-		//{
-		//	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		//	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		//	srvDesc.Format = FromFormat(args.resource.format);
-		//	srvDesc.ViewDimension = FromResourceViewDimension(args.resource.dimension);
-		//	if (args.resource.dimension == ResourceViewDimension::Buffer)
-		//	{
-		//		srvDesc.Buffer.FirstElement = args.resource.buffer.firstElement;
-		//		srvDesc.Buffer.NumElements = args.resource.buffer.numElements;
-		//		srvDesc.Buffer.StructureByteStride = args.resource.buffer.stride;
-		//		srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-		//	}
-		//	else if (args.resource.dimension == ResourceViewDimension::Texture2D)
-		//	{
-		//		srvDesc.Texture2D.MipLevels = 1;
-		//	}
-		//	else
-		//	{
-		//		
-		//	}
-		//	device->CreateShaderResourceView(static_cast<RHID3D12Resource *>(resource)->Resource(), &srvDesc, CPUHandle);
-		//}
-		//else if (args.type == ResourceType::UnorderedAccess)
-		//{
-		//	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-		//	uavDesc.Format = FromFormat(args.resource.format);
-		//	uavDesc.ViewDimension = FromResourceViewDimension_UAV(args.resource.dimension);
-		//	if (args.resource.dimension == ResourceViewDimension::Buffer)
-		//	{
-		//		uavDesc.Buffer.FirstElement = args.resource.buffer.firstElement;
-		//		uavDesc.Buffer.NumElements = args.resource.buffer.numElements;
-		//		uavDesc.Buffer.StructureByteStride = args.resource.buffer.stride;
-		//		uavDesc.Buffer.CounterOffsetInBytes = 0;
-		//		uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
-		//	}
-		//	else if (args.resource.dimension == ResourceViewDimension::Texture2D)
-		//	{
-		//		uavDesc.Texture2D.MipSlice = 0;
-		//		uavDesc.Texture2D.PlaneSlice = 0;
-		//	}
-		//	else
-		//	{
+			//device->CreateConstantBufferView(&viewDesc, CPUHandle);
+		}
+		else if(args.type == ResourceType::ShaderResource)
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+			srvDesc.ViewDimension = FromResourceViewDimension(args.resource.dimension);
+			srvDesc.Format = FromFormat(args.resource.format);
+			if (args.resource.dimension == ResourceViewDimension::Buffer)
+			{
+				srvDesc.Buffer.FirstElement = args.resource.buffer.firstElement;
+				srvDesc.Buffer.NumElements = args.resource.buffer.numElements;
+				srvDesc.Buffer.ElementWidth = args.resource.buffer.stride;
+			}
+			else if (args.resource.dimension == ResourceViewDimension::Texture2D)
+			{
+				srvDesc.Texture2D.MipLevels = 1;
+			}
+			else
+			{
 
-		//	}
+			}
 
-		//	device->CreateUnorderedAccessView(static_cast<RHID3D12Resource *>(resource)->Resource(), nullptr, &uavDesc, CPUHandle);
-		//}
-		//else
-		//{
-		//}
+			core::comptr<ID3D11ShaderResourceView> view;
+			hr = device->CreateShaderResourceView(static_cast<RHID3D11Resource *>(resource)->Resource() , &srvDesc, view.getpp());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ " CreateShaderResourceView failed: " << win32::winerr_str(hr & 0xFFFF);
+				return;
+			}
 
+			_views[index] = view;
+		}
+		else if (args.type == ResourceType::UnorderedAccess)
+		{
+			D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+			uavDesc.Format = FromFormat(args.resource.format);
+			uavDesc.ViewDimension = FromResourceViewDimension_UAV(args.resource.dimension);
+			if (args.resource.dimension == ResourceViewDimension::Buffer)
+			{
+				uavDesc.Buffer.FirstElement = args.resource.buffer.firstElement;
+				uavDesc.Buffer.NumElements = args.resource.buffer.numElements;
+				uavDesc.Buffer.Flags = 0;
+			}
+			else if (args.resource.dimension == ResourceViewDimension::Texture2D)
+			{
+				uavDesc.Texture2D.MipSlice = 0;
+			}
+			else
+			{
+
+			}
+
+			core::comptr<ID3D11UnorderedAccessView> view;
+			hr = device->CreateUnorderedAccessView(static_cast<RHID3D11Resource *>(resource)->Resource(), &uavDesc, view.getpp());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ " CreateUnorderedAccessView failed: " << win32::winerr_str(hr & 0xFFFF);
+				return;
+			}
+
+			_views[index] = view;
+		}
+		else
+		{
+		}
+
+		_resources[index] = resource;
 		_viewArgs[index] = args;
 	}
 }

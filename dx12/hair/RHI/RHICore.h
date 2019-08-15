@@ -62,7 +62,8 @@ namespace RHI
 	enum class ResourceDimension
 	{
 		None = 0,
-		Raw,
+		Buffer,
+		Structure,
 		Texture1D,
 		Texture2D,
 		Texture3D,
@@ -71,11 +72,15 @@ namespace RHI
 	enum class ResourceFlag
 	{
 		None = 0,
-		AllowRenderTarget = 0x1,
-		AllowDepthStencial = 0x2,
-		AllowUnorderdAccess = 0x4,
-		AllowCrossAdapter = 0x8,
-		DenyShaderResource = 0x10,
+		RenderTarget = 0x1,
+		DepthStencial = 0x2,
+		CrossAdapter = 0x8,
+		
+		ShaderResource = 0x10,
+		UnorderdResource = 0x20,
+		
+		VertexBuffer = 0x100,
+		IndexBuffer = 0x200,
 	};
 	using ResourceFlags = core::bitflag<ResourceFlag>;
 
@@ -237,20 +242,22 @@ namespace RHI
 			return args;
 		}
 		
-		static ResourceViewArgs Unordered(uint32_t stride, uint32_t numElements)
+		static ResourceViewArgs Unordered(uint32_t stride, uint32_t numElements, core::format format)
 		{
 			ResourceViewArgs args = {};
 			args.type = ResourceType::UnorderedAccess;
+			args.resource.format = format;
 			args.resource.dimension = ResourceViewDimension::Buffer;
 			args.resource.buffer.numElements = numElements;
 			args.resource.buffer.stride = stride;
 			return args;
 		}
 
-		static ResourceViewArgs Shader(uint32_t stride, uint32_t numElements)
+		static ResourceViewArgs Shader(uint32_t stride, uint32_t numElements, core::format format)
 		{
 			ResourceViewArgs args = {};
 			args.type = ResourceType::ShaderResource;
+			args.resource.format = format;
 			args.resource.dimension = ResourceViewDimension::Buffer;
 			args.resource.buffer.numElements = numElements;
 			args.resource.buffer.stride = stride;
@@ -286,7 +293,7 @@ namespace RHI
 		float farZ = 0;
 	};
 
-	enum Shader
+	enum class Shader
 	{
 		All = 0,
 		Vertex,
@@ -495,7 +502,7 @@ namespace RHI
 		{
 			bool alphaToCoverage = false;
 			bool independentBlend = false;
-
+			float blendFactor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 			struct
 			{
 				bool enable = false;
@@ -523,6 +530,7 @@ namespace RHI
 		{
 			bool depth = false;
 			bool stencil = false;
+			uint32_t stencilref = 0;
 		}depthstencil;
 
 		uint32_t samplemask = 0xffffffff;

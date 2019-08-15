@@ -10,7 +10,7 @@ namespace RHI::RHID3D11
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 
 		if (args.CS.empty())
@@ -29,7 +29,7 @@ namespace RHI::RHID3D11
 	{
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 		
 		UINT compileFlags = 0;
@@ -218,7 +218,7 @@ namespace RHI::RHID3D11
 	core::error RHID3D11PipelineState::_CreateComputePipelineState(const PipelineStateArgs & args)
 	{
 		HRESULT hr = S_OK;
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 		
 		UINT compileFlags = 0;

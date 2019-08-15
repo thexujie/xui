@@ -32,7 +32,7 @@ namespace RHI::RHID3D11
 			break;
 		}
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 		core::comptr<ID3D11DeviceContext> immediateContext;
 		device->GetImmediateContext(immediateContext.getpp());

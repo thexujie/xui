@@ -11,19 +11,19 @@ namespace RHI::RHID3D11
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
-		auto adapter = _device->InnerAdapter();
+		auto device = _device->Device();
+		auto adapter = _device->Adapter();
 		assert(device);
 		assert(adapter);
 
 		core::comptr<ID3D11Resource> resource;
-		if (args.dimension == ResourceDimension::Raw)
+		if (args.dimension == ResourceDimension::Buffer || args.dimension == ResourceDimension::Structure)
 		{
 			D3D11_BUFFER_DESC desc = {};
 			desc.ByteWidth = args.size.cx;
 			desc.Usage = FromHeapType(args.heap.type);
 			desc.MiscFlags = 0;
-			desc.BindFlags = 0;
+			desc.BindFlags = args.heap.type == HeapType::Upload ? 0 : FromResourceFlags(args.flags);
 			desc.CPUAccessFlags = args.heap.type == HeapType::Upload ? D3D11_CPU_ACCESS_WRITE : 0;
 			desc.StructureByteStride = 0;
 			core::comptr<ID3D11Buffer> buffer;
@@ -46,7 +46,7 @@ namespace RHI::RHID3D11
 			desc.SampleDesc.Count = 1;
 			desc.Usage = FromHeapType(args.heap.type);
 			desc.MiscFlags = 0;
-			desc.BindFlags = 0;
+			desc.BindFlags = FromResourceFlags(args.flags);
 			desc.CPUAccessFlags = 0;
 			core::comptr<ID3D11Texture2D> texture;
 			hr = device->CreateTexture2D(&desc, NULL, texture.getpp());

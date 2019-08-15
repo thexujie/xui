@@ -17,11 +17,7 @@ namespace RHI::RHID3D11
 	public:
 		void Reset() override;
 
-	public:
-		ID3D11DeviceContext * DeviceContext() const { return _deferedContext.get(); }
-
 	private:
 		RHID3D11Device * _device = nullptr;
-		core::comptr<ID3D11DeviceContext> _deferedContext;
 	};
 }

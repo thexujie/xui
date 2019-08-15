@@ -1,12 +1,10 @@
 #include "stdafx.h"
 #include "RHID3D11CommandList.h"
 #include "RHID3D11CommandAllocator.h"
-//#include "RHID3D11Resource.h"
-#include "RHID3D11RenderTarget.h"
 #include "RHID3D11Resource.h"
-
-//#include "RHID3D11PipelineState.h"
-//#include "RHID3D11ResourcePacket.h"
+#include "RHID3D11RenderTarget.h"
+#include "RHID3D11PipelineState.h"
+#include "RHID3D11ResourcePacket.h"
 
 namespace RHI::RHID3D11
 {
@@ -17,12 +15,22 @@ namespace RHI::RHID3D11
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
-		auto adapter = _device->InnerAdapter();
-		auto d3d11allocator = static_cast<RHID3D11CommandAllocator *>(allocator);
+		auto device = _device->Device();
+		auto adapter = _device->Adapter();
 		assert(device);
 		assert(adapter);
-		_deferredContext.reset(d3d11allocator->DeviceContext());
+
+		uint32_t flags = 0;
+		core::comptr<ID3D11DeviceContext> deferredContext;
+		hr = device->CreateDeferredContext(flags, deferredContext.getpp());
+		if (FAILED(hr))
+		{
+			core::war() << __FUNCTION__ " device->CreateDeferredContext failed: " << win32::winerr_str(hr & 0xFFFF);
+			return core::e_inner;
+		}
+
+		_deferredContext = deferredContext;
+		
 		return core::ok;
 	}
 
@@ -32,7 +40,6 @@ namespace RHI::RHID3D11
 
 	void RHID3D11CommandList::Reset(RHICommandAllocator * allocator)
 	{
-		_deferredContext.reset(reinterpret_cast<RHID3D11CommandAllocator *>(allocator)->DeviceContext());
 		_deferredContext->ClearState();
 	}
 
@@ -45,7 +52,32 @@ namespace RHI::RHID3D11
 	{
 		auto d3d11rendertarget = static_cast<RHID3D11RenderTarget *>(rendertarget);
 		ID3D11RenderTargetView * rtvs[] = { d3d11rendertarget->RenderTargetView() };
-		_deferredContext->OMSetRenderTargets(1, rtvs, nullptr);
+
+		ID3D11UnorderedAccessView * uavs[D3D11_1_UAV_SLOT_COUNT] = {};
+		size_t nuavs = 0;
+		if (_resourcePacket)
+		{
+			auto & args = _resourcePacket->ViewArgs();
+			auto & views = _resourcePacket->Views();
+			for (size_t iuav = 0; iuav < std::min<size_t>(D3D11_1_UAV_SLOT_COUNT, views.size()); ++iuav)
+			{
+				if (args[iuav].type == ResourceType::UnorderedAccess)
+				{
+					uavs[iuav] = views[iuav].as<ID3D11UnorderedAccessView>().get();
+					++nuavs;
+				}
+			}
+		}
+
+		if (nuavs > 0)
+		{
+			UINT UAVInitialCounts = 0;
+			_deferredContext->OMSetRenderTargetsAndUnorderedAccessViews(1, rtvs, nullptr, 0, D3D11_1_UAV_SLOT_COUNT, uavs, &UAVInitialCounts);
+		}
+		else
+		{
+			_deferredContext->OMSetRenderTargets(1, rtvs, nullptr);
+		}
 	}
 
 	void RHID3D11CommandList::ClearRenderTarget(RHIRenderTarget * rendertarget, core::color color)
@@ -91,46 +123,162 @@ namespace RHI::RHID3D11
 	
 	void RHID3D11CommandList::SetPipelineState(RHIPipelineState * pipelinestate)
 	{
-		//auto d3d12pipelinestate = static_cast<RHID3D12PipelineState *>(pipelinestate);
-		//_cmdlist->SetPipelineState(d3d12pipelinestate->PipelineState());
-		//if (d3d12pipelinestate->Args().CS.empty())
-		//	_cmdlist->SetGraphicsRootSignature(d3d12pipelinestate->RootSignature());
-		//else
-		//	_cmdlist->SetComputeRootSignature(d3d12pipelinestate->RootSignature());
+		auto d3d11pipelinestate = static_cast<RHID3D11PipelineState *>(pipelinestate);
+		_deferredContext->IASetInputLayout(d3d11pipelinestate->InputLayout());
+		_deferredContext->VSSetShader(d3d11pipelinestate->VertexShader(), nullptr, 0);
+		_deferredContext->HSSetShader(d3d11pipelinestate->HullShader(), nullptr, 0);
+		_deferredContext->DSSetShader(d3d11pipelinestate->DomainShader(), nullptr, 0);
+		_deferredContext->GSSetShader(d3d11pipelinestate->GeometryShader(), nullptr, 0);
+		_deferredContext->PSSetShader(d3d11pipelinestate->PixelShader(), nullptr, 0);
+		_deferredContext->CSSetShader(d3d11pipelinestate->ComputeShader(), nullptr, 0);
+		_deferredContext->OMSetBlendState(d3d11pipelinestate->BlendState(), d3d11pipelinestate->Args().blend.blendFactor, d3d11pipelinestate->Args().samplemask);
+		_deferredContext->OMSetDepthStencilState(d3d11pipelinestate->DepthStencilState(), d3d11pipelinestate->Args().depthstencil.stencilref);
+		_deferredContext->RSSetState(d3d11pipelinestate->RasterizerState());
 	}
 	
 	void RHID3D11CommandList::SetResourcePacket(RHIResourcePacket * packet)
 	{
-		//_resourcepacket = static_cast<RHID3D12ResourcePacket *>(packet);
-		//ID3D12DescriptorHeap * heaps[1] = { _resourcepacket->DescriptorHeap()};
-		//_cmdlist->SetDescriptorHeaps(1, heaps);
+		_resourcePacket = static_cast<RHID3D11ResourcePacket *>(packet);
 	}
 
 	void RHID3D11CommandList::SetGraphicsResources(uint32_t index, uint32_t packetoffset)
 	{
-		assert(_resourcepacket);
-		if (!_resourcepacket)
+		assert(_resourcePacket);
+		if (!_resourcePacket)
 			return;
+
+		if (!_pipelineState)
+		{
+			core::war() << __FUNCTION__ " no pso.";
+			return;
+		}
+
+		const std::vector<RHIResource *> & resources = _resourcePacket->Resources();
+		const std::vector<ResourceViewArgs> & viewArgs = _resourcePacket->ViewArgs();
+		const std::vector<core::comptr<ID3D11View>> & views = _resourcePacket->Views();
+		const PipelineStateTable & table = _pipelineState->Table(index);
+		if (packetoffset + table.ranges.size() >= resources.size())
+		{
+			core::war() << __FUNCTION__ " resource index out of bounds.";
+			return;
+		}
 		
-		//_cmdlist->SetGraphicsRootDescriptorTable(index, _resourcepacket->GPUDescriptorHandle(packetoffset));
+		for (size_t iresource = 0; iresource < resources.size(); ++iresource)
+		{
+			auto & args = viewArgs[iresource];
+			auto & range = table.ranges[packetoffset + iresource];
+			switch (args.type)
+			{
+			case ResourceType::ConstBuffer:
+			{
+				core::comptr<ID3D11Resource> resource(static_cast<RHID3D11Resource *>(resources[iresource])->Resource());
+				ID3D11Buffer * buffers[] = { resource .as<ID3D11Buffer>().get()};
+				switch(table.shader)
+				{
+				case Shader::Vertex:
+					_deferredContext->VSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::Hull:
+					_deferredContext->HSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::Domain:
+					_deferredContext->DSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::Geoetry:
+					_deferredContext->GSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::Pixel:
+					_deferredContext->PSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::All:
+					_deferredContext->VSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					_deferredContext->HSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					_deferredContext->DSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					_deferredContext->GSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					_deferredContext->PSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				default:
+					break;;
+				}
+				break;
+			}
+			case ResourceType::ShaderResource:
+			{
+				core::comptr<ID3D11View> view(views[iresource]);
+				ID3D11ShaderResourceView * shaderviews[] = { view.as<ID3D11ShaderResourceView>().get() };
+				switch (table.shader)
+				{
+				case Shader::Vertex:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::Hull:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::Domain:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::Geoetry:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::Pixel:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::All:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				default:
+					break;;
+				}
+				break;
+			}
+			case ResourceType::UnorderedAccess:
+			{
+				core::comptr<ID3D11View> view(views[iresource]);
+				ID3D11UnorderedAccessView * shaderviews[] = { view.as<ID3D11UnorderedAccessView>().get() };
+				UINT UAVInitialCounts = 0;
+				switch (table.shader)
+				{
+				case Shader::Vertex:
+					break;
+				case Shader::Hull:
+					break;
+				case Shader::Domain:
+					break;
+				case Shader::Geoetry:
+					_deferredContext->CSSetUnorderedAccessViews(range.shaderRegister, 1, shaderviews, &UAVInitialCounts);
+					break;
+				case Shader::Pixel:
+					break;
+				case Shader::All:
+					_deferredContext->CSSetUnorderedAccessViews(range.shaderRegister, 1, shaderviews, &UAVInitialCounts);
+					break;
+				default:
+					break;;
+				}
+				break;
+			}
+			default:;
+			}
+		}
 	}
 	
 	void RHID3D11CommandList::IASetVertexBuffer(RHIResource * resource, uint32_t stride, uint32_t size)
 	{
-		//D3D12_VERTEX_BUFFER_VIEW vbv = {};
-		//vbv.BufferLocation = static_cast<RHID3D12Resource *>(resource)->GPUVirtualAddress();
-		//vbv.StrideInBytes = stride;
-		//vbv.SizeInBytes = size;
-		//_cmdlist->IASetVertexBuffers(0, 1, &vbv);
+		core::comptr<ID3D11Resource> buffer(static_cast<RHID3D11Resource *>(resource)->Resource());
+		ID3D11Buffer * buffers[] = { buffer.as<ID3D11Buffer>().get() };
+		uint32_t strides[] = { stride };
+		uint32_t offsets[] = { 0 };
+		_deferredContext->IASetVertexBuffers(0, 1, buffers, strides, offsets);
 	}
 	
 	void RHID3D11CommandList::IASetIndexBuffer(RHIResource * resource, uint32_t stride, uint32_t size)
 	{
-		//D3D12_INDEX_BUFFER_VIEW vbv = {};
-		//vbv.BufferLocation = static_cast<RHID3D12Resource *>(resource)->GPUVirtualAddress();
-		//vbv.Format = stride == 4 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT;
-		//vbv.SizeInBytes = size;
-		//_cmdlist->IASetIndexBuffer(&vbv);
+		core::comptr<ID3D11Resource> buffer(static_cast<RHID3D11Resource *>(resource)->Resource());
+		_deferredContext->IASetIndexBuffer(buffer.as<ID3D11Buffer>().get(), stride == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
 	}
 
 	void RHID3D11CommandList::IASetTopologyType(Topology topology)
@@ -150,11 +298,127 @@ namespace RHI::RHID3D11
 
 	void RHID3D11CommandList::SetComputeResources(uint32_t index, uint32_t packetoffset)
 	{
-		assert(_resourcepacket);
-		if (!_resourcepacket)
+		assert(_resourcePacket);
+		if (!_resourcePacket)
 			return;
 
-		//_cmdlist->SetComputeRootDescriptorTable(index, _resourcepacket->GPUDescriptorHandle(packetoffset));
+		if (!_pipelineState)
+		{
+			core::war() << __FUNCTION__ " no pso.";
+			return;
+		}
+
+		const std::vector<RHIResource *> & resources = _resourcePacket->Resources();
+		const std::vector<ResourceViewArgs> & viewArgs = _resourcePacket->ViewArgs();
+		const std::vector<core::comptr<ID3D11View>> & views = _resourcePacket->Views();
+		const PipelineStateTable & table = _pipelineState->Table(index);
+		if (packetoffset + table.ranges.size() >= resources.size())
+		{
+			core::war() << __FUNCTION__ " resource index out of bounds.";
+			return;
+		}
+
+		for (size_t iresource = 0; iresource < resources.size(); ++iresource)
+		{
+			auto & args = viewArgs[iresource];
+			auto & range = table.ranges[packetoffset + iresource];
+			switch (args.type)
+			{
+			case ResourceType::ConstBuffer:
+			{
+				core::comptr<ID3D11Resource> resource(static_cast<RHID3D11Resource *>(resources[iresource])->Resource());
+				ID3D11Buffer * buffers[] = { resource.as<ID3D11Buffer>().get() };
+				switch (table.shader)
+				{
+				case Shader::Vertex:
+					_deferredContext->VSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::Hull:
+					_deferredContext->HSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::Domain:
+					_deferredContext->DSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::Geoetry:
+					_deferredContext->GSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::Pixel:
+					_deferredContext->PSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				case Shader::All:
+					_deferredContext->VSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					_deferredContext->HSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					_deferredContext->DSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					_deferredContext->GSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					_deferredContext->PSSetConstantBuffers(range.shaderRegister, 1, buffers);
+					break;
+				default:
+					break;;
+				}
+				break;
+			}
+			case ResourceType::ShaderResource:
+			{
+				core::comptr<ID3D11View> view(views[iresource]);
+				ID3D11ShaderResourceView * shaderviews[] = { view.as<ID3D11ShaderResourceView>().get() };
+				switch (table.shader)
+				{
+				case Shader::Vertex:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::Hull:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::Domain:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::Geoetry:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::Pixel:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				case Shader::All:
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					_deferredContext->VSSetShaderResources(range.shaderRegister, 1, shaderviews);
+					break;
+				default:
+					break;;
+				}
+				break;
+			}
+			case ResourceType::UnorderedAccess:
+			{
+				core::comptr<ID3D11View> view(views[iresource]);
+				ID3D11UnorderedAccessView * shaderviews[] = { view.as<ID3D11UnorderedAccessView>().get() };
+				UINT UAVInitialCounts = 0;
+				switch (table.shader)
+				{
+				case Shader::Vertex:
+					break;
+				case Shader::Hull:
+					break;
+				case Shader::Domain:
+					break;
+				case Shader::Geoetry:
+					_deferredContext->CSSetUnorderedAccessViews(range.shaderRegister, 1, shaderviews, &UAVInitialCounts);
+					break;
+				case Shader::Pixel:
+					break;
+				case Shader::All:
+					_deferredContext->CSSetUnorderedAccessViews(range.shaderRegister, 1, shaderviews, &UAVInitialCounts);
+					break;
+				default:
+					break;;
+				}
+				break;
+			}
+			default:;
+			}
+		}
 	}
 	
 	void RHID3D11CommandList::Dispatch(core::uint3 ngroups)
@@ -164,7 +428,7 @@ namespace RHI::RHID3D11
 	
 	void RHID3D11CommandList::CopyResource(RHIResource * dst, RHIResource * src)
 	{
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		auto rhid3d11dst = static_cast<RHID3D11Resource *>(dst);
 		auto rhid3d11src = static_cast<RHID3D11Resource *>(src);
 		if (rhid3d11dst->Args().dimension == ResourceDimension::Texture2D)
