@@ -237,7 +237,9 @@ namespace core
                 }
             }
             _fs.flush();
+#ifdef _DEBUG
 			_cond_notify.notify_all();
+#endif
         }
     }
 

@@ -133,6 +133,7 @@ namespace core
 		std::mutex _mtx_write;
         std::condition_variable _cond;
 #ifdef _DEBUG
+    	// write log synchronic on debug 
 		std::mutex _mtx_notify;
 		std::condition_variable _cond_notify;
 #endif
