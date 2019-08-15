@@ -122,6 +122,15 @@
     <ClCompile Include="RHID3D11\RHID3D11ResourcePacket.cpp">
       <Filter>RHID3D11</Filter>
     </ClCompile>
+    <ClCompile Include="RHI\RHIFence.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D12\RHID3D12Fence.cpp">
+      <Filter>RHID3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="RHID3D11\RHID3D11Fence.cpp">
+      <Filter>RHID3D11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -246,6 +255,15 @@
       <Filter>RHID3D11</Filter>
     </ClInclude>
     <ClInclude Include="RHID3D11\RHID3D11ResourcePacket.h">
+      <Filter>RHID3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\RHIFence.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D12\RHID3D12Fence.h">
+      <Filter>RHID3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="RHID3D11\RHID3D11Fence.h">
       <Filter>RHID3D11</Filter>
     </ClInclude>
   </ItemGroup>

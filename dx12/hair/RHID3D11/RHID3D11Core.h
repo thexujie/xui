@@ -6,6 +6,8 @@
 
 namespace RHI::RHID3D11
 {
+	class RHID3D11Device;
+	
 	inline DXGI_SWAP_EFFECT FromSwapEffect(SwapEffect effect)
 	{
 		switch(effect)

@@ -112,14 +112,14 @@ namespace RHI
 		DepthWrite = 0x20,
 		DepthRead = 0x40,
 
-		VertexShaderRerources = 0x100,
-		HullShaderRerources = 0x200,
-		DomainShaderRerources = 0x400,
-		GeometryShaderRerources = 0x800,
-		PixelShaderRerources = 0x1000,
-		ComputerShaderRerources = 0x2000,
+		VertexShaderRerource = 0x100,
+		HullShaderRerource = 0x200,
+		DomainShaderRerource = 0x400,
+		GeometryShaderRerource = 0x800,
+		PixelShaderRerource = 0x1000,
+		ComputerShaderRerource = 0x2000,
 
-		NonePixelShaderRerources = VertexShaderRerources | HullShaderRerources | DomainShaderRerources | GeometryShaderRerources | ComputerShaderRerources,
+		NonePixelShaderRerource = VertexShaderRerource | HullShaderRerource | DomainShaderRerource | GeometryShaderRerource | ComputerShaderRerource,
 
 		CopySource = 0x10000,
 		CopyDest = 0x20000,
@@ -538,4 +538,12 @@ namespace RHI
 		uint32_t samplemask = 0xffffffff;
 
 	};
+
+	enum class FenceFlag
+	{
+		None = 0,
+		Shared = 0x1
+	};
+
+	using FenceFlags = core::bitflag<FenceFlag>;
 }

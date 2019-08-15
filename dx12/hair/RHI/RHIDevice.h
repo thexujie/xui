@@ -4,6 +4,7 @@
 
 namespace RHI
 {
+	class RHIFence;
 	class RHICommandQueue;
 	class RHICommandAllocator;
 	class RHICommandList;
@@ -22,6 +23,7 @@ namespace RHI
 		RHIAdapterDesc Desc() const { return _desc; }
 
 	public:
+		virtual std::shared_ptr<RHIFence> CreateFence(FenceFlags flags) const = 0;
 		virtual std::shared_ptr<RHICommandQueue> CreateCommandQueue(CommandType type, CommandQueueFlags flags) const = 0;
 		virtual std::shared_ptr<RHICommandAllocator> CreateCommandAllocator(CommandType type, uint32_t count) const = 0;
 		virtual std::shared_ptr<RHICommandList> CreateCommandList(CommandType type, RHICommandAllocator * allocator) const = 0;

@@ -5,6 +5,7 @@
 #include "RHICore.h"
 #include "RHIResource.h"
 #include "RHIDevice.h"
+#include "RHIFence.h"
 #include "RHICommandAllocator.h"
 #include "RHICommandList.h"
 #include "RHICommandQueue.h"

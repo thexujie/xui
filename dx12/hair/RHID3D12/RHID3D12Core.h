@@ -6,6 +6,8 @@
 
 namespace RHI::RHID3D12
 {
+	class RHID3D12Device;
+	
 	inline DXGI_SWAP_EFFECT FromSwapEffect(SwapEffect effect)
 	{
 		switch(effect)
@@ -165,12 +167,12 @@ namespace RHI::RHID3D12
 		result.set(D3D12_RESOURCE_STATE_DEPTH_WRITE, states.any(ResourceState::DepthWrite));
 		result.set(D3D12_RESOURCE_STATE_DEPTH_READ, states.any(ResourceState::DepthRead));
 		result.set(D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, states.any(
-			ResourceState::VertexShaderRerources |
-			ResourceState::HullShaderRerources |
-			ResourceState::DomainShaderRerources |
-			ResourceState::GeometryShaderRerources |
-			ResourceState::ComputerShaderRerources));
-		result.set(D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, states.any(ResourceState::PixelShaderRerources));
+			ResourceState::VertexShaderRerource |
+			ResourceState::HullShaderRerource |
+			ResourceState::DomainShaderRerource |
+			ResourceState::GeometryShaderRerource |
+			ResourceState::ComputerShaderRerource));
+		result.set(D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, states.any(ResourceState::PixelShaderRerource));
 		result.set(D3D12_RESOURCE_STATE_COPY_SOURCE, states.any(ResourceState::CopySource));
 		result.set(D3D12_RESOURCE_STATE_COPY_DEST, states.any(ResourceState::CopyDest));
 		result.set(D3D12_RESOURCE_STATE_RESOLVE_SOURCE, states.any(ResourceState::ResolveSource));
@@ -506,6 +508,13 @@ namespace RHI::RHID3D12
 		core::bitflag<D3D12_DESCRIPTOR_RANGE_FLAGS> result;
 		result.set(D3D12_DESCRIPTOR_RANGE_FLAG_DATA_VOLATILE, flags.any(DescriptorFlag::Volatile));
 		result.set(D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC, flags.any(DescriptorFlag::Static));
+		return result;
+	}
+
+	inline D3D12_FENCE_FLAGS FromFenceFlags(FenceFlags flags)
+	{
+		core::bitflag<D3D12_FENCE_FLAGS> result;
+		result.set(D3D12_FENCE_FLAG_SHARED, flags.any(FenceFlag::Shared));
 		return result;
 	}
 }

@@ -54,8 +54,4 @@ namespace RHI::RHID3D11
 	{
 		_immediateContext->ExecuteCommandList(reinterpret_cast<RHID3D11CommandList *>(cmdlist)->CommandList(), false);
 	}
-	
-	void RHID3D11CommandQueue::Fence(uint64_t signal, uint64_t fence)
-	{
-	}
 }

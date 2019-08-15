@@ -10,7 +10,7 @@ namespace RHI::RHID3D12
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 
 		std::vector<D3D12_ROOT_PARAMETER1> d3d12params(args.tables.size());
@@ -98,7 +98,7 @@ namespace RHI::RHID3D12
 	{
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 		
 		UINT compileFlags = 0;
@@ -233,7 +233,7 @@ namespace RHI::RHID3D12
 	core::error RHID3D12PipelineState::_CreateComputePipelineState(const PipelineStateArgs & args, core::comptr<ID3D12RootSignature> rootSignature)
 	{
 		HRESULT hr = S_OK;
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 		
 		UINT compileFlags = 0;

@@ -15,8 +15,8 @@ namespace RHI::RHID3D12
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
-		auto adapter = _device->InnerAdapter();
+		auto device = _device->Device();
+		auto adapter = _device->Adapter();
 		auto d3d12allocator = static_cast<RHID3D12CommandAllocator *>(allocator);
 		assert(device);
 		assert(adapter);
@@ -105,6 +105,8 @@ namespace RHI::RHID3D12
 		barrier.Transition.StateBefore = FromResourceStates(d3d12resource->State());
 		barrier.Transition.StateAfter = FromResourceStates(state);
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		if (barrier.Transition.StateBefore == barrier.Transition.StateAfter)
+			return;
 
 		if ((barrier.Transition.StateBefore & barrier.Transition.StateAfter) != 0)
 		{
@@ -205,7 +207,7 @@ namespace RHI::RHID3D12
 	
 	void RHID3D12CommandList::CopyResource(RHIResource * dst, RHIResource * src)
 	{
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		auto rhid3d12dst = static_cast<RHID3D12Resource *>(dst);
 		auto rhid3d12src = static_cast<RHID3D12Resource *>(src);
 		if (rhid3d12dst->Args().dimension == ResourceDimension::Texture2D)

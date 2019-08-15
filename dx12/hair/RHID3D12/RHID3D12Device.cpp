@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "RHID3D12Device.h"
+#include "RHID3D12Fence.h"
 #include "RHID3D12CommandQueue.h"
 #include "RHID3D12RenderTargetHWND.h"
 #include "RHID3D12CommandList.h"
@@ -41,7 +42,16 @@ namespace RHI::RHID3D12
 
 		return core::ok;
 	}
-
+	
+	std::shared_ptr<RHIFence> RHID3D12Device::CreateFence(FenceFlags flags) const
+	{
+		auto fence = std::make_shared<RHID3D12Fence>(const_cast<RHID3D12Device *>(this));
+		auto err = fence->Create(flags);
+		if (err)
+			return nullptr;
+		return fence;
+	}
+	
 	std::shared_ptr<RHICommandQueue> RHID3D12Device::CreateCommandQueue(CommandType type, CommandQueueFlags flags) const
 	{
 		auto queue = std::make_shared<RHID3D12CommandQueue>(const_cast<RHID3D12Device *>(this));

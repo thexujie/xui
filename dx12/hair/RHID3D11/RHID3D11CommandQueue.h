@@ -18,7 +18,10 @@ namespace RHI::RHID3D11
 
 	public:
 		void Excute(RHICommandList * cmdlist) override;
-		void Fence(uint64_t signal, uint64_t fence) override;
+		void Signal(RHIFence * fence, uint64_t signal) override {}
+		void Fence(RHIFence * fence, uint64_t value) override {}
+		void Wait(RHIFence * fence, uint64_t value) override {}
+		void SignalAndFence(RHIFence * fence, uint64_t signal, uint64_t value) override {}
 
 	public:
 		ID3D11DeviceContext * DeviceContext() const { return _immediateContext.get(); }

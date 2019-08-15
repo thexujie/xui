@@ -11,8 +11,8 @@ namespace RHI::RHID3D12
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
-		auto adapter = _device->InnerAdapter();
+		auto device = _device->Device();
+		auto adapter = _device->Adapter();
 		assert(device);
 		assert(adapter);
 

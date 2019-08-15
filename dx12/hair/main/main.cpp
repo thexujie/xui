@@ -570,21 +570,21 @@ public:
 		_cmdlist->CopyResource(_resource_vertexbuffer_lines.get(), indexLinesbuffer_UL.get());
 		_cmdlist->CopyResource(_resource_strandoffsets.get(), strandoffsets_UL.get());
 		_cmdlist->CopyResource(_resource_constraints.get(), constraints_UL.get());
-		_cmdlist->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::ComputerShaderRerources);
-		_cmdlist->TransitionBarrier(_resource_prev_positions.get(), RHI::ResourceState::ComputerShaderRerources);
-		_cmdlist->TransitionBarrier(_resource_init_positions.get(), RHI::ResourceState::ComputerShaderRerources);
-		_cmdlist->TransitionBarrier(_resource_tangents.get(), RHI::ResourceState::VertexShaderRerources);
-		_cmdlist->TransitionBarrier(_resource_coord_jitters.get(), RHI::ResourceState::VertexShaderRerources);
+		_cmdlist->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::ComputerShaderRerource);
+		_cmdlist->TransitionBarrier(_resource_prev_positions.get(), RHI::ResourceState::ComputerShaderRerource);
+		_cmdlist->TransitionBarrier(_resource_init_positions.get(), RHI::ResourceState::ComputerShaderRerource);
+		_cmdlist->TransitionBarrier(_resource_tangents.get(), RHI::ResourceState::VertexShaderRerource);
+		_cmdlist->TransitionBarrier(_resource_coord_jitters.get(), RHI::ResourceState::VertexShaderRerource);
 		_cmdlist->TransitionBarrier(_resource_vertexbuffer.get(), RHI::ResourceState::VertexBuffer);
 		_cmdlist->TransitionBarrier(_resource_vertexbuffer_lines.get(), RHI::ResourceState::VertexBuffer);
-		_cmdlist->TransitionBarrier(_resource_strandoffsets.get(), RHI::ResourceState::ComputerShaderRerources);
-		_cmdlist->TransitionBarrier(_resource_constraints.get(), RHI::ResourceState::ComputerShaderRerources);
+		_cmdlist->TransitionBarrier(_resource_strandoffsets.get(), RHI::ResourceState::ComputerShaderRerource);
+		_cmdlist->TransitionBarrier(_resource_constraints.get(), RHI::ResourceState::ComputerShaderRerource);
 		
 		_cmdlist->Close();
 		_cmdqueue->Excute(_cmdlist.get());
 
-		uint64_t fence = _fenceValues[_frameIndex]++;
-		_cmdqueue->Fence(fence, fence);
+		_fenceValuesRender[_frameIndex] = ++_fenceValueRender;
+		_cmdqueue->SignalAndFence(_fence.get(), _fenceValuesRender[_frameIndex], _fenceValuesRender[_frameIndex]);
 	}
 
 	void LoadRawResources()
@@ -933,6 +933,8 @@ public:
 
 		std::vector<RHI::RHIAdapterDesc> adapters = _factory->AdapterDescs();
 		_device = _factory->CreateDevice(adapters[0].uri);
+		_fenceSimulate = _device->CreateFence(RHI::FenceFlag::None);
+		_fence = _device->CreateFence(RHI::FenceFlag::None);
 		_cmdqueue = _device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
 		_cmdqueue_compute = _device->CreateCommandQueue(RHI::CommandType::Compute, RHI::CommandQueueFlag::None);
 		RHI::RenderTargetArgs rtparams = {};
@@ -951,13 +953,16 @@ public:
 		_cmdallocator_compute->SetName(u8"_cmdallocator_compute");
 		_cmdlist_compute->SetName(u8"_cmdlist_compute");
 
-		_fenceValues.resize(rtparams.nbuffer, 0);
+		_fenceValuesComputer.resize(rtparams.nbuffer);
+		_fenceValuesRender.resize(rtparams.nbuffer);
+		std::fill(_fenceValuesComputer.begin(), _fenceValuesComputer.end(), 0);
+		std::fill(_fenceValuesRender.begin(), _fenceValuesRender.end(), 0);
 		_frameIndex = 0;
 		
 		LoadAssets();
 
 
-		core::counter_fps<float, 3> fps;
+		core::counter_fps<float, 1> fps;
 		float64_t time_last = core::datetime::system();
 
 		RECT rcClient;
@@ -970,6 +975,7 @@ public:
 
 		core::float4x4 matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, 16.0f / 9.0f, 0.1f, 5000.0f);
 
+		uint32_t frameIndexLast = 0;
 		while (_rendering && _rhi_next == _rhi)
 		{
 			auto elapse = core::datetime::system() - time_last;
@@ -980,15 +986,24 @@ public:
 			if (windowSize2 != windowSize)
 			{
 				windowSize = windowSize2;
+				for (uint32_t iframebuffer = 0; iframebuffer < _backBufferCount; ++iframebuffer)
+				{
+					_cmdqueue_compute->Fence(_fence.get(), _fenceValuesComputer[iframebuffer]);
+					_cmdqueue->Fence(_fence.get(), _fenceValuesRender[iframebuffer]);
+				}
 				_rendertarget.reset();
 				matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, float(windowSize.cx) / windowSize.cy, 0.1f, 5000.0f);
 				sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
 				viewport = { 0, 0, (float)windowSize.cx, (float)windowSize.cy, 0.0f, 1.0f };
-				RHI::RenderTargetArgs rtparams = {};
-				rtparams.hwnd = _hwnd;
 				_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
 
-				_fenceValues.resize(rtparams.nbuffer, 0);
+				_fenceValueSimulate = 0;
+				_fenceValueRender = 0;
+				
+				_fenceValuesComputer.resize(rtparams.nbuffer, 0);
+				_fenceValuesRender.resize(rtparams.nbuffer, 0);
+				std::fill(_fenceValuesComputer.begin(), _fenceValuesComputer.end(), 0);
+				std::fill(_fenceValuesRender.begin(), _fenceValuesRender.end(), 0);
 				_frameIndex = 0;
 			}
 
@@ -1035,16 +1050,19 @@ public:
 				_cmdlist_compute->SetComputeResources(0, 0);
 
 				_cmdlist_compute->Dispatch({ uint32_t(_strandOffsets.size()), 1, 1 });
-				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderRerources);
+				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderRerource);
 				_cmdlist_compute->Close();
 				_cmdqueue_compute->Excute(_cmdlist_compute.get());
-				//_cmdqueue_compute->Wait(_fenceValues[_frameIndex]);
+				_fenceValuesComputer[_frameIndex] = ++_fenceValueSimulate;
+				_cmdqueue_compute->Signal(_fenceSimulate.get(), _fenceValuesComputer[_frameIndex]);
 			}
 
-
 			// Render
-			if(true)
+			if (true)
 			{
+				if (_simulate)
+					_cmdqueue->Wait(_fenceSimulate.get(), _fenceValuesComputer[_frameIndex]);
+				
 				{
 					SceneConstantBuffer cbuffer;
 					cbuffer.worldTransform = matrWorld;
@@ -1092,11 +1110,12 @@ public:
 				_cmdlist->Close();
 				_cmdqueue->Excute(_cmdlist.get());
 				_rendertarget->Present(0);
-				uint64_t signal = _fenceValues[_frameIndex];
+
+				//----------------------------------------------------
+				_fenceValuesRender[_frameIndex] = ++_fenceValueRender;
+				_cmdqueue->Signal(_fence.get(), _fenceValuesRender[_frameIndex]);
 				_frameIndex = _rendertarget->FrameIndex();
-				uint64_t fence = _fenceValues[_frameIndex];
-				_cmdqueue->Fence(signal, fence);
-				_fenceValues[_frameIndex] = signal + 1;
+				_cmdqueue->Fence(_fence.get(), _fenceValuesRender[_frameIndex]);
 			}
 
 			fps.acc(1);
@@ -1166,6 +1185,8 @@ private:
 	std::shared_ptr<RHI::RHIFactory> _factory;
 	std::shared_ptr<RHI::RHIDevice> _device;
 	
+	std::shared_ptr<RHI::RHIFence> _fenceSimulate;
+	std::shared_ptr<RHI::RHIFence> _fence;
 	std::shared_ptr<RHI::RHICommandQueue> _cmdqueue;
 	std::shared_ptr<RHI::RHICommandQueue> _cmdqueue_compute;
 	
@@ -1174,7 +1195,10 @@ private:
 	std::shared_ptr<RHI::RHICommandList> _cmdlist;
 	std::shared_ptr<RHI::RHICommandAllocator> _cmdallocator_compute;
 	std::shared_ptr<RHI::RHICommandList> _cmdlist_compute;
-	std::vector<uint32_t> _fenceValues;
+	uint64_t _fenceValueSimulate = 0;
+	uint64_t _fenceValueRender = 0;
+	std::vector<uint64_t> _fenceValuesComputer;
+	std::vector<uint64_t> _fenceValuesRender;
 	uint32_t _frameIndex = 0;
 
 	std::shared_ptr<RHI::RHIPipelineState> _pipelinestate;
@@ -1219,6 +1243,14 @@ private:
 
 	void Reset()
 	{
+		for (uint32_t iframebuffer = 0; iframebuffer < _backBufferCount; ++iframebuffer)
+		{
+			_cmdqueue_compute->Fence(_fence.get(), _fenceValuesComputer[iframebuffer]);
+			_cmdqueue->Fence(_fence.get(), _fenceValuesRender[iframebuffer]);
+		}
+		_fenceValueSimulate = 0;
+		_fenceValueRender = 0;
+		
 		_resource_constraints.reset();
 		_resource_strandoffsets.reset();
 		_resource_vertexbuffer_lines.reset();

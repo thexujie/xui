@@ -11,7 +11,7 @@ namespace RHI::RHID3D12
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 
 		core::comptr<ID3D12DescriptorHeap> heap;
@@ -57,7 +57,7 @@ namespace RHI::RHID3D12
 
 		HRESULT hr = S_OK;
 
-		auto device = _device->Inner();
+		auto device = _device->Device();
 		assert(device);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE CPUHandle = _heap->GetCPUDescriptorHandleForHeapStart();

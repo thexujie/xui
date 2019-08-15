@@ -12,10 +12,11 @@ namespace RHI::RHID3D12
 
 		core::error Create(core::comptr<IDXGIAdapter1> adapter);
 
-		core::comptr<ID3D12Device> Inner() const { return _device; }
-		core::comptr<IDXGIAdapter1> InnerAdapter() const { return _adapter; }
+		core::comptr<ID3D12Device> Device() const { return _device; }
+		core::comptr<IDXGIAdapter1> Adapter() const { return _adapter; }
 
 	public:
+		std::shared_ptr<RHIFence> CreateFence(FenceFlags flags) const override;
 		std::shared_ptr<RHICommandQueue> CreateCommandQueue(CommandType type, CommandQueueFlags flags) const override;
 		std::shared_ptr<RHICommandAllocator> CreateCommandAllocator(CommandType type, uint32_t count) const override;
 		std::shared_ptr<RHICommandList> CreateCommandList(CommandType type, RHICommandAllocator * allocator) const override;

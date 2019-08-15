@@ -16,6 +16,7 @@ namespace RHI::RHID3D11
 		IDXGIAdapter1 * Adapter() const { return _adapter.get(); }
 
 	public:
+		std::shared_ptr<RHIFence> CreateFence(FenceFlags flags) const override;
 		std::shared_ptr<RHICommandQueue> CreateCommandQueue(CommandType type, CommandQueueFlags flags) const override;
 		std::shared_ptr<RHICommandAllocator> CreateCommandAllocator(CommandType type, uint32_t count) const override;
 		std::shared_ptr<RHICommandList> CreateCommandList(CommandType type, RHICommandAllocator * allocator) const override;

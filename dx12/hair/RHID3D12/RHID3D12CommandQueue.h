@@ -17,7 +17,10 @@ namespace RHI::RHID3D12
 
 	public:
 		void Excute(RHICommandList * cmdlist) override;
-		void Fence(uint64_t signal, uint64_t fence) override;
+		void Signal(RHIFence * fence, uint64_t signal) override;
+		void Wait(RHIFence * fence, uint64_t value) override;
+		void Fence(RHIFence * fence, uint64_t value) override;
+		void SignalAndFence(RHIFence * fence, uint64_t signal, uint64_t value) override;
 
 	public:
 		ID3D12CommandQueue * CommandQueue() const { return _cmdqueue.get(); }
@@ -25,12 +28,8 @@ namespace RHI::RHID3D12
 	private:
 		RHID3D12Device * _device = nullptr;
 		core::comptr<ID3D12CommandQueue> _cmdqueue;
-		core::comptr<ID3D12Fence> _fence;
-
 		CommandType _type = CommandType::Direct;
 		CommandQueueFlags _flags = nullptr;
-
-		uint64_t _fenceValue = 0;
 		HANDLE _fenceEvent = NULL;
 	};
 }
