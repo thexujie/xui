@@ -14,12 +14,14 @@ namespace RHI::RHID3D11
 			pObject->SetPrivateData(GUID_D3DDebugObjectName, (uint32_t)name.length(), name.c_str());
 	}
 
+#ifdef __cpp_char8_t
 	template<typename OT>
 	void SetD3D11ObjectName(OT * pObject, const std::u8string & name)
 	{
 		if (pObject)
 			pObject->SetPrivateData(GUID_D3DDebugObjectName, (uint32_t)name.length(), static_cast<const void *>(name.c_str()));
 	}
+#endif
 	
 	inline std::string_view D3D11BlobMessage(ID3DBlob * blob)
 	{

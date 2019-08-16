@@ -173,165 +173,108 @@ public:
 	void LoadAssets()
 	{
 		std::u8string path_basic = u8"../data/shaders/basic.hlsl";
-		RHI::PipelineStateArgs psoArgs_basic =
+		RHI::PipelineStateArgs psoArgs_basic = {};
 		{
-			.topology = RHI::TopologyType::Line,
-			.VS = path_basic,
-			.VSMain = "VSMain",
-			.PS = path_basic,
-			.PSMain = "PSMain",
+			psoArgs_basic.topology = RHI::TopologyType::Line;
+			psoArgs_basic.VS = path_basic;
+			psoArgs_basic.VSMain = "VSMain";
+			psoArgs_basic.PS = path_basic;
+			psoArgs_basic.PSMain = "PSMain";
 			
-			.elements =
+			psoArgs_basic.elements =
 			{
 				RHI::InputElement{ "POINT_INDEX", core::format::uint1, 0 },
-			},
-			.tables =
+			};
+			psoArgs_basic.tables =
 			{
 				RHI::PipelineStateTable
 				{
-					.shader = RHI::Shader::All,
-					.ranges =
+					RHI::Shader::All,
 					{
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ConstBuffer,
-							.shaderRegister = 0
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ShaderResource,
-							.shaderRegister = 0
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ShaderResource,
-							.shaderRegister = 1
-						},
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ConstBuffer, 0 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ShaderResource, 0 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ShaderResource, 1 },
 					}
 				},
-			},
-			.samplers = { RHI::SamplerArgs{}},
+			};
+			psoArgs_basic.samplers = { RHI::SamplerArgs{} };
 		};
 		_pipelinestate_basic = _device->CreatePipelineState(psoArgs_basic);
 
 		std::u8string path_hair = u8"../data/shaders/hair.hlsl";
-		RHI::PipelineStateArgs psoArgs_hair =
+		RHI::PipelineStateArgs psoArgs_hair = {};
 		{
-			.topology = RHI::TopologyType::Patch,
-			.VS = path_hair,
-			.VSMain = "VSMain",
-			.HS = path_hair,
-			.HSMain = "HSMain",
-			.DS = path_hair,
-			.DSMain = "DSMain",
-			.GS = path_hair,
-			.GSMain = "GSMain",
-			.PS = path_hair,
-			.PSMain = "PSMain",
+			psoArgs_hair.topology = RHI::TopologyType::Patch;
+			psoArgs_hair.VS = path_hair;
+			psoArgs_hair.VSMain = "VSMain";
+			psoArgs_hair.HS = path_hair;
+			psoArgs_hair.HSMain = "HSMain";
+			psoArgs_hair.DS = path_hair;
+			psoArgs_hair.DSMain = "DSMain";
+			psoArgs_hair.GS = path_hair;
+			psoArgs_hair.GSMain = "GSMain";
+			psoArgs_hair.PS = path_hair;
+			psoArgs_hair.PSMain = "PSMain";
 
-			.elements =
+			psoArgs_hair.elements =
 			{
 				RHI::InputElement{ "PATCH_INDEX", core::format::uint4, 0 },
 				RHI::InputElement{ "STRAND_INDEX", core::format::uint1, 16 },
-			},
-			.tables =
+			};
+			psoArgs_hair.tables =
 			{
 				RHI::PipelineStateTable
 				{
-					.shader = RHI::Shader::All,
-					.ranges =
+					RHI::Shader::All,
 					{
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ConstBuffer,
-							.shaderRegister = 0
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ShaderResource,
-							.shaderRegister = 0
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ShaderResource,
-							.shaderRegister = 1
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ShaderResource,
-							.shaderRegister = 2
-						},
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ConstBuffer, 0 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ShaderResource, 0 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ShaderResource, 1 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ShaderResource, 2 },
 					}
 				},
-			},
-			.samplers = { RHI::SamplerArgs{}},
-		};
+			};
+			psoArgs_hair.samplers = { RHI::SamplerArgs{} };
+		}
 		_pipelinestate = _device->CreatePipelineState(psoArgs_hair);
 
 		
 		std::u8string path_hair_simulate = u8"../data/shaders/hair_simulate.hlsl";
-		RHI::PipelineStateArgs psoArgs_hair_simulate =
+		RHI::PipelineStateArgs psoArgs_hair_simulate = {};
 		{
-			.topology = RHI::TopologyType::Point,
-			.CS = path_hair_simulate,
-			.CSMain = "CSMain",
-			
-			.tables =
+			psoArgs_hair_simulate.CS = path_hair_simulate;
+			psoArgs_hair_simulate.CSMain = "CSMain";
+			psoArgs_hair_simulate.tables =
 			{
 				RHI::PipelineStateTable
 				{
-					.shader = RHI::Shader::All,
-					.ranges =
+					RHI::Shader::All,
 					{
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ConstBuffer,
-							.shaderRegister = 0
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ShaderResource,
-							.shaderRegister = 0
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ShaderResource,
-							.shaderRegister = 1
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::ShaderResource,
-							.shaderRegister = 2
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::UnorderedAccess,
-							.shaderRegister = 0
-						},
-						RHI::PipelineStateTableRange
-						{
-							.type = RHI::DescriptorRangeType::UnorderedAccess,
-							.shaderRegister = 1
-						},
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ConstBuffer, 0 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ShaderResource, 0 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ShaderResource, 1 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::ShaderResource, 2 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::UnorderedAccess, 0 },
+						RHI::PipelineStateTableRange { RHI::DescriptorRangeType::UnorderedAccess, 1 },
 					}
 				},
-			},
+			};
 		};
 		_pipelinestate_simulate = _device->CreatePipelineState(psoArgs_hair_simulate);
 
 		RHI::ResourcePacketArgs packetArgs_hair = 
 		{
-			.type = RHI::ResourcePacketType::Resource,
-			.capacity = RenderResourceId_Count,
-			.flags = RHI::ResourcePacketFlag::ShaderVisible,
+			RHI::ResourcePacketType::Resource,
+			RenderResourceId_Count,
+			RHI::ResourcePacketFlag::ShaderVisible,
 		};
 		_resourcepacket = _device->CreateResourcePacket(packetArgs_hair);
 
 		RHI::ResourcePacketArgs packetArgs_hair_simulate =
 		{
-			.type = RHI::ResourcePacketType::Resource,
-			.capacity = SimulateResourceId_Count,
-			.flags = RHI::ResourcePacketFlag::ShaderVisible,
+			RHI::ResourcePacketType::Resource,
+			SimulateResourceId_Count,
+			RHI::ResourcePacketFlag::ShaderVisible,
 		};
 		_resourcepacket_simulate = _device->CreateResourcePacket(packetArgs_hair_simulate);
 
@@ -341,194 +284,66 @@ public:
 		_cmdallocator->Reset(_frameIndex);
 		_cmdlist->Reset(_cmdallocator.get(), _frameIndex);
 
+
+		// const
+		_cbuffer_render = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, uint32_t((sizeof(SceneConstantBuffer) + 0xff) & ~0xff),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ConstBuffer));
+		_cbuffer_simulate = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, uint32_t((sizeof(SimulateConstantBuffer) + 0xff) & ~0xff),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ConstBuffer));
+		_cbuffer_staging = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, uint32_t((sizeof(SimulateConstantBuffer) + sizeof(SimulateConstantBuffer) + 0xff) & ~0xff),
+			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+		
 		// tangents
-		RHI::ResourceArgs tangentsParams_UL = {};
-		tangentsParams_UL.heap.type = RHI::HeapType::Upload;
-		tangentsParams_UL.size.cx = sizeof(core::float4) * _tangentYs.size();
-		tangentsParams_UL.dimension = RHI::ResourceDimension::Buffer;
-		tangentsParams_UL.states = RHI::ResourceState::GenericRead;
-		auto resource_tangents_UL = _device->CreateResource(tangentsParams_UL);
+		auto resource_tangents_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(core::float4) * _tangentYs.size(),
+			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+		_resource_tangents = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float4) * _tangentYs.size(),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ShaderResource));
 		std::memcpy(resource_tangents_UL->Data(), _tangentYs.data(), sizeof(core::float4) * _tangentYs.size());
-
-		RHI::ResourceArgs tangentsParams = {};
-		tangentsParams.heap.type = RHI::HeapType::Default;
-		tangentsParams.size.cx = sizeof(core::float4) * _positions.size();
-		tangentsParams.dimension = RHI::ResourceDimension::Buffer;
-		tangentsParams.states = RHI::ResourceState::CopyDest;
-		tangentsParams.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource;
-		_resource_tangents = _device->CreateResource(tangentsParams);
 		
-		// vertices
-		RHI::ResourceArgs pointsParam_UL = {};
-		pointsParam_UL.heap.type = RHI::HeapType::Upload;
-		pointsParam_UL.size.cx = sizeof(core::float4) * _positions.size();
-		pointsParam_UL.dimension = RHI::ResourceDimension::Buffer;
-		pointsParam_UL.states = RHI::ResourceState::GenericRead;
-		auto resource_positions_UL = _device->CreateResource(pointsParam_UL);
+		// positions
+		auto resource_positions_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(core::float4) * _positions.size(),
+			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+		_resource_init_positions = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float4) * _positions.size(),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ShaderResource));
+		_resource_prev_positions = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float4) * _positions.size(),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource));
+		_resource_curr_positions = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float4) * _positions.size(),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource));
 		std::memcpy(resource_positions_UL->Data(), _positions.data(), sizeof(core::float4) * _positions.size());
-
-		RHI::ResourceArgs pointsParams = {};
-		pointsParams.heap.type = RHI::HeapType::Default;
-		pointsParams.size.cx = sizeof(core::float4) * _positions.size();
-		pointsParams.dimension = RHI::ResourceDimension::Buffer;
-		pointsParams.states = RHI::ResourceState::CopyDest;
-		pointsParams.flags = RHI::ResourceFlag::ShaderResource;
-		_resource_init_positions = _device->CreateResource(pointsParams);
-		pointsParams.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource;
-		_resource_prev_positions = _device->CreateResource(pointsParams);
-		_resource_curr_positions = _device->CreateResource(pointsParams);
 		
-		core::float4 * vetexbuffer_prev_UL_ptr = static_cast<core::float4 *>(resource_positions_UL->Data());
-		for (size_t ivertex = 0; ivertex < _positions.size(); ++ivertex)
-			vetexbuffer_prev_UL_ptr[ivertex] = _positions[ivertex];
-
-		// indices
-		RHI::ResourceArgs vertexbufferParams_UL = {};
-		vertexbufferParams_UL.heap.type = RHI::HeapType::Upload;
-		vertexbufferParams_UL.size.cx = sizeof(HairVertex) * _vertices.size();
-		vertexbufferParams_UL.dimension = RHI::ResourceDimension::Buffer;
-		vertexbufferParams_UL.states = RHI::ResourceState::GenericRead;
-		auto resource_vertices_UL = _device->CreateResource(vertexbufferParams_UL);
+		// vertices patchs
+		auto resource_vertices_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(HairVertex) * _vertices.size(),
+			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+		_resource_vertexbuffer = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(HairVertex) * _vertices.size(),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::VertexBuffer));
 		std::memcpy(resource_vertices_UL->Data(), _vertices.data(), sizeof(HairVertex) * _vertices.size());
 
-		RHI::ResourceArgs vertexbufferParams = {};
-		vertexbufferParams.heap.type = RHI::HeapType::Default;
-		vertexbufferParams.size.cx = sizeof(HairVertex) * _vertices.size();
-		vertexbufferParams.dimension = RHI::ResourceDimension::Buffer;
-		vertexbufferParams.states = RHI::ResourceState::CopyDest;
-		vertexbufferParams.flags = RHI::ResourceFlag::VertexBuffer;
-		_resource_vertexbuffer = _device->CreateResource(vertexbufferParams);
-
-		// line
-		RHI::ResourceArgs indicesLinesParams_UL = {};
-		indicesLinesParams_UL.heap.type = RHI::HeapType::Upload;
-		indicesLinesParams_UL.size.cx = sizeof(core::uint2) * _lines.size();
-		indicesLinesParams_UL.dimension = RHI::ResourceDimension::Buffer;
-		indicesLinesParams_UL.states = RHI::ResourceState::GenericRead;
-		auto indexLinesbuffer_UL = _device->CreateResource(indicesLinesParams_UL);
+		// vertices lines
+		auto indexLinesbuffer_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(core::uint2) * _lines.size(),
+			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+		_resource_vertexbuffer_lines = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::uint2) * _lines.size(),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::VertexBuffer));
 		std::memcpy(indexLinesbuffer_UL->Data(), _lines.data(), sizeof(core::uint2) * _lines.size());
-
-		RHI::ResourceArgs indicesLinesParams = {};
-		indicesLinesParams.heap.type = RHI::HeapType::Default;
-		indicesLinesParams.size.cx = sizeof(core::uint2) * _lines.size();
-		indicesLinesParams.dimension = RHI::ResourceDimension::Buffer;
-		indicesLinesParams.states = RHI::ResourceState::CopyDest;
-		indicesLinesParams.flags = RHI::ResourceFlag::VertexBuffer;
-		_resource_vertexbuffer_lines = _device->CreateResource(indicesLinesParams);
-
-		// coordJitters
-		RHI::ResourceArgs coordJittersArgs_UL = {};
-		coordJittersArgs_UL.heap.type = RHI::HeapType::Upload;
-		coordJittersArgs_UL.size.cx = sizeof(core::float2) * _coordJitters.size();
-		coordJittersArgs_UL.dimension = RHI::ResourceDimension::Buffer;
-		coordJittersArgs_UL.states = RHI::ResourceState::GenericRead;
-		auto resource_coordJitters_UL = _device->CreateResource(coordJittersArgs_UL);
-		std::memcpy(resource_coordJitters_UL->Data(), _coordJitters.data(), sizeof(core::float2) * _coordJitters.size());
-
-		RHI::ResourceArgs coordJittersArgs = {};
-		coordJittersArgs.heap.type = RHI::HeapType::Default;
-		coordJittersArgs.size.cx = sizeof(core::float2) * _coordJitters.size();
-		coordJittersArgs.dimension = RHI::ResourceDimension::Buffer;
-		coordJittersArgs.states = RHI::ResourceState::CopyDest;
-		coordJittersArgs.flags = RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource;
-		_resource_coord_jitters = _device->CreateResource(coordJittersArgs);
 		
-		// const
-		_cbuffer_render = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Default
-				},
-				.dimension = RHI::ResourceDimension::Buffer,
-				.flags = RHI::ResourceFlag::ConstBuffer,
-				.size = { uint32_t((sizeof(SceneConstantBuffer) + 0xff) & ~0xff), 1 },
-				.states = RHI::ResourceState::CopyDest,
-			}
-		);
-		
-		_cbuffer_simulate = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Default
-				},
-				.dimension = RHI::ResourceDimension::Buffer,
-				.flags = RHI::ResourceFlag::ConstBuffer,
-				.size = { uint32_t((sizeof(SimulateConstantBuffer) + 0xff) & ~0xff), 1 },
-				.states = RHI::ResourceState::CopyDest,
-			}
-		);
-		
-		_cbuffer_staging = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Upload
-				},
-				.dimension = RHI::ResourceDimension::Buffer,
-				.size = { uint32_t((sizeof(SceneConstantBuffer) + sizeof(SimulateConstantBuffer) + 0xff) & ~0xff), 1 },
-				.states = RHI::ResourceState::GenericRead,
-			}
-		);
-
 		// strandoffsets
-		auto strandoffsets_UL = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Upload,
-				},
-				.dimension = RHI::ResourceDimension::Buffer,
-				.size = { uint32_t(sizeof(uint32_t) * _strandOffsets.size()), 1},
-				.states = RHI::ResourceState::GenericRead
-			}
-		);
-		_resource_strandoffsets = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Default,
-				},
-				.dimension = RHI::ResourceDimension::Buffer,
-				.flags = RHI::ResourceFlag::ShaderResource,
-				.size = { uint32_t(sizeof(uint32_t) * _strandOffsets.size()), 1},
-				.states = RHI::ResourceState::CopyDest
-			}
-		);
+		auto strandoffsets_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(uint32_t) * _strandOffsets.size(),
+			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+		_resource_strandoffsets = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(uint32_t) * _strandOffsets.size(),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource));
 		std::memcpy(strandoffsets_UL->Data(), _strandOffsets.data(), sizeof(uint32_t) * _strandOffsets.size());
 
+		// coordJitters
+		auto resource_coordJitters_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(core::float2) * _coordJitters.size(),
+			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+		_resource_coord_jitters = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float2) * _coordJitters.size(),
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource));
+		std::memcpy(resource_coordJitters_UL->Data(), _coordJitters.data(), sizeof(core::float2) * _coordJitters.size());
+		
 		// constraints
-		auto constraints_UL = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Upload,
-				},
-				.dimension = RHI::ResourceDimension::Buffer,
-				.size = { uint32_t(sizeof(core::float4) * _constraints.size()), 1 },
-				.states = RHI::ResourceState::GenericRead
-			}
-		);
-		_resource_constraints = _device->CreateResource(
-			RHI::ResourceArgs
-			{
-				.heap =
-				{
-					.type = RHI::HeapType::Default,
-				},
-				.dimension = RHI::ResourceDimension::Buffer,
-				.flags = RHI::ResourceFlag::ShaderResource,
-				.size = { uint32_t(sizeof(core::float4) * _constraints.size()), 1 },
-				.states = RHI::ResourceState::CopyDest
-			}
-		);
+		auto constraints_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, uint32_t(sizeof(core::float4) * _constraints.size()), 
+			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+		_resource_constraints = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, uint32_t(sizeof(core::float4) * _constraints.size()), 
+			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ShaderResource));
 		std::memcpy(constraints_UL->Data(), _constraints.data(), sizeof(core::float4) * _constraints.size());
 
 		//--------------------------------------------------------
@@ -863,7 +678,7 @@ public:
 		std::string line;
 		while (std::getline(collision_objects_file, line) && _num_collisionSpheres < MAX_COLLISION_SPHERES)
 		{
-			if (line.empty() || line.starts_with('#'))
+			if (line.empty() || line[0] =='#')
 				continue;
 
 			// Sphere

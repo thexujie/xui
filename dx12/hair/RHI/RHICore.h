@@ -172,6 +172,18 @@ namespace RHI
 				uint8_t stencial;
 			};
 		}clear;
+
+
+		static ResourceArgs Buffer(HeapType type, uint32_t size, ResourceStates states, ResourceFlags flags)
+		{
+			ResourceArgs args = {};
+			args.heap.type = type;
+			args.dimension = ResourceDimension::Buffer;
+			args.flags = flags;
+			args.size = { size, 1 };
+			args.states = states;
+			return args;
+		}
 	};
 
 	enum class ResourceViewDimension
@@ -451,11 +463,11 @@ namespace RHI
 	struct PipelineStateTableRange
 	{
 		DescriptorRangeType type = DescriptorRangeType::ConstBuffer;
-		uint32_t numDescriptor = 1;
 		uint32_t shaderRegister = 0;
 		uint32_t registerSpace = 0;
-		uint32_t packetOffset = core::uint32_max;
+		uint32_t numDescriptor = 1;
 		DescriptorFlags flags = DescriptorFlag::None;
+		uint32_t packetOffset = core::uint32_max;
 	};
 
 	struct PipelineStateTable

@@ -568,7 +568,8 @@ namespace core
 			return ost;
 		return ost << core::astr_wstr(a8str_view.data(), a8str_view.length());
 	}
-	
+
+#ifdef __cpp_char8_t
 	inline std::wostream & operator<<(std::wostream & ost, const std::u8string & u8str)
 	{
 		if (!ost.good())
@@ -596,6 +597,7 @@ namespace core
 			return ost;
 		return ost << core::u8str_wstr(u8str_view.data(), u8str_view.length());
 	}
+#endif
 
 	inline std::wostream & operator<<(std::wostream & ost, const std::u16string & u16str)
 	{
