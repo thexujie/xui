@@ -7,11 +7,12 @@ namespace RHI::RHID3D12
 	class RHID3D12Device : public RHIDevice
 	{
 	public:
-		RHID3D12Device() = default;
+		RHID3D12Device(RHID3D12Factory * factory) : _factory(factory) {}
 		virtual ~RHID3D12Device() = default;
 
 		core::error Create(core::comptr<IDXGIAdapter1> adapter);
 
+		RHID3D12Factory * Factory() const { return _factory; }
 		core::comptr<ID3D12Device> Device() const { return _device; }
 		core::comptr<IDXGIAdapter1> Adapter() const { return _adapter; }
 
@@ -26,6 +27,7 @@ namespace RHI::RHID3D12
 		std::shared_ptr<RHIPipelineState> CreatePipelineState(const PipelineStateArgs & args) const override;
 
 	private:
+		RHID3D12Factory * _factory;
 		core::comptr<IDXGIAdapter1> _adapter;
 		core::comptr<ID3D12Device> _device;
 	};

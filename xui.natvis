@@ -13,6 +13,9 @@
     <!--<DisplayString Condition="isLongString()">{{isLongString}}</DisplayString>-->
   </Type>
 
+  <Type Name="core::bitflag&lt;*&gt;">
+    <DisplayString>{_e}</DisplayString>
+  </Type>
   <Type Name="core::math::xmm::xmt">
 		<DisplayString>{{{fx},{fy},{fz},{fw}}}</DisplayString>
 		<Expand>

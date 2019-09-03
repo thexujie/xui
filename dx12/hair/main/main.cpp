@@ -12,10 +12,9 @@
 #include "main.h"
 #include "RHID3D12/RHID3D12Factory.h"
 #include "RHID3D11/RHID3D11Factory.h"
-#include "RHIVulkan/RHIVulkanFactory.h"
+//#include "RHIVulkan/RHIVulkanFactory.h"
 
 #pragma comment(lib, "imm32.lib")
-#include <DirectXMath.h>
 
 const int COORD_JITTER_COUNT_U = 64;
 const int COORD_JITTER_COUNT_V = 16;
@@ -749,7 +748,8 @@ public:
 			_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
 			break;
 		case RHIType::Vulkan:
-			_factory = std::make_shared<RHI::RHIVulkan::RHIVulkanFactory>();
+			//_factory = std::make_shared<RHI::RHIVulkan::RHIVulkanFactory>();
+			_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
 			break;
 		default:
 			_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
@@ -765,7 +765,7 @@ public:
 		rtparams.hwnd = _hwnd;
 		rtparams.nbuffers = _backBufferCount;
 		rtparams.size = { uint32_t(rcClient.right - rcClient.left), uint32_t(rcClient.bottom - rcClient.top) };
-
+		
 		std::vector<RHI::RHIAdapterDesc> adapters = _factory->AdapterDescs();
 		_device = _factory->CreateDevice(adapters[0].id);
 		_fenceSimulate = _device->CreateFence(RHI::FenceFlag::None);
@@ -880,7 +880,7 @@ public:
 				_cmdlist_compute->SetResourcePacket(_resourcepacket_simulate.get());
 				_cmdlist_compute->SetComputeResources(0, 0);
 
-				_cmdlist_compute->Dispatch({ uint32_t(_strandOffsets.size()), 1, 1 });
+				_cmdlist_compute->Dispatch({ uint32_t(_strandOffsets.size() * 64), 1, 1 });
 				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderResource);
 				_cmdlist_compute->Close();
 				_cmdqueue_compute->Excute(_cmdlist_compute.get());

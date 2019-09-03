@@ -67,9 +67,19 @@ namespace RHI::RHID3D12
 			hr = device->CheckFeatureSupport(D3D12_FEATURE_ARCHITECTURE, &architecture, sizeof(architecture));
 			if (FAILED(hr))
 			{
-				core::war() << __FUNCTION__ << " CheckFeatureSupport failed.";
+				core::war() << __FUNCTION__ << " CheckFeatureSupport(D3D12_FEATURE_ARCHITECTURE) failed.";
 				continue;
 			}
+			
+			//D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS MSAALevels = {};
+			//MSAALevels.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			//MSAALevels.SampleCount = 2;
+			//hr = device->CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &MSAALevels, sizeof(MSAALevels));
+			//if (FAILED(hr))
+			//{
+			//	core::war() << __FUNCTION__ << " CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS) failed.";
+			//	continue;
+			//}
 			
 			RHIAdapterDesc rhidesc;
 			rhidesc.id = dxgidesc.DeviceId;
@@ -104,7 +114,7 @@ namespace RHI::RHID3D12
 		if (!adapter)
 			return nullptr;
 
-		auto device = std::make_shared<RHID3D12Device>();
+		auto device = std::make_shared<RHID3D12Device>(const_cast<RHID3D12Factory *>(this));
 		auto err = device->Create(adapter);
 		if (err)
 			return nullptr;

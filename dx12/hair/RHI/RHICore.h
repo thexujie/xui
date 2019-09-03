@@ -552,7 +552,9 @@ namespace RHI
 
 		struct
 		{
-			bool depth = false;
+			bool depth = true;
+			bool depthWrite = true;
+			Comparison depthComparison = Comparison::Greater;
 			bool stencil = false;
 			uint32_t stencilref = 0;
 		}depthstencil;

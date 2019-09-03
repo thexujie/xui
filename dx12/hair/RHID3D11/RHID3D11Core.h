@@ -241,4 +241,29 @@ namespace RHI::RHID3D11
 		result.set(D3D11_BIND_INDEX_BUFFER, usages.any(ResourceUsage::IndexBuffer));
 		return result.get();
 	}
+	
+	inline D3D11_COMPARISON_FUNC FromComparison(Comparison cmp)
+	{
+		switch (cmp)
+		{
+		case Comparison::None:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+		case Comparison::Always:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
+		case Comparison::Less:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
+		case Comparison::LessEqual:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+		case Comparison::Equal:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_EQUAL;
+		case Comparison::GreaterEqual:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+		case Comparison::Greater:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER;
+		case Comparison::NotEqual:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NOT_EQUAL;
+		default:
+			return D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+		}
+	}
 }

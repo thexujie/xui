@@ -15,6 +15,9 @@ namespace RHI::RHID3D12
 		std::vector<RHIAdapterDesc> AdapterDescs() const override;
 		std::shared_ptr<RHIDevice> CreateDevice(uint64_t id) const override;
 
+	public:
+		core::comptr<IDXGIFactory3> Factory() const { return _dxgi; }
+		
 	private:
 		utils::dll _dll;
 		core::comptr<IDXGIFactory3> _dxgi;

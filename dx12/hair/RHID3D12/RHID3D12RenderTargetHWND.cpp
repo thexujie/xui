@@ -2,6 +2,7 @@
 #include "RHID3D12RenderTargetHWND.h"
 #include "RHID3D12CommandList.h"
 #include "RHID3D12CommandQueue.h"
+#include "RHID3D12Factory.h"
 
 namespace RHI::RHID3D12
 {
@@ -12,18 +13,19 @@ namespace RHI::RHID3D12
 
 		HRESULT hr = S_OK;
 
+		auto factory = _device->Factory()->Factory();
 		auto device = _device->Device();
 		auto adapter = _device->Adapter();
 		assert(device);
 		assert(adapter);
 
-		core::comptr<IDXGIFactory3> dxgifactory;
-		hr = adapter->GetParent(__uuidof(IDXGIFactory3), dxgifactory.getvv());
-		if (FAILED(hr))
-		{
-			core::war() << __FUNCTION__ " adapter->GetParent failed: " << win32::winerr_str(hr & 0xFFFF);
-			return core::e_inner;
-		}
+		//core::comptr<IDXGIFactory3> factory;
+		//hr = adapter->GetParent(__uuidof(IDXGIFactory3), factory.getvv());
+		//if (FAILED(hr))
+		//{
+		//	core::war() << __FUNCTION__ " adapter->GetParent failed: " << win32::winerr_str(hr & 0xFFFF);
+		//	return core::e_inner;
+		//}
 
 		auto d3d12cmdqueue = static_cast<RHID3D12CommandQueue *>(cmdqueue)->CommandQueue();
 
@@ -38,7 +40,7 @@ namespace RHI::RHID3D12
 		swapChainDesc.SampleDesc.Quality = args.MSAAQuality;
 
 		core::comptr<IDXGISwapChain1> swapchain1;
-		hr = dxgifactory->CreateSwapChainForHwnd(
+		hr = factory->CreateSwapChainForHwnd(
 			d3d12cmdqueue,
 			(HWND)args.hwnd,
 			&swapChainDesc,
@@ -48,10 +50,10 @@ namespace RHI::RHID3D12
 		);
 		if (FAILED(hr))
 		{
-			core::war() << __FUNCTION__ " dxgifactory->CreateSwapChainForHwnd failed: " << win32::winerr_str(hr & 0xFFFF);
+			core::war() << __FUNCTION__ " factory->CreateSwapChainForHwnd failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
-		hr = dxgifactory->MakeWindowAssociation((HWND)args.hwnd, DXGI_MWA_NO_ALT_ENTER);
+		hr = factory->MakeWindowAssociation((HWND)args.hwnd, DXGI_MWA_NO_ALT_ENTER);
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " dxgifactory->MakeWindowAssociation(DXGI_MWA_NO_ALT_ENTER) failed: " << win32::winerr_str(hr & 0xFFFF);

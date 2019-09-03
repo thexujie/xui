@@ -6,6 +6,7 @@
 
 namespace RHI::RHID3D12
 {
+	class RHID3D12Factory;
 	class RHID3D12Device;
 	
 	inline DXGI_SWAP_EFFECT FromSwapEffect(SwapEffect effect)

@@ -191,6 +191,8 @@ namespace RHI::RHID3D11
 
 		D3D11_DEPTH_STENCIL_DESC depthstencilDesc = {};
 		depthstencilDesc.DepthEnable = args.depthstencil.depth;
+		depthstencilDesc.DepthWriteMask = args.depthstencil.depthWrite ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+		depthstencilDesc.DepthFunc = FromComparison(args.depthstencil.depthComparison);
 		depthstencilDesc.StencilEnable = args.depthstencil.stencil;
 		core::comptr<ID3D11DepthStencilState> depthstencilState;
 		hr = device->CreateDepthStencilState(&depthstencilDesc, depthstencilState.getpp());

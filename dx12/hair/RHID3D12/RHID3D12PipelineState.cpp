@@ -195,6 +195,8 @@ namespace RHI::RHID3D12
 		}
 
 		desc.DepthStencilState.DepthEnable = args.depthstencil.depth;
+		desc.DepthStencilState.DepthWriteMask = args.depthstencil.depthWrite ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
+		desc.DepthStencilState.DepthFunc = FromComparison(args.depthstencil.depthComparison);
 		desc.DepthStencilState.StencilEnable = args.depthstencil.stencil;
 
 		desc.InputLayout = { elements.data(), (uint32_t)elements.size() };
