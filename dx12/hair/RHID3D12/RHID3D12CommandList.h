@@ -26,6 +26,7 @@ namespace RHI::RHID3D12
 		void SetViewPort(const ViewPort & viewport) override;
 		void SetScissorRect(const core::recti & rect) override;
 		void TransitionBarrier(RHIResource * resource, ResourceStates state) override;
+		void UnorderedBarrier(RHIResource * resource) override;
 		void TransitionBarrier(RHIRenderTarget * rendertarget, uint32_t index, ResourceStates state) override;
 
 		void SetPipelineState(RHIPipelineState * pipelinestate) override;

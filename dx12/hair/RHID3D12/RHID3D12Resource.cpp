@@ -27,7 +27,7 @@ namespace RHI::RHID3D12
 		resdesc.SampleDesc.Count = args.MSAA;
 		resdesc.SampleDesc.Quality = args.MSAAQuality;
 		resdesc.Layout = args.dimension == ResourceDimension::Buffer ? D3D12_TEXTURE_LAYOUT_ROW_MAJOR : D3D12_TEXTURE_LAYOUT_UNKNOWN;
-		resdesc.Flags = FromResourceFlags(args.flags);
+		resdesc.Flags = FromResourceUsages(args.usages);
 
 		D3D12_HEAP_PROPERTIES heapprop = {};
 		heapprop.Type = FromHeapType(args.heap.type);

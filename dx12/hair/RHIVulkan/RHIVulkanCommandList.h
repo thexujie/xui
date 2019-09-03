@@ -1,21 +1,23 @@
 #pragma once
 
 #include "RHI/RHI.h"
-#include "RHID3D11Device.h"
+#include "RHIVulkanDevice.h"
+#include "RHID3D11/RHID3D11CommandList.h"
 
-namespace RHI::RHID3D11
+namespace RHI::RHIVulkan
 {
-	class RHID3D11RenderTarget;
-	class RHID3D11ResourcePacket;
-	class RHID3D11PipelineState;
+	class RHIVulkanRenderTarget;
+	class RHIVulkanResourcePacket;
+	class RHIVulkanPipelineState;
+	class RHIVulkanCommandAllocator;
 
-	class RHID3D11CommandList : public RHICommandList
+	class RHIVulkanCommandList : public RHICommandList
 	{
 	public:
-		RHID3D11CommandList(RHID3D11Device * device) : _device(device) {}
-		virtual ~RHID3D11CommandList() = default;
+		RHIVulkanCommandList(RHIVulkanDevice * device) : _device(device) {}
+		virtual ~RHIVulkanCommandList() = default;
 
-		core::error Create(CommandType type, RHICommandAllocator * allocator);
+		core::error Create(CommandType type, RHIVulkanCommandAllocator * allocator);
 		void SetName(const std::u8string & name) override;
 
 	public:
@@ -46,16 +48,12 @@ namespace RHI::RHID3D11
 		void CopyResource(RHIResource * dst, RHIResource * src, uint32_t offset, uint32_t size) override;
 		void CopyBuffer(RHIResource * dst, RHIResource * src) override;
 
-	public:
-		ID3D11DeviceContext * DeviceContext() const { return _deferredContext.get(); }
-		ID3D11CommandList * CommandList() const { return _commandList.get(); }
-
 	private:
-		RHID3D11Device * _device = nullptr;
-		core::comptr<ID3D11DeviceContext> _deferredContext;
-		core::comptr<ID3D11CommandList> _commandList;
+		RHIVulkanDevice * _device = nullptr;
+		RHIVulkanCommandAllocator * _allocator = nullptr;
+		VkCommandBuffer _commandBuffer = nullptr;
 
-		RHID3D11PipelineState * _pipelineState = nullptr;
-		RHID3D11ResourcePacket * _resourcePacket = nullptr;
+		RHIVulkanPipelineState * _pipelineState = nullptr;
+		RHIVulkanResourcePacket * _resourcePacket = nullptr;
 	};
 }

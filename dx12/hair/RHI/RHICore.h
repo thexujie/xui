@@ -68,7 +68,7 @@ namespace RHI
 		Texture3D,
 	};
 
-	enum class ResourceFlag
+	enum class ResourceUsage
 	{
 		None = 0,
 		RenderTarget = 0x1,
@@ -82,7 +82,7 @@ namespace RHI
 		VertexBuffer = 0x100,
 		IndexBuffer = 0x200,
 	};
-	using ResourceFlags = core::bitflag<ResourceFlag>;
+	using ResourceUsages = core::bitflag<ResourceUsage>;
 
 	enum class HeapFlag
 	{
@@ -94,11 +94,20 @@ namespace RHI
 	};
 	using HeapFlags = core::bitflag<HeapFlag>;
 
-
+	enum class RHIAdapterFlag
+	{
+		None = 0,
+		CacheCoherentUMA = 0x1,
+		TileBasedRender = 0x2,
+		Software = 0x40,
+	};
+	using RHIAdapterFlags = core::bitflag<RHIAdapterFlag>;
+	
 	struct RHIAdapterDesc
 	{
-		std::u8string uri;
+		uint64_t id = 0;
 		std::u8string name;
+		RHIAdapterFlags flags = RHIAdapterFlag::None;
 	};
 
 	enum class ResourceState
@@ -112,14 +121,14 @@ namespace RHI
 		DepthWrite = 0x20,
 		DepthRead = 0x40,
 
-		VertexShaderRerource = 0x100,
-		HullShaderRerource = 0x200,
-		DomainShaderRerource = 0x400,
-		GeometryShaderRerource = 0x800,
-		PixelShaderRerource = 0x1000,
-		ComputerShaderRerource = 0x2000,
+		VertexShaderResource = 0x100,
+		HullShaderResource = 0x200,
+		DomainShaderResource = 0x400,
+		GeometryShaderResource = 0x800,
+		PixelShaderResource = 0x1000,
+		ComputerShaderResource = 0x2000,
 
-		NonePixelShaderRerource = VertexShaderRerource | HullShaderRerource | DomainShaderRerource | GeometryShaderRerource | ComputerShaderRerource,
+		NonePixelShaderResource = VertexShaderResource | HullShaderResource | DomainShaderResource | GeometryShaderResource | ComputerShaderResource,
 
 		CopySource = 0x10000,
 		CopyDest = 0x20000,
@@ -150,7 +159,7 @@ namespace RHI
 		}heap;
 
 		ResourceDimension dimension = ResourceDimension::None;
-		ResourceFlags flags = nullptr;
+		ResourceUsages usages = nullptr;
 		core::format format = core::format::none;
 
 		uint32_t alignment = 0;
@@ -174,12 +183,12 @@ namespace RHI
 		}clear;
 
 
-		static ResourceArgs Buffer(HeapType type, uint32_t size, ResourceStates states, ResourceFlags flags)
+		static ResourceArgs Buffer(HeapType type, uint32_t size, ResourceStates states, ResourceUsages flags)
 		{
 			ResourceArgs args = {};
 			args.heap.type = type;
 			args.dimension = ResourceDimension::Buffer;
-			args.flags = flags;
+			args.usages = flags;
 			args.size = { size, 1 };
 			args.states = states;
 			return args;
@@ -291,7 +300,8 @@ namespace RHI
 		void * hwnd = nullptr;
 		CommandQueueFlags queueFlags;
 		core::format format = core::format::bgra;
-		uint32_t nbuffer = 2;
+		uint32_t nbuffers = 2;
+		core::sizeu size;
 		SwapEffect swapeffect = SwapEffect::FlipDiscard;
 		uint32_t MSAA = 1;
 		uint32_t MSAAQuality = 0;

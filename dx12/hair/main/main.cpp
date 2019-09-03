@@ -12,6 +12,7 @@
 #include "main.h"
 #include "RHID3D12/RHID3D12Factory.h"
 #include "RHID3D11/RHID3D11Factory.h"
+#include "RHIVulkan/RHIVulkanFactory.h"
 
 #pragma comment(lib, "imm32.lib")
 #include <DirectXMath.h>
@@ -287,63 +288,63 @@ public:
 
 		// const
 		_cbuffer_render = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, uint32_t((sizeof(SceneConstantBuffer) + 0xff) & ~0xff),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ConstBuffer));
+			RHI::ResourceState::None, RHI::ResourceUsage::ConstBuffer));
 		_cbuffer_simulate = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, uint32_t((sizeof(SimulateConstantBuffer) + 0xff) & ~0xff),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ConstBuffer));
+			RHI::ResourceState::None, RHI::ResourceUsage::ConstBuffer));
 		_cbuffer_staging = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, uint32_t((sizeof(SimulateConstantBuffer) + sizeof(SimulateConstantBuffer) + 0xff) & ~0xff),
-			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+			RHI::ResourceState::GenericRead, RHI::ResourceUsage::None));
 		
 		// tangents
 		auto resource_tangents_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(core::float4) * _tangentYs.size(),
-			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+			RHI::ResourceState::GenericRead, RHI::ResourceUsage::None));
 		_resource_tangents = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float4) * _tangentYs.size(),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ShaderResource));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::ShaderResource));
 		std::memcpy(resource_tangents_UL->Data(), _tangentYs.data(), sizeof(core::float4) * _tangentYs.size());
 		
 		// positions
 		auto resource_positions_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(core::float4) * _positions.size(),
-			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+			RHI::ResourceState::GenericRead, RHI::ResourceUsage::None));
 		_resource_init_positions = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float4) * _positions.size(),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ShaderResource));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::ShaderResource));
 		_resource_prev_positions = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float4) * _positions.size(),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::UnorderdResource | RHI::ResourceUsage::ShaderResource));
 		_resource_curr_positions = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float4) * _positions.size(),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::UnorderdResource | RHI::ResourceUsage::ShaderResource));
 		std::memcpy(resource_positions_UL->Data(), _positions.data(), sizeof(core::float4) * _positions.size());
 		
 		// vertices patchs
 		auto resource_vertices_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(HairVertex) * _vertices.size(),
-			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+			RHI::ResourceState::GenericRead, RHI::ResourceUsage::None));
 		_resource_vertexbuffer = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(HairVertex) * _vertices.size(),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::VertexBuffer));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::VertexBuffer));
 		std::memcpy(resource_vertices_UL->Data(), _vertices.data(), sizeof(HairVertex) * _vertices.size());
 
 		// vertices lines
 		auto indexLinesbuffer_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(core::uint2) * _lines.size(),
-			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+			RHI::ResourceState::GenericRead, RHI::ResourceUsage::None));
 		_resource_vertexbuffer_lines = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::uint2) * _lines.size(),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::VertexBuffer));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::VertexBuffer));
 		std::memcpy(indexLinesbuffer_UL->Data(), _lines.data(), sizeof(core::uint2) * _lines.size());
 		
 		// strandoffsets
 		auto strandoffsets_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(uint32_t) * _strandOffsets.size(),
-			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+			RHI::ResourceState::GenericRead, RHI::ResourceUsage::None));
 		_resource_strandoffsets = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(uint32_t) * _strandOffsets.size(),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::UnorderdResource | RHI::ResourceUsage::ShaderResource));
 		std::memcpy(strandoffsets_UL->Data(), _strandOffsets.data(), sizeof(uint32_t) * _strandOffsets.size());
 
 		// coordJitters
 		auto resource_coordJitters_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, sizeof(core::float2) * _coordJitters.size(),
-			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+			RHI::ResourceState::GenericRead, RHI::ResourceUsage::None));
 		_resource_coord_jitters = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, sizeof(core::float2) * _coordJitters.size(),
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::UnorderdResource | RHI::ResourceFlag::ShaderResource));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::UnorderdResource | RHI::ResourceUsage::ShaderResource));
 		std::memcpy(resource_coordJitters_UL->Data(), _coordJitters.data(), sizeof(core::float2) * _coordJitters.size());
 		
 		// constraints
 		auto constraints_UL = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Upload, uint32_t(sizeof(core::float4) * _constraints.size()), 
-			RHI::ResourceState::GenericRead, RHI::ResourceFlag::None));
+			RHI::ResourceState::GenericRead, RHI::ResourceUsage::None));
 		_resource_constraints = _device->CreateResource(RHI::ResourceArgs::Buffer(RHI::HeapType::Default, uint32_t(sizeof(core::float4) * _constraints.size()), 
-			RHI::ResourceState::CopyDest, RHI::ResourceFlag::ShaderResource));
+			RHI::ResourceState::CopyDest, RHI::ResourceUsage::ShaderResource));
 		std::memcpy(constraints_UL->Data(), _constraints.data(), sizeof(core::float4) * _constraints.size());
 
 		//--------------------------------------------------------
@@ -385,15 +386,15 @@ public:
 		_cmdlist->CopyResource(_resource_vertexbuffer_lines.get(), indexLinesbuffer_UL.get());
 		_cmdlist->CopyResource(_resource_strandoffsets.get(), strandoffsets_UL.get());
 		_cmdlist->CopyResource(_resource_constraints.get(), constraints_UL.get());
-		_cmdlist->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::ComputerShaderRerource);
-		_cmdlist->TransitionBarrier(_resource_prev_positions.get(), RHI::ResourceState::ComputerShaderRerource);
-		_cmdlist->TransitionBarrier(_resource_init_positions.get(), RHI::ResourceState::ComputerShaderRerource);
-		_cmdlist->TransitionBarrier(_resource_tangents.get(), RHI::ResourceState::VertexShaderRerource);
-		_cmdlist->TransitionBarrier(_resource_coord_jitters.get(), RHI::ResourceState::VertexShaderRerource);
+		_cmdlist->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderResource);
+		_cmdlist->TransitionBarrier(_resource_prev_positions.get(), RHI::ResourceState::VertexShaderResource);
+		_cmdlist->TransitionBarrier(_resource_init_positions.get(), RHI::ResourceState::VertexShaderResource);
+		_cmdlist->TransitionBarrier(_resource_tangents.get(), RHI::ResourceState::VertexShaderResource);
+		_cmdlist->TransitionBarrier(_resource_coord_jitters.get(), RHI::ResourceState::VertexShaderResource);
 		_cmdlist->TransitionBarrier(_resource_vertexbuffer.get(), RHI::ResourceState::VertexBuffer);
 		_cmdlist->TransitionBarrier(_resource_vertexbuffer_lines.get(), RHI::ResourceState::VertexBuffer);
-		_cmdlist->TransitionBarrier(_resource_strandoffsets.get(), RHI::ResourceState::ComputerShaderRerource);
-		_cmdlist->TransitionBarrier(_resource_constraints.get(), RHI::ResourceState::ComputerShaderRerource);
+		_cmdlist->TransitionBarrier(_resource_strandoffsets.get(), RHI::ResourceState::VertexShaderResource);
+		_cmdlist->TransitionBarrier(_resource_constraints.get(), RHI::ResourceState::VertexShaderResource);
 		
 		_cmdlist->Close();
 		_cmdqueue->Excute(_cmdlist.get());
@@ -739,26 +740,42 @@ public:
 
 	void RenderThread()
 	{
-		if (_rhi == RHIType::D3D11)
+		switch (_rhi)
+		{
+		case RHIType::D3D11:
 			_factory = std::make_shared<RHI::RHID3D11::RHID3D11Factory>();
-		else
+			break;
+		case RHIType::D3D12:
 			_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
+			break;
+		case RHIType::Vulkan:
+			_factory = std::make_shared<RHI::RHIVulkan::RHIVulkanFactory>();
+			break;
+		default:
+			_factory = std::make_shared<RHI::RHID3D12::RHID3D12Factory>();
+			break;
+		}
 		
 		_factory->Load();
 
+		RECT rcClient = {};
+		GetClientRect(_hwnd, &rcClient);
+		
+		RHI::RenderTargetArgs rtparams = {};
+		rtparams.hwnd = _hwnd;
+		rtparams.nbuffers = _backBufferCount;
+		rtparams.size = { uint32_t(rcClient.right - rcClient.left), uint32_t(rcClient.bottom - rcClient.top) };
+
 		std::vector<RHI::RHIAdapterDesc> adapters = _factory->AdapterDescs();
-		_device = _factory->CreateDevice(adapters[0].uri);
+		_device = _factory->CreateDevice(adapters[0].id);
 		_fenceSimulate = _device->CreateFence(RHI::FenceFlag::None);
 		_fence = _device->CreateFence(RHI::FenceFlag::None);
 		_cmdqueue = _device->CreateCommandQueue(RHI::CommandType::Direct, RHI::CommandQueueFlag::None);
 		_cmdqueue_compute = _device->CreateCommandQueue(RHI::CommandType::Compute, RHI::CommandQueueFlag::None);
-		RHI::RenderTargetArgs rtparams = {};
-		rtparams.hwnd = _hwnd;
-		rtparams.nbuffer = _backBufferCount;
 		_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
-		_cmdallocator = _device->CreateCommandAllocator(RHI::CommandType::Direct, rtparams.nbuffer);
+		_cmdallocator = _device->CreateCommandAllocator(RHI::CommandType::Direct, rtparams.nbuffers);
 		_cmdlist = _device->CreateCommandList(RHI::CommandType::Direct, _cmdallocator.get());
-		_cmdallocator_compute = _device->CreateCommandAllocator(RHI::CommandType::Compute, rtparams.nbuffer);
+		_cmdallocator_compute = _device->CreateCommandAllocator(RHI::CommandType::Compute, rtparams.nbuffers);
 		_cmdlist_compute = _device->CreateCommandList(RHI::CommandType::Compute, _cmdallocator_compute.get());
 
 		_cmdqueue->SetName(u8"_cmdqueue");
@@ -768,8 +785,8 @@ public:
 		_cmdallocator_compute->SetName(u8"_cmdallocator_compute");
 		_cmdlist_compute->SetName(u8"_cmdlist_compute");
 
-		_fenceValuesComputer.resize(rtparams.nbuffer);
-		_fenceValuesRender.resize(rtparams.nbuffer);
+		_fenceValuesComputer.resize(rtparams.nbuffers);
+		_fenceValuesRender.resize(rtparams.nbuffers);
 		std::fill(_fenceValuesComputer.begin(), _fenceValuesComputer.end(), 0);
 		std::fill(_fenceValuesRender.begin(), _fenceValuesRender.end(), 0);
 		_frameIndex = 0;
@@ -779,9 +796,6 @@ public:
 
 		core::counter_fps<float, 1> fps;
 		float64_t time_last = core::datetime::system();
-
-		RECT rcClient;
-		GetClientRect(_hwnd, &rcClient);
 
 		core::sizei windowSize(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
 
@@ -810,13 +824,15 @@ public:
 				matrProj = core::float4x4_perspective_lh(3.14f / 3.0f, float(windowSize.cx) / windowSize.cy, 0.1f, 5000.0f);
 				sccisorrect = { 0, 0, windowSize.cx, windowSize.cy };
 				viewport = { 0, 0, (float)windowSize.cx, (float)windowSize.cy, 0.0f, 1.0f };
+
+				rtparams.size = { uint32_t(rcClient.right - rcClient.left), uint32_t(rcClient.bottom - rcClient.top) };
 				_rendertarget = _device->CreateRenderTargetForHWND(_cmdqueue.get(), rtparams);
 
 				_fenceValueSimulate = 0;
 				_fenceValueRender = 0;
 				
-				_fenceValuesComputer.resize(rtparams.nbuffer, 0);
-				_fenceValuesRender.resize(rtparams.nbuffer, 0);
+				_fenceValuesComputer.resize(rtparams.nbuffers, 0);
+				_fenceValuesRender.resize(rtparams.nbuffers, 0);
 				std::fill(_fenceValuesComputer.begin(), _fenceValuesComputer.end(), 0);
 				std::fill(_fenceValuesRender.begin(), _fenceValuesRender.end(), 0);
 				_frameIndex = 0;
@@ -865,7 +881,7 @@ public:
 				_cmdlist_compute->SetComputeResources(0, 0);
 
 				_cmdlist_compute->Dispatch({ uint32_t(_strandOffsets.size()), 1, 1 });
-				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderRerource);
+				_cmdlist_compute->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderResource);
 				_cmdlist_compute->Close();
 				_cmdqueue_compute->Excute(_cmdlist_compute.get());
 				_fenceValuesComputer[_frameIndex] = ++_fenceValueSimulate;
@@ -895,6 +911,8 @@ public:
 				_cmdlist->SetViewPort(viewport);
 				_cmdlist->SetScissorRect(sccisorrect);
 				_cmdlist->TransitionBarrier(_rendertarget.get(), _frameIndex, RHI::ResourceState::RenderTarget);
+				//_cmdlist->TransitionBarrier(_resource_curr_positions.get(), RHI::ResourceState::VertexShaderResource);
+				//_cmdlist->UnorderedBarrier(_resource_curr_positions.get());
 				_cmdlist->SetResourcePacket(_resourcepacket.get());
 				_cmdlist->SetRenderTarget(_rendertarget.get(), _frameIndex);
 				_cmdlist->ClearRenderTarget(_rendertarget.get(), _frameIndex, 0xffdddddd);
@@ -948,7 +966,8 @@ private:
 	enum class RHIType
 	{
 		D3D11 = 0,
-		D3D12
+		D3D12,
+		Vulkan
 	};
 	RHIType _rhi = RHIType::D3D12;
 	RHIType _rhi_next = RHIType::D3D12;
@@ -978,7 +997,7 @@ private:
 	float angularStiffness = 0.025f;
 	// viewprojTransform
 	bool _rotating = false;
-	bool _simulate = false;
+	bool _simulate = true;
 	float _hair_rotate_z = 0.0f;
 	core::float3 _hair_translate;
 

@@ -131,6 +131,33 @@
     <ClCompile Include="RHID3D11\RHID3D11Fence.cpp">
       <Filter>RHID3D11</Filter>
     </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkan.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkanFactory.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkanDevice.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkanCommandAllocator.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkanCommandList.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkanRenderTarget.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkanRenderTargetHWND.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkanCommandQueue.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="RHIVulkan\RHIVulkanResource.cpp">
+      <Filter>RHIVulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -266,6 +293,36 @@
     <ClInclude Include="RHID3D11\RHID3D11Fence.h">
       <Filter>RHID3D11</Filter>
     </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkan.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanFactory.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanCore.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanDevice.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanCommandAllocator.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanCommandList.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanRenderTarget.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanRenderTargetHWND.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanCommandQueue.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="RHIVulkan\RHIVulkanResource.h">
+      <Filter>RHIVulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="main">
@@ -289,6 +346,9 @@
     <Filter Include="win32">
       <UniqueIdentifier>{7e824935-a9b0-4abc-b1ce-0f2692f1cbbe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RHIVulkan">
+      <UniqueIdentifier>{3dab2cf7-82d4-4368-bba4-9ed3d60d7115}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\shaders\basic.hlsl">
@@ -300,10 +360,6 @@
     <None Include="data\shaders\hair.hlsl">
       <Filter>data\shaders</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="data\shaders\hair_simulate.hlsl">
-      <Filter>data\shaders</Filter>
-    </FxCompile>
+    <None Include="data\shaders\hair_simulate.hlsl" />
   </ItemGroup>
 </Project>

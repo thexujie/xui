@@ -27,13 +27,10 @@ namespace RHI::RHID3D12
 
 		auto d3d12cmdqueue = static_cast<RHID3D12CommandQueue *>(cmdqueue)->CommandQueue();
 
-		RECT rcClient = {};
-		GetClientRect((HWND)args.hwnd, &rcClient);
-
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-		swapChainDesc.BufferCount = args.nbuffer;
-		swapChainDesc.Width = rcClient.right - rcClient.left;
-		swapChainDesc.Height = rcClient.bottom - rcClient.top;
+		swapChainDesc.BufferCount = args.nbuffers;
+		swapChainDesc.Width = args.size.cx;
+		swapChainDesc.Height = args.size.cy;
 		swapChainDesc.Format = FromFormat(args.format);
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		swapChainDesc.SwapEffect = FromSwapEffect(args.swapeffect);
@@ -61,10 +58,10 @@ namespace RHI::RHID3D12
 		}
 
 		core::comptr<ID3D12DescriptorHeap> rtv_heap;
-		std::vector<core::comptr<ID3D12Resource>> buffers(args.nbuffer);
+		std::vector<core::comptr<ID3D12Resource>> buffers(args.nbuffers);
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-			rtvHeapDesc.NumDescriptors = args.nbuffer;
+			rtvHeapDesc.NumDescriptors = args.nbuffers;
 			rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 			rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 			hr = device->CreateDescriptorHeap(&rtvHeapDesc, __uuidof(ID3D12DescriptorHeap), rtv_heap.getvv());
@@ -77,7 +74,7 @@ namespace RHI::RHID3D12
 
 			D3D12_CPU_DESCRIPTOR_HANDLE handle(rtv_heap->GetCPUDescriptorHandleForHeapStart());
 			uint32_t rtv_desc_size = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-			for (uint32_t ibuffer = 0; ibuffer < args.nbuffer; ibuffer++)
+			for (uint32_t ibuffer = 0; ibuffer < args.nbuffers; ibuffer++)
 			{
 				hr = swapchain1->GetBuffer(ibuffer, __uuidof(ID3D12Resource), buffers[ibuffer].getvv());
 				if (FAILED(hr))
@@ -92,7 +89,7 @@ namespace RHI::RHID3D12
 		}
 
 		//---------------------------------------------------------------
-		_states.resize(args.nbuffer, ResourceState::Present);
+		_states.resize(args.nbuffers, ResourceState::Present);
 		_args = args;
 		_swapchain = swapchain1.as<IDXGISwapChain3>();
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();

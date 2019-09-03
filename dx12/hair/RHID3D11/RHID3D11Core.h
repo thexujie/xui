@@ -229,16 +229,16 @@ namespace RHI::RHID3D11
 		}
 	}
 
-	inline D3D11_BIND_FLAG FromResourceFlags(ResourceFlags flags)
+	inline D3D11_BIND_FLAG FromResourceUsages(ResourceUsages usages)
 	{
 		core::bitflag<D3D11_BIND_FLAG> result;
-		result.set(D3D11_BIND_RENDER_TARGET, flags.any(ResourceFlag::RenderTarget));
-		result.set(D3D11_BIND_DEPTH_STENCIL, flags.any(ResourceFlag::DepthStencial));
-		result.set(D3D11_BIND_CONSTANT_BUFFER, flags.any(ResourceFlag::ConstBuffer));
-		result.set(D3D11_BIND_SHADER_RESOURCE, flags.any(ResourceFlag::ShaderResource));
-		result.set(D3D11_BIND_UNORDERED_ACCESS, flags.any(ResourceFlag::UnorderdResource));
-		result.set(D3D11_BIND_VERTEX_BUFFER, flags.any(ResourceFlag::VertexBuffer));
-		result.set(D3D11_BIND_INDEX_BUFFER, flags.any(ResourceFlag::IndexBuffer));
+		result.set(D3D11_BIND_RENDER_TARGET, usages.any(ResourceUsage::RenderTarget));
+		result.set(D3D11_BIND_DEPTH_STENCIL, usages.any(ResourceUsage::DepthStencial));
+		result.set(D3D11_BIND_CONSTANT_BUFFER, usages.any(ResourceUsage::ConstBuffer));
+		result.set(D3D11_BIND_SHADER_RESOURCE, usages.any(ResourceUsage::ShaderResource));
+		result.set(D3D11_BIND_UNORDERED_ACCESS, usages.any(ResourceUsage::UnorderdResource));
+		result.set(D3D11_BIND_VERTEX_BUFFER, usages.any(ResourceUsage::VertexBuffer));
+		result.set(D3D11_BIND_INDEX_BUFFER, usages.any(ResourceUsage::IndexBuffer));
 		return result.get();
 	}
 }

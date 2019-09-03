@@ -12,7 +12,7 @@ namespace RHI::RHID3D11
 
 		core::error Load() override;
 		std::vector<RHIAdapterDesc> AdapterDescs() const override;
-		std::shared_ptr<RHIDevice> CreateDevice(const std::u8string & uri) const override;
+		std::shared_ptr<RHIDevice> CreateDevice(uint64_t id) const override;
 
 	private:
 		utils::dll _dll;

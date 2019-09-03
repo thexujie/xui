@@ -116,6 +116,17 @@ namespace RHI::RHID3D12
 		d3d12resource->SetState(state);
 		_cmdlist->ResourceBarrier(1, &barrier);
 	}
+
+	void RHID3D12CommandList::UnorderedBarrier(RHIResource * resource)
+	{
+		auto d3d12resource = static_cast<RHID3D12Resource *>(resource);
+
+		D3D12_RESOURCE_BARRIER barrier;
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.UAV.pResource = d3d12resource->Resource();
+		_cmdlist->ResourceBarrier(1, &barrier);
+	}
 	
 	void RHID3D12CommandList::TransitionBarrier(RHIRenderTarget * rendertarget, uint32_t index, ResourceStates state)
 	{

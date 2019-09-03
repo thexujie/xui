@@ -101,14 +101,14 @@ namespace RHI::RHID3D12
 		}
 	}
 
-	inline D3D12_RESOURCE_FLAGS FromResourceFlags(ResourceFlags flags)
+	inline D3D12_RESOURCE_FLAGS FromResourceUsages(ResourceUsages usages)
 	{
 		core::bitflag<D3D12_RESOURCE_FLAGS> result;
-		result.set(D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, flags.any(ResourceFlag::RenderTarget));
-		result.set(D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, flags.any(ResourceFlag::DepthStencial));
-		result.set(D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS, flags.any(ResourceFlag::UnorderdResource));
-		result.set(D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER, flags.any(ResourceFlag::CrossAdapter));
-		result.set(D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE, !flags.any(ResourceFlag::ConstBuffer | ResourceFlag::ShaderResource));
+		result.set(D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, usages.any(ResourceUsage::RenderTarget));
+		result.set(D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, usages.any(ResourceUsage::DepthStencial));
+		result.set(D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS, usages.any(ResourceUsage::UnorderdResource));
+		result.set(D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER, usages.any(ResourceUsage::CrossAdapter));
+		result.set(D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE, !usages.any(ResourceUsage::ConstBuffer | ResourceUsage::ShaderResource));
 		return result.get();
 	}
 
@@ -167,12 +167,12 @@ namespace RHI::RHID3D12
 		result.set(D3D12_RESOURCE_STATE_DEPTH_WRITE, states.any(ResourceState::DepthWrite));
 		result.set(D3D12_RESOURCE_STATE_DEPTH_READ, states.any(ResourceState::DepthRead));
 		result.set(D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, states.any(
-			ResourceState::VertexShaderRerource |
-			ResourceState::HullShaderRerource |
-			ResourceState::DomainShaderRerource |
-			ResourceState::GeometryShaderRerource |
-			ResourceState::ComputerShaderRerource));
-		result.set(D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, states.any(ResourceState::PixelShaderRerource));
+			ResourceState::VertexShaderResource |
+			ResourceState::HullShaderResource |
+			ResourceState::DomainShaderResource |
+			ResourceState::GeometryShaderResource |
+			ResourceState::ComputerShaderResource));
+		result.set(D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, states.any(ResourceState::PixelShaderResource));
 		result.set(D3D12_RESOURCE_STATE_COPY_SOURCE, states.any(ResourceState::CopySource));
 		result.set(D3D12_RESOURCE_STATE_COPY_DEST, states.any(ResourceState::CopyDest));
 		result.set(D3D12_RESOURCE_STATE_RESOLVE_SOURCE, states.any(ResourceState::ResolveSource));

@@ -5,7 +5,7 @@
 
 namespace RHI::RHID3D11
 {
-	core::error RHID3D11RenderTargetHWND::Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & params)
+	core::error RHID3D11RenderTargetHWND::Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & args)
 	{
 		if (!_device)
 			return core::e_state;
@@ -25,23 +25,20 @@ namespace RHI::RHID3D11
 			return core::e_inner;
 		}
 
-		RECT rcClient = {};
-		GetClientRect((HWND)params.hwnd, &rcClient);
-
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-		swapChainDesc.BufferCount = params.nbuffer;
-		swapChainDesc.Width = rcClient.right - rcClient.left;
-		swapChainDesc.Height = rcClient.bottom - rcClient.top;
-		swapChainDesc.Format = FromFormat(params.format);
+		swapChainDesc.BufferCount = args.nbuffers;
+		swapChainDesc.Width = args.size.cx;
+		swapChainDesc.Height = args.size.cy;
+		swapChainDesc.Format = FromFormat(args.format);
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapChainDesc.SwapEffect = FromSwapEffect(params.swapeffect);
-		swapChainDesc.SampleDesc.Count = params.MSAA;
-		swapChainDesc.SampleDesc.Quality = params.MSAAQuality;
+		swapChainDesc.SwapEffect = FromSwapEffect(args.swapeffect);
+		swapChainDesc.SampleDesc.Count = args.MSAA;
+		swapChainDesc.SampleDesc.Quality = args.MSAAQuality;
 
 		core::comptr<IDXGISwapChain1> swapchain1;
 		hr = dxgifactory->CreateSwapChainForHwnd(
 			device,
-			(HWND)params.hwnd,
+			(HWND)args.hwnd,
 			&swapChainDesc,
 			nullptr,
 			nullptr,
@@ -52,7 +49,7 @@ namespace RHI::RHID3D11
 			core::war() << __FUNCTION__ " dxgifactory->CreateSwapChainForHwnd failed: " << win32::winerr_str(hr & 0xFFFF);
 			return core::e_inner;
 		}
-		hr = dxgifactory->MakeWindowAssociation((HWND)params.hwnd, DXGI_MWA_NO_ALT_ENTER);
+		hr = dxgifactory->MakeWindowAssociation((HWND)args.hwnd, DXGI_MWA_NO_ALT_ENTER);
 		if (FAILED(hr))
 		{
 			core::war() << __FUNCTION__ " dxgifactory->MakeWindowAssociation(DXGI_MWA_NO_ALT_ENTER) failed: " << win32::winerr_str(hr & 0xFFFF);
@@ -81,7 +78,7 @@ namespace RHI::RHID3D11
 		}
 
 		//---------------------------------------------------------------
-		_params = params;
+		_args = args;
 		_swapchain = swapchain1.as<IDXGISwapChain3>();
 		_frameIndex = _swapchain->GetCurrentBackBufferIndex();
 		_backBuffer = backBuffer;

@@ -13,7 +13,7 @@ namespace RHI::RHID3D11
 		RHID3D11RenderTargetHWND(RHID3D11Device * device) : _device(device) {}
 		virtual ~RHID3D11RenderTargetHWND() = default;
 
-		core::error Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & params);
+		core::error Create(RHICommandQueue * cmdqueue, const RenderTargetArgs & args);
 		void SetName(const std::u8string & name) override;
 
 	public:
@@ -26,7 +26,7 @@ namespace RHI::RHID3D11
 		
 	private:
 		RHID3D11Device * _device = nullptr;
-		RenderTargetArgs _params;
+		RenderTargetArgs _args;
 
 		core::comptr<IDXGISwapChain3> _swapchain;
 

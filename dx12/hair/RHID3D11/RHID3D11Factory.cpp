@@ -47,17 +47,37 @@ namespace RHI::RHID3D11
 		{
 			DXGI_ADAPTER_DESC1 dxgidesc = {};
 			adapter->GetDesc1(&dxgidesc);
-			adapter.reset();
 
+			D3D_FEATURE_LEVEL levels[] = { D3D_FEATURE_LEVEL_11_0 };
+			D3D_FEATURE_LEVEL level = D3D_FEATURE_LEVEL_11_0;
+			core::comptr<ID3D11Device> device;
+			HRESULT hr = D3D11CreateDevice(adapter.get(), D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, levels, 1, D3D11_SDK_VERSION, device.getpp(), &level, NULL);
+			adapter.reset();
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ << " D3D11CreateDevice failed.";
+				continue;
+			}
+
+			D3D11_FEATURE_DATA_ARCHITECTURE_INFO architecture = {};
+			hr = device->CheckFeatureSupport(D3D11_FEATURE_ARCHITECTURE_INFO, &architecture, sizeof(architecture));
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ << " CheckFeatureSupport failed.";
+				continue;
+			}
+			
 			RHIAdapterDesc rhidesc;
-			rhidesc.uri = core::fmt("DXGI\\DEVICEID_", dxgidesc.DeviceId);
+			rhidesc.id = dxgidesc.DeviceId;
 			rhidesc.name = core::wstr_u8str(dxgidesc.Description);
+			rhidesc.flags.set(RHIAdapterFlag::TileBasedRender, architecture.TileBasedDeferredRenderer);
+			rhidesc.flags.set(RHIAdapterFlag::Software, dxgidesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE);
 			rhidescs.emplace_back(rhidesc);
 		}
 		return rhidescs;
 	}
 
-	std::shared_ptr<RHIDevice> RHID3D11Factory::CreateDevice(const std::u8string & uri) const
+	std::shared_ptr<RHIDevice> RHID3D11Factory::CreateDevice(uint64_t id) const
 	{
 		if (!_dxgi)
 			return nullptr;
@@ -66,15 +86,11 @@ namespace RHI::RHID3D11
 		UINT adapterIndex = 0;
 		core::comptr<IDXGIAdapter1> adapter;
 
-		UINT deviceId = std::atol(reinterpret_cast<const char *>(uri.data()) + 14);
-		if (!deviceId)
-			return nullptr;
-
 		while (_dxgi->EnumAdapters1(adapterIndex++, adapter.getpp()) != DXGI_ERROR_NOT_FOUND)
 		{
 			DXGI_ADAPTER_DESC1 dxgidesc = {};
 			adapter->GetDesc1(&dxgidesc);
-			if (dxgidesc.DeviceId == deviceId)
+			if (dxgidesc.DeviceId == id)
 				break;
 
 			adapter.reset();

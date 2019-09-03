@@ -7,6 +7,7 @@
 #include "RHIDevice.h"
 #include "RHIFence.h"
 #include "RHICommandAllocator.h"
+#include "RHICommandQueue.h"
 #include "RHICommandList.h"
 #include "RHICommandQueue.h"
 #include "RHIRenderTarget.h"
@@ -23,6 +24,6 @@ namespace RHI
 
 		virtual core::error Load() = 0;
 		virtual std::vector<RHIAdapterDesc> AdapterDescs() const = 0;
-		virtual std::shared_ptr<RHIDevice> CreateDevice(const std::u8string & uri) const = 0;
+		virtual std::shared_ptr<RHIDevice> CreateDevice(uint64_t id) const = 0;
 	};
 }

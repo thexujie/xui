@@ -55,15 +55,34 @@ namespace RHI::RHID3D12
 			adapter->GetDesc1(&dxgidesc);
 			adapter.reset();
 
+			core::comptr<ID3D12Device> device;
+			HRESULT hr = D3D12CreateDevice(adapter.get(), D3D_FEATURE_LEVEL_12_0, __uuidof(ID3D12Device), device.getvv());
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ << " D3D12CreateDevice failed.";
+				continue;
+			}
+
+			D3D12_FEATURE_DATA_ARCHITECTURE architecture = {};
+			hr = device->CheckFeatureSupport(D3D12_FEATURE_ARCHITECTURE, &architecture, sizeof(architecture));
+			if (FAILED(hr))
+			{
+				core::war() << __FUNCTION__ << " CheckFeatureSupport failed.";
+				continue;
+			}
+			
 			RHIAdapterDesc rhidesc;
-			rhidesc.uri = core::fmt("DXGI\\DEVICEID_", dxgidesc.DeviceId);
+			rhidesc.id = dxgidesc.DeviceId;
 			rhidesc.name = core::wstr_u8str(dxgidesc.Description);
+			rhidesc.flags.set(RHIAdapterFlag::CacheCoherentUMA, architecture.CacheCoherentUMA);
+			rhidesc.flags.set(RHIAdapterFlag::TileBasedRender, architecture.TileBasedRenderer);
+			rhidesc.flags.set(RHIAdapterFlag::Software, dxgidesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE);
 			rhidescs.emplace_back(rhidesc);
 		}
 		return rhidescs;
 	}
 
-	std::shared_ptr<RHIDevice> RHID3D12Factory::CreateDevice(const std::u8string & uri) const
+	std::shared_ptr<RHIDevice> RHID3D12Factory::CreateDevice(uint64_t id) const
 	{
 		if (!_dxgi)
 			return nullptr;
@@ -72,15 +91,11 @@ namespace RHI::RHID3D12
 		UINT adapterIndex = 0;
 		core::comptr<IDXGIAdapter1> adapter;
 
-		UINT deviceId = std::atol(reinterpret_cast<const char *>(uri.data()) + 14);
-		if (!deviceId)
-			return nullptr;
-
 		while (_dxgi->EnumAdapters1(adapterIndex++, adapter.getpp()) != DXGI_ERROR_NOT_FOUND)
 		{
 			DXGI_ADAPTER_DESC1 dxgidesc = {};
 			adapter->GetDesc1(&dxgidesc);
-			if (dxgidesc.DeviceId == deviceId)
+			if (dxgidesc.DeviceId == id)
 				break;
 
 			adapter.reset();

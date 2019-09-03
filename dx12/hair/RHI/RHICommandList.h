@@ -26,6 +26,7 @@ namespace RHI
 		virtual void SetViewPort(const ViewPort & viewport) = 0;
 		virtual void SetScissorRect(const core::recti & rect) = 0;
 		virtual void TransitionBarrier(RHIResource * resource, ResourceStates states) = 0;
+		virtual void UnorderedBarrier(RHIResource * resource) = 0;
 		virtual void TransitionBarrier(RHIRenderTarget * rendertarget, uint32_t index, ResourceStates states) = 0;
 
 		virtual void SetPipelineState(RHIPipelineState * pipelinestate) = 0;
