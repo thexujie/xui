@@ -266,6 +266,9 @@
     <ClInclude Include="RHID3D11\RHID3D11Fence.h">
       <Filter>RHID3D11</Filter>
     </ClInclude>
+    <ClInclude Include="win32\win32.h">
+      <Filter>win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="main">

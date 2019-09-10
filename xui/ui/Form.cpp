@@ -48,7 +48,7 @@ namespace ui
     {
         if (!_window)
         {
-            auto window = std::make_shared<platform::win32::Window>();
+            auto window = std::make_shared<win32::Window>();
             window->attatch(share_ref<Form>());
             const_cast<Form *>(this)->_window = window;
         }

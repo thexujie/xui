@@ -1,6 +1,5 @@
 #pragma once
 
-#include "image/image.h"
 #include "font.h"
 
 namespace script {

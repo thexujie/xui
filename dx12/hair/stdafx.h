@@ -1,10 +1,6 @@
 #pragma once
 
-#include "core/core.h"
-#include "drawing/drawing.h"
-#include "utils/utils.h"
-
-
+#include "x/x.h"
 
 //#ifdef _UNICODE
 //#if defined _M_IX86

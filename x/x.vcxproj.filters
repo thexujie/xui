@@ -75,6 +75,30 @@
     <ClCompile Include="platform\win32\win32.cpp">
       <Filter>platform\win32</Filter>
     </ClCompile>
+    <ClCompile Include="image\image.cpp">
+      <Filter>image</Filter>
+    </ClCompile>
+    <ClCompile Include="image\loader.cpp">
+      <Filter>image</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\bmp.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\dds.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\ico.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\jpg.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\png.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="image\formats\tga.cpp">
+      <Filter>image\formats</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -226,6 +250,30 @@
     <ClInclude Include="platform\win32\win32.h">
       <Filter>platform\win32</Filter>
     </ClInclude>
+    <ClInclude Include="image\image.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="image\loader.h">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\bmp.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\dds.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\ico.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\jpg.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\png.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="image\formats\tga.h">
+      <Filter>image\formats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -242,6 +290,12 @@
     </Filter>
     <Filter Include="platform\win32">
       <UniqueIdentifier>{86fda5a7-33bf-4102-8f67-f0585d96ac07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image">
+      <UniqueIdentifier>{fdedfa26-1eb2-4f2b-93d5-f660c0715b98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image\formats">
+      <UniqueIdentifier>{4f1964e7-b0fc-492c-9d8e-b00d254114eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

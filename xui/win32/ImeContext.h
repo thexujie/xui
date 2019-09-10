@@ -1,9 +1,8 @@
 #pragma once
 
 #include "ui/Control.h"
-#include "platform/win32/win32.h"
 
-namespace platform::win32
+namespace win32
 {
     class ImeContext : public ui::IImeContext
     {

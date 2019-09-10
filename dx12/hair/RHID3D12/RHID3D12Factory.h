@@ -19,7 +19,7 @@ namespace RHI::RHID3D12
 		core::comptr<IDXGIFactory3> Factory() const { return _dxgi; }
 		
 	private:
-		utils::dll _dll;
+		core::library _dll;
 		core::comptr<IDXGIFactory3> _dxgi;
 	};
 }

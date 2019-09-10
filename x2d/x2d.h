@@ -3,7 +3,6 @@
 #include "x/x.h"
 
 #include "drawing/drawing.h"
-#include "image/image.h"
 
 #include "drawing/PathStyle.h"
 #include "drawing/StringFormat.h"

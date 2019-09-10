@@ -115,14 +115,6 @@
     <ClCompile Include="drawing\PathStyle.cpp" />
     <ClCompile Include="drawing\Region.cpp" />
     <ClCompile Include="drawing\StringFormat.cpp" />
-    <ClCompile Include="image\formats\bmp.cpp" />
-    <ClCompile Include="image\formats\dds.cpp" />
-    <ClCompile Include="image\formats\ico.cpp" />
-    <ClCompile Include="image\formats\jpg.cpp" />
-    <ClCompile Include="image\formats\png.cpp" />
-    <ClCompile Include="image\formats\tga.cpp" />
-    <ClCompile Include="image\image.cpp" />
-    <ClCompile Include="image\loader.cpp" />
     <ClCompile Include="platform\platform_x2d.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -146,14 +138,6 @@
     <ClInclude Include="drawing\Region.h" />
     <ClInclude Include="drawing\skia\skia.h" />
     <ClInclude Include="drawing\StringFormat.h" />
-    <ClInclude Include="image\formats\bmp.h" />
-    <ClInclude Include="image\formats\dds.h" />
-    <ClInclude Include="image\formats\ico.h" />
-    <ClInclude Include="image\formats\jpg.h" />
-    <ClInclude Include="image\formats\png.h" />
-    <ClInclude Include="image\formats\tga.h" />
-    <ClInclude Include="image\image.h" />
-    <ClInclude Include="image\loader.h" />
     <ClInclude Include="platform\platform_x2d.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="x2d.h" />

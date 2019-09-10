@@ -1,12 +1,14 @@
 #pragma once
 
-#include "core/core.h"
+#include "../../core/core.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-namespace core::win32
+namespace win32
 {
+	using namespace core;
+	
 	enum res_e
 	{
 		// "FILE"
@@ -18,7 +20,6 @@ namespace core::win32
 	constexpr wchar_t WINDOW_PROP_THIS_PTR[] = L"C8C8BD2D-46A7-4DFB-BB5D-EE6A25E83368";
 	constexpr wchar_t WINDOW_PROP_DLG_RESULT[] = L"99358F8F-E19F-4337-8192-A088F1CA41D1";
 	constexpr wchar_t WINDOW_PROP_OLD_WNDPROC[] = L"FCAC0730-350D-4D79-B28E-D137C22648EA";
-
 
 	std::u8string winerr_str(int32_t err);
 

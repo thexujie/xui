@@ -4,7 +4,7 @@
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
-namespace core::win32
+namespace win32
 {
 	pointer_t instance()
 	{

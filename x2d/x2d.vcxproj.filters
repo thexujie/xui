@@ -41,31 +41,7 @@
     <ClCompile Include="drawing\ImageFormat.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
-    <ClCompile Include="image\formats\bmp.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\dds.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\ico.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\jpg.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\png.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\tga.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\image.cpp">
-      <Filter>image</Filter>
-    </ClCompile>
     <ClCompile Include="x2d.cpp" />
-    <ClCompile Include="image\loader.cpp">
-      <Filter>image</Filter>
-    </ClCompile>
     <ClCompile Include="platform\platform_x2d.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -111,31 +87,7 @@
     <ClInclude Include="drawing\ImageFormat.h">
       <Filter>drawing</Filter>
     </ClInclude>
-    <ClInclude Include="image\formats\bmp.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\dds.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\ico.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\jpg.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\png.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\tga.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\image.h">
-      <Filter>image</Filter>
-    </ClInclude>
     <ClInclude Include="x2d.h" />
-    <ClInclude Include="image\loader.h">
-      <Filter>image</Filter>
-    </ClInclude>
     <ClInclude Include="platform\platform_x2d.h">
       <Filter>platform</Filter>
     </ClInclude>
@@ -146,12 +98,6 @@
     </Filter>
     <Filter Include="drawing\skia">
       <UniqueIdentifier>{24e94b74-1226-4644-ae9c-e92ef487af0b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="image">
-      <UniqueIdentifier>{7f518882-ff59-4a06-8b90-d25e03adc4a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="image\formats">
-      <UniqueIdentifier>{aa8018da-8785-4d44-8e28-43f9eff85e83}</UniqueIdentifier>
     </Filter>
     <Filter Include="platform">
       <UniqueIdentifier>{4cfeef82-cceb-4e5a-9fcd-3abf35484807}</UniqueIdentifier>

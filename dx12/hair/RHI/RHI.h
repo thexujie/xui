@@ -1,7 +1,5 @@
 #pragma once
 
-#include "core/core.h"
-#include "drawing/drawing.h"
 #include "RHICore.h"
 #include "RHIResource.h"
 #include "RHIDevice.h"

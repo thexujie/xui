@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "ImeContext.h"
+#include "x/platform/win32/win32.h"
 #include <Imm.h>
 #pragma comment(lib, "imm32.lib")
 
-namespace platform::win32
+namespace win32
 {
     ImeContext::ImeContext(pointer_t hwnd) :_hwnd(hwnd)
     {

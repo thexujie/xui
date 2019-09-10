@@ -31,7 +31,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -46,7 +46,7 @@
     <ClCompile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>./;../x/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../../;$(VULKAN_SDK)/Include/vulkan/</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -68,7 +68,7 @@
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>./;../../x/;$(VULKAN_SDK)/Include/vulkan/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../../;$(VULKAN_SDK)/Include/vulkan/</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -82,7 +82,7 @@
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>./;../../x/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../../;$(VULKAN_SDK)/Include/vulkan/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;</AdditionalLibraryDirectories>
@@ -94,7 +94,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>./;../x/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../../;$(VULKAN_SDK)/Include/vulkan/</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -194,6 +194,7 @@
     <ClInclude Include="win32\d3d9.h" />
     <ClInclude Include="win32\d3d12.h" />
     <ClInclude Include="win32\dxgi.h" />
+    <ClInclude Include="win32\win32.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\x\x.vcxproj">

@@ -3,7 +3,7 @@
 #include "ui/Form.h"
 #include "ImeContext.h"
 
-namespace platform::win32
+namespace win32
 {
     enum class windowmessage_bock
     {
@@ -132,8 +132,8 @@ namespace platform::win32
         bool _mouseIn = false;
         bool _trackingMouse = false;
 
-        std::shared_ptr<platform::win32::ImeContext> _ime_context;
-        std::shared_ptr<platform::win32::CursorContext> _cursor_context;
+        std::shared_ptr<win32::ImeContext> _ime_context;
+        std::shared_ptr<win32::CursorContext> _cursor_context;
 
     public:
         core::event<void()> closed;

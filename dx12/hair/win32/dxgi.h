@@ -6,7 +6,6 @@
 #include <dxgi1_3.h>
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
-#include "x.h"
 
 namespace win32::DXGI
 {

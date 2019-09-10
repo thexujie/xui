@@ -1,8 +1,5 @@
 #pragma once
 
-#include "core/core.h"
-#include "drawing/drawing.h"
-
 namespace RHI
 {
 	class RHIObject

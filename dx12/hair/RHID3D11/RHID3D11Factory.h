@@ -15,7 +15,7 @@ namespace RHI::RHID3D11
 		std::shared_ptr<RHIDevice> CreateDevice(uint64_t id) const override;
 
 	private:
-		utils::dll _dll;
+		core::library _dll;
 		core::comptr<IDXGIFactory3> _dxgi;
 	};
 }

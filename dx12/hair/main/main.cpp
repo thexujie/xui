@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-
+#include "x/platform/win32/win32.h"
 //#include <ShellScalingAPI.h>
 //#pragma comment(lib, "Shcore.lib")
 
@@ -7,8 +7,7 @@
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
-//#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
-#pragma comment(lib, "../../externals/skia/bin/x64/skia.dll.lib")
+
 #include "main.h"
 #include "RHID3D12/RHID3D12Factory.h"
 #include "RHID3D11/RHID3D11Factory.h"
@@ -1155,7 +1154,7 @@ static LRESULT CALLBACK DefaultWndProc(HWND hWnd, UINT message, WPARAM wParam, L
 	{
 		if (Render)
 			Render->Stop();
-		win32::endLoop(0);
+		core::quit(0);
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
@@ -1169,7 +1168,7 @@ int main()
 
 	core::global_logger::start(u8"log.log", core::log_dbg);
 	
-	HINSTANCE hInstance = (HINSTANCE)win32::instance();
+	HINSTANCE hInstance = (HINSTANCE)core::instance();
 
 	WNDCLASSEXW wcex = { sizeof(WNDCLASSEXW) };
 
@@ -1201,7 +1200,7 @@ int main()
 	hr.Start();
 	
 	Render = &hr;
-    win32::runLoop();
+	core::loop();
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,

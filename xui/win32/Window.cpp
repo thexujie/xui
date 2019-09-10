@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Window.h"
-#include "platform/win32/win32.h"
+#include "x/platform/win32/win32.h"
 
-namespace platform::win32
+namespace win32
 {
     const uint32_t WM_REFRESH = WM_USER + 1;
 
@@ -94,17 +94,17 @@ namespace platform::win32
 
         HWND hwnd = (HWND)handle;
 
-        if (GetPropW(hwnd, WINDOW_PROP_THIS_PTR))
+        if (GetPropW(hwnd, win32::WINDOW_PROP_THIS_PTR))
             return core::e_state;
 
         WNDPROC pfnWndProcOld = (WNDPROC)GetWindowLongPtrW(hwnd, GWLP_WNDPROC);
         if (pfnWndProcOld == WindowWndProc)
             return core::e_state;
 
-        SetPropW(hwnd, WINDOW_PROP_THIS_PTR, (HANDLE)(void *)this);
-        SetPropW(hwnd, WINDOW_PROP_DLG_RESULT, (HANDLE)0);
+        SetPropW(hwnd, win32::WINDOW_PROP_THIS_PTR, (HANDLE)(void *)this);
+        SetPropW(hwnd, win32::WINDOW_PROP_DLG_RESULT, (HANDLE)0);
         SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowWndProc);
-        SetPropW(hwnd, WINDOW_PROP_OLD_WNDPROC, (HANDLE)pfnWndProcOld);
+        SetPropW(hwnd, win32::WINDOW_PROP_OLD_WNDPROC, (HANDLE)pfnWndProcOld);
         _handle = handle;
 
         _ime_context = std::make_shared<win32::ImeContext>(handle);
@@ -119,15 +119,15 @@ namespace platform::win32
         if (!hwnd)
             return;
 
-        WNDPROC pfnWndProcOld = (WNDPROC)GetPropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
+        WNDPROC pfnWndProcOld = (WNDPROC)GetPropW(hwnd, win32::WINDOW_PROP_OLD_WNDPROC);
         if (!pfnWndProcOld)
             return;
 
         SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR)pfnWndProcOld);
 
-        RemovePropW(hwnd, WINDOW_PROP_THIS_PTR);
-        RemovePropW(hwnd, WINDOW_PROP_DLG_RESULT);
-        RemovePropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
+        RemovePropW(hwnd, win32::WINDOW_PROP_THIS_PTR);
+        RemovePropW(hwnd, win32::WINDOW_PROP_DLG_RESULT);
+        RemovePropW(hwnd, win32::WINDOW_PROP_OLD_WNDPROC);
         _ime_context->release();
         _ime_context.reset();
 		_handle = nullptr;
@@ -389,7 +389,7 @@ namespace platform::win32
         __currentWindow = this;
         std::u16string t = core::u8str_u16str(f->title());
         HWND hwnd = CreateWindowExW(
-			styleEx, WINDOW_CLASS_NAME, (const wchar_t *)t.c_str(), style | WS_BORDER | WS_DLGFRAME,
+			styleEx, win32::WINDOW_CLASS_NAME, (const wchar_t *)t.c_str(), style | WS_BORDER | WS_DLGFRAME,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             pf ? (HWND)pf->handle() : NULL, NULL, hInstance, this);
 		// TRICK: 这样搞一下，可以避免用 SetWindowRgn，见 OnWmSize。
@@ -720,7 +720,7 @@ namespace platform::win32
     {
         assert(_handle);
         HWND hwnd = (HWND)_handle;
-        WNDPROC pfnOldWndProc = (WNDPROC)GetPropW(hwnd, WINDOW_PROP_OLD_WNDPROC);
+        WNDPROC pfnOldWndProc = (WNDPROC)GetPropW(hwnd, win32::WINDOW_PROP_OLD_WNDPROC);
         if (!pfnOldWndProc)
             pfnOldWndProc = DefWindowProcW;
         return (intx_t)CallWindowProcW(pfnOldWndProc, hwnd, (UINT)uiMessage, (WPARAM)wParam, (LPARAM)lParam);
@@ -1133,7 +1133,7 @@ namespace platform::win32
 
     Window * Window::fromHandle(pointer_t handle)
     {
-        return (Window *)(void *)GetPropW((HWND)handle, WINDOW_PROP_THIS_PTR);
+        return (Window *)(void *)GetPropW((HWND)handle, win32::WINDOW_PROP_THIS_PTR);
     }
 
 
