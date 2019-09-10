@@ -2,7 +2,6 @@
 #include "Form.h"
 #include "win32/Window.h"
 #include "Desktop.h"
-#include "core/app.h"
 #include "RadioGroup.h"
 ////#include "../../xui/main/Menu.h"
 
@@ -49,7 +48,7 @@ namespace ui
     {
         if (!_window)
         {
-            auto window = std::make_shared<win32::Window>();
+            auto window = std::make_shared<platform::win32::Window>();
             window->attatch(share_ref<Form>());
             const_cast<Form *>(this)->_window = window;
         }

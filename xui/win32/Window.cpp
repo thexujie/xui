@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Window.h"
-#include "win32/win32.h"
+#include "platform/win32/win32.h"
 
-namespace win32
+namespace platform::win32
 {
     const uint32_t WM_REFRESH = WM_USER + 1;
 
@@ -356,7 +356,7 @@ namespace win32
         if (_handle)
             return core::ok;
 
-        HINSTANCE hInstance = (HINSTANCE)win32::instance();
+        HINSTANCE hInstance = (HINSTANCE)core::instance();
         WNDCLASSEXW wcex = { sizeof(WNDCLASSEXW) };
         if (!GetClassInfoExW(hInstance, WINDOW_CLASS_NAME, &wcex))
         {
@@ -1131,7 +1131,7 @@ namespace win32
         return OnDefault(WM_WINDOWPOSCHANGED, wParam, lParam);
     }
 
-    Window * Window::fromHandle(handle_t handle)
+    Window * Window::fromHandle(pointer_t handle)
     {
         return (Window *)(void *)GetPropW((HWND)handle, WINDOW_PROP_THIS_PTR);
     }
@@ -1184,7 +1184,7 @@ namespace win32
                 }
                 break;
             case WM_DESTROY:
-                win32::endLoop(0);
+				core::app().quit(0);
                 break;
             default:
                 res = DefWindowProcW(hWnd, uiMessage, wParam, lParam);

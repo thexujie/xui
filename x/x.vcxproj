@@ -46,7 +46,7 @@
     <ClCompile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>./;../deps/FreeImage/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -66,7 +66,7 @@
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/effects</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -81,7 +81,7 @@
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/effects</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;</AdditionalLibraryDirectories>
@@ -91,16 +91,13 @@
       </AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\utils.cpp" />
-    <ClCompile Include="drawing\ColorFilter.cpp" />
-    <ClCompile Include="drawing\drawing.cpp" />
-    <ClCompile Include="drawing\ImageFormat.cpp" />
-    <ClCompile Include="drawing\Text.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ExternalsDir)skia/include/config;$(ExternalsDir)skia/include/core;$(ExternalsDir)skia/include/codec;$(ExternalsDir)skia/include/gpu;$(ExternalsDir)skia/include/private;$(ExternalsDir)skia/src/core;$(ExternalsDir)icu/include;$(ExternalsDir)harfbuzz/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="drawing\skia\skia.cpp" />
     <ClCompile Include="core\app.cpp" />
     <ClCompile Include="core\core.cpp" />
     <ClCompile Include="core\datetime.cpp" />
@@ -113,43 +110,19 @@
     <ClCompile Include="core\io\filestream.cpp" />
     <ClCompile Include="core\logger.cpp" />
     <ClCompile Include="core\math.cpp" />
-    <ClCompile Include="core\network\addr.cpp" />
-    <ClCompile Include="core\network\http.cpp" />
-    <ClCompile Include="core\network\socket.cpp" />
     <ClCompile Include="core\object.cpp" />
     <ClCompile Include="core\property.cpp" />
     <ClCompile Include="core\quat4.cpp" />
     <ClCompile Include="core\string.cpp" />
     <ClCompile Include="core\system.cpp" />
     <ClCompile Include="core\timer.cpp" />
-    <ClCompile Include="drawing\font.cpp" />
-    <ClCompile Include="drawing\Graphics.cpp" />
-    <ClCompile Include="drawing\Image.cpp" />
-    <ClCompile Include="drawing\Bitmap.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ExternalsDir)skia/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="drawing\Path.cpp" />
-    <ClCompile Include="drawing\PathStyle.cpp" />
-    <ClCompile Include="drawing\Region.cpp" />
-    <ClCompile Include="drawing\StringFormat.cpp" />
-    <ClCompile Include="image\converter.cpp" />
-    <ClCompile Include="image\formats\bmp.cpp" />
-    <ClCompile Include="image\formats\dds.cpp" />
-    <ClCompile Include="image\formats\ico.cpp" />
-    <ClCompile Include="image\formats\jpg.cpp" />
-    <ClCompile Include="image\formats\png.cpp" />
-    <ClCompile Include="image\formats\tga.cpp" />
-    <ClCompile Include="image\format.cpp" />
-    <ClCompile Include="image\image.cpp" />
+    <ClCompile Include="platform\platform.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="utils\dll.cpp" />
-    <ClCompile Include="utils\utils.cpp" />
-    <ClCompile Include="win32\win32.cpp" />
     <ClCompile Include="x.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -157,13 +130,9 @@
     <ClInclude Include="core\comptr.h" />
     <ClInclude Include="core\easingcurve.h" />
     <ClInclude Include="core\format.h" />
+    <ClInclude Include="core\library.h" />
     <ClInclude Include="core\matrix.h" />
     <ClInclude Include="core\vec.h" />
-    <ClInclude Include="drawing\ColorFilter.h" />
-    <ClInclude Include="drawing\draw.h" />
-    <ClInclude Include="drawing\drawing.h" />
-    <ClInclude Include="drawing\ImageFormat.h" />
-    <ClInclude Include="drawing\Text.h" />
     <ClInclude Include="core\align.h" />
     <ClInclude Include="core\app.h" />
     <ClInclude Include="core\attribute.h" />
@@ -192,9 +161,6 @@
     <ClInclude Include="core\math\xmi_argb.h" />
     <ClInclude Include="core\math\xmm.h" />
     <ClInclude Include="core\member_traits.h" />
-    <ClInclude Include="core\network\addr.h" />
-    <ClInclude Include="core\network\http.h" />
-    <ClInclude Include="core\network\socket.h" />
     <ClInclude Include="core\object.h" />
     <ClInclude Include="core\path.h" />
     <ClInclude Include="core\property.h" />
@@ -207,28 +173,8 @@
     <ClInclude Include="core\vec2.h" />
     <ClInclude Include="core\vec3.h" />
     <ClInclude Include="core\vec4.h" />
-    <ClInclude Include="drawing\font.h" />
-    <ClInclude Include="drawing\Image.h" />
-    <ClInclude Include="drawing\Graphics.h" />
-    <ClInclude Include="drawing\Bitmap.h" />
-    <ClInclude Include="drawing\Path.h" />
-    <ClInclude Include="drawing\PathStyle.h" />
-    <ClInclude Include="drawing\Region.h" />
-    <ClInclude Include="drawing\skia\skia.h" />
-    <ClInclude Include="drawing\StringFormat.h" />
-    <ClInclude Include="image\converter.h" />
-    <ClInclude Include="image\formats\bmp.h" />
-    <ClInclude Include="image\formats\dds.h" />
-    <ClInclude Include="image\formats\ico.h" />
-    <ClInclude Include="image\formats\jpg.h" />
-    <ClInclude Include="image\formats\png.h" />
-    <ClInclude Include="image\formats\tga.h" />
-    <ClInclude Include="image\format.h" />
-    <ClInclude Include="image\image.h" />
+    <ClInclude Include="platform\platform.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="utils\dll.h" />
-    <ClInclude Include="utils\utils.h" />
-    <ClInclude Include="win32\win32.h" />
     <ClInclude Include="x.h" />
   </ItemGroup>
   <ItemGroup>

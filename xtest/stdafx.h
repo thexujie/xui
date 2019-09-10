@@ -1,9 +1,8 @@
 #pragma once
 
-#include "core/core.h"
-#include "drawing/drawing.h"
-#include "ui/ui.h"
-#include "win32/win32.h"
+#include "x/x.h"
+#include "x2d/x2d.h"
+#include "xui/xui.h"
 
 
 //#ifdef _UNICODE

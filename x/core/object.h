@@ -47,7 +47,6 @@ namespace core
         invoke_helper & ref();
 
         uint32_t thread_id() const { return _id; }
-        void * thread_handle() const;
 
         bool can_safe_invoke() const;
         void check_invoke();

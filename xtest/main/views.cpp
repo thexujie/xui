@@ -109,7 +109,7 @@ void views_main()
 	form->setLayoutDirection(core::align::top);
 	form->show();
 	form->centerScreen();
-	form->closed += []() { win32::endLoop(0); };
+	form->closed += []() { core::app().quit(0); };
 
 	//auto layer = std::make_shared<ui::Container>();
 	//{
@@ -284,5 +284,5 @@ void views_main()
         form->addControl(container);
 	}
 	//form->addControl(layer);
-	win32::runLoop();
+	core::app().loop();
 }

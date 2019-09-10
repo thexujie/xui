@@ -51,7 +51,7 @@
     <ClCompile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>./;../x/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -73,7 +73,7 @@
       <Optimization>Disabled</Optimization>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>./;../x/;./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/effects</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;./;../externals/;../externals/skia/include/core;../externals/skia/include/codec;../externals/skia/include/gpu;../externals/skia/include/effects</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -87,7 +87,7 @@
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>./;../x/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;</AdditionalLibraryDirectories>
@@ -99,10 +99,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>./;../x/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../;</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\x2d\x2d.vcxproj">
+      <Project>{7ada2e34-2c4a-4305-9451-be9be77f5194}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\x\x.vcxproj">
       <Project>{0cd56909-021a-4656-baf7-c1183fd6dff8}</Project>
     </ProjectReference>
@@ -134,9 +137,10 @@
     <ClCompile Include="ui\Form.cpp" />
     <ClCompile Include="ui\Grid.cpp" />
     <ClCompile Include="ui\RadioGroup.cpp" />
-    <ClCompile Include="ui\UICommon.cpp" />
+    <ClCompile Include="ui\ui.cpp" />
     <ClCompile Include="win32\ImeContext.cpp" />
     <ClCompile Include="win32\Window.cpp" />
+    <ClCompile Include="xui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -161,9 +165,9 @@
     <ClInclude Include="ui\Grid.h" />
     <ClInclude Include="ui\RadioGroup.h" />
     <ClInclude Include="ui\ui.h" />
-    <ClInclude Include="ui\UICommon.h" />
     <ClInclude Include="win32\ImeContext.h" />
     <ClInclude Include="win32\Window.h" />
+    <ClInclude Include="xui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

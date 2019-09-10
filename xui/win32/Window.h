@@ -1,9 +1,9 @@
 #pragma once
+
 #include "ui/Form.h"
-#include "win32/win32.h"
 #include "ImeContext.h"
 
-namespace win32
+namespace platform::win32
 {
     enum class windowmessage_bock
     {
@@ -132,15 +132,15 @@ namespace win32
         bool _mouseIn = false;
         bool _trackingMouse = false;
 
-        std::shared_ptr<win32::ImeContext> _ime_context;
-        std::shared_ptr<win32::CursorContext> _cursor_context;
+        std::shared_ptr<platform::win32::ImeContext> _ime_context;
+        std::shared_ptr<platform::win32::CursorContext> _cursor_context;
 
     public:
         core::event<void()> closed;
         core::event<void(uint32_t msg, uintx_t wparam, intx_t lparam)> message;
 
     public:
-        static Window * fromHandle(handle_t handle);
+        static Window * fromHandle(pointer_t handle);
     };
 
     ui::keycode virtualkey2keycode(uint32_t ivirtualkey);

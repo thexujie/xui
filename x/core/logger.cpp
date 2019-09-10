@@ -2,7 +2,6 @@
 #include "logger.h"
 #include <sys/timeb.h>
 #include "system.h"
-#include "win32/win32.h"
 
 namespace core
 {
@@ -231,7 +230,7 @@ namespace core
                         std::cout << reinterpret_cast<const std::string &>(item.text);
 
                     if (_debug_output)
-                        OutputDebugStringW(core::u8str_wstr(log_text).data());
+						core::debug_output(log_text);
 
                     _fs.write(reinterpret_cast<const char *>(log_text.data()), log_text.length());
                 }

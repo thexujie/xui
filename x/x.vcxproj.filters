@@ -14,44 +14,17 @@
     <ClCompile Include="core\string.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="core\network\addr.cpp">
-      <Filter>core\network</Filter>
-    </ClCompile>
-    <ClCompile Include="core\network\http.cpp">
-      <Filter>core\network</Filter>
-    </ClCompile>
-    <ClCompile Include="core\network\socket.cpp">
-      <Filter>core\network</Filter>
-    </ClCompile>
     <ClCompile Include="core\io\filestream.cpp">
       <Filter>core\io</Filter>
     </ClCompile>
-    <ClCompile Include="drawing\Graphics.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
     <ClCompile Include="core\app.cpp">
       <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\Image.cpp">
-      <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="core\math.cpp">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="core\core.cpp">
       <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\Bitmap.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\font.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\StringFormat.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\PathStyle.cpp">
-      <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="core\float2.cpp">
       <Filter>core</Filter>
@@ -71,14 +44,8 @@
     <ClCompile Include="core\float3x2.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="drawing\Path.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
     <ClCompile Include="core\property.cpp">
       <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\Region.cpp">
-      <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="core\timer.cpp">
       <Filter>core</Filter>
@@ -92,57 +59,9 @@
     <ClCompile Include="core\utils.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="drawing\skia\skia.cpp">
-      <Filter>drawing\skia</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\drawing.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\ColorFilter.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\Text.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="drawing\ImageFormat.cpp">
-      <Filter>drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\win32.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\dll.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
     <ClCompile Include="x.cpp" />
-    <ClCompile Include="utils\utils.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\bmp.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\dds.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\ico.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\jpg.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\png.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\formats\tga.cpp">
-      <Filter>image\formats</Filter>
-    </ClCompile>
-    <ClCompile Include="image\format.cpp">
-      <Filter>image</Filter>
-    </ClCompile>
-    <ClCompile Include="image\image.cpp">
-      <Filter>image</Filter>
-    </ClCompile>
-    <ClCompile Include="image\converter.cpp">
-      <Filter>image</Filter>
+    <ClCompile Include="platform\platform.cpp">
+      <Filter>platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,15 +84,6 @@
     <ClInclude Include="core\base64.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="core\network\addr.h">
-      <Filter>core\network</Filter>
-    </ClInclude>
-    <ClInclude Include="core\network\http.h">
-      <Filter>core\network</Filter>
-    </ClInclude>
-    <ClInclude Include="core\network\socket.h">
-      <Filter>core\network</Filter>
-    </ClInclude>
     <ClInclude Include="core\io\buffer.h">
       <Filter>core\io</Filter>
     </ClInclude>
@@ -183,17 +93,11 @@
     <ClInclude Include="core\io\stream.h">
       <Filter>core\io</Filter>
     </ClInclude>
-    <ClInclude Include="drawing\Graphics.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
     <ClInclude Include="core\app.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\object.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\Image.h">
-      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="core\align.h">
       <Filter>core</Filter>
@@ -218,21 +122,6 @@
     </ClInclude>
     <ClInclude Include="core\counter_fps.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\Bitmap.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\skia\skia.h">
-      <Filter>drawing\skia</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\font.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\StringFormat.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\PathStyle.h">
-      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="core\event.h">
       <Filter>core</Filter>
@@ -273,9 +162,6 @@
     <ClInclude Include="core\float3x2.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="drawing\Path.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
     <ClInclude Include="core\utils.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -284,9 +170,6 @@
     </ClInclude>
     <ClInclude Include="core\property.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\Region.h">
-      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="core\timer.h">
       <Filter>core</Filter>
@@ -297,17 +180,8 @@
     <ClInclude Include="core\bitflag.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="drawing\drawing.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
     <ClInclude Include="core\block_ptr.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\draw.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\ColorFilter.h">
-      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="core\member_traits.h">
       <Filter>core</Filter>
@@ -318,57 +192,12 @@
     <ClInclude Include="core\easingcurve.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="drawing\Text.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\ImageFormat.h">
-      <Filter>drawing</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\win32.h">
-      <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\dll.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="x.h" />
-    <ClInclude Include="utils\utils.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="core\comptr.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="image\formats\bmp.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\dds.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\ico.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\jpg.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\png.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\formats\tga.h">
-      <Filter>image\formats</Filter>
-    </ClInclude>
-    <ClInclude Include="image\format.h">
-      <Filter>image</Filter>
-    </ClInclude>
-    <ClInclude Include="image\image.h">
-      <Filter>image</Filter>
-    </ClInclude>
-    <ClInclude Include="image\converter.h">
-      <Filter>image</Filter>
-    </ClInclude>
     <ClInclude Include="core\format.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="drawing\GraphicsResource.h">
-      <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="core\matrix.h">
       <Filter>core</Filter>
@@ -376,37 +205,25 @@
     <ClInclude Include="core\vec.h">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="platform\platform.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="core\library.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
       <UniqueIdentifier>{e66dda2f-c3a6-461a-8a88-89379ad27427}</UniqueIdentifier>
     </Filter>
-    <Filter Include="core\network">
-      <UniqueIdentifier>{78b849b8-1f55-4870-a9f1-1786828a6c0f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="core\io">
       <UniqueIdentifier>{f04b9ca1-3ee7-48f3-b7da-66c8c1a693e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="drawing">
-      <UniqueIdentifier>{749c32a9-4ad8-41c4-ac68-4c8f72da806d}</UniqueIdentifier>
     </Filter>
     <Filter Include="core\math">
       <UniqueIdentifier>{cb6c943e-d954-4c9b-9492-3fdf01283f00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="drawing\skia">
-      <UniqueIdentifier>{24e94b74-1226-4644-ae9c-e92ef487af0b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="win32">
-      <UniqueIdentifier>{e59198d3-b02d-4361-b998-da485eed6cfb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="utils">
-      <UniqueIdentifier>{0102ed16-7da0-45f9-9fb8-2e34b7e0c72e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="image">
-      <UniqueIdentifier>{7f518882-ff59-4a06-8b90-d25e03adc4a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="image\formats">
-      <UniqueIdentifier>{aa8018da-8785-4d44-8e28-43f9eff85e83}</UniqueIdentifier>
+    <Filter Include="platform">
+      <UniqueIdentifier>{d29e4e5c-c2d4-4a60-9d48-91f6f2e94273}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

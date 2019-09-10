@@ -1,12 +1,11 @@
 #include "stdafx.h"
 #include "ImeContext.h"
-#include "win32/win32.h"
 #include <Imm.h>
 #pragma comment(lib, "imm32.lib")
 
-namespace win32
+namespace platform::win32
 {
-    ImeContext::ImeContext(handle_t hwnd) :_hwnd(hwnd)
+    ImeContext::ImeContext(pointer_t hwnd) :_hwnd(hwnd)
     {
         //_imc = ImmGetContext(HWND(_hwnd));
         //ImmSetOpenStatus(HIMC(_imc), FALSE);
@@ -78,7 +77,7 @@ namespace win32
     }
 
 
-    CursorContext::CursorContext(handle_t hwnd)
+    CursorContext::CursorContext(pointer_t hwnd)
     {
         
     }

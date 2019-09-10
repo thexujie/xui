@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "app.h"
 
-#include "win32/win32.h"
+#include "platform/platform.h"
 
 namespace core
 {
@@ -42,9 +42,14 @@ namespace core
         return nullptr;
     }
 
+	void App::loop()
+    {
+		platform::runLoop();
+    }
+	
     void App::quit(int32_t ret)
     {
-        win32::endLoop(ret);
+        platform::endLoop(ret);
     }
 
     App & app()

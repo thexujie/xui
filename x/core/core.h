@@ -171,6 +171,8 @@ namespace std
 
 #include "core/comptr.h"
 
+#include "core/library.h"
+
 using namespace core::unit_literals;
 
 namespace core

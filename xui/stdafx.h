@@ -1,4 +1,4 @@
 #pragma once
 
-#include "core/core.h"
-#include "drawing/drawing.h"
+#include "x/x.h"
+#include "x2d/x2d.h"

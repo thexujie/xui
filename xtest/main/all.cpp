@@ -119,7 +119,7 @@ void all_main()
 #endif
 	form->show();
 	form->centerScreen();
-	form->closed += []() { win32::endLoop(0); };
+	form->closed += []() { core::app().quit(0); };
 	form->setScrollbarVisionH(ui::scrollbar_vision::always);
 	const core::property_table & props = core::app().properties<ui::controls::Button>();
 
@@ -251,7 +251,7 @@ void all_main()
 			auto rbtn = std::make_shared<ui::controls::Check>();
 			rbtn->setText(u8"Vickyyyyyyy");
 			container->addControl(rbtn);
-			rbtn->stateChanged += [](ui::check_state state) { win32::endLoop(0); };
+			rbtn->stateChanged += [](ui::check_state state) { core::app().quit(0); };
 		}
 		layer->addControl(container);
 		container->setBorder({ 1_px, 1_px });
@@ -424,5 +424,5 @@ void all_main()
 	};
 
 	t.start();
-	win32::runLoop();
+	core::app().loop();
 }

@@ -1,14 +1,14 @@
 #pragma once
 
 #include "ui/Control.h"
-#include "win32/win32.h"
+#include "platform/win32/win32.h"
 
-namespace win32
+namespace platform::win32
 {
     class ImeContext : public ui::IImeContext
     {
     public:
-        ImeContext(handle_t hwnd);
+        ImeContext(pointer_t hwnd);
         ~ImeContext();
 
         void setImeMode(ui::ime_mode mode);
@@ -17,15 +17,15 @@ namespace win32
 
         void release();
     private:
-        handle_t _hwnd = nullptr;
-        handle_t _imc = nullptr;
+		pointer_t _hwnd = nullptr;
+		pointer_t _imc = nullptr;
 		ui::ime_mode _mode = ui::ime_mode::disabled;
     };
 
     class CursorContext : public ui::ICursorContext
     {
     public:
-        CursorContext(handle_t hwnd);
+        CursorContext(pointer_t hwnd);
         ~CursorContext();
 
         void setCursor(ui::cursor c) override;
@@ -35,7 +35,7 @@ namespace win32
         void reset();
         void apply();
     private:
-        handle_t _hwnd = nullptr;
+		pointer_t _hwnd = nullptr;
         void * _id = nullptr;
         void * _id_last = nullptr;
     };

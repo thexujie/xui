@@ -1,8 +1,6 @@
 #pragma once
 
-#include "component/Style.h"
-#include "drawing/Region.h"
-#include "UICommon.h"
+#include "ui.h"
 
 namespace ui
 {

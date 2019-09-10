@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Desktop.h"
-#include "win32/win32.h"
+#include "platform/win32/win32.h"
 
 namespace ui
 {

@@ -81,9 +81,6 @@
     <ClCompile Include="ui\RadioGroup.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\UICommon.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
     <ClCompile Include="win32\ImeContext.cpp">
       <Filter>win32</Filter>
     </ClCompile>
@@ -91,6 +88,10 @@
       <Filter>win32</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="xui.cpp" />
+    <ClCompile Include="ui\ui.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ui\base\Button.h">
@@ -156,9 +157,6 @@
     <ClInclude Include="ui\ui.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\UICommon.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="win32\ImeContext.h">
       <Filter>win32</Filter>
     </ClInclude>
@@ -166,5 +164,6 @@
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="xui.h" />
   </ItemGroup>
 </Project>
