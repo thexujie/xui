@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "platform.h"
+#include "win32.h"
 
 namespace core
 {
@@ -54,7 +54,7 @@ namespace core
 			_thread = OpenThread(THREAD_SET_CONTEXT, FALSE, _id);
 			if (!_thread)
 			{
-				logger::err() << __FUNCTION__" OpenThread" << platform::win32::winerr_str(GetLastError());
+				logger::err() << __FUNCTION__" OpenThread" << win32::winerr_str(GetLastError());
 			}
 		}
 		if (!_thread)
@@ -75,7 +75,7 @@ namespace core
 			_thread = OpenThread(THREAD_SET_CONTEXT, FALSE, _id);
 			if (!_thread)
 			{
-				logger::err() << __FUNCTION__" OpenThread" << platform::win32::winerr_str(GetLastError());
+				logger::err() << __FUNCTION__" OpenThread" << win32::winerr_str(GetLastError());
 			}
 		}
 		if (!_thread)

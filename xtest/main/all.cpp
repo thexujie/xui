@@ -425,4 +425,5 @@ void all_main()
 
 	t.start();
 	core::app().loop();
+	g_form.reset();
 }

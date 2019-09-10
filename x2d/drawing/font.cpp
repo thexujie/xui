@@ -1,22 +1,14 @@
 #include "stdafx.h"
 #include "font.h"
 
-static drawing::font __default_font;
-static drawing::fontmetrics __default_fontmetrics;
-static std::once_flag __default_font_once_flag;
-
-void generate_default_font()
-{
-	__default_font = platform::default_font();
-    __default_fontmetrics.from(__default_font);
-}
 
 namespace drawing
 {
+	void generate_default_font();
+	
     font::font()
     {
-        std::call_once(__default_font_once_flag, generate_default_font);
-        *this = platform::default_font();
+        *this = default_font();
     }
 
     font::font(const char8_t * family_, float_t size_, font_style style_)
@@ -24,9 +16,8 @@ namespace drawing
     {
         if (!family_ || !family_[0] || size_ <= 0)
         {
-            std::call_once(__default_font_once_flag, generate_default_font);
-            family = (family_ && family_[0]) ? family_ : __default_font.family;
-            size = size_ > 0 ? size_ : __default_font.size;
+            family = (family_ && family_[0]) ? family_ : default_font().family;
+            size = size_ > 0 ? size_ : default_font().size;
         }
         else
         {
@@ -40,9 +31,8 @@ namespace drawing
     {
         if (family_.empty() || size_ <= 0)
         {
-            std::call_once(__default_font_once_flag, generate_default_font);
-            family = family_.empty() ? __default_font.family : family_;
-            size = size_ > 0 ? size_ : __default_font.size;
+            family = family_.empty() ? default_font().family : family_;
+            size = size_ > 0 ? size_ : default_font().size;
         }
         else
         {
@@ -53,23 +43,11 @@ namespace drawing
 
     fontmetrics::fontmetrics(const font & font)
     {
-        platform::font_metrics(font, *this);
+		font_metrics(font, *this);
     }
 
     void fontmetrics::from(const font & font)
     {
-		platform::font_metrics(font, *this);
-    }
-
-    const font & default_font()
-    {
-        std::call_once(__default_font_once_flag, generate_default_font);
-        return __default_font;
-    }
-
-    const fontmetrics & default_fontmetrics()
-    {
-        std::call_once(__default_font_once_flag, generate_default_font);
-        return __default_fontmetrics;
+		font_metrics(font, *this);
     }
 }

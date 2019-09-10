@@ -1,9 +1,11 @@
 #pragma once
 
+#include "core/core.h"
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-namespace platform::win32
+namespace core::win32
 {
 	enum res_e
 	{

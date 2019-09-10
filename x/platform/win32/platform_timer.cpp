@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "platform.h"
+#include "win32.h"
 
 namespace core
 {

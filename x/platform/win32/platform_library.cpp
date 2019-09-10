@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "platform.h"
+#include "win32.h"
 
 namespace core
 {
@@ -31,7 +31,7 @@ namespace core
             else
                 _handle = ::LoadLibraryW(pathw.c_str());
 			if (!_handle)
-				core::war() << __FUNCTION__" LoadLibrary [" << pathw << "] failed " << platform::win32::winerr_str(GetLastError());
+				core::war() << __FUNCTION__" LoadLibrary [" << pathw << "] failed " << win32::winerr_str(GetLastError());
             else
             {
                 wchar_t temp[1024] = {};

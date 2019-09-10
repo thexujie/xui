@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "app.h"
 
-#include "platform/platform.h"
-
 namespace core
 {
     App * __app = nullptr;
@@ -44,12 +42,12 @@ namespace core
 
 	void App::loop()
     {
-		platform::runLoop();
+		core::loop();
     }
 	
     void App::quit(int32_t ret)
     {
-        platform::endLoop(ret);
+		core::quit(ret);
     }
 
     App & app()

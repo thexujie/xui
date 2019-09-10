@@ -60,8 +60,20 @@
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="x.cpp" />
-    <ClCompile Include="platform\platform.cpp">
+    <ClCompile Include="platform\platform_win32.cpp">
       <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\platform_library.cpp">
+      <Filter>platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\platform_object.cpp">
+      <Filter>platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\platform_timer.cpp">
+      <Filter>platform\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\win32.cpp">
+      <Filter>platform\win32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -205,11 +217,14 @@
     <ClInclude Include="core\vec.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="platform\platform.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="core\library.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\platform_win32.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\win32\win32.h">
+      <Filter>platform\win32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +239,9 @@
     </Filter>
     <Filter Include="platform">
       <UniqueIdentifier>{d29e4e5c-c2d4-4a60-9d48-91f6f2e94273}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\win32">
+      <UniqueIdentifier>{86fda5a7-33bf-4102-8f67-f0585d96ac07}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

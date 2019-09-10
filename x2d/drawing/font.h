@@ -117,7 +117,8 @@ namespace drawing
     };
 
     const font & default_font();
-    const fontmetrics & default_fontmetrics();
+	const fontmetrics & default_fontmetrics();
+	void font_metrics(const font & font, fontmetrics & metrics);
 }
 
 namespace std

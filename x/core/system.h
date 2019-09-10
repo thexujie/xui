@@ -5,6 +5,9 @@
 namespace core
 {
 	pointer_t instance();
+	int32_t loop();
+	void quit(int32_t ret);
+	
     core::filesystem::path temp_path();
     core::filesystem::path appdata_path();
     core::filesystem::path process_path();
@@ -27,4 +30,6 @@ namespace core
     };
 
 	void set_thread_priority(thread_priority priority);
+
+	void debug_output(const std::u8string & str);
 }

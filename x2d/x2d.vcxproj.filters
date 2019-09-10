@@ -66,6 +66,9 @@
     <ClCompile Include="image\loader.cpp">
       <Filter>image</Filter>
     </ClCompile>
+    <ClCompile Include="platform\platform_x2d.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -133,7 +136,7 @@
     <ClInclude Include="image\loader.h">
       <Filter>image</Filter>
     </ClInclude>
-    <ClInclude Include="platform\platform.h">
+    <ClInclude Include="platform\platform_x2d.h">
       <Filter>platform</Filter>
     </ClInclude>
   </ItemGroup>

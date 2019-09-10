@@ -34,8 +34,6 @@ namespace core
             breakpoint();
     }
 
-    void debug_output(std::u8string str);
-
     /**
     * @} // VenusCore-Base-Fun
     */

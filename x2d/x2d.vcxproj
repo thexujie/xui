@@ -123,6 +123,7 @@
     <ClCompile Include="image\formats\tga.cpp" />
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="image\loader.cpp" />
+    <ClCompile Include="platform\platform_x2d.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -153,7 +154,7 @@
     <ClInclude Include="image\formats\tga.h" />
     <ClInclude Include="image\image.h" />
     <ClInclude Include="image\loader.h" />
-    <ClInclude Include="platform\platform.h" />
+    <ClInclude Include="platform\platform_x2d.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="x2d.h" />
   </ItemGroup>

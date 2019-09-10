@@ -128,9 +128,6 @@
     <None Include="samples\test.css" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\platform\platform.vcxproj">
-      <Project>{85af7f0e-8bd8-433a-8031-03d06c913549}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\x2d\x2d.vcxproj">
       <Project>{7ada2e34-2c4a-4305-9451-be9be77f5194}</Project>
     </ProjectReference>
