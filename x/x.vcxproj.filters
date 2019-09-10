@@ -60,9 +60,6 @@
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="x.cpp" />
-    <ClCompile Include="platform\platform_win32.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="platform\win32\platform_library.cpp">
       <Filter>platform\win32</Filter>
     </ClCompile>
@@ -98,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="image\formats\tga.cpp">
       <Filter>image\formats</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\platform_win32.cpp">
+      <Filter>platform\win32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,9 +244,6 @@
     <ClInclude Include="core\library.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="platform\platform_win32.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="platform\win32\win32.h">
       <Filter>platform\win32</Filter>
     </ClInclude>
@@ -273,6 +270,9 @@
     </ClInclude>
     <ClInclude Include="image\formats\tga.h">
       <Filter>image\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\win32\platform_win32.h">
+      <Filter>platform\win32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -124,10 +124,10 @@
     <ClCompile Include="image\formats\tga.cpp" />
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="image\loader.cpp" />
-    <ClCompile Include="platform\platform_win32.cpp" />
     <ClCompile Include="platform\win32\platform_library.cpp" />
     <ClCompile Include="platform\win32\platform_object.cpp" />
     <ClCompile Include="platform\win32\platform_timer.cpp" />
+    <ClCompile Include="platform\win32\platform_win32.cpp" />
     <ClCompile Include="platform\win32\win32.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -193,7 +193,7 @@
     <ClInclude Include="image\formats\tga.h" />
     <ClInclude Include="image\image.h" />
     <ClInclude Include="image\loader.h" />
-    <ClInclude Include="platform\platform_win32.h" />
+    <ClInclude Include="platform\win32\platform_win32.h" />
     <ClInclude Include="platform\win32\win32.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="x.h" />

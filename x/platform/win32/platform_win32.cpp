@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "platform_win32.h"
-#include "win32/win32.h"
+#include "win32.h"
 #include <shlobj.h>
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
