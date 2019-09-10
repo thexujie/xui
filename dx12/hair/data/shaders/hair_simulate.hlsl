@@ -56,15 +56,10 @@ float3 SphereConstraint(float4 position, int isphere)
     
     if (len < 1)
     {
-        force = (1 - len) * (transformedPosition / len);
+        force = (1 - len) * normalize(transformedPosition);
     
-        row_major float4x4 sphereTransform = CollisionSphereTransformations[isphere];
-        //remove the translation
-        sphereTransform._41 = 0;
-        sphereTransform._42 = 0;
-        sphereTransform._43 = 0;
-        sphereTransform._44 = 1;
-        force = (mul(float4(force, 1), sphereTransform)).xyz;
+        float4x4 sphereTransform = CollisionSphereTransformations[isphere];
+        force = (mul(float4(force, 0), sphereTransform)).xyz;
     }
 
     return force;
@@ -173,9 +168,9 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
     }
     GroupMemoryBarrierWithGroupSync();
 
-    uint _half = floor(count / 2.0f);
-    uint _half2 = floor((count - 1) / 2.0f);
-    uint _half3 = floor((count - 3) / 2.0f);
+    uint _half = count / 2;
+    uint _half2 = (count - 1) / 2;
+    uint _half3 = (count - 3) / 2;
 
     uint halfAng1 = max(3, _half2) - 3;
     uint halfAng2 = max(3, _half3) - 3;
@@ -203,7 +198,7 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
         GroupMemoryBarrierWithGroupSync();
 
         int idM2 = localIndex % 2;
-        int idD2 = floor(localIndex / 2.0);
+        int idD2 = localIndex / 2;
         int id = idD2 * 4 + idM2;
 
         //apply the angular constraints to the first subset
