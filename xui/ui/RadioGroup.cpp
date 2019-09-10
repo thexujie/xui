@@ -6,8 +6,9 @@ namespace ui
 {
     void RadioGroup::check(std::shared_ptr<base::Radio> radio)
     {
-        for (auto & r : _radios)
+        for (auto & wr : _radios)
         {
+			auto r = wr.lock();
             if (r != radio)
                 r->setCheckState(check_state::unchecked);
         }
@@ -15,7 +16,7 @@ namespace ui
 
     void RadioGroup::addRadio(std::shared_ptr<base::Radio> radio)
     {
-        auto iter = std::find(_radios.begin(), _radios.end(), radio);
+        auto iter = std::find_if(_radios.begin(), _radios.end(), [&](auto & wr) { return wr.lock() == radio;});
         if (iter != _radios.end())
             return;
 
@@ -24,7 +25,7 @@ namespace ui
 
     void RadioGroup::removeRadio(std::shared_ptr<base::Radio> radio)
     {
-        auto iter = std::find(_radios.begin(), _radios.end(), radio);
+        auto iter = std::find_if(_radios.begin(), _radios.end(), [&](auto & wr) { return wr.lock() == radio; });
         if (iter == _radios.end())
             return;
 

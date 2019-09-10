@@ -37,7 +37,7 @@ namespace core
         __app = ptr;
     }
 
-    std::shared_ptr<object> App::GetService(std::string name)
+    std::shared_ptr<object> App::get_service(std::string name)
     {
         return nullptr;
     }
