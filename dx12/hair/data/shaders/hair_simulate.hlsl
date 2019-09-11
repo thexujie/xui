@@ -100,7 +100,7 @@ float4 addForcesAndIntegrate(float4 position, float4 oldPosition, float3 force, 
     force += float3(0.0f, -gravityAcceleration * lerp(1.0f, 0.5f, stiffness), 0.0f);
     float3 result = position.xyz + velocity + force * timeElapse * timeElapse / 20.0f * 400.0f;
     float staticky = stiffness0 * 0.0475;
-    if (length(result - transformedPos) < 1.6)
+    if (length(result - transformedPos) < gravityAcceleration)
         result = lerp(result, transformedPos, staticky);
     return float4(result, position.w);
 }
@@ -213,10 +213,9 @@ void CSMain(uint localIndex : SV_GroupIndex, uint3 groupId : SV_GroupID, uint3 d
         //apply the angular constraints to the second subset
         if (localIndex < halfAng2)
         {
-            id += 2;
-            float stiffness = sharedConstraints[id].w * angularStiffness;
+            float stiffness = sharedConstraints[id + 2].w * angularStiffness;
             if (stiffness > 0)
-                DistanceConstraint(sharedPos[id], sharedPos[id + 2], sharedConstraints[id].z, stiffness);
+                DistanceConstraint(sharedPos[id + 2], sharedPos[id + 4], sharedConstraints[id + 2].z, stiffness);
         }
         GroupMemoryBarrierWithGroupSync();
 
