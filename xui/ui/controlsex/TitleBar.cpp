@@ -123,10 +123,10 @@ namespace ui::controlsex
             _close->setSize({ 1.5_em });
             _close->setMargin({ 0.2_em });
 			auto path = std::make_shared<drawing::Path>();
-			path->moveTo({ 0.3f, 0.3f });
-			path->lineTo({ 0.7f, 0.7f });
-			path->moveTo({ 0.7f, 0.3f });
-			path->lineTo({ 0.3f, 0.7f });
+			path->move({ 0.3f, 0.3f });
+			path->line({ 0.7f, 0.7f });
+			path->move({ 0.7f, 0.3f });
+			path->line({ 0.3f, 0.7f });
 			_close->setPath(path);
 			_close->setActionT(ui::system_action::close);
             _close->active += std::bind(&TitleBar::onAction, this, std::placeholders::_1);
@@ -149,8 +149,8 @@ namespace ui::controlsex
             _minimize->setSize({ 1.5_em });
             _minimize->setMargin({ 0.2_em });
 			auto path = std::make_shared<drawing::Path>();
-			path->moveTo({ 0.3f, 0.7f });
-			path->lineTo({ 0.7f, 0.7f });
+			path->move({ 0.3f, 0.7f });
+			path->line({ 0.7f, 0.7f });
 			path->close();
 			_minimize->setPath(path);
 			_minimize->setActionT(ui::system_action::minimize);
@@ -176,24 +176,24 @@ namespace ui::controlsex
 			auto path = std::make_shared<drawing::Path>();
 			if(state == form_state::maximize)
 			{
-				path->moveTo({ 0.4f, 0.4f });
-				path->lineTo({ 0.4f, 0.3f });
-				path->lineTo({ 0.7f, 0.3f });
-				path->lineTo({ 0.7f, 0.6f });
-				path->lineTo({ 0.6f, 0.6f });
+				path->move({ 0.4f, 0.4f });
+				path->line({ 0.4f, 0.3f });
+				path->line({ 0.7f, 0.3f });
+				path->line({ 0.7f, 0.6f });
+				path->line({ 0.6f, 0.6f });
 
-				path->moveTo({ 0.3f, 0.4f });
-				path->lineTo({ 0.6f, 0.4f });
-				path->lineTo({ 0.6f, 0.7f });
-				path->lineTo({ 0.3f, 0.7f });
+				path->move({ 0.3f, 0.4f });
+				path->line({ 0.6f, 0.4f });
+				path->line({ 0.6f, 0.7f });
+				path->line({ 0.3f, 0.7f });
 				path->close();
 			}
 			else
 			{
-				path->moveTo({ 0.3f, 0.3f });
-				path->lineTo({ 0.7f, 0.3f });
-				path->lineTo({ 0.7f, 0.7f });
-				path->lineTo({ 0.3f, 0.7f });
+				path->move({ 0.3f, 0.3f });
+				path->line({ 0.7f, 0.3f });
+				path->line({ 0.7f, 0.7f });
+				path->line({ 0.3f, 0.7f });
 				path->close();
 			}
 			_maximize->setPath(path);

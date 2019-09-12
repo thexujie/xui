@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="drawing_skia.cpp" />
+    <ClCompile Include="skia\Bitmap.cpp">
+      <Filter>skia</Filter>
+    </ClCompile>
+    <ClCompile Include="skia\ColorFilter.cpp">
+      <Filter>skia</Filter>
+    </ClCompile>
+    <ClCompile Include="skia\Graphics.cpp">
+      <Filter>skia</Filter>
+    </ClCompile>
+    <ClCompile Include="skia\GraphicsResource.cpp">
+      <Filter>skia</Filter>
+    </ClCompile>
+    <ClCompile Include="skia\Image.cpp">
+      <Filter>skia</Filter>
+    </ClCompile>
+    <ClCompile Include="skia\Path.cpp">
+      <Filter>skia</Filter>
+    </ClCompile>
+    <ClCompile Include="skia\Text.cpp">
+      <Filter>skia</Filter>
+    </ClCompile>
+    <ClCompile Include="skia\skia.cpp">
+      <Filter>skia</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="drawing_skia.h" />
+    <ClInclude Include="skia\Bitmap.h">
+      <Filter>skia</Filter>
+    </ClInclude>
+    <ClInclude Include="skia\ColorFilter.h">
+      <Filter>skia</Filter>
+    </ClInclude>
+    <ClInclude Include="skia\Graphics.h">
+      <Filter>skia</Filter>
+    </ClInclude>
+    <ClInclude Include="skia\GraphicsResource.h">
+      <Filter>skia</Filter>
+    </ClInclude>
+    <ClInclude Include="skia\Image.h">
+      <Filter>skia</Filter>
+    </ClInclude>
+    <ClInclude Include="skia\Path.h">
+      <Filter>skia</Filter>
+    </ClInclude>
+    <ClInclude Include="skia\Text.h">
+      <Filter>skia</Filter>
+    </ClInclude>
+    <ClInclude Include="skia\skia.h">
+      <Filter>skia</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="skia">
+      <UniqueIdentifier>{749c32a9-4ad8-41c4-ac68-4c8f72da806d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

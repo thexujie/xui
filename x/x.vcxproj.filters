@@ -99,6 +99,24 @@
     <ClCompile Include="platform\win32\platform_win32.cpp">
       <Filter>platform\win32</Filter>
     </ClCompile>
+    <ClCompile Include="utils\xml.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="core\file.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="drawing\path_source.cpp">
+      <Filter>drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="drawing\Graphics.cpp">
+      <Filter>drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="drawing\drawing.cpp">
+      <Filter>drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\win32\drawing\platform_drawing.cpp">
+      <Filter>platform\win32\drawing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -106,9 +124,6 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\logger.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\path.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\system.h">
@@ -274,6 +289,21 @@
     <ClInclude Include="platform\win32\platform_win32.h">
       <Filter>platform\win32</Filter>
     </ClInclude>
+    <ClInclude Include="utils\xml.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="core\file.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing\drawing.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing\path_source.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing\Graphics.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="core">
@@ -296,6 +326,15 @@
     </Filter>
     <Filter Include="image\formats">
       <UniqueIdentifier>{4f1964e7-b0fc-492c-9d8e-b00d254114eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{02e2fbdb-3e2f-49f8-a1fa-2f94795ddf96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawing">
+      <UniqueIdentifier>{bfa44752-cb29-4270-a558-975d026c2963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\win32\drawing">
+      <UniqueIdentifier>{9445df83-55d4-4729-a031-5f23c2a0c2f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

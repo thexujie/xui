@@ -1,17 +1,15 @@
 #pragma once
 
-#include "path.h"
-
 namespace core
 {
 	pointer_t instance();
 	int32_t loop();
 	void quit(int32_t ret);
 	
-    core::filesystem::path temp_path();
-    core::filesystem::path appdata_path();
-    core::filesystem::path process_path();
-    core::filesystem::path current_path();
+    std::filesystem::path temp_path();
+	std::filesystem::path appdata_path();
+	std::filesystem::path process_path();
+	std::filesystem::path current_path();
     std::string process_name();
     uint32_t thread_id();
 	uint32_t process_id();

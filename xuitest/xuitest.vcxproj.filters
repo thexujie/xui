@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="main\main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main\all.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main\views.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main\ListView.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main\View.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main\ViewItem.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="main\Menu.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="main\ListView.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="main\View.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="main\ViewItem.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="main\Menu.h">
+      <Filter>main</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="main">
+      <UniqueIdentifier>{88779072-c8c3-48d8-b1d9-fd7315e9672e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="samples">
+      <UniqueIdentifier>{0f904187-4471-42fa-8f27-bb675c5afac1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="samples\test.css">
+      <Filter>samples</Filter>
+    </None>
+    <None Include="roadmap.md" />
+  </ItemGroup>
+</Project>

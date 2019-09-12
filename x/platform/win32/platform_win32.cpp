@@ -54,34 +54,34 @@ namespace core
 		return GetCurrentThreadId();
 	}
 
-	core::filesystem::path temp_path()
+	std::filesystem::path temp_path()
 	{
 		wchar_t szPath[MAX_PATH] = {};
 		DWORD dwLength = ::GetTempPathW(MAX_PATH, szPath);
-		return core::filesystem::path(core::wstr_u8str(std::wstring(szPath, dwLength)));
+		return std::filesystem::path(core::wstr_u8str(std::wstring(szPath, dwLength)));
 	}
 
-	core::filesystem::path appdata_path()
+	std::filesystem::path appdata_path()
 	{
 		wchar_t szPath[MAX_PATH] = {};
 		BOOL bSucc = ::SHGetSpecialFolderPathW(NULL, szPath, CSIDL_APPDATA, FALSE);
 		if (!bSucc)
 			return temp_path();
-		return core::filesystem::path(core::wstr_u8str(std::wstring(szPath, std::wcslen(szPath))));
+		return std::filesystem::path(core::wstr_u8str(std::wstring(szPath, std::wcslen(szPath))));
 	}
 
-	core::filesystem::path process_path()
+	std::filesystem::path process_path()
 	{
 		char temp[512] = {};
 		int32_t nchars = GetModuleFileNameA(NULL, temp, 512);
-		return core::filesystem::path(std::string(temp, nchars));
+		return std::filesystem::path(std::string(temp, nchars));
 	}
 
-	core::filesystem::path current_path()
+	std::filesystem::path current_path()
 	{
 		wchar_t temp[512] = {};
 		int32_t nchars = GetCurrentDirectoryW(512, temp);
-		return core::filesystem::path(std::wstring(temp, nchars));
+		return std::filesystem::path(std::wstring(temp, nchars));
 	}
 
 	static void __thread_set_name(uint32_t thread_id, const char * name)

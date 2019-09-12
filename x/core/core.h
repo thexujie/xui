@@ -44,8 +44,15 @@
 #include <chrono>
 
 #include <filesystem>
+#include <experimental/generator>
 
 using namespace std::chrono_literals;
+namespace std
+{
+	using std::experimental::generator;
+	using namespace std::experimental;
+}
+
 
 #define USE_UTF8
 
@@ -133,7 +140,6 @@ namespace std
 #include "core/error.h"
 #include "core/system.h"
 #include "core/logger.h"
-#include "core/path.h"
 #include "core/color.h"
 #include "core/object.h"
 #include "core/counter_fps.h"
@@ -168,6 +174,7 @@ namespace std
 
 #include "core/io/stream.h"
 #include "core/io/filestream.h"
+#include "core/file.h"
 
 #include "core/comptr.h"
 

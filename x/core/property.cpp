@@ -43,18 +43,18 @@ namespace core
         return true;
     }
 
-    template<> std::u8string property_parser<std::u8string>(const std::u8string & str)
+    template<> std::u8string property_parser<std::u8string>(const std::u8string_view & str)
     {
         return std::u8string(str.data(), str.length());
     }
 
-    template<> bool property_parser<bool>(const std::u8string & str)
+    template<> bool property_parser<bool>(const std::u8string_view & str)
     {
         return !core::equal_ic(str, u8"false");
     }
 
     template<>
-    core::color property_parser<core::color>(const std::u8string & str)
+    core::color property_parser<core::color>(const std::u8string_view & str)
     {
         if (str.empty())
             return colors::Auto;
@@ -133,9 +133,9 @@ namespace core
         return colors::Auto;
     }
 
-    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::u8string & str)
+    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::u8string_view & str)
     {
-        std::vector<std::u8string> strs = core::split(str, ' ');
+        std::vector<std::u8string_view> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec2<core::color>{ property_parser<core::color>(strs[0])};
         if (strs.size() == 2)
@@ -143,9 +143,9 @@ namespace core
         return {};
     }
 
-    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::u8string & str)
+    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::u8string_view & str)
     {
-        std::vector<std::u8string> strs = core::split(str, ' ');
+        std::vector<std::u8string_view> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec4<core::color>{ property_parser<core::color>(strs[0])};
         if (strs.size() == 2)
@@ -155,7 +155,7 @@ namespace core
         return {};
     }
 
-    template<> core::dimenf property_parser<core::dimenf>(const std::u8string & str)
+    template<> core::dimenf property_parser<core::dimenf>(const std::u8string_view & str)
     {
         for (auto & uint_name : unit_names)
         {
@@ -167,9 +167,9 @@ namespace core
         return {};
     }
 
-    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::u8string & str)
+    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::u8string_view & str)
     {
-        std::vector<std::u8string> strs = core::split(str, u8' ');
+        std::vector<std::u8string_view> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec2<core::dimenf>{ property_parser<core::dimenf>(strs[0]) };
         if (strs.size() == 2)
@@ -177,9 +177,9 @@ namespace core
         return {};
     }
 
-    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::u8string & str)
+    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::u8string_view & str)
     {
-        std::vector<std::u8string> strs = core::split(str, u8' ');
+        std::vector<std::u8string_view> strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec4<core::dimenf>{ property_parser<core::dimenf>(strs[0]) };
         if (strs.size() == 2)
@@ -189,11 +189,11 @@ namespace core
         return {};
     }
 
-    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::u8string & str)
+    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::u8string_view & str)
     {
         auto end = str.end();
         char * curr = nullptr;
-        int64_t val = std::strtoll(reinterpret_cast<const char *>(str.c_str()), &curr, 10);
+        int64_t val = std::strtoll(reinterpret_cast<const char *>(str.data()), &curr, 10);
         if (errno == ERANGE)
             return {};
 

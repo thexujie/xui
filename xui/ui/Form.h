@@ -75,7 +75,6 @@ namespace ui
 
         std::shared_ptr<ui::IImeContext> imeContext() const { if (!_window) return nullptr; return _window->imeContext(); }
         std::shared_ptr<ICursorContext> cursorContext() const { if (!_window) return nullptr; return _window->cursorContext(); }
-        std::shared_ptr<drawing::GraphicsDevice> bitmap() const { return _draw_buffer; }
 
     private:
         void _updateMouseArea(const input_state & state, mouse_action action);
@@ -108,8 +107,6 @@ namespace ui
         bool _invaliding = false;
         core::rectf _invalid_region;
         core::color _color_default = core::colors::AliceBlue;
-
-        std::shared_ptr<drawing::Surface> _draw_buffer;
 
 		std::shared_ptr<Control> _current_control;
 		std::shared_ptr<Control> _current_select;

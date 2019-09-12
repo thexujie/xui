@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "zlib\zlib.vcxproj", "{D2202452-772A-4E11-B3D8-5E7849065CC1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjpeg", "libjpeg\libjpeg.vcxproj", "{0EFF8869-28A7-4736-AD19-046B893652FA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpng", "libpng\libpng.vcxproj", "{21CB22F3-74EA-4A22-A953-C6CA294D7D8D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rapidxml", "rapidxml\rapidxml.vcxproj", "{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{21CB22F3-74EA-4A22-A953-C6CA294D7D8D}.Release|x64.Build.0 = Release|x64
 		{21CB22F3-74EA-4A22-A953-C6CA294D7D8D}.Release|x86.ActiveCfg = Release|Win32
 		{21CB22F3-74EA-4A22-A953-C6CA294D7D8D}.Release|x86.Build.0 = Release|Win32
+		{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}.Debug|x64.ActiveCfg = Debug|x64
+		{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}.Debug|x64.Build.0 = Debug|x64
+		{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}.Debug|x86.ActiveCfg = Debug|Win32
+		{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}.Debug|x86.Build.0 = Debug|Win32
+		{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}.Release|x64.ActiveCfg = Release|x64
+		{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}.Release|x64.Build.0 = Release|x64
+		{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}.Release|x86.ActiveCfg = Release|Win32
+		{BA1CE5E5-B2F9-4BCD-8A0C-598C896964FB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,25 +1,11 @@
 ﻿#include "stdafx.h"
+#include "x/platform/win32/win32.h"
 
-#include <ShellScalingAPI.h>
-#pragma comment(lib, "Shcore.lib")
+//#pragma optimize( "/await", on )
 
-//#pragma comment(lib, "E:/github/google/skia/out/x64d/skia.dll.lib")
-#pragma comment(lib, "../externals/skia/bin/x64/skia.dll.lib")
+#pragma conform(await, on)
 
-void all_main();
-void views_main();
-
-//template<typename R, typename... A>
-//R ret(R(*)(A...));
-//
-//template<typename C, typename R, typename... A>
-//R ret(R(C::*)(A...));
-//
-//template<typename T>
-//void print_name(T f)
-//{
-//    printf("%s\n", typeid(decltype(ret(f))).name());
-//}
+using core::operator<<;
 
 int main()
 {
@@ -27,8 +13,38 @@ int main()
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
     core::App app;
-	//views_main();
-	all_main();
+
+	drawing::path_source path_source;
+	path_source.move({ 0.0f, 0.0f });
+	path_source.line({ 0.0f, 0.0f });
+	path_source.line({ 0.0f, 0.0f });
+	path_source.line({ 0.0f, 0.0f });
+	path_source.line({ 0.0f, 0.0f });
+	path_source.arc({ 0.0f, 0.0f }, { 0.0f, 0.0f }, 12);
+	
+	core::xml xml;
+	xml.load(u8"../data/layout.xml");
+	auto root = xml.root();
+	auto nodes = xml.root().children();
+	auto root_name = root.name();
+
+	auto node = root.find(u8"stack/div/row/te1xt")[u8"text"].value();
+	
+	auto titlebar = root.child(u8"titlebar");
+	for (auto & node : titlebar.children(u8"button"))
+	{
+		std::cout << node.name() << std::endl;
+		for (auto & attr : node.attributes_generator())
+			std::cout << attr.name() << std::endl;
+	}
+	
+	for (auto & node : root.children_generator())
+	{
+		std::cout << node.name() << std::endl;
+		for (auto & attr : node.attributes_generator())
+			std::cout << attr.name() << std::endl;
+	}
+	
 	return 0;
 }
 

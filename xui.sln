@@ -15,7 +15,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xtest", "xtest\xtest.vcxproj", "{2F38136F-B7AF-480A-938D-F3F6B66C876A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x2d", "x2d\x2d.vcxproj", "{7ADA2E34-2C4A-4305-9451-BE9BE77F5194}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{8B51EB29-D7D0-4024-A796-AC646309DEAF}"
+	ProjectSection(SolutionItems) = preProject
+		data\layout.xml = data\layout.xml
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "drawing_skia", "drawing_skia\drawing_skia.vcxproj", "{7ADA2E34-2C4A-4305-9451-BE9BE77F5194}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

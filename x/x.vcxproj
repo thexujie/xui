@@ -51,6 +51,7 @@
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;../deps/FreeImage/lib/x64/</AdditionalLibraryDirectories>
@@ -70,6 +71,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>
@@ -82,6 +84,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../deps/bin/$(PlatformTarget)/;</AdditionalLibraryDirectories>
@@ -94,9 +97,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\file.cpp" />
     <ClCompile Include="core\utils.cpp" />
     <ClCompile Include="core\app.cpp" />
     <ClCompile Include="core\core.cpp" />
@@ -116,6 +121,9 @@
     <ClCompile Include="core\string.cpp" />
     <ClCompile Include="core\system.cpp" />
     <ClCompile Include="core\timer.cpp" />
+    <ClCompile Include="drawing\drawing.cpp" />
+    <ClCompile Include="drawing\Graphics.cpp" />
+    <ClCompile Include="drawing\path_source.cpp" />
     <ClCompile Include="image\formats\bmp.cpp" />
     <ClCompile Include="image\formats\dds.cpp" />
     <ClCompile Include="image\formats\ico.cpp" />
@@ -124,6 +132,7 @@
     <ClCompile Include="image\formats\tga.cpp" />
     <ClCompile Include="image\image.cpp" />
     <ClCompile Include="image\loader.cpp" />
+    <ClCompile Include="platform\win32\drawing\platform_drawing.cpp" />
     <ClCompile Include="platform\win32\platform_library.cpp" />
     <ClCompile Include="platform\win32\platform_object.cpp" />
     <ClCompile Include="platform\win32\platform_timer.cpp" />
@@ -135,12 +144,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="utils\xml.cpp" />
     <ClCompile Include="x.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\block_ptr.h" />
     <ClInclude Include="core\comptr.h" />
     <ClInclude Include="core\easingcurve.h" />
+    <ClInclude Include="core\file.h" />
     <ClInclude Include="core\format.h" />
     <ClInclude Include="core\library.h" />
     <ClInclude Include="core\matrix.h" />
@@ -174,7 +185,6 @@
     <ClInclude Include="core\math\xmm.h" />
     <ClInclude Include="core\member_traits.h" />
     <ClInclude Include="core\object.h" />
-    <ClInclude Include="core\path.h" />
     <ClInclude Include="core\property.h" />
     <ClInclude Include="core\quat4.h" />
     <ClInclude Include="core\string.h" />
@@ -185,6 +195,9 @@
     <ClInclude Include="core\vec2.h" />
     <ClInclude Include="core\vec3.h" />
     <ClInclude Include="core\vec4.h" />
+    <ClInclude Include="drawing\drawing.h" />
+    <ClInclude Include="drawing\Graphics.h" />
+    <ClInclude Include="drawing\path_source.h" />
     <ClInclude Include="image\formats\bmp.h" />
     <ClInclude Include="image\formats\dds.h" />
     <ClInclude Include="image\formats\ico.h" />
@@ -196,6 +209,7 @@
     <ClInclude Include="platform\win32\platform_win32.h" />
     <ClInclude Include="platform\win32\win32.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="utils\xml.h" />
     <ClInclude Include="x.h" />
   </ItemGroup>
   <ItemGroup>

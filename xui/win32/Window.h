@@ -135,6 +135,8 @@ namespace win32
         std::shared_ptr<win32::ImeContext> _ime_context;
         std::shared_ptr<win32::CursorContext> _cursor_context;
 
+		std::shared_ptr<drawing::Surface> _draw_buffer;
+
     public:
         core::event<void()> closed;
         core::event<void(uint32_t msg, uintx_t wparam, intx_t lparam)> message;

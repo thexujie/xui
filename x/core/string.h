@@ -20,13 +20,63 @@ namespace std
 
 namespace core
 {
-	template<typename string_t = std::string>
-	std::vector<string_t> split(const string_t & src, const typename string_t::value_type & delimiter)
+	template<typename char_type = char>
+	std::basic_string_view<char_type> getline(const std::basic_string_view<char_type> & str, size_t & offset, char_type delimiter)
 	{
-		std::vector<string_t> tokens;
-		string_t token;
-		std::basic_istringstream<typename string_t::value_type, typename string_t::traits_type, typename string_t::allocator_type> sstream(src);
-		while (std::getline(sstream, token, delimiter)) { tokens.push_back(token); }
+		size_t begin = offset;
+		size_t count = 0;
+		while (offset < str.length())
+		{
+			if (str[offset++] == delimiter)
+				break;
+
+			++count;
+		}
+		return std::basic_string_view<char_type>(str.data() + begin, count);
+
+	}
+	template<typename char_type = char>
+	std::basic_string_view<char_type> getline(const std::basic_string_view<char_type> & str, size_t & offset, const std::basic_string_view<char_type> & delimiters)
+	{
+		size_t begin = offset;
+		size_t count = 0;
+		while (offset < str.length())
+		{
+			if (delimiters.find_first_of(str[offset++]) != std::basic_string_view<char_type>::npos)
+				break;
+
+			++count;
+		}
+		return std::basic_string_view<char_type>(str.data() + begin, count);
+	}
+	
+	template<typename char_type>
+	std::vector<std::basic_string_view<char_type>> split(const std::basic_string_view<char_type> & str, const std::basic_string_view<char_type> & delimiters)
+	{
+		std::vector<std::basic_string_view<char_type>> tokens;
+		size_t offset = 0;
+		while (true)
+		{
+			auto token = core::getline(str, offset, delimiters);
+			if (!token.length())
+				break;
+			tokens.push_back(token);
+		}
+		return tokens;
+	}
+
+	template<typename char_type>
+	std::vector<std::basic_string_view<char_type>> split(const std::basic_string_view<char_type> & str, char_type delimiter)
+	{
+		std::vector<std::basic_string_view<char_type>> tokens;
+		size_t offset = 0;
+		while (true)
+		{
+			auto token = core::getline(str, offset, delimiter);
+			if (!token.length())
+				break;
+			tokens.push_back(token);
+		}
 		return tokens;
 	}
 
@@ -128,33 +178,36 @@ namespace core
 	}
 
 
-    std::u8string astr_u8str(const char * astr, size_t nchar);
-    std::string u8str_astr(const char8_t * u8str, size_t nu8char);
-    inline std::u8string astr_u8str(const std::string & astr) { return astr_u8str(astr.c_str(), astr.length()); }
+    std::u8string astr_u8str(const char * astr, size_t nchar = core::npos);
+    std::string u8str_astr(const char8_t * u8str, size_t nu8char = core::npos);
+	inline std::u8string astr_u8str(const std::string & astr) { return astr_u8str(astr.c_str(), astr.length()); }
+	inline std::u8string astr_u8str(const std::string_view & astr) { return astr_u8str(astr.data(), astr.length()); }
     inline std::string u8str_astr(const std::u8string & astr) { return u8str_astr(astr.c_str(), astr.length()); }
+	inline std::string u8str_astr(const std::u8string_view & u8str) { return u8str_astr(u8str.data(), u8str.length()); }
 
-    std::u8string wstr_u8str(const wchar_t * wstr, size_t nwchar);
-    std::wstring u8str_wstr(const char8_t * u8str, size_t nu8char);
+    std::u8string wstr_u8str(const wchar_t * wstr, size_t nwchar = core::npos);
+    std::wstring u8str_wstr(const char8_t * u8str, size_t nu8char = core::npos);
     inline std::u8string wstr_u8str(const std::wstring & wstr) { return wstr_u8str(wstr.c_str(), wstr.length()); }
-    inline std::wstring u8str_wstr(const std::u8string & u8str) { return u8str_wstr(u8str.c_str(), u8str.length()); }
+	inline std::wstring u8str_wstr(const std::u8string & u8str) { return u8str_wstr(u8str.c_str(), u8str.length()); }
+	inline std::wstring u8str_wstr(const std::u8string_view & u8str) { return u8str_wstr(u8str.data(), u8str.length()); }
 
-    std::string wstr_astr(const wchar_t * wstr, size_t nwchar);
-    std::wstring astr_wstr(const char * astr, size_t nchar);
+    std::string wstr_astr(const wchar_t * wstr, size_t nwchar = core::npos);
+    std::wstring astr_wstr(const char * astr, size_t nchar = core::npos);
     inline std::string wstr_astr(const std::wstring & wstr) { return wstr_astr(wstr.c_str(), wstr.length()); }
     inline std::wstring astr_wstr(const std::string & astr) { return astr_wstr(astr.c_str(), astr.length()); }
 
-    inline std::u8string u16str_u8str(const char16_t * u16str, size_t nu16char) { return wstr_u8str(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
-    inline std::u16string u8str_u16str(const char8_t * u8str, size_t nu8char) { auto wstr = u8str_wstr(u8str, nu8char); return std::u16string(wstr.begin(), wstr.end()); }
+    inline std::u8string u16str_u8str(const char16_t * u16str, size_t nu16char = core::npos) { return wstr_u8str(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
+    inline std::u16string u8str_u16str(const char8_t * u8str, size_t nu8char = core::npos) { auto wstr = u8str_wstr(u8str, nu8char); return std::u16string(wstr.begin(), wstr.end()); }
     inline std::u8string u16str_u8str(const std::u16string & u16str) { return u16str_u8str(u16str.c_str(), u16str.length()); }
     inline std::u16string u8str_u16str(const std::u8string & u8str) { return u8str_u16str(u8str.c_str(), u8str.length()); }
 
-    inline std::string u16str_astr(const char16_t * u16str, size_t nu16char) { return wstr_astr(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
-    inline std::u16string astr_u16str(const char * astr, size_t nchar) { auto wstr = astr_wstr(astr, nchar); return std::u16string(wstr.begin(), wstr.end()); }
+    inline std::string u16str_astr(const char16_t * u16str, size_t nu16char = core::npos) { return wstr_astr(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
+    inline std::u16string astr_u16str(const char * astr, size_t nchar = core::npos) { auto wstr = astr_wstr(astr, nchar); return std::u16string(wstr.begin(), wstr.end()); }
     inline std::string u16str_astr(const std::u16string & u16str) { return u16str_astr(u16str.c_str(), u16str.length()); }
     inline std::u16string astr_u16str(const std::string & astr) { return astr_u16str(astr.c_str(), astr.length()); }
 
-	inline std::wstring u16str_wstr(const char16_t * u16str, size_t nu16char) { if (nu16char == npos) nu16char = core::textlen(u16str);  return std::wstring(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
-	inline std::u16string wstr_u16str(const wchar_t * wstr, size_t nwchar) { if (nwchar == npos) nwchar = core::textlen(wstr); return std::u16string(reinterpret_cast<const char16_t *>(wstr), nwchar); }
+	inline std::wstring u16str_wstr(const char16_t * u16str, size_t nu16char = core::npos) { if (nu16char == core::npos) nu16char = core::textlen(u16str);  return std::wstring(reinterpret_cast<const wchar_t *>(u16str), nu16char); }
+	inline std::u16string wstr_u16str(const wchar_t * wstr, size_t nwchar = core::npos) { if (nwchar == core::npos) nwchar = core::textlen(wstr); return std::u16string(reinterpret_cast<const char16_t *>(wstr), nwchar); }
 	inline std::wstring u16str_wstr(const std::u16string & u16str) { return std::wstring(reinterpret_cast<const wchar_t *>(u16str.c_str()), u16str.length()); }
 	inline std::u16string wstr_u16str(const std::wstring & wstr) { return std::u16string(reinterpret_cast<const char16_t *>(wstr.c_str()), wstr.length()); }
 

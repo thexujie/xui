@@ -13,6 +13,35 @@
     <!--<DisplayString Condition="isLongString()">{{isLongString}}</DisplayString>-->
   </Type>
 
+  <Type Name="std::basic_string_view&lt;char8_t,*&gt;">
+    <DisplayString>{*((char**)this),s8}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">_Mysize</Item>
+      <ArrayItems>
+        <Size>_Mysize</Size>
+        <ValuePointer>*((char**)this)</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+
+  <!--<Type Name="std::basic_string_view&lt;char8_t,*&gt;" Priority="High">
+    <DisplayString>{xxxx}</DisplayString>
+  </Type>-->
+
+  <!--<Type Name="std::basic_string_view&lt;char8_t,*&gt;">
+    <Intrinsic Name="size" Expression="_Mysize" />
+    <Intrinsic Name="data" Expression="_Mydata" />
+    <DisplayString>{_Mydata,[_Mysize]}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">size()</Item>
+      <ArrayItems>
+        <Size>size()</Size>
+        <ValuePointer>data()</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>-->
+
   <Type Name="core::bitflag&lt;*&gt;">
     <DisplayString>{_e}</DisplayString>
   </Type>

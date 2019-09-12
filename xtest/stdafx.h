@@ -1,9 +1,6 @@
 #pragma once
 
 #include "x/x.h"
-#include "x2d/x2d.h"
-#include "xui/xui.h"
-
 
 //#ifdef _UNICODE
 //#if defined _M_IX86

@@ -3,7 +3,7 @@
 namespace core
 {
     template<typename T>
-    T property_parser(const std::u8string & str);
+    T property_parser(const std::u8string_view & str);
 
     class property_value
     {
@@ -201,7 +201,7 @@ namespace core
     template<typename SetterT, typename GetterT>
     static auto make_accessor(SetterT setter, GetterT getter,
         std::function<std::decay_t<typename member_traits<GetterT>::value_type>(const std::u8string &)> store = property_parser<std::decay_t<typename member_traits<GetterT>::value_type>>,
-        std::function<std::u8string(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch = nullptr)
+        std::function<std::u8string_view(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch = nullptr)
     {
         static_assert(std::is_member_function_pointer<SetterT>::value);
         static_assert(std::is_member_pointer<GetterT>::value);
@@ -209,7 +209,7 @@ namespace core
         return std::make_shared<property_accessor_impl<typename member_traits<SetterT>::instance_type, std::decay_t<typename member_traits<GetterT>::value_type>, SetterT, GetterT>>(setter, getter, store, fetch);
     }
 
-    typedef std::map<std::u8string, std::shared_ptr<core::property_accessor>> property_table;
+    typedef std::map<std::u8string_view, std::shared_ptr<core::property_accessor>> property_table;
 
     //---------------------------------------------------------------- interpolator
 
@@ -430,15 +430,15 @@ namespace core
 
 
     template<>
-    inline float32_t property_parser<float32_t>(const std::u8string & str)
+    inline float32_t property_parser<float32_t>(const std::u8string_view & str)
     {
-        return std::atof(reinterpret_cast<const char *>(str.c_str()));
+        return std::atof(reinterpret_cast<const char *>(str.data()));
     }
 
     template<>
-    inline core::vec2<float32_t> property_parser<core::vec2<float32_t>>(const std::u8string & str)
+    inline core::vec2<float32_t> property_parser<core::vec2<float32_t>>(const std::u8string_view & str)
     {
-        std::vector<std::u8string> strs = core::split(str, u8' ');
+        auto strs = core::split(str, u8' ');
         if (strs.size() == 1)
             return core::vec2<float32_t>{ property_parser<float32_t>(strs[0]) };
         if (strs.size() == 2)
@@ -446,15 +446,15 @@ namespace core
         return {};
     }
 
-    template<> std::u8string property_parser<std::u8string>(const std::u8string & str);
-    template<> bool property_parser<bool>(const std::u8string & str);
-    template<> core::color property_parser<core::color>(const std::u8string & str);
-    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::u8string & str);
-    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::u8string & str);
+    template<> std::u8string property_parser<std::u8string>(const std::u8string_view & str);
+    template<> bool property_parser<bool>(const std::u8string_view & str);
+    template<> core::color property_parser<core::color>(const std::u8string_view & str);
+    template<> core::vec2<core::color> property_parser<core::vec2<core::color>>(const std::u8string_view & str);
+    template<> core::vec4<core::color> property_parser<core::vec4<core::color>>(const std::u8string_view & str);
 
-    template<> core::dimenf property_parser<core::dimenf>(const std::u8string & str);
-    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::u8string & str);
-    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::u8string & str);
+    template<> core::dimenf property_parser<core::dimenf>(const std::u8string_view & str);
+    template<> core::vec2<core::dimenf> property_parser<core::vec2<core::dimenf>>(const std::u8string_view & str);
+    template<> core::vec4<core::dimenf> property_parser<core::vec4<core::dimenf>>(const std::u8string_view & str);
 
-    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::u8string & str);
+    template<> std::chrono::nanoseconds property_parser<std::chrono::nanoseconds>(const std::u8string_view & str);
 }
