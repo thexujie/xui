@@ -14,8 +14,8 @@ namespace ui::base
         static void propertyTableCallback(core::property_table & properties);
         void propertyTable(core::property_table & properties) override;
 
-        void onEntering(std::shared_ptr<Form> & form) override;
-        void onLeaving() override;
+        void onEnteringScene(std::shared_ptr<Scene> & scene) override;
+        void onLeavingScene() override;
 
     public:
         void setCheckState(check_state state);

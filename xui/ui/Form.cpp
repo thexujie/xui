@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Form.h"
 #include "Desktop.h"
-#include "RadioGroup.h"
 ////#include "../../xui/main/Menu.h"
 
 namespace ui
@@ -429,29 +428,6 @@ namespace ui
 		default:;
 		}
 	}
-
-    std::shared_ptr<RadioGroup> Form::radioGroup(const std::u8string & name)
-    {
-        auto iter = _radio_groups.find(name);
-        if (iter == _radio_groups.end())
-        {
-            auto group = std::make_shared<RadioGroup>(name);
-            _radio_groups[name] = group;
-            return group;
-        }
-        else
-        {
-            auto ptr = iter->second.lock();
-            if (!ptr)
-            {
-                auto group = std::make_shared<RadioGroup>(name);
-                _radio_groups[name] = group;
-                return group;
-            }
-            else
-                return ptr;
-        }
-    }
 
     void Form::_updateMouseArea(const input_state & state, mouse_action action)
     {

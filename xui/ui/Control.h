@@ -2,7 +2,6 @@
 
 #include "ui.h"
 #include "Scene.h"
-#include "SceneView.h"
 
 namespace ui
 {
@@ -201,14 +200,9 @@ namespace ui
         void setCursor(cursor cs) { _cursor = cs; }
         cursor cursor() const { return _cursor; }
 
-        virtual void onEntering(std::shared_ptr<Form> & form);
-        virtual void onEnter(std::shared_ptr<Form> & form);
-        virtual void onLeaving();
-        virtual void onLeave();
-
 		virtual void onEnteringScene(std::shared_ptr<Scene> & scene);
 		virtual void onEnterScene();
-		virtual void onLeavingScene(std::shared_ptr<Scene> & scene);
+		virtual void onLeavingScene();
 		virtual void onLeaveScene();
 
         // rect 控件应该定位的范围
@@ -312,12 +306,6 @@ namespace ui
         std::map<std::u8string, std::vector<std::shared_ptr<core::animation>>> _animations;
         core::rectf _rect_repaint;
 
-		std::vector<std::shared_ptr<ui::rendering::Component>> _rendering_components;
-
-		virtual void Draw(SceneView & view, std::vector<std::shared_ptr<ui::rendering::Component>> & rendering_components) const {}
-    public:
-		void addComponent(std::shared_ptr<ui::rendering::Component> component) { _rendering_components.push_back(component); }
-    	
     public:
         void clearAnimations() { _animations.clear(); }
         void clearAnimations(const std::u8string & group);

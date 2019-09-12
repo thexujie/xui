@@ -48,8 +48,8 @@ namespace ui::controlsex
             setLayoutDirection(core::align::right);
         }
 
-		void onEnter(std::shared_ptr<ui::Form> & form);
-		void onLeave();
+		void onEnterScene() override;
+		void onLeaveScene() override;
 		std::shared_ptr< ui::Form> form() { return _form.lock(); }
 
 		void onFormStylesChanged(ui::form_styles, ui::form_styles styles)
@@ -67,10 +67,10 @@ namespace ui::controlsex
             refresh();
         }
 
-		void onAction(action_t action);
+		void onAction(action_t action) override;
 
     private:
-		void update();
+		void update() override;
 
 	private:
 		std::weak_ptr< ui::Form> _form;

@@ -138,12 +138,7 @@
     <ClCompile Include="ui\Form.cpp" />
     <ClCompile Include="ui\Grid.cpp" />
     <ClCompile Include="ui\RadioGroup.cpp" />
-    <ClCompile Include="ui\rendering\Component.cpp" />
-    <ClCompile Include="ui\rendering\Geometry.cpp" />
-    <ClCompile Include="ui\rendering\Image.cpp" />
-    <ClCompile Include="ui\rendering\Text.cpp" />
     <ClCompile Include="ui\Scene.cpp" />
-    <ClCompile Include="ui\SceneView.cpp" />
     <ClCompile Include="ui\ui.cpp" />
     <ClCompile Include="xui.cpp" />
   </ItemGroup>
@@ -169,12 +164,7 @@
     <ClInclude Include="ui\Form.h" />
     <ClInclude Include="ui\Grid.h" />
     <ClInclude Include="ui\RadioGroup.h" />
-    <ClInclude Include="ui\rendering\Component.h" />
-    <ClInclude Include="ui\rendering\Geometry.h" />
-    <ClInclude Include="ui\rendering\Image.h" />
-    <ClInclude Include="ui\rendering\Text.h" />
     <ClInclude Include="ui\Scene.h" />
-    <ClInclude Include="ui\SceneView.h" />
     <ClInclude Include="ui\ui.h" />
     <ClInclude Include="xui.h" />
   </ItemGroup>

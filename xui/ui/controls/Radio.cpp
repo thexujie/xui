@@ -48,7 +48,7 @@ namespace ui::controls
 
 	void Radio::onEnterScene()
 	{
-		_text_object = scene()->createTextComponent();
+		_text_object = scene()->createText();
 		ui::base::Radio::onEnterScene();
 	}
 

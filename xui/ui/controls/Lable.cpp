@@ -16,7 +16,7 @@ namespace ui::controls
 
 	void Lable::onEnterScene()
 	{
-		_text_object = scene()->createTextComponent();
+		_text_object = scene()->createText();
 		Control::onEnterScene();
 	}
 

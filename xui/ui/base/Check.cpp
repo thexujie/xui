@@ -22,14 +22,14 @@ namespace ui::base
         Check::propertyTableCallback(properties);
     }
 
-    void Check::onEntering(std::shared_ptr<Form> & form)
+    void Check::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
-        Control::onEntering(form);
+        Control::onEnteringScene(scene);
     }
 
-    void Check::onLeaving()
+    void Check::onLeavingScene()
     {
-        Control::onLeaving();
+        Control::onLeavingScene();
     }
 
     void Check::setCheckState(check_state state)

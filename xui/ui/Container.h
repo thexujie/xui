@@ -38,10 +38,10 @@ namespace ui
 		void clearControls();
         std::multiset<std::shared_ptr<Control>, ControlSorter> & children() { return _controls; }
 
-        void onEntering(std::shared_ptr<Form> & form) override;
-        void onEnter(std::shared_ptr<Form> & form) override;
-        void onLeaving() override;
-        void onLeave() override;
+        void onEnteringScene(std::shared_ptr<Scene> & scene) override;
+        void onEnterScene() override;
+        void onLeavingScene() override;
+        void onLeaveScene() override;
 
         //core::sizef contentSize() const override;
 		bool validCompleted() const override;

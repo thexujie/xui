@@ -16,7 +16,7 @@ namespace ui
 		return *(drawing::GraphicsService *)0;
 	}
 	
-	std::shared_ptr<drawing::Text> Scene::createTextComponent()
+	std::shared_ptr<drawing::Text> Scene::createText()
 	{
 		return nullptr;
 	}
@@ -39,5 +39,28 @@ namespace ui
 	drawing::fontmetrics Scene::default_fontmetrics()
 	{
 		return {};
+	}
+
+	std::shared_ptr<RadioGroup> Scene::radioGroup(const std::u8string & name)
+	{
+		auto iter = _radio_groups.find(name);
+		if (iter == _radio_groups.end())
+		{
+			auto group = std::make_shared<RadioGroup>(name);
+			_radio_groups[name] = group;
+			return group;
+		}
+		else
+		{
+			auto ptr = iter->second.lock();
+			if (!ptr)
+			{
+				auto group = std::make_shared<RadioGroup>(name);
+				_radio_groups[name] = group;
+				return group;
+			}
+			else
+				return ptr;
+		}
 	}
 }

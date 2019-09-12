@@ -421,23 +421,6 @@ namespace ui
             std::max(padding.bbottom, border.bbottom) };
     }
 
-    void Control::onEntering(std::shared_ptr<Form> & form)
-    {
-        restyle();
-    }
-
-    void Control::onEnter(std::shared_ptr<Form> & form)
-    {
-        repaint();
-    }
-
-    void Control::onLeaving()
-    {
-    }
-
-    void Control::onLeave() { }
-
-
 	void Control::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
 		_scene = scene;
@@ -448,7 +431,7 @@ namespace ui
     {
     }
 	
-	void Control::onLeavingScene(std::shared_ptr<Scene> & scene)
+	void Control::onLeavingScene()
     {
 		_scene.reset();
 		onLeaveScene();

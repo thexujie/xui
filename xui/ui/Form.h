@@ -71,8 +71,6 @@ namespace ui
 		void onFormStateChanged(form_state from, form_state to);
 
     public:
-        std::shared_ptr<RadioGroup> radioGroup(const std::u8string & name);
-
         std::shared_ptr<ui::IImeContext> imeContext() const { if (!_window) return nullptr; return _window->imeContext(); }
         std::shared_ptr<ICursorContext> cursorContext() const { if (!_window) return nullptr; return _window->cursorContext(); }
 
@@ -95,7 +93,6 @@ namespace ui
 
         core::pointf _window_pos;
         core::attribute<core::vec4<core::dimenf>> _resize_borders;
-        std::map<std::u8string, std::weak_ptr<RadioGroup>> _radio_groups;
         core::timer _animation_timer;
         std::shared_ptr<component::StyleSheet> _style_sheet;
 

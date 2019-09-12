@@ -29,11 +29,11 @@ namespace ui
             return;
 
         control->setParent(share_ref<Container>());
-        if(auto f = form())
+        if(auto s = scene())
         {
-            control->onEntering(f);
+            control->onEnteringScene(s);
             _controls.insert(control);
-            control->onEnter(f);
+            control->onEnterScene();
 			if (_shown && control->visible() && control->aviliable())
 				control->notifyShown(true);
         }
@@ -57,10 +57,10 @@ namespace ui
         {
 			if (control->shown())
 				control->notifyShown(false);
-            control->onLeaving();
+            control->onLeavingScene();
             control->setParent(nullptr);
             _controls.erase(iter);
-            control->onLeave();
+            control->onLeaveScene();
         }
     }
 
@@ -70,41 +70,41 @@ namespace ui
 		{
 			if (control->shown())
 				control->notifyShown(false);
-			control->onLeaving();
+			control->onLeavingScene();
             control->setParent(nullptr);
 		}
 		auto controls = std::move(_controls);
 		for(auto & control : _controls)
-			control->onLeave();
+			control->onLeaveScene();
     }
 
-    void Container::onEntering(std::shared_ptr<Form> & form)
+    void Container::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
-        Control::onEntering(form);
+        Control::onEnteringScene(scene);
         for (auto & control : _controls)
-            control->onEntering(form);
+            control->onEnteringScene(scene);
     }
 
-    void Container::onEnter(std::shared_ptr<Form> & form)
+    void Container::onEnterScene()
     {
-        Control::onEnter(form);
+        Control::onEnterScene();
         relayout();
         for (auto & control : _controls)
-            control->onEnter(form);
+            control->onEnterScene();
     }
 
-    void Container::onLeaving()
+    void Container::onLeavingScene()
     {
         for (auto & control : _controls)
-            control->onLeaving();
-        Control::onLeaving();
+            control->onLeavingScene();
+        Control::onLeavingScene();
     }
 
-    void Container::onLeave()
+    void Container::onLeaveScene()
     {
         for (auto & control : _controls)
-            control->onLeave();
-        Control::onLeave();
+            control->onLeaveScene();
+        Control::onLeaveScene();
     }
 
 	bool Container::validCompleted() const

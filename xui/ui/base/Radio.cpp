@@ -23,24 +23,24 @@ namespace ui::base
         Radio::propertyTableCallback(properties);
     }
 
-    void Radio::onEntering(std::shared_ptr<Form> & form)
+    void Radio::onEnteringScene(std::shared_ptr<Scene> & scene)
     {
         if (!_group.empty())
         {
-            _radio_group = form->radioGroup(_group);
+            _radio_group = scene->radioGroup(_group);
             _radio_group->addRadio(share_ref<Radio>());
         }
-        Control::onEntering(form);
+        Control::onEnteringScene(scene);
     }
 
-    void Radio::onLeaving()
+    void Radio::onLeavingScene()
     {
         if (_radio_group)
         {
             _radio_group->removeRadio(share_ref<Radio>());
             _radio_group = nullptr;
         }
-        Control::onLeaving();
+        Control::onLeavingScene();
     }
 
     void Radio::setGroup(const std::u8string & group)
@@ -55,8 +55,8 @@ namespace ui::base
             _group = group;
             if (!group.empty())
             {
-                if (auto f = form())
-                    _radio_group = f->radioGroup(group);
+                if (auto s = scene())
+                    _radio_group = s->radioGroup(group);
             }
 
         }

@@ -89,24 +89,21 @@ namespace ui::controlsex
 
 	//---------------------------------------------------
 
-	void TitleBar::onEnter(std::shared_ptr<ui::Form> & form)
+	void TitleBar::onEnterScene()
 	{
-        form->stylesChanged += std::bind(&TitleBar::onFormStylesChanged, this, std::placeholders::_1, std::placeholders::_2);
-        form->stateChanged += std::bind(&TitleBar::onFormStateChanged, this, std::placeholders::_1, std::placeholders::_2);
-        form->titleChanged += std::bind(&TitleBar::onFormTitleChanged, this, std::placeholders::_1);
+        form()->stylesChanged += std::bind(&TitleBar::onFormStylesChanged, this, std::placeholders::_1, std::placeholders::_2);
+        form()->stateChanged += std::bind(&TitleBar::onFormStateChanged, this, std::placeholders::_1, std::placeholders::_2);
+        form()->titleChanged += std::bind(&TitleBar::onFormTitleChanged, this, std::placeholders::_1);
         refresh();
-        ui::Container::onEnter(form);
+        ui::Container::onEnterScene();
 	}
 
-	void TitleBar::onLeave()
+	void TitleBar::onLeaveScene()
 	{
-		ui::Container::onLeave();
-		if(auto f = form())
-		{
-			f->stylesChanged -= std::bind(&TitleBar::onFormStylesChanged, this, std::placeholders::_1, std::placeholders::_2);
-			f->stateChanged -= std::bind(&TitleBar::onFormStateChanged, this, std::placeholders::_1, std::placeholders::_2);
-            f->titleChanged += std::bind(&TitleBar::onFormTitleChanged, this, std::placeholders::_1);
-		}
+		ui::Container::onLeaveScene();
+		form()->stylesChanged -= std::bind(&TitleBar::onFormStylesChanged, this, std::placeholders::_1, std::placeholders::_2);
+		form()->stateChanged -= std::bind(&TitleBar::onFormStateChanged, this, std::placeholders::_1, std::placeholders::_2);
+		form()->titleChanged += std::bind(&TitleBar::onFormTitleChanged, this, std::placeholders::_1);
 	}
 
 	void TitleBar::onAction(action_t action)

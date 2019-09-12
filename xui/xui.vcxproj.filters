@@ -16,9 +16,6 @@
     <Filter Include="ui\controlsex">
       <UniqueIdentifier>{47d25aa0-a594-49bd-9dbd-e61e179d949b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ui\rendering">
-      <UniqueIdentifier>{ae7be824-c98a-4e70-affb-6a9dcbf271c1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ui\base\Button.cpp">
@@ -86,22 +83,7 @@
     <ClCompile Include="ui\ui.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\rendering\Geometry.cpp">
-      <Filter>ui\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\rendering\Image.cpp">
-      <Filter>ui\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\rendering\Text.cpp">
-      <Filter>ui\rendering</Filter>
-    </ClCompile>
     <ClCompile Include="ui\Scene.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\rendering\Component.cpp">
-      <Filter>ui\rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\SceneView.cpp">
       <Filter>ui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -171,22 +153,7 @@
     </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="xui.h" />
-    <ClInclude Include="ui\rendering\Geometry.h">
-      <Filter>ui\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\rendering\Image.h">
-      <Filter>ui\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\rendering\Text.h">
-      <Filter>ui\rendering</Filter>
-    </ClInclude>
     <ClInclude Include="ui\Scene.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\rendering\Component.h">
-      <Filter>ui\rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\SceneView.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
