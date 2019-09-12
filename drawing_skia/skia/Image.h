@@ -4,7 +4,7 @@
 
 class SkImage;
 
-namespace skia
+namespace drawing::skia
 {
     class Image : public drawing::Image
     {

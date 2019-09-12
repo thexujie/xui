@@ -201,7 +201,7 @@ namespace core
     template<typename SetterT, typename GetterT>
     static auto make_accessor(SetterT setter, GetterT getter,
         std::function<std::decay_t<typename member_traits<GetterT>::value_type>(const std::u8string &)> store = property_parser<std::decay_t<typename member_traits<GetterT>::value_type>>,
-        std::function<std::u8string_view(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch = nullptr)
+        std::function<std::u8string(const std::decay_t<typename member_traits<GetterT>::value_type> &)> fetch = nullptr)
     {
         static_assert(std::is_member_function_pointer<SetterT>::value);
         static_assert(std::is_member_pointer<GetterT>::value);

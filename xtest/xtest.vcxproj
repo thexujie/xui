@@ -118,8 +118,14 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\drawing_skia\drawing_skia.vcxproj">
+      <Project>{7ada2e34-2c4a-4305-9451-be9be77f5194}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\xui\xui.vcxproj">
       <Project>{327eadff-ed36-413c-89fe-d9dc08be57be}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\xui_win32\xui_win32.vcxproj">
+      <Project>{1242615e-9cbd-4b13-bee1-454ecf9536a5}</Project>
     </ProjectReference>
     <ProjectReference Include="..\x\x.vcxproj">
       <Project>{0cd56909-021a-4656-baf7-c1183fd6dff8}</Project>

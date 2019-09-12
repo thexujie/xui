@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/core.h"
+#include "path_source.h"
 
 namespace drawing
 {

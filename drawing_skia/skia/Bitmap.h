@@ -5,7 +5,7 @@
 class SkBitmap;
 class SkSurface;
 
-namespace skia
+namespace drawing::skia
 {
     class GraphicsDevice
     {

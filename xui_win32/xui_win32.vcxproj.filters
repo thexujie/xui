@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{4c6e2485-f4d6-405f-9e04-fe807e99650a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="win32\ImeContext.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\Window.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="xui_win32.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="win32\ImeContext.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Window.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="xui_win32.h" />
+  </ItemGroup>
+</Project>

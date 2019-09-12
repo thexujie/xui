@@ -3,7 +3,7 @@
 
 #include "platform/win32/win32.h"
 
-namespace skia
+namespace drawing::skia
 {
     Bitmap::Bitmap(const core::sizei & size)
     {

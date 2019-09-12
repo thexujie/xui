@@ -4,7 +4,7 @@
 
 class SkPath;
 
-namespace skia
+namespace drawing::skia
 {
     class Path : public drawing::Path
     {

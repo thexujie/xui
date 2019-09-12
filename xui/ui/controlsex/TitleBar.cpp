@@ -36,10 +36,10 @@ namespace ui::controlsex
 		TitleButton::propertyTableCallback(properties);
 	}
 
-	void TitleButton::setPath(std::shared_ptr<drawing::Path> path)
+	void TitleButton::setPath(drawing::path_source & path)
 	{
 		_path = path;
-        repaint();
+		refresh();
 	}
 
 	std::u8string TitleButton::styleName() const
@@ -52,22 +52,28 @@ namespace ui::controlsex
 			return u8"titlebutton";
 	}
 
+	void TitleButton::onEnterScene()
+	{
+		_path_object = scene()->createPath();
+		ui::base::Button::onEnterScene();
+	}
+	
+	void TitleButton::onLeaveScene()
+	{
+		_path_object.reset();
+		ui::base::Button::onLeaveScene();
+	}
+
+	void TitleButton::update()
+	{
+		_path_object->update(_path);
+	}
+	
 	void TitleButton::paint(drawing::Graphics & graphics, const core::rectf & clip) const
 	{
 		auto b = box();
-		if(_path)
-		{
-			core::float3x2 matrix;
-			//matrix *= core::float3x2::translate(-0.5f, -0.5f);
-			matrix *= core::float3x2::scale(b.cx, b.cy);
-			matrix *= core::float3x2::translate(b.x, b.y);
-			drawing::Path path;
-			_path->transform(matrix, path);
-			//matrix *= core::float3x2::translate(box.x + box.cx * 0.5f, box.y + box.cy * 0.5f);
-			//matrix *= core::float3x2::scale(box.cx, box.cy);
-			//matrix *= core::float3x2::translate(box.x, box.y);
-			graphics.drawPath(path, drawing::PathStyle().stoke(_shape_color, calc(1.5_px)));
-		}
+		if(_path_object)
+			graphics.drawPath(*_path_object, drawing::PathFormat()._stoke(_shape_color, calc(1.5_px)));
 	}
 
 	void TitleButton::_setShapeColor(core::color color)
@@ -122,11 +128,15 @@ namespace ui::controlsex
 			_close = std::make_shared<TitleButton>();
             _close->setSize({ 1.5_em });
             _close->setMargin({ 0.2_em });
-			auto path = std::make_shared<drawing::Path>();
-			path->move({ 0.3f, 0.3f });
-			path->line({ 0.7f, 0.7f });
-			path->move({ 0.7f, 0.3f });
-			path->line({ 0.3f, 0.7f });
+			auto b = _close->box();
+			core::float3x2 matrix = core::float3x2::scale(b.cx, b.cy) * core::float3x2::translate(b.x, b.y);
+			drawing::path_source path;
+			path.move({ 0.3f, 0.3f });
+			path.line({ 0.7f, 0.7f });
+			path.move({ 0.7f, 0.3f });
+			path.line({ 0.3f, 0.7f });
+			path.transform(matrix);
+			
 			_close->setPath(path);
 			_close->setActionT(ui::system_action::close);
             _close->active += std::bind(&TitleBar::onAction, this, std::placeholders::_1);
@@ -148,10 +158,13 @@ namespace ui::controlsex
 			_minimize = std::make_shared<TitleButton>();
             _minimize->setSize({ 1.5_em });
             _minimize->setMargin({ 0.2_em });
-			auto path = std::make_shared<drawing::Path>();
-			path->move({ 0.3f, 0.7f });
-			path->line({ 0.7f, 0.7f });
-			path->close();
+			auto b = _close->box();
+			core::float3x2 matrix = core::float3x2::scale(b.cx, b.cy) * core::float3x2::translate(b.x, b.y);
+			drawing::path_source path;
+			path.move({ 0.3f, 0.7f });
+			path.line({ 0.7f, 0.7f });
+			path.close();
+			path.transform(matrix);
 			_minimize->setPath(path);
 			_minimize->setActionT(ui::system_action::minimize);
 			_minimize->active += std::bind(&TitleBar::onAction, this, std::placeholders::_1);
@@ -173,29 +186,32 @@ namespace ui::controlsex
 
 		{
 			auto state = f->formState();
-			auto path = std::make_shared<drawing::Path>();
+			drawing::path_source path;
 			if(state == form_state::maximize)
 			{
-				path->move({ 0.4f, 0.4f });
-				path->line({ 0.4f, 0.3f });
-				path->line({ 0.7f, 0.3f });
-				path->line({ 0.7f, 0.6f });
-				path->line({ 0.6f, 0.6f });
+				path.move({ 0.4f, 0.4f });
+				path.line({ 0.4f, 0.3f });
+				path.line({ 0.7f, 0.3f });
+				path.line({ 0.7f, 0.6f });
+				path.line({ 0.6f, 0.6f });
 
-				path->move({ 0.3f, 0.4f });
-				path->line({ 0.6f, 0.4f });
-				path->line({ 0.6f, 0.7f });
-				path->line({ 0.3f, 0.7f });
-				path->close();
+				path.move({ 0.3f, 0.4f });
+				path.line({ 0.6f, 0.4f });
+				path.line({ 0.6f, 0.7f });
+				path.line({ 0.3f, 0.7f });
+				path.close();
 			}
 			else
 			{
-				path->move({ 0.3f, 0.3f });
-				path->line({ 0.7f, 0.3f });
-				path->line({ 0.7f, 0.7f });
-				path->line({ 0.3f, 0.7f });
-				path->close();
+				path.move({ 0.3f, 0.3f });
+				path.line({ 0.7f, 0.3f });
+				path.line({ 0.7f, 0.7f });
+				path.line({ 0.3f, 0.7f });
+				path.close();
 			}
+			auto b = _close->box();
+			core::float3x2 matrix = core::float3x2::scale(b.cx, b.cy) * core::float3x2::translate(b.x, b.y);
+			path.transform(matrix);
 			_maximize->setPath(path);
 		}
 		setAviliable(styles.any(ui::form_style::frameless));

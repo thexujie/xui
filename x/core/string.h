@@ -80,6 +80,68 @@ namespace core
 		return tokens;
 	}
 
+	// string
+
+	template<typename char_type = char>
+	std::basic_string<char_type> getline(const std::basic_string<char_type> & str, size_t & offset, char_type delimiter)
+	{
+		size_t begin = offset;
+		size_t count = 0;
+		while (offset < str.length())
+		{
+			if (str[offset++] == delimiter)
+				break;
+
+			++count;
+		}
+		return std::basic_string<char_type>(str.data() + begin, count);
+
+	}
+	template<typename char_type = char>
+	std::basic_string<char_type> getline(const std::basic_string<char_type> & str, size_t & offset, const std::basic_string<char_type> & delimiters)
+	{
+		size_t begin = offset;
+		size_t count = 0;
+		while (offset < str.length())
+		{
+			if (delimiters.find_first_of(str[offset++]) != std::basic_string<char_type>::npos)
+				break;
+
+			++count;
+		}
+		return std::basic_string<char_type>(str.data() + begin, count);
+	}
+
+	template<typename char_type>
+	std::vector<std::basic_string<char_type>> split(const std::basic_string<char_type> & str, const std::basic_string<char_type> & delimiters)
+	{
+		std::vector<std::basic_string<char_type>> tokens;
+		size_t offset = 0;
+		while (true)
+		{
+			auto token = core::getline(str, offset, delimiters);
+			if (!token.length())
+				break;
+			tokens.push_back(token);
+		}
+		return tokens;
+	}
+
+	template<typename char_type>
+	std::vector<std::basic_string<char_type>> split(const std::basic_string<char_type> & str, char_type delimiter)
+	{
+		std::vector<std::basic_string<char_type>> tokens;
+		size_t offset = 0;
+		while (true)
+		{
+			auto token = core::getline(str, offset, delimiter);
+			if (!token.length())
+				break;
+			tokens.push_back(token);
+		}
+		return tokens;
+	}
+
 	template <class T>
 	const T trim_chars = T();
 

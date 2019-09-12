@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ui.h"
+#include "Scene.h"
+#include "SceneView.h"
 
 namespace ui
 {
@@ -68,8 +70,9 @@ namespace ui
         virtual core::sizef fittingSize(const core::sizef & spacing) const { return { std::nanf(0) , std::nanf(0) }; }
 
         void setParent(std::shared_ptr<Container> parent) { _parent = parent; }
-        std::shared_ptr<Container> parent() const { return _parent.lock(); }
-
+		std::shared_ptr<Container> parent() const { return _parent.lock(); }
+		std::shared_ptr<Scene> scene() const { return _scene.lock(); }
+    	
         virtual std::shared_ptr<Form> form() const;
         virtual std::shared_ptr<component::StyleSheet> styleSheet() const;
         virtual std::shared_ptr<ui::IImeContext> imeContext() const;
@@ -203,6 +206,11 @@ namespace ui
         virtual void onLeaving();
         virtual void onLeave();
 
+		virtual void onEnteringScene(std::shared_ptr<Scene> & scene);
+		virtual void onEnterScene();
+		virtual void onLeavingScene(std::shared_ptr<Scene> & scene);
+		virtual void onLeaveScene();
+
         // rect 控件应该定位的范围
         // size 控件的预计尺寸
         virtual void place(const core::rectf & rect, const core::sizef & size);
@@ -247,6 +255,7 @@ namespace ui
 
     protected:
         std::weak_ptr<Container> _parent;
+		std::weak_ptr<Scene> _scene;
 
         int32_t _zvalue = ZVALUE_CONTENT;
         layout_origin _layout_origin = layout_origin::layout;
@@ -303,6 +312,12 @@ namespace ui
         std::map<std::u8string, std::vector<std::shared_ptr<core::animation>>> _animations;
         core::rectf _rect_repaint;
 
+		std::vector<std::shared_ptr<ui::rendering::Component>> _rendering_components;
+
+		virtual void Draw(SceneView & view, std::vector<std::shared_ptr<ui::rendering::Component>> & rendering_components) const {}
+    public:
+		void addComponent(std::shared_ptr<ui::rendering::Component> component) { _rendering_components.push_back(component); }
+    	
     public:
         void clearAnimations() { _animations.clear(); }
         void clearAnimations(const std::u8string & group);

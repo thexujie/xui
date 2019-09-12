@@ -171,9 +171,9 @@ namespace ui
         case core::unit::px:
             return value.value * ratio();
         case core::unit::em:
-			return value.value * drawing::default_fontmetrics().height;
+			return value.value * scene()->default_fontmetrics().height;
 		case core::unit::ft:
-            return value.value * drawing::fontmetrics(font()).height;
+            return value.value * scene()->font_metrics(font()).height;
         case core::unit::pt:
             return value.value * 72.0f * ratio();
         case core::unit::dot:
@@ -192,7 +192,7 @@ namespace ui
         case core::unit::px:
             return value.value * ratio();
         case core::unit::em:
-            return value.value * drawing::fontmetrics(drawing::font()).height;
+            return value.value * scene()->font_metrics(drawing::font()).height;
         case core::unit::pt:
             return value.value * 72.0f * ratio();
         case core::unit::dot:
@@ -437,6 +437,27 @@ namespace ui
 
     void Control::onLeave() { }
 
+
+	void Control::onEnteringScene(std::shared_ptr<Scene> & scene)
+    {
+		_scene = scene;
+		onEnterScene();
+    }
+
+	void Control::onEnterScene()
+    {
+    }
+	
+	void Control::onLeavingScene(std::shared_ptr<Scene> & scene)
+    {
+		_scene.reset();
+		onLeaveScene();
+    }
+
+	void Control::onLeaveScene()
+    {
+    }
+	
     void Control::place(const core::rectf & rect, const core::sizef & size)
     {
         assert(!std::isnan(size.cx) && !std::isnan(size.cy));
@@ -650,7 +671,7 @@ namespace ui
         if (!_background_color.available())
             return;
 
-        graphics.drawRectangle(box(_background_box), drawing::PathStyle().fill(_background_color));
+        graphics.drawRectangle(box(_background_box), drawing::PathFormat()._fill(_background_color));
     }
 
     void Control::_drawBorder(drawing::Graphics & graphics) const
@@ -661,23 +682,23 @@ namespace ui
                 std::equal(_border_colors.arr.begin() + 1, _border_colors.arr.end(), _border_colors.arr.begin()) &&
                 std::equal(_border_styles.arr.begin() + 1, _border_styles.arr.end(), _border_styles.arr.begin()))
             {
-                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathStyle().stoke(_border_colors.x, calc(_border.x), _border_styles[0]));
+                graphics.drawRectangle(box().expanded(calc(_border) * -0.5f), drawing::PathFormat()._stoke(_border_colors.x, calc(_border.x), _border_styles[0]));
             }
             else
             {
                 auto border = calc(_border);
                 const core::align edges[4] = { core::align::left, core::align::top, core::align::right, core::align::bottom };
-                drawing::Path path;
+                //drawing::Path path;
                 for (int32_t cnt = 0; cnt < 4; ++cnt)
                 {
                     if (border[cnt] > 0 && _border_colors[cnt].visible())
                     {
                         auto points = boderPoints(edges[cnt]);
                         auto line = boderLine(edges[cnt]);
-                        auto style = drawing::PathStyle().stoke(_border_colors[cnt], border.arr[cnt], _border_styles[cnt]);
+                        auto style = drawing::PathFormat()._stoke(_border_colors[cnt], border.arr[cnt], _border_styles[cnt]);
 
-                        path.clear();
-                        path.fromPoints(std::begin(points), std::end(points), true);
+                        //path.clear();
+                        //path.fromPoints(std::begin(points), std::end(points), true);
 
                         graphics.save();
                         //graphics.setClipPath(path);

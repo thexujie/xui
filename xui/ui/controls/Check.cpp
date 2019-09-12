@@ -32,7 +32,7 @@ namespace ui::controls
 
     void Check::setText(const std::u8string & text)
     {
-        _text.setText(text);
+		_text = text;
         refresh();
     }
 
@@ -46,25 +46,37 @@ namespace ui::controls
             return u8"radio";
     }
 
+	void Check::onEnterScene()
+	{
+		_text_object = scene()->createTextComponent();
+		ui::base::Check::onEnterScene();
+	}
+
+	void Check::onLeaveScene()
+	{
+		_text_object.reset();
+		ui::base::Check::onLeaveScene();
+	}
+	
     void Check::update()
     {
-        _text.update(font(), color());
-        core::sizef size = _text.bounds();
-        size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
+		_text_object->update(_text, font(), color());
+        core::sizef size = _text_object->bounds();
+        size.cx += scene()->graphicsService().font_metrics(font()).height + calc(_content_spacing);
         setContentSize(size);
     }
 
     void Check::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         auto box = paddingBox();
-        auto fm = drawing::fontmetrics(font());
+        auto fm = scene()->graphicsService().font_metrics(font());
 
         core::rectf rc_hole(box.leftTop(), { fm.height, fm.height });
         rc_hole.expand(-calc(_hole_border_size) * 0.5f);
         if (_hole_color.visible())
-            graphics.drawRectangle(rc_hole, drawing::PathStyle().fill(_hole_color));
+            graphics.drawRectangle(rc_hole, drawing::PathFormat()._fill(_hole_color));
         if (_hole_border_color.visible())
-            graphics.drawRectangle(rc_hole, drawing::PathStyle().stoke(_hole_border_color, calc(_hole_border_size)));
+            graphics.drawRectangle(rc_hole, drawing::PathFormat()._stoke(_hole_border_color, calc(_hole_border_size)));
 
         if(_state == check_state::checked)
         {
@@ -76,19 +88,19 @@ namespace ui::controls
             points[2] = rc_hole.rightBorder(0.1f);
 
             if (_dot_border_color.visible())
-                graphics.drawPoints(points, 3, drawing::point_mode::polygon, drawing::PathStyle().stoke(_dot_border_color, calc(lw)).join(drawing::join_style::round));
+                graphics.drawPoints(points, 3, drawing::point_mode::polygon, drawing::PathFormat()._stoke(_dot_border_color, calc(lw))._join(drawing::join_style::round));
         }
         else if (_state == check_state::unknown)
         {
             core::rectf rc_dot = rc_hole.expanded(-fm.height * 0.2f);
             if (_dot_color.visible())
-                graphics.drawRectangle(rc_dot, drawing::PathStyle().fill(_dot_color));
+                graphics.drawRectangle(rc_dot, drawing::PathFormat()._fill(_dot_color));
             if (_dot_border_color.visible())
-                graphics.drawRectangle(rc_dot, drawing::PathStyle().stoke(_dot_border_color, calc(_dot_border_size)));
+                graphics.drawRectangle(rc_dot, drawing::PathFormat()._stoke(_dot_border_color, calc(_dot_border_size)));
         }
         else {}
 
-        graphics.drawText(_text, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
+        graphics.drawText(*_text_object, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat()._color(color()));
     }
 
     void Check::onActiveOut(const input_state & state)

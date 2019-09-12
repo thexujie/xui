@@ -21,10 +21,12 @@ namespace ui::controls
         void propertyTable(core::property_table & properties) override;
 
         void setText(const std::u8string & text);
-        const std::u8string & text() const { return _text.text(); }
+        const std::u8string & text() const { return _text; }
 
         std::u8string styleName() const override;
 
+		void onEnterScene() override;
+		void onLeaveScene() override;
         void update() override;
         void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
     public:
@@ -54,7 +56,8 @@ namespace ui::controls
 		void _setSelectColor(const core::color & color) { _color_select = color; repaint(); }
 
     private:
-        drawing::Text _text;
+		std::u8string _text;
+		std::shared_ptr<drawing::Text> _text_object;
 
 		core::color _color_select = core::colors::AliceBlue;
 

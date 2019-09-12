@@ -3,7 +3,7 @@
 #include "core/io/filestream.h"
 
 
-namespace skia
+namespace drawing::skia
 {
     using namespace core;
 

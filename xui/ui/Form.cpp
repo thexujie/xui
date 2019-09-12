@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Form.h"
-#include "win32/Window.h"
 #include "Desktop.h"
 #include "RadioGroup.h"
 ////#include "../../xui/main/Menu.h"
@@ -48,7 +47,7 @@ namespace ui
     {
         if (!_window)
         {
-            auto window = std::make_shared<win32::Window>();
+            auto window = scene()->createWindow();
             window->attatch(share_ref<Form>());
             const_cast<Form *>(this)->_window = window;
         }
@@ -470,39 +469,12 @@ namespace ui
 
     void Form::_render()
     {
-        //static core::counter_fps<float64_t, 3> fps(1s);
         if (_invalid_region.empty())
             return;
 
-        auto tms = core::datetime::high_resolution();
-        if (!_draw_buffer)
-            _draw_buffer = std::make_shared<drawing::Surface>();
-
         auto bounds = _invalid_region.ceil<int32_t>();
         _invalid_region.clear();
-
-        if (_draw_buffer->size().cx < bounds.right() || _draw_buffer->size().cy < bounds.bottom())
-            _draw_buffer->resize(core::sizei{ bounds.right(), bounds.bottom() });
-
-        auto boundsf = bounds.to<float32_t>();
-        drawing::Graphics graphics(_draw_buffer);
-        graphics.save();
-        graphics.setClipRect(bounds.to<float32_t>(), true);
-        graphics.clear(0);
-        onPaint(graphics, boundsf);
-        graphics.restore();
-        static bool save = false;
-        if (save)
-            _draw_buffer->Save("scene.png");
-
-        //fps.acc(1);
-        //auto cost = core::datetime::high_resolution() - tms;
-        //core::dbg_output(core::string::format(graphics.statistics().total(), " drawcalls, ", cost, " s, fps=", fps.fps()));
-        //graphics.drawRectangle(rect.to<float32_t>(), graphics::PathStyle().stoke(core::colors::Red).width(2));
-
-        //invoke([this, region = std::move(invalid_region)]() { rendered(region); });
         rendered(bounds);
-        //rendered(core::recti{{}, _draw_buffer ->size()});
     }
 
     void Form::_animationTimerTick(core::timer &, int64_t)

@@ -32,7 +32,7 @@ namespace ui::controls
 
     void Radio::setText(const std::u8string & text)
     {
-        _text.setText(text);
+		_text = text;
         refresh();
     }
 
@@ -46,36 +46,48 @@ namespace ui::controls
             return u8"radio";
     }
 
+	void Radio::onEnterScene()
+	{
+		_text_object = scene()->createTextComponent();
+		ui::base::Radio::onEnterScene();
+	}
+
+	void Radio::onLeaveScene()
+	{
+		_text_object.reset();
+		ui::base::Radio::onLeaveScene();
+	}
+	
     void Radio::update()
     {
-        _text.update(font(), color());
-        core::sizef size = _text.bounds();
-        size.cx += drawing::fontmetrics(font()).height + calc(_content_spacing);
+		_text_object->update(_text, font(), color());
+        core::sizef size = _text_object->bounds();
+        size.cx += scene()->graphicsService().font_metrics(font()).height + calc(_content_spacing);
         setContentSize(size);
     }
 
     void Radio::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         auto box = paddingBox();
-        auto fm = drawing::fontmetrics(font());
+        auto fm = scene()->graphicsService().font_metrics(font());
 
         core::rectf rc_hole(box.leftTop(), { fm.height, fm.height });
         rc_hole.expand(-calc(_hole_border_size) * 0.5f);
         if (_hole_color.visible())
-            graphics.drawEllipse(rc_hole, drawing::PathStyle().fill(_hole_color));
+            graphics.drawEllipse(rc_hole, drawing::PathFormat()._fill(_hole_color));
         if (_hole_border_color.visible())
-            graphics.drawEllipse(rc_hole, drawing::PathStyle().stoke(_hole_border_color, calc(_hole_border_size)));
+            graphics.drawEllipse(rc_hole, drawing::PathFormat()._stoke(_hole_border_color, calc(_hole_border_size)));
 
         if(_state == check_state::checked)
         {
             core::rectf rc_dot = rc_hole.expanded(-fm.height * 0.2f);
             if (_dot_color.visible())
-                graphics.drawEllipse(rc_dot, drawing::PathStyle().fill(_dot_color));
+                graphics.drawEllipse(rc_dot, drawing::PathFormat()._fill(_dot_color));
             if (_dot_border_color.visible())
-                graphics.drawEllipse(rc_dot, drawing::PathStyle().stoke(_dot_border_color, calc(_dot_border_size)));
+                graphics.drawEllipse(rc_dot, drawing::PathFormat()._stoke(_dot_border_color, calc(_dot_border_size)));
         }
 
-        graphics.drawText(_text, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat().color(color()));
+        graphics.drawText(*_text_object, contentBox().leftTop().offset(fm.height + calc(_content_spacing), 0), drawing::StringFormat()._color(color()));
     }
 
     void Radio::onActiveOut(const input_state & state)

@@ -3,7 +3,7 @@
 #include <SkBlendMode.h>
 #include <SkColorFilter.h>
 
-namespace skia
+namespace drawing::skia
 {
     std::shared_ptr<ColorFilter> ColorFilter::createBlendMode(core::color color, drawing::blend_mode mode)
     {

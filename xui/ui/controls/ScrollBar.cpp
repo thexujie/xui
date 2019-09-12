@@ -43,7 +43,7 @@ namespace ui::controls
     void ScrollBar::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
         core::rectf bar_rect = barRect();
-        graphics.drawRectangle(bar_rect, drawing::PathStyle().fill(_bar_color));
+        graphics.drawRectangle(bar_rect, drawing::PathFormat()._fill(_bar_color));
     }
 
     void ScrollBar::setValue(float32_t val)

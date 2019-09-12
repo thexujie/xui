@@ -65,8 +65,8 @@ namespace ui::controls
 
     void TextLine::setText(const std::u8string & text)
     {
-        _text.setText(text);
-        _text.update(font(), color());
+		_text = text;
+		refresh();
     }
 
     std::u8string TextLine::styleName() const
@@ -79,6 +79,19 @@ namespace ui::controls
             return u8"textline";
     }
 
+	void TextLine::onEnterScene()
+	{
+		_text_object = scene()->createTextComponent();
+		Control::onEnterScene();
+	}
+
+	void TextLine::onLeaveScene()
+	{
+		_text_object.reset();
+		Control::onLeaveScene();
+	}
+
+	
     void TextLine::update()
     {
 #ifdef  _DEBUG
@@ -94,11 +107,11 @@ namespace ui::controls
         assert(utf8_pos <= _text.length());
 #endif
 
-        _text.update(font(), color());
+		_text_object->update(_text, font(), color());
 
         if (!_text.empty())
         {
-            auto & cluster = _text.findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+            auto & cluster = _text_object->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
             assert(cluster);
             if (cluster)
             {
@@ -110,7 +123,7 @@ namespace ui::controls
                     scroll_pos = cbox.cx - cluster.rect.right();
                 else {}
 
-                auto size = _text.bounds();
+                auto size = _text_object->bounds();
                 if (_scroll_pos + size.cx < cbox.width)
                 {
                     float32_t scroll_max = cbox.width - size.cx;
@@ -122,7 +135,7 @@ namespace ui::controls
             }
         }
         repaint();
-        setContentSize(_text.bounds());
+        setContentSize(_text_object->bounds());
     }
 
     void TextLine::paint(drawing::Graphics & graphics, const core::rectf & clip) const
@@ -138,24 +151,24 @@ namespace ui::controls
             core::rectf rect;
             do
             {
-               std::tie(off, rect) = _text.textRect(off, end - off);
+               std::tie(off, rect) = _text_object->textRect(off, end - off);
                 if(!rect.empty())
-                    graphics.drawRectangle({ (cbox.leftTop() + rect.leftTop()).offset(_scroll_pos, 0.0f), rect.size }, drawing::PathStyle().fill(_color_select));
+                    graphics.drawRectangle({ (cbox.leftTop() + rect.leftTop()).offset(_scroll_pos, 0.0f), rect.size }, drawing::PathFormat()._fill(_color_select));
             }
             while (off != core::npos);
         }
 
 
         if (!_text.empty())
-            graphics.drawText(_text, contentBox().leftTop().offseted(_scroll_pos, 0), drawing::StringFormat().color(color()));
+            graphics.drawText(*_text_object, contentBox().leftTop().offseted(_scroll_pos, 0), drawing::StringFormat()._color(color()));
         graphics.restore();
 
         if (_cursor_shown)
         {
             if(_text.empty())
             {
-                drawing::fontmetrics fmetrics(font());
-                graphics.drawRectangle({ cbox.leftTop(), { fmetrics.height * 0.5f, fmetrics.height } }, drawing::PathStyle().fill(0x80ff0000));
+                auto fmetrics = scene()->graphicsService().font_metrics(font());
+                graphics.drawRectangle({ cbox.leftTop(), { fmetrics.height * 0.5f, fmetrics.height } }, drawing::PathFormat()._fill(0x80ff0000));
             }
             else
             {
@@ -181,18 +194,18 @@ namespace ui::controls
                     cursor_tindex = _cursor_pos;
                     cursor_left = !_cursor_far;
                 }
-                auto & cluster = _text.findCluster(cursor_tindex);
+                auto & cluster = _text_object->findCluster(cursor_tindex);
                 if (cluster)
                 {
                     if(cluster.bidi == drawing::bidirection::rtl)
                         cursor_left = !cursor_left;
                     core::rectf rect = cluster.rect;
                     rect.offset(cbox.leftTop()).offset(_scroll_pos, 0);
-                    graphics.drawRectangle(rect, drawing::PathStyle().fill(0x400000ff));
+                    graphics.drawRectangle(rect, drawing::PathFormat()._fill(0x400000ff));
                     if (cursor_left)
-                        graphics.drawLine(rect.leftTop(), rect.leftBottom(), drawing::PathStyle().stoke(core::colors::Red, calc(1_px)));
+                        graphics.drawLine(rect.leftTop(), rect.leftBottom(), drawing::PathFormat()._stoke(core::colors::Red, calc(1_px)));
                     else
-                        graphics.drawLine(rect.rightTop(), rect.rightBottom(), drawing::PathStyle().stoke(core::colors::Red, calc(1_px)));
+                        graphics.drawLine(rect.rightTop(), rect.rightBottom(), drawing::PathFormat()._stoke(core::colors::Red, calc(1_px)));
                 }
             }
         }
@@ -211,7 +224,7 @@ namespace ui::controls
         {
             auto cbox = contentBox();
             float32_t pos = state.pos().x - cbox.x - _scroll_pos;
-            auto & cluster = _text.findCluster(pos);
+            auto & cluster = _text_object->findCluster(pos);
             if (!cluster)
                 break;
 
@@ -242,7 +255,7 @@ namespace ui::controls
 
         auto cbox = contentBox();
         float32_t pos = state.pos().x - cbox.x - _scroll_pos;
-        auto & cluster = _text.findCluster(pos);
+        auto & cluster = _text_object->findCluster(pos);
         if (!cluster)
             return;
 
@@ -354,9 +367,9 @@ namespace ui::controls
 
 	void TextLine::onPopupMenu(const input_state & state, IMenuPresenter & presenter)
     {
-		auto item_cut = std::make_shared<ui::MenuItem>(drawing::Image(u8"icon.png"), u8"ºÙ«–", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::X } }), system_action::cut, (_cursor_pos_selected != core::npos) ? item_flag::none : item_flag::disabled);
-		auto item_copy = std::make_shared<ui::MenuItem>(drawing::Image(u8"icon.png"), u8"∏¥÷∆", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::C } }), system_action::copy, (_cursor_pos_selected != core::npos) ? item_flag::none : item_flag::disabled);
-		auto item_paste = std::make_shared<ui::MenuItem>(drawing::Image(u8"icon.png"), u8"’≥Ã˘", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::V} }), system_action::paste);
+		auto item_cut = std::make_shared<ui::MenuItem>(u8"icon.png", u8"ºÙ«–", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::X } }), system_action::cut, (_cursor_pos_selected != core::npos) ? item_flag::none : item_flag::disabled);
+		auto item_copy = std::make_shared<ui::MenuItem>(u8"icon.png", u8"∏¥÷∆", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::C } }), system_action::copy, (_cursor_pos_selected != core::npos) ? item_flag::none : item_flag::disabled);
+		auto item_paste = std::make_shared<ui::MenuItem>(u8"icon.png", u8"’≥Ã˘", ui::shortcut({ ui::keybind{ ui::keycode::ctrl, ui::keycode::V} }), system_action::paste);
 		item_cut->active += [](auto action) { std::cout << "ºÙ«–"; };
 		item_copy->active += [](auto action) { std::cout << "∏¥÷∆"; };
 		item_paste->active += [](auto action) { std::cout << "’≥Ã˘"; };
@@ -368,7 +381,7 @@ namespace ui::controls
         if (_cursor_pos < 1)
             return;
 
-        auto & cluster = _text.findCluster(_cursor_pos - 1);
+        auto & cluster = _text_object->findCluster(_cursor_pos - 1);
         if(!cluster)
             return;
 
@@ -385,7 +398,7 @@ namespace ui::controls
         if (_cursor_pos >= _text.length())
             return;
 
-        auto & cluster = _text.findCluster(_cursor_pos);
+        auto & cluster = _text_object->findCluster(_cursor_pos);
         if (!cluster)
             return;
 
@@ -402,7 +415,7 @@ namespace ui::controls
         if (!_cursor_pos)
             return;
 
-        auto & cluster = _text.findCluster(_cursor_pos - 1);
+        auto & cluster = _text_object->findCluster(_cursor_pos - 1);
         if (!cluster)
             return;
 
@@ -426,7 +439,7 @@ namespace ui::controls
         if (_cursor_pos >= _text.length())
             return;
 
-        auto & cluster = _text.findCluster(_cursor_pos);
+        auto & cluster = _text_object->findCluster(_cursor_pos);
         if (!cluster)
             return;
 
@@ -464,7 +477,7 @@ namespace ui::controls
                     ic->setCompositionPos(cbox.leftTop().offseted(_scroll_pos, 0));
                 else
                 {
-                    auto & cluster = _text.findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+                    auto & cluster = _text_object->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
                     assert(cluster);
                     ic->setCompositionPos(cbox.leftTop().offseted(_cursor_far ? cluster.rect.right() : cluster.rect.left(), 0).offset(_scroll_pos, 0));
                 }
@@ -477,7 +490,7 @@ namespace ui::controls
     {
         if (!_text.empty())
         {
-            auto & cluster = _text.findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
+            auto & cluster = _text_object->findCluster(_cursor_far ? _cursor_pos - 1 : _cursor_pos);
             assert(cluster);
             if (cluster)
             {
@@ -489,7 +502,7 @@ namespace ui::controls
                     scroll_pos = cbox.cx - cluster.rect.right();
                 else {}
 
-                auto size = _text.bounds();
+                auto size = _text_object->bounds();
                 if (_scroll_pos + size.cx < cbox.width)
                 {
                     float32_t scroll_max = cbox.width - size.cx;

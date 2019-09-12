@@ -21,17 +21,22 @@ namespace ui::controlsex
 		static void propertyTableCallback(core::property_table & properties);
 		void propertyTable(core::property_table & properties) override;
 
-		void setPath(std::shared_ptr<drawing::Path> path);
+		void setPath(drawing::path_source & source);
 
 		std::u8string styleName() const override;
 
+		void onEnterScene() override;
+		void onLeaveScene() override;
+		void update() override;
 		void paint(drawing::Graphics & graphics, const core::rectf & clip) const override;
 
 	private:
 		void _setShapeColor(core::color color);
 
 	private:
-		std::shared_ptr<drawing::Path> _path;
+		drawing::path_source _path;
+		std::shared_ptr<drawing::Path> _path_object;
+		
 		core::color _shape_color = core::colors::Black;
 	};
 

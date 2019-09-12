@@ -1,10 +1,6 @@
 ﻿#include "stdafx.h"
 #include "x/platform/win32/win32.h"
 
-//#pragma optimize( "/await", on )
-
-#pragma conform(await, on)
-
 using core::operator<<;
 
 int main()

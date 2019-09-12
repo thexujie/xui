@@ -293,11 +293,6 @@ namespace win32
         ::PostMessageW(hwnd, WM_REFRESH, core::uxfromih(rect.x, rect.y), core::ixfromih(rect.cx, rect.cy));
     }
 
-    void Window::onSceneRendered(const drawing::Region & region)
-    {
-        _render(region);
-    }
-
     void Window::onSceneRendered2(const core::recti & rect)
     {
         _render(rect);
@@ -513,13 +508,13 @@ namespace win32
 
 		auto tms = core::datetime::high_resolution();
 		if (!_draw_buffer)
-			_draw_buffer = std::make_shared<drawing::Surface>();
+			_draw_buffer = std::make_shared<drawing::skia::Surface>();
 
 		if (_draw_buffer->size().cx < rect.right() || _draw_buffer->size().cy < rect.bottom())
 			_draw_buffer->resize(core::sizei{ rect.right(), rect.bottom() });
 
 		auto boundsf = rect.to<float32_t>();
-		drawing::Graphics graphics(_draw_buffer);
+		drawing::skia::Graphics graphics(_draw_buffer);
 		graphics.save();
 		graphics.setClipRect(rect.to<float32_t>(), true);
 		graphics.clear(0);
@@ -582,82 +577,6 @@ namespace win32
 			}
             ReleaseDC(hwnd, hdst);
 		}
-    }
-
-    void Window::_render(const drawing::Region & region)
-    {
-        //auto f = form();
-        //if (!f)
-        //    return;
-
-        //HWND hwnd = (HWND)_handle;
-        //if (!hwnd)
-        //    return;
-
-        //std::shared_ptr<drawing::GraphicsDevice> bitmap = f->bitmap();
-        //if (!bitmap)
-        //    return;
-
-        //if(_form_styles.all(ui::form_style::layered))
-        //{
-        //    //async([this, &hwnd, &bitmap]()
-        //    {
-        //        auto rect = _rect();
-        //        POINT pos_dst = { rect.x, rect.y };
-        //        SIZE size_dst = { rect.cx, rect.cy };
-        //        POINT pos_src = { 0, 0 };
-        //        BLENDFUNCTION bf = { 0 };
-        //        bf.AlphaFormat = AC_SRC_ALPHA;
-        //        bf.BlendFlags = 0;
-        //        bf.BlendOp = AC_SRC_OVER;
-        //        bf.SourceConstantAlpha = 0xFF;
-        //        UpdateLayeredWindow(hwnd, NULL, &pos_dst, &size_dst, (HDC)bitmap->hdc(), &pos_src, 0, &bf, ULW_ALPHA);
-        //    }
-        //    //);
-        //}
-        //else
-        //{
-        //    HDC hdst = GetDC(hwnd);
-        //    HDC hsrc = (HDC)bitmap->hdc();
-        //    if(hsrc)
-        //    {
-        //        drawing::RegionIterator ri(region);
-        //        while (!ri.done())
-        //        {
-        //            auto rect = ri.rect();
-        //            ri.next();
-
-        //            auto rc = rect.intersected(core::recti(core::pointi(), _size()));
-        //            BitBlt(hdst, rc.x, rc.y, rc.cx, rc.cy, hsrc, rc.x, rc.y, SRCCOPY);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        drawing::bitmap_buffer buffer = bitmap->buffer();
-        //        BITMAPINFO bmi;
-        //        memset(&bmi, 0, sizeof(bmi));
-        //        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        //        bmi.bmiHeader.biWidth = buffer.size.cx;
-        //        bmi.bmiHeader.biHeight = -buffer.size.cy;
-        //        bmi.bmiHeader.biPlanes = 1;
-        //        bmi.bmiHeader.biBitCount = 32;
-        //        bmi.bmiHeader.biCompression = BI_RGB;
-        //        bmi.bmiHeader.biSizeImage = 0;
-
-        //        drawing::RegionIterator ri(region);
-        //        while (!ri.done())
-        //        {
-        //            auto rect = ri.rect();
-        //            ri.next();
-
-        //            auto rc = rect.intersected(core::recti(core::pointi(), _size()));
-        //            SetDIBitsToDevice(hdst,
-        //                rc.x, rc.y, rc.cx, rc.cy,
-        //                rc.x, buffer.size.cy - rc.y - rc.cy, 0, buffer.size.cy, buffer.data, &bmi, DIB_RGB_COLORS);
-        //        }
-        //    }
-        //    ReleaseDC(hwnd, hdst);
-        //}
     }
 
 #define CASE_MSG(M, F) case M: return F(wParam, lParam)

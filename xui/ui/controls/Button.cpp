@@ -33,18 +33,30 @@ namespace ui::controls
 
     void Button::setText(const std::u8string & text)
     {
-        _text.setText(text);
+		_text = text;
         refresh();
     }
 
+	void Button::onEnterScene()
+    {
+		_text_object = scene()->createTextComponent();
+		ui::base::Button::onEnterScene();
+    }
+	
+	void Button::onLeaveScene()
+    {
+		_text_object.reset();
+		ui::base::Button::onLeaveScene();
+    }
+	
     void Button::update()
     {
-        _text.update(font(), color());
-        setContentSize(_text.bounds());
+		_text_object->update(_text, font(), color());
+        setContentSize(_text_object->bounds());
     }
 
     void Button::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        graphics.drawText(_text, contentBox().leftTop(), drawing::StringFormat().color(color()));
+        graphics.drawText(*_text_object, contentBox().leftTop(), drawing::StringFormat()._color(color()));
     }
 }

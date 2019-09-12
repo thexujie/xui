@@ -1,7 +1,5 @@
 #pragma once
 
-#include "drawing.h"
-
 namespace drawing
 {
     //class path_source
@@ -48,6 +46,8 @@ namespace drawing
                 close();
         }
 
+		bool valid() const { return !_buffer.empty(); }
+    	
     private:
 		enum class command : uint32_t
 		{

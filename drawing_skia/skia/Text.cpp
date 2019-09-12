@@ -83,7 +83,7 @@ static inline size_t utf8_to_utf32(const char * text, size_t size, char32_t & ch
 }
 
 
-namespace skia
+namespace drawing::skia
 {
     static inline bidirection level_to_bidi(UBiDiLevel level)
     {
@@ -215,17 +215,30 @@ namespace skia
         std::fill(_rtf_colors.begin() + range.index, _rtf_colors.begin() + range.end(), color);
     }
 
-    core::error Text::update(const drawing::font & font, core::color color)
+	core::error Text::update(std::u8string_view text, const drawing::font & font, core::color color)
     {
-        auto font_default = _shaper.indexFont(font);
-        if (_blob && (_font_default == font_default && _color_default == color))
-            return core::ok;
+		_text = text;
+		auto font_default = _shaper.indexFont(font);
+		if (_blob && (_font_default == font_default && _color_default == color))
+			return core::ok;
 
-        itermize(font, color);
-        layout();
-        _blob = build();
-        return core::ok;
+		itermize(font, color);
+		layout();
+		_blob = build();
+		return core::ok;
     }
+	
+    //core::error Text::update(const drawing::font & font, core::color color)
+    //{
+    //    auto font_default = _shaper.indexFont(font);
+    //    if (_blob && (_font_default == font_default && _color_default == color))
+    //        return core::ok;
+
+    //    itermize(font, color);
+    //    layout();
+    //    _blob = build();
+    //    return core::ok;
+    //}
 
     core::error Text::itermize(const drawing::font & font_default, core::color color_default)
     {

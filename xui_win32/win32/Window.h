@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ui/Form.h"
 #include "ImeContext.h"
 
 namespace win32
@@ -37,7 +36,6 @@ namespace win32
         void onPosChanged(const core::pointf & from, const core::pointf & to);
         void onSizeChanged(const core::sizef & from, const core::sizef & to);
         void onSceneInvalidated(const core::recti & rect);
-        void onSceneRendered(const drawing::Region & region);
         void onSceneRendered2(const core::recti & rect);
         void onSceneCaptured(bool capture);
         void onSceneEvented(ui::scene_event evt);
@@ -54,7 +52,6 @@ namespace win32
         core::vec4i _padding() const;
 
         void _render(const core::recti & rect);
-        void _render(const drawing::Region & region);
 
     private:
 
@@ -135,7 +132,7 @@ namespace win32
         std::shared_ptr<win32::ImeContext> _ime_context;
         std::shared_ptr<win32::CursorContext> _cursor_context;
 
-		std::shared_ptr<drawing::Surface> _draw_buffer;
+		std::shared_ptr<drawing::skia::Surface> _draw_buffer;
 
     public:
         core::event<void()> closed;

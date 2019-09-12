@@ -14,20 +14,32 @@ namespace ui::controls
         
     }
 
+	void Lable::onEnterScene()
+	{
+		_text_object = scene()->createTextComponent();
+		Control::onEnterScene();
+	}
+
+	void Lable::onLeaveScene()
+	{
+		_text_object.reset();
+		Control::onLeaveScene();
+	}
+	
     void Lable::update()
     {
-        _text.update(font(), color());
-        setContentSize(_text.bounds());
+		_text_object->update(_text, font(), color());
+        setContentSize(_text_object->bounds());
     }
 
     void Lable::paint(drawing::Graphics & graphics, const core::rectf & clip) const
     {
-        graphics.drawText(_text, contentBox().leftTop(), drawing::StringFormat().color(color()));
+        graphics.drawText(*_text_object, contentBox().leftTop(), drawing::StringFormat()._color(color()));
     }
 
     void Lable::setText(const std::u8string & text)
     {
-        _text.setText(text);
+		_text = text;
         refresh();
     }
 }

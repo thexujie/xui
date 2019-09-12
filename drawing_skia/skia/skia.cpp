@@ -9,7 +9,7 @@ namespace drawing
 	}
 }
 
-namespace skia
+namespace drawing::skia
 {
 	SkFontStyle from(const drawing::font_style & style)
 	{

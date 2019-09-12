@@ -7,7 +7,7 @@ class SkPaint;
 class SkCanvas;
 class SkTextBlobBuilder;
 
-namespace skia
+namespace drawing::skia
 {
 	class Bitmap;
 	class Surface;

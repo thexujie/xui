@@ -3,7 +3,7 @@
 #include "skia.h"
 
 class SkColorFilter;
-namespace skia
+namespace drawing::skia
 {
     class ColorFilter : public drawing::ColorFilter
     {

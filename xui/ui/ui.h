@@ -4,6 +4,8 @@
 
 namespace ui
 {
+	class Form;
+
 	enum class image_fitting
 	{
 		none = 0,
@@ -511,6 +513,7 @@ namespace ui
 	public:
 		virtual ~IWindow() {}
 
+		virtual core::error attatch(std::shared_ptr<ui::Form> form) = 0;
 		virtual pointer_t handle() const = 0;
 		virtual std::shared_ptr<IImeContext> imeContext() const = 0;
 		virtual std::shared_ptr<ICursorContext> cursorContext() const = 0;
@@ -544,11 +547,11 @@ namespace ui
 	{
 	public:
 		MenuItem() {}
-		MenuItem(const drawing::Image & i, const std::u8string & t, ui::shortcut s, action_t a = 0, item_flags f = nullptr) : icon(i), text(t), shortcut(s.string()), action(a), flags(f) {}
+		MenuItem(const std::u8string & i, const std::u8string & t, ui::shortcut s, action_t a = 0, item_flags f = nullptr) : icon(i), text(t), shortcut(s.string()), action(a), flags(f) {}
 
-		drawing::Image icon;
-		drawing::Text text;
-		drawing::Text shortcut;
+		std::u8string icon;
+		std::u8string text;
+		std::u8string shortcut;
 		action_t action = 0;
 
 		item_flags flags;

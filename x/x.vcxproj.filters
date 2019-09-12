@@ -117,6 +117,9 @@
     <ClCompile Include="platform\win32\drawing\platform_drawing.cpp">
       <Filter>platform\win32\drawing</Filter>
     </ClCompile>
+    <ClCompile Include="drawing\GraphicsService.cpp">
+      <Filter>drawing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -302,6 +305,12 @@
       <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="drawing\Graphics.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing\GraphicsService.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="drawing\Text.h">
       <Filter>drawing</Filter>
     </ClInclude>
   </ItemGroup>

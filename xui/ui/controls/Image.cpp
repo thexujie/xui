@@ -8,7 +8,7 @@ namespace ui::controls
         _interactable = false;
     }
 
-    Image::Image(const std::u8string & path) : _image(std::make_shared<drawing::Image>(path))
+    Image::Image(const std::u8string & path) : _path(path)
     {
         _interactable = false;
     }
@@ -20,13 +20,13 @@ namespace ui::controls
 
     void Image::setImage(const std::u8string & path)
     {
-        _image = std::make_shared<drawing::Image>(path);
+		_path = path;
         refresh();
     }
 
     void Image::setImage(std::shared_ptr<drawing::Image> image)
     {
-        _image = image;
+        _image_object = image;
         refresh();
     }
 
@@ -39,31 +39,44 @@ namespace ui::controls
     core::sizef Image::_imageSize() const
     {
         if (!_image_size)
-            return _image ? _image->size().to<float32_t>() : core::sizef();
+            return _image_object ? _image_object->size().to<float32_t>() : core::sizef();
         else
         {
             // ×ÔÊÊÓ¦¿í¶È
             core::attribute<core::vec2<core::dimenf>> _size = _image_size;
             if (_image_size.value.cx.nan() && !_image_size.value.cy.nan())
-                _size.value.cx = _image_size.value.cy * _image->aspect();
+                _size.value.cx = _image_size.value.cy * _image_object->aspect();
             else if (!_image_size.value.cx.nan() && _image_size.value.cy.nan())
-                _size.value.cy = _image_size.value.cx / _image->aspect();
+                _size.value.cy = _image_size.value.cx / _image_object->aspect();
             else if (_image_size.value.cx.nan() && _image_size.value.cy.nan())
             {
-                _size.value.cx = core::unit_dot(float32_t(_image->width()));
-                _size.value.cy = core::unit_dot(float32_t(_image->height()));
+                _size.value.cx = core::unit_dot(float32_t(_image_object->width()));
+                _size.value.cy = core::unit_dot(float32_t(_image_object->height()));
             }
             else {}
             return calc(_size);
         }
     }
 
+	void Image::onEnterScene()
+	{
+		_image_object = scene()->createImage();
+		Control::onEnterScene();
+	}
+
+	void Image::onLeaveScene()
+	{
+		_image_object.reset();
+		Control::onLeaveScene();
+	}
+	
     void Image::update()
     {
+		_image_object->load(_path);
         if (_image_size.available())
             setContentSize(calc(_image_size.value));
         else
-            setContentSize(_image ? _image->size().to<float32_t>() : core::sizef());
+            setContentSize(_image_object ? _image_object->size().to<float32_t>() : core::sizef());
     }
 
     void Image::paint(drawing::Graphics & graphics, const core::rectf & clip) const
@@ -75,14 +88,14 @@ namespace ui::controls
         auto image_size = _imageSize();
         core::rectf rect = box;
         if (_image_fitting.x == image_fitting::scale)
-            rect.cx = float32_t(_image->width());
+            rect.cx = float32_t(_image_object->width());
         else
-            rect.cx = image_size.empty() ? float32_t(_image->width()) : image_size.cx;
+            rect.cx = image_size.empty() ? float32_t(_image_object->width()) : image_size.cx;
 
         if (_image_fitting.y == image_fitting::scale)
-            rect.cy = float32_t(_image->height());
+            rect.cy = float32_t(_image_object->height());
         else
-            rect.cy = image_size.empty() ? float32_t(_image->height()) : image_size.cy;
+            rect.cy = image_size.empty() ? float32_t(_image_object->height()) : image_size.cy;
 
         while (true)
         {
@@ -90,9 +103,9 @@ namespace ui::controls
             while (true)
             {
                 if (_image_clip.available())
-                    graphics.drawImage(*_image, rect, _image_clip);
+                    graphics.drawImage(*_image_object, rect, _image_clip);
                 else
-                    graphics.drawImage(*_image, rect);
+                    graphics.drawImage(*_image_object, rect);
 
                 if (_image_fitting.x != image_fitting::repeat)
                     break;

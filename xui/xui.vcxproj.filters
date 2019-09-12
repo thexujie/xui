@@ -16,8 +16,8 @@
     <Filter Include="ui\controlsex">
       <UniqueIdentifier>{47d25aa0-a594-49bd-9dbd-e61e179d949b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="win32">
-      <UniqueIdentifier>{4c6e2485-f4d6-405f-9e04-fe807e99650a}</UniqueIdentifier>
+    <Filter Include="ui\rendering">
+      <UniqueIdentifier>{ae7be824-c98a-4e70-affb-6a9dcbf271c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -81,15 +81,27 @@
     <ClCompile Include="ui\RadioGroup.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="win32\ImeContext.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\Window.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="xui.cpp" />
     <ClCompile Include="ui\ui.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\rendering\Geometry.cpp">
+      <Filter>ui\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\rendering\Image.cpp">
+      <Filter>ui\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\rendering\Text.cpp">
+      <Filter>ui\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\Scene.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\rendering\Component.cpp">
+      <Filter>ui\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\SceneView.cpp">
       <Filter>ui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -157,13 +169,25 @@
     <ClInclude Include="ui\ui.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="win32\ImeContext.h">
-      <Filter>win32</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\Window.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="xui.h" />
+    <ClInclude Include="ui\rendering\Geometry.h">
+      <Filter>ui\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\rendering\Image.h">
+      <Filter>ui\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\rendering\Text.h">
+      <Filter>ui\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\Scene.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\rendering\Component.h">
+      <Filter>ui\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\SceneView.h">
+      <Filter>ui</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

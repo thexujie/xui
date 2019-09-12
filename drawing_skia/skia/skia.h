@@ -18,7 +18,7 @@ namespace script {
 	struct range;
 }
 
-namespace skia
+namespace drawing::skia
 {
 	template<typename T = SkRefCnt>
 	inline void skia_unref(T * ptr)

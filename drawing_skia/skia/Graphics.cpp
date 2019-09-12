@@ -17,7 +17,7 @@
 #include "ColorFilter.h"
 #include "Text.h"
 
-namespace skia
+namespace drawing::skia
 {
     //Graphics::Graphics(core::sizei size): _native(GraphicsService().CreateGraphics(GraphicsService().CreatePixmap(dimension))) { }
 

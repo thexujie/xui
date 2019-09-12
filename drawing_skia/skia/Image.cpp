@@ -6,7 +6,7 @@
 #include "image/formats/tga.h"
 
 
-namespace skia
+namespace drawing::skia
 {
     using namespace core;
 

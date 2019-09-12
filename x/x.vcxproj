@@ -123,6 +123,7 @@
     <ClCompile Include="core\timer.cpp" />
     <ClCompile Include="drawing\drawing.cpp" />
     <ClCompile Include="drawing\Graphics.cpp" />
+    <ClCompile Include="drawing\GraphicsService.cpp" />
     <ClCompile Include="drawing\path_source.cpp" />
     <ClCompile Include="image\formats\bmp.cpp" />
     <ClCompile Include="image\formats\dds.cpp" />
@@ -197,7 +198,9 @@
     <ClInclude Include="core\vec4.h" />
     <ClInclude Include="drawing\drawing.h" />
     <ClInclude Include="drawing\Graphics.h" />
+    <ClInclude Include="drawing\GraphicsService.h" />
     <ClInclude Include="drawing\path_source.h" />
+    <ClInclude Include="drawing\Text.h" />
     <ClInclude Include="image\formats\bmp.h" />
     <ClInclude Include="image\formats\dds.h" />
     <ClInclude Include="image\formats\ico.h" />

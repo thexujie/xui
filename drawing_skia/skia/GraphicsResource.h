@@ -2,7 +2,7 @@
 
 class SkPath;
 
-namespace drawing
+namespace drawing::skia
 {
 	class GraphicsObject
 	{
